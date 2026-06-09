@@ -10,8 +10,8 @@ public final class MyClass {
     private final field property: int
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public @kotlin.jvm.JvmExposeBoxed method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt): void
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method <init>(p0: java.lang.String): void
     public synthetic method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="3") p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void

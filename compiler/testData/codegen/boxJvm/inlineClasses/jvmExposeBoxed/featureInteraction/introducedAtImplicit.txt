@@ -8,7 +8,7 @@ public final class BoxKt {
 public final class MyClass {
     // source: 'Test.kt'
     private final field property: int
-    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) method <init>(): void
+    public deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=ERROR) method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p0: kotlin.UInt): void
     public synthetic method <init>(@kotlin.IntroducedAt(version="3") p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int, p1: kotlin.jvm.internal.BoxingConstructorMarker): void

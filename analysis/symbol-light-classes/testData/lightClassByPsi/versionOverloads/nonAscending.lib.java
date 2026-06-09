@@ -7,6 +7,27 @@ public final class DataClass /* DataClass*/ {
 
   private final int d;
 
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  @org.jetbrains.annotations.NotNull()
+  public final DataClass copy();//  copy()
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  public  DataClass();//  .ctor()
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level = kotlin.DeprecationLevel.ERROR)
+  @org.jetbrains.annotations.NotNull()
+  public final DataClass copy(@kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  copy(int, int)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level = kotlin.DeprecationLevel.ERROR)
+  public  DataClass(@kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  .ctor(int, int)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level = kotlin.DeprecationLevel.ERROR)
+  @org.jetbrains.annotations.NotNull()
+  public final DataClass copy(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  copy(int, int, int)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level = kotlin.DeprecationLevel.ERROR)
+  public  DataClass(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  .ctor(int, int, int)
+
   @org.jetbrains.annotations.NotNull()
   public final DataClass copy(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "3") int);//  copy(int, int, int, int)
 
@@ -37,6 +58,21 @@ public final class DataClass /* DataClass*/ {
 }
 
 public final class SimpleClass /* SimpleClass*/ {
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  public final void foo();//  foo()
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level = kotlin.DeprecationLevel.ERROR)
+  public final void foo2();//  foo2()
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level = kotlin.DeprecationLevel.ERROR)
+  public final void foo(@kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  foo(int, int)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 1.", level = kotlin.DeprecationLevel.ERROR)
+  public final void foo2(@kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  foo2(int, int)
+
+  @kotlin.Deprecated(message = "This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to version 2.", level = kotlin.DeprecationLevel.ERROR)
+  public final void foo(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int);//  foo(int, int, int)
+
   public  SimpleClass();//  .ctor()
 
   public final void foo(@kotlin.IntroducedAt(version = "2") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "1") int, @kotlin.IntroducedAt(version = "3") int);//  foo(int, int, int, int)

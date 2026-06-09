@@ -22,3 +22,5 @@ data class DataClass(
     @IntroducedAt("1") val c: Int = 3,
     @IntroducedAt("3") val d: Int = 4,
 )
+
+// LIGHT_ELEMENTS_NO_DECLARATION: DataClass.class[copy;copy;copy], SimpleClass.class[foo;foo;foo;foo2;foo2]
