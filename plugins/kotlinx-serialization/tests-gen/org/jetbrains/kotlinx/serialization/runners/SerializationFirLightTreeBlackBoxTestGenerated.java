@@ -277,12 +277,6 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
-    @TestMetadata("multiFieldValueClasses.kt")
-    public void testMultiFieldValueClasses() {
-      run("multiFieldValueClasses.kt");
-    }
-
-    @Test
     @TestMetadata("multiFileInheritanceJs.kt")
     public void testMultiFileInheritanceJs() {
       run("multiFileInheritanceJs.kt");

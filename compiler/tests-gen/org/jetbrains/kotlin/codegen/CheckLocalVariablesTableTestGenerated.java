@@ -90,16 +90,6 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
     runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
   }
 
-  @TestMetadata("multiFieldValueClassesExtension.kt")
-  public void testMultiFieldValueClassesExtension() {
-    runTest("compiler/testData/checkLocalVariablesTable/multiFieldValueClassesExtension.kt");
-  }
-
-  @TestMetadata("multiFieldValueClassesMethod.kt")
-  public void testMultiFieldValueClassesMethod() {
-    runTest("compiler/testData/checkLocalVariablesTable/multiFieldValueClassesMethod.kt");
-  }
-
   @TestMetadata("objectInLocalPropertyDelegate.kt")
   public void testObjectInLocalPropertyDelegate() {
     runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");

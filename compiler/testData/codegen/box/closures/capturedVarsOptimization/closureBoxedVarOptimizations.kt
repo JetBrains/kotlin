@@ -1,5 +1,4 @@
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // WITH_STDLIB
 // ^ Because kotlin.jvm.JvmInline is not in the minimized stdlib for some reason
 

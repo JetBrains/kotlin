@@ -1,7 +1,6 @@
 // WITH_REFLECT
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.test.*
 

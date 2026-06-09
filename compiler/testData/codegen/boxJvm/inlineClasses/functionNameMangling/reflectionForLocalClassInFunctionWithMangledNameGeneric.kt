@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.test.*
 
