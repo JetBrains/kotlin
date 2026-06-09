@@ -252,9 +252,9 @@ internal class JsStaticInitializersInheritanceLowering(val context: JsIrBackendC
 
             override fun visitClass(declaration: IrClass) {
                 for (function in declaration.functions) {
-                    if (declaration.staticInitializer != function) continue
+                    if (function != declaration.staticInitializer) continue
 
-                    val body = function.body as? IrBlockBody ?: return
+                    val body = function.body as? IrBlockBody ?: continue
                     val parentInitializerCalls =
                         context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).let { builder ->
                             declaration.parentStaticInitializers.map { builder.irCall(it) }
@@ -262,9 +262,9 @@ internal class JsStaticInitializersInheritanceLowering(val context: JsIrBackendC
 
                     // Prepend the first initializer of this class with call to parent ones
                     // If static_init exists, it always contains at least 1 static field initializer
-                    val initStartIndex = body.statements.indexOfFirst {
-                        it is IrSetField && it.origin == STATIC_FIELD_INITIALIZER
-                    }
+                    // TODO: The 'origin' has not been taken into account here because currently enum cases initializers do not set it to
+                    //  STATIC_FIELD_INITIALIZER
+                    val initStartIndex = body.statements.indexOfFirst { it is IrSetField }
 
                     body.statements.addAll(initStartIndex, parentInitializerCalls)
                 }
