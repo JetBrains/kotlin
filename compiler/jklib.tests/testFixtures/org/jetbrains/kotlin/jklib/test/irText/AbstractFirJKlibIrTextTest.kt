@@ -58,6 +58,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
         facadeStep(::Fir2IrCliJKlibFacade)
         irHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
             commonIrHandlersForCodegenTest()
         }
 
@@ -65,7 +66,9 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep()
+        deserializedIrHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = true) })
+        }
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {

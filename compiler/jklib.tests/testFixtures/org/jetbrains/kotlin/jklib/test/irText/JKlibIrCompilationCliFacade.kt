@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jklib.test.irText
 
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationArtifact
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationPhase
@@ -48,12 +49,6 @@ class JKlibDeserializedIrBackendInput(
     override val irBuiltIns: IrBuiltIns
         get() = compilationArtifact.pluginContext.irBuiltIns
 
-    // Bypassing full mangler initialization since IR text verification doesn't necessitate linking steps.
     override val irMangler: KotlinMangler.IrMangler
-        get() = object : KotlinMangler.IrMangler {
-            override fun IrDeclaration.mangleString(compatibleMode: Boolean): String = ""
-            override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = true
-            override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = ""
-            override val String.hashMangle: Long get() = 0L
-        }
+        get() = JKlibIrMangler()
 }
