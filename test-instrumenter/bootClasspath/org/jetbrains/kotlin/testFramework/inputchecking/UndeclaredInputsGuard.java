@@ -5,60 +5,44 @@
 
 package org.jetbrains.kotlin.testFramework.inputchecking;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toSet;
 
 public class UndeclaredInputsGuard {
 
-    private static final AtomicBoolean initialized = new AtomicBoolean(false);
-    private static Set<String> declaredInputs;
-    private static final Set<String> undeclaredInputs = ConcurrentHashMap.newKeySet();
-    private static final String rootDir = System.getProperty("test.instrumenter.root.dir");
-    private static final String buildDir = System.getProperty("test.instrumenter.build.dir");
+    private volatile static UndeclaredInputsGuard INSTANCE;
 
-    /**
-     * This method must be called before {@link UndeclaredInputsGuard#checkPath(String)}
-     */
-    public static void initialize() {
-        if (initialized.compareAndSet(false, true)) {
-            Path declaredInputsFilePath = Paths.get(System.getProperty("test.instrumenter.declared.inputs.file"));
+    private final String rootDir;
+    private final String buildDir;
+    private final Set<String> declaredInputs;
+    private final Set<String> undeclaredInputs;
 
-            try (BufferedReader reader = Files.newBufferedReader(declaredInputsFilePath)) {
-                declaredInputs = reader.lines()
-                        .filter(line -> !line.isEmpty())
-                        .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Unable to read file: " + declaredInputsFilePath, e);
-            }
-        } else {
-            throw new RuntimeException("UndeclaredInputsGuard is already initialized!");
-        }
+    public static void initialize(String rootDir, String buildDir, Collection<String> declaredInputs) {
+        INSTANCE = new UndeclaredInputsGuard(rootDir, buildDir, declaredInputs);
     }
 
-    public static void checkPath(String path) {
-        if (!initialized.get()) {
-            throw new RuntimeException(
-                    "UndeclaredInputsGuard is not initialized! Please call initialize() before any " +
-                    "file reading instrumentation is installed. This explicit step is required to prevent " +
-                    "class circularity error that may have happen if we performed initialization in the " +
-                    "static block (UndeclaredInputsGuard is called by the file reading instrumentation, " +
-                    "but it also reads a file during its initialization)."
-            );
+    public static UndeclaredInputsGuard getInstance() {
+        if (INSTANCE == null) {
+            throw new RuntimeException("The UndeclaredInputsGuard instance is not yet available!");
         }
+        return INSTANCE;
+    }
+
+    private UndeclaredInputsGuard(String rootDir, String buildDir, Collection<String> declaredInputs) {
+        this.rootDir = rootDir;
+        this.buildDir = buildDir;
+        this.declaredInputs = Collections.unmodifiableSet(new HashSet<>(declaredInputs));
+        this.undeclaredInputs = ConcurrentHashMap.newKeySet();
+    }
+
+    public void checkPath(String path) {
         // Short circuit and deduplication
-        if (path == null || declaredInputs == null || undeclaredInputs.contains(path)) {
+        if (path == null || undeclaredInputs.contains(path)) {
             return;
         }
         // We use File instead of Path because it's more lightweight.
@@ -75,7 +59,7 @@ public class UndeclaredInputsGuard {
         }
     }
 
-    private static boolean isUndeclaredInput(File file) {
+    private boolean isUndeclaredInput(File file) {
         // The order of expressions matters here, the Set::contains is the most expensive operation
         return insideRootProjectDir(file) &&
                notInsideCurrentProjectBuildDir(file) &&
@@ -85,7 +69,7 @@ public class UndeclaredInputsGuard {
     /**
      * Filter out files outside the root project directory (like Gradle caches)
      */
-    private static boolean insideRootProjectDir(File file) {
+    private boolean insideRootProjectDir(File file) {
         return file.getPath().startsWith(rootDir);
     }
 
@@ -93,7 +77,7 @@ public class UndeclaredInputsGuard {
      * Filter out files inside the current project's build directory
      * (tests sometimes write files there and then read them back)
      */
-    private static boolean notInsideCurrentProjectBuildDir(File file) {
+    private boolean notInsideCurrentProjectBuildDir(File file) {
         return !file.getPath().startsWith(buildDir);
     }
 
@@ -113,7 +97,7 @@ public class UndeclaredInputsGuard {
         return file;
     }
 
-    public static Set<String> getUndeclaredInputs() {
+    public Set<String> getUndeclaredInputs() {
         return Collections.unmodifiableSet(undeclaredInputs);
     }
 }
