@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag
  * Smoke tests are intended to cover the core functionality of a domain to catch regressions
  * caused by changes in unrelated domains.
  *
+ *
  * Requirements:
  * - Smoke tests must be very stable.
  * - Smoke test (suites) must be fast.
