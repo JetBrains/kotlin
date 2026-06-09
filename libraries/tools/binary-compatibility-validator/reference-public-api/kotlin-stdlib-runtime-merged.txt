@@ -758,6 +758,24 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun all ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun all ([SLkotlin/jvm/functions/Function1;)Z
 	public static final fun all ([ZLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinct ([B)Z
+	public static final fun allDistinct ([C)Z
+	public static final fun allDistinct ([D)Z
+	public static final fun allDistinct ([F)Z
+	public static final fun allDistinct ([I)Z
+	public static final fun allDistinct ([J)Z
+	public static final fun allDistinct ([Ljava/lang/Object;)Z
+	public static final fun allDistinct ([S)Z
+	public static final fun allDistinct ([Z)Z
+	public static final fun allDistinctBy ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([CLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([DLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([FLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([SLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy ([ZLkotlin/jvm/functions/Function1;)Z
 	public static final fun allEqual ([B)Z
 	public static final fun allEqual ([C)Z
 	public static final fun allEqual ([D)Z
@@ -2271,6 +2289,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun addAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun addAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun all (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinct (Ljava/lang/Iterable;)Z
+	public static final fun allDistinctBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun allEqual (Ljava/lang/Iterable;)Z
 	public static final fun allEqualBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Ljava/lang/Iterable;)Z
@@ -2733,6 +2753,14 @@ public final class kotlin/collections/UCollectionsKt {
 }
 
 public final class kotlin/collections/unsigned/UArraysKt {
+	public static final fun allDistinct--ajY-9A ([I)Z
+	public static final fun allDistinct-GBYM_sE ([B)Z
+	public static final fun allDistinct-QwZRm1k ([J)Z
+	public static final fun allDistinct-rL5Bavg ([S)Z
+	public static final fun allDistinctBy-JOV_ifY ([BLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy-MShoTSo ([JLkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy-jgv0xPQ ([ILkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinctBy-xTcfx_M ([SLkotlin/jvm/functions/Function1;)Z
 	public static final fun allEqual--ajY-9A ([I)Z
 	public static final fun allEqual-GBYM_sE ([B)Z
 	public static final fun allEqual-QwZRm1k ([J)Z
@@ -5454,6 +5482,8 @@ public abstract class kotlin/sequences/SequenceScope {
 
 public final class kotlin/sequences/SequencesKt {
 	public static final fun all (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun allDistinct (Lkotlin/sequences/Sequence;)Z
+	public static final fun allDistinctBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun allEqual (Lkotlin/sequences/Sequence;)Z
 	public static final fun allEqualBy (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Lkotlin/sequences/Sequence;)Z
