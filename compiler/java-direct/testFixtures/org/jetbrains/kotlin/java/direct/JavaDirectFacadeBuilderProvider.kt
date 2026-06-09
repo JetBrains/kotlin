@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.test.frontend.fir.JavaFacadeBuilderProvider
@@ -25,6 +26,21 @@ class JavaDirectFacadeBuilderProvider(@Suppress("UNUSED_PARAMETER") testServices
     override fun createBuilder(
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
+        librariesScope: AbstractProjectFileSearchScope,
     ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-        createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+        createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
+
+    /**
+     * Stage 2 §6.3 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
+     * the deserializer-side companion. Returns a builder that produces a
+     * [JvmBinaryClassFinderInputs] adapter backed by the same `BinaryJavaClassFinder` used by
+     * the production CLI for the library scope, so `JvmClassFileBasedSymbolProvider` reads
+     * binary `.class`/`.sig` files directly from the index instead of routing through
+     * `FirJavaFacade`.
+     */
+    override fun createBinaryClassFinderInputsBuilder(
+        configuration: CompilerConfiguration,
+        projectEnvironment: VfsBasedProjectEnvironment,
+    ): (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? =
+        createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)
 }

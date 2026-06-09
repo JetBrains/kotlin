@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.createJavaDirectBinaryClassFinderInputsBuilder
 import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -350,9 +350,11 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
         val javaDirectFacade =
-            if (configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.useJavaDirect)) {
-                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
-            } else AbstractProjectEnvironment::getFirJavaFacade
+//            if (configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.useJavaDirect)) {
+                createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
+//            } else AbstractProjectEnvironment::getFirJavaFacade
+        val javaDirectBinaryClassFinderInputs =
+            createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -384,6 +386,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration.languageVersionSettings,
                     context,
                     createJavaFacade = javaDirectFacade,
+                    createBinaryClassFinderInputs = javaDirectBinaryClassFinderInputs,
                 )
             },
             createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->

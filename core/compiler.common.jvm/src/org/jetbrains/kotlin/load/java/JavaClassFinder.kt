@@ -42,4 +42,37 @@ interface JavaClassFinder {
      * will always return `null`.
      */
     fun canComputeKnownClassNamesInPackage(): Boolean
+
+    // ---- Source-only probes (Stage 2 §6.2 of `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
+    //
+    // These let `JavaSymbolProvider` see *only* the Java source half of a finder, leaving binary
+    // Java lookups to flow through `JvmClassFileBasedSymbolProvider`. For non-source finders
+    // (PSI, reflect, javac) the defaults coincide with the existing methods, since those
+    // finders are themselves a single "side" — the narrowing is a no-op for them.
+    //
+    // After Stage 2 §6.5 the `java-direct` source finder (`JavaClassFinderOverAstImpl`)
+    // overrides `isInSourceIndex` to delegate to its index, so `JavaSymbolProvider` sees source
+    // Java classes only on that path; binary classes are routed through the deserializer-owned
+    // `JvmBinaryClassFinderInputs` adapter (`compiler/java-direct/.../JvmBinaryClassFinderInputsOverIndex`).
+
+    /**
+     * Cheap (index-level) check whether [classId] could be served by the Java source half of this finder.
+     * Used by `JavaSymbolProvider.getClassLikeSymbolByClassId` as a gate so binary classes flow through
+     * `JvmClassFileBasedSymbolProvider` instead.
+     *
+     * Default = `true` (preserving current behavior for finders that have no separate "source side").
+     */
+    fun isInSourceIndex(classId: ClassId): Boolean = true
+
+    /**
+     * Whether [fqName] is a Java package known to the source half of this finder.
+     * Default = `findPackage(fqName, mayHaveAnnotations = false) != null`.
+     */
+    fun hasPackageInSources(fqName: FqName): Boolean = findPackage(fqName, mayHaveAnnotations = false) != null
+
+    /**
+     * Top-level Java class names visible to the source half of this finder, or `null` if not computable.
+     * Default = [knownClassNamesInPackage] (same as today for single-side finders).
+     */
+    fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? = knownClassNamesInPackage(packageFqName)
 }

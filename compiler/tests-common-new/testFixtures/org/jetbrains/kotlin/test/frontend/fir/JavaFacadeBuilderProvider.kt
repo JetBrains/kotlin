@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.test.services.TestService
@@ -26,10 +27,30 @@ import org.jetbrains.kotlin.test.services.TestServices
  * `projectEnvironment.getFirJavaFacade(...)`.
  */
 abstract class JavaFacadeBuilderProvider : TestService {
+    /**
+     * Stage 2 §6.4 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
+     * [librariesScope] is threaded through so a java-direct builder can identity-compare it
+     * against the per-call `scope` argument of the returned lambda and route source vs library
+     * sessions to different facades (source-only `JavaClassFinderOverAstImpl` vs binary-only
+     * `BinaryJavaClassFinder`).
+     */
     abstract fun createBuilder(
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
+        librariesScope: AbstractProjectFileSearchScope,
     ): ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?
+
+    /**
+     * Stage 2 §6.3 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
+     * companion seam to [createBuilder] for the deserializer-side
+     * [JvmBinaryClassFinderInputs] adapter. Test fixtures that target `java-direct` return a
+     * builder lambda; everyone else returns `null` (deserializer falls back to `FirJavaFacade`
+     * — zero-delta with pre-§6.3 behaviour).
+     */
+    open fun createBinaryClassFinderInputsBuilder(
+        configuration: CompilerConfiguration,
+        projectEnvironment: VfsBasedProjectEnvironment,
+    ): ((AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?)? = null
 }
 
 val TestServices.javaFacadeBuilderProvider: JavaFacadeBuilderProvider? by TestServices.nullableTestServiceAccessor()

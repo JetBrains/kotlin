@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
-import org.jetbrains.kotlin.fir.java.javaSymbolProvider
+import org.jetbrains.kotlin.fir.java.getJavaClassLikeSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -162,8 +162,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             // Generate builder methods only for existing Java builder classes.
             // Otherwise, those methods are generated together with class generation (`createAndInitializeBuilders`).
-            val existingJavaBuilderSymbol = session.javaSymbolProvider?.getClassLikeSymbolByClassId(classSymbol.classId)
-                ?: continue
+            // Stage 2 §6.1 indirect-caller audit (see compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md §6.1):
+            // decouple from `JavaSymbolProvider` directly via the Java-targeted lookup helper. Today it wraps
+            // `javaSymbolProvider`; after §6.2/§6.3 it transparently picks up binary `FirDeclarationOrigin.Java.Library`
+            // results from the deserializer.
+            val existingJavaBuilderSymbol = session.getJavaClassLikeSymbolByClassId(classSymbol.classId) ?: continue
             val existingJavaBuilderFunctionNames = existingJavaBuilderSymbol.getExistingFunctionNames()
 
             addBuilderMethods(
@@ -244,7 +247,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
             val builderClassId = entityClass.classId.createNestedClassId(builderName)
 
-            val existingJavaBuilderSymbol = session.javaSymbolProvider?.getClassLikeSymbolByClassId(builderClassId)
+            // Stage 2 §6.1 indirect-caller audit: same pattern as above.
+            val existingJavaBuilderSymbol = session.getJavaClassLikeSymbolByClassId(builderClassId)
 
             // Extend existing classes using `generateFunctions` instead of generating a new class
             if (existingJavaBuilderSymbol != null) continue
