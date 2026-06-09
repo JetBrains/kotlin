@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
@@ -373,11 +374,13 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     /**
      * Browser test runner configuration.
      */
+    @ExperimentalJsTestDsl
     val test: KotlinJsBrowserTestDsl
 
     /**
      * Configure the browser test runner.
      */
+    @ExperimentalJsTestDsl
     fun test(body: Action<KotlinJsBrowserTestDsl>)
 
     /**
