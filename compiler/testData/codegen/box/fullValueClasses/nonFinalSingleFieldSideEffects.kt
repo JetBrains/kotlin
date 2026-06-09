@@ -1,7 +1,5 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
-// IGNORE_BACKEND: NATIVE, WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
-// ^ The support will be added later
 
 val list = mutableListOf<Any>()
 
@@ -30,6 +28,7 @@ fun A.cast(): B = this as B
 fun B.asNullable(): B? = this
 
 fun box(): String {
+    list.clear()
     val b = B(42)
     val b1 = id(b)
     val a = b1.cast()
@@ -40,7 +39,7 @@ fun box(): String {
     val b4 = b3.asNullable()
     val b5 = b4!!
 
-    require(list == listOf(-242, -42, 42)) { list.toString() }
+    require(list == listOf(-242, -42, 42)) { "Single-field: $list" }
 
     return "OK"
 }

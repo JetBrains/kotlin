@@ -616,11 +616,11 @@ fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
 
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = false)
+val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic = false)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic = false)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
-    getInlineClassUnderlyingType(irClass, treatFullValueClassesWithOneFieldAsBasic = false)
+    getInlineClassUnderlyingType(irClass, treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic = false)
