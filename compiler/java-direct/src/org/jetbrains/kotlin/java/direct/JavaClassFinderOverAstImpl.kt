@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaPackageOverAst
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.LeanJavaClassFinder
 import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelInFlightResolutionsIfAbsent
+import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelSupertypeWalkGuardIfAbsent
 import org.jetbrains.kotlin.java.direct.resolution.registerJavaModelTypeUseCacheIfAbsent
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
@@ -47,6 +48,9 @@ class JavaClassFinderOverAstImpl internal constructor(
         // [cycleSafeTryResolveClass]. Idempotent; safe to call once per `JavaClassFinderOverAstImpl`
         // construction even if the same session backs multiple finders.
         session.registerJavaModelInFlightResolutionsIfAbsent()
+        // Attach the per-session supertype-walk guard used by [cycleGuardedSupertypeWalk] to bound
+        // Java inheritance cycles during supertype walks. Same idempotency guarantees as above.
+        session.registerJavaModelSupertypeWalkGuardIfAbsent()
         // Attach the per-session TYPE_USE annotation-class cache used by
         // [isTypeUseAnnotationClass] when filtering TYPE_USE annotations on java-direct
         // `JavaTypeOverAst.annotations`. Same idempotency guarantees as above.

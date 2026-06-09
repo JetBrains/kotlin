@@ -35,3 +35,22 @@ This log is read into the agent's context every session, so **entries must stay 
 ---
 
 <!-- Add new entries below, newest first. -->
+
+### 2026-06-09 — Minify supertype cycle breaker to a session-keyed guard
+- **Change**: Replaced the per-file `JavaSupertypeCycleChecker` (thread-local deque + dead
+  `recordCycleEdge`/`consumeCycleEdges` diagnostic machinery, never wired to a diagnostic) with a
+  session-registered `JavaModelSupertypeWalkGuard` + `cycleGuardedSupertypeWalk`, co-located with
+  `cycleSafeClassLikeSymbol`/`JavaModelInFlightResolutions` and mirroring its shape (concurrent
+  per-session set, no thread-local). Behaviour is unchanged: re-entry on an in-flight `ClassId`
+  returns the caller default, bounding `A→B→A` Java inheritance cycles.
+- **Comments**: `cycleSafeClassLikeSymbol` KDoc now states the *hypothetical* re-entrance trigger
+  (no IntelliJ-test mention); `JavaCycleBreakerTest` documents the real `testIntellij_vcs_git` /
+  KT-74097 scenario (`GitSimpleEventDetector.Event.@Deprecated`, refs to
+  `implDocs/archive/ITERATION_RESULTS_2026_05_11.md`) for the in-flight guard and the hypothetical
+  malformed-cyclic-Java pattern for the supertype guard.
+- **Files**: `JavaModelSessionAccess.kt` (+guard), `JavaTypeResolver.kt`, `JavaFileContext.kt`
+  (−`cycleChecker`), `JavaClassFinderOverAstImpl.kt` (+register), `JavaCycleBreakerTest.kt`;
+  deleted `JavaSupertypeCycleChecker.kt`.
+- **Tests**: `:compiler:java-direct:test` 2816/2816 (455 files, 0 failures); `JavaCycleBreakerTest`
+  4/4 (each breaker proven load-bearing — `StackOverflowError` when the guard component is absent).
+- **Result**: green; valid-code paths unaffected, both breakers stay out of the way.

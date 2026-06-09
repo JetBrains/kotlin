@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * Per-file immutable data shared across all scope variants of a [JavaResolutionContext].
- * the [cycleChecker] is shared so every scope variant for the same file sees the same cycle bound.
  *
  * [imports] is the four-bucket [JavaImports] holder produced by
  * [JavaImportResolver.extractImports]; see its KDoc for the JLS 7.5 / 6.4.1 semantics of each
@@ -22,5 +21,4 @@ internal class JavaFileContext(
     val inheritedMemberResolver: JavaInheritedMemberResolver,
     val classFinder: LeanJavaClassFinder?,
     val session: FirSession,
-    val cycleChecker: JavaSupertypeCycleChecker = JavaSupertypeCycleChecker(),
 )

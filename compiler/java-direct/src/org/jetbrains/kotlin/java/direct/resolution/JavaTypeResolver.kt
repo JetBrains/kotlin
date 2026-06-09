@@ -443,7 +443,7 @@ private fun resolveInheritedInnerClassToClassId(
 /**
  * Searches the supertype hierarchy of [outerClassId] for an inherited nested class with
  * [nestedName]. Dispatches via [directSupertypeClassIds] and probes via [tryResolve]; cycles are
- * bounded by [JavaSupertypeCycleChecker].
+ * bounded by [cycleGuardedSupertypeWalk].
  */
 context(c: JavaResolutionContext)
 private fun findInheritedNestedClass(
@@ -451,14 +451,14 @@ private fun findInheritedNestedClass(
     nestedName: String,
 ): ClassId? {
     // Read supertypes BEFORE the cycle guard: [directSupertypeClassIds] shares the same
-    // [JavaSupertypeCycleChecker] keyed by `classId` and would bail out if entered re-entrantly.
+    // per-session supertype-walk guard keyed by `classId` and would bail out if entered re-entrantly.
     val supers = directSupertypeClassIds(outerClassId)
-    return c.fileContext.cycleChecker.guarded(outerClassId, default = null) {
+    return c.fileContext.session.cycleGuardedSupertypeWalk(outerClassId, default = null) {
         for (supertypeId in supers) {
             val candidateId = supertypeId.createNestedClassId(Name.identifier(nestedName))
-            if (tryResolve(candidateId)) return@guarded candidateId
+            if (tryResolve(candidateId)) return@cycleGuardedSupertypeWalk candidateId
             // Recurse into supertype's supertypes
-            findInheritedNestedClass(supertypeId, nestedName)?.let { return@guarded it }
+            findInheritedNestedClass(supertypeId, nestedName)?.let { return@cycleGuardedSupertypeWalk it }
         }
 
         // Also check via the class finder for same-package Java source supertypes
@@ -468,7 +468,7 @@ private fun findInheritedNestedClass(
             val candidates = inheritedInners[nestedName]
             if (candidates != null && candidates.size == 1) {
                 val candidateClassId = candidates.first()
-                if (tryResolve(candidateClassId)) return@guarded candidateClassId
+                if (tryResolve(candidateClassId)) return@cycleGuardedSupertypeWalk candidateClassId
             }
         }
 
@@ -535,9 +535,8 @@ internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
 }
 
 /**
- * Per-origin direct-supertype-`ClassId` dispatcher, guarded by [JavaSupertypeCycleChecker] so
- * direct (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly with a
- * logged edge.
+ * Per-origin direct-supertype-`ClassId` dispatcher, guarded by [cycleGuardedSupertypeWalk] so
+ * direct (`A extends A`) and indirect (`A → B → A`) Java-side cycles terminate cleanly.
  *
  *  1. **Source Java arm** — `classFinder.findClass(classId)` hits: walk `JavaClass.supertypes`
  *     directly (no FIR phase involved).
@@ -548,29 +547,29 @@ internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
  *     Cycles on this arm are bounded by FIR's `SupertypeComputationStatus.Computing` sentinel,
  *     not by the model-side checker.
  */
-context(c: JavaResolutionContext)
 @OptIn(SymbolInternals::class)
+context(c: JavaResolutionContext)
 internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
-    c.fileContext.cycleChecker.guarded(classId, default = emptyList()) {
+    c.fileContext.session.cycleGuardedSupertypeWalk(classId, default = emptyList()) {
         // 1. Source Java arm — walk our own AST. Supertype names are syntactically
         // knowable; no FIR phase is involved.
         val finder = c.fileContext.classFinder
         if (finder != null && finder.isClassInIndex(classId)) {
             val javaClass = finder.findClass(JavaClassFinder.Request(classId))
             if (javaClass != null) {
-                return@guarded resolveSupertypeNames(javaClass)
+                return@cycleGuardedSupertypeWalk resolveSupertypeNames(javaClass)
             }
         }
 
         // 2. & 3. Look up the FIR symbol — the model's only handle for non-source-Java
         // classes (binary Java, Kotlin, deserialized).
-        val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@guarded emptyList()
-        val firClass = symbol.fir as? FirRegularClass ?: return@guarded emptyList()
+        val symbol = c.fileContext.session.cycleSafeClassLikeSymbol(classId) ?: return@cycleGuardedSupertypeWalk emptyList()
+        val firClass = symbol.fir as? FirRegularClass ?: return@cycleGuardedSupertypeWalk emptyList()
 
         // 2. Binary Java arm — read the pre-resolved cache on FirJavaClass; never
         // touches the lazy `superTypeRefs` enhancement.
         if (firClass is FirJavaClass) {
-            return@guarded firClass.directSupertypeClassIds()
+            return@cycleGuardedSupertypeWalk firClass.directSupertypeClassIds()
         }
 
         // 3. Kotlin / built-in / deserialized arm — lazyResolveToPhase is honest here.

@@ -41,6 +41,20 @@ internal val FirSession.nullableSymbolProvider: FirSymbolProvider? by FirSession
  * `FirJavaClass.declarations` PUBLICATION-lazy cycle (KT-74097): symbol-provider lookup
  * materialises declarations, which calls back into model resolution, which probes here again.
  *
+ * Concretely, this fires when an annotation on a member of a Java class `C` has a simple name
+ * that resolves to a candidate [ClassId] nested in `C`, and that candidate is probed through a
+ * symbol provider that builds `C`'s nested-classifier scope by forcing `FirJavaClass.declarations`.
+ * Materialising those declarations re-converts the same annotated member, which re-probes the same
+ * candidate [ClassId]; the in-flight set short-circuits the second probe so resolution falls back
+ * (e.g. to the top-level [ClassId] for that simple name) instead of recursing.
+ *
+ * See [JavaCycleBreakerTest] for more details.
+ *
+ * The marker is keyed per session: a re-entrant probe can arrive through a
+ * different per-file context that wraps the same session, so the in-flight set must be shared
+ * across them. It is a concurrent set, so the guard stays correct should resolution ever run on
+ * more than one thread.
+ *
  * Registered by [registerJavaModelInFlightResolutionsIfAbsent]; sessions without it skip the
  * guard but cannot enter the cycle anyway — [cycleSafeClassLikeSymbol] short-circuits at the
  * missing [FirSymbolProvider] before any recursion.
@@ -88,6 +102,60 @@ internal fun FirSession.cycleSafeClassLikeSymbol(classId: ClassId): FirClassLike
 internal fun FirSession.cycleSafeTryResolveClass(classId: ClassId): Boolean {
     val symbol = cycleSafeClassLikeSymbol(classId) ?: return false
     return symbol.origin != FirDeclarationOrigin.BuiltIns
+}
+
+/**
+ * Per-session set of [ClassId]s whose Java supertype graph is currently being walked by
+ * [cycleGuardedSupertypeWalk].
+ *
+ * Re-entry to a [ClassId] already on the set returns the caller-supplied default without
+ * recursing, which bounds direct (`A extends A`) and indirect (`A -> B -> A`) Java inheritance
+ * cycles. Such cycles can only come from malformed Java source during error recovery; an
+ * unbounded supertype walk over them (`directSupertypeClassIds` / `findInheritedNestedClass`)
+ * would otherwise recurse until a `StackOverflowError`.
+ *
+ * See [JavaCycleBreakerTest] for more details.
+ *
+ * Keyed per session for the same reason as [JavaModelInFlightResolutions]: a re-entrant walk can
+ * arrive through a different per-file context that wraps the same session, so the active set must
+ * be shared across them. It is a concurrent set, so the guard stays correct should resolution ever
+ * run on more than one thread.
+ *
+ * Registered by [registerJavaModelSupertypeWalkGuardIfAbsent]; sessions without it run the walk
+ * unguarded (parsing-level fixtures never build the cyclic supertype graphs that need bounding).
+ */
+internal class JavaModelSupertypeWalkGuard : FirSessionComponent {
+    val classIds: MutableSet<ClassId> = ConcurrentHashMap.newKeySet()
+}
+
+private val FirSession.javaModelSupertypeWalkGuard: JavaModelSupertypeWalkGuard?
+        by FirSession.nullableSessionComponentAccessor()
+
+/** Registers a [JavaModelSupertypeWalkGuard] on this session if one is not already present. */
+@OptIn(SessionConfiguration::class)
+internal fun FirSession.registerJavaModelSupertypeWalkGuardIfAbsent() {
+    if (javaModelSupertypeWalkGuard == null) {
+        register(JavaModelSupertypeWalkGuard::class, JavaModelSupertypeWalkGuard())
+    }
+}
+
+/**
+ * Runs [block] guarded against re-entry on [classId]'s supertype walk: if [classId] is already
+ * being walked on this session, returns [default] without invoking [block]; otherwise marks
+ * [classId] in-flight, runs [block], and clears the mark in a `finally`.
+ *
+ * Mirrors [cycleSafeClassLikeSymbol], but bounds the Java inheritance-graph cycle rather than the
+ * KT-74097 PUBLICATION-lazy cycle. Sessions without [JavaModelSupertypeWalkGuard] run [block]
+ * unguarded.
+ */
+internal fun <R> FirSession.cycleGuardedSupertypeWalk(classId: ClassId, default: R, block: () -> R): R {
+    val active = javaModelSupertypeWalkGuard?.classIds
+    if (active != null && !active.add(classId)) return default
+    return try {
+        block()
+    } finally {
+        active?.remove(classId)
+    }
 }
 
 /**
