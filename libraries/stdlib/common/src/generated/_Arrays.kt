@@ -14281,6 +14281,438 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun <T> Array<out T>.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<T>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctByteArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ByteArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Byte>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctShortArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun ShortArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Short>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctIntArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun IntArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Int>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctLongArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun LongArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Long>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using equality semantics consistent with [Float.equals].
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctFloatArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun FloatArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Float>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using equality semantics consistent with [Double.equals].
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+ * consistent with [Double.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctDoubleArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun DoubleArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Double>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctBooleanArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun BooleanArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Boolean>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are distinct from each other,
+ * that is, no two elements are equal.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate element is found.
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharArraySamples.allDistinct
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public fun CharArray.allDistinct(): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<Char>()
+    for (element in this) {
+        if (!seen.add(element)) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <T, K> Array<out T>.allDistinctBy(selector: (T) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctByteArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ByteArray.allDistinctBy(selector: (Byte) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctShortArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> ShortArray.allDistinctBy(selector: (Short) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctIntArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> IntArray.allDistinctBy(selector: (Int) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctLongArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> LongArray.allDistinctBy(selector: (Long) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctFloatArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> FloatArray.allDistinctBy(selector: (Float) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctDoubleArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> DoubleArray.allDistinctBy(selector: (Double) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctBooleanArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> BooleanArray.allDistinctBy(selector: (Boolean) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all values produced by applying the given [selector] function to the
+ * elements in the array are distinct from each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared using structural equality (`==`).
+ * The operation returns `false` as soon as a duplicate [selector] value is found.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.alldistinct.AllDistinctCharArraySamples.allDistinctBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+public inline fun <K> CharArray.allDistinctBy(selector: (Char) -> K): Boolean {
+    if (size < 2) return true
+    val seen = HashSet<K>()
+    for (element in this) {
+        if (!seen.add(selector(element))) return false
+    }
+    return true
+}
+
+/**
  * Returns `true` if all elements in the array are equal to each other.
  * 
  * Returns `true` for an empty array.

@@ -340,6 +340,138 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.allDistinctSampleRef(methodName: String): String = "samples.generated.alldistinct." + when (f) {
+        ArraysOfObjects -> "AllDistinctArraySamples.$methodName"
+        ArraysOfPrimitives, ArraysOfUnsigned -> "AllDistinct${primitive!!.name}ArraySamples.$methodName"
+        else -> "AllDistinct${f}Samples.$methodName"
+    }
+
+    private fun MemberBuilder.appendAllDistinctFloatingPointNote() {
+        if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
+            doc {
+                doc + """
+                `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+                consistent with [${primitive!!.name}.equals].
+                """
+            }
+        }
+        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
+            doc {
+                doc + """
+                For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+                and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+                """
+            }
+        }
+    }
+
+    private fun MemberBuilder.appendAllDistinctByFloatingPointNote() {
+        doc {
+            doc + """
+            For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+            and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+            """
+        }
+    }
+
+    val f_allDistinct = fn("allDistinct()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        returns("Boolean")
+        doc {
+            val equalityPhrase = if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true)
+                "equality semantics consistent with [${primitive!!.name}.equals]"
+            else
+                "structural equality (`==`)"
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} are distinct from each other,
+            that is, no two ${f.element.pluralize()} are equal.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The ${f.element.pluralize()} are compared using $equalityPhrase.
+            The operation returns `false` as soon as a duplicate ${f.element} is found.
+            """
+        }
+        appendAllDistinctFloatingPointNote()
+        sample(allDistinctSampleRef("allDistinct"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            if (!iterator.hasNext()) return true
+            val seen = HashSet<T>()
+            seen.add(first)
+            do {
+                if (!seen.add(iterator.next())) return false
+            } while (iterator.hasNext())
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val seen = HashSet<T>()
+            for (element in this) {
+                if (!seen.add(element)) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_allDistinctBy = fn("allDistinctBy(selector: (T) -> K)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        returns("Boolean")
+        typeParam("K")
+        doc {
+            """
+            Returns `true` if all values produced by applying the given [selector] function to the
+            ${f.element.pluralize()} in the ${f.collection} are distinct from each other.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The [selector] values are compared using structural equality (`==`).
+            The operation returns `false` as soon as a duplicate [selector] value is found.
+            """
+        }
+        appendAllDistinctByFloatingPointNote()
+        sample(allDistinctSampleRef("allDistinctBy"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            if (!iterator.hasNext()) return true
+            val seen = HashSet<K>()
+            seen.add(selector(first))
+            do {
+                if (!seen.add(selector(iterator.next()))) return false
+            } while (iterator.hasNext())
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val seen = HashSet<K>()
+            for (element in this) {
+                if (!seen.add(selector(element))) return false
+            }
+            return true
+            """
+        }
+    }
+
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()
         include(Maps, CharSequences, ArraysOfUnsigned)
