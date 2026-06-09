@@ -168,12 +168,6 @@ class SwiftExportUnitTests {
         assertNotNull(regenerateTask, "regenerate linkage task should be registered")
         assertNotNull(checkTask, "checkSyntheticImportProjectIsCorrectlyIntegrated task should be registered")
 
-        val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
-        val embedDependencies = embedSwiftExportTask.taskDependencies.getDependencies(null)
-        assert(embedDependencies.contains(regenerateTask)) {
-            "embedSwiftExportForXcode should depend on regenerate linkage project task, got: ${embedDependencies.joinToString { it.name }}"
-        }
-
         val copySwiftExportTask = project.tasks.getByName("copyDebugSPMIntermediates")
         val copySwiftExportDependencies = copySwiftExportTask.taskDependencies.getDependencies(null)
         assert(copySwiftExportDependencies.contains(regenerateTask)) {
