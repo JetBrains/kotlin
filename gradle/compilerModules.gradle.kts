@@ -33,6 +33,7 @@ val commonCompilerModules = arrayOf(
     ":core:language.targets",
     ":core:language.targets.jvm",
     ":core:language.version-settings",
+    ":core:reflection.common.jvm",
     ":compiler:frontend.common.jvm",
     ":kotlin-util-io",
     ":kotlin-util-klib",

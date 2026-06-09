@@ -233,6 +233,7 @@ include(
     ":core:descriptors.jvm",
     ":core:deserialization",
     ":core:descriptors.runtime",
+    ":core:reflection.common.jvm",
     ":core:metadata",
     ":core:metadata.jvm",
     ":core:deserialization.common",
