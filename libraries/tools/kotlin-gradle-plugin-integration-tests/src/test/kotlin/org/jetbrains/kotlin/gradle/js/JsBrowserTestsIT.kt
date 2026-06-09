@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.test.assertContains
 
 @JsGradlePluginTests
@@ -139,6 +140,10 @@ class JsBrowserTestsIT : KGPBaseTest() {
             }
 
             buildAndFail("jsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
                 assertTasksExecuted(":prepareWebpackBundleForKotlinJsTests")
                 assertTasksFailed(":jsBrowserTest")
                 assertOutputContains("""Execute JS tests with chromium runner at URL: file.*kotlinJsTest/dist/test.html""".toRegex())
