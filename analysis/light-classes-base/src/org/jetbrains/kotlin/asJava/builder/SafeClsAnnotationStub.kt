@@ -9,6 +9,10 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.java.stubs.PsiAnnotationStub
+import com.intellij.psi.stubs.ObjectStubSerializer
+import com.intellij.psi.stubs.Stub
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.IncorrectOperationException
 
 /**
@@ -24,7 +28,6 @@ import com.intellij.util.IncorrectOperationException
  * when the original text is not a valid Java annotation. This drops the unrepresentable arguments, which is
  * consistent with how the metadata-based decompiler renders the same declarations.
  */
-@Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
 internal class SafeClsAnnotationStub(
     private val delegate: PsiAnnotationStub,
 ) : PsiAnnotationStub by delegate {
@@ -44,4 +47,9 @@ internal class SafeClsAnnotationStub(
             null
         }
     }
+
+    override fun findChildStubByElementType(elementType: IElementType): StubElement<out PsiElement?>? =
+        delegate.findChildStubByElementType(elementType)
+
+    override fun getStubSerializer(): ObjectStubSerializer<*, out Stub?>? = delegate.stubSerializer
 }
