@@ -129,7 +129,9 @@ constructor(
         }
 
         val runner = KotlinWebpackRunner(
-            npmProject = npmProject,
+            name = name,
+            npmProjectDir = npmProject.dir.get().asFile,
+            nodeExecutable = npmProject.nodeExecutable,
             logger = logger,
             configFile = webpackConfigFile.get().asFile,
             tool = "webpack/bin/webpack.js",
