@@ -154,8 +154,17 @@ private fun translateModules(
     inputModules: Set<InputModule>,
     config: SwiftExportConfig,
 ): List<TranslationResult> {
-    val allModules = inputModules + config.stdlibInputModule
-    val kaModules = createKaModulesForStandaloneAnalysis(allModules, config.targetPlatform, config.platformLibsInputModule)
+    val [cinteropReexportLibs, ordinaryInputs] = inputModules
+        .partition { it.config.moduleProvidedThroughCinterop }
+        .let { it.first.toSet() to it.second.toSet() }
+
+    val allModules = ordinaryInputs + config.stdlibInputModule
+    val kaModules = createKaModulesForStandaloneAnalysis(
+        inputs = allModules,
+        targetPlatform = config.targetPlatform,
+        platformLibraries = config.platformLibsInputModule,
+        cinteropReexportLibraries = cinteropReexportLibs,
+    )
     val explicitModulesTranslationResults = allModules
         .filter { it.config.shouldBeFullyExported }
         .map { translateModulePublicApi(it, kaModules, config) }

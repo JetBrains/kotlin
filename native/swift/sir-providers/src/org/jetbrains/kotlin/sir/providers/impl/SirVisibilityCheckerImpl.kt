@@ -75,7 +75,6 @@ public class SirVisibilityCheckerImpl(
                     visibility.value = SirVisibility.PUBLIC
             }
         }
-
         // We care only about public API.
         if (!ktSymbol.compilerVisibility.isPublicAPI || ktSymbol.compilerVisibility == Visibilities.Protected) {
             visibility.value = SirVisibility.PRIVATE
