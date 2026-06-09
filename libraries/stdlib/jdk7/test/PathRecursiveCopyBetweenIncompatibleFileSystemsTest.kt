@@ -15,11 +15,12 @@ import java.nio.file.attribute.FileAttributeView
 import java.nio.file.attribute.UserPrincipalLookupService
 import java.nio.file.spi.FileSystemProvider
 import kotlin.io.path.*
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
     @Test // Regression test for KT-85020
@@ -67,15 +68,19 @@ class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
         val mockFs = SharpFileSystemProvider().newTestFileSystem(dst.fileSystem)
         val mockedDst = mockFs.wrap(dst)
 
-        assertFailsWith<FileSystemException> {
-            src.copyToRecursively(mockedDst, followLinks = false, overwrite = false)
-        }.also {
-            assertContains(it.message!!, "b#test.txt")
-        }
+        var failed = false
+        src.copyToRecursively(mockedDst, followLinks = false, overwrite = false, onError = { srcPath, dstPath, exception ->
+            assertIs<IllegalFileNameException>(exception)
+            assertEquals("a/b#test.txt", srcPath.relativeTo(src).toString())
+            assertEquals("a#b#test.txt", dstPath.relativeTo(mockedDst).toString())
+            failed = true
+            OnErrorResult.SKIP_SUBTREE
+        })
+        assertTrue(failed, "Expected onError to be called, but it never happened")
     }
 }
 
-// FileSystemProvide, FileSystem and Path implementations below exists for testing purposes only,
+// FileSystemProvider, FileSystem and Path implementations below exists for testing purposes only,
 // and solve the only one purpose - wrap an existing file system so that all
 // its path will use "#" as a path separator. Thus, the name - SharpSomething.
 private class SharpFileSystemProvider : FileSystemProvider() {

@@ -225,7 +225,7 @@ public fun Path.copyToRecursively(
         }
     }
 
-    fun destination(source: Path): Path {
+    fun destination(source: Path, skipValidation: Boolean = false): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
 
         // Source and target filesystems may use different path separators,
@@ -245,7 +245,7 @@ public fun Path.copyToRecursively(
             // it may indicate that these filesystems may treat some of the segments differently,
             // which could lead to different directory trees.
             // Let's inspect the path and figure out if it's the case.
-            if (relativeTargetPath.nameCount != relativePath.nameCount) {
+            if (!skipValidation && relativeTargetPath.nameCount != relativePath.nameCount) {
                 validatePathsWithDifferentNameCount(
                     target, relativeTargetPath, resolved,
                     this@copyToRecursively, relativePath, source
@@ -255,7 +255,7 @@ public fun Path.copyToRecursively(
         } else {
             target
         }
-        if (!destination.normalize().startsWith(normalizedTarget)) {
+        if (!skipValidation && !destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
                 source,
                 destination,
@@ -266,7 +266,7 @@ public fun Path.copyToRecursively(
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {
-        return onError(source, destination(source), exception).toFileVisitResult()
+        return onError(source, destination(source, skipValidation = true), exception).toFileVisitResult()
     }
 
     val stack = arrayListOf<Path>()
