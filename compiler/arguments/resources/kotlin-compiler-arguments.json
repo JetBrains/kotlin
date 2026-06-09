@@ -7706,6 +7706,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
