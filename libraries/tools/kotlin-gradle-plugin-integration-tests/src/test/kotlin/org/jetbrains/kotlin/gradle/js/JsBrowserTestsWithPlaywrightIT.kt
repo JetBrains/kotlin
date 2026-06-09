@@ -7,30 +7,24 @@
 
 package org.jetbrains.kotlin.gradle.js
 
-import org.gradle.api.tasks.Copy
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.JsGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.OsCondition
-import org.jetbrains.kotlin.gradle.testbase.TestProject
-import org.jetbrains.kotlin.gradle.testbase.addKgpToBuildScriptCompilationClasspath
-import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
-import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
-import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
-import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
-import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
-import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.condition.OS
-import kotlin.apply
+import javax.inject.Inject
 import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
@@ -117,34 +111,25 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         project(
             "empty",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions
+            buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
         ) {
             addKgpToBuildScriptCompilationClasspath()
             buildScriptInjection {
                 project.applyMultiplatform {
                     js {
                         browser {
-                            val postProcess = project.tasks.register(
-                                "postProcessTestBundle",
-                                Copy::class.java,
-                            ) { copy ->
-                                copy.from(test.defaultBundleTask.flatMap { it.outputBundleDir })
-                                copy.into(project.layout.buildDirectory.dir("post-processed-test-bundle"))
-                                copy.filter { line: String ->
-                                    line.replace("dummy test", "post-processed test output")
-                                }
-                            }
-
                             test.apply {
-                                chromium()
+                                val postProcess = project.tasks.register(
+                                    "postProcessTestBundle",
+                                    PostProcessTestsBundle::class.java,
+                                ) { task ->
+                                    task.originalTestsLocation.set(defaultTestsLocation)
+                                    task.outputBundleDir.set(project.layout.buildDirectory.dir("post-processed-test-bundle"))
+                                }
 
+                                chromium()
                                 browserDefaults.testsLocation.set(
-                                    defaultTestsLocation.map { default ->
-                                        object : KotlinJsTestsLocation {
-                                            override val devServer = default.devServer
-                                            override val bundleLocation = project.layout.dir(postProcess.map { it.destinationDir })
-                                        }
-                                    }
+                                    postProcess.flatMap { it.postProcessedTestsLocation }
                                 )
                             }
                         }
@@ -366,5 +351,36 @@ private fun TestProject.jsProject(
             parentFile.mkdirs()
             writeText(testSource)
         }
+    }
+}
+
+abstract class PostProcessTestsBundle : DefaultTask() {
+
+    @get:Nested
+    abstract val originalTestsLocation: Property<KotlinJsTestsLocation>
+
+    @get:OutputDirectory
+    abstract val outputBundleDir: DirectoryProperty
+
+    @get:Internal
+    abstract val postProcessedTestsLocation: Property<KotlinJsTestsLocation>
+
+    @get:Inject
+    abstract val fs: FileSystemOperations
+
+    @TaskAction
+    fun postProcess() {
+        fs.copy { spec ->
+            spec.from(originalTestsLocation.get().bundleLocation)
+            spec.into(outputBundleDir)
+            spec.filter { line: String ->
+                line.replace("dummy test", "post-processed test output")
+            }
+        }
+
+        postProcessedTestsLocation.set(object : KotlinJsTestsLocation {
+            override val devServer get() = originalTestsLocation.get().devServer
+            override val bundleLocation = outputBundleDir
+        })
     }
 }
