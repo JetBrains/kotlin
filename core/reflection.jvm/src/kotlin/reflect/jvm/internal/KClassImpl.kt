@@ -60,8 +60,6 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.metadata.jvm.moduleName
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
-import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
@@ -421,48 +419,9 @@ internal class KClassImpl<T : Any>(
                     Number::class.java.isAssignableFrom(jClass)
         }
 
-        val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
-            buildList {
-                if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
-                    addAll(getMembers(memberScope, DECLARED))
-                    addAll(getMembers(staticScope, DECLARED))
-                } else {
-                    getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-                    getMembers(memberScope, DECLARED).filterTo(this) { it is KProperty<*> }
-                    for (method in jClass.declaredMethods) {
-                        if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
-                            add(JavaKNamedFunction(this@KClassImpl, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                        }
-                    }
+        val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeDeclaredMembers)
 
-                    for (field in jClass.declaredFields) {
-                        if (field.isEnumConstant) continue
-                        if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
-                            if (Modifier.isFinal(field.modifiers)) {
-                                add(JavaKProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                            } else {
-                                add(JavaKMutableProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                            }
-                        }
-                    }
-
-                    if (jClass.isEnum) {
-                        @Suppress("UNCHECKED_CAST")
-                        add(JavaEnumEntriesKProperty(this@KClassImpl as KClassImpl<out Enum<*>>))
-                    }
-                }
-            }
-        }
-
-        val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
-            if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
-                buildList {
-                    addAll(declaredMembers)
-                    addAll(getMembers(memberScope, INHERITED))
-                    addAll(getMembers(staticScope, INHERITED))
-                }
-            } else getAllMembers(this@KClassImpl, declaredMembers)
-        }
+        val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeAllMembers)
 
         val fakeOverrideMembers: FakeOverrideMembers by ReflectProperties.lazySoft {
             computeFakeOverrideMembers(this@KClassImpl, declaredMembers)
@@ -497,26 +456,7 @@ internal class KClassImpl<T : Any>(
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
 
-    private fun getMembers(scope: MemberScope, belonginess: MemberBelonginess): Collection<DescriptorKCallable<*>> {
-        val visitor = object : CreateKCallableVisitor(this) {
-            override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
-                throw IllegalStateException("No constructors should appear here: $descriptor")
-        }
-        return scope.getContributedDescriptors().mapNotNull { descriptor ->
-            if (descriptor is CallableMemberDescriptor &&
-                descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
-                belonginess.accept(descriptor)
-            ) descriptor.accept(visitor, Unit) else null
-        }.toList()
-    }
-
-    private enum class MemberBelonginess {
-        DECLARED,
-        INHERITED;
-
-        fun accept(member: CallableMemberDescriptor): Boolean =
-            member.kind.isReal == (this == DECLARED)
-    }
+    val isComplicatedBuiltinSubclass: Boolean get() = data.value.isComplicatedBuiltinSubclass
 
     override val functionsMetadata: Collection<KmFunction>
         get() = kmClass?.functions.orEmpty()

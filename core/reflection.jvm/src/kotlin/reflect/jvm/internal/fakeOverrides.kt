@@ -5,7 +5,6 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.metadata.ClassKind
@@ -16,24 +15,6 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.*
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
-
-internal fun getAllMembers(kClass: KClassImpl<*>, declaredMembers: Collection<ReflectKCallable<*>>): Collection<ReflectKCallable<*>> {
-    val fakeOverrideMembers = kClass.data.value.fakeOverrideMembers
-    val isKotlin = kClass.java.isKotlin
-    val members = fakeOverrideMembers.members.filterNotTo(
-        newHashMapWithExpectedSize(
-            // We expect that all non-transitive operations below (like filtering out statics or adding privates)
-            // do not change the final size of the collection significantly.
-            // We expect the size to stay more or less the same.
-            expectedSize = fakeOverrideMembers.members.size
-        )
-    ) { (_, member) ->
-        // Kotlin classes never inherit static members (neither from Java, nor from Kotlin).
-        (isKotlin && member.isStatic && member.overriddenStorage.isFakeOverride) ||
-                (member.isPackagePrivate && member.originalContainer.jClass.`package` != kClass.java.`package`)
-    }
-    return members.values + declaredMembers.filter { isNonTransitiveMember(kClass, it) }
-}
 
 internal fun starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug: String): Nothing =
     error(
@@ -92,7 +73,7 @@ private fun ReflectKCallable<*>.isStaticMethodInInterface(kClass: KClassImpl<*>)
 /**
  * Non-transitive members don't inherit transitively but appear in the 'members' list of the immediate KClass
  */
-private fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallable<*>): Boolean =
+internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallable<*>): Boolean =
     member.visibility == KVisibility.PRIVATE ||
             // static methods (but not fields) in interfaces are never inherited (neither in Java nor in Kotlin)
             member.isStaticMethodInInterface(kClass)
@@ -221,7 +202,7 @@ private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<
     { it.originalContainer == Any::class },
 )
 
-private val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
+internal val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
     get() = overriddenStorage.originalContainerIfFakeOverride ?: container
 
 internal val ReflectKCallable<*>.isStatic: Boolean
