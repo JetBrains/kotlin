@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BundleKotlinJsTestsTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.FileBasedKotlinJsTestDevServer
+import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -60,11 +61,11 @@ internal abstract class KotlinJsBrowserTestImpl
     private val objects: ObjectFactory,
     providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
-    // TODO: rename to defaultBundleTask
-    override val bundleTask: TaskProvider<out BundleKotlinJsTestsTask> = testCompilation.locateOrRegisterBrowserTestBundleTask()
+    override val defaultBundleTask: TaskProvider<WebpackBundleKotlinJsTests> = testCompilation
+        .locateOrRegisterBrowserTestBundleTask()
 
     override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> =
-        bundleTask.map { KotlinDefaultJsTestLocation(it.outputBundleDir) }
+        defaultBundleTask.map { KotlinDefaultJsTestLocation(it.outputBundleDir) }
 
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
         chromiumRunners + firefoxRunners + webkitRunners
