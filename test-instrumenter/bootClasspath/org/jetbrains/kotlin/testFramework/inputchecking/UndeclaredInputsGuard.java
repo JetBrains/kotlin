@@ -18,7 +18,7 @@ public class UndeclaredInputsGuard {
     private final String rootDir;
     private final String buildDir;
     private final Set<String> declaredInputs;
-    private final Set<String> undeclaredInputs = ConcurrentHashMap.newKeySet();
+    private final Set<String> undeclaredInputs;
 
     public static void install(String rootDir, String buildDir, Set<String> declaredInputs) {
         INSTANCE = new UndeclaredInputsGuard(rootDir, buildDir, declaredInputs);
@@ -35,6 +35,7 @@ public class UndeclaredInputsGuard {
         this.rootDir = rootDir;
         this.buildDir = buildDir;
         this.declaredInputs = declaredInputs;
+        this.undeclaredInputs = ConcurrentHashMap.newKeySet();
     }
 
     public void checkPath(String path) {
