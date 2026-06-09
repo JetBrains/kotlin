@@ -6,4 +6,4 @@ rem Use of this source code is governed by the Apache 2.0 license that can be fo
 setlocal
 set _KOTLIN_RUNNER=1
 
-call %~dps0kotlinc.bat %*
+call "%~dps0"kotlinc.bat %*
