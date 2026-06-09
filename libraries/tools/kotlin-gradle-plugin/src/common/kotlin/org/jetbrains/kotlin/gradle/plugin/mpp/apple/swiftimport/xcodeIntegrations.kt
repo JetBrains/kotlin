@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleXcodeTasks
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.MessageDigest
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 internal const val XCODEPROJ_PATH_ENV = "XCODEPROJ_PATH"
 
@@ -39,11 +42,11 @@ private fun resolveAndValidateXcodeproj(
     xcodeprojPath: Property<String>,
     currentDir: File,
     taskPath: String,
-): File {
+): Path {
     val raw = requireXcodeprojPath(xcodeprojPath, taskPath)
-    val resolved = Paths.get(raw).let { if (it.isAbsolute) it else currentDir.get().toPath().resolve(it) }
+    val resolved = Paths.get(raw).let { if (it.isAbsolute) it else currentDir.toPath().resolve(it) }
 
-    check(resolved.isDirectory) {
+    check(resolved.isDirectory()) {
         """
         The path set in the $XCODEPROJ_PATH_ENV environment variable does not point to an Xcode project directory.
         Resolved path: $resolved
@@ -52,7 +55,7 @@ private fun resolveAndValidateXcodeproj(
         Both relative (from the Gradle invocation directory) and absolute paths are supported.
         """.trimIndent()
     }
-    check(resolved.resolve("project.pbxproj").isFile) {
+    check(resolved.resolve("project.pbxproj").isRegularFile()) {
         """
         '$resolved' is not a valid Xcode project: it does not contain a project.pbxproj file.
         Please verify the path set in the $XCODEPROJ_PATH_ENV environment variable points to a valid .xcodeproj bundle.
