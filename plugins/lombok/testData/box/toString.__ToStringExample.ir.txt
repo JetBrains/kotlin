@@ -1,0 +1,24 @@
+CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:ToStringExample modality:OPEN visibility:public/*package*/ superTypes:[kotlin.Any]
+  annotations:
+    ToString(includeFieldNames = <null>, exclude = <null>, of = <null>, callSuper = <null>, doNotUseGetters = <null>, onlyExplicitlyIncluded = <null>)
+  thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ToStringExample
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:name visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:name type:@[FlexibleNullability] kotlin.String? visibility:public
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:age visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:age type:kotlin.Int visibility:public
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public returnType:<root>.ToStringExample
+    VALUE_PARAMETER kind:Regular name:name index:0 type:@[FlexibleNullability] kotlin.String?
+    VALUE_PARAMETER kind:Regular name:age index:1 type:kotlin.Int
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    overridden:
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+    VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    overridden:
+      public open fun hashCode (): kotlin.Int declared in kotlin.Any
+  FUN GENERATED[org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGeneratorKey] name:toString visibility:public modality:OPEN returnType:kotlin.String
+    VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGeneratorKey] kind:DispatchReceiver name:<this> index:0 type:<root>.ToStringExample
+    overridden:
+      public open fun toString (): kotlin.String declared in kotlin.Any

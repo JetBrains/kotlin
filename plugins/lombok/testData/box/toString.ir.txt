@@ -1,0 +1,32 @@
+FILE fqName:<root> fileName:/common.kt
+  FUN name:assertEquals visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER kind:Regular name:a index:0 type:T of <root>.assertEquals
+    VALUE_PARAMETER kind:Regular name:b index:1 type:T of <root>.assertEquals
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            ARG <this>: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              ARG arg0: GET_VAR 'a: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+              ARG arg1: GET_VAR 'b: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+          then: THROW type=kotlin.Nothing
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
+              ARG p0: STRING_CONCATENATION type=kotlin.String
+                CONST String type=kotlin.String value="'"
+                GET_VAR 'a: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+                CONST String type=kotlin.String value="' was not equal to '"
+                GET_VAR 'b: T of <root>.assertEquals declared in <root>.assertEquals' type=T of <root>.assertEquals origin=null
+                CONST String type=kotlin.String value="'"
+FILE fqName:<root> fileName:/test.kt
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        TYPE_ARG T: kotlin.String
+        ARG a: CONST String type=kotlin.String value="ToStringOnJavaClass(name=Alice, age=30)"
+        ARG b: CALL 'public open fun toString (): kotlin.String declared in <root>.ToStringOnJavaClass' type=kotlin.String origin=null
+          ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (name: @[FlexibleNullability] kotlin.String?, age: kotlin.Int) declared in <root>.ToStringOnJavaClass' type=<root>.ToStringOnJavaClass origin=null
+            ARG name: CONST String type=kotlin.String value="Alice"
+            ARG age: CONST Int type=kotlin.Int value=30
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
