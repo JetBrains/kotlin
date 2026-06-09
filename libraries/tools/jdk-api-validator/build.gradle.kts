@@ -3,10 +3,6 @@ plugins {
     id("test-inputs-check")
 }
 
-repositories {
-    mavenCentral()
-}
-
 val signature by configurations.creating
 
 sourceSets {

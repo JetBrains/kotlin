@@ -12,10 +12,6 @@ plugins {
 
 group = "org.jetbrains.kotlin"
 
-repositories {
-    mavenCentral()
-}
-
 kotlin {
     js {
         browser()

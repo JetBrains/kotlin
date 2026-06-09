@@ -11,10 +11,6 @@ plugins {
     id("test-inputs-check")
 }
 
-repositories {
-    google()
-}
-
 /**
  * Used to unpack the `classes.jar` from `.aar` artifacts.
  *

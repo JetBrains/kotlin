@@ -22,11 +22,6 @@ kotlin {
     }
 }
 
-repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-}
-
-
 dependencies {
     testFixturesImplementation(libs.jgit)
 }

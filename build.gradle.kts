@@ -289,71 +289,6 @@ allprojects {
         }
 
         mirrorRepo?.let(::maven)
-
-        exclusiveContent {
-            forRepository {
-                maven(intellijRepo)
-            }
-            filter {
-                includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
-            }
-            filter {
-                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
-                includeGroupByRegex("com.intellij.platform.*")
-                includeGroupByRegex("org.jetbrains.jps.*")
-                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
-                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
-                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
-                includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
-                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-            }
-            filter {
-                includeModule("org.jetbrains.dukat", "dukat")
-                includeModule("org.jetbrains.kotlin", "android-dx")
-                includeModule("org.jetbrains.kotlin", "jcabi-aether")
-                includeModule("org.jetbrains.kotlin", "protobuf-lite")
-                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
-                includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven("https://download.jetbrains.com/teamcity-repository")
-            }
-            filter {
-                includeModule("org.jetbrains.teamcity", "serviceMessages")
-                includeModule("org.jetbrains.teamcity.idea", "annotations")
-            }
-        }
-
-        exclusiveContent {
-            forRepository {
-                maven("https://dl.google.com/dl/android/maven2")
-            }
-            filter {
-                includeGroup("com.android.tools")
-                includeGroup("com.android.tools.build")
-                includeGroup("com.android.tools.layoutlib")
-                includeGroup("com.android")
-                includeGroup("androidx.test")
-                includeGroup("androidx.annotation")
-            }
-        }
-
-        mavenCentral()
     }
 }
 
@@ -734,12 +669,6 @@ tasks {
 
     named("check") {
         dependsOn("test")
-    }
-
-    register("dependenciesAll") {
-        subprojects.forEach {
-            dependsOn(it.tasks.named("dependencies"))
-        }
     }
 
     named("checkBuild") {

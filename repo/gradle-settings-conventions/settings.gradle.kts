@@ -23,6 +23,14 @@ dependencyResolutionManagement {
             from(files("../../gradle/libs.versions.toml"))
         }
     }
+    repositories {
+        maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+            name = "kotlin-dependencies"
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
 
 include(":develocity")

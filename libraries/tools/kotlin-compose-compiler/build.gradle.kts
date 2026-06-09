@@ -6,10 +6,6 @@ plugins {
     id("gradle-plugin-api-reference")
 }
 
-repositories {
-    google()
-}
-
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin"))

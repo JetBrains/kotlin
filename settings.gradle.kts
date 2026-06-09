@@ -1,5 +1,5 @@
-import java.io.File
-import java.util.Properties
+import java.net.URI
+import java.util.*
 
 pluginManagement {
     includeBuild("repo/kotlin-build-helpers")
@@ -29,6 +29,7 @@ pluginManagement {
                 includeGroup("com.android.tools")
             }
         }
+
         mavenCentral {
             url = uri("https://cache-redirector.jetbrains.com/maven-central")
         }
@@ -97,6 +98,357 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("composeRuntimeSnapshot") {
             from(files("plugins/compose/compose-runtime-snapshot-versions.toml"))
+        }
+    }
+    repositories {
+        exclusiveContent {
+            forRepository {
+                val isEAPIntellij = versionProperties["versions.intellijSdk"].toString().contains("-EAP-")
+                val isNightlyIntellij = versionProperties["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
+                val intellijRepo =
+                    when {
+                        isEAPIntellij -> "https://www.jetbrains.com/intellij-repository/snapshots"
+                        isNightlyIntellij -> "https://www.jetbrains.com/intellij-repository/nightly"
+                        else -> "https://www.jetbrains.com/intellij-repository/releases"
+                    }
+
+                maven(intellijRepo) {
+                    name = "intellij-repository"
+                }
+            }
+            filter {
+                includeGroupByRegex("com\\.jetbrains\\.intellij(\\..+)?")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+                    name = "intellij-dependencies"
+                }
+            }
+            filter {
+                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+                includeGroupByRegex("com.intellij.platform.*")
+                includeGroupByRegex("org.jetbrains.jps.*")
+                includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
+                includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
+                includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
+                includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies") {
+                    name = "kotlin-dependencies"
+                }
+            }
+            filter {
+                includeModule("org.jetbrains.dukat", "dukat")
+                includeModule("org.jetbrains.kotlin", "android-dx")
+                includeModule("org.jetbrains.kotlin", "jcabi-aether")
+                includeModule("org.jetbrains.kotlin", "protobuf-lite")
+                includeModule("org.jetbrains.kotlin", "protobuf-relocated")
+                includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven("https://download.jetbrains.com/teamcity-repository") {
+                    name = "teamcity-repository"
+                }
+            }
+            filter {
+                includeModule("org.jetbrains.teamcity", "serviceMessages")
+                includeModule("org.jetbrains.teamcity.idea", "annotations")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                google()
+            }
+            filter {
+                includeGroupByRegex("""com\.android(\..*)?""")
+                includeGroupByRegex("""androidx(\..*)?""")
+                includeGroup("com.google.testing.platform")
+            }
+        }
+
+        exclusiveContent {
+            forRepository {
+                maven(url = "https://repo.gradle.org/gradle/libs-releases") {
+                    name = "Gradle Libs Releases"
+                }
+            }
+            filter {
+                includeGroup("org.gradle.experimental")
+            }
+        }
+
+        exclusiveContent {
+            forRepository {
+                gradlePluginPortal()
+            }
+            filter {
+                includeGroup("com.gradle")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven("https://packages.jetbrains.team/maven/p/plan/litmuskt") {
+                    name = "litmuskt"
+                }
+            }
+            filter {
+                includeGroupByRegex("org\\.jetbrains\\.litmuskt(\\..+)?")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven("https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies") {
+                    name = "kotlin-ide-plugin-dependencies"
+                }
+            }
+            filter {
+                val kotlinGradlePluginIdeaTestedVersion = "1.8.20-dev-4242"
+                includeModule("org.jetbrains.kotlin", "kotlin-gradle-plugin-idea")
+                includeModule("org.jetbrains.kotlin", "kotlin-gradle-plugin-idea-proto")
+                includeVersionByRegex("org.jetbrains.kotlin", ".*", kotlinGradlePluginIdeaTestedVersion)
+            }
+        }
+        /*maven("https://androidx.dev/snapshots/builds/13911742/artifacts/repository") {
+            name = "androidx-snapshot"
+            content {
+                includeGroup("androidx.compose.runtime")
+                includeGroup("androidx.collection")
+                includeGroup("androidx.annotation")
+            }
+        }*/
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Mozilla Releases"
+                    url = uri("https://archive.mozilla.org/pub/firefox/releases/")
+                    patternLayout {
+                        artifact("[revision]/jsshell/[artifact]-[classifier].[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("org.mozilla", "jsshell")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "kotlin-file-dependencies-jsc"
+                    url = uri("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
+                    patternLayout {
+                        artifact("[classifier]_[revision].zip")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("org.jsc", "jsc")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Github Release: WasmEdge/WasmEdge"
+                    url = uri("https://github.com/WasmEdge/WasmEdge/releases/download/")
+                    patternLayout {
+                        artifact("[revision]/[artifact](-[revision])(-[classifier]).[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("org.wasmedge", "WasmEdge")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Github Release: bytecodealliance/wasmtime"
+                    url = uri("https://github.com/bytecodealliance/wasmtime/releases/download/")
+                    patternLayout {
+                        artifact("v[revision]/[artifact](-v[revision])(-[classifier]).[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("dev.wasmtime", "wasmtime")
+            }
+        }
+        githubCommit("webassembly", "testsuite")
+        githubRelease("webassembly", "wabt", revisionPrefix = "")
+        githubTag("google", "breakpad")
+        githubCommit("google", "googletest")
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Node Distributions"
+                    url = uri("https://cache-redirector.jetbrains.com/nodejs.org/dist")
+                    patternLayout {
+                        artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("org.nodejs", "node")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Yarn Distributions"
+                    url = uri("https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download")
+                    patternLayout {
+                        artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("com.yarnpkg", "yarn")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "Binaryen Distributions"
+                    url = uri("https://cache-redirector.jetbrains.com/github.com/WebAssembly/binaryen/releases/download")
+                    patternLayout {
+                        artifact("version_[revision]/binaryen-version_[revision]-[classifier].[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("com.github.webassembly", "binaryen")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    name = "D8 Distributions"
+                    url = uri("https://cache-redirector.jetbrains.com/storage.googleapis.com/chromium-v8/official/canary")
+                    patternLayout {
+                        artifact("[artifact]-[revision].[ext]")
+                    }
+                    metadataSources { artifact() }
+                }
+            }
+            filter {
+                includeModule("google.d8", "v8")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    url = uri("https://dl.google.com/android/repository")
+                    patternLayout {
+                        artifact("[artifact]-[revision].[ext]")
+                        artifact("[artifact]_[revision](-[classifier]).[ext]")
+                        artifact("[artifact]_[revision](_[classifier]).[ext]")
+                    }
+                    metadataSources {
+                        artifact()
+                    }
+                }
+            }
+            filter {
+                includeModule("google", "platform-tools")
+                includeModule("google", "commandlinetools-linux")
+                includeModule("google", "commandlinetools-win")
+                includeModule("google", "commandlinetools-mac")
+                includeModule("google", "emulator-linux_x64")
+                includeModule("google", "emulator-windows_x64")
+                includeModule("google", "emulator-darwin_aarch64")
+                includeModule("google", "android")
+                includeModule("google", "platform")
+                includeModule("google", "android_m2repository")
+                includeModule("google", "build-tools")
+                includeModuleByRegex("google", """.*\.build-tools""")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                ivy {
+                    url = URI("https://dl.google.com/android/repository/sys-img/android")
+                    patternLayout {
+                        artifact("[artifact]-[revision](_[classifier]).[ext]")
+                    }
+                    metadataSources {
+                        artifact()
+                    }
+                }
+            }
+            filter {
+                includeModule("google", "arm64-v8a")
+                includeModule("google", "x86_64")
+            }
+        }
+        mavenCentral()
+    }
+    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+}
+
+fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Tag: $ghUser/$repo"
+                url = uri("https://github.com/$ghUser/$repo/archive/refs/tags/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision].[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+
+fun RepositoryHandler.githubRelease(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Release: $ghUser/$repo"
+                url = uri("https://github.com/$ghUser/$repo/releases/download/")
+                patternLayout {
+                    artifact("$revisionPrefix[revision]/[artifact](-$revisionPrefix[revision])(-[classifier]).[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
+        }
+    }
+}
+
+fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: String? = null) {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Github Commit: $ghUser/$repo"
+                url = uri("https://github.com/$ghUser/$repo/archive/")
+                patternLayout {
+                    artifact("[revision].[ext]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule(groupAlias ?: ghUser, repo)
         }
     }
 }

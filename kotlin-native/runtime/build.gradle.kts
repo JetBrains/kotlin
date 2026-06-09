@@ -21,11 +21,6 @@ plugins {
     id("compile-to-bitcode")
 }
 
-repositories {
-    githubTag("google", "breakpad")
-    githubCommit("google", "googletest")
-}
-
 val breakpad = configurations.dependencyScope("breakpad")
 val breakpadClasspath = configurations.resolvable("breakpadClasspath") {
     extendsFrom(breakpad.get())

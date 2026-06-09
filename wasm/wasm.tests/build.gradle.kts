@@ -3,7 +3,6 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
 import org.jetbrains.kotlin.testFederation.smokeTestConfig
-import java.net.URI
 import java.util.*
 
 plugins {
@@ -23,31 +22,10 @@ node {
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
 }
 
-repositories {
-    ivy {
-        url = URI("https://archive.mozilla.org/pub/firefox/releases/")
-        patternLayout {
-            artifact("[revision]/jsshell/[artifact]-[classifier].[ext]")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.mozilla", "jsshell") }
-    }
-    ivy {
-        url = URI("https://packages.jetbrains.team/files/p/kt/kotlin-file-dependencies/javascriptcore/")
-        patternLayout {
-            artifact("[classifier]_[revision].zip")
-        }
-        metadataSources { artifact() }
-        content { includeModule("org.jsc", "jsc") }
-    }
-    githubRelease("WasmEdge", "WasmEdge", groupAlias = "org.wasmedge", revisionPrefix = "")
-    githubRelease("bytecodealliance", "wasmtime", groupAlias = "dev.wasmtime")
-}
 
 enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
 enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
 data class OsType(val name: OsName, val arch: OsArch)
-
 
 abstract class CreateJscRunner : DefaultTask() {
     @get:InputDirectory
@@ -169,7 +147,6 @@ val jscOsDependentRevision = when (currentOsType.name) {
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
 }.get()
-
 
 val jsc by configurations.creating {
     isCanBeResolved = true
@@ -320,7 +297,6 @@ val unzipWasmEdge by task<UnzipWasmEdge> {
     getIsWindows.set(currentOsTypeForConfigurationCache !in setOf(OsName.MAC, OsName.LINUX))
     getIsMac.set(currentOsTypeForConfigurationCache == OsName.MAC)
 }
-
 
 val jscDirectory = toolsDirectory.map { it.dir("JavaScriptCore").asFile }
 val unzipJsc by task<UnzipJsc> {

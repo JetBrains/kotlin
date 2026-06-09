@@ -10,11 +10,6 @@ plugins {
     id("test-inputs-check")
 }
 
-repositories {
-    githubCommit("webassembly", "testsuite")
-    githubRelease("webassembly", "wabt", revisionPrefix = "")
-}
-
 val wabtVersion = "1.0.19"
 val testSuiteRevision = "18f8340"
 

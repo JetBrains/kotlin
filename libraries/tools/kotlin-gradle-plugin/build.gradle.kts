@@ -23,12 +23,6 @@ plugins {
     `java-test-fixtures`
 }
 
-repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 kotlin {
     compilerOptions {
         optIn.addAll(

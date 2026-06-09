@@ -23,6 +23,22 @@ dependencyResolutionManagement {
             from(files("../../gradle/libs.versions.toml"))
         }
     }
+    repositories {
+        //maven(url = "https://redirector.kotlinlang.org/maven/kotlin-dependencies")
+        maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+            name = "intellij-dependencies"
+            content {
+                includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+                includeGroupByRegex("com.intellij.platform.*")
+                includeGroupByRegex("org.jetbrains.jps.*")
+            }
+        }
+
+        google() //{ setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
 
 include(":buildsrc-compat")

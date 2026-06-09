@@ -9,10 +9,6 @@ plugins {
     id("java-test-fixtures")
 }
 
-repositories {
-    mavenLocal()
-}
-
 val composeCompilerPlugin by configurations.creating
 
 dependencies {

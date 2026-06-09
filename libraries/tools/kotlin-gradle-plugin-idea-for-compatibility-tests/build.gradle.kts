@@ -16,9 +16,6 @@ repositories {
         mavenLocal()
         mavenCentral()
     }
-
-    maven(url = "https://redirector.kotlinlang.org/maven/bootstrap")
-    maven(url = "https://redirector.kotlinlang.org/maven/kotlin-ide-plugin-dependencies")
 }
 
 val classpathDestination = layout.buildDirectory.dir("classpath")

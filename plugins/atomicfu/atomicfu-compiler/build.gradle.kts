@@ -53,10 +53,6 @@ val atomicfuJsIrRuntimeForTests by configurations.creating {
 
 val atomicfuCompilerPluginForTests by configurations.creating
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

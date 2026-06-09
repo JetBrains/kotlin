@@ -11,13 +11,6 @@ plugins {
     id("test-inputs-check")
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url = uri("https://packages.jetbrains.team/maven/p/plan/litmuskt")
-    }
-}
-
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 

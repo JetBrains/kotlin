@@ -13,9 +13,6 @@ plugins {
 val isNativeBuildToolsProject = rootProject.name == "native-build-tools"
 val isPerformanceProject = rootProject.name == "performance"
 
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation(kotlinStdlib())

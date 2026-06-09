@@ -4,10 +4,6 @@ plugins {
     id("gradle-plugin-common-configuration")
 }
 
-repositories {
-    google()
-}
-
 dependencies {
     commonCompileOnly(gradleKotlinDsl())
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {

@@ -13,8 +13,6 @@ repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    composeGoogleMaven(libs.versions.compose.stable.get())
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
 fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {

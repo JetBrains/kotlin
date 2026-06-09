@@ -10,10 +10,6 @@ plugins {
 description = "Embeddable JAR of Kotlin/Native compiler"
 group = "org.jetbrains.kotlin"
 
-repositories {
-    mavenCentral()
-}
-
 val kotlinNativeEmbedded = configurations.dependencyScope("kotlinNativeEmbedded")
 val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbeddableClasspath") {
     extendsFrom(kotlinNativeEmbedded.get())

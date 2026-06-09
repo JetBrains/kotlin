@@ -7,11 +7,6 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-repositories {
-    mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
-    gradlePluginPortal()
-}
-
 dependencies {
     implementation(libs.kotlinx.serialization.json)
     testImplementation(kotlin("test-junit5"))
