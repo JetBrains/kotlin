@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.ObjectStubSerializer
 import com.intellij.psi.stubs.Stub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.IElementType
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.IncorrectOperationException
 
 /**
@@ -41,11 +42,15 @@ internal class SafeClsAnnotationStub(
     }
 
     private fun createAnnotationFromText(text: String, context: PsiElement): PsiAnnotation? {
-        return try {
+        val annotation = try {
             JavaPsiFacade.getInstance(context.project).parserFacade.createAnnotationFromText(text, context)
         } catch (_: IncorrectOperationException) {
-            null
+            return null
         }
+
+        // Mark the throwaway light file as read-only, mirroring `PsiAnnotationStubImpl.getPsiElement()`.
+        (annotation.containingFile.viewProvider.virtualFile as? LightVirtualFile)?.isWritable = false
+        return annotation
     }
 
     override fun findChildStubByElementType(elementType: IElementType): StubElement<out PsiElement?>? =
