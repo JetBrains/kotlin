@@ -78,9 +78,14 @@ internal fun uriBuilder(base: URI): URIBuilder {
         }
     }
 
+    // Java's URI returns null for both "no authority" (file:/foo) and "empty authority" (file:///foo).
+    // Distinguish by checking the raw scheme-specific-part: it starts with "//" iff the original had an authority component.
+    val authority = base.authority
+        ?: if (base.rawSchemeSpecificPart?.startsWith("//") == true) "" else null
+
     return URIBuilder(
         scheme = base.scheme,
-        authority = base.authority,
+        authority = authority,
         path = base.path,
         queryParams = queryParams,
         fragment = base.fragment
