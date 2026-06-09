@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.native.interop.gen.*
@@ -307,7 +305,7 @@ private fun processCLib(
     val outKtPkg = fqParts.joinToString(".")
     checkPackageName(outKtPkg)
 
-    val resolver = getLibraryResolver(cinteropArguments, tool.target)
+    val resolver = getSearchPathResolver(cinteropArguments, tool.target)
 
     val allLibraryDependencies = when (flavor) {
         KotlinPlatform.NATIVE -> resolveDependencies(resolver, cinteropArguments)
@@ -476,11 +474,11 @@ private fun processCLib(
             argsToCompiler(staticLibraries, libraryPaths) + bitcodePaths
         }
         is StubIrDriver.Result.Metadata -> {
-            val stdlibDependency = resolver.resolveWithDependencies(
-                    emptyList(),
+            val stdlibDependency = resolver.defaultLinks(
+                    noStdLib = false,
                     noDefaultLibs = true,
                     noEndorsedLibs = true
-            ).getFullList()
+            )
 
             val nopack = cinteropArguments.nopack
             val outputPath = cinteropArguments.output.let {
@@ -583,27 +581,28 @@ private fun compileSources(
     outputFileName
 }
 
-private fun getLibraryResolver(
+private fun getSearchPathResolver(
         cinteropArguments: CInteropArguments, target: KonanTarget
-): KotlinLibraryResolverImpl<KotlinLibrary> {
+): SearchPathResolverWithTarget<KotlinLibrary> {
     return defaultResolver(
         directLibs = cinteropArguments.library,
         target,
         Distribution(cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
-    ).libraryResolver(resolveManifestDependenciesLenient = true)
+    )
 }
 
 private fun resolveDependencies(
-        resolver: KotlinLibraryResolverImpl<KotlinLibrary>, cinteropArguments: CInteropArguments
+        resolver: SearchPathResolverWithTarget<KotlinLibrary>, cinteropArguments: CInteropArguments
 ): List<KotlinLibrary> {
     val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
     val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    val resolvedLibraries = resolver.resolveWithDependencies(
-        unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
+    val defaultLibraries = resolver.defaultLinks(
         noStdLib = false,
         noDefaultLibs = noDefaultLibs,
-        noEndorsedLibs = noEndorsedLibs
-    ).getFullList()
+        noEndorsedLibs = noEndorsedLibs,
+    )
+    val directLibraries = cinteropArguments.library.map { resolver.resolve(it) }
+    val resolvedLibraries = (directLibraries + defaultLibraries).distinctBy { it.libraryFile.absolutePath }
     validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
     return resolvedLibraries
 }
