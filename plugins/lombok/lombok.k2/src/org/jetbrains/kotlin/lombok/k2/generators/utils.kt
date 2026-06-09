@@ -69,6 +69,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     isStatic: Boolean = false,
     methodSymbol: FirNamedFunctionSymbol? = null,
     methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
+    isOverride: Boolean = false,
 ): FirJavaMethod {
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
@@ -79,6 +80,7 @@ fun FirClassSymbol<*>.createJavaMethod(
         symbol = methodSymbol ?: FirNamedFunctionSymbol(CallableId(classId, name))
         status = FirResolvedDeclarationStatusImpl(visibility, modality, visibility.toEffectiveVisibility(this@createJavaMethod)).apply {
             this.isStatic = isStatic
+            this.isOverride = isOverride
         }
         isFromSource = true
         typeParameters += methodTypeParameters
