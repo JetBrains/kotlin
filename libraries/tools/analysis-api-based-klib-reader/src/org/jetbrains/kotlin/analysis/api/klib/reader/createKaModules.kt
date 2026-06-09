@@ -19,11 +19,15 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 /**
  * @property useSiteModule A target for creating Analysis API session via [analyze].
  * @property platformLibraries Platform libraries from the Kotlin Native distribution, if any.
+ * @property cinteropReexportLibraries User cinterop klibs whose types originate from an externally-defined
+ *   ObjC module; treated as platform-like (no generated Swift module), but distinguished from distribution
+ *   platform libs since they are opted in by the caller.
  */
 public class KaModules<Config> internal constructor(
     public val useSiteModule: KaModule,
     private val modulesToInputs: Map<KaLibraryModule, KlibInputModule<Config>>,
     public val platformLibraries: List<KaLibraryModule>,
+    public val cinteropReexportLibraries: List<KaLibraryModule> = emptyList(),
 ) {
     public val inputsToModules: Map<KlibInputModule<Config>, KaLibraryModule> = modulesToInputs.map { it.value to it.key }.toMap()
     public val mainModules: List<KaLibraryModule> = modulesToInputs.keys.toList()
@@ -39,15 +43,18 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
     inputs: Collection<KlibInputModule<Config>>,
     targetPlatform: TargetPlatform,
     platformLibraries: Collection<KlibInputModule<Config>> = emptyList(),
+    cinteropReexportLibraries: Collection<KlibInputModule<Config>> = emptyList(),
 ): KaModules<Config> {
     lateinit var binaryModules: Map<KaLibraryModule, KlibInputModule<Config>>
     lateinit var fakeSourceModule: KaSourceModule
     var platformLibraryModules: List<KaLibraryModule> = emptyList()
+    var cinteropReexportLibraryModules: List<KaLibraryModule> = emptyList()
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = targetPlatform
             binaryModules = inputs.associateBy { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             platformLibraryModules = platformLibraries.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
+            cinteropReexportLibraryModules = cinteropReexportLibraries.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
@@ -55,11 +62,12 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
                     moduleName = "fakeSourceModule"
                     binaryModules.keys.forEach(::addRegularDependency)
                     platformLibraryModules.forEach(::addRegularDependency)
+                    cinteropReexportLibraryModules.forEach(::addRegularDependency)
                 }
             )
         }
     }
-    return KaModules(fakeSourceModule, binaryModules, platformLibraryModules)
+    return KaModules(fakeSourceModule, binaryModules, platformLibraryModules, cinteropReexportLibraryModules)
 }
 
 private fun <Config> KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(

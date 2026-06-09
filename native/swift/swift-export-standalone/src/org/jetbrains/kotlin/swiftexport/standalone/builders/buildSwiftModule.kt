@@ -36,7 +36,10 @@ internal fun buildSirSession(
     unsupportedTypeStrategy = config.unsupportedTypeStrategy.toInternalType(),
     moduleForPackageEnums = buildModule { name = config.moduleForPackagesName },
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
-    moduleProvider = SirOneToOneModuleProvider(kaModules.platformLibraries),
+    moduleProvider = SirOneToOneModuleProvider(
+        platformLibs = kaModules.platformLibraries,
+        cinteropReexportLibs = kaModules.cinteropReexportLibraries,
+    ),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,

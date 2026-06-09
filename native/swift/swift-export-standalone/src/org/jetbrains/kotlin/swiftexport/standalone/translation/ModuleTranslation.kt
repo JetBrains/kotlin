@@ -53,7 +53,7 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
             val sirModule = translateModule(
                 module = kaModules.mainModules.single { it.libraryName == module.name }
             )
-            createTranslationResult(sirModule, config, module.config, externalTypeDeclarationReferences)
+            createTranslationResult(sirModule, config, module.config, kaModules, externalTypeDeclarationReferences)
         }
     }
 }
@@ -141,6 +141,7 @@ internal fun translateCrossReferencingModulesTransitively(
                 sirModule,
                 config,
                 it.moduleConfig,
+                kaModules,
                 emptyMap(),
             )
         }
@@ -152,6 +153,7 @@ private fun createTranslationResult(
     sirModule: SirModule,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
+    kaModules: KaModules,
     externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
 ): TranslationResult {
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
@@ -175,7 +177,9 @@ private fun createTranslationResult(
     // Serialize SirModule to sources to avoid leakage of SirSession (and KaSession, likely) outside the analyze call.
     val swiftSourceCode = printer.print(sirModule).swiftSource.joinToString("\n")
 
-    val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) + config.platformLibsInputModule.map { it.name }
+    val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) +
+            kaModules.platformLibraries.map { it.libraryName } +
+            kaModules.cinteropReexportLibraries.map { it.libraryName }
     val referencedSwiftModules = sirModule.imports
         .filter { it.moduleName !in knownModuleNames }
         .map { SwiftExportModule.Reference(it.moduleName) }

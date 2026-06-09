@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.withSessions
-import org.jetbrains.kotlin.sir.util.SirPlatformModule
+import org.jetbrains.kotlin.sir.util.SirPlatformLikeModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isValueType
 import org.jetbrains.kotlin.sir.util.name
@@ -132,7 +132,7 @@ private fun bridgeNominalType(type: SirNominalType, position: SirTypeVariance): 
         is SirTypealias -> bridgeType(subtype.type, position)
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
-        else -> if (type.typeDeclaration.parent is SirPlatformModule) {
+        else -> if (type.typeDeclaration.parent is SirPlatformLikeModule) {
             AsNSObject(type)
         } else {
             AsObject(type, KotlinType.KotlinObject, CType.Object)

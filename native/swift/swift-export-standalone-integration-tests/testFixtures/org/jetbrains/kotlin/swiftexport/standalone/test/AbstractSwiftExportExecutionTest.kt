@@ -87,7 +87,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
             "-framework", "Testing",
             testRunSettings.systemToolchainPath?.let { "-plugin-path" },
             testRunSettings.systemToolchainPath?.let { "${it}/usr/lib/swift/host/plugins/testing/" },
-        )
+        ) + extraSwiftCompilerOptions
 
         val success = SwiftCompilation(
             testRunSettings,
