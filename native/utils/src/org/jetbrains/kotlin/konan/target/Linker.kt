@@ -44,6 +44,7 @@ private fun Ar.staticArCommands(
     executable: ExecutableFile,
     objectFiles: List<ObjectFile>,
     libraries: List<String>,
+    tempFiles: TempFiles,
 ) = when {
     HostManager.hostIsMingw -> {
         // TODO KT-84037: it would be nice to pass the `D` modifier to make it deterministic.
@@ -77,14 +78,24 @@ private fun Ar.staticArCommands(
             }
         }
 
+        // The `ar -M` script (`create`/`addlib`) is whitespace-tokenized and does not support quoting or escaping
+        // of file names. To stay correct when `executable` lives under a directory whose path contains spaces,
+        // we run `ar` from its parent directory and reference it by the base name.
+        val executableFile = File(executable)
+        val arScript = tempFiles.create("ar-repack", ".mri").apply {
+            writeText("create ${executableFile.name}\naddlib ${executableFile.name}\nsave\nend\n")
+        }
         listOf(
             Command(ar, "cqT$D", executable).apply {
                 +objectFiles
                 +libraries
             },
-            Command("/bin/sh", "-c").apply {
-                +"printf 'create $executable\\naddlib $executable\\nsave\\nend' | $ar -M$D"
-            })
+            Command(
+                listOf(ar, "-M$D"),
+                redirectInputFile = java.io.File(arScript.absolutePath),
+                workingDirectory = java.io.File(executableFile.parentFile.absolutePath),
+            )
+        )
     }
     else -> TODO("Unsupported host ${HostManager.host}")
 }
@@ -172,7 +183,7 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return ar.staticArCommands(executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries, tempFiles)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val toolchainSysroot = "${absoluteTargetToolchain}/sysroot"
@@ -436,7 +447,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             require(sanitizer == null) {
                 "Sanitizers are unsupported"
             }
-            return ar.staticArCommands(executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries, tempFiles)
         }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
         val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
@@ -521,7 +532,7 @@ class MingwLinker(targetProperties: MingwConfigurables)
             "Sanitizers are unsupported"
         }
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
-            return ar.staticArCommands(executable, objectFiles, staticLibraries)
+            return ar.staticArCommands(executable, objectFiles, staticLibraries, tempFiles)
 
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
 
