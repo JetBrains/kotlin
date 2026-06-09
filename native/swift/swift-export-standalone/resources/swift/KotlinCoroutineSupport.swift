@@ -48,7 +48,6 @@ package func withKotlinContinuation<T>(
     _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
 ) async throws -> T {
     try await {
-        try Task.checkCancellation()
         var cancellation: KotlinTask! = nil
         return try await withTaskCancellationHandler {
             try await withUnsafeThrowingContinuation { nativeContinuation in
