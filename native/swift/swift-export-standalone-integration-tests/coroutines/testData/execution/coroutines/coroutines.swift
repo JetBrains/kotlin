@@ -3,6 +3,51 @@ import Testing
 import Foundation
 
 @Test
+func testAlreadyCancelledTaskWithSuspensionThrowsCancellationError() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            Issue.record("Task should get cancelled before invoking Kotlin code")
+        } catch is CancellationError {
+            // Ignore as we want to test an already cancelled task
+        }
+        // Use a 1 second delay to create a Kotlin suspend call
+        return try await callAfter(delay: 1) {
+            Issue.record("Callback shouldn't be invoked")
+            return 1
+        }
+    }
+    task.cancel()
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()), "function should fail with cancellation error")
+}
+
+@Test
+func testAlreadyCancelledTaskWithoutSuspensionSucceeds() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            Issue.record("Task should get cancelled before invoking Kotlin code")
+        } catch is CancellationError {
+            // Ignore as we want to test an already cancelled task
+        }
+        // Use a 0 second delay so we don't have a Kotlin suspend call
+        return try await callAfter(delay: 0) {
+            return 1
+        }
+    }
+    task.cancel()
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .success(1), "function should succeed")
+}
+
+@Test
 func testCallingKotlinThatUsesCoroutines() async throws {
     try #expect(await testPrimitive() == 42)
     try #expect(await testAny() as? Foo == Foo.shared)
