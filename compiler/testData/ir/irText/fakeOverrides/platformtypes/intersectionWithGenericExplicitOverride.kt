@@ -17,7 +17,6 @@ public interface Java2<T> {
 }
 
 // FILE: Java3.java
-
 public class Java3<T> {
     public T a;
     public T foo(){ return a;};

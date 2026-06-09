@@ -219,6 +219,7 @@ class IrModuleDeserializerWithBuiltIns(
     override operator fun contains(idSig: IdSignature): Boolean {
         val topLevel = idSig.topLevelSignature()
         if (topLevel in irBuiltInsMap) return true
+        if (topLevel.isPubliclyVisible && topLevel.packageFqName() == FqName("kotlin.internal.ir")) return true
 
         return checkIsFunctionInterface(topLevel) || idSig in delegate
     }
@@ -255,6 +256,14 @@ class IrModuleDeserializerWithBuiltIns(
         irBuiltInsMap[idSig]?.let { return it }
 
         val topLevel = idSig.topLevelSignature()
+        if (topLevel.isPubliclyVisible && topLevel.packageFqName() == FqName("kotlin.internal.ir")) {
+            val symbol = when (symbolKind) {
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> symbolTable.referenceSimpleFunction(topLevel)
+                else -> null
+            }
+            if (symbol?.isBound == true) return symbol
+        }
+
         if (checkIsFunctionInterface(topLevel)) {
             computeFunctionClass(topLevel)
             return referenceDeserializedSymbol(symbolTable, null, symbolKind, idSig)
