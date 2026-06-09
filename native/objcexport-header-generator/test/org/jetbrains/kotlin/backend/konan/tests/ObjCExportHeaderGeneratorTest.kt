@@ -322,6 +322,9 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("specialFunctionNames"))
     }
 
+    /**
+     * For equivalent AA-test, see reducedSpecialFunctionNamesExplicitMethodFamily.
+     */
     @Test
     @TodoAnalysisApi
     fun `test - special function names with explicit method family`() {
@@ -719,6 +722,16 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @TodoAnalysisApi
     fun `test - conflict upon mangling a property or a method should be handled by the manglers`() {
         doTest(headersTestDataDir.resolve("conflictUponManglingPropertyOrMethod"))
+    }
+
+    /**
+     * This test primarily exercises the AA impl for explicitMethodFamily=true, and not the subsequent conflict
+     * detection and mangling, as that's dependent on the resolution of KT-86289. For such a test (K1), see
+     * specialFunctionNamesExplicitMethodFamily.
+     */
+    @Test
+    fun `test - reduced set of special function names with explicit method family`() {
+        doTest(headersTestDataDir.resolve("reducedSpecialFunctionNamesExplicitMethodFamily"), Configuration(explicitMethodFamily = true))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

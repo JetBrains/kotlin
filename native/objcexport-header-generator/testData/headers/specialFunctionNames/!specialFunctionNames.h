@@ -26,6 +26,7 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)doAlloc __attribute__((swift_name("doAlloc()")));
 - (Foo *)doCopy __attribute__((swift_name("doCopy()")));
+- (Foo *)doCopyWithSomething __attribute__((swift_name("doCopyWithSomething()")));
 - (Foo *)doInit __attribute__((swift_name("doInit()")));
 - (Foo *)doMutableCopy __attribute__((swift_name("doMutableCopy()")));
 - (Foo *)doNew __attribute__((swift_name("doNew()")));

@@ -4,4 +4,5 @@ class Foo {
     fun mutableCopy(): Foo = Foo()
     fun new(): Foo = Foo()
     fun init(): Foo = Foo()
+    fun copyWithSomething(): Foo = Foo()
 }

@@ -24,5 +24,7 @@ data class KtObjCExportConfiguration(
     val objcGenerics: Boolean = true,
 
     val objcExportBlockExplicitParameterNames: Boolean = false,
+
+    val explicitMethodFamilyName: Boolean = false
 )
 

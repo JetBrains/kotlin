@@ -85,6 +85,11 @@ internal fun ObjCExportContext.buildObjCMethod(
         } else {
             attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
         }
+
+        if (this.exportSession.configuration.explicitMethodFamilyName && !symbol.isConstructor && selector.isASpecialName()) {
+            attributes += "objc_method_family(none)"
+        }
+
         return attributes
     }
 
@@ -299,10 +304,17 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 fun ObjCExportContext.getMangledName(symbol: KaFunctionSymbol, forSwift: Boolean): String {
+    val explicitMethodFamilyName = this.exportSession.configuration.explicitMethodFamilyName
+
     return if (symbol.isConstructor) {
         if (analysisSession.isArrayConstructor(symbol) && !forSwift) "array" else "init"
     } else {
-        getObjCFunctionName(symbol).name(forSwift).handleSpecialNames("do")
+        val name = getObjCFunctionName(symbol).name(forSwift)
+        if (!explicitMethodFamilyName || name == "init" || name.startsWith("initWith")) {
+            name.handleSpecialNames(prefix = "do")
+        } else {
+            name
+        }
     }
 }
 

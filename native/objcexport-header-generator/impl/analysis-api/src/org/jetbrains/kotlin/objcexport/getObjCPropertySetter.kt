@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
  */
 internal fun ObjCExportContext.getObjCPropertySetter(symbol: KaPropertySymbol, objCName: String): String? {
 
-    if (!symbol.hasReservedName && symbol.name.asString() !in objCMacroDefinitions) return null
+    // `init`-like properties will always need prefixing.
+    if (!symbol.hasReservedName && symbol.name.asString() !in objCMacroDefinitions && !objCName.isSpecialFamilyOrInit(exportSession.configuration.explicitMethodFamilyName))
+        return null
 
     val setterName = symbol.setter?.let {
         val setterSelector = getSelector(it, getFunctionMethodBridge(it))
