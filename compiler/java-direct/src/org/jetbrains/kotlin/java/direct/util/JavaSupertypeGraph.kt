@@ -118,7 +118,7 @@ internal class JavaSupertypeGraph(
                 // the same ClassId within a single top-level call — which the cache makes redundant.
                 inheritedInnerClassesCache[current]?.let { cached ->
                     visited.add(current)
-                    for ((name, classIds) in cached) {
+                    for ([name, classIds] in cached) {
                         if (name !in shadowedNames) {
                             result.getOrPut(name) { mutableSetOf() }.addAll(classIds)
                         }

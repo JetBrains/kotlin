@@ -147,7 +147,7 @@ class JavaClassFinderOverAstImpl internal constructor(
         val classesByName = packageIndexer.ensurePackageIndexed(fqName)
         if (classesByName.isEmpty()) return emptyList()
         val result = mutableListOf<JavaClass>()
-        for ((simpleName, files) in classesByName) {
+        for ([simpleName, files] in classesByName) {
             val name = Name.identifier(simpleName)
             if (!nameFilter(name)) continue
             for (file in files) {

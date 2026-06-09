@@ -86,7 +86,7 @@ internal fun extractFileInfoLightweight(file: VirtualFile, reader: JavaSourceFil
     lineReader.use { br ->
         var rawLine = br.readLine()
         while (rawLine != null) {
-            val (effective, stillInComment) = stripLineComments(rawLine, inBlockComment)
+            val [effective, stillInComment] = stripLineComments(rawLine, inBlockComment)
             inBlockComment = stillInComment
 
             if (effective.isNotBlank()) {

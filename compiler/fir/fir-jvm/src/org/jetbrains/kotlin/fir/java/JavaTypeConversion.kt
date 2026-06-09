@@ -423,7 +423,7 @@ private fun substituteTypeArgs(
     if (actualType.typeArguments.isEmpty() || declaringClass.typeParameters.isEmpty()) return declaredSupertype
     // Build substitution map: type parameter -> actual type argument
     val substitutionMap = mutableMapOf<ConeTypeParameterLookupTag, ConeTypeProjection>()
-    for ((index, typeParam) in declaringClass.typeParameters.withIndex()) {
+    for ([index, typeParam] in declaringClass.typeParameters.withIndex()) {
         if (index < actualType.typeArguments.size) {
             substitutionMap[typeParam.symbol.toLookupTag()] = actualType.typeArguments[index]
         }

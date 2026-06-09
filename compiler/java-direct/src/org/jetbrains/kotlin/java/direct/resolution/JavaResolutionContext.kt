@@ -80,7 +80,7 @@ class JavaResolutionContext private constructor(
             while (current != null) {
                 val fqn = (current as? JavaClassOverAst)?.fqName
                 if (fqn != null) {
-                    for ((name, classIds) in finder.collectInheritedInnerClasses(fqNameToClassId(fqn))) {
+                    for ([name, classIds] in finder.collectInheritedInnerClasses(fqNameToClassId(fqn))) {
                         merged.getOrPut(name) { mutableSetOf() }.addAll(classIds)
                     }
                 }

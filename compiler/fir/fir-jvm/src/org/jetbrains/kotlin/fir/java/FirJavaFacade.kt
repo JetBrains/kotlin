@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaDeclarationList
 import org.jetbrains.kotlin.fir.java.enhancement.FirLazyJavaAnnotationList
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -742,7 +741,7 @@ private fun isCanonicalRecordConstructorForSource(constructor: JavaConstructor, 
     val components = javaClass.recordComponents.toList()
     val params = constructor.valueParameters
     if (params.size != components.size) return false
-    return params.zip(components).all { (param, component) -> param.name == component.name }
+    return params.zip(components).all { [param, component] -> param.name == component.name }
 }
 
 private fun FqName.topLevelName() = asString().substringBefore(".")

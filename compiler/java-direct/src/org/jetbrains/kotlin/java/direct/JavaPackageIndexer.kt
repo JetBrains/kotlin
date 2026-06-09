@@ -73,7 +73,7 @@ internal class JavaPackageIndexer(
     private val packageDirectoryCache: ConcurrentHashMap<FqName, List<VirtualFile>> = ConcurrentHashMap()
 
     init {
-        val (fileRoots, dirRoots) = sourceRoots.partition { !it.root.isDirectory }
+        val [fileRoots, dirRoots] = sourceRoots.partition { !it.root.isDirectory }
         directoryRoots = dirRoots
 
         val fileRootIndexBuilder = HashMap<FqName, MutableMap<String, MutableList<FileEntry>>>()
@@ -160,7 +160,7 @@ internal class JavaPackageIndexer(
                 else -> {
                     // Merge directory-scanned entries with file-root entries (rare edge case)
                     val merged = HashMap(dirEntries)
-                    for ((className, entries) in fileEntries) {
+                    for ([className, entries] in fileEntries) {
                         merged.merge(className, entries) { a, b -> a + b }
                     }
                     merged
@@ -208,7 +208,7 @@ internal class JavaPackageIndexer(
         val classesByName = ensurePackageIndexed(packageFqName)
         if (classesByName.isEmpty()) return emptySet()
         return buildSet {
-            for ((name, fileEntries) in classesByName) {
+            for ([name, fileEntries] in classesByName) {
                 if (fileEntries.any { it.fileBaseName == name }) add(name)
             }
         }
