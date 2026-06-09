@@ -74,6 +74,7 @@ projectTests {
         val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
         val compilerDirectory = project.layout.dir(providers.provider { nativeDistributionDownloader.compilerDirectory })
         addClasspathProperty("kotlin.internal.native.test.nativeHome") { from(compilerDirectory) }
+        outputs.upToDateWhen { false }
     }
     testData(project.isolated, "testData")
 }
