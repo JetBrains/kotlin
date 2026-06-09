@@ -145,7 +145,7 @@ interface KotlinJsBrowserTestDsl {
      */
     fun webkit(name: String = "webkit", body: Action<WebkitTestRunnerDsl>)
 
-    /** @see [firefox] */
+    /** @see [webkit] */
     fun webkit(name: String = "webkit") = webkit(name, Action { })
 
     /**
