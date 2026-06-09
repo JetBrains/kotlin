@@ -202,9 +202,7 @@ val KClass<*>.allSupertypes: Collection<KType>
             } else {
                 val substitutor =
                     KTypeSubstitutor.create(klass, current.arguments, (current as AbstractKType).isSuspendFunctionType, current.isRawType)
-                supertypes.map {
-                    substitutor.substitute(it).type ?: throw KotlinReflectionInternalError("Incorrect type substitution: $it")
-                }
+                supertypes.map(substitutor::substituteTopLevelType)
             }
         },
         DFS.VisitedWithSet(),

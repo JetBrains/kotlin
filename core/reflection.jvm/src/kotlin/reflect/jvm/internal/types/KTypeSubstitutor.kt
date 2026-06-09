@@ -16,7 +16,13 @@ internal class KTypeSubstitutor(
     private val substitution: Map<KTypeParameter, KTypeProjection>,
     private val eraseToUpperBoundsAfterSubstitution: Boolean = false,
 ) {
-    fun substitute(type: KType, variance: KVariance = KVariance.INVARIANT): KTypeProjection {
+    fun substituteTopLevelType(type: KType, containerNameForDebug: String? = null): KType =
+        substitute(type, KVariance.INVARIANT).type ?: error(
+            "Projection in top level type is not possible" +
+                    if (containerNameForDebug != null) ": $containerNameForDebug" else "."
+        )
+
+    private fun substitute(type: KType, variance: KVariance): KTypeProjection {
         val substituted = substituteWithoutErasureRecursively(type, variance)
         return when (eraseToUpperBoundsAfterSubstitution) {
             true -> substituted.copy(type = substituted.type?.eraseToUpperBoundsAndMakeItRawRecursively())
@@ -24,7 +30,7 @@ internal class KTypeSubstitutor(
         }
     }
 
-    private fun substituteWithoutErasureRecursively(type: KType, variance: KVariance = KVariance.INVARIANT): KTypeProjection {
+    private fun substituteWithoutErasureRecursively(type: KType, variance: KVariance): KTypeProjection {
         // Small optimization
         if (substitution.isEmpty()) return KTypeProjection(variance, type)
 

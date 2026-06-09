@@ -60,7 +60,7 @@ internal class JavaKConstructor(
     override val overridden: Collection<ReflectKFunction> = emptyList()
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(typeParameters)
+        computeParameters()
     }
 
     override val caller: Caller<*> by lazy(PUBLICATION) {

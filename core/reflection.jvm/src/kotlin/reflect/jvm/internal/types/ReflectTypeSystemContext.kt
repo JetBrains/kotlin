@@ -336,7 +336,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
         val substitutor = KTypeSubstitutor.create(type as KType)
         return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
             override fun transformType(state: TypeCheckerState, type: KotlinTypeMarker): RigidTypeMarker {
-                return substitutor.substitute(type.lowerBoundIfFlexible() as KType).type as AbstractKType
+                return substitutor.substituteTopLevelType(type.lowerBoundIfFlexible() as KType) as AbstractKType
             }
         }
     }

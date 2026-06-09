@@ -59,7 +59,7 @@ internal abstract class JavaKFunction(
         ReflectionObjectRenderer.renderFunction(this)
 }
 
-internal fun JavaKFunction.computeParameters(typeParameters: List<KTypeParameter>): List<KParameter> = buildList {
+internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
     val function = this@computeParameters
 
     val isInnerClassConstructor = member is Constructor<*> && member.declaringClass.isInner
@@ -74,10 +74,7 @@ internal fun JavaKFunction.computeParameters(typeParameters: List<KTypeParameter
                 type.toKType(knownTypeParameters, nullability)
             }
 
-    val parameterKTypes = unsubstitutedParameterKTypes.map {
-        function.overriddenStorage.getTypeSubstitutor(typeParameters, function.name).substitute(it).type
-            ?: starProjectionInTopLevelTypeIsNotPossible(function.name)
-    }
+    val parameterKTypes = unsubstitutedParameterKTypes.map(function::substituteType)
 
     if (isInnerClassConstructor) {
         add(InstanceParameter(function, member.declaringClass.declaringClass.kotlin))
