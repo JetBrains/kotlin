@@ -63,7 +63,7 @@ internal constructor(
     @get:Nested
     @get:Optional
     @Suppress("unused")
-    val testFrameworkInputs: Any?
+    internal val testFrameworkInputs: Any?
         get() = testFramework?.frameworkGradleInputObject
 
     @PathSensitive(PathSensitivity.ABSOLUTE)
