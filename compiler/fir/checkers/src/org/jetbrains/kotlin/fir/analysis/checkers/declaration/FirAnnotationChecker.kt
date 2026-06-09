@@ -81,15 +81,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
             checkAnnotationTarget(declaration, annotation)
         }
 
-        if (declaration is FirCallableDeclaration) {
-            val receiverParameter = declaration.receiverParameter
-            if (receiverParameter != null) {
-                for (receiverAnnotation in receiverParameter.annotations) {
-                    reportIfMfvc(receiverAnnotation, "receivers", receiverParameter.typeRef.coneType)
-                }
-            }
-        }
-
         if (deprecatedSinceKotlin != null) {
             checkDeprecatedCalls(deprecatedSinceKotlin, deprecated)
         }
@@ -128,30 +119,18 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
                 !propertySymbol.isExtension && !propertySymbol.hasContextParameters
 
-        // TODO: KT-85291 consider analyzing here the type of declaration instead of use-site target
-        // (as at this stage all annotations should be on a declaration bound to its use-site target)
-        val [hint, type] = when (annotation.useSiteTarget) {
-            FIELD -> "fields" to ((declaration as? FirBackingField)?.returnTypeRef?.coneType ?: return)
-            PROPERTY_DELEGATE_FIELD -> "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
+        val [hint, type] = if (annotation.useSiteTarget == PROPERTY_DELEGATE_FIELD) {
+            // The only target that requires additional handling because both FIELD and PROPERTY_DELEGATE_FIELD use FirBackingField
+            "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
                 ?: return)
-            RECEIVER -> "receivers" to ((declaration as? FirCallableDeclaration)?.receiverParameter?.typeRef?.coneType ?: return)
-            FILE, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CONSTRUCTOR_PARAMETER, SETTER_PARAMETER, null -> when (declaration) {
-                is FirProperty if declaration.symbol is FirRegularPropertySymbol -> {
-                    val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-                    when {
-                        declaration.fromPrimaryConstructor == true && allowedAnnotationTargets.contains(KotlinTarget.VALUE_PARAMETER) -> return // handled in FirValueParameter case
-                        allowedAnnotationTargets.contains(KotlinTarget.PROPERTY) -> return
-                        allowedAnnotationTargets.contains(KotlinTarget.FIELD) -> "fields" to declaration.returnTypeRef.coneType
-                        else -> return
-                    }
-                }
-                is FirField -> "fields" to declaration.returnTypeRef.coneType
-                is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
-                is FirVariable -> "variables" to declaration.returnTypeRef.coneType
-                is FirPropertyAccessor if declaration.isGetter && declaration.hasNoReceivers() -> "getters" to declaration.returnTypeRef.coneType
-                else -> return
-            }
-            ALL -> return // TODO: how @all: interoperates with ValueClasses feature?
+        } else when (declaration) {
+            is FirReceiverParameter -> "receivers" to declaration.typeRef.coneType
+            is FirProperty if declaration.symbol is FirRegularPropertySymbol -> return
+            is FirField -> "fields" to declaration.returnTypeRef.coneType // This includes also FirBackingField
+            is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
+            is FirVariable -> "variables" to declaration.returnTypeRef.coneType
+            is FirPropertyAccessor if declaration.isGetter && declaration.hasNoReceivers() -> "getters" to declaration.returnTypeRef.coneType
+            else -> return
         }
         reportIfMfvc(annotation, hint, type)
     }
