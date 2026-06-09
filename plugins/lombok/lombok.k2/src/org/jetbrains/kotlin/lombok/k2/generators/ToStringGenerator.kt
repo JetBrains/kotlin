@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.k2.generators.kotlin
+package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -32,9 +32,8 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.Call
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
-import org.jetbrains.kotlin.lombok.k2.generators.createJavaMethod
-import org.jetbrains.kotlin.lombok.k2.generators.hasJavaOrigin
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
