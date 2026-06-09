@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.lombok.k2.generators.hasJavaOrigin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
@@ -76,6 +77,11 @@ fun FirExtension.initializeCompanionObjectIfNeeded(
     context: NestedClassGenerationContext,
     extractKey: () -> GeneratedDeclarationKey?,
 ): FirRegularClassSymbol? {
+    // Companion objects are only relevant for Kotlin classes
+    if (owner.hasJavaOrigin) {
+        return null
+    }
+
     // Ignore local classes and anonymous objects to prevent potential exceptions
     if (owner.isLocal) {
         return null

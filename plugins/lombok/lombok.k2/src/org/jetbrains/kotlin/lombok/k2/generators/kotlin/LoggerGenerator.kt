@@ -51,14 +51,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
 
 /**
- * Checks if the declaration origin is a logger annotation.
- *
- * @param logAnnotation Optional annotation to compare with the logger annotation.
- * If not provided, the function returns true if declaration is marked by any log annotation (`@Log`, `@Slf4j`, etc.).
+ * Checks whether the current [FirDeclarationOrigin] instance is of type [FirDeclarationOrigin.Plugin]
+ * and verifies if `logAnnotation` of its key matches the provided [logAnnotation].
  */
-fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation? = null): Boolean {
+fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
     return this is FirDeclarationOrigin.Plugin && (key as? LoggerGeneratorKey)?.let {
-        logAnnotation == null || it.logAnnotation == logAnnotation
+        it.logAnnotation == logAnnotation
     } == true
 }
 
