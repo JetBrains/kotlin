@@ -499,7 +499,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
                 else -> return
             }
             val argument = equalityOperatorCall.arguments[1].unwrapSmartcastExpression() as? FirResolvedQualifier ?: return
-            val firClass = (argument.symbol as? FirRegularClassSymbol)?.fir
+            val firClass = (argument.qualifierSymbol as? FirRegularClassSymbol)?.fir
             val symbol = if (firClass?.classKind == ClassKind.OBJECT) {
                 firClass.symbol
             } else {
@@ -691,7 +691,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
             if (!session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) return
             if (equalityOperatorCall.operation != FirOperation.EQ && equalityOperatorCall.operation != FirOperation.IDENTITY) return
             val argument = equalityOperatorCall.arguments[1]
-            val symbol = (argument as? FirResolvedQualifier)?.symbol ?: return
+            val symbol = (argument as? FirResolvedQualifier)?.qualifierSymbol ?: return
 
             if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.OBJECT) {
                 data.add(argument.resolvedType)

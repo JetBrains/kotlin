@@ -46,7 +46,7 @@ object FirWhenConditionChecker : FirWhenExpressionChecker(MppCheckerKind.Common)
                         is FirQualifiedAccessExpression -> targetExpression.calleeReference.toResolvedCallableSymbol() as? FirEnumEntrySymbol
                             ?: continue
                         is FirResolvedQualifier -> {
-                            val classSymbol = targetExpression.symbol ?: continue
+                            val classSymbol = targetExpression.qualifierSymbol ?: continue
                             if (classSymbol.classKind != ClassKind.OBJECT) continue
                             classSymbol.classId
                         }

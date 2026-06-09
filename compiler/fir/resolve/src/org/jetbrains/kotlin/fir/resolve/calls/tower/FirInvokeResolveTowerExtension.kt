@@ -473,7 +473,7 @@ private class InvokeFunctionResolveTask(
         val receiverExpression = invokeReceiverValue.receiverExpression
         val isResolvedQualifier = receiverExpression is FirResolvedQualifier
 
-        if (isResolvedQualifier && receiverExpression.symbol != null && companionBlocksAndExtensionsEnabled) {
+        if (isResolvedQualifier && receiverExpression.qualifierSymbol != null && companionBlocksAndExtensionsEnabled) {
             val group = TowerGroup.QualifierOrClassifier.withGivenInvokeReceiverGroup(InvokeResolvePriority.COMMON_INVOKE)
 
             processCallableScope(

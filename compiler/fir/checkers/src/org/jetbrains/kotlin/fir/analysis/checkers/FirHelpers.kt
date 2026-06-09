@@ -1111,14 +1111,14 @@ fun FirBasedSymbol<*>?.isExpect(): Boolean {
 
 context(context: SessionHolder)
 fun FirResolvedQualifier.resolvedSymbolOrCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol?.applyIf(resolvedToCompanionObject) {
+    return qualifierSymbol?.applyIf(resolvedToCompanionObject) {
         fullyExpandedClass()?.resolvedCompanionObjectSymbol
     }
 }
 
 context(context: SessionHolder)
 fun FirResolvedQualifier.resolvedCompanionSymbol(): FirClassLikeSymbol<*>? {
-    return symbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
+    return qualifierSymbol.takeIf { resolvedToCompanionObject }?.fullyExpandedClass()?.resolvedCompanionObjectSymbol
 }
 
 context(context: CheckerContext)

@@ -40,7 +40,7 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
         val containingClassSymbol = projectionClassSymbol.getContainingClassSymbol() ?: return
 
         val receiver = expression.extensionReceiver as? FirResolvedQualifier ?: return
-        if (receiver.symbol != containingClassSymbol) return
+        if (receiver.qualifierSymbol != containingClassSymbol) return
 
         val expectedType = actualType.lookupTag.constructClassType(
             arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
@@ -34,8 +33,6 @@ import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -187,7 +184,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         }
 
         if (this is FirResolvedQualifier) {
-            symbol?.let { symbol ->
+            qualifierSymbol?.let { symbol ->
                 if (symbol is FirTypeAliasSymbol && symbol.resolvedExpandedTypeRef.coneType.hasError()) {
                     return true
                 }

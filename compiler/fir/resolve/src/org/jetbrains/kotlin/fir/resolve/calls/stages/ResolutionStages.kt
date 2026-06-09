@@ -104,7 +104,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         val resolvedQualifier = extensionReceiver.expression as? FirResolvedQualifier
             ?: error("Candidate for companion extension has non-qualifier extension receiver")
 
-        val receiverClassSymbol = resolvedQualifier.symbol?.fullyExpandedClass()
+        val receiverClassSymbol = resolvedQualifier.qualifierSymbol?.fullyExpandedClass()
 
         if (receiverClassSymbol == null) {
             sink.reportDiagnostic(ReceiverIsNotAClass)

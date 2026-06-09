@@ -294,7 +294,7 @@ class CallAndReferenceGenerator(
         val classSymbol = when (this) {
             is FirResolvedQualifier -> {
                 if (resolvedToCompanionObject) return null
-                this.symbol as? FirClassSymbol<*>
+                this.qualifierSymbol as? FirClassSymbol<*>
             }
             else -> {
                 val type = this.resolvedType.fullyExpandedType().lowerBoundIfFlexible()

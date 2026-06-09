@@ -34,7 +34,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
-    override var symbol: FirClassLikeSymbol<*>? = null
+    override var qualifierSymbol: FirClassLikeSymbol<*>? = null
     override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLhsForCallableReference: Boolean = false
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType? = null
@@ -52,7 +52,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             annotations.toMutableOrEmpty(),
             packageFqName,
             relativeClassFqName,
-            symbol,
+            qualifierSymbol,
             explicitParent,
             isNullableLhsForCallableReference,
             resolvedLhsTypeForCallableReferenceOrNull,

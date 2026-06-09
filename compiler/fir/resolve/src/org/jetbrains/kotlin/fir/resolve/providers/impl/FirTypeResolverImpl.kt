@@ -434,7 +434,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                 addOwnTypeArguments(currentQualifier)
 
-                when (val nextClass = currentQualifier.explicitParent?.symbol) {
+                when (val nextClass = currentQualifier.explicitParent?.qualifierSymbol) {
                     is FirClassLikeSymbol if currentClass.isInner -> {
                         currentClass = nextClass
                         currentQualifier = currentQualifier.explicitParent!!
@@ -451,7 +451,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         configuration: TypeResolutionConfiguration,
     ): ConeSubstitutor? {
         // if the first part is a package, a substitutor is never needed
-        val firstQualifierSymbol = qualifier.firstQualifierPart().symbol ?: return null
+        val firstQualifierSymbol = qualifier.firstQualifierPart().qualifierSymbol ?: return null
         val name = firstQualifierSymbol.name
 
         var result: ConeSubstitutor? = null
@@ -471,7 +471,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         qualifier: FirResolvedQualifier,
         configuration: TypeResolutionConfiguration,
     ): CallableReferenceLhsAsType? {
-        val classSymbol = qualifier.symbol ?: return null
+        val classSymbol = qualifier.qualifierSymbol ?: return null
 
         val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
         var diagnostic: ConeDiagnostic? = null

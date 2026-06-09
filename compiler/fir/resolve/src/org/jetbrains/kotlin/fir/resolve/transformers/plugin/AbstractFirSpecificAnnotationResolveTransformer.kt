@@ -229,7 +229,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     packageFqName = symbol.classId.packageFqName
                     relativeClassFqName = symbol.classId.relativeClassName
                     coneTypeOrNull = session.builtinTypes.unitType.coneType
-                    this.symbol = symbol
+                    this.qualifierSymbol = symbol
                     if (segments.isNotEmpty()) {
                         explicitParent = buildResolvedQualifier {
                             packageFqName = symbol.classId.packageFqName

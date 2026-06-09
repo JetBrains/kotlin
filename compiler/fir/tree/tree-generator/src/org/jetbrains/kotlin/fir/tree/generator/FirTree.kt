@@ -1339,7 +1339,12 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
-        +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
+        +referencedSymbol("qualifierSymbol", classLikeSymbolType, nullable = true) {
+            kDoc = """Always refers to the class with the name denoted by the qualifier.
+                |
+                |If the qualifier resolves to a companion object, this is the symbol of the containing class, **not** the companion object itself.
+            """.trimMargin()
+        }
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLhsForCallableReference", boolean, withReplace = true)
         +field("resolvedLhsTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)

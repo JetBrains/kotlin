@@ -43,7 +43,12 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
     abstract override val annotations: List<FirAnnotation>
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
-    abstract val symbol: FirClassLikeSymbol<*>?
+    /**
+     * Always refers to the class with the name denoted by the qualifier.
+     *
+     * If the qualifier resolves to a companion object, this is the symbol of the containing class, **not** the companion object itself.
+     */
+    abstract val qualifierSymbol: FirClassLikeSymbol<*>?
     abstract val explicitParent: FirResolvedQualifier?
     abstract val isNullableLhsForCallableReference: Boolean
     abstract val resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?

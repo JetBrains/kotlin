@@ -20,7 +20,7 @@ object FirCustomEnumEntriesMigrationQualifierChecker : FirResolvedQualifierCheck
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
         if (LanguageFeature.PrioritizedEnumEntries.isEnabled()) return
-        if (expression.symbol?.name != StandardNames.ENUM_ENTRIES) return
+        if (expression.qualifierSymbol?.name != StandardNames.ENUM_ENTRIES) return
         if (expression.nonFatalDiagnostics.none { it is ConeResolutionResultOverridesOtherToPreserveCompatibility }) return
 
         reporter.reportOn(expression.source, FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER)

@@ -18,7 +18,7 @@ object FirQualifierWithTypeArgumentsChecker : FirResolvedQualifierChecker(MppChe
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
         expression.nonFatalDiagnostics.filterIsInstance<ConeTypeArgumentsForOuterClass>().forEach { diagnostic ->
-            if (expression.symbol?.isInner == true) return@forEach
+            if (expression.qualifierSymbol?.isInner == true) return@forEach
             reporter.reportOn(
                 expression.source,
                 FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED

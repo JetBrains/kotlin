@@ -1843,7 +1843,7 @@ internal class KaFirResolver(
             }
 
             is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
-                val symbol = this.symbol ?: return null
+                val symbol = this.qualifierSymbol ?: return null
                 KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKaType())
             }
 
@@ -1976,7 +1976,7 @@ internal class KaFirResolver(
     }
 
     private fun FirResolvedQualifier.findQualifierConstructors(): List<FirConstructorSymbol> {
-        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
+        val classSymbol = this.qualifierSymbol?.fullyExpandedClass(analysisSession.firSession) ?: return emptyList()
         return classSymbol.unsubstitutedScope(
             analysisSession.firSession,
             analysisSession.getScopeSessionFor(analysisSession.firSession),
