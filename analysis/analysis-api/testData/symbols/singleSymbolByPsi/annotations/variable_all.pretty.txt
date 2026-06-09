@@ -1,7 +1,7 @@
-@all:Property
-@all:PropertyAndField
-@all:ParameterPropertyAndField
-@all:Everything
+@Property
+@PropertyAndField
+@ParameterPropertyAndField
+@Everything
 var prop: kotlin.Int
   @Get
   @Everything

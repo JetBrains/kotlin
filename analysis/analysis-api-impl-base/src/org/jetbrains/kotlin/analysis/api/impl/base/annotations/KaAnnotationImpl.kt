@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
-import java.util.Objects
+import java.util.*
 
 @KaImplementationDetail
 class KaAnnotationImpl(
     classId: ClassId?,
     psi: KtCallElement?,
-    useSiteTarget: AnnotationUseSiteTarget?,
 
     /**
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KaAnnotationValue]
@@ -44,10 +43,9 @@ class KaAnnotationImpl(
     override val psi: KtCallElement?
         get() = withValidityAssertion { backingPsi }
 
-    private val backingUseSiteTarget: AnnotationUseSiteTarget? = useSiteTarget
-
+    @Deprecated("Use the underlying `(psi as? KtAnnotationEntry)?.useSiteTarget` if needed")
     override val useSiteTarget: AnnotationUseSiteTarget?
-        get() = withValidityAssertion { backingUseSiteTarget }
+        get() = withValidityAssertion { null }
 
     private val backingArguments: List<KaNamedAnnotationValue> by lazyArguments
 
@@ -64,7 +62,6 @@ class KaAnnotationImpl(
                 other is KaAnnotationImpl &&
                 backingClassId == other.backingClassId &&
                 backingPsi == other.backingPsi &&
-                backingUseSiteTarget == other.backingUseSiteTarget &&
                 backingConstructorSymbol == other.backingConstructorSymbol &&
                 backingArguments == other.backingArguments
     }
@@ -73,15 +70,16 @@ class KaAnnotationImpl(
         return Objects.hash(
             backingClassId,
             backingPsi,
-            backingUseSiteTarget,
             backingConstructorSymbol,
             backingArguments,
         )
     }
 
     override fun toString(): String {
-        return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId + ", psi=" + backingPsi + ", useSiteTarget=" +
-                backingUseSiteTarget + ", constructorSymbol=" +
-                backingConstructorSymbol + ", arguments=" + backingArguments + ")"
+        return "KaAnnotationApplicationWithArgumentsInfo(classId=" + backingClassId +
+                ", psi=" + backingPsi +
+                ", constructorSymbol=" + backingConstructorSymbol +
+                ", arguments=" + backingArguments +
+                ")"
     }
 }
