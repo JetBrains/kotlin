@@ -47,22 +47,22 @@ import java.io.File
  *
  * @property isAfterDeserialization Whether the handler is to be executed before serialization (false) or after deserialization (true).
  */
-class SerializedIrDumpHandler(
+open class SerializedIrDumpHandler(
     testServices: TestServices,
-    private val isAfterDeserialization: Boolean,
+    protected val isAfterDeserialization: Boolean,
 ) : AbstractIrHandler(testServices) {
 
-    private val dumper = MultiModuleInfoDumper()
+    protected val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(KlibBasedCompilerTestDirectives)
 
-    override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (module.isSkipped) return
-
-        val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-
-        val dumpOptions = DumpIrTreeOptions(
+    protected open fun createDumpOptions(
+        module: TestModule,
+        info: IrBackendInput,
+        isFirFrontend: Boolean,
+    ): DumpIrTreeOptions {
+        return DumpIrTreeOptions(
             /** Rename temporary local variables using a stable naming scheme. */
             normalizeNames = true,
 
@@ -237,13 +237,23 @@ class SerializedIrDumpHandler(
              */
             referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(info.irMangler),
         )
+    }
+
+    protected open fun normalizeDump(dump: String, module: TestModule, info: IrBackendInput): String = dump
+
+    override fun processModule(module: TestModule, info: IrBackendInput) {
+        if (module.isSkipped) return
+
+        val isFirFrontend = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
+
+        val dumpOptions = createDumpOptions(module, info, isFirFrontend)
 
         val builder = dumper.builderForModule(module.name)
 
         val irFiles = info.irModuleFragment.files.sortedBy { it.fileEntry.name }
         for (irFile in irFiles) {
             val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
-            builder.append(actualDump)
+            builder.append(normalizeDump(actualDump, module, info))
         }
     }
 

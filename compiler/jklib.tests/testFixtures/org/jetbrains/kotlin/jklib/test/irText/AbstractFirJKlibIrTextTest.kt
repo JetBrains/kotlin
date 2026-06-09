@@ -58,14 +58,18 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
         facadeStep(::Fir2IrCliJKlibFacade)
         irHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = false) })
             commonIrHandlersForCodegenTest()
+            setupIrTextDumpHandlers()
         }
 
         facadeStep(::SerializationCliJKlibFacade)
         klibArtifactsHandlersStep()
 
         facadeStep(::JKlibIrCompilationCliFacade)
-        deserializedIrHandlersStep()
+        deserializedIrHandlersStep {
+            useHandlers({ JKlibSerializedIrDumpHandler(it, isAfterDeserialization = true) })
+        }
 
         setupDefaultDirectivesForIrTextTest()
         defaultDirectives {
@@ -99,3 +103,4 @@ class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(test
         return testServices.moduleStructure.allDirectives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT)
     }
 }
+

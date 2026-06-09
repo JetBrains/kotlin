@@ -9,6 +9,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
     testFixturesImplementation(project(":compiler:cli-jklib"))
+    testFixturesImplementation(project(":compiler:ir.serialization.jklib"))
 
     testFixturesApi("org.junit.jupiter:junit-jupiter")
 }
