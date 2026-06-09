@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common"))
-    api(project(":js:js.serializer"))
+    api(project(":js:js.config"))
 }
 
 sourceSets {

@@ -12,7 +12,6 @@ val excludedCompilerModules = listOf(
 
 val extraCompilerModules = listOf(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
-    ":js:js.serializer",
     ":compiler:frontend.java",
 )
 

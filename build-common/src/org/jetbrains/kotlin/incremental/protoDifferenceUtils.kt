@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.incremental
@@ -296,9 +285,6 @@ class DifferenceCalculatorForClass(
                     changedSupertypes.addAll(elements)
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
-                ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
-                    // TODO
-                }
                 ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
                 }
@@ -330,7 +316,6 @@ class DifferenceCalculatorForClass(
                     areSubclassesAffected = true
                 }
                 ProtoBufClassKind.ANNOTATION_LIST,
-                ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST,
                 ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST,
                 ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
@@ -398,9 +383,6 @@ class DifferenceCalculatorForPackageFacade(
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
-                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME -> {
-                    // TODO
-                }
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
                 }
