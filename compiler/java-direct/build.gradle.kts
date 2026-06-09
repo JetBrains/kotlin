@@ -14,12 +14,12 @@ repositories {
 }
 
 dependencies {
-    api(project(":compiler:frontend.java"))
     api(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
     compileOnly(libs.org.jetbrains.syntax.api)
     compileOnly(libs.org.jetbrains.java.syntax.jvm)
+    "implementation"(project(":compiler:frontend.java"))
     implementation(project(":compiler:plugin-api"))
     implementation(project(":compiler:cli"))
 
