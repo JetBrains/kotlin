@@ -147,5 +147,18 @@ internal class KotlinPlaywrightJsTestFramework(
         )
         return runnerConfig.buildUrlWithConfigState(URI(baseUrl)).toString()
     }
-}
 
+    companion object {
+        fun createInputs(objects: ObjectFactory): Inputs =
+            objects.newInstance(Inputs::class.java)
+
+        fun createChromiumInputs(objects: ObjectFactory): ChromiumRunnerInput =
+            objects.newInstance(ChromiumRunnerInput::class.java)
+
+        fun createFirefoxInputs(objects: ObjectFactory): FirefoxRunnerInput =
+            objects.newInstance(FirefoxRunnerInput::class.java)
+
+        fun createWebkitInputs(objects: ObjectFactory): WebkitRunnerInput =
+            objects.newInstance(WebkitRunnerInput::class.java)
+    }
+}
