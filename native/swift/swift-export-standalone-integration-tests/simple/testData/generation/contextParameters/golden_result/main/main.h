@@ -55,11 +55,11 @@ _Bool __root___complexContextProperty_get__TypesOfArgumentsEC2__Swift_String_mai
 
 _Bool __root___complexContextProperty_set__TypesOfArgumentsEC2__Swift_String_Swift_Bool_main_ContextA_main_ContextB__(NSString * receiver, _Bool value, void * contextA, void * contextB);
 
-_Bool __root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(_Bool (^block)(void *, void *, int32_t, NSString *));
+_Bool __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(_Bool (^block)(void *, void *, int32_t, NSString *));
 
 void * __root___contextBlockB();
 
-_Bool __root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(_Bool (^block)(void *, NSString *));
+_Bool __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__(_Bool (^block)(void *, NSString *));
 
 void * __root___contextBlockD();
 
