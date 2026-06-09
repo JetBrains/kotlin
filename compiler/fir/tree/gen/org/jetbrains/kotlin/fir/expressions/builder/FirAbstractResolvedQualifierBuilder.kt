@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
@@ -31,11 +32,11 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var packageFqName: FqName
     abstract var relativeClassFqName: FqName?
     abstract var qualifierSymbol: FirClassLikeSymbol<*>?
+    abstract var accessedObjectSymbol: FirRegularClassSymbol?
     abstract var explicitParent: FirResolvedQualifier?
     abstract var isNullableLhsForCallableReference: Boolean
     abstract var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?
     abstract var resolvedToCompanionObject: Boolean
-    abstract var canBeValue: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract var resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val typeArguments: MutableList<FirTypeProjection>

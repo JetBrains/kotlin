@@ -302,14 +302,15 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
                 }
             }
         )
-        if (expression.resolvedToCompanionObject) {
+
+        val companionSymbol = expression.accessedObjectSymbol.takeIf { expression.resolvedToCompanionObject }
+        if (companionSymbol != null) {
             // Accessing the companion is like following a chain:
             // TA1 -> TA2 -> ... -> MyClass ~> Companion.
             // The first part - `TA1 -> TA2 -> ... -> MyClass` -
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            val companionSymbol = symbol.fullyExpandedClass()?.resolvedCompanionObjectSymbol ?: return
             FirDeprecationChecker.reportApiStatusIfNeeded(
                 expression.source,
                 companionSymbol,

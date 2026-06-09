@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -39,11 +40,11 @@ internal class FirResolvedQualifierImpl(
     override val packageFqName: FqName,
     override val relativeClassFqName: FqName?,
     override val qualifierSymbol: FirClassLikeSymbol<*>?,
+    override var accessedObjectSymbol: FirRegularClassSymbol?,
     override var explicitParent: FirResolvedQualifier?,
     override var isNullableLhsForCallableReference: Boolean,
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?,
     override var resolvedToCompanionObject: Boolean,
-    override var canBeValue: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
@@ -84,6 +85,10 @@ internal class FirResolvedQualifierImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
+    override fun replaceAccessedObjectSymbol(newAccessedObjectSymbol: FirRegularClassSymbol?) {
+        accessedObjectSymbol = newAccessedObjectSymbol
+    }
+
     override fun replaceIsNullableLhsForCallableReference(newIsNullableLhsForCallableReference: Boolean) {
         isNullableLhsForCallableReference = newIsNullableLhsForCallableReference
     }
@@ -94,10 +99,6 @@ internal class FirResolvedQualifierImpl(
 
     override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean) {
         resolvedToCompanionObject = newResolvedToCompanionObject
-    }
-
-    override fun replaceCanBeValue(newCanBeValue: Boolean) {
-        canBeValue = newCanBeValue
     }
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {

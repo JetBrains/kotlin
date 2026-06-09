@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.isExperimentalMarker
-import org.jetbrains.kotlin.fir.analysis.checkers.resolvedCompanionSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -34,7 +33,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         expression: FirResolvedQualifier,
     ) {
         val symbol = expression.qualifierSymbol ?: return
-        val companionObjectSymbol = expression.resolvedCompanionSymbol()
+        val companionObjectSymbol = expression.accessedObjectSymbol.takeIf { expression.resolvedToCompanionObject }
         with(FirOptInUsageBaseChecker) {
             val [regular, potentiallyUnderDeprecation] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
             reportNotAcceptedExperimentalities(regular, expression)

@@ -127,8 +127,7 @@ fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
             packageFqName = packageName
             source = collectionLiteral.source?.fakeElement(KtFakeSourceElementKind.DesugaredReceiverForOperatorOfCall)
             resolvedToCompanionObject = false
-        }.apply {
-            setTypeOfQualifier(this@buildCollectionLiteralCallForStdlibType)
+            initTypeAndObjectAccess()
         }
         source = collectionLiteral.source
         calleeReference = buildSimpleNamedReference {
