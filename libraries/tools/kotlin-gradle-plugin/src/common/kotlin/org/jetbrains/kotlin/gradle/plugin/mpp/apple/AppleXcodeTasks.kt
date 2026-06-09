@@ -242,7 +242,6 @@ internal fun Project.registerEmbedSwiftExportTask(
     if (!project.kotlinPropertiesProvider.disableSwiftPMImport) {
         val regenerateSyntheticLinkageProject = wireSyntheticLinkageImportCheck("embedSwiftExport")
         swiftExportTask.dependsOn(regenerateSyntheticLinkageProject)
-        embedAndSignTask.dependsOn(regenerateSyntheticLinkageProject)
     }
 }
 
