@@ -9,7 +9,7 @@
 #include "llvm-c/Core.h"
 
 #include "llvm/ADT/SmallVector.h"
-#include "llvm/IR/Module.h"
+#include "llvm/IR/Function.h"
 
 #include <cstring>
 #include <string>
@@ -71,22 +71,20 @@ static void removeOrInlinePrologueSafepointInstructions(
 }
 
 static void
-LLVMKotlinRemoveRedundantSafepoints(LLVMModuleRef M,
+LLVMKotlinRemoveRedundantSafepoints(LLVMValueRef F,
                                     int IsSafepointInliningAllowed) {
-  for (auto F = LLVMGetFirstFunction(M); F; F = LLVMGetNextFunction(F)) {
-    if (LLVMIsDeclaration(F))
-      continue;
-    LLVMBasicBlockRef FirstBB = LLVMGetFirstBasicBlock(F);
-    if (!FirstBB)
-      continue;
-    bool FirstBBHasSafepoint = containsPrologueSafepoint(FirstBB);
-    removeOrInlinePrologueSafepointInstructions(FirstBB, /*RemoveFirst=*/false,
+  if (LLVMIsDeclaration(F))
+    return;
+  LLVMBasicBlockRef FirstBB = LLVMGetFirstBasicBlock(F);
+  if (!FirstBB)
+    return;
+  bool FirstBBHasSafepoint = containsPrologueSafepoint(FirstBB);
+  removeOrInlinePrologueSafepointInstructions(FirstBB, /*RemoveFirst=*/false,
+                                              IsSafepointInliningAllowed);
+  for (auto BB = LLVMGetNextBasicBlock(FirstBB); BB;
+       BB = LLVMGetNextBasicBlock(BB)) {
+    removeOrInlinePrologueSafepointInstructions(BB, FirstBBHasSafepoint,
                                                 IsSafepointInliningAllowed);
-    for (auto BB = LLVMGetNextBasicBlock(FirstBB); BB;
-         BB = LLVMGetNextBasicBlock(BB)) {
-      removeOrInlinePrologueSafepointInstructions(BB, FirstBBHasSafepoint,
-                                                  IsSafepointInliningAllowed);
-    }
   }
 }
 
@@ -95,13 +93,13 @@ RemoveRedundantSafepointsPass::RemoveRedundantSafepointsPass(
     : IsSafepointInliningAllowed(IsSafepointInliningAllowed) {}
 
 PreservedAnalyses
-RemoveRedundantSafepointsPass::run(Module &M, ModuleAnalysisManager &AM) {
-  if (!run(M))
+RemoveRedundantSafepointsPass::run(Function &F, FunctionAnalysisManager &AF) {
+  if (!run(F))
     return PreservedAnalyses::all();
   return PreservedAnalyses::none();
 }
 
-bool RemoveRedundantSafepointsPass::run(Module &M) {
-  LLVMKotlinRemoveRedundantSafepoints(wrap(&M), IsSafepointInliningAllowed);
+bool RemoveRedundantSafepointsPass::run(Function &F) {
+  LLVMKotlinRemoveRedundantSafepoints(wrap(&F), IsSafepointInliningAllowed);
   return true;
 }

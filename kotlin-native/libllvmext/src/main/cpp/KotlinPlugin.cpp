@@ -74,11 +74,6 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                     PM.addPass(HideSymbolsPass());
                     return true;
                   }
-                  if (auto Param = parsePass(Name, "kotlin-remove-sp",
-                                             ParseShouldInlineSafepoints)) {
-                    PM.addPass(RemoveRedundantSafepointsPass(*Param));
-                    return true;
-                  }
                   return false;
                 });
             PB.registerPipelineParsingCallback(
@@ -91,6 +86,11 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                   if (auto Param = parsePass(Name, "kotlin-ssp",
                                              ParseSspModePassOptions)) {
                     PM.addPass(PrepareStackProtectorPass(*Param));
+                    return true;
+                  }
+                  if (auto Param = parsePass(Name, "kotlin-remove-sp",
+                                             ParseShouldInlineSafepoints)) {
+                    PM.addPass(RemoveRedundantSafepointsPass(*Param));
                     return true;
                   }
                   return false;
