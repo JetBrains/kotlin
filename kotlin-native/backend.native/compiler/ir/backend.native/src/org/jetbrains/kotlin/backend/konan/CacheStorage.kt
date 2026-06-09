@@ -53,6 +53,10 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
             }
             if (!outputFiles.tempCacheDirectory!!.renameTo(outputFiles.mainFile))
                 outputFiles.tempCacheDirectory.deleteRecursively()
+            else {
+                outputFiles.mainFile.child(CachedLibraries.MONOLITHIC_CACHE_COMPLETE_MARKER)
+                    .javaFile().createNewFile()
+            }
         }
     }
 

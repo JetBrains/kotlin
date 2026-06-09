@@ -115,9 +115,14 @@ internal class PlatformLibrariesGenerator(
         val cacheDirectory = getRootCacheDirectory(
             konanHome, konanTarget, true, konanCacheKind.get()
         )
-        return presentDefs.toPlatformLibNames().all {
+        val platformLibsReady = presentDefs.toPlatformLibNames().all {
             cacheDirectory.resolve(getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
         }
+        if (!platformLibsReady) return false
+
+        // Verify stdlib-cache is complete (KT-86251: incomplete dir from interrupted run).
+        val stdlibCacheDir = cacheDirectory.resolve(getCacheFileName("stdlib", konanCacheKind.get()))
+        return stdlibCacheDir.resolve(CACHE_COMPLETE_MARKER).exists()
     }
 
     private fun getRootCacheDirectory(konanHome: File, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): File {
@@ -293,5 +298,11 @@ internal class PlatformLibrariesGenerator(
         }
 
         private val commonizerLockForDirectory = ConcurrentHashMap<File, NativeDistributionCommonizerLock>()
+
+        /**
+         * Marker file written inside the monolithic stdlib cache directory after
+         * a successful build. Absence means the cache is incomplete. KT-86251.
+         */
+        internal const val CACHE_COMPLETE_MARKER = ".cache-complete"
     }
 }
