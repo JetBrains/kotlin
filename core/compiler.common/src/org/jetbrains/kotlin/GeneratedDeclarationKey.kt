@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin
 
-abstract class GeneratedDeclarationKey
+abstract class GeneratedDeclarationKey {
+    override fun toString(): String {
+        // Stabilize the string so the FIR dump is deterministic regardless of object identity.
+        return this::class.simpleName!!
+    }
+}
