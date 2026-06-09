@@ -149,14 +149,13 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             symbol = classSymbol
             name = javaClass.name
             isFromSource = javaClass.isFromSource
-            val visibility = javaClass.visibility
-            this@buildJavaClass.visibility = visibility
             classKind = javaClass.classKind
             javaPackage = packageCache.getValue(classSymbol.classId.packageFqName)
             this.javaTypeParameterStack = classJavaTypeParameterStack
             existingNestedClassifierNames += javaClass.innerClassNames
             scopeProvider = JavaScopeProvider
 
+            val visibility = javaClass.visibility
             val selfEffectiveVisibility = visibility.toEffectiveVisibility(parentClassSymbol?.toLookupTag(), forClass = true)
             val parentEffectiveVisibility = parentClassSymbol?.let {
                 // `originalStatus` can be used here as in the current implementation, status compiler plugins
