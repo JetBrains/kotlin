@@ -413,9 +413,6 @@ internal class KClassImpl<T : Any>(
             }
         }
 
-        private fun useK1ImplementationForFakeOverrides(): Boolean =
-            !newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass
-
         // TODO: KT-85727 Reflection: support collections and their subclasses in the new implementation
         val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
             Iterable::class.java.isAssignableFrom(jClass) ||
@@ -424,73 +421,52 @@ internal class KClassImpl<T : Any>(
                     Number::class.java.isAssignableFrom(jClass)
         }
 
-        val declaredNonStaticMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
-            if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
-                getMembers(memberScope, DECLARED)
-            } else buildList {
-                getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-                getMembers(memberScope, DECLARED).filterTo(this) { it is KProperty<*> }
-            }
-        }
-
-        private val declaredStaticMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
-            if (useK1Implementation || kmClass != null || classKind == ClassKind.ENUM_ENTRY) {
-                // For Kotlin classes, use the legacy implementation for now to create companion block members / enum's static members.
-                getMembers(staticScope, DECLARED)
-            } else buildList {
-                for (method in jClass.declaredMethods) {
-                    if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
-                        add(JavaKNamedFunction(this@KClassImpl, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                    }
-                }
-
-                for (field in jClass.declaredFields) {
-                    if (field.isEnumConstant) continue
-                    if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
-                        if (Modifier.isFinal(field.modifiers)) {
-                            add(JavaKProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                        } else {
-                            add(JavaKMutableProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+        val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
+            buildList {
+                if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
+                    addAll(getMembers(memberScope, DECLARED))
+                    addAll(getMembers(staticScope, DECLARED))
+                } else {
+                    getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+                    getMembers(memberScope, DECLARED).filterTo(this) { it is KProperty<*> }
+                    for (method in jClass.declaredMethods) {
+                        if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
+                            add(JavaKNamedFunction(this@KClassImpl, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
                         }
                     }
-                }
 
-                if (jClass.isEnum) {
-                    @Suppress("UNCHECKED_CAST")
-                    add(JavaEnumEntriesKProperty(this@KClassImpl as KClassImpl<out Enum<*>>))
+                    for (field in jClass.declaredFields) {
+                        if (field.isEnumConstant) continue
+                        if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
+                            if (Modifier.isFinal(field.modifiers)) {
+                                add(JavaKProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                            } else {
+                                add(JavaKMutableProperty0<Any>(this@KClassImpl, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+                            }
+                        }
+                    }
+
+                    if (jClass.isEnum) {
+                        @Suppress("UNCHECKED_CAST")
+                        add(JavaEnumEntriesKProperty(this@KClassImpl as KClassImpl<out Enum<*>>))
+                    }
                 }
             }
         }
-        private val inheritedNonStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(memberScope, INHERITED) }
-        private val inheritedStaticMembers_k1Impl: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft { getMembers(staticScope, INHERITED) }
 
-        val allNonStaticMembers: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft {
-                    when (useK1ImplementationForFakeOverrides()) {
-                        true -> declaredNonStaticMembers + inheritedNonStaticMembers_k1Impl
-                        false -> allMembers.filter { !it.isStatic }
-                    }
+        val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
+            if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
+                buildList {
+                    addAll(declaredMembers)
+                    addAll(getMembers(memberScope, INHERITED))
+                    addAll(getMembers(staticScope, INHERITED))
                 }
-        val allStaticMembers: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft {
-                    when (useK1ImplementationForFakeOverrides()) {
-                        true -> declaredStaticMembers + inheritedStaticMembers_k1Impl
-                        false -> allMembers.filter { it.isStatic }
-                    }
-                }
-        val declaredMembers: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft { declaredNonStaticMembers + declaredStaticMembers }
-        val allMembers: Collection<ReflectKCallable<*>>
-                by ReflectProperties.lazySoft {
-                    when (useK1ImplementationForFakeOverrides()) {
-                        true -> allNonStaticMembers + allStaticMembers
-                        false -> getAllMembers(this@KClassImpl)
-                    }
-                }
-        internal val fakeOverrideMembers: FakeOverrideMembers
-                by ReflectProperties.lazySoft { computeFakeOverrideMembers(this@KClassImpl) }
+            } else getAllMembers(this@KClassImpl, declaredMembers)
+        }
+
+        val fakeOverrideMembers: FakeOverrideMembers by ReflectProperties.lazySoft {
+            computeFakeOverrideMembers(this@KClassImpl, declaredMembers)
+        }
     }
 
     val data = lazy(PUBLICATION) { Data() }

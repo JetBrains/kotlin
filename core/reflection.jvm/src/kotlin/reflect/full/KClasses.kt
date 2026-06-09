@@ -21,10 +21,7 @@ package kotlin.reflect.full
 
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KClassImpl
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.ReflectKCallable
-import kotlin.reflect.jvm.internal.ReflectKFunction
+import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.jvm.internal.types.AbstractKType
 import kotlin.reflect.jvm.internal.types.KTypeSubstitutor
 import kotlin.reflect.jvm.internal.types.allTypeParameters
@@ -99,21 +96,21 @@ val KClass<*>.functions: Collection<KFunction<*>>
  */
 @SinceKotlin("1.1")
 val KClass<*>.staticFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.allStaticMembers.filterIsInstance<KFunction<*>>()
+    get() = members.filter { it is ReflectKFunction && it.isStatic } as Collection<KFunction<*>>
 
 /**
  * Returns non-extension non-static functions declared in this class and all of its superclasses.
  */
 @SinceKotlin("1.1")
 val KClass<*>.memberFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.allNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
+    get() = members.filter { it is ReflectKFunction && !it.isStatic && it.isNotExtension } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class and all of its superclasses.
  */
 @SinceKotlin("1.1")
 val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.allNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
+    get() = members.filter { it is ReflectKFunction && !it.isStatic && it.isExtension } as Collection<KFunction<*>>
 
 /**
  * Returns all functions declared in this class.
@@ -122,21 +119,21 @@ val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
  */
 @SinceKotlin("1.1")
 val KClass<*>.declaredFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.declaredMembers.filterIsInstance<KFunction<*>>()
+    get() = declaredMembers.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns non-extension non-static functions declared in this class.
  */
 @SinceKotlin("1.1")
 val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.declaredNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
+    get() = declaredMembers.filter { it is ReflectKFunction && !it.isStatic && it.isNotExtension } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class.
  */
 @SinceKotlin("1.1")
 val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
-    get() = (this as KClassImpl).data.value.declaredNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
+    get() = declaredMembers.filter { it is ReflectKFunction && !it.isStatic && it.isExtension } as Collection<KFunction<*>>
 
 /**
  * Returns static properties declared in this class.
@@ -144,35 +141,35 @@ val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
  */
 @SinceKotlin("1.1")
 val KClass<*>.staticProperties: Collection<KProperty0<*>>
-    get() = (this as KClassImpl).data.value.allStaticMembers.filter { it.isNotExtension && it is KProperty0<*> } as Collection<KProperty0<*>>
+    get() = members.filter { it is ReflectKProperty && it.isStatic } as Collection<KProperty0<*>>
 
 /**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
-    get() = (this as KClassImpl<T>).data.value.allNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
+    get() = members.filter { it is KProperty1<*, *> && it is ReflectKProperty && !it.isStatic && it.isNotExtension } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class and all of its superclasses.
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
-    get() = (this as KClassImpl<T>).data.value.allNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
+    get() = members.filter { it is KProperty2<*, *, *> && it is ReflectKProperty && !it.isStatic && it.isExtension } as Collection<KProperty2<T, *, *>>
 
 /**
  * Returns non-extension properties declared in this class.
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
-    get() = (this as KClassImpl<T>).data.value.declaredNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
+    get() = declaredMembers.filter { it is KProperty1<*, *> && it is ReflectKProperty && !it.isStatic && it.isNotExtension } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class.
  */
 @SinceKotlin("1.1")
 val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
-    get() = (this as KClassImpl<T>).data.value.declaredNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
+    get() = declaredMembers.filter { it is KProperty2<*, *, *> && it is ReflectKProperty && !it.isStatic && it.isExtension } as Collection<KProperty2<T, *, *>>
 
 
 private val ReflectKCallable<*>.isExtension: Boolean
