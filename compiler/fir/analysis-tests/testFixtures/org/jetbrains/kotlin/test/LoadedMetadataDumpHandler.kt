@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.PLATFORM_DEPENDANT_METADATA
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -59,8 +57,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
 ) {
     override val targetPlatform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = JvmPlatformAnalyzerServices
+
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
@@ -101,8 +98,6 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
 ) {
     override val targetPlatform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = shouldNotBeCalled()
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
@@ -138,8 +133,6 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
 ) {
     override val targetPlatform: TargetPlatform
         get() = WasmPlatforms.wasmJs
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = shouldNotBeCalled()
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
@@ -222,7 +215,6 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     }
 
     protected abstract val targetPlatform: TargetPlatform
-    protected abstract val platformAnalyzerServices: PlatformDependentAnalyzerServices
     protected abstract val dependencyKind: DependencyKind
 
     protected abstract fun prepareSessions(
