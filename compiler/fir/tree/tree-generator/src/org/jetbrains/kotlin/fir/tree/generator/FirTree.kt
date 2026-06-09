@@ -1337,20 +1337,48 @@ object FirTree : AbstractFirTreeBuilder() {
 
         customParentInVisitor = expression
 
+        kDoc = """A class or package qualifier.
+            |
+            |If [qualifierSymbol] is `null`, this is a package qualifier, otherwise this is a class qualifier.
+        """.trimMargin()
+
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
         +referencedSymbol("qualifierSymbol", classLikeSymbolType, nullable = true) {
-            kDoc = """Always refers to the class with the name denoted by the qualifier.
+            kDoc = "If not null, refers to the class or **unexpanded** typealias with the name denoted by the qualifier."
+        }
+        +referencedSymbol("accessedObjectSymbol", regularClassSymbolType, nullable = true, withReplace = true) {
+            kDoc = """
+                |### Before resolution
                 |
-                |If the qualifier resolves to a companion object, this is the symbol of the containing class, **not** the companion object itself.
+                |If the [qualifierSymbol] resolves to a named object (or a typealias of that object),
+                |it's the symbol of that named object.
+                | 
+                |If the [qualifierSymbol] resolves to a class with companion object (or a typealias of that class),
+                |it's the symbol of the companion object.
+                |
+                |Otherwise `null`.
+                |
+                |A not-null value indicates that the qualifier _can_ be used as an expression.
+                |
+                |### After resolution
+                |
+                |Same as above but **if and only if** the qualifier is used as an expression.
             """.trimMargin()
         }
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLhsForCallableReference", boolean, withReplace = true)
         +field("resolvedLhsTypeForCallableReferenceOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
-        +field("resolvedToCompanionObject", boolean, withReplace = true)
-        +field("canBeValue", boolean, withReplace = true) {
-            kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."
+        +field("resolvedToCompanionObject", boolean, withReplace = true) {
+            kDoc = """
+                ### Before resolution
+                
+                True, if [qualifierSymbol] refers to a class (or typealias of) with a companion object.
+                
+                ### After resolution
+                
+                Same as above **and** the qualifier is used as an expression.
+                """.trimIndent()
         }
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)

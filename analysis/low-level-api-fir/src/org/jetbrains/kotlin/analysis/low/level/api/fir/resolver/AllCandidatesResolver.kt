@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.fullyProcessCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.handleObjectAccess
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
@@ -82,7 +84,9 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(resolutionFacade, element)
 
-        val copiedAccess = copyQualifiedAccess(qualifiedAccess, element) ?: return emptyList()
+        val copiedAccess = context(bodyResolveComponents) {
+            copyQualifiedAccess(qualifiedAccess, element) ?: return emptyList()
+        }
         return run {
             bodyResolveComponents.callResolver
                 .collectAllCandidates(
@@ -197,9 +201,10 @@ class AllCandidatesResolver(private val firSession: FirSession) {
  * The copied tree is then passed to the [org.jetbrains.kotlin.fir.resolve.calls.overloads.FirOverloadByLambdaReturnTypeResolver]
  * which may modify the tree. In particular, it may change the callee reference and lambdas.
  *
- * There is no goal to make a proper deep copy of the subtree – it is enough to cover the known cases there
+ * There is no goal to make a proper deep copy of the subtree – it is enough to cover the known cases where
  * the modification is possible.
  */
+context(components: BodyResolveComponents)
 private fun copyQualifiedAccess(
     qualifiedAccess: FirQualifiedAccessExpression,
     element: KtElement,
@@ -239,8 +244,12 @@ private fun copyQualifiedAccess(
                 return null
             }
         }
+
+        copyResolvedQualifiedReceiverIfNecessary()
     }
-    is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(qualifiedAccess) {}
+    is FirPropertyAccessExpression -> buildPropertyAccessExpressionCopy(qualifiedAccess) {
+        copyResolvedQualifiedReceiverIfNecessary()
+    }
     else -> {
         logger<AllCandidatesResolver>().logErrorWithAttachment("Unsupported qualified access ${qualifiedAccess::class.simpleName}") {
             withFirEntry("qualifiedAccess", qualifiedAccess)
@@ -248,6 +257,33 @@ private fun copyQualifiedAccess(
         }
 
         null
+    }
+}
+
+/**
+ * During construction [FirResolvedQualifier.accessedObjectSymbol] is set to a not-null value if the qualifier
+ * _can_ be used as an expression. Resolution uses this information.
+ *
+ * After resolution, it is set to `null`, if it's not used as expression.
+ *
+ * If we used a qualifier to a class with companion object, which _could_ be used as an expression but isn't, as is, we would miss
+ * candidates from the companion object.
+ *
+ * For this reason, we need to "recreate" qualifiers with [FirResolvedQualifier.accessedObjectSymbol] still intact.
+ */
+context(components: BodyResolveComponents)
+private fun FirQualifiedAccessExpressionBuilder.copyResolvedQualifiedReceiverIfNecessary() {
+    val oldExplicitReceiver = explicitReceiver
+    if (oldExplicitReceiver is FirResolvedQualifier) {
+        explicitReceiver = buildResolvedQualifierCopy(oldExplicitReceiver) {
+            handleObjectAccess()
+        }
+        if (dispatchReceiver == oldExplicitReceiver) {
+            dispatchReceiver = explicitReceiver
+        }
+        if (extensionReceiver == oldExplicitReceiver) {
+            extensionReceiver = explicitReceiver
+        }
     }
 }
 

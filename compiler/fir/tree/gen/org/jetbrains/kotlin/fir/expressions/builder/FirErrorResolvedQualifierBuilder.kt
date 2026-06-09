@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
@@ -36,11 +37,11 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var qualifierSymbol: FirClassLikeSymbol<*>? = null
+    override var accessedObjectSymbol: FirRegularClassSymbol? = null
     override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLhsForCallableReference: Boolean = false
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType? = null
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override var canBeValue: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
@@ -55,11 +56,11 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             packageFqName,
             relativeClassFqName,
             qualifierSymbol,
+            accessedObjectSymbol,
             explicitParent,
             isNullableLhsForCallableReference,
             resolvedLhsTypeForCallableReferenceOrNull,
             resolvedToCompanionObject,
-            canBeValue,
             nonFatalDiagnostics.toMutableOrEmpty(),
             resolvedSymbolOrigin,
             typeArguments.toMutableOrEmpty(),

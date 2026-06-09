@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
@@ -50,13 +49,8 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Data) {
-            if (resolvedQualifier.qualifierSymbol == data.objectSymbol) {
+            if (resolvedQualifier.qualifierSymbol == data.objectSymbol || resolvedQualifier.accessedObjectSymbol == data.objectSymbol) {
                 data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
-            } else if (resolvedQualifier.resolvedToCompanionObject) {
-                val companionSymbol = resolvedQualifier.qualifierSymbol?.fullyExpandedClass(data.context.session)?.resolvedCompanionObjectSymbol
-                if (companionSymbol == data.objectSymbol) {
-                    data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
-                }
             }
         }
 

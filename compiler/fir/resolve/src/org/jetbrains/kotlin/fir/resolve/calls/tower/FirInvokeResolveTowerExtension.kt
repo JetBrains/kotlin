@@ -15,12 +15,8 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirPropertyAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitPropertyTypeMakesBehaviorOrderDependant
-import org.jetbrains.kotlin.fir.resolve.calls.NotFunctionAsOperator
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
-import org.jetbrains.kotlin.fir.resolve.calls.createQualifierReceiver
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentTypeStatement
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNotFunctionAsOperator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ReturnTypeCalculatorWithJump
@@ -490,7 +486,7 @@ private class InvokeFunctionResolveTask(
             )
         }
 
-        if (!isResolvedQualifier || receiverExpression.canBeValue) {
+        if (!isResolvedQualifier || receiverExpression.accessedObjectSymbol != null) {
             processLevelForRegularInvoke(
                 invokeReceiverValue.toDispatchReceiverMemberScopeTowerLevel(),
                 info, TowerGroup.Member,
