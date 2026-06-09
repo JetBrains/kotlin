@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * - [findInnerClassFromSupertypes] returns a [JavaClass] (with its full AST-side outer-class
  *   chain) for inherited inner classes, including cross-file Java-source supertypes via the
- *   [classFinder]. Used by [JavaScopeForContext.findClassInCurrentScope] step 3 so that the rest of the
+ *   [classFinder]. Used by [findClassInCurrentScope] step 3 so that the rest of the
  *   AST pipeline (`JavaTypeOverAst.computeClassifier`, `JavaClassOverAst.findInnerClassInSupertypes`)
  *   can thread outer-class type arguments through the AST chain — the substitution context
  *   FIR needs for cases like
@@ -240,7 +240,7 @@ internal class JavaInheritedMemberResolver(
 
 /**
  * Depth cap for supertype BFS in [JavaInheritedMemberResolver.resolveInheritedInnerClassToClassId]. Chosen to cover
- * typical collection / Throwable / Cloneable hierarchies without pathological looping on
+ * typical collection / Throwable / Cloneable hierarchies without pathological non-termination on
  * cycles the `visited` set misses (there shouldn't be any, but the cap is a cheap insurance).
  */
 private const val MAX_SUPERTYPE_DEPTH = 5

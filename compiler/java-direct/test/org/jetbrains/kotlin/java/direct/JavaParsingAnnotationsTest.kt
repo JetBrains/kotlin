@@ -9,6 +9,7 @@ import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
 import org.junit.jupiter.api.Test
 
 class JavaParsingAnnotationsTest : JavaParsingTestBase() {
@@ -422,7 +423,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val context = parsed.context
 
         // Check that star import is extracted
-        val starCandidate = context.getFirstStarImportCandidate("NotNull")
+        val starCandidate = with(context) { getFirstStarImportCandidate("NotNull") }
         assert(starCandidate != null) { "Expected star import candidate for NotNull" }
         assert(starCandidate?.packageFqName?.asString() == "org.jetbrains.annotations") {
             "Expected package org.jetbrains.annotations, got ${starCandidate?.packageFqName}"
@@ -471,14 +472,14 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val context = parsed.context
 
         // Verify star imports are extracted
-        val starCandidate1 = context.getFirstStarImportCandidate("Iterator")
+        val starCandidate1 = with(context) { getFirstStarImportCandidate("Iterator") }
         assert(starCandidate1?.packageFqName?.asString() == "java.util") {
             "First star import should be java.util, got ${starCandidate1?.packageFqName}"
         }
 
         // Check if org.jetbrains.annotations is in star imports
         @Suppress("UNUSED_VARIABLE")
-        val starCandidate2 = context.getFirstStarImportCandidate("NotNull")
+        val starCandidate2 = with(context) { getFirstStarImportCandidate("NotNull") }
         // Note: getFirstStarImportCandidate returns the FIRST star import package
         // We need to check if org.jetbrains.annotations is also there
 

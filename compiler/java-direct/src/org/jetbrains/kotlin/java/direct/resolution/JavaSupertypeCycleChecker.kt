@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
  * re-asks the model for a Java class will hit the active set on the *same thread* —
  * provided the model never spawns supertype walks on a different thread.
  */
-internal class JavaSupertypeLoopChecker {
+internal class JavaSupertypeCycleChecker {
     private val resolving: ThreadLocal<ArrayDeque<ClassId>> =
         ThreadLocal.withInitial { ArrayDeque() }
 

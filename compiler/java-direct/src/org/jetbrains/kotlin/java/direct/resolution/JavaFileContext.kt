@@ -9,18 +9,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.FqName
 
 /**
- * Per-compilation-unit immutable data shared across all scope variants of a [JavaResolutionContext].
- * the [loopChecker] is shared so every scope variant for the same unit sees the same cycle bound.
+ * Per-file immutable data shared across all scope variants of a [JavaResolutionContext].
+ * the [cycleChecker] is shared so every scope variant for the same file sees the same cycle bound.
  *
  * [imports] is the four-bucket [JavaImports] holder produced by
  * [JavaImportResolver.extractImports]; see its KDoc for the JLS 7.5 / 6.4.1 semantics of each
  * bucket.
  */
-internal class CompilationUnitContext(
+internal class JavaFileContext(
     val packageFqName: FqName,
     val imports: JavaImports,
     val inheritedMemberResolver: JavaInheritedMemberResolver,
     val classFinder: LeanJavaClassFinder?,
     val session: FirSession,
-    val loopChecker: JavaSupertypeLoopChecker = JavaSupertypeLoopChecker(),
+    val cycleChecker: JavaSupertypeCycleChecker = JavaSupertypeCycleChecker(),
 )

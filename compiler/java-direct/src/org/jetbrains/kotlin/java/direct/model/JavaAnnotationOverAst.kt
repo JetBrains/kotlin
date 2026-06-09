@@ -12,6 +12,10 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
+import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
+import org.jetbrains.kotlin.java.direct.resolution.resolve
+import org.jetbrains.kotlin.java.direct.resolution.resolveConstFieldValue
 import org.jetbrains.kotlin.java.direct.util.JavaLiteralParser
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
@@ -58,7 +62,7 @@ class JavaAnnotationOverAst(
         //   * unqualified names that need `java.lang` / star-import / inherited-inner resolution.
         //   * fully-qualified annotation references `@a.b.C.D` (the resolver splits via
         //     `resolveQualifiedNameToClassId` rather than a trivial last-dot split).
-        resolutionContext.resolve(reference)?.let { return it }
+        with(resolutionContext) { resolve(reference) }?.let { return it }
 
         // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null
         // because `tryResolve` is always `false` without a provider. The `ClassId.topLevel`
@@ -69,7 +73,7 @@ class JavaAnnotationOverAst(
             return ClassId.topLevel(FqName(reference))
         }
 
-        val imported = resolutionContext.getSimpleImport(reference)
+        val imported = with(resolutionContext) { getSimpleImport(reference) }
         if (imported != null) {
             return ClassId.topLevel(imported)
         }
@@ -128,7 +132,7 @@ internal fun createAnnotationArgumentFromValue(
             val enumArg = JavaEnumValueAnnotationArgumentOverAst(name, valueNode, tree, resolutionContext)
             val classId = enumArg.enumClassId
             val constValue = if (classId != null) {
-                resolutionContext.resolveConstFieldValue(classId, enumArg.entryName)
+                with(resolutionContext) { resolveConstFieldValue(classId, enumArg.entryName) }
             } else null
             if (constValue != null) JavaLiteralAnnotationArgumentOverAst(name, constValue) else enumArg
         }
@@ -243,7 +247,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
     private val staticImportResolution: Pair<String, String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val text = tree.getText(refNode).toString()
         if (text.contains('.')) return@lazy null
-        val importedFqn = resolutionContext.getStaticImport(text) ?: return@lazy null
+        val importedFqn = with(resolutionContext) { getStaticImport(text) } ?: return@lazy null
         val fqnStr = importedFqn.asString()
         val lastDot = fqnStr.lastIndexOf('.')
         if (lastDot < 0) return@lazy null
@@ -262,7 +266,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
         get() {
             val className = className ?: return null
 
-            val imported = resolutionContext.getSimpleImport(className)
+            val imported = with(resolutionContext) { getSimpleImport(className) }
             if (imported != null) {
                 return ClassId.topLevel(imported)
             }
@@ -271,7 +275,7 @@ class JavaEnumValueAnnotationArgumentOverAst(
             // inherited inner classes, same-package, java.lang, star imports). `resolve` returns
             // null without a symbol provider (parsing-level unit fixtures), letting the
             // package+name heuristic below take over.
-            resolutionContext.resolve(className)?.let { return it }
+            with(resolutionContext) { resolve(className) }?.let { return it }
 
             // Already-dotted className (qualified or static-import-resolved FQN) is treated
             // as a top-level FQN — mirrors `JavaAnnotationOverAst.classId`'s dotted-name

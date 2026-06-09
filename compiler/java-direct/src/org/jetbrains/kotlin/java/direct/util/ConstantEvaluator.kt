@@ -12,6 +12,8 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
+import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
+import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.name.Name
 import kotlin.experimental.inv
@@ -184,7 +186,7 @@ class ConstantEvaluator(
         val resolvedClassQualifier = if (className.contains('.')) {
             className
         } else {
-            containingClass.resolutionContext.resolve(className)?.asSingleFqName()?.asString() ?: className
+            with(containingClass.resolutionContext) { resolve(className) }?.asSingleFqName()?.asString() ?: className
         }
 
         return resolveExternalReference?.invoke(resolvedClassQualifier, fieldName)
@@ -197,7 +199,7 @@ class ConstantEvaluator(
         // Route through the shared resolution context so that sibling top-level classes are
         // retrieved from the file-level cache (same JavaClassOverAst instance, same type-parameter
         // identity) instead of being freshly constructed here.
-        return containingClass.resolutionContext.findClassInCurrentScope(Name.identifier(name)) as? JavaClassOverAst
+        return with(containingClass.resolutionContext) { findClassInCurrentScope(Name.identifier(name)) } as? JavaClassOverAst
     }
 
     private fun resolveFieldValue(javaClass: JavaClassOverAst, fieldName: String): Any? {

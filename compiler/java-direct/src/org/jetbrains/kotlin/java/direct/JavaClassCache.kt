@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -68,7 +69,7 @@ internal class JavaClassCache(
         for (className in allClassNames) {
             val cid = ClassId(fileEntry.packageFqName, FqName(className), isLocal = false)
             if (classCache[cid] != null) continue
-            val javaClass = resolutionContext.findClassInCurrentScope(Name.identifier(className)) ?: continue
+            val javaClass = with(resolutionContext) { findClassInCurrentScope(Name.identifier(className)) } ?: continue
             // putIfAbsent: if a concurrent thread already installed an entry, drop ours and keep
             // theirs so all callers observe the same JavaClassOverAst instance (identity contract).
             classCache.putIfAbsent(cid, javaClass)

@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
+import org.jetbrains.kotlin.java.direct.resolution.JavaImportResolver
 import org.jetbrains.kotlin.java.direct.resolution.JavaImports
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.getImports
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -71,7 +73,7 @@ internal class JavaSupertypeGraph(
             // via findInnerClassFromSupertypes → collectInheritedInnerClasses.
             val cachedClass = classCacheLookup(classId)
             if (cachedClass is JavaClassOverAst) {
-                val imports = cachedClass.resolutionContext.getImports()
+                val imports = with(cachedClass.resolutionContext) { getImports() }
                 return@computeIfAbsent extractSupertypeRefsFromNode(
                     cachedClass.tree, cachedClass.node, packageFqName, imports
                 )
@@ -86,7 +88,7 @@ internal class JavaSupertypeGraph(
             val tree = parseJavaToLightTree(source, 0)
             val root = tree.getRoot()
 
-            val imports = JavaResolutionContext.extractImports(tree, root)
+            val imports = JavaImportResolver.extractImports(tree, root)
             val classNode = findClassInTree(tree, root, classId) ?: return@computeIfAbsent emptyList()
             extractSupertypeRefsFromNode(tree, classNode, packageFqName, imports)
         }

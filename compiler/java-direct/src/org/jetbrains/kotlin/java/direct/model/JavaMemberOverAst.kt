@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
+import org.jetbrains.kotlin.java.direct.resolution.resolveExternalFieldValue
 import org.jetbrains.kotlin.java.direct.util.ConstantEvaluator
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
@@ -252,7 +254,7 @@ class JavaFieldOverAst(
         if (localField != null) {
             return localField.isFinal
         }
-        return containingClass.resolutionContext.getSimpleImport(name) != null
+        return with(containingClass.resolutionContext) { getSimpleImport(name) } != null
     }
 
     /**
@@ -271,7 +273,7 @@ class JavaFieldOverAst(
             if (!hasConstantNotNullInitializer) return null
             val init = initializerNode ?: return null
             val evaluator = ConstantEvaluator(containingClass) { classQualifier, fieldName ->
-                containingClass.resolutionContext.resolveExternalFieldValue(classQualifier, fieldName)
+                with(containingClass.resolutionContext) { resolveExternalFieldValue(classQualifier, fieldName) }
             }
             return coerceConstantToFieldType(evaluator.evaluate(init))
         }
