@@ -216,7 +216,7 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 
-    commonImplementation("com.microsoft.playwright:playwright:1.60.0")
+    commonImplementation(libs.playwrigt)
 
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
