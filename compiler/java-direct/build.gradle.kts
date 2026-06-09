@@ -17,6 +17,7 @@ dependencies {
     api(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.asm)
     compileOnly(libs.org.jetbrains.syntax.api)
     compileOnly(libs.org.jetbrains.java.syntax.jvm)
     "implementation"(project(":compiler:frontend.java"))

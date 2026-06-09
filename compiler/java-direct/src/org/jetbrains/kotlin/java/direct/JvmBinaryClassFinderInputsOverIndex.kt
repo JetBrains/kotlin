@@ -151,7 +151,7 @@ class JvmBinaryClassFinderInputsOverIndex(
         findClassImpl(request, applyScopeFilter = false)
 
     private fun findClassImpl(request: JavaClassFinder.Request, applyScopeFilter: Boolean): JavaClass? {
-        val (classId, classFileContentFromRequest, outerClassFromRequest) = request
+        val [classId, classFileContentFromRequest, outerClassFromRequest] = request
 
         val outerMostClassFqName = classId.packageFqName.child(classId.relativeClassName.pathSegments().first())
         // Cache top-level lookups separately for the two scope modes so that a previously cached
