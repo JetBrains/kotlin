@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File.Companion.userDir
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForDistDirectory
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -89,7 +88,6 @@ object CompilerTestUtil {
             .replace("info: executable production duration: \\d+ms".toRegex(), "info: executable production duration: [time]")
             .replace(System.getProperty("java.runtime.version"), "\$JVM_VERSION$")
             .replace((" " + MetadataVersion.INSTANCE.toString().replace(".", "\\.") + "(?!\\-)").toRegex(), " \\\$ABI_VERSION\\\$")
-            .replace((" " + JsMetadataVersion.INSTANCE.toString().replace(".", "\\.") + "(?!\\-)").toRegex(), " \\\$ABI_VERSION\\\$")
             .replace(KotlinCompilerVersion.VERSION, "\$VERSION$")
             .replace(" " + MetadataVersion.INSTANCE_NEXT, " \$ABI_VERSION_NEXT$")
             .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
