@@ -171,10 +171,10 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         }
     }
 
-    private val deprecationLevelHiddenSymbol: IrEnumEntrySymbol by lazy {
+    private val deprecationLevelErrorSymbol: IrEnumEntrySymbol by lazy {
         irBuiltIns.deprecationLevelSymbol.owner.declarations
             .filterIsInstance<IrEnumEntry>()
-            .single { it.name.toString() == "HIDDEN" }.symbol
+            .single { it.name.toString() == "ERROR" }.symbol
     }
 
     fun buildDeprecationCall(version: MavenComparableVersion?): IrAnnotation = IrAnnotationImpl.fromSymbolOwner(
@@ -196,7 +196,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 irBuiltIns.deprecationLevelSymbol.defaultType,
-                deprecationLevelHiddenSymbol
+                deprecationLevelErrorSymbol
             )
     }
 
