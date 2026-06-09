@@ -131,6 +131,10 @@ internal fun ObjectFactory.fileProperty(initialValue: File): RegularFileProperty
 internal fun ObjectFactory.directoryProperty(initialValue: File): DirectoryProperty = directoryProperty()
     .apply { set(initialValue) }
 
+internal fun ObjectFactory.directoryProperty(initialValue: Provider<File>): DirectoryProperty = directoryProperty()
+    .apply { fileProvider(initialValue) }
+
+
 internal fun Project.filesProvider(
     vararg buildDependencies: Any,
     provider: () -> Any?

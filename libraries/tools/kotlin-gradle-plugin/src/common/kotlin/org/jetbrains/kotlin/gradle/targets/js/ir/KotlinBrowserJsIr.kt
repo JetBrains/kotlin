@@ -32,7 +32,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         test.dependsOn(
             nodeJsRoot.npmInstallTaskProvider,
         )
-        if (target.webTargetVariant(jsVariant = false, wasmVariant = true)) {
+        if (target.isWasm) {
             test.dependsOn((nodeJsRoot as WasmNodeJsRootExtension).toolingInstallTaskProvider)
         }
 
