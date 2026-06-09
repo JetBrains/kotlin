@@ -11,6 +11,6 @@ public class InputCheckingFileReadAdvice {
 
     @Advice.OnMethodExit
     public static void advice(@Advice.FieldValue("path") String path) {
-        UndeclaredInputsGuard.checkPath(path);
+        UndeclaredInputsGuard.getInstance().checkPath(path);
     }
 }

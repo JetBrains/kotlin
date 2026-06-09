@@ -16,6 +16,7 @@ import net.bytebuddy.matcher.ElementMatchers.none
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileExistsAdvice
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileReadAdvice
 import org.jetbrains.kotlin.testFramework.inputchecking.UndeclaredInputsGuard
+import java.io.File
 import java.lang.instrument.ClassFileTransformer
 import java.lang.instrument.Instrumentation
 
@@ -36,6 +37,21 @@ object TestInstrumentationAgent {
 
     private fun instrumentMockApplicationCreationTracing(instrumentation: Instrumentation, debug: Boolean) {
         instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter(debug))
+    }
+
+    private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
+        initializeUndeclaredInputsGuard()
+        installInputCheckingAdvices(instrumentation)
+    }
+
+    private fun initializeUndeclaredInputsGuard() {
+        val rootDir = System.getProperty("test.instrumenter.root.dir")
+        val buildDir = System.getProperty("test.instrumenter.build.dir")
+        val declaredInputs = File(System.getProperty("test.instrumenter.declared.inputs.file"))
+            .readLines()
+            .filter(String::isNotEmpty)
+
+        UndeclaredInputsGuard.initialize(rootDir, buildDir, declaredInputs);
     }
 
     /**
@@ -60,9 +76,7 @@ object TestInstrumentationAgent {
      * The resulting bytecode is the same as if we had used [TypeStrategy.Default.REDEFINE],
      * but the illegal modifications are caught earlier (by ByteBuddy, not JVM).
      */
-    private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
-        UndeclaredInputsGuard.initialize()
-
+    private fun installInputCheckingAdvices(instrumentation: Instrumentation) {
         AgentBuilder.Default()
             .ignore(none())
             .with(InitializationStrategy.NoOp.INSTANCE)

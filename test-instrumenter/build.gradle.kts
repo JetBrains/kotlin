@@ -9,8 +9,6 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(libs.bytebuddy)
-
-    testImplementation(libs.junit.jupiter.api)
 }
 
 sourceSets {
@@ -57,8 +55,3 @@ configurations {
         }
     }
 }
-
-testing.suites.withType<JvmTestSuite>().configureEach {
-    useJUnitJupiter()
-}
-
