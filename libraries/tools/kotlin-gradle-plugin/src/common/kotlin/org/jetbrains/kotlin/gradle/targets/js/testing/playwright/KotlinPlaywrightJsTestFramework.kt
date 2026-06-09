@@ -11,12 +11,13 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -55,11 +56,8 @@ internal class KotlinPlaywrightJsTestFramework(
      * webkit) extend this class to share the same set of Gradle-tracked properties.
      */
     abstract class BrowserRunnerInput @Inject constructor(objects: ObjectFactory) {
-        @get:Input
-        abstract val baseUrl: Property<URI>
-
-        @get:InputDirectory
-        abstract val bundleDirectory: DirectoryProperty
+        @get:Nested
+        abstract val testsLocation: Property<KotlinJsTestsLocation>
 
         @get:Input
         abstract val name: Property<String>
@@ -134,19 +132,20 @@ internal class KotlinPlaywrightJsTestFramework(
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
-        url = buildRunnerUrl(cliArgs),
+        testsLocation = testsLocation.get(),
+        buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs) },
         timeout = timeout.get().toKotlinDuration(),
         finishMarker = finishMarker.get(),
         headless = headless.get(),
         launchArgs = launchArgs.get(),
     )
 
-    private fun BrowserRunnerInput.buildRunnerUrl(cliArgs: List<String>): String {
+    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: String, cliArgs: List<String>): String {
         val runnerConfig = objects.newInstance(KotlinBrowserRunnerConfig::class.java)
 
         runnerConfig.timeout.value(timeout)
         runnerConfig.testsFinishedMarker.value(finishMarker)
-        return runnerConfig.buildUrlWithConfigState(baseUrl.get(), cliArgs).toString()
+        return runnerConfig.buildUrlWithConfigState(URI(baseUrl), cliArgs).toString()
     }
 }
 
