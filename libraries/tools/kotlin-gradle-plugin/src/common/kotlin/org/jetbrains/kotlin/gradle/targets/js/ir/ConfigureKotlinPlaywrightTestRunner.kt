@@ -1,0 +1,75 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.targets.js.ir
+
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+
+internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
+    if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
+
+    val project = target.project
+
+    project.launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
+        val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
+
+        // TODO: KT-86706 Implement different browser runners as independent test runs
+        //  so it is aligned with KGP API
+        val testRun = browser.testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
+        val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
+        val testTaskProvider = testRun.executionTask
+
+        val browserDsl = browser.test as KotlinJsBrowserTestImpl
+
+        testTaskProvider.configure { testTask ->
+            val objects = project.objects
+            val inputs = objects.newInstance(KotlinPlaywrightJsTestFramework.Inputs::class.java)
+
+            inputs.chromiumRunners.set(
+                browserDsl.chromiumRunners.values.map { runner ->
+                    objects.newInstance(KotlinPlaywrightJsTestFramework.ChromiumRunnerInput::class.java)
+                        .also { it.populateFrom(runner) }
+                }
+            )
+            inputs.firefoxRunners.set(
+                browserDsl.firefoxRunners.values.map { runner ->
+                    objects.newInstance(KotlinPlaywrightJsTestFramework.FirefoxRunnerInput::class.java)
+                        .also { it.populateFrom(runner) }
+                }
+            )
+            inputs.webkitRunners.set(
+                browserDsl.webkitRunners.values.map { runner ->
+                    objects.newInstance(KotlinPlaywrightJsTestFramework.WebkitRunnerInput::class.java)
+                        .also { it.populateFrom(runner) }
+                }
+            )
+
+            // TODO: KT-86707 Report warning if test framework was set with something else.
+            testTask.testFramework = KotlinPlaywrightJsTestFramework(
+                compilation = testCompilation,
+                frameworkGradleInputObject = inputs,
+                objects = objects,
+            )
+        }
+    }
+}
+
+private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
+    runner: KotlinBrowserTestRunnerDsl,
+) {
+    name.convention(runner.name)
+    bundleDirectory.convention(runner.bundleDirectory)
+    // TODO: KT-86715 Add ability to load test.html via dev-server, so we need to allow configuring it
+    baseUrl.convention(runner.bundleDirectory.map { it.file("test.html").asFile.toURI() })
+    timeout.convention(runner.timeout)
+    headless.convention(runner.headless)
+    launchArgs.convention(runner.launchArgs)
+}
