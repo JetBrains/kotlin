@@ -1,7 +1,7 @@
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
-// LANGUAGE: +JsStaticInInterface +JsAllowExportingSuspendFunctions +JsExportInterfacesInImplementableWay
+// LANGUAGE: +JsStaticInInterface +JsExportInterfacesInImplementableWay
 // OPT_IN: kotlin.js.ExperimentalJsNoRuntime
 // INFER_MAIN_MODULE
 // WITH_STDLIB
@@ -102,6 +102,25 @@ suspend fun justCallParentAsyncMethod(foo: IFoo<*>): String =
 @JsExport
 suspend fun justCallSuspendWithDefaultImplementation(foo: IFoo<*>): String =
     foo.suspendWithDefaultImplementation()
+
+@JsExport
+suspend fun callTypeScriptDefaultSuspend(value: TypeScriptDefaultSuspend): String =
+    value.suspendDefault()
+
+@JsExport
+interface TypeScriptDefaultSuspend {
+    fun marker(): String
+    suspend fun suspendDefault(): String = "DEFAULT ${marker()}"
+}
+
+@JsExport
+suspend fun callTsAbstractSuspend(value: TsSuspendDispatch): String =
+    value.abstractSuspend()
+
+@JsExport
+interface TsSuspendDispatch {
+    suspend fun abstractSuspend(): String
+}
 
 @JsExport
 fun callingWithDefaultsWithoutParameter(foo: IFoo<*>): String =

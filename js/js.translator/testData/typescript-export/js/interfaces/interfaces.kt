@@ -160,6 +160,172 @@ public interface WithDefaultSuspend {
 @JsExport
 public class WithDefaultSuspendImpl : WithDefaultSuspend
 
+@JsExport
+suspend fun callComposedDefaultSuspend(value: AbstractAndDefaultSuspend): String =
+    value.defaultSuspend()
+
+@JsExport
+interface AbstractAndDefaultSuspend {
+    suspend fun abstractSuspend(): String
+    suspend fun defaultSuspend(): String = "${abstractSuspend()} DEFAULT"
+}
+
+@JsExport
+class AbstractAndDefaultSuspendImpl : AbstractAndDefaultSuspend {
+    override suspend fun abstractSuspend(): String = "ABSTRACT"
+}
+
+@JsExport
+suspend fun callOuterDefaultSuspend(value: ChainedDefaultSuspend): String =
+    value.outerSuspendDefault()
+
+@JsExport
+interface ChainedDefaultSuspend {
+    suspend fun innerSuspendDefault(): String = "INNER"
+    suspend fun outerSuspendDefault(): String = "${innerSuspendDefault()} OUTER"
+}
+
+@JsExport
+class ChainedDefaultSuspendImpl : ChainedDefaultSuspend
+
+@JsExport
+suspend fun callDiamondDefaultSuspend(value: BaseDiamondDefaultSuspend): String =
+    value.suspendDefault()
+
+@JsExport
+interface BaseDiamondDefaultSuspend {
+    suspend fun suspendDefault(): String = "DIAMOND"
+}
+
+@JsExport
+interface LeftDiamondDefaultSuspend : BaseDiamondDefaultSuspend
+
+@JsExport
+interface RightDiamondDefaultSuspend : BaseDiamondDefaultSuspend
+
+@JsExport
+class DiamondDefaultSuspendImpl : LeftDiamondDefaultSuspend, RightDiamondDefaultSuspend
+
+@JsExport
+suspend fun callGenericDefaultSuspend(value: GenericDefaultSuspend<String>, input: String): String =
+    value.echoSuspendDefault(input)
+
+@JsExport
+interface GenericDefaultSuspend<T> {
+    suspend fun echoSuspendDefault(input: T): T = input
+}
+
+@JsExport
+class StringGenericDefaultSuspendImpl : GenericDefaultSuspend<String>
+
+@JsExport
+suspend fun callChainDefaultSuspend(value: ChainDefaultSuspend, input: String): String =
+    value.suspendDefault(input)
+
+@JsExport
+interface ChainDefaultSuspend {
+    suspend fun suspendDefault(input: String = "OK"): String = "CHAIN $input"
+}
+
+@JsExport
+open class MidChainDefaultSuspendImpl : ChainDefaultSuspend
+
+@JsExport
+class LeafChainDefaultSuspendImpl : MidChainDefaultSuspendImpl()
+
+@JsExport
+suspend fun callLeftDefaultSuspend(value: LeftDefaultSuspend): String =
+    value.leftSuspendDefault()
+
+@JsExport
+suspend fun callRightDefaultSuspend(value: RightDefaultSuspend): String =
+    value.rightSuspendDefault()
+
+@JsExport
+interface LeftDefaultSuspend {
+    suspend fun leftSuspendDefault(): String = "LEFT"
+}
+
+@JsExport
+interface RightDefaultSuspend {
+    suspend fun rightSuspendDefault(): String = "RIGHT"
+}
+
+@JsExport
+class MultipleInterfaceDefaultsImpl : LeftDefaultSuspend, RightDefaultSuspend
+
+@JsExport
+suspend fun callNullableDefaultSuspend(value: NullableDefaultSuspend): String? =
+    value.suspendDefault()
+
+@JsExport
+interface NullableDefaultSuspend {
+    suspend fun suspendDefault(): String? = null
+}
+
+@JsExport
+class NullableDefaultSuspendImpl : NullableDefaultSuspend
+
+@JsExport
+suspend fun callParameterizedDefaultSuspend(value: ParameterizedDefaultSuspend, input: String): String =
+    value.suspendDefault(input)
+
+@JsExport
+interface ParameterizedDefaultSuspend {
+    suspend fun suspendDefault(input: String = "OK"): String = "VALUE $input"
+}
+
+@JsExport
+class ParameterizedDefaultSuspendImpl : ParameterizedDefaultSuspend
+
+@JsExport
+suspend fun callUnitDefaultSuspend(value: UnitDefaultSuspend): Unit =
+    value.runDefault()
+
+@JsExport
+interface UnitDefaultSuspend {
+    suspend fun runDefault(): Unit = Unit
+}
+
+@JsExport
+class UnitDefaultSuspendImpl : UnitDefaultSuspend
+
+@JsExport
+suspend fun callParentSuspend(holder: HolderOfInheritedSuspend, value: String): String =
+    holder.parentSuspend(value)
+
+@JsExport
+interface HolderOfInheritedSuspend {
+    suspend fun parentSuspend(value: String): String
+}
+
+@JsExport.Ignore
+open class HiddenSuspendParent : HolderOfInheritedSuspend {
+    override suspend fun parentSuspend(value: String): String = "PARENT $value"
+}
+
+@JsExport
+class ExportedSuspendChild : HiddenSuspendParent() {
+    suspend fun childSuspend(): String = "CHILD"
+}
+
+@JsExport
+suspend fun callOverrideSuspend(value: OverridableSuspend): String =
+    value.suspendDefault()
+
+@JsExport
+interface OverridableSuspend {
+    suspend fun suspendDefault(): String = "DEFAULT"
+}
+
+@JsExport
+class InheritingSuspendImpl : OverridableSuspend
+
+@JsExport
+class OverridingSuspendImpl : OverridableSuspend {
+    override suspend fun suspendDefault(): String = "OVERRIDDEN"
+}
+
 // KT-85038
 @JsExport
 sealed external interface ExternalInterfaceWithCompanion {

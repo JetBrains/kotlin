@@ -87,6 +87,26 @@ declare namespace JS_TESTS {
         function justCallAsyncFoo(foo: foo.IFoo<any>): Promise<string>;
         function justCallParentAsyncMethod(foo: foo.IFoo<any>): Promise<string>;
         function justCallSuspendWithDefaultImplementation(foo: foo.IFoo<any>): Promise<string>;
+        function callTypeScriptDefaultSuspend(value: foo.TypeScriptDefaultSuspend): Promise<string>;
+        interface TypeScriptDefaultSuspend {
+            marker(): string;
+            suspendDefault(): Promise<string>;
+            readonly [foo.TypeScriptDefaultSuspend.Symbol]: true;
+        }
+        namespace TypeScriptDefaultSuspend {
+            const Symbol: unique symbol;
+            namespace DefaultImpls {
+                function suspendDefault($this: foo.TypeScriptDefaultSuspend): Promise<string>;
+            }
+        }
+        function callTsAbstractSuspend(value: foo.TsSuspendDispatch): Promise<string>;
+        interface TsSuspendDispatch {
+            abstractSuspend(): Promise<string>;
+            readonly [foo.TsSuspendDispatch.Symbol]: true;
+        }
+        namespace TsSuspendDispatch {
+            const Symbol: unique symbol;
+        }
         function callingWithDefaultsWithoutParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithoutParameter(foo: foo.IFoo<any>): string;

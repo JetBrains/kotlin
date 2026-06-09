@@ -28,6 +28,10 @@ import KotlinChildNoRuntimeImpl = JS_TESTS.foo.KotlinChildNoRuntimeImpl;
 import NoRuntimeFunIface = JS_TESTS.foo.NoRuntimeFunIface;
 import callNoRuntimeFunInterface = JS_TESTS.foo.callNoRuntimeFunInterface;
 import makeNoRuntimeFunInterfaceWithSam = JS_TESTS.foo.makeNoRuntimeFunInterfaceWithSam;
+import TypeScriptDefaultSuspend = JS_TESTS.foo.TypeScriptDefaultSuspend;
+import callTypeScriptDefaultSuspend = JS_TESTS.foo.callTypeScriptDefaultSuspend;
+import TsSuspendDispatch = JS_TESTS.foo.TsSuspendDispatch;
+import callTsAbstractSuspend = JS_TESTS.foo.callTsAbstractSuspend;
 import Listener = JS_TESTS.foo.Listener;
 import beginWork = JS_TESTS.foo.beginWork;
 import ShouldBeNotImplementableWithIgnoredProperty = JS_TESTS.foo.ShouldBeNotImplementableWithIgnoredProperty;
@@ -145,6 +149,26 @@ class TsNoRuntimeImpl implements NoRuntimeIface {
 class TsChildNoRuntimeImpl implements ChildOfNoRuntime {
     constructor(public readonly a: string) {}
     child(): string { return `child-${this.a}` }
+}
+
+class TypeScriptDefaultSuspendImpl implements TypeScriptDefaultSuspend {
+    readonly [TypeScriptDefaultSuspend.Symbol] = true
+
+    marker(): string {
+        return "TYPESCRIPT"
+    }
+
+    suspendDefault(): Promise<string> {
+        return TypeScriptDefaultSuspend.DefaultImpls.suspendDefault(this)
+    }
+}
+
+class TypeScriptSuspendDispatchImpl implements TsSuspendDispatch {
+    readonly [TsSuspendDispatch.Symbol] = true
+
+    async abstractSuspend(): Promise<string> {
+        return "ABSTRACT TYPESCRIPT"
+    }
 }
 
 class TsListener implements Listener {
@@ -344,6 +368,22 @@ async function box(): Promise<string> {
 
     const ktChildNR: ChildOfNoRuntime = new KotlinChildNoRuntimeImpl("Z")
     if (ktChildNR.child() !== "child-Z") return "Fail: KotlinChildNoRuntimeImpl.child() is wrong: " + ktChildNR.child()
+
+    const typeScriptDefaultSuspend: TypeScriptDefaultSuspend = new TypeScriptDefaultSuspendImpl()
+    if (await typeScriptDefaultSuspend.suspendDefault() !== "DEFAULT TYPESCRIPT") {
+        return "Fail: TypeScriptDefaultSuspend.suspendDefault returns unexpected result"
+    }
+    if (await callTypeScriptDefaultSuspend(typeScriptDefaultSuspend) !== "DEFAULT TYPESCRIPT") {
+        return "Fail: callTypeScriptDefaultSuspend returns unexpected result"
+    }
+
+    const typeScriptSuspendDispatch: TsSuspendDispatch = new TypeScriptSuspendDispatchImpl()
+    if (await typeScriptSuspendDispatch.abstractSuspend() !== "ABSTRACT TYPESCRIPT") {
+        return "Fail: TsSuspendDispatch.abstractSuspend returns unexpected result"
+    }
+    if (await callTsAbstractSuspend(typeScriptSuspendDispatch) !== "ABSTRACT TYPESCRIPT") {
+        return "Fail: callTsAbstractSuspend returns unexpected result"
+    }
 
     const tsListener: Listener = new TsListener("ts")
     const beginWorkResult = beginWork(tsListener)
