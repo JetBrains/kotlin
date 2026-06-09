@@ -2877,6 +2877,12 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRules
 	public fun withType (Ljava/lang/Class;Lorg/gradle/api/Action;)Lorg/gradle/api/DomainObjectCollection;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackBundleForKotlinJsTests : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl$Companion;
 	public abstract fun cssSupport (Lorg/gradle/api/Action;)V
