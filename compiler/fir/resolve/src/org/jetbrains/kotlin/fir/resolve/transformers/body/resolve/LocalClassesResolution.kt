@@ -63,7 +63,6 @@ fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClassLikeDeclarations(
         components.scopeSession,
         localClassesNavigationInfo
     )
-    println("Resolving local class body ${symbol.classId} during ${components.transformer.transformerPhase}")
     runContractAndBodiesResolutionForLocalClass(
         components,
         resolutionMode,
