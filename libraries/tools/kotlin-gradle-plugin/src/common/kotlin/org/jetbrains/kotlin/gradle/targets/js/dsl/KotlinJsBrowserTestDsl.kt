@@ -79,7 +79,13 @@ interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerConfigDsl, Named
  * DSL Interface to configure multiple browser test runners for Kotlin/JS.
  */
 @ExperimentalJsTestDsl
-interface KotlinJsBrowserTestDsl : BrowserTestRunnerConfigDsl {
+interface KotlinJsBrowserTestDsl {
+    /**
+     * Represents a default configuration for all browser test runners.
+     * Defaults can be overridden in the individual browser test runner configuration.
+     */
+    val browserDefaults: BrowserTestRunnerConfigDsl
+
     /**
      * Default bundle task that produces js bundle with the HTML file to run Kotlin tests in a browser.
      *
