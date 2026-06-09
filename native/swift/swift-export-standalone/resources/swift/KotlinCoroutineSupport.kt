@@ -63,6 +63,25 @@ class SwiftJob private constructor(
     }
 }
 
+public fun <T> swiftCoroutine(
+    continuation: (T) -> Unit,
+    exception: (Any?) -> Unit,
+    cancellation: SwiftJob,
+    block: suspend CoroutineScope.() -> T
+) {
+    CoroutineScope(cancellation + Dispatchers.Default).launch(start = CoroutineStart.UNDISPATCHED) {
+        try {
+            continuation(block())
+        } catch (error: CancellationException) {
+            cancellation.cancel()
+            exception(null)
+            throw error
+        } catch (error: Throwable) {
+            exception(error)
+        }
+    }.alsoCancel(cancellation)
+}
+
 @ExportedBridge("__root___SwiftJob_init_allocate")
 public fun __root___SwiftJob_init_allocate(): kotlin.native.internal.NativePtr {
     val instance = kotlin.native.internal.createUninitializedInstance<SwiftJob>()
@@ -238,9 +257,14 @@ public fun SwiftFlowIterator_next(self: kotlin.native.internal.NativePtr, contin
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SwiftFlowIterator<kotlin.Any?>
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.Boolean, kotlin.native.internal.NativePtr)->Unit>(continuation);
-        { arg0: kotlin.Boolean, arg1: kotlin.Any? ->
-            val _arg1 = if (arg1 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg1)
-            val _result = kotlinFun(arg0, _arg1)
+        { arg0: SwiftFlowIterator<kotlin.Any?>.Value? ->
+            val _result = if (arg0 == null) {
+                kotlinFun(false, kotlin.native.internal.NativePtr.NULL)
+            } else {
+                val value = arg0.value
+                val _value = if (value == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(value)
+                kotlinFun(true, _value)
+            }
             _result
         }
     }
@@ -252,22 +276,9 @@ public fun SwiftFlowIterator_next(self: kotlin.native.internal.NativePtr, contin
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = __self.next()
-            if (_result == null) {
-                __continuation(false, null)
-            } else {
-                __continuation(true, _result.value)
-            }
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.next()
+    }
 }
 
 @ExportedBridge("_kotlin_swift_SwiftFlowIterator_init_allocate")

@@ -12,31 +12,15 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector where Sel
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await {
-            try Task.checkCancellation()
-            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { nativeContinuation in
-                    withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Void) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
-
-                        let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
-                            let originalBlock = continuation
-                            return { (arg0: Swift.Bool) in return { originalBlock({ arg0; return () }()); return true }() }
-                        }(), {
-                            let originalBlock = exception
-                            return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
-                        }(), cancellation.__externalRCRef())
-                    }
-                }
-            } onCancel: {
-                cancellation?.cancelExternally()
-            }
-        }()
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
+                let originalBlock: (Swift.Void) -> Swift.Void = continuation
+                return { (arg0: Swift.Bool) in return { originalBlock({ arg0; return () }()); return true }() }
+            }(), {
+                let originalBlock: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
+            }(), cancellation.__externalRCRef())
+        }
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector {
@@ -50,31 +34,15 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
     public func emit(
         value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) async throws -> Swift.Void {
-        try await {
-            try Task.checkCancellation()
-            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { nativeContinuation in
-                    withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Void) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
-
-                        let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
-                            let originalBlock = continuation
-                            return { (arg0: Swift.Bool) in return { originalBlock({ arg0; return () }()); return true }() }
-                        }(), {
-                            let originalBlock = exception
-                            return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
-                        }(), cancellation.__externalRCRef())
-                    }
-                }
-            } onCancel: {
-                cancellation?.cancelExternally()
-            }
-        }()
+        try await withKotlinContinuation { continuation, exception, cancellation in
+            let _: Bool = kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, {
+                let originalBlock: (Swift.Void) -> Swift.Void = continuation
+                return { (arg0: Swift.Bool) in return { originalBlock({ arg0; return () }()); return true }() }
+            }(), {
+                let originalBlock: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = exception
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
+            }(), cancellation.__externalRCRef())
+        }
     }
     @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
     public func resetReplayCache() -> Swift.Void {

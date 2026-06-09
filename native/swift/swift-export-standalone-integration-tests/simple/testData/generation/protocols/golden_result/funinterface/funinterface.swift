@@ -114,7 +114,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers
     }
@@ -122,7 +122,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation
     }
@@ -130,7 +130,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore
     }
@@ -138,7 +138,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.FunctionalInterface {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface.FunctionalInterface
     }
@@ -146,7 +146,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
     }
@@ -154,7 +154,7 @@ extension ExportedKotlinPackages.funinterface {
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock = function
+            let originalBlock: () -> Swift.Int32 = function
             return { return originalBlock() }
         }())) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
     }

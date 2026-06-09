@@ -506,18 +506,9 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
         val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
-            CoroutineScope(__${cancellation.name.kotlinIdentifier} + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-                try {
-                    val $resultName = $callSite
-                    __${continuation.name}(${resultName})
-                } catch (error: CancellationException) {
-                    __${cancellation.name.kotlinIdentifier}.cancel()
-                    __${exception.name}(null)
-                    throw error
-                } catch (error: Throwable) {
-                    __${exception.name}(error)
-                }
-            }.alsoCancel(__${cancellation.name.kotlinIdentifier})
+            swiftCoroutine(__${continuation.name}, __${exception.name}, __${cancellation.name.kotlinIdentifier}) {
+                $callSite
+            }
             """.trimIndent().prependIndent(indent)
         )
     } else {
@@ -563,28 +554,15 @@ context(session: SirSession)
 private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
     val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
     val errorParameter = errorParameter ?: error("Async function must have an error parameter")
-    val indent = "                        "
+    val indent = "            "
 
+    val continuationName = continuation.name.swiftIdentifier
+    val exceptionName = exception.name.swiftIdentifier
+    val cancellationName = cancellation.name.swiftIdentifier
     return """
-        try${"!".takeIf { !isAsync } ?: ""} await {
-            try Task.checkCancellation()
-            var ${cancellation.name.swiftIdentifier}: ${cancellation.bridge.swiftType.swiftName}! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { nativeContinuation in
-                    withUnsafeCurrentTask { currentTask in
-                        let ${continuation.name.swiftIdentifier}: ${continuation.bridge.swiftType.swiftName} = { nativeContinuation.resume(returning: $0) }
-                        let ${exception.name.swiftIdentifier}: ${exception.bridge.swiftType.swiftName} = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        ${cancellation.name.swiftIdentifier} = ${cancellation.bridge.swiftType.swiftName}(currentTask!)
-                        
-                        let _: Bool = ${swiftInvocationLineForCBridge(typeNamer, argumentOverrides).prependIndentToTrailingLines(indent)}
-                    }            
-                }
-            } onCancel: {
-                ${cancellation.name.swiftIdentifier}?.cancelExternally()
-            }
-        }()
+        try await withKotlinContinuation { $continuationName, $exceptionName, $cancellationName in 
+            let _: Bool = ${swiftInvocationLineForCBridge(typeNamer, argumentOverrides).prependIndentToTrailingLines(indent)}
+        }
     """.trimIndent()
 }
 
@@ -640,4 +618,3 @@ private fun String.prependIndentToTrailingLines(indent: String): String = this.l
         }
     }
 }
-

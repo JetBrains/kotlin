@@ -302,7 +302,7 @@ public func customFilter(
     predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, {
-        let originalBlock = predicate
+        let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool = predicate
         return { (arg0: Swift.UnsafeMutableRawPointer?) in return originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()) }
     }()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
@@ -316,7 +316,7 @@ public func produceBoxUpperBound(
     box: @escaping (main.Box) -> Swift.Void
 ) -> Swift.Void {
     return { __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
-        let originalBlock = box
+        let originalBlock: (main.Box) -> Swift.Void = box
         return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.Box.__createClassWrapper(externalRCRef: arg0)); return true }() }
     }()); return () }()
 }
@@ -357,7 +357,7 @@ public func takeBoxUpperBoundClosure(
     box: @escaping () -> main.Box
 ) -> Swift.Void {
     return { __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__({
-        let originalBlock = box
+        let originalBlock: () -> main.Box = box
         return { return originalBlock().__externalRCRef() }
     }()); return () }()
 }

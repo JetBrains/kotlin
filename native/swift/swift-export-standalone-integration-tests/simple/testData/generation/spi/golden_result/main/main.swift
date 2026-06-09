@@ -94,7 +94,7 @@ public var functionalTypePropertyA: (main.MyOptInClass) -> Swift.Void {
     @_spi(MyOptInApi)
     set {
         return { __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__({
-            let originalBlock = newValue
+            let originalBlock: (main.MyOptInClass) -> Swift.Void = newValue
             return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.MyOptInClass.__createClassWrapper(externalRCRef: arg0)); return true }() }
         }()); return () }()
     }
@@ -111,7 +111,7 @@ public var functionalTypePropertyB: (any lib.InternalLibInterface) -> Swift.Void
     @_spi(InternalLibApi)
     set {
         return { __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__({
-            let originalBlock = newValue
+            let originalBlock: (any lib.InternalLibInterface) -> Swift.Void = newValue
             return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any lib.InternalLibInterface); return true }() }
         }()); return () }()
     }
@@ -121,7 +121,7 @@ public func callbackFunction(
     action: @escaping () -> main.MyOptInClass
 ) -> Swift.Void {
     return { __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__({
-        let originalBlock = action
+        let originalBlock: () -> main.MyOptInClass = action
         return { return originalBlock().__externalRCRef() }
     }()); return () }()
 }
