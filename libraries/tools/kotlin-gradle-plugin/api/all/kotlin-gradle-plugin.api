@@ -2586,10 +2586,16 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
-	public abstract fun getBundleDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BundleKotlinJsTestsTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution {
@@ -2627,13 +2633,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun webpackTask (Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl {
+	public abstract fun browserDefaults (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
 	public abstract fun chromium (Ljava/lang/String;)V
 	public abstract fun chromium (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun firefox (Ljava/lang/String;)V
 	public abstract fun firefox (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun getAllBrowserRunners ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getBrowserDefaults ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
 	public abstract fun getBundleTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getDefaultTestsLocation ()Lorg/gradle/api/provider/Provider;
 	public abstract fun webkit (Ljava/lang/String;)V
 	public abstract fun webkit (Ljava/lang/String;Lorg/gradle/api/Action;)V
 }
@@ -2723,6 +2732,15 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun produceExecutable (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestDevServerService {
+	public abstract fun use (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestsLocation {
+	public abstract fun getBundleLocation ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getDevServer ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl {
@@ -2919,12 +2937,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRules
 	public fun withType (Ljava/lang/Class;)Lorg/gradle/api/NamedDomainObjectSet;
 	public fun withType (Ljava/lang/Class;Lgroovy/lang/Closure;)Lorg/gradle/api/DomainObjectCollection;
 	public fun withType (Ljava/lang/Class;Lorg/gradle/api/Action;)Lorg/gradle/api/DomainObjectCollection;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackBundleForKotlinJsTests : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
-	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl {
