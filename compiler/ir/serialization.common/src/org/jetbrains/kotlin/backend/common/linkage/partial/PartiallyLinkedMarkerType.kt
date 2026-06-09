@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 
@@ -16,9 +17,10 @@ import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
  * Replacement for IR types that reference unusable classifier symbols.
  * Behaves like [kotlin.Any]?. Preserves [ClassifierPartialLinkageStatus.Unusable].
  */
-internal class PartiallyLinkedMarkerType(
+class PartiallyLinkedMarkerType(
     anyClass: IrClassSymbol,
     val unusableClassifier: ClassifierPartialLinkageStatus.Unusable,
+    val originalType: IrType,
 ) : IrSimpleType() {
     override val annotations: List<IrAnnotation> get() = emptyList()
     override val classifier: IrClassSymbol = anyClass

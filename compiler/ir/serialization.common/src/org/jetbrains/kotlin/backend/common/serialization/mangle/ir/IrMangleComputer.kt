@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartiallyLinkedMarkerType
 import org.jetbrains.kotlin.backend.common.serialization.mangle.BaseKotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
@@ -136,6 +137,9 @@ open class IrMangleComputer(
 
     final override fun mangleType(tBuilder: StringBuilder, type: IrType, declarationSiteSession: Nothing?) {
         when (type) {
+            is PartiallyLinkedMarkerType -> {
+                mangleType(tBuilder, type.originalType, declarationSiteSession)
+            }
             is IrSimpleType -> {
                 when (val classifier = type.classifier) {
                     is IrClassSymbol -> {
