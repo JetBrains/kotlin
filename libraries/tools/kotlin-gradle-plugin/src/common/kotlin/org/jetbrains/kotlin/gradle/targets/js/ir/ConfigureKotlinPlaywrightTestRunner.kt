@@ -35,23 +35,23 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
 
         testTaskProvider.configure { testTask ->
             val objects = project.objects
-            val inputs = objects.newInstance(KotlinPlaywrightJsTestFramework.Inputs::class.java)
+            val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
 
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->
-                    objects.newInstance(KotlinPlaywrightJsTestFramework.ChromiumRunnerInput::class.java)
+                    KotlinPlaywrightJsTestFramework.createChromiumInputs(objects)
                         .also { it.populateFrom(runner) }
                 }
             )
             inputs.firefoxRunners.set(
                 browserTestDsl.firefoxRunners.values.map { runner ->
-                    objects.newInstance(KotlinPlaywrightJsTestFramework.FirefoxRunnerInput::class.java)
+                    KotlinPlaywrightJsTestFramework.createFirefoxInputs(objects)
                         .also { it.populateFrom(runner) }
                 }
             )
             inputs.webkitRunners.set(
                 browserTestDsl.webkitRunners.values.map { runner ->
-                    objects.newInstance(KotlinPlaywrightJsTestFramework.WebkitRunnerInput::class.java)
+                    KotlinPlaywrightJsTestFramework.createWebkitInputs(objects)
                         .also { it.populateFrom(runner) }
                 }
             )
