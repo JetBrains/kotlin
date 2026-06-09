@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.JsStaticInitializersLowering.Companion.STATIC_FIELD_INITIALIZER
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitializer
 import org.jetbrains.kotlin.ir.builders.*
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -104,8 +102,17 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         })
     }
 
+    private val visited = hashSetOf<IrClass>()
     private fun processDeclarationContainer(container: IrClass) {
+        if (container in visited) return
         if (container.isEffectivelyExternal()) return
+
+        // Before building child static_init, we need to be sure that all super classes are processed in order before the child.
+        // This is needed for 2 reasons:
+        // 1. To create a call to a parent static_init in the child static_init body.
+        // 2. To create child static_init even if the child doesn't have any initializers, but super class has.
+        container.superClass?.let { processDeclarationContainer(it) }
+
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
         val staticDeclarationsByFields = buildMap {
             for (declaration in container.declarations) {
@@ -124,41 +131,41 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
             }
 
             for (declaration in container.declarations) {
-                val field = declaration as? IrField ?: (declaration as? IrProperty)?.backingField
-                if (field != null && field.isStatic) {
-                    field.initializer?.expression?.let {
-                        add(
-                            builder.irSetField(
-                                receiver = null,
-                                field = field,
-                                value = it,
-                                origin = STATIC_FIELD_INITIALIZER
+                when (declaration) {
+                    in staticDeclarationsByFields -> {
+                        staticDeclarationsByFields[declaration]?.let { [field, initializer] ->
+                            add(
+                                builder.irSetField(
+                                    receiver = null,
+                                    field = field,
+                                    value = initializer,
+                                    origin = STATIC_FIELD_INITIALIZER
+                                )
                             )
-                        )
-                        field.initializer = null
+                            field.initializer = null
+                        }
                     }
-                    continue
-                }
-
-                if (declaration is IrClass && declaration.isCompanion && staticDeclarationsByFields.isNotEmpty()) {
-                    // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
-                    // body should be moved to the static_init body to preserve the correct order of initialization.
-                    // _getInstance then calls static_init instead.
-                    declaration.objectGetInstanceFunction?.let { getInstance ->
-                        val body = getInstance.body as? IrBlockBody ?: return@let
-                        body.statements.let { statements ->
-                            // Relying on the fact that _getInstance always ends with IrReturn
-                            addAll(statements.dropLast(1))
-                            val irReturn = statements.last()
-                            statements.clear()
-                            statements.add(irReturn)
+                    is IrClass if declaration.isCompanion && staticDeclarationsByFields.isNotEmpty() -> {
+                        // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
+                        // body should be moved to the static_init body to preserve the correct order of initialization.
+                        // _getInstance then calls static_init instead.
+                        declaration.objectGetInstanceFunction?.let { getInstance ->
+                            val body = getInstance.body as? IrBlockBody ?: return@let
+                            body.statements.let { statements ->
+                                // Relying on the fact that _getInstance always ends with IrReturn
+                                addAll(statements.dropLast(1))
+                                val irReturn = statements.last()
+                                statements.clear()
+                                statements.add(irReturn)
+                            }
                         }
                     }
                 }
             }
         }
 
-        if (initializers.isEmpty()) return
+        visited += container
+        if (initializers.isEmpty() && container.superClass?.staticInitializer == null) return
 
         val staticInitCalledField = createStaticInitCalledField(container)
         val staticInitFunction = createInitFunction(
@@ -224,56 +231,23 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
             returnType = context.irBuiltIns.unitType
         }
         return initFunction.apply {
+            val builder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET)
             parent = container
             body = context.irFactory.createBlockBody(startOffset, endOffset) {
-                statements += context.createIrBuilder(symbol, SYNTHETIC_OFFSET).irBlockBody(this) {
+                statements += builder.irBlockBody(this) {
                     +irIfThen(irGetField(null, initCalledVar), irReturnUnit())
                     +irSetField(null, initCalledVar, irBoolean(true))
                 }.statements
+
+                container.superClass?.staticInitializer?.let {
+                    statements += builder.irCall(it.symbol)
+                }
+
                 for (initializer in initializers) {
                     initializer.setDeclarationsParent(initFunction)
                 }
                 statements += initializers
             }
         }
-    }
-}
-
-/**
- * Inserts parents static initializer calls into the child static initializers body.
- */
-@PhasePrerequisites(JsStaticInitializersLowering::class)
-internal class JsStaticInitializersInheritanceLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitFile(declaration: IrFile) {
-                declaration.acceptChildrenVoid(this)
-            }
-
-            override fun visitClass(declaration: IrClass) {
-                for (function in declaration.functions) {
-                    if (function != declaration.staticInitializer) continue
-
-                    val body = function.body as? IrBlockBody ?: continue
-                    val parentInitializerCalls =
-                        context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).let { builder ->
-                            declaration.parentStaticInitializers.map { builder.irCall(it) }
-                        }
-
-                    // Prepend the first initializer of this class with call to parent ones
-                    // If static_init exists, it always contains at least 1 static field initializer
-                    // TODO: The 'origin' has not been taken into account here because currently enum cases initializers do not set it to
-                    //  STATIC_FIELD_INITIALIZER
-                    val initStartIndex = body.statements.indexOfFirst { it is IrSetField }
-
-                    body.statements.addAll(initStartIndex, parentInitializerCalls)
-                }
-
-                declaration.acceptChildrenVoid(this)
-            }
-
-            private val IrClass.parentStaticInitializers: List<IrSimpleFunctionSymbol>
-                get() = getAllSuperclasses().mapNotNull { it.staticInitializer?.symbol }
-        })
     }
 }
