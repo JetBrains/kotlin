@@ -20,26 +20,25 @@ import kotlin.random.Random
 
 class UndeclaredInputsGuardTest {
 
-    @TempDir
-    private lateinit var tempDir: Path
-
-    private lateinit var declaredInputsFile: Path
+    private lateinit var undeclaredInputsGuard: UndeclaredInputsGuard
 
     @BeforeEach
     fun setup() {
-        declaredInputsFile = tempDir.resolve("declared-inputs.txt").apply { writeText("") }
-        System.setProperty("test.instrumenter.declared.inputs.file", declaredInputsFile.absolutePathString())
-        System.setProperty("test.instrumenter.root.dir", File("..").canonicalPath)
-        System.setProperty("test.instrumenter.build.dir", File("build").canonicalPath)
+        val rootDir = File("..").canonicalPath
+        val buildDir = File("build").canonicalPath
+        val declaredInputs = emptySet<String>()
+
+        UndeclaredInputsGuard.install(rootDir, buildDir, declaredInputs)
+        undeclaredInputsGuard = UndeclaredInputsGuard.getInstance()
     }
 
     @Test
     fun `guard detects undeclared inout`() {
         // when
-        UndeclaredInputsGuard.checkPath("foo.txt")
+        undeclaredInputsGuard.checkPath("foo.txt")
 
         // then
-        assertTrue { UndeclaredInputsGuard.getUndeclaredInputs().isNotEmpty() }
+        assertTrue { undeclaredInputsGuard.undeclaredInputs.isNotEmpty() }
     }
 
     @Test
@@ -49,12 +48,12 @@ class UndeclaredInputsGuardTest {
             .map {
                 thread {
                     Thread.sleep(Random.nextLong(0, 500))
-                    UndeclaredInputsGuard.checkPath("$it.txt")
+                    undeclaredInputsGuard.checkPath("$it.txt")
                 }
             }
             .forEach { it.join() }
 
         // then
-        assertEquals(1000, UndeclaredInputsGuard.getUndeclaredInputs().size)
+        assertEquals(1000, undeclaredInputsGuard.undeclaredInputs.size)
     }
 }

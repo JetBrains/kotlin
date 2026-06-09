@@ -15,7 +15,7 @@ public class InputCheckingFileExistsAdvice {
     public static void advice(@Advice.This File file, @Advice.Return boolean fileExistsReturnValue) {
         // We skip non-existent files as we don't consider them inputs; see detailed explanation in test-inputs-check-v2/README.md
         if (fileExistsReturnValue) {
-            UndeclaredInputsGuard.checkPath(file.getPath());
+            UndeclaredInputsGuard.getInstance().checkPath(file.getPath());
         }
     }
 }
