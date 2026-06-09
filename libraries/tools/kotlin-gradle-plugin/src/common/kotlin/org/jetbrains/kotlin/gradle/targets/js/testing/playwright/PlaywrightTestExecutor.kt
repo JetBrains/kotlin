@@ -53,16 +53,11 @@ internal class PwExecutionSpec(
 ) : TestExecutionSpec
 
 internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
-    private var playwright: Playwright? = null
 
     override fun execute(spec: PwExecutionSpec, testResultProcessor: TestResultProcessor) {
         if (spec.runners.isEmpty()) return
 
-        // TODO: KT-86449 Provide Node.js and plawright-core npm dependency separately.
-        //  Use thin layer of Java Classes to interact with Playwright via std in/out pipes.
-        val playwright = Playwright.create().also { this.playwright = it }
         val client = spec.createClient(testResultProcessor, log)
-
         val handler = TCServiceMessageOutputStreamHandler(
             client,
             { },
@@ -70,11 +65,18 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             false,
         )
 
-        with(client) {
-            root {
-                for (runner in spec.runners) {
-                    suite(id = runner.name) {
-                        executeRunner(playwright, runner, handler)
+        handler.use {
+            // TODO: KT-86449 Provide Node.js and plawright-core npm dependency separately.
+            //  Use thin layer of Java Classes to interact with Playwright via std in/out pipes.
+            val playwright = Playwright.create()
+            playwright.use {
+                with(client) {
+                    root {
+                        for (runner in spec.runners) {
+                            suite(id = runner.name) {
+                                executeRunner(playwright, runner, handler)
+                            }
+                        }
                     }
                 }
             }
@@ -123,6 +125,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
     override fun stopNow() {
-        playwright?.close()
+        // TODO: implement stop now now support
+        log.warn("Playwright executor doesn't support immediate stop")
     }
 }
