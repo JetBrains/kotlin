@@ -21,6 +21,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -51,6 +52,13 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Input
     abstract val hasSwiftPMDependencies: Property<Boolean>
 
+    /**
+     * When `true` (IDE sync) an xcodebuild failure is downgraded to a warning + stub outputs
+     * instead of failing the IDE import. See KT-85468.
+     */
+    @get:Input
+    abstract val ideaSyncEnabled: Property<Boolean>
+
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
@@ -77,6 +85,20 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:OutputDirectory
     protected val ldDump: Provider<org.gradle.api.file.Directory> = xcodebuildSdk.flatMap { sdk ->
         layout.buildDirectory.dir(XcodebuildDefFileUtils.ldDumpRelativeDir(sdk))
+    }
+
+    /**
+     * Written only when xcodebuild fails leniently during IDE sync, so the task is not considered
+     * up-to-date and the next regular build retries. Mirrors CInteropProcess.errorFileProvider.
+     */
+    @get:OutputFile
+    val swiftPMImportError: Provider<RegularFile> = xcodebuildSdk.flatMap { sdk ->
+        layout.buildDirectory.file("${XcodebuildDefFileUtils.defFilesRelativeDir(sdk)}/xcodebuild_error.out")
+    }
+
+    init {
+        // KT-85468: while the error marker exists the task is not up-to-date so the next build retries.
+        outputs.upToDateWhen { !swiftPMImportError.get().asFile.exists() }
     }
 
     /**
@@ -136,6 +158,8 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
             params.clangDumpIntermediatesDir.set(layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)))
             params.additionalXcodeArgs.set(additionalXcodeArgs)
             params.cinteropNamespace.set(cinteropNamespace)
+            params.ideaSyncEnabled.set(ideaSyncEnabled)
+            params.errorFile.set(swiftPMImportError)
         }
     }
 

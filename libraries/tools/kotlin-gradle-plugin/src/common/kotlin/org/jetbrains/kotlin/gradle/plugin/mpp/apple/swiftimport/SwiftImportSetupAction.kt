@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
@@ -65,6 +66,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     }
 
     val isMacOSHost = HostManager.hostIsMac
+    val ideaSyncEnabled = project.isInIdeaSync
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 
@@ -136,6 +138,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     ) {
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+        it.ideaSyncEnabled.set(ideaSyncEnabled)
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
         it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
@@ -512,6 +515,7 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
         it.dependsOn(actualGeneratedClaimer)
         it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
+        it.ideaSyncEnabled.set(project.isInIdeaSync)
         it.swiftPMDependenciesCheckout.set(checkOutDir)
         it.gitIgnoreCheckoutDir.set(true)
     }
@@ -744,6 +748,7 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         it.discoverModulesImplicitly.set(discoverModulesImplicitly)
         it.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
         it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
+        it.ideaSyncEnabled.set(project.isInIdeaSync)
     }
 }
 
