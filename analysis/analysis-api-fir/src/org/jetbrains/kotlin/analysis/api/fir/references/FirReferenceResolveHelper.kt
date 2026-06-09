@@ -301,7 +301,7 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
-        val referencedSymbol = when (val symbol = fir.symbol) {
+        val referencedSymbol = when (val symbol = fir.qualifierSymbol) {
             // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
             is FirRegularClassSymbol if (fir.resolvedToCompanionObject) -> symbol.companionObjectSymbol
             else -> symbol

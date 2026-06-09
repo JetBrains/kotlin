@@ -254,7 +254,7 @@ class CandidateFactory private constructor(
     private fun FirExpression?.isCandidateFromCompanionObjectTypeScope(useSiteSession: FirSession): Boolean {
         val resolvedQualifier = this?.unwrapSmartcastExpression() as? FirResolvedQualifier ?: return false
         val originClassOfCandidate = this.resolvedType.classId ?: return false
-        val companion = resolvedQualifier.symbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
+        val companion = resolvedQualifier.qualifierSymbol?.fullyExpandedClass(useSiteSession)?.fir?.companionObjectSymbol
         return companion?.classId == originClassOfCandidate
     }
 

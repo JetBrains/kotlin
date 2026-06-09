@@ -318,7 +318,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             dispatchReceiver = buildResolvedQualifier {
                 packageFqName = loggerFactoryClassId.packageFqName
                 relativeClassFqName = loggerFactoryClassId.relativeClassName
-                symbol = loggerFactorySymbol
+                qualifierSymbol = loggerFactorySymbol
                 resolvedToCompanionObject = false
                 coneTypeOrNull = loggerFactoryClassType
             }
@@ -348,7 +348,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     buildResolvedQualifier {
                         packageFqName = targetClassId.packageFqName
                         relativeClassFqName = targetClassId.relativeClassName
-                        symbol = targetClassType.toSymbol(session)
+                        qualifierSymbol = targetClassType.toSymbol(session)
                         resolvedToCompanionObject = false
                         coneTypeOrNull = targetClassType
                     }

@@ -60,7 +60,7 @@ fun ClassId.toResolvedQualifier(session: FirSession): FirResolvedQualifier {
         coneTypeOrNull = lookupTag.constructClassType()
         packageFqName = this@toResolvedQualifier.packageFqName
         relativeClassFqName = relativeClassName
-        symbol = lookupTag.toSymbol(session)
+        qualifierSymbol = lookupTag.toSymbol(session)
         resolvedToCompanionObject = false
     }
 }

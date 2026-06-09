@@ -391,7 +391,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
                     .toFirResolvedTypeRef(source = it.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
             }
         }
-        this.symbol = symbol
+        this.qualifierSymbol = symbol
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
@@ -424,7 +424,7 @@ internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
         relativeClassFqName = classId.relativeClassName
         resolvedToCompanionObject =
             !definitelyNotCompanion && fullyExpandedClass(bodyResolveComponents.session)?.resolvedCompanionObjectSymbol != null
-        symbol = this@toImplicitResolvedQualifierReceiver
+        qualifierSymbol = this@toImplicitResolvedQualifierReceiver
         this.source = source
     }.apply {
         setTypeOfQualifier(bodyResolveComponents)
@@ -433,7 +433,7 @@ internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
 }
 
 fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
-    val classSymbol = symbol
+    val classSymbol = qualifierSymbol
     if (classSymbol != null) {
         classSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
         val declaration = classSymbol.fir

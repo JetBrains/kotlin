@@ -94,7 +94,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
         qualifiedAccess,
         nonFatalDiagnosticsFromExpression,
         explicitParent = null,
-    ).takeIf { isUsedAsReceiver || it?.qualifier?.symbol == null }
+    ).takeIf { isUsedAsReceiver || it?.qualifier?.qualifierSymbol == null }
 }
 
 fun FirResolvedQualifier.continueQualifier(
@@ -112,7 +112,7 @@ fun FirResolvedQualifier.continueQualifier(
             ?: FirResolvedSymbolOrigin.Qualified
 
     // No symbol means it's a package. Continue resolution in that package.
-    val outerClassSymbol = symbol ?: return components.continueQualifierInPackage(
+    val outerClassSymbol = qualifierSymbol ?: return components.continueQualifierInPackage(
         packageFqName,
         name,
         qualifiedAccess,

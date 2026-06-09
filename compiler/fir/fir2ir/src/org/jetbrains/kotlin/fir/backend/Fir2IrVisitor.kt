@@ -1751,7 +1751,7 @@ class Fir2IrVisitor(
                 classifierStorage.getIrTypeParameterSymbol(argument.symbol, ConversionTypeOrigin.DEFAULT)
             }
             is FirResolvedQualifier -> {
-                when (val symbol = argument.symbol) {
+                when (val symbol = argument.qualifierSymbol) {
                     is FirClassSymbol -> {
                         classifierStorage.getIrClassSymbol(symbol)
                     }

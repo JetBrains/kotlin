@@ -33,7 +33,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
     private fun checkNotAcceptedExperimentalities(
         expression: FirResolvedQualifier,
     ) {
-        val symbol = expression.symbol ?: return
+        val symbol = expression.qualifierSymbol ?: return
         val companionObjectSymbol = expression.resolvedCompanionSymbol()
         with(FirOptInUsageBaseChecker) {
             val [regular, potentiallyUnderDeprecation] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
@@ -54,7 +54,7 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         val containingElements = context.containingElements
         val parentExpression = containingElements.lastOrNull { it is FirQualifiedAccessExpression && it.dispatchReceiver == expression }
         val source = parentExpression?.source ?: return
-        expression.symbol?.checkContainingClasses(source)
+        expression.qualifierSymbol?.checkContainingClasses(source)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

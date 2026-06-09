@@ -50,10 +50,10 @@ object FirObjectConstructorChecker : FirRegularClassChecker(MppCheckerKind.Commo
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Data) {
-            if (resolvedQualifier.symbol == data.objectSymbol) {
+            if (resolvedQualifier.qualifierSymbol == data.objectSymbol) {
                 data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
             } else if (resolvedQualifier.resolvedToCompanionObject) {
-                val companionSymbol = resolvedQualifier.symbol?.fullyExpandedClass(data.context.session)?.resolvedCompanionObjectSymbol
+                val companionSymbol = resolvedQualifier.qualifierSymbol?.fullyExpandedClass(data.context.session)?.resolvedCompanionObjectSymbol
                 if (companionSymbol == data.objectSymbol) {
                     data.reporter.reportOn(resolvedQualifier.source, SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR, data.context)
                 }

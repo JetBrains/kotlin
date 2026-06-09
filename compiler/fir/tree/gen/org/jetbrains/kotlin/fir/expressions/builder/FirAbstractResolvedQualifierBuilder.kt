@@ -30,7 +30,7 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract val annotations: MutableList<FirAnnotation>
     abstract var packageFqName: FqName
     abstract var relativeClassFqName: FqName?
-    abstract var symbol: FirClassLikeSymbol<*>?
+    abstract var qualifierSymbol: FirClassLikeSymbol<*>?
     abstract var explicitParent: FirResolvedQualifier?
     abstract var isNullableLhsForCallableReference: Boolean
     abstract var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?

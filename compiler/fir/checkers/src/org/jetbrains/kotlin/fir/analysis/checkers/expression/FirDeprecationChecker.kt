@@ -292,7 +292,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        val symbol = expression.symbol ?: return
+        val symbol = expression.qualifierSymbol ?: return
         if (isExcludedSourceKind(expression.source?.kind)) return
         FirDeprecationChecker.reportApiStatusIfNeeded(
             expression.source, symbol,

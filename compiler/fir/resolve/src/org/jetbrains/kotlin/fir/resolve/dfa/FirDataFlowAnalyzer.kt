@@ -782,7 +782,7 @@ abstract class FirDataFlowAnalyzer(
 
             val symbol = when (val other = otherOperand.unwrapSmartcastExpression()) {
                 is FirPropertyAccessExpression -> other.calleeReference.toResolvedBaseSymbol()?.takeIf { it.isSingleton() }
-                is FirResolvedQualifier -> other.symbol?.takeIf { it.isSingleton() }
+                is FirResolvedQualifier -> other.qualifierSymbol?.takeIf { it.isSingleton() }
                 else -> null
             }
             if (symbol != null) {

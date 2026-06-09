@@ -226,7 +226,7 @@ internal abstract class FirBaseTowerResolveTask(
         emptyScopes: MutableSet<FirScope>? = null,
         scopesWithoutCompanionExtensions: MutableSet<FirScope>? = null,
     ) {
-        if (resolvedQualifier.symbol?.fullyExpandedClass()?.classKind.let { it == null || it == ClassKind.OBJECT }) {
+        if (resolvedQualifier.qualifierSymbol?.fullyExpandedClass()?.classKind.let { it == null || it == ClassKind.OBJECT }) {
             return
         }
 
@@ -315,7 +315,7 @@ internal open class FirTowerResolveTask(
             )
         }
 
-        if (resolvedQualifier.symbol != null) {
+        if (resolvedQualifier.qualifierSymbol != null) {
             if (info is CallableReferenceInfo && info.lhsAsType != null) {
                 val stubReceiver = buildExpressionStub {
                     source = info.explicitReceiver?.source

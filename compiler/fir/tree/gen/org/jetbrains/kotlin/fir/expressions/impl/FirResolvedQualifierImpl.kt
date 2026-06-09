@@ -38,7 +38,7 @@ internal class FirResolvedQualifierImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val packageFqName: FqName,
     override val relativeClassFqName: FqName?,
-    override val symbol: FirClassLikeSymbol<*>?,
+    override val qualifierSymbol: FirClassLikeSymbol<*>?,
     override var explicitParent: FirResolvedQualifier?,
     override var isNullableLhsForCallableReference: Boolean,
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?,

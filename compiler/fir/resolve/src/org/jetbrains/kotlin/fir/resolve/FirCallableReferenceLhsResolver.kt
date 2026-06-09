@@ -72,7 +72,7 @@ class FirCallableReferenceLhsResolver(
     }
 
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
-        var fir = symbol?.fir ?: return null
+        var fir = qualifierSymbol?.fir ?: return null
         while (fir is FirTypeAlias) {
             fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
