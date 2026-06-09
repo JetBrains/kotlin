@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JKLIB
 // IGNORE_BACKEND: WASM, NATIVE, JS_IR, JS_IR_ES6, JVM, JVM_IR, WASM, WASM_JS, WASM_WASI, ANDROID, JVM_IR_SERIALIZE
 //  ^ TODO decide if we want to fix KT-42020 for FIR as well
 // KT-61141: IrSimpleFunctionSymbolImpl for /Derived.foo|foo(kotlin.String){}[0] is already bound

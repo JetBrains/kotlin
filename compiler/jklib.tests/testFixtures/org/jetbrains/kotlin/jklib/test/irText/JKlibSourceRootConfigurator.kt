@@ -34,7 +34,7 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         // we map each module dependency to its expected, deterministic JKLIB output path.
         // Since these dependencies are compiled sequentially, these KLib binaries will exist on disk
         // by the time this module's compilation phase actually executes.
-        val klibs = module.allDependencies.map { File(tempDir, "${it.dependencyModule.name}.klib") }
+        val klibs = module.regularDependencies.map { File(tempDir, "${it.dependencyModule.name}.klib") }
         if (klibs.isNotEmpty()) {
             configuration.klibPaths += klibs.map { it.absolutePath }
         }

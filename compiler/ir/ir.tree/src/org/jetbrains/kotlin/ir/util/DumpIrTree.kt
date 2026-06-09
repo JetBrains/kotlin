@@ -60,7 +60,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property declarationFlagsFilter The filter that allows filtering declaration flags like `fake_override`, `inline` etc. both
  *   in declarations and in declaration references. See [FlagsFilter] for more details.
  * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
- * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
+ * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] and
+ * [IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB] origins as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
  * @property printAnnotationsWithSourceRetention If annotations with SOURCE retention should be printed.
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
