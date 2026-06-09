@@ -682,17 +682,6 @@ This can be used in the event of problems with the new implementation.""",
         }
 
     @Argument(
-        value = "-Xvalue-classes",
-        description = "Enable experimental value classes.",
-    )
-    @Enables(LanguageFeature.JvmInlineMultiFieldValueClasses)
-    var valueClasses: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xwhen-expressions",
         valueDescription = "{indy|inline}",
         description = """Select the code generation scheme for type-checking 'when' expressions:
