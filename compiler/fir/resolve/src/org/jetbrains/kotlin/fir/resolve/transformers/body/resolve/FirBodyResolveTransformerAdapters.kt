@@ -37,21 +37,21 @@ class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeS
         scopeSession = scopeSession
     ) {
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
-            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver?.resolveRegularClass(this) }
+            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver.resolveRegularClass(this) }
 
         override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
-            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver?.resolveTypeAlias(this) }
+            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver.resolveTypeAlias(this) }
 
         override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
             super.transformAnonymousObject(anonymousObject, data)
-                .apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
+                .apply { components.directClassInheritorsResolver.resolveAnonymousObject(this) }
 
         override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
             super.transformNamedFunction(namedFunction, data)
-                .apply { components.directCallableOverridesResolver?.resolveNamedFunction(this, false) }
+                .apply { components.directCallableOverridesResolver.resolveNamedFunction(this, false) }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
-            super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this, false) }
+            super.transformProperty(property, data).apply { components.directCallableOverridesResolver.resolveProperty(this, false) }
     }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {

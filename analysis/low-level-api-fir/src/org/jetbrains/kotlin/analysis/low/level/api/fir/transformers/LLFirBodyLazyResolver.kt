@@ -601,21 +601,21 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
-            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver?.resolveRegularClass(this) }
+            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver.resolveRegularClass(this) }
 
         override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
-            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver?.resolveTypeAlias(this) }
+            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver.resolveTypeAlias(this) }
 
         override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
             super.transformAnonymousObject(anonymousObject, data)
-                .apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
+                .apply { components.directClassInheritorsResolver.resolveAnonymousObject(this) }
 
         override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
             super.transformNamedFunction(namedFunction, data)
-                .apply { components.directCallableOverridesResolver?.resolveNamedFunction(this, true) }
+                .apply { components.directCallableOverridesResolver.resolveNamedFunction(this, true) }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
-            super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this, true) }
+            super.transformProperty(property, data).apply { components.directCallableOverridesResolver.resolveProperty(this, true) }
     }
 
     /**
@@ -709,7 +709,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
-        transformer.components.directClassInheritorsResolver?.resolveRegularClass(target)
+        transformer.components.directClassInheritorsResolver.resolveRegularClass(target)
     }
 
     private inline fun <T : FirElementWithResolveState> resolveMembersForControlFlowGraph(
@@ -848,7 +848,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
-            is FirTypeAlias -> transformer.components.directClassInheritorsResolver?.resolveTypeAlias(target)
+            is FirTypeAlias -> transformer.components.directClassInheritorsResolver.resolveTypeAlias(target)
             is FirDanglingModifierList,
             is FirReplSnippet
                 -> {
