@@ -10,12 +10,12 @@ private val reservedPropertyNames = cKeywords + setOf("description") // https://
 /**
  * Following class and object names should be handled in a special way to avoid clashing with NSObject class methods.
  *
- * When processing ["alloc", "copy", "mutableCopy", "new", "init"] names the `get` prefix should be added.
+ * When processing ["alloc", "copy", "mutableCopy", "new", "init"] names the `do` prefix should be added.
  * Other reserved names are mangled by adding `_` suffix.
  */
 private val reservedClassOrObjectNames = setOf(
     "retain", "release", "autorelease",
-    "initialize", "load", "alloc", "new", "class", "superclass",
+    "initialize", "load", "class", "superclass",
     "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
     "description", "debugDescription", "version", "hash",
     "useStoredAccessor"
