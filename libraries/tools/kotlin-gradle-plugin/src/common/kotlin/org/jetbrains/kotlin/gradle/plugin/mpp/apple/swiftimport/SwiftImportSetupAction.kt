@@ -347,7 +347,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         ) { fingerprintTask ->
             fingerprintTask.onlyIf("SwiftPM import doesn't support non macOS hosts") { isMacOSHost }
             fingerprintTask.syntheticPackageFingerprint.set(fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() })
-            fingerprintTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
             fingerprintTask.xcodebuildSdk.set(targetSdk)
         }
 

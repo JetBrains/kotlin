@@ -107,17 +107,6 @@ internal abstract class FingerprintXcodeBuild : DefaultTask() {
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val syntheticPackageFingerprint: RegularFileProperty
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val filesToTrackFromLocalPackages: RegularFileProperty
-
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    protected val localPackageSources: Provider<List<File>>
-        get() = filesToTrackFromLocalPackages.map {
-            it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
-        }
-
     @get:OutputFile
     val xcodebuildFingerprint: RegularFileProperty =
         project.objects.fileProperty().convention(
@@ -138,7 +127,6 @@ internal abstract class FingerprintXcodeBuild : DefaultTask() {
             architectures = architectures.get(),
             additionalXcodeArgs = additionalXcodeArgs.get(),
             syntheticPackageFingerprint = syntheticPackageFingerprint.get().asFile.readText().trim(),
-            localPackagesFingerprint = localPackageSourcesFingerprint(localPackageSources.get()),
         )
 
         // The dump task reads this hash during its own execution and performs the build-service claim/join step.
@@ -157,46 +145,16 @@ internal fun fingerprintXcodebuildFingerprintInput(
     architectures: Set<AppleArchitecture>,
     additionalXcodeArgs: List<String>,
     syntheticPackageFingerprint: String,
-    localPackagesFingerprint: String,
 ): String {
     val payload = dumpTaskFingerprintJson.encodeToString(
         XcodebuildFingerprintInput(
             architectures = architectures.map { it.name }.sorted(),
-            localPackagesFingerprint = localPackagesFingerprint,
             syntheticPackageFingerprint = syntheticPackageFingerprint,
             additionalXcodeArgs = additionalXcodeArgs.sorted(),
         )
     )
 
     return sha256(payload)
-}
-
-internal fun localPackageSourcesFingerprint(
-    files: List<File>,
-): String {
-    val digest = MessageDigest.getInstance(SWIFT_IMPORT_HASH_ALGORITHM)
-    files
-        // The tracking file can contain both individual files and source directories. Directories are expanded here so
-        // source edits, additions, and removals change the dump sharing key.
-        .flatMap { trackedFile ->
-            when {
-                trackedFile.isFile -> listOf(trackedFile to trackedFile.name)
-                trackedFile.isDirectory -> trackedFile.walkTopDown().filter { it.isFile }
-                    .map { file -> file to file.relativeTo(trackedFile).invariantSeparatorsPath }.toList()
-                else -> emptyList()
-            }
-        }
-        // Stable ordering keeps the hash independent of filesystem traversal order.
-        .sortedBy { (_, relativePath) -> relativePath }.forEach { (file, relativePath) ->
-            // Include both relative path and content. The zero byte separators avoid accidental concatenation
-            // collisions between neighboring entries.
-            digest.update(relativePath.toByteArray())
-            digest.update(0.toByte())
-            digest.update(file.readBytes())
-            digest.update(0.toByte())
-        }
-
-    return digest.digest().toHexString()
 }
 
 private fun dumpFingerprint(fingerprint: String, outputFile: File) {
@@ -208,7 +166,6 @@ private fun dumpFingerprint(fingerprint: String, outputFile: File) {
 private data class XcodebuildFingerprintInput(
 //    val packageResolvedSynchronization: String,
     val architectures: List<String>,
-    val localPackagesFingerprint: String,
     val syntheticPackageFingerprint: String,
     val additionalXcodeArgs: List<String>,
 )
