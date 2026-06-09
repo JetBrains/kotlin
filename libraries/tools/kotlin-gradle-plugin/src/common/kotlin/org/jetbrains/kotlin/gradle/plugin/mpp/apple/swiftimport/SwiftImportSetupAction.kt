@@ -214,7 +214,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
 
         fingerprintSyntheticPackageTask.configure {
-            it.packageResolvedSynchronizationFingerprint.set(swiftPMImportExtension.packageResolvedSynchronization.normalizedText())
+            it.packageResolvedSynchronizationFingerprint.set(fingerprintPackageResolvedSynchronization(swiftPMImportExtension.packageResolvedSynchronization))
         }
 
         when (val packageIdentifier = identifierSynchronizationOrNull()) {

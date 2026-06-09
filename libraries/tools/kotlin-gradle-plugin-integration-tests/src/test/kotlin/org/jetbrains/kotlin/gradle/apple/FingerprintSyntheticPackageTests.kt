@@ -32,52 +32,78 @@ class FingerprintSyntheticPackageTests : KGPBaseTest() {
 
     @GradleTest
     fun `fingerprint task generates same fingerprint given the two target with same flattened dependency graph`(version: GradleVersion) {
-        val subProjectName = "subProject"
+        val rightProjectName = "rightProject"
+        val leftProjectName = "leftProject"
         project("empty", version) {
             withLockFileFixture {
-                val swiftPmPackage = repoRef("Maps").also { createRepo(it.name, listOf("1.0.0")) }
+                val swiftPmPackage =
+                    repoRef("Maps").also { createRepo(it.name, listOf("1.0.0"), products = listOf("MapsCore", "MapsUtils")) }
 
                 initSwiftPmProject(cacheDirFile) {
                     sourceSets.appleMain.dependencies {
-                        api(project(":$subProjectName"))
+                        api(project(":$rightProjectName"))
                     }
                 }
 
-                val subProject = project("empty", version) {
+                val leftProject = project("empty", version) {
                     initSwiftPmProject(cacheDirFile) {
                         swiftPMDependencies {
                             swiftPackage(
                                 url = url(swiftPmPackage.url),
                                 version = exact("1.0.0"),
-                                products = listOf(product(swiftPmPackage.name))
+                                products = listOf(product("MapsCore"), product("MapsUtils"))
                             )
                         }
                     }
                 }
 
+                val rightProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(swiftPmPackage.url),
+                                version = exact("1.0.0"),
+                                products = listOf(product("MapsUtils"), product("MapsCore"))
+                            )
+                        }
+                    }
+                }
 
-                include(subProject, subProjectName)
+                include(rightProject, rightProjectName)
+                include(leftProject, leftProjectName)
 
                 val prepareFingerPrint = FingerprintSyntheticPackage.TASK_NAME
 
                 build(
                     ":$prepareFingerPrint",
-                    ":$subProjectName:$prepareFingerPrint",
+                    ":$rightProjectName:$prepareFingerPrint",
+                    ":$leftProjectName:$prepareFingerPrint",
                 ) {
 
                     assertTasksExecuted(
                         ":$prepareFingerPrint",
-                        ":$subProjectName:$prepareFingerPrint",
+                        ":$rightProjectName:$prepareFingerPrint",
+                        ":$leftProjectName:$prepareFingerPrint",
                     )
 
                     assertEquals(
-                        subProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                        rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                             .readText()
                             .trim(),
                         projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
                             .readText()
                             .trim(),
                         "Projects with same flattened dependency graphs and same build settings should have same fingerprint"
+                    )
+
+                    assertEquals(
+                        rightProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                            .readText()
+                            .trim(),
+                        leftProject.projectPath.resolve(SYNTHETIC_PACKAGE_FINGERPRINT_BUILD_DIR_PATH)
+                            .readText()
+                            .trim(),
+                        "Projects with same flattened dependency products and same build settings should have same fingerprint"
                     )
                 }
 

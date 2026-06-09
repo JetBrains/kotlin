@@ -70,11 +70,12 @@ const val SYNTHETIC_IMPORT_DYLIB =
 fun createLocalSwiftPackage(
     localPackageDir: Path,
     packageName: String = "LocalSwiftPackage",
+    products : List<String> = listOf(packageName),
     sourceLanguage: SwiftPackageSourceLanguage = SwiftPackageSourceLanguage.SWIFT_WITH_OBJC,
 ) {
     localPackageDir.createDirectories()
     val sourcesDir = localPackageDir.resolve("Sources/$packageName")
-    writePackageManifest(localPackageDir, packageName, ".target(name: \"$packageName\")")
+    writePackageManifest(localPackageDir, packageName, products = products)
     writeLocalPackageSources(sourcesDir, packageName, sourceLanguage)
 }
 
@@ -93,15 +94,18 @@ fun createLocalSwiftPackageWithResources(
 
     // Write Package.swift with resource processing
     writePackageManifest(
-        localPackageDir, packageName,
-        """
+        localPackageDir = localPackageDir,
+        packageName = packageName,
+        targetDefinitions = listOf(
+            """
             .target(
                 name: "$packageName",
                 resources: [
                     .process("$resourceFileName"),
                 ]
-            ),
+            )
         """.trimIndent()
+        )
     )
 
     // Write Swift source that exposes a resource accessor
@@ -128,7 +132,8 @@ fun createLocalSwiftPackageWithResources(
 internal fun writePackageManifest(
     localPackageDir: Path,
     packageName: String,
-    targetDefinition: String,
+    products: List<String> = listOf(packageName),
+    targetDefinitions: List<String> = products.map { """.target(name: "$it")""" },
 ) {
     localPackageDir.resolve("Package.swift").writeText(
         """
@@ -139,10 +144,10 @@ internal fun writePackageManifest(
                 name: "$packageName",
                 platforms: [.iOS(.v15)],
                 products: [
-                    .library(name: "$packageName", targets: ["$packageName"]),
+                    ${products.joinToString(",\n") { """.library(name: "$it", targets: ["$it"])""" }}
                 ],
                 targets: [
-                    ${targetDefinition.prependIndent("            ")}
+                    ${targetDefinitions.joinToString(",\n") { it }}
                 ]
             )
         """.trimIndent()
@@ -271,18 +276,20 @@ internal fun swiftSourceContent(): String = """
 fun createLocalSwiftPackageWithBinaryTarget(
     localPackageDir: Path,
     packageName: String,
-    xcframeworkPath: Path
+    xcframeworkPath: Path,
 ) {
     localPackageDir.createDirectories()
     writePackageManifest(
         localPackageDir = localPackageDir,
         packageName = packageName,
-        targetDefinition = """
-            .binaryTarget(
-                name: "$packageName",
-                path: "${xcframeworkPath.fileName}"
-            ),
-        """.trimIndent(),
+        targetDefinitions = listOf(
+            """
+                .binaryTarget(
+                    name: "$packageName",
+                    path: "${xcframeworkPath.fileName}"
+                )
+            """.trimIndent()
+        ),
     )
 }
 
@@ -297,6 +304,7 @@ internal fun createSwiftPmGitRepoWithTags(
     reposRoot: Path,
     packageName: String,
     tags: List<String>,
+    products: List<String> = listOf(packageName),
     fileByTag: Map<String, Map<String, String>> = emptyMap(),
 ): Path {
     val repoDir = reposRoot.resolve(packageName).createDirectories()
@@ -304,33 +312,43 @@ internal fun createSwiftPmGitRepoWithTags(
     runGit("init", "-q", repoDir = repoDir)
     runGit("config", "user.email", "spm@test", repoDir = repoDir)
     runGit("config", "user.name", "spm-test", repoDir = repoDir)
+
     val commandResult = runProcess(
         listOf("touch", "git-daemon-export-ok"),
         workingDir = repoDir.toFile(),
     )
 
-    if (!commandResult.isSuccessful) throw IllegalStateException("Failed to create git-daemon-export-ok file: ${commandResult.output}")
+    if (!commandResult.isSuccessful) {
+        error("Failed to create git-daemon-export-ok file: ${commandResult.output}")
+    }
 
-    writePackageManifest(repoDir, packageName, ".target(name: \"$packageName\")")
+    writePackageManifest(repoDir, packageName, products = products)
 
-    // Seed sources dir
-    repoDir.resolve("Sources/$packageName").createDirectories()
-    repoDir.resolve("Sources/$packageName/$packageName.swift").writeText(
-        "public struct $packageName { public static let v = \"seed\" }\n"
-    )
+    products.forEach { product ->
+        repoDir.resolve("Sources/$product").createDirectories()
+        repoDir.resolve("Sources/$product/$product.swift").writeText(
+            "public struct $product { public static let v = \"seed\" }\n"
+        )
+    }
 
     runGit("add", ".", repoDir = repoDir)
     runGit("commit", "--quiet", "-m", "init", repoDir = repoDir)
 
     tags.forEach { tag ->
-        // If caller provided per-tag content, apply it; otherwise just update a value.
-        val files = fileByTag[tag]
-            ?: mapOf("Sources/$packageName/$packageName.swift" to "public struct $packageName { public static let v = \"$tag\" }\n")
+        val files: Map<String, String> =
+            fileByTag[tag]
+                ?: products.associate { product ->
+                    "Sources/$product/$product.swift" to
+                            "public struct $product { public static let v = \"$tag\" }\n"
+                }
 
-        files.forEach { [rel, content] ->
-            val f = repoDir.resolve(rel)
-            f.parent.createDirectories()
-            f.writeText(content)
+        files.forEach { entry ->
+            val rel = entry.key
+            val content = entry.value
+            val file = repoDir.resolve(rel)
+            file.parent.createDirectories()
+            file.writeText(content)
+
         }
 
         runGit("add", ".", repoDir = repoDir)
@@ -701,11 +719,13 @@ internal fun Set<String>.assertExactTaskGraph(vararg tasks : String) {
 internal fun LockFileTestFixture.createRepo(
     name: String,
     tags: List<String>,
+    products: List<String> = listOf(name),
 ): Path {
     return createSwiftPmGitRepoWithTags(
         reposRoot = reposRoot,
         packageName = name,
         tags = tags,
+        products = products
     )
 }
 

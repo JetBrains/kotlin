@@ -264,7 +264,6 @@ internal fun fingerprintSwiftPMDependencyGraph(
     return TransitiveSwiftPMDependencies(transformed)
 }
 
-
 internal fun fingerprintSwiftPMImportMetadata(
     metadata: SwiftPMImportMetadata,
 ): String {
@@ -276,12 +275,11 @@ internal fun fingerprintSwiftPMImportMetadata(
             watchosDeploymentVersion = metadata.watchosDeploymentVersion,
             tvosDeploymentVersion = metadata.tvosDeploymentVersion,
             isModulesDiscoveryEnabled = false,
-            normalizedDependencies = metadata.dependencies
-                .map { it.normalizedSwiftPMDependency() }
-                .sortedBy { it.stableSortKey },
-        ),
+            dependencies = metadata.dependencies
+                .map { it.normalizedForFingerprint() }
+                .sortedBy { it.stableSortKey() },
+        )
     )
-
     return sha256(payload)
 }
 
@@ -313,68 +311,60 @@ private data class SwiftPMImportMetadataFingerprintInput(
     val watchosDeploymentVersion: String?,
     val tvosDeploymentVersion: String?,
     val isModulesDiscoveryEnabled: Boolean,
-    val normalizedDependencies: List<NormalizedSwiftPMDependency>,
+    val dependencies: List<SwiftPMDependency>,
 )
 
 
-internal fun PackageResolvedSynchronization.normalizedText(): String = when (this) {
-    is PackageResolvedSynchronization.Identifier -> "identifier:$identifier"
-    PackageResolvedSynchronization.None -> "none"
-}
-
-@Serializable
-private data class NormalizedSwiftPMDependency(
-    val stableSortKey: String,
-    val kind: String,
-    val packageName: String,
-    val traits: List<String>,
-    val products: List<NormalizedSwiftPMProduct>,
-    val location: String? = null,
-    val version: String? = null,
-)
-
-@Serializable
-private data class NormalizedSwiftPMProduct(
-    val name: String,
-    val platformConstraints: List<String>,
-)
-
-
-private fun SwiftPMDependency.normalizedSwiftPMDependency(): NormalizedSwiftPMDependency = when (this) {
-    is SwiftPMDependency.Local -> NormalizedSwiftPMDependency(
-        stableSortKey = "local|${absolutePath.path}|$packageName",
-        kind = "local",
-        packageName = packageName,
-        traits = traits.sorted(),
-        products = products.map { it.normalizedSwiftPMProduct() }.sortedBy { it.name },
-        location = absolutePath.path,
+internal fun fingerprintPackageResolvedSynchronization(
+    packageResolvedSynchronization: PackageResolvedSynchronization,
+): String = sha256(
+    dumpTaskFingerprintJson.encodeToString(
+        packageResolvedSynchronization
     )
-    is SwiftPMDependency.Remote -> {
-        val normalizedRepository = repository.normalizedText()
-        val normalizedVersion = version.normalizedText()
-        NormalizedSwiftPMDependency(
-            stableSortKey = "remote|$normalizedRepository|$normalizedVersion|$packageName",
-            kind = "remote",
-            packageName = packageName,
-            traits = traits.sorted(),
-            products = products.map { it.normalizedSwiftPMProduct() }.sortedBy { it.name },
-            location = normalizedRepository,
-            version = normalizedVersion,
-        )
-    }
-}
-
-private fun SwiftPMDependency.Product.normalizedSwiftPMProduct(): NormalizedSwiftPMProduct = NormalizedSwiftPMProduct(
-    name = name,
-    platformConstraints = platformConstraints.orEmpty().map { it.name }.sorted(),
 )
 
-private fun SwiftPMDependency.Remote.Repository.normalizedText(): String = when (this) {
+private fun SwiftPMDependency.normalizedForFingerprint(): SwiftPMDependency = when (this) {
+    is SwiftPMDependency.Local -> copy(
+        products = products.map { it.normalizedForFingerprint() }.sortedBy { it.name },
+        cinteropClangModules = cinteropClangModules.map { it.normalizedForFingerprint() }.sortedBy { it.stableSortKey() },
+        traits = traits.sorted().toSet(),
+    )
+
+    is SwiftPMDependency.Remote -> copy(
+        products = products.map { it.normalizedForFingerprint() }.sortedBy { it.name },
+        cinteropClangModules = cinteropClangModules.map { it.normalizedForFingerprint() }.sortedBy { it.stableSortKey() },
+        traits = traits.sorted().toSet(),
+
+        )
+}
+
+private fun SwiftPMDependency.Product.normalizedForFingerprint(): SwiftPMDependency.Product =
+    copy(
+        cinteropClangModules = cinteropClangModules.sorted().toSet(),
+        platformConstraints = platformConstraints?.sortedBy { it.name }?.toSet(),
+    )
+
+private fun SwiftPMDependency.CinteropClangModule.normalizedForFingerprint(): SwiftPMDependency.CinteropClangModule =
+    copy(
+        platformConstraints = platformConstraints?.sortedBy { it.name }?.toSet(),
+    )
+
+private fun SwiftPMDependency.stableSortKey(): String = when (this) {
+    is SwiftPMDependency.Local ->
+        "local|${absolutePath.path}|$packageName"
+    is SwiftPMDependency.Remote ->
+        "remote|${repository.stableSortKey()}|${version.stableSortKey()}|$packageName"
+}
+
+private fun SwiftPMDependency.CinteropClangModule.stableSortKey(): String =
+    "$name|${platformConstraints.orEmpty().map { it.name }.sorted().joinToString(",")}"
+
+private fun SwiftPMDependency.Remote.Repository.stableSortKey(): String = when (this) {
     is SwiftPMDependency.Remote.Repository.Id -> "id:$value"
     is SwiftPMDependency.Remote.Repository.Url -> "url:$value"
 }
 
-private fun SwiftPMDependency.Remote.Version.normalizedText(): String = when (this) {
+private fun SwiftPMDependency.Remote.Version.stableSortKey(): String = when (this) {
     is SwiftPMDependency.Remote.Version.Exact -> "exact:$value"
     is SwiftPMDependency.Remote.Version.From -> "from:$value"
     is SwiftPMDependency.Remote.Version.Range -> "range:$from..$through"
