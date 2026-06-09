@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object ConstructorGeneratorKey : LombokDeclarationKey()
 
@@ -63,7 +62,7 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
         session.firCachesFactory.createCache(::createConstructors)
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (!classSymbol.hasJavaOrigin && companionObjectsCache.getValue(classSymbol, context) != null) {
+        if (companionObjectsCache.getValue(classSymbol, context) != null) {
             return setOf(DEFAULT_NAME_FOR_COMPANION_OBJECT)
         }
         return emptySet()
@@ -74,7 +73,7 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
         name: Name,
         context: NestedClassGenerationContext
     ): FirClassLikeSymbol<*>? {
-        return runIf(!owner.hasJavaOrigin) { companionObjectsCache.getValue(owner, context) }
+        return companionObjectsCache.getValue(owner, context)
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
