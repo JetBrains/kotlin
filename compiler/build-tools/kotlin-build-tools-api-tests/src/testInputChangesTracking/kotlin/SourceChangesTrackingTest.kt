@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAg
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -123,6 +124,23 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
                 assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-49023: Renaming a file with a case-only change should not cause redeclaration errors")
+    @TestMetadata("ic-scenarios/kt-49023")
+    fun testCaseOnlyFileRenameDoesNotCauseRedeclarationErrors(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-49023")
+
+            mod.deleteFile("Foo.kt")
+            mod.createPredefinedFile("foo.kt", "different-case")
+
+            mod.compile {
+                assertCompiledSources("foo.kt")
+                assertNoOutputSetChanges()
             }
         }
     }
