@@ -276,7 +276,9 @@ internal constructor(
         }
 
         return KotlinWebpackRunner(
-            npmProject = npmProject,
+            name = npmProject.compilationName,
+            npmProjectDir = npmProject.dir.get().asFile,
+            nodeExecutable = npmProject.nodeExecutable,
             logger = logger,
             configFile = configFile.get(),
             tool = bin,
