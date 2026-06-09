@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.net.URI
+import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.test.*
 
 class URIBuilderTest {
@@ -110,16 +113,15 @@ class URIBuilderTest {
 
     @Test
     fun `addQueryParam works for file scheme URI`() {
-        val someFile = File("/some/path")
-        val result = someFile.toURI().withBuilder {
+        val baseUri = Path("/foo").toUri()
+        val result = baseUri.withBuilder {
             addQueryParam("key", "value")
             addQueryParam("someJson", """["'", "", {}]""")
         }
         assertEquals("file", result.scheme)
-        assertEquals("/some/path", result.path)
         assertEquals("""key=value&someJson=["'",+"",+{}]""", result.query)
         assertEquals("key=value&someJson=%5B%22%27%22%2C+%22%22%2C+%7B%7D%5D", result.rawQuery)
-        assertEquals("file:/some/path?key=value&someJson=%5B%22%27%22%2C+%22%22%2C+%7B%7D%5D", result.toString())
+        assertEquals("${baseUri}?key=value&someJson=%5B%22%27%22%2C+%22%22%2C+%7B%7D%5D", result.toString())
     }
 
     @Test
