@@ -45,6 +45,7 @@ import kotlin.collections.joinToString
 data class KotlinWebpackConfig(
     val npmProjectDir: Provider<File>? = null,
     var mode: Mode = Mode.DEVELOPMENT,
+    /** This is main entry */
     var entry: File? = null,
     var output: KotlinWebpackOutput? = null,
     var outputPath: File? = null,
@@ -70,8 +71,12 @@ data class KotlinWebpackConfig(
      * that targets environments other than the browser.
      */
     val defineNonBrowserEnvironmentProperties: Property<Boolean>,
-) : WebpackRulesDsl {
 
+    /**
+     * Additional JS code to be appended at the end of the webpack.config.js file.
+     */
+    internal val extraJs: MutableList<String> = mutableListOf(),
+) : WebpackRulesDsl {
     val entryInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeTo(npmProjectDir)?.invariantSeparatorsPath }
 
@@ -306,6 +311,7 @@ data class KotlinWebpackConfig(
             appendFromConfigDir()
             appendDefinePluginForBrowser()
             appendExperiments()
+            appendExtraJs()
 
             if (export) {
                 //language=JavaScript 1.8
@@ -516,6 +522,12 @@ data class KotlinWebpackConfig(
                 
             """.trimIndent()
         )
+    }
+
+    private fun Appendable.appendExtraJs() {
+        appendLine("// section: Extra JS code from KotlinWebpackConfig.extraJs")
+        extraJs.forEach { appendLine(it) }
+        appendLine("// section end")
     }
 
     private fun json(obj: Any) = StringWriter().also {
