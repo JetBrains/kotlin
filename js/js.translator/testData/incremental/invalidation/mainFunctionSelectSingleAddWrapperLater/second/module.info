@@ -1,0 +1,11 @@
+STEP 0:
+    modifications:
+        U : okValue.0.kt -> okValue.kt
+        U : root.0.kt -> root.kt
+    added file: okValue.kt, root.kt
+STEP 1:
+STEP 2:
+STEP 3:
+    removed inverse depends: okValue.kt
+STEP 4:
+    removed inverse depends: okValue.kt

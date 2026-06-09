@@ -31,8 +31,8 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
         if (backendContext.irModuleFragment != irModule) return
 
         val detector = JsMainFunctionDetector(backendContext)
-        irModule.files.forEach { file ->
-            val mainFunction = detector.getMainFunctionOrNull(file) ?: return@forEach
+        for (file in irModule.files) {
+            val mainFunction = detector.getMainFunctionOrNull(file) ?: continue
             val generateArgv = mainFunction.parameters.firstOrNull()?.isStringArrayParameter() ?: false
             val generateContinuation = mainFunction.isLoweredSuspendFunction(backendContext)
 
@@ -40,7 +40,7 @@ class GenerateMainFunctionWrappers(private val backendContext: WasmBackendContex
 
             if (!generateArgv && !generateContinuation) {
                 fileContext.mainFunctionWrapper = mainFunction
-                return
+                continue
             }
 
             val wrapper = backendContext.irFactory.stageController.restrictTo(mainFunction) {
