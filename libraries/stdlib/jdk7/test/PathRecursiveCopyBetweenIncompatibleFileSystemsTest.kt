@@ -51,7 +51,6 @@ class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
         assertEquals(expectedPaths, actualPaths)
     }
 
-    @Ignore // Names containing path separators are handled incorrectly now.
     @Test
     fun copyFileWithNameCorrespondingToMultipleSegments() {
         val root = createTempDirectory().cleanupRecursively()

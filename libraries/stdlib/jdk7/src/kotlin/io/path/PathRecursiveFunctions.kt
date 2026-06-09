@@ -202,6 +202,29 @@ public fun Path.copyToRecursively(
 
     val normalizedTarget = target.normalize()
 
+    fun validatePathsWithDifferentNameCount(
+        target: Path, relativeTargetPath: Path, resolvedTargetPath: Path,
+        source: Path, relativePath: Path, resolvedSourcePath: Path) {
+        val targetNameCount = target.nameCount
+        val sourceNameCount = source.nameCount
+
+        // Different filesystems can interpret the same path differently, for example, an empty path
+        // can have a single segment in one filesystem, but zero segments in another.
+        // To gracefully handle such discrepancies, let's only check that relative path's resolution
+        // in one filesystem will increase the number of segments by the same amount as in another.
+        if (resolvedTargetPath.nameCount - targetNameCount != resolvedSourcePath.nameCount - sourceNameCount) {
+            val sourceSegments = relativePath.joinToString(", ", prefix = "[", postfix = "]") { "\"${it}\"" }
+            val targetSegments = relativeTargetPath.joinToString(", ", prefix = "[", postfix = "]") { "\"${it}\"" }
+            throw IllegalFileNameException(
+                resolvedSourcePath,
+                resolvedTargetPath,
+                "Source path, when resolved in the target directory, " +
+                        "has a different number of name elements (parts relative to the source root: $sourceSegments) " +
+                        "than the target path (parts relative to the target root: $targetSegments)."
+            )
+        }
+    }
+
     fun destination(source: Path): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
 
@@ -212,11 +235,23 @@ public fun Path.copyToRecursively(
         val destination = if (source.fileSystem === target.fileSystem) {
             target.resolve(relativePath)
         } else if (relativePath.nameCount > 0) {
-            val firstName = relativePath.getName(0).name
+            val firstName = relativePath.getName(0).toString()
             val trailingNames = Array(relativePath.nameCount - 1) {
-                relativePath.getName(it + 1).name
+                relativePath.getName(it + 1).toString()
             }
-            target.resolve(target.fileSystem.getPath(firstName, *trailingNames))
+            val relativeTargetPath = target.fileSystem.getPath(firstName, *trailingNames)
+            val resolved = target.resolve(relativeTargetPath)
+            // If the relative path has different name count in source and target filesystems,
+            // it may indicate that these filesystems may treat some of the segments differently,
+            // which could lead to different directory trees.
+            // Let's inspect the path and figure out if it's the case.
+            if (relativeTargetPath.nameCount != relativePath.nameCount) {
+                validatePathsWithDifferentNameCount(
+                    target, relativeTargetPath, resolved,
+                    this@copyToRecursively, relativePath, source
+                )
+            }
+            resolved
         } else {
             target
         }
