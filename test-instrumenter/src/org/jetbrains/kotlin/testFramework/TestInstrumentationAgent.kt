@@ -50,7 +50,6 @@ object TestInstrumentationAgent {
         val declaredInputs = File(System.getProperty("test.instrumenter.declared.inputs.file"))
             .readLines()
             .filter(String::isNotEmpty)
-            .toSet()
 
         UndeclaredInputsGuard.install(rootDir, buildDir, declaredInputs);
     }

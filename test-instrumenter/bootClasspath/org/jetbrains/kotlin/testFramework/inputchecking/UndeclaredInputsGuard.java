@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.testFramework.inputchecking;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,7 +22,7 @@ public class UndeclaredInputsGuard {
     private final Set<String> declaredInputs;
     private final Set<String> undeclaredInputs;
 
-    public static void install(String rootDir, String buildDir, Set<String> declaredInputs) {
+    public static void install(String rootDir, String buildDir, Collection<String> declaredInputs) {
         INSTANCE = new UndeclaredInputsGuard(rootDir, buildDir, declaredInputs);
     }
 
@@ -31,10 +33,10 @@ public class UndeclaredInputsGuard {
         return INSTANCE;
     }
 
-    private UndeclaredInputsGuard(String rootDir, String buildDir, Set<String> declaredInputs) {
+    private UndeclaredInputsGuard(String rootDir, String buildDir, Collection<String> declaredInputs) {
         this.rootDir = rootDir;
         this.buildDir = buildDir;
-        this.declaredInputs = declaredInputs;
+        this.declaredInputs = Collections.unmodifiableSet(new HashSet<>(declaredInputs));
         this.undeclaredInputs = ConcurrentHashMap.newKeySet();
     }
 
