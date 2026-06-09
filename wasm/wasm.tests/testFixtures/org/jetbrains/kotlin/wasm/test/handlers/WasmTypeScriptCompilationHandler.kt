@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.test.handlers.JsTypeScriptCompilationHandler.Companion.getMainTsFile
 import org.jetbrains.kotlin.js.test.handlers.TypeScriptCompilation
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
@@ -34,7 +33,7 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
         val defaultMode = if (!includedModuleOnly) "dev" else ""
 
         val outputDir = testServices.getWasmTestOutputDirectoryForMode(defaultMode)
-        val outputJsFile = compiledTypeScriptOutput(testServices, defaultMode, JavaScript.DOT_EXTENSION)
+        val outputJsFile = compiledTypeScriptOutput(testServices, defaultMode, ".js")
 
         val dtsFiles = modulesToArtifact.values.map { artifact ->
             require(artifact is WasmCompilationSetsBinaryArtifact)
@@ -70,6 +69,6 @@ class WasmTypeScriptCompilationHandler(testServices: TestServices) : AbstractWas
         }
 
         fun compiledTypeScriptOutput(testServices: TestServices, mode: String): File =
-            compiledTypeScriptOutput(testServices, mode, JavaScript.DOT_MODULE_EXTENSION)
+            compiledTypeScriptOutput(testServices, mode, ".mjs")
     }
 }
