@@ -21,32 +21,36 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
     project.launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
         val browser = target.subTargets.filterIsInstance<KotlinBrowserJsIr>().singleOrNull() ?: return@launchInStage
 
+        val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
+        if (browserTestDsl.allBrowserRunners.get().isEmpty()) {
+            project.logger.debug("No browser runners configured. Skipping kotlin js test task configuration")
+            return@launchInStage
+        }
+
         // TODO: KT-86706 Implement different browser runners as independent test runs
         //  so it is aligned with KGP API
         val testRun = browser.testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
-        val browserDsl = browser.test as KotlinJsBrowserTestImpl
-
         testTaskProvider.configure { testTask ->
             val objects = project.objects
             val inputs = objects.newInstance(KotlinPlaywrightJsTestFramework.Inputs::class.java)
 
             inputs.chromiumRunners.set(
-                browserDsl.chromiumRunners.values.map { runner ->
+                browserTestDsl.chromiumRunners.values.map { runner ->
                     objects.newInstance(KotlinPlaywrightJsTestFramework.ChromiumRunnerInput::class.java)
                         .also { it.populateFrom(runner) }
                 }
             )
             inputs.firefoxRunners.set(
-                browserDsl.firefoxRunners.values.map { runner ->
+                browserTestDsl.firefoxRunners.values.map { runner ->
                     objects.newInstance(KotlinPlaywrightJsTestFramework.FirefoxRunnerInput::class.java)
                         .also { it.populateFrom(runner) }
                 }
             )
             inputs.webkitRunners.set(
-                browserDsl.webkitRunners.values.map { runner ->
+                browserTestDsl.webkitRunners.values.map { runner ->
                     objects.newInstance(KotlinPlaywrightJsTestFramework.WebkitRunnerInput::class.java)
                         .also { it.populateFrom(runner) }
                 }
