@@ -50,7 +50,7 @@ public class UndeclaredInputsGuard {
         File file = new File(path).getAbsoluteFile();
 
         if (isUndeclaredInput(file) && !file.isDirectory()) {
-            File canonicalFile = convertToCanonicalIfNecessary(file);
+            File canonicalFile = convertToCanonical(file);
 
             if (canonicalFile.equals(file) || isUndeclaredInput(canonicalFile)) {
                 UndeclaredInputEvent.emit(file.toString());
@@ -85,16 +85,13 @@ public class UndeclaredInputsGuard {
      * Convert paths like "/foo/../bar" to "/bar".
      * This is an expensive operation, so we try to do it as rarely as possible.
      */
-    private static File convertToCanonicalIfNecessary(File file) {
-        if (file.getPath().contains(".") || file.getPath().contains("..")) {
-            try {
-                return file.getCanonicalFile();
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Unable to get canonical path for: " + file.getPath(), e);
-            }
+    private static File convertToCanonical(File file) {
+        try {
+            return file.getCanonicalFile();
         }
-        return file;
+        catch (IOException e) {
+            throw new RuntimeException("Unable to get canonical path for: " + file.getPath(), e);
+        }
     }
 
     public Set<String> getUndeclaredInputs() {

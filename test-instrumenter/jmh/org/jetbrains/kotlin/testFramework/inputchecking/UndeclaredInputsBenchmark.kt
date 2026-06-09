@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.testFramework.inputchecking
 
 import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
+import kotlin.io.path.pathString
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -21,7 +23,6 @@ open class UndeclaredInputsBenchmark {
 
     private val fileCount = 100_000
     private val tempDir = Files.createTempDirectory("benchmark").toFile().canonicalFile.toPath()
-    private val declaredInputsFile = tempDir.resolve("declared-inputs.txt").createFile()
     private val outsideRootDir = tempDir.resolve("outside").createDirectories()
     private val rootDir = tempDir.resolve("root").createDirectories()
     private val buildDir = rootDir.resolve("build").createDirectories()
@@ -32,15 +33,11 @@ open class UndeclaredInputsBenchmark {
 
     @Setup(Level.Trial)
     fun setUp() {
-        System.setProperty("test.instrumenter.declared.inputs.file", declaredInputsFile.absolutePathString())
-        System.setProperty("test.instrumenter.root.dir", rootDir.absolutePathString())
-        System.setProperty("test.instrumenter.build.dir", buildDir.absolutePathString())
-
-        val declared = generateDeclaredInputs(30)
-        val declaredNonCanonical = generateNonCanonicalDeclared(4)
+        val declared = generateDeclaredInputs(8)
+        val declaredNonCanonical = generateNonCanonicalDeclared(15)
         val undeclared = generateUndeclaredInputs(11)
         val undeclaredAlreadyDetected = generateAlreadyDetectedUndeclaredInputs(5)
-        val undeclaredNonCanonical = generateNonCanonicalUndeclared(4)
+        val undeclaredNonCanonical = generateNonCanonicalUndeclared(15)
         val nulls = generateNulls(1)
         val filesOutsideRootDir = generateFilesOutsideRootDir(20)
         val filesInsideBuildDir = generateFilesInsideBuildDir(20)
@@ -66,9 +63,13 @@ open class UndeclaredInputsBenchmark {
 
         require(pathsToCheck.size == fileCount)
 
-        declaredInputsFile.toFile().writeText((declared + declaredNonCanonical).joinToString("\n"))
-        UndeclaredInputsGuard.initialize()
-        undeclaredAlreadyDetected.forEach(UndeclaredInputsGuard::checkPath)
+        val declaredInputs = declared + declaredNonCanonical.map { File(it).canonicalPath }
+        UndeclaredInputsGuard.install(rootDir.pathString, buildDir.pathString, declaredInputs)
+
+        // preload internal list
+        for (it in undeclaredAlreadyDetected) {
+            UndeclaredInputsGuard.getInstance().checkPath(it)
+        }
     }
 
     private fun generateDeclaredInputs(n: Int) = buildList {
@@ -128,15 +129,15 @@ open class UndeclaredInputsBenchmark {
     @Benchmark
     fun benchmark(blackhole: Blackhole) {
         for (path in pathsToCheck) {
-            UndeclaredInputsGuard.checkPath(path)
+            UndeclaredInputsGuard.getInstance().checkPath(path)
         }
-        blackhole.consume(UndeclaredInputsGuard.getUndeclaredInputs())
+        blackhole.consume(UndeclaredInputsGuard.getInstance().undeclaredInputs)
     }
 
     @Suppress("unused")
     @TearDown(Level.Invocation)
     fun assertCorrectUndeclaredInputsDetected() {
-        val undeclaredInputs = UndeclaredInputsGuard.getUndeclaredInputs()
+        val undeclaredInputs = UndeclaredInputsGuard.getInstance().undeclaredInputs
 
         check(undeclaredInputs == expectedUndeclaredInputs) {
             buildString {

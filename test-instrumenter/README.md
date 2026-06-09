@@ -47,8 +47,8 @@ The performance of the `UndeclaredInputsGuard` has been assessed via JMH microbe
 
 | Scenario                                         | [Mode Cnt Score Error Units]        |
 |--------------------------------------------------|-------------------------------------|
-| all optimizations                                | avgt    5  27.012 ± 7.600  ms/op    |
-| without check for `.` and `..`                   | avgt    5  26.068 ± 1.937  ms/op    |
+| all optimizations                                | avgt   25  91.095 ± 9.472  ms/op    |
+| without check for `.` and `..`                   | avgt   25  84.452 ± 3.188  ms/op    |
 | `!isDirectory()` before `isUndeclaredInput()`    | avgt    5  24.564 ± 2.801  ms/op    |
 | without `canonicalFile.equals(file)`             | avgt    5  28.303 ± 3.928  ms/op    |
 | `getCanonicalFile()` always invoked              | avgt    5  1240.139 ± 75.544  ms/op |
