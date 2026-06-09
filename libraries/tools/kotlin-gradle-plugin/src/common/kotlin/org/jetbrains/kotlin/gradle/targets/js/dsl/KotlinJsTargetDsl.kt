@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests.Companion.DEFAULT_TEST_RUN_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
@@ -370,6 +369,16 @@ interface KotlinJsSubTargetDsl {
  * **Note:** This interface is not intended for implementation by build script or plugin authors.
  */
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
+
+    /**
+     * Browser test runner configuration.
+     */
+    val test: KotlinJsBrowserTestDsl
+
+    /**
+     * Configure the browser test runner.
+     */
+    fun test(body: Action<KotlinJsBrowserTestDsl>)
 
     /**
      * Configures the default Webpack configuration for the browser execution environment.
