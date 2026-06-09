@@ -275,6 +275,12 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
+        /**
+         * Marker file written inside a monolithic cache directory after a successful
+         * atomic rename. Absence means the cache is incomplete. KT-86251.
+         */
+        const val MONOLITHIC_CACHE_COMPLETE_MARKER = ".cache-complete"
+
         private fun computeLibraryHash(library: KotlinLibrary, librariesHashes: MutableMap<String, FingerprintHash>) =
                 librariesHashes.getOrPut(library.uniqueName) {
                     val hashComputer = LibraryHashComputer()

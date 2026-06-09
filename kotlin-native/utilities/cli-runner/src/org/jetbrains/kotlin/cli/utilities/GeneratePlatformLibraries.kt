@@ -339,9 +339,15 @@ private fun buildStdlibCache(
         logger: Logger
 ): Unit = with(cacheInfo) {
     val stdlibCacheFile = getLibraryCacheDir("stdlib", target, cacheDirectory, cacheKind)
-    if (stdlibCacheFile.exists) {
+    val markerFile = stdlibCacheFile.resolve(CachedLibraries.MONOLITHIC_CACHE_COMPLETE_MARKER)
+    if (markerFile.exists) {
         logger.verbose("Skip precompiling standard library as it's already precompiled")
         return
+    }
+    // Remove stale incomplete cache from a previous interrupted run. KT-86251.
+    if (stdlibCacheFile.exists) {
+        logger.verbose("Removing stale incomplete stdlib cache at ${stdlibCacheFile.absolutePath}")
+        stdlibCacheFile.deleteRecursively()
     }
 
     logger.log("Precompiling standard library...")
