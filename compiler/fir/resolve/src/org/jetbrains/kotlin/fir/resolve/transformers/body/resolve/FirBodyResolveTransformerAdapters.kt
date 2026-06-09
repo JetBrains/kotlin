@@ -43,13 +43,15 @@ class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeS
             super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver?.resolveTypeAlias(this) }
 
         override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
-            super.transformAnonymousObject(anonymousObject, data).apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
+            super.transformAnonymousObject(anonymousObject, data)
+                .apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
 
         override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
-            super.transformNamedFunction(namedFunction, data).apply { components.directCallableOverridesResolver?.resolveNamedFunction(this) }
+            super.transformNamedFunction(namedFunction, data)
+                .apply { components.directCallableOverridesResolver?.resolveNamedFunction(this, false) }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
-            super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this) }
+            super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this, false) }
     }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
