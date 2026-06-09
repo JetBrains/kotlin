@@ -85,6 +85,7 @@ interface KotlinJsBrowserTestDsl {
      * Defaults can be overridden in the individual browser test runner configuration.
      */
     val browserDefaults: BrowserTestRunnerConfigDsl
+    fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>): BrowserTestRunnerConfigDsl
 
     /**
      * Default bundle task that produces js bundle with the HTML file to run Kotlin tests in a browser.
