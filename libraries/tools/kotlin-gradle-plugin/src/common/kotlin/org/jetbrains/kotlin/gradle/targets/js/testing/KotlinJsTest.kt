@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.internal.tasks.testing.TestExecuter
+import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
@@ -58,6 +59,12 @@ internal constructor(
     @Suppress("unused")
     val testFrameworkSettings: String
         @Input get() = testFramework!!.settingsState
+
+    @get:Nested
+    @get:Optional
+    @Suppress("unused")
+    val testFrameworkInputs: Any?
+        get() = testFramework?.frameworkGradleInputObject
 
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
@@ -154,7 +161,7 @@ internal constructor(
         return testFramework
     }
 
-    override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
+    override fun createTestExecutionSpec(): TestExecutionSpec {
         val launchOpts = objects.processLaunchOptions {
             workingDir.set(this@KotlinJsTest.testFramework!!.workingDir)
             executable.set(this@KotlinJsTest.testFramework!!.executable)
@@ -167,5 +174,10 @@ internal constructor(
             nodeJsArgs = nodeJsArgs,
             debug = debug
         )
+    }
+
+    override fun createTestExecuter(): TestExecuter<*> {
+        val testExecuter = testFramework!!.createTestExecuter() ?: super.createTestExecuter()
+        return testExecuter
     }
 }
