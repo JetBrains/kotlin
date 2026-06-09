@@ -12,6 +12,8 @@ package test.generated.alldistinct
 //
 
 import kotlin.test.*
+import test.TestPlatform
+import test.testExceptOn
 
 class AllDistinctArrayTest {
 
@@ -68,17 +70,23 @@ class AllDistinctArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsDouble() {
-        assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
-        assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
-        assertFalse(arrayOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
+            assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
+            assertFalse(arrayOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
+        }
         assertTrue(arrayOf(Double.NaN, 1.0).allDistinct())
         assertTrue(arrayOf(0.0, 1.0).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsDouble() {
-        assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
-        assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
+            assertFalse(arrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
+        }
         assertTrue(arrayOf(Double.NaN, 1.0).allDistinctBy { it })
     }
 
@@ -113,17 +121,23 @@ class AllDistinctArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsFloat() {
-        assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
-        assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
-        assertFalse(arrayOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
+            assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
+            assertFalse(arrayOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allDistinct())
+        }
         assertTrue(arrayOf(Float.NaN, 1.0f).allDistinct())
         assertTrue(arrayOf(0.0f, 1.0f).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsFloat() {
-        assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
-        assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
+            assertFalse(arrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
+        }
         assertTrue(arrayOf(Float.NaN, 1.0f).allDistinctBy { it })
     }
 }

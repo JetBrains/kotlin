@@ -12,6 +12,8 @@ package test.generated.alldistinct
 //
 
 import kotlin.test.*
+import test.TestPlatform
+import test.testExceptOn
 
 class AllDistinctDoubleArrayTest {
 
@@ -68,17 +70,23 @@ class AllDistinctDoubleArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsDouble() {
-        assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
-        assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
-        assertFalse(doubleArrayOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
+            assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
+            assertFalse(doubleArrayOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allDistinct())
+        }
         assertTrue(doubleArrayOf(Double.NaN, 1.0).allDistinct())
         assertTrue(doubleArrayOf(0.0, 1.0).allDistinct())
     }
 
     @Test
     fun allDistinctByDifferentNaNBitsDouble() {
-        assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
-        assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
+        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        testExceptOn(TestPlatform.Js) {
+            assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
+            assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
+        }
         assertTrue(doubleArrayOf(Double.NaN, 1.0).allDistinctBy { it })
     }
 }
