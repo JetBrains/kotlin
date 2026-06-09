@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/manifestPropertyNewCompanionInitialization.kt
+-Xwasm
+-Xir-produce-klib-dir
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-libraries
+$STDLIB_WASM_JS$
+
+-Xcompanion-blocks-and-extensions

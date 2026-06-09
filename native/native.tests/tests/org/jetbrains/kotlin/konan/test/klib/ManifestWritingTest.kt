@@ -215,6 +215,15 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         )
     }
 
+    @Test
+    @TestMetadata("metadata_compilation_without_companion_blocks")
+    fun testWithDisabledCompanionBlockFeature(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-XXLanguage:-CompanionBlocksAndExtensions",
+        )
+    }
+
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
         val compilationResult = compileLibrary(
             testRunSettings,
