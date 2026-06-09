@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
-import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.withType
 import javax.inject.Inject
@@ -82,6 +84,14 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 it.configureBuild(body)
             }
     }
+
+    override val test: KotlinJsBrowserTestDsl = project.objects
+        .newInstance(
+            KotlinJsBrowserTestImpl::class.java,
+            target.compilations.getByName(TEST_COMPILATION_NAME)
+        )
+
+    override fun test(body: Action<KotlinJsBrowserTestDsl>) = body.execute(test)
 
     companion object {
         internal const val WEBPACK_TASK_NAME = "webpack"
