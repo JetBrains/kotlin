@@ -117,6 +117,9 @@ internal abstract class KotlinJsBrowserTestImpl
             timeout.convention(Duration.ofSeconds(2))
         }
 
+    override fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>) =
+        browserDefaults.also { configure.execute(it) }
+
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
         with(browserDefaults) {
             browserLevelDsl.testsLocation.convention(testsLocation)
