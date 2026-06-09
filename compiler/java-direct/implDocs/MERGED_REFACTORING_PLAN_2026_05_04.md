@@ -14,12 +14,12 @@
 > [`implDocs/ARCHITECTURE.md`](ARCHITECTURE.md),
 > [`implDocs/RESOLUTION_PIPELINE.md`](RESOLUTION_PIPELINE.md),
 > [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md),
-> [`implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-> [`implDocs/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
+> [`implDocs/archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+> [`implDocs/archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
 > (superseded by the next entry; kept for fallback alternatives A / C / F),
-> [`implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+> [`implDocs/archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
 > (chosen redesign track for closing the unification residue; Step 4.5a / 4.5b inserts and the Step 4 re-classification are now applied to §5 below),
-> [`implDocs/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md).
+> [`implDocs/archive/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](archive/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md).
 
 ---
 
@@ -30,7 +30,7 @@ and now need a shared execution timeline. The **PSI-replacement** track
 ([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md))
 removes the IntelliJ-platform dependency for binary Java lookups, in three phases (Phase 1
 already landed). The **resolver-unification** track
-([`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md))
+([`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md))
 collapses the AST-vs-FIR split for classifier resolution into a single FIR-native path,
 while preserving the laziness contract — five invariants, three failure modes — that
 predominantly-Java compilation depends on. Together, they leave `java-direct` with one
@@ -91,8 +91,8 @@ End-state after all steps land:
   retire and `JavaClassifierType.classifier?.classId` answers every cross-file reference
   via `firSession.symbolProvider`.
   Owns:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §10](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 5](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §10](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
 - The five laziness invariants are upheld and the three failure modes remain guarded
   against. Post-Step-4.5a, failure mode 1's mitigation moves from *structural*
   (the model has no `FirSession`) to *policy + typed wrapper* — invariants 1, 2, 3
@@ -102,16 +102,16 @@ End-state after all steps land:
   bounds inheritance cycles on every supertype-walking entry point and emits
   `CYCLIC_INHERITANCE_HIERARCHY` for Java-only cycles that today silently truncate.
   Owns:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Five laziness invariants](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Three failure modes](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §§6.1, 7, 8](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Five laziness invariants](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [§Three failure modes](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §§6.1, 7, 8](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
 - Performance is not regressed on the agreed CI testbed
   (`IntelliJFullPipelineTestsGenerated.testIntellij_platform_externalProcessAuthHelper`):
   parse-counter / symbol-creation-counter values after Step 4 (end of unification) and
   after Step 6 (end of PSI Phase 2) are within noise of the Phase-1 baseline, with each
   measurement attributable to a single redesign.
   Owns:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 
 ## 4. Source documents and their continuing roles
 
@@ -122,9 +122,9 @@ and when*.
 | Document | Role | Owns |
 |---|---|---|
 | [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) | What/why of PSI removal. | Three-phase design, indirect-caller catalogue (§1.5), risks per phase (§2.7). |
-| [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md) | What/why of resolver unification. | Five laziness invariants, three failure modes, five-stage migration. |
-| [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md) | **Superseded** — design space for the L1 / L2 leftovers (alternatives A–F + Step-6 compatibility verdicts). | Kept for fallback closers A / C / F if `FirSession` injection is rejected; the §2 timing-bug analysis remains canonical. |
-| [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md) | Redesign track for closing the unification residue (L1 + L2); supersedes the alternatives doc. | Deletion of `JavaClassifierType.resolve(...)` and `JavaAnnotation.resolveAnnotation(...)`; per-origin supertype routing; `JavaSupertypeLoopChecker` (cycle bound + diagnostic emission); typed `LazySessionAccess`; `directSupertypeClassIds()` cache on `FirJavaClass` (variant C); per-file plan for Step 4.5a / 4.5b (§5 inserts and Step 4 re-classification **applied 2026-05-06**). |
+| [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md) | What/why of resolver unification. | Five laziness invariants, three failure modes, five-stage migration. |
+| [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md`](archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md) | **Superseded** — design space for the L1 / L2 leftovers (alternatives A–F + Step-6 compatibility verdicts). | Kept for fallback closers A / C / F if `FirSession` injection is rejected; the §2 timing-bug analysis remains canonical. |
+| [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md`](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md) | Redesign track for closing the unification residue (L1 + L2); supersedes the alternatives doc. | Deletion of `JavaClassifierType.resolve(...)` and `JavaAnnotation.resolveAnnotation(...)`; per-origin supertype routing; `JavaSupertypeLoopChecker` (cycle bound + diagnostic emission); typed `LazySessionAccess`; `directSupertypeClassIds()` cache on `FirJavaClass` (variant C); per-file plan for Step 4.5a / 4.5b (§5 inserts and Step 4 re-classification **applied 2026-05-06**). |
 | [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) | Per-iteration log. | Dated entries for each landed step (overview / changes / test results / files / key learnings). |
 | `MERGED_REFACTORING_PLAN_2026_05_04.md` (this doc) | When / in what order. | Step ordering, per-step prerequisites and validation gates, coupling points. |
 
@@ -181,8 +181,8 @@ Each step uses the same template:
 - **Prerequisites**: Step 1 green on default-ON flag (already true).
 - **Validation gate**: full `JavaUsingAst*` matrix unchanged (2692/2692).
 - **References**:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 1](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Stage 2](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 1](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [§Stage 2](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 
 #### Step 3 — Unification Stage 3 (load-bearing; perf gate on clean Phase-1 baseline)
 
@@ -201,9 +201,9 @@ Each step uses the same template:
   laziness invariants and three failure modes are the explicit checklist for any
   regression triage.
 - **References**:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 3](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Five laziness invariants](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Three failure modes](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 3](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [§Five laziness invariants](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [§Three failure modes](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 
 #### Step 4 — Unification Stages 4 + partial 5 (KDoc only)
 
@@ -220,9 +220,9 @@ Each step uses the same template:
 - **Validation gate**: full `JavaUsingAst*` matrix unchanged + re-run parse counter on
   the Stage-3 testbed (must be ≤ Step 3's value, within noise).
 - **References**:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 4](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [§Stage 5](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
-  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §13](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Stage 4](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [§Stage 5](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md),
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §13](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md)
   (Step 4 re-classification rationale).
 
 #### Step 5 — Performance & test-data sweep (verification only)
@@ -237,7 +237,7 @@ Each step uses the same template:
   [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) at the same level of detail as the
   existing Phase-1 entries.
 - **References**:
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md);
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md` §Verification under realistic loads](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md);
   [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.7 Phase 1](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.7).
 
 #### Step 4.5a — `FirSession` injection + `resolve(...)` deletion + drop Phase 1 (closes L1)
@@ -276,8 +276,8 @@ Each step uses the same template:
   `lazyResolveToPhase(SUPER_TYPES)` no-op + `superTypeRefs` enhancement read on
   the Java arms).
 - **References**:
-  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5a"](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md);
-  [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md` §3 "C — pre-resolved supertype-`ClassId` cache"](UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5a"](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md);
+  [`UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md` §3 "C — pre-resolved supertype-`ClassId` cache"](archive/UNIFICATION_CLOSURE_ALTERNATIVES_2026_05_05.md)
   (variant C and fallback variant D).
 
 #### Step 4.5b — Stage-5 collapse (closes L2)
@@ -301,7 +301,7 @@ Each step uses the same template:
   green; perf-counter re-run (must be within noise of the post-Step-4.5a
   baseline).
 - **References**:
-  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5b"](FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
+  [`FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §11 "Step 4.5b"](archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md).
 
 #### Step 6 — PSI Phase 2: structural refactoring of the symbol-provider topology
 
@@ -363,14 +363,14 @@ one of the source documents; this section flags the linkage.
   LL-FIR Analysis API component). The audit becomes a propagation, not an invention —
   which is the second-largest reason to do unification first. See PSI doc
   [§2.4.4](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md#2.4) and unification doc
-  [§Stage 3](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
+  [§Stage 3](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md).
 - **Doc-wording follow-ups when Step 6 lands.** The unification doc's chain quote
   `tryResolve(ClassId) → JvmSymbolProvider → CombinedJavaClassFinder → BinaryJavaClassFinder (miss) → JavaClassFinderOverAstImpl`
   becomes stale post-Phase-2 (those classes are deleted). The doc's *argument* survives —
   the chain just shortens to
   `tryResolve(ClassId) → session.symbolProvider → JvmClassFileBasedSymbolProvider | JavaSymbolProvider → JavaClassFinderOverAstImpl (source side only)`.
   Refresh the chain quote in
-  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md)
+  [`RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md)
   (around its "Why the code looks the way it does today" reason 2 and the closing
   "Net assessment") in the same iteration that lands Step 6, so the design narrative
   matches reality.
@@ -432,10 +432,10 @@ safer-to-debug ordering wins.
   pipeline reference.
 - [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
   — the *what* and *why* of PSI removal. Owns the three-phase design and risks.
-- [`implDocs/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md)
+- [`implDocs/archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md`](archive/RESOLVER_UNIFICATION_AND_LAZINESS_2026_05_04.md)
   — the *what* and *why* of resolver unification. Owns the laziness invariants and
   failure modes.
-- [`implDocs/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md)
+- [`implDocs/archive/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md`](archive/CLASSIFIER_RESOLUTION_TRACE_2026_05_04.md)
   — sister document to the unification plan; traces a single classifier resolution
   end-to-end through the *current* architecture.
 - [`ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) — per-iteration log; each landed step

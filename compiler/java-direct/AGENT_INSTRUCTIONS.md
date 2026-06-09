@@ -2,22 +2,21 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%). No
 known won't-fix.
-The module is feature-complete on the `JavaUsingAst*` suite; active work is
-optimization, the merged PSI-removal × resolver-unification refactoring, and
-closing the IJ-FP regression delta.
+The module is feature-complete on the `JavaUsingAst*` suite. Active work is
+optimization, **PSI-removal Phase 3** (source-only PSI/AST switch — see
+`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`), and closing the IJ-FP
+regression delta. The public Java-model interface rollback (rule 7) and the
+resolver-unification residue have landed.
 
-> **Caveat on historical numbers.** Before 2026-04-28 the `JavaUsingAst*` test
-> generators did **not** actually route `// FILE: *.java` blocks through
-> `java-direct`'s AST — every Java class fell through to PSI's
-> `JavaClassFinderImpl`. Any "feature complete" / `1168/1168 box` /
-> `1454/1456 phased` claim dated before 2026-04-28 was against the PSI loader,
-> not `java-direct`. Treat older docs and archive entries with that lens.
-> See `implDocs/archive/ITERATION_RESULTS_2026_05_11.md` (entry
-> *Test framework wiring: java-direct AST was never used — 2026-04-28*).
+> **Caveat on historical numbers.** Before 2026-04-28 the `JavaUsingAst*`
+> generators did **not** route `// FILE: *.java` blocks through `java-direct`'s
+> AST (they fell through to PSI's `JavaClassFinderImpl`), so any test counts in
+> docs/archives dated before 2026-04-28 are against the PSI loader, not
+> `java-direct`. See `implDocs/archive/ITERATION_RESULTS_2026_05_11.md`.
 
 **Key files**: `JavaClassOverAst.kt`, `JavaTypeOverAst.kt`, `JavaMemberOverAst.kt`,
 `JavaResolutionContext.kt`, `JavaClassFinderOverAstImpl.kt`,
-`BinaryJavaClassFinder.kt`, `JavaModelSessionAccess.kt`,
+`JvmBinaryClassFinderInputsOverIndex.kt`, `JavaModelSessionAccess.kt`,
 `JavaSupertypeLoopChecker.kt`.
 Full map in `implDocs/ARCHITECTURE.md`.
 
@@ -58,7 +57,9 @@ Full map in `implDocs/ARCHITECTURE.md`.
    `java-direct`-private subinterface inside `compiler/java-direct/src/.../model/` and
    record the obstacle in `ITERATION_RESULTS.md`. **This rule supersedes any in-flight
    design doc that suggests adding a new member as a "bridge", "hint", or "side-channel".**
-   See `implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` for the rollback inventory.
+   The rollback has **landed** (the public interface now matches the pre-`java-direct`
+   shape); the rule remains a standing constraint. Historical inventory:
+   `implDocs/archive/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md`.
 
 ---
 
@@ -183,7 +184,8 @@ test regresses:
    `TreeBasedMethod.kt`) or PSI (`JavaClassImpl.java`, `JavaMemberImpl.java`).
 4. **Implement a minimal fix** — then rerun the full suite. **Any regression → revert.**
    A net improvement of +3/-2 is not acceptable.
-5. **Document** — append an entry to `ITERATION_RESULTS.md`.
+5. **Document** — append a short entry to `ITERATION_RESULTS.md` using the template's
+   fixed fields (see *Docs Maintenance*). Keep extended traces in a linked `implDocs/` note.
 
 ---
 
@@ -221,7 +223,7 @@ test regresses:
   silently (cf. archived 2026-05-08 `findInheritedNestedClass` double-guard fix).
   Hoist the supertype lookup *out* of the guard region instead.
 - **`FirJavaClass.directSupertypeClassIds()`** (variant C of
-  `FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §12 Q1) is the supported
+  `implDocs/archive/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` §12 Q1) is the supported
   cross-origin supertype read; the old `getResolvedSupertypeClassIds` callback
   has been deleted.
 - **`FirDeclarationOrigin.Java.Source` vs `Java.Library`** — `Java.Source`
@@ -240,15 +242,6 @@ test regresses:
   KT-24392 filter only removes them from *container* annotations, not
   *typeAnnotations*). Place them on the component for varargs, leave the outer
   array wrapper's member annotations empty for non-varargs.
-
-## Binary Class Finder Flag
-
-`-Pkotlin.javaDirect.useBinaryClassFinder=true` switches the binary half of
-`CombinedJavaClassFinder` from the legacy PSI finder to the index-based
-`BinaryJavaClassFinder` (Phase 1 of the PSI-removal plan in
-`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`). Default is **OFF** in
-production; the flag is exercised by the test JVM via the `systemProperty`
-passthrough in `compiler/java-direct/build.gradle.kts`.
 
 ## Performance Measurement
 
@@ -278,17 +271,38 @@ When profiling java-direct code paths:
 
 | Document | When to consult |
 |----------|----------------|
-| `implDocs/INTERFACE_ROLLBACK_INVENTORY_2026_05_07.md` | **Authoritative goal-statement** for the public Java-model interface rollback. Read before touching any `core/compiler.common.jvm/.../structure/*` interface or any `JavaTypeOverAst` / `JavaAnnotationOverAst` resolution path. |
-| `implDocs/FIRSESSION_INJECTION_PROPOSAL_2026_05_05.md` | Design of `LazySessionAccess`, the `resolvedClassId` hint, `directSupertypeClassIds()`, and the Step 4.5a-c public-interface deletions. |
 | `implDocs/MERGED_REFACTORING_PLAN_2026_05_04.md` | PSI removal × resolver unification — Stages 1-4 plan, dependencies, and acceptance criteria. |
-| `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase PSI removal plan; `BinaryJavaClassFinder` design. |
+| `implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` | Three-phase PSI removal plan; Phases 1-2 landed, **Phase 3** (source-only PSI/AST switch) is the next effort. |
 | `implDocs/IJ_FP_REGRESSION_ANALYSIS_2026_05_10.md` | IntelliJ-full-pipeline regression categorisation (Cat A-E). |
-| `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes |
-| `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix |
-| `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes |
-| `ITERATION_RESULTS.md` | Current iteration log (new entries on top) |
-| `implDocs/archive/` | Historical iterations, completed plans, measurement data; `ITERATION_RESULTS_2026_05_11.md` is the most recent archive |
+| `implDocs/ARCHITECTURE.md` | Callback patterns, key files, JLS implicit rules, common fixes. |
+| `implDocs/RESOLUTION_PIPELINE.md` | Before any resolution fix. |
+| `implDocs/INVESTIGATION_TECHNIQUES.md` | Debugging, AST inspection, measurement recipes. |
+| `ITERATION_RESULTS.md` | Current iteration log — template + brevity rules; new entries on top. |
+| `implDocs/archive/` | Historical iterations and **landed** design docs: the interface-rollback inventory, the FIRSESSION-injection proposal, the JTC / TYPE_USE / `fir-jvm` cleanups, and per-iteration logs. `ITERATION_RESULTS_2026_06_01.md` is the most recent log archive. |
 
 ---
 
-*Last updated: 2026-05-20 (Gradle project path renamed from `:kotlin-java-direct` to `:compiler:java-direct`; dropped routine `--rerun-tasks --no-build-cache` from Test Commands to use Gradle's input-change detection and avoid forced full rebuilds.)*
+## Docs Maintenance
+
+Keep the working doc set small — these files are read into context every session.
+
+- **`ITERATION_RESULTS.md` is append-only and short.** New entry on top, using the
+  template's fixed fields (`Change` / `Files` / `Tests` / `Result`). Cap each entry at
+  ~15 lines / ~150 words; long rationale, traces, or measurement tables go into a
+  dedicated `implDocs/<TOPIC>.md` and are linked, never inlined. No pasted logs/diffs.
+- **Archive the log when it passes ~600 lines.** `git mv` it to
+  `implDocs/archive/ITERATION_RESULTS_<last-entry-date>.md`, add an archive banner
+  (Archive Date / Coverage / Result / warning), then reset `ITERATION_RESULTS.md` to its
+  template.
+- **Archive an `implDocs/` doc once its refactoring has fully landed or been superseded.**
+  Move it to `implDocs/archive/` and repoint any references here. Keep only living
+  references (`ARCHITECTURE`, `RESOLUTION_PIPELINE`, `INVESTIGATION_TECHNIQUES`) and docs
+  for *active* work in `implDocs/`.
+
+---
+
+*Last updated: 2026-06-09 (docs cleanup: archived `ITERATION_RESULTS` →
+`implDocs/archive/ITERATION_RESULTS_2026_06_01.md` and reset the log to a structured,
+capped template; moved 10 landed/superseded design docs — incl. the interface-rollback
+inventory and FIRSESSION-injection proposal — into `implDocs/archive/`; removed the
+obsolete Binary-Class-Finder-Flag section; added this Docs Maintenance section.)*
