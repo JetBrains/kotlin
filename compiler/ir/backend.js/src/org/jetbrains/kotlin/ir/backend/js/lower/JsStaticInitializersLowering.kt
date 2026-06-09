@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -134,8 +135,11 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
                 when (declaration) {
                     in staticDeclarationsByFields -> {
                         staticDeclarationsByFields[declaration]?.let { [field, initializer] ->
+                            val initBuilder = context.irBuiltIns.createIrBuilder(
+                                container.symbol, declaration.startOffset, declaration.endOffset
+                            )
                             add(
-                                builder.irSetField(
+                                initBuilder.irSetField(
                                     receiver = null,
                                     field = field,
                                     value = initializer,
@@ -223,8 +227,8 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         initializers: List<IrStatement>
     ): IrSimpleFunction {
         val initFunction = context.irFactory.buildFun {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
+            startOffset = UNDEFINED_OFFSET
+            endOffset = UNDEFINED_OFFSET
             this.origin = origin
             name = Name.identifier(container.name.identifier + '$' + STATIC_INIT_FUNCTION_NAME)
             visibility = PRIVATE
