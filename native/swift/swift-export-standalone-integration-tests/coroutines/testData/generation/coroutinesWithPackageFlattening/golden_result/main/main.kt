@@ -26,16 +26,7 @@ public fun flattened_testSuspendFunction(continuation: kotlin.native.internal.Na
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = flattened.testSuspendFunction()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        flattened.testSuspendFunction()
+    }
 }

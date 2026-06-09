@@ -44,6 +44,29 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 }
 
+package func withKotlinContinuation<T>(
+    _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
+) async throws -> T {
+    try await {
+        try Task.checkCancellation()
+        var cancellation: KotlinTask! = nil
+        return try await withTaskCancellationHandler {
+            try await withUnsafeThrowingContinuation { nativeContinuation in
+                withUnsafeCurrentTask { currentTask in
+                    let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
+                    let exception: (KotlinRuntime.KotlinBase?) -> Void = { error in
+                        nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
+                    }
+                    cancellation = KotlinTask(currentTask!)
+                    fn(continuation, exception, cancellation)
+                }
+            }
+        } onCancel: {
+            cancellation?.cancelExternally()
+        }
+    }()
+}
+
 public protocol KotlinFlow: KotlinRuntime.KotlinBase { }
 
 public protocol KotlinTypedFlow<Element> {
@@ -229,40 +252,23 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
     }
 
     public func next() async throws -> Element? {
-        try await {
-            try Task.checkCancellation()
-            var cancellation: KotlinCoroutineSupport.KotlinTask! = nil
-            return try await withTaskCancellationHandler {
-                try await withUnsafeThrowingContinuation { (nativeContinuation: UnsafeContinuation<Element?, any Error>) in
-                    withUnsafeCurrentTask { currentTask in
-                        let continuation: (Swift.Optional<Element>) -> Swift.Void = { nativeContinuation.resume(returning: $0) }
-                        let exception: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = { error in
-                            nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                        }
-                        cancellation = KotlinCoroutineSupport.KotlinTask(currentTask!)
-
-                        let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), { arg0, arg1 in
-                                return {
-                                    if arg0 {
-                                        let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
-                                        continuation(.some(element))
-                                    } else {
-                                        continuation(.none)
-                                    }
-                                    return 0
-                                }()
-                        }, { arg0 in
-                                return {
-                                    exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
-                                    return 0
-                                }()
-                        }, cancellation.__externalRCRef())
-                    }
+        let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
+            let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
+                if arg0 {
+                    let element = arg1.flatMap(KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef:)) as! Element
+                    continuation(.some(element))
+                } else {
+                    continuation(.none)
                 }
-            } onCancel: {
-                cancellation?.cancelExternally()
+                return 0
             }
-        }()
+            let _exception: (UnsafeMutableRawPointer?) -> Int32 = { arg0 in
+                exception(arg0.flatMap(KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef:)));
+                return 0
+            }
+            let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), _continuation, _exception, cancellation.__externalRCRef())
+        }
+        return result
     }
 }
 

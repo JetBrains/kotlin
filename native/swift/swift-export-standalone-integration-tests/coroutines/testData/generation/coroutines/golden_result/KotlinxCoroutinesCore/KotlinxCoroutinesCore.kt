@@ -79,18 +79,9 @@ public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_O
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = __self.emit(__value)
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.emit(__value)
+    }
 }
 
 @ExportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
@@ -112,18 +103,9 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swi
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = __self.emit(__value)
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.emit(__value)
+    }
 }
 
 @ExportedBridge("kotlinx_coroutines_flow_MutableSharedFlow_resetReplayCache")

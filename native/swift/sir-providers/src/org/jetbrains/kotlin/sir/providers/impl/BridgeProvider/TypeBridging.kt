@@ -1079,7 +1079,7 @@ internal sealed interface Bridge {
                 val callSite = returnType.inSwiftSources.swiftToKotlin(typeNamer, "originalBlock($callArgs)")
 
                 return@with """{
-                |    let originalBlock = $valueExpression
+                |    let originalBlock: ${swiftType.swiftName} = $valueExpression
                 |    return {$defineArgs return $callSite }
                 |}()""".trimMargin()
             }

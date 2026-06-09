@@ -7145,7 +7145,7 @@ extension ExportedKotlinPackages.kotlin.time {
             action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
-                let originalBlock = action
+                let originalBlock: (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
                 return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32, arg3: Swift.Int32, arg4: Swift.Int32) in return originalBlock(arg0, arg1, arg2, arg3, arg4).map { it in it.__externalRCRef() } ?? nil }
             }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
@@ -7153,7 +7153,7 @@ extension ExportedKotlinPackages.kotlin.time {
             action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
-                let originalBlock = action
+                let originalBlock: (Swift.Int64, Swift.Int32, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
                 return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32, arg3: Swift.Int32) in return originalBlock(arg0, arg1, arg2, arg3).map { it in it.__externalRCRef() } ?? nil }
             }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
@@ -7161,7 +7161,7 @@ extension ExportedKotlinPackages.kotlin.time {
             action: @escaping (Swift.Int64, Swift.Int32, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
-                let originalBlock = action
+                let originalBlock: (Swift.Int64, Swift.Int32, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
                 return { (arg0: Swift.Int64, arg1: Swift.Int32, arg2: Swift.Int32) in return originalBlock(arg0, arg1, arg2).map { it in it.__externalRCRef() } ?? nil }
             }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }
@@ -7169,7 +7169,7 @@ extension ExportedKotlinPackages.kotlin.time {
             action: @escaping (Swift.Int64, Swift.Int32) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             return { switch kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), {
-                let originalBlock = action
+                let originalBlock: (Swift.Int64, Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = action
                 return { (arg0: Swift.Int64, arg1: Swift.Int32) in return originalBlock(arg0, arg1).map { it in it.__externalRCRef() } ?? nil }
             }()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
         }

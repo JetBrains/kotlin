@@ -65,7 +65,7 @@ public func nothingClosure(
     block: @escaping () -> Swift.Never
 ) -> Swift.Never {
     return { __root___nothingClosure__TypesOfArguments__U2829202D_U20Swift_Never__({
-        let originalBlock = block
+        let originalBlock: () -> Swift.Never = block
         return { return { originalBlock() }() }
     }()); fatalError() }()
 }
@@ -73,7 +73,7 @@ public func nothingClosureParam(
     block: @escaping (Swift.Never) -> Swift.String
 ) -> Swift.String {
     return __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D_U20Swift_String__({
-        let originalBlock = block
+        let originalBlock: (Swift.Never) -> Swift.String = block
         return { (arg0: Swift.Bool) in return originalBlock({ arg0; fatalError() }()) }
     }())
 }
@@ -93,7 +93,7 @@ public func nothingOptClosure(
     block: @escaping () -> Swift.Never?
 ) -> Swift.Never {
     return { __root___nothingOptClosure__TypesOfArguments__U2829202D_U20Swift_Optional_Swift_Never___({
-        let originalBlock = block
+        let originalBlock: () -> Swift.Optional<Swift.Never> = block
         return { return { originalBlock(); return true }() }
     }()); fatalError() }()
 }
@@ -101,7 +101,7 @@ public func nothingOptClosureParam(
     block: @escaping (Swift.Never?) -> Swift.String
 ) -> Swift.String {
     return __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_Swift_Never_U29202D_U20Swift_String__({
-        let originalBlock = block
+        let originalBlock: (Swift.Optional<Swift.Never>) -> Swift.String = block
         return { (arg0: Swift.Bool) in return originalBlock({ arg0; return nil }()) }
     }())
 }
