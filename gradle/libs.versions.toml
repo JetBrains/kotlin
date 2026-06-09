@@ -88,6 +88,7 @@ yarn = "1.22.22"
 bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
 bytebuddy = "1.18.9"
+playwright = "1.60.0"
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
@@ -217,6 +218,8 @@ bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", vers
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
 
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
+
+playwrigt = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

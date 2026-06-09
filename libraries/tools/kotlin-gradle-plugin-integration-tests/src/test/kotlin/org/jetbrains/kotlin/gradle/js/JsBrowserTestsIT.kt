@@ -109,7 +109,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
                         browser {
                             @OptIn(ExperimentalJsTestDsl::class)
                             with(test) {
-                                chromium()
+                                firefox()
                             }
                         }
                     }
