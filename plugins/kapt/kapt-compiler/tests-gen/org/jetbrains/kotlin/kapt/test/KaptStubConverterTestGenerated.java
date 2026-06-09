@@ -419,6 +419,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("introducesAt.kt")
+  public void testIntroducesAt() {
+    run("introducesAt.kt");
+  }
+
+  @Test
   @TestMetadata("invalidFieldName.kt")
   public void testInvalidFieldName() {
     run("invalidFieldName.kt");
