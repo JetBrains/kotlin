@@ -75,7 +75,10 @@ val SirType.swiftName
         is SirErrorType -> "ERROR_TYPE"
         is SirUnsupportedType -> "Swift.Never"
         is SirFunctionalType -> {
-            val parameters = parameterTypes.joinToString { it.annotatedSwiftName }
+            val parameters = buildList {
+                contextType?.let(::add)
+                addAll(parameterTypes)
+            }.joinToString { it.annotatedSwiftName }
             val async = " async".takeIf { isAsync } ?: ""
             val throws = when (errorType) {
                 SirType.never -> ""
