@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +LocalTypeAliases
 object Foo
 
@@ -7,7 +7,7 @@ fun foo() {
 
     val x: () -> String = TA::toString
     val y = TA::toString
-    val z = TA<*>::<!UNRESOLVED_REFERENCE!>toString<!>
+    val z = TA<*>::toString
 }
 
 /* GENERATED_FIR_TAGS: callableReference, functionDeclaration, functionalType, localProperty, nullableType,
