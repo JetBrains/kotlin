@@ -14,17 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.gradle.workers.WorkAction
-import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.IOS_DEPLOYMENT_TARGET_DEFAULT
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.MACOS_DEPLOYMENT_TARGET_DEFAULT
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.MANIFEST_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SUBPACKAGES
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_DYLIB
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.TVOS_DEPLOYMENT_TARGET_DEFAULT
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.WATCHOS_DEPLOYMENT_TARGET_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -37,294 +27,10 @@ import java.io.File
 import java.io.Serializable
 import java.security.MessageDigest
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.collections.map
 import kotlin.collections.mapNotNull
-
-
-internal interface GenerateSyntheticPackageParameters : WorkParameters {
-    val directlyImportedDependencies: SetProperty<SwiftPMDependency>
-    val dependencyIdentifierToImportedSwiftPMDependencies: Property<TransitiveSwiftPMDependencies>
-    val syntheticImportProjectRoot: RegularFileProperty
-    val konanTargets: SetProperty<KonanTarget>
-    val iosDeploymentVersion: Property<String>
-    val macosDeploymentVersion: Property<String>
-    val watchosDeploymentVersion: Property<String>
-    val tvosDeploymentVersion: Property<String>
-    val syntheticProductType: Property<GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType>
-    val failOnNonIdempotentChanges: Property<Boolean>
-    val buildingFromXcode: Property<Boolean>
-
-}
-
-internal abstract class GenerateSyntheticPackageWorkActions @Inject constructor() : WorkAction<GenerateSyntheticPackageParameters> {
-
-    override fun execute() {
-        runPackageGeneration()
-    }
-
-    private fun runPackageGeneration() {
-        failOnNonIdempotentChangesIfNeeded {
-            val packageRoot = parameters.syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
-            when (parameters.syntheticProductType.get()) {
-                GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC -> {
-                    generatePackageManifest(
-                        identifier = SYNTHETIC_IMPORT_DYLIB,
-                        packageRoot = packageRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
-                        syntheticProductType = GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC,
-                        directlyImportedSwiftPMDependencies = parameters.directlyImportedDependencies.get(),
-                        transitiveSyntheticPackages = parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
-                        transitiveSyntheticPackagesPath = "..",
-                    )
-                    generatePackageManifest(
-                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                        packageRoot = packageRoot,
-                        syntheticProductType = GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED,
-                        // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
-                        directlyImportedSwiftPMDependencies = parameters.directlyImportedDependencies.get().mapNotNull {
-                            val remoteDependency = when (it) {
-                                is SwiftPMDependency.Local -> return@mapNotNull null
-                                is SwiftPMDependency.Remote -> it
-                            }
-                            remoteDependency.copy(products = emptyList())
-                        }.toSet(),
-                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB, false)),
-                        transitiveSyntheticPackagesPath = SUBPACKAGES,
-                    )
-                }
-                GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED, null -> {
-                    generatePackageManifest(
-                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
-                        packageRoot = packageRoot,
-                        syntheticProductType = GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED,
-                        directlyImportedSwiftPMDependencies = parameters.directlyImportedDependencies.get(),
-                        transitiveSyntheticPackages = parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
-                        transitiveSyntheticPackagesPath = SUBPACKAGES,
-                    )
-                }
-            }
-            parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
-                generatePackageManifest(
-                    identifier = dependencyIdentifier.identifier,
-                    packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
-                    /**
-                     * FIXME: KT-83873 We probably always want inferred here, but figure out what is wrong with SwiftPM's linkage when 2 .dynamic products are involved
-                     *
-                     * Also all the project/modular dependencies will litter embedAndSign integration with useless dylibs
-                     */
-                    syntheticProductType = GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED,
-                    directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
-                    transitiveSyntheticPackages = setOf(),
-                    transitiveSyntheticPackagesPath = "..",
-                )
-            }
-        }
-    }
-
-    private fun failOnNonIdempotentChangesIfNeeded(work: () -> Unit) {
-        if (!parameters.failOnNonIdempotentChanges.get()) {
-            work()
-            return
-        }
-
-        fun hashProjectFiles(root: File): ByteArray {
-            val sha = MessageDigest.getInstance("SHA-256")
-            root.walkTopDown()
-                .filter { it.isFile }
-                .filterNot { file ->
-                    val path = file.relativeTo(root).invariantSeparatorsPath
-                    path.startsWith(".swiftpm/") ||
-                            path.startsWith(".build/") ||
-                            path == "Package.resolved"
-                }
-                .sortedBy { it.relativeTo(root).invariantSeparatorsPath }
-                .forEach { file ->
-                    sha.update(file.relativeTo(root).invariantSeparatorsPath.toByteArray())
-                    sha.update(0)
-                    sha.update(file.readBytes())
-                    sha.update(0)
-                }
-
-            return sha.digest()
-        }
-
-        val root = parameters.syntheticImportProjectRoot.get().asFile
-        val initialDigest = hashProjectFiles(root)
-        work()
-        val finalDigest = hashProjectFiles(root)
-
-        if (!initialDigest.contentEquals(finalDigest)) {
-            println("error: Synthetic project regenerated")
-            if (parameters.buildingFromXcode.get()) {
-                println("error: Please go to File -> Package -> Resolve Package Versions in Xcode")
-            } else {
-                // KMP IJ plugin
-                println("error: Please go to Tools -> Swift Package Manager -> Resolve Dependencies")
-            }
-            error("Synthetic project state updated")
-        }
-    }
-
-    private fun generatePackageManifest(
-        identifier: String,
-        packageRoot: File,
-        syntheticProductType: GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType,
-        directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
-        transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
-        transitiveSyntheticPackagesPath: String,
-    ) {
-        val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
-            buildString {
-                appendLine(".package(")
-                val dependencyArguments = mutableListOf<String>()
-                when (importedPackage) {
-                    is SwiftPMDependency.Remote -> {
-                        dependencyArguments += when (val repository = importedPackage.repository) {
-                            is SwiftPMDependency.Remote.Repository.Id -> "  id: \"${repository.value}\""
-                            is SwiftPMDependency.Remote.Repository.Url -> "  url: \"${repository.value}\""
-                        }
-                        dependencyArguments += when (val version = importedPackage.version) {
-                            is SwiftPMDependency.Remote.Version.Exact -> "  exact: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.From -> "  from: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.Range -> "  \"${version.from}\"...\"${version.through}\""
-                            is SwiftPMDependency.Remote.Version.Branch -> "  branch: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.Revision -> "  revision: \"${version.value}\""
-                        }
-                    }
-                    is SwiftPMDependency.Local -> {
-                        val absolutePath = importedPackage.absolutePath
-                        val relativePath = absolutePath.normalizedAbsoluteFile().relativeTo(packageRoot)
-                        dependencyArguments += "  path: \"${relativePath.path}\""
-                    }
-                }
-                if (importedPackage.traits.isNotEmpty()) {
-                    val traitsString = importedPackage.traits.joinToString(", ") { "\"${it}\"" }
-                    dependencyArguments += "  traits: [${traitsString}]"
-                }
-                appendLine(dependencyArguments.joinToString(",\n"))
-                append(")")
-            }
-        } + transitiveSyntheticPackages.map {
-            ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
-        })
-        val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
-            dependency.products.map { product -> product to dependency.packageName }
-        }.map { dependency ->
-            buildString {
-                appendLine(".product(")
-                val dependencyArguments = mutableListOf<String>()
-                dependencyArguments += "  name: \"${dependency.first.name}\""
-                dependencyArguments += "  package: \"${dependency.second}\""
-                val platformConstraints = dependency.first.platformConstraints
-                if (platformConstraints != null) {
-                    val platformsString = platformConstraints.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
-                    dependencyArguments += "  condition: .when(platforms: [${platformsString}])"
-                }
-                appendLine(dependencyArguments.joinToString(",\n"))
-                append(")")
-            }
-        } + transitiveSyntheticPackages.map {
-            ".product(name: \"${it.identifier}\", package: \"${it.identifier}\")"
-        })
-
-        val platforms = parameters.konanTargets.get().map { it.family }.toSet().map {
-            when (it) {
-                Family.OSX -> {
-                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
-                        parameters.macosDeploymentVersion,
-                        MACOS_DEPLOYMENT_TARGET_DEFAULT,
-                        parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.macosDeploymentVersion },
-                    )
-                    ".macOS(\"${deploymentTarget}\")"
-                }
-                Family.IOS -> {
-                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
-                        parameters.iosDeploymentVersion,
-                        IOS_DEPLOYMENT_TARGET_DEFAULT,
-                        parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.iosDeploymentVersion },
-                    )
-                    ".iOS(\"${deploymentTarget}\")"
-                }
-                Family.TVOS -> {
-                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
-                        parameters.tvosDeploymentVersion,
-                        TVOS_DEPLOYMENT_TARGET_DEFAULT,
-                        parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.tvosDeploymentVersion },
-                    )
-                    ".tvOS(\"${deploymentTarget}\")"
-                }
-                Family.WATCHOS -> {
-                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
-                        parameters.watchosDeploymentVersion,
-                        WATCHOS_DEPLOYMENT_TARGET_DEFAULT,
-                        parameters.dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.watchosDeploymentVersion },
-                    )
-                    ".watchOS(\"${deploymentTarget}\")"
-                }
-                Family.LINUX,
-                Family.MINGW,
-                Family.ANDROID,
-                    -> error("Unexpected SwiftPM import family: $it")
-            }
-        }
-
-        val productType = when (syntheticProductType) {
-            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC -> ".dynamic"
-            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED -> ".none"
-        }
-
-        val manifest = packageRoot.resolve(MANIFEST_NAME)
-        manifest.also {
-            it.parentFile.mkdirs()
-        }.writeText(
-            SwiftImportManifestGenerator.generateManifest(
-                identifier = identifier,
-                productType = productType,
-                platforms = platforms,
-                repoDependencies = repoDependencies,
-                targetDependencies = targetDependencies,
-            )
-        )
-
-        val objcSource = "Sources/${identifier}/${identifier}.m"
-        val objcHeader = "Sources/${identifier}/include/${identifier}.h"
-        // Generate ObjC sources specifically because the next CC-overriding step relies on passing a clang shim to dump compiler arguments
-        packageRoot.resolve(objcSource).also {
-            it.parentFile.mkdirs()
-        }.writeText("")
-        packageRoot.resolve(objcHeader).also {
-            it.parentFile.mkdirs()
-        }.writeText("")
-    }
-
-    /**
-     * Calculate the deployment target:
-     * - Use an explicit version from the build script if set
-     * - Otherwise take the maximum version of all transitive packages (otherwise the package will not build)
-     *
-     * We also use a [deploymentVersionDefault] as the minimum implicit version because SwiftPM by default uses an ancient deployment default
-     */
-    private fun explicitOrMaximumDeploymentTarget(
-        deploymentVersionProperty: Provider<String>,
-        deploymentVersionDefault: String,
-        transitivelyImportedDeploymentVersions: List<String>,
-    ): String {
-        val explicitlySpecifiedDeploymentVersion = deploymentVersionProperty.orNull
-        if (explicitlySpecifiedDeploymentVersion != null) {
-            return explicitlySpecifiedDeploymentVersion
-        }
-        val maximumDeploymentTarget = transitivelyImportedDeploymentVersions.fold(
-            SemVer.from(deploymentVersionDefault, loose = true),
-        ) { max, current ->
-            val other = SemVer.from(current, loose = true)
-            if (max >= other) {
-                max
-            } else {
-                other
-            }
-        }
-        return "${maximumDeploymentTarget.major}.${maximumDeploymentTarget.minor}"
-    }
-}
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), UsesBuildFusService {
@@ -420,7 +126,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         }
 
         if (!syntheticPackageFingerprint.isPresent) {
-            submitPackageGenerationWorkAction(
+            runPackageGeneration(
                 syntheticImportProjectRoot.get().asFile
             )
             return
@@ -463,10 +169,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         bucket: GeneratePackageBucket,
     ) {
         try {
-            submitPackageGenerationWorkAction(
+            runPackageGeneration(
                 bucket.ownerSyntheticPackageRoot
             )
-            workerExecutor.await()
             coordinationService.get().markPackageGenerationCompleted(bucket)
         } catch (failure: Throwable) {
             coordinationService.get().markPackageGenerationFailed(bucket, failure)
@@ -474,22 +179,256 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         }
     }
 
-    private fun submitPackageGenerationWorkAction(
+    private fun runPackageGeneration(
         syntheticImportProjectRoot: File,
     ) {
-        workerExecutor.noIsolation().submit(GenerateSyntheticPackageWorkActions::class.java) { params ->
-            params.directlyImportedDependencies.set(directlyImportedDependencies)
-            params.dependencyIdentifierToImportedSwiftPMDependencies.set(dependencyIdentifierToImportedSwiftPMDependencies)
-            params.syntheticImportProjectRoot.set(syntheticImportProjectRoot)
-            params.konanTargets.set(konanTargets)
-            params.iosDeploymentVersion.set(iosDeploymentVersion)
-            params.macosDeploymentVersion.set(macosDeploymentVersion)
-            params.watchosDeploymentVersion.set(watchosDeploymentVersion)
-            params.tvosDeploymentVersion.set(tvosDeploymentVersion)
-            params.syntheticProductType.set(syntheticProductType)
-            params.failOnNonIdempotentChanges.set(failOnNonIdempotentChanges)
-            params.buildingFromXcode.set(buildingFromXcode)
+
+        failOnNonIdempotentChangesIfNeeded {
+            when (syntheticProductType.get()) {
+                SyntheticProductType.DYNAMIC -> {
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_DYLIB,
+                        packageRoot = syntheticImportProjectRoot.resolve("${SUBPACKAGES}/${SYNTHETIC_IMPORT_DYLIB}"),
+                        syntheticProductType = SyntheticProductType.DYNAMIC,
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
+                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        transitiveSyntheticPackagesPath = "..",
+                    )
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = syntheticImportProjectRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get().mapNotNull {
+                            val remoteDependency = when (it) {
+                                is SwiftPMDependency.Local -> return@mapNotNull null
+                                is SwiftPMDependency.Remote -> it
+                            }
+                            remoteDependency.copy(products = emptyList())
+                        }.toSet(),
+                        transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB, false)),
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
+                }
+                SyntheticProductType.INFERRED, null -> {
+                    generatePackageManifest(
+                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        packageRoot = syntheticImportProjectRoot,
+                        syntheticProductType = SyntheticProductType.INFERRED,
+                        directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
+                        transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
+                        transitiveSyntheticPackagesPath = SUBPACKAGES,
+                    )
+                }
+            }
+            dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
+                generatePackageManifest(
+                    identifier = dependencyIdentifier.identifier,
+                    packageRoot = syntheticImportProjectRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
+                    /**
+                     * FIXME: KT-83873 We probably always want inferred here, but figure out what is wrong with SwiftPM's linkage when 2 .dynamic products are involved
+                     *
+                     * Also all the project/modular dependencies will litter embedAndSign integration with useless dylibs
+                     */
+                    syntheticProductType = SyntheticProductType.INFERRED,
+                    directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
+                    transitiveSyntheticPackages = setOf(),
+                    transitiveSyntheticPackagesPath = "..",
+                )
+            }
         }
+
+    }
+
+    private fun failOnNonIdempotentChangesIfNeeded(work: () -> Unit) {
+        if (!failOnNonIdempotentChanges.get()) {
+            work()
+            return
+        }
+
+        val sha = MessageDigest.getInstance("SHA-256")
+        val hashProjectFiles: () -> ByteArray = {
+            projectRootTrackedFiles.files.sorted().forEach {
+                sha.update(it.readBytes())
+            }
+            sha.digest()
+        }
+
+        val initialDigest = hashProjectFiles()
+        work()
+        val finalDigest = hashProjectFiles()
+
+        if (!initialDigest.contentEquals(finalDigest)) {
+            println("error: Synthetic project regenerated")
+            if (buildingFromXcode.get()) {
+                println("error: Please go to File -> Package -> Resolve Package Versions in Xcode")
+            } else {
+                // KMP IJ plugin
+                println("error: Please go to Tools -> Swift Package Manager -> Resolve Dependencies")
+            }
+            error("Synthetic project state updated")
+        }
+    }
+
+    private fun generatePackageManifest(
+        identifier: String,
+        packageRoot: File,
+        syntheticProductType: SyntheticProductType,
+        directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
+        transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
+        transitiveSyntheticPackagesPath: String,
+    ) {
+        val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
+            buildString {
+                appendLine(".package(")
+                val dependencyArguments = mutableListOf<String>()
+                when (importedPackage) {
+                    is SwiftPMDependency.Remote -> {
+                        dependencyArguments += when (val repository = importedPackage.repository) {
+                            is SwiftPMDependency.Remote.Repository.Id -> "  id: \"${repository.value}\""
+                            is SwiftPMDependency.Remote.Repository.Url -> "  url: \"${repository.value}\""
+                        }
+                        dependencyArguments += when (val version = importedPackage.version) {
+                            is SwiftPMDependency.Remote.Version.Exact -> "  exact: \"${version.value}\""
+                            is SwiftPMDependency.Remote.Version.From -> "  from: \"${version.value}\""
+                            is SwiftPMDependency.Remote.Version.Range -> "  \"${version.from}\"...\"${version.through}\""
+                            is SwiftPMDependency.Remote.Version.Branch -> "  branch: \"${version.value}\""
+                            is SwiftPMDependency.Remote.Version.Revision -> "  revision: \"${version.value}\""
+                        }
+                    }
+                    is SwiftPMDependency.Local -> {
+                        val absolutePath = importedPackage.absolutePath
+                        val relativePath = absolutePath.normalizedAbsoluteFile().relativeTo(packageRoot)
+                        dependencyArguments += "  path: \"${relativePath.path}\""
+                    }
+                }
+                if (importedPackage.traits.isNotEmpty()) {
+                    val traitsString = importedPackage.traits.joinToString(", ") { "\"${it}\"" }
+                    dependencyArguments += "  traits: [${traitsString}]"
+                }
+                appendLine(dependencyArguments.joinToString(",\n"))
+                append(")")
+            }
+        } + transitiveSyntheticPackages.map {
+            ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
+        })
+        val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
+            dependency.products.map { product -> product to dependency.packageName }
+        }.map { dependency ->
+            buildString {
+                appendLine(".product(")
+                val dependencyArguments = mutableListOf<String>()
+                dependencyArguments += "  name: \"${dependency.first.name}\""
+                dependencyArguments += "  package: \"${dependency.second}\""
+                val platformConstraints = dependency.first.platformConstraints
+                if (platformConstraints != null) {
+                    val platformsString = platformConstraints.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
+                    dependencyArguments += "  condition: .when(platforms: [${platformsString}])"
+                }
+                appendLine(dependencyArguments.joinToString(",\n"))
+                append(")")
+            }
+        } + transitiveSyntheticPackages.map {
+            ".product(name: \"${it.identifier}\", package: \"${it.identifier}\")"
+        })
+
+        val platforms = konanTargets.get().map { it.family }.toSet().map {
+            when (it) {
+                Family.OSX -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        macosDeploymentVersion,
+                        MACOS_DEPLOYMENT_TARGET_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.macosDeploymentVersion },
+                    )
+                    ".macOS(\"${deploymentTarget}\")"
+                }
+                Family.IOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        iosDeploymentVersion,
+                        IOS_DEPLOYMENT_TARGET_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.iosDeploymentVersion },
+                    )
+                    ".iOS(\"${deploymentTarget}\")"
+                }
+                Family.TVOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        tvosDeploymentVersion,
+                        TVOS_DEPLOYMENT_TARGET_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.tvosDeploymentVersion },
+                    )
+                    ".tvOS(\"${deploymentTarget}\")"
+                }
+                Family.WATCHOS -> {
+                    val deploymentTarget = explicitOrMaximumDeploymentTarget(
+                        watchosDeploymentVersion,
+                        WATCHOS_DEPLOYMENT_TARGET_DEFAULT,
+                        dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.values.mapNotNull { it.watchosDeploymentVersion },
+                    )
+                    ".watchOS(\"${deploymentTarget}\")"
+                }
+                Family.LINUX,
+                Family.MINGW,
+                Family.ANDROID,
+                    -> error("Unexpected SwiftPM import family: $it")
+            }
+        }
+
+        val productType = when (syntheticProductType) {
+            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC -> ".dynamic"
+            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED -> ".none"
+        }
+
+        val manifest = packageRoot.resolve(MANIFEST_NAME)
+        manifest.also {
+            it.parentFile.mkdirs()
+        }.writeText(
+            SwiftImportManifestGenerator.generateManifest(
+                identifier = identifier,
+                productType = productType,
+                platforms = platforms,
+                repoDependencies = repoDependencies,
+                targetDependencies = targetDependencies,
+            )
+        )
+
+        val objcSource = "Sources/${identifier}/${identifier}.m"
+        val objcHeader = "Sources/${identifier}/include/${identifier}.h"
+        // Generate ObjC sources specifically because the next CC-overriding step relies on passing a clang shim to dump compiler arguments
+        packageRoot.resolve(objcSource).also {
+            it.parentFile.mkdirs()
+        }.writeText("")
+        packageRoot.resolve(objcHeader).also {
+            it.parentFile.mkdirs()
+        }.writeText("")
+    }
+
+    /**
+     * Calculate the deployment target:
+     * - Use an explicit version from the build script if set
+     * - Otherwise take the maximum version of all transitive packages (otherwise the package will not build)
+     *
+     * We also use a [deploymentVersionDefault] as the minimum implicit version because SwiftPM by default uses an ancient deployment default
+     */
+    private fun explicitOrMaximumDeploymentTarget(
+        deploymentVersionProperty: Provider<String>,
+        deploymentVersionDefault: String,
+        transitivelyImportedDeploymentVersions: List<String>,
+    ): String {
+        val explicitlySpecifiedDeploymentVersion = deploymentVersionProperty.orNull
+        if (explicitlySpecifiedDeploymentVersion != null) {
+            return explicitlySpecifiedDeploymentVersion
+        }
+        val maximumDeploymentTarget = transitivelyImportedDeploymentVersions.fold(
+            SemVer.from(deploymentVersionDefault, loose = true),
+        ) { max, current ->
+            val other = SemVer.from(current, loose = true)
+            if (max >= other) {
+                max
+            } else {
+                other
+            }
+        }
+        return "${maximumDeploymentTarget.major}.${maximumDeploymentTarget.minor}"
     }
 
     companion object {
