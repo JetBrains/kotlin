@@ -382,3 +382,8 @@ internal class CustomNativeCompiler(private val lazyNativeHome: Lazy<KotlinNativ
         URLClassLoader(nativeClassPath, null).apply { setDefaultAssertionStatus(true) }
     }
 }
+
+enum class PlatformLibs(val compilerFlag: String?) {
+    DEFAULT(null),
+    NO_DEFAULT_LIBS("-no-default-libs")
+}
