@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -37,8 +34,6 @@ import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -80,16 +75,11 @@ internal class LinkKlibsOutput(
 }
 
 
-@OptIn(K1Deprecation::class, ObsoleteDescriptorBasedAPI::class)
 internal fun LinkKlibsContext.linkKlibs(
         input: LinkKlibsInput
 ): LinkKlibsOutput {
     val symbolTable = symbolTable!!
     val moduleDescriptor = input.moduleDescriptor
-    // Translate AST to high level IR.
-
-    val typeTranslator = TypeTranslatorImpl(symbolTable, config.configuration.languageVersionSettings, moduleDescriptor)
-    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
@@ -104,6 +94,7 @@ internal fun LinkKlibsContext.linkKlibs(
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
 
+    val irBuiltIns: IrBuiltIns
     val symbols: BackendNativeSymbols
 
     val mainModule = IrModuleFragmentImpl(moduleDescriptor)
@@ -176,6 +167,8 @@ internal fun LinkKlibsContext.linkKlibs(
 
             ensureCStructsAndEnumsAreLoadedForCaching(linker, libraryToCacheModule)
 
+            @OptIn(InternalSymbolFinderAPI::class)
+            irBuiltIns = IrBuiltInsForLinker(linker, config.configuration.languageVersionSettings)
             symbols = BackendNativeSymbols(
                     this,
                     irBuiltIns,

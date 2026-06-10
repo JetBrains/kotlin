@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.konan.test.converters
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
+import org.jetbrains.kotlin.config.PartialLinkageLogLevel
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
@@ -31,10 +34,8 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.native.pipeline.NativeLoadedIrArtifact
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
@@ -83,7 +84,6 @@ class NativeDeserializerFacade(
         ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     private inline fun getIrModuleInfoForKlib(
         moduleDescriptor: ModuleDescriptor,
         sortedDependencies: Collection<KotlinLibrary>,
@@ -93,13 +93,12 @@ class NativeDeserializerFacade(
         mapping: (KotlinLibrary) -> ModuleDescriptor,
     ): IrModuleInfo {
         val mainModuleLib = sortedDependencies.last()
-        val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
-        val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
             configuration.languageVersionSettings,
         )
 
+        @OptIn(K1Deprecation::class)
         val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
         val irLinker = KonanIrLinker(
@@ -117,6 +116,9 @@ class NativeDeserializerFacade(
         )
 
         val moduleDependencies: IrModuleDependencies = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
+
+        @OptIn(InternalSymbolFinderAPI::class)
+        val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
 
         irLinker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
