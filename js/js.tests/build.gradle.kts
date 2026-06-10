@@ -26,9 +26,7 @@ node {
     download.set(true)
     version.set(nodejsLtsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    if (cacheRedirectorEnabled) {
-        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
-    }
+    distBaseUrl = null
 }
 
 val testJsRuntime by configurations.creating {

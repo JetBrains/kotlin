@@ -37,14 +37,6 @@ import java.security.MessageDigest
 
 import static BuildPropertiesKt.getKotlinBuildProperties
 
-buildscript {
-
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
 defaultTasks 'clean', 'dist'
 
 apply plugin: XcodeOverridePlugin
@@ -56,15 +48,6 @@ if (PlatformInfo.isMac()) {
 apply plugin: "kotlin.native.build-tools-conventions"
 apply plugin: "platform-manager"
 apply plugin: "java"
-
-allprojects {
-    repositories {
-        mavenCentral()
-        maven {
-            url = project.bootstrapKotlinRepo
-        }
-    }
-}
 
 def platformManager = project.extensions.platformManager
 def hostName = PlatformInfo.hostName

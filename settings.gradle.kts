@@ -291,8 +291,8 @@ dependencyResolutionManagement {
         exclusiveContent {
             forRepository {
                 ivy {
-                    name = "Node Distributions"
-                    url = uri("https://cache-redirector.jetbrains.com/nodejs.org/dist")
+                    name = "Node.js"
+                    setUrl("https://cache-redirector.jetbrains.com/nodejs.org/dist")
                     patternLayout {
                         artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
                     }
@@ -396,7 +396,7 @@ dependencyResolutionManagement {
         }
         mavenCentral()
     }
-    repositoriesMode = RepositoriesMode.PREFER_SETTINGS
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
 
 fun RepositoryHandler.githubTag(ghUser: String, repo: String, revisionPrefix: String = "v", groupAlias: String? = null) {

@@ -784,6 +784,7 @@ kotlin.sourceSets.common {
 
 node {
     version = nodejsVersion
+    distBaseUrl = null
 }
 
 tasks.test {

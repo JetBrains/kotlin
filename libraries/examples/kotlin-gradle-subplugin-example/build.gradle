@@ -8,11 +8,6 @@ plugins {
     id("maven-publish")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 dependencies {
     api project(':kotlin-gradle-plugin-api')
     // Use this dependency instead when building apart from the other modules:

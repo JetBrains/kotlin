@@ -9,6 +9,7 @@ description = "Node utils"
 
 node {
     download.set(true)
+    distBaseUrl = null
 }
 
 val deployDir = "$buildDir/deploy_to_npm"

@@ -15,6 +15,7 @@ description = "Kotlin-test integration tests for JS"
 node {
     version.set(nodejsLtsVersion)
     download.set(true)
+    distBaseUrl = null
 }
 
 idea {

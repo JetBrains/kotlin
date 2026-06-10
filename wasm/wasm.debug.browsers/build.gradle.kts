@@ -16,6 +16,7 @@ node {
     download.set(true)
     nodeProjectDir.set(projectDir)
     npmInstallCommand.set("ci")
+    distBaseUrl = null
 }
 
 dependencies {
