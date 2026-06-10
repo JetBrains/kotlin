@@ -17,7 +17,8 @@ if (!disableInputsCheck) {
 }
 
 fun Test.configureTestInstrumenter() {
-    val declaredInputsFile = layout.buildDirectory.file("$pluginBuildDir/declared-inputs.txt")
+    val testTask = this
+    val declaredInputsFile = layout.buildDirectory.file("$pluginBuildDir/declared-inputs-for-${testTask.name}.txt")
 
     doFirst {
         declaredInputsFile.get().asFile.apply {
