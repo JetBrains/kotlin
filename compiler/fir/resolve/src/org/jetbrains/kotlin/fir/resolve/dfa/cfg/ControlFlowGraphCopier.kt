@@ -465,7 +465,7 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
         return SmartCastExpressionExitNode(get(node.owner), node.fir, node.level)
     }
 
-    override fun visitFakeExpressionEnterNode(node: FakeExpressionEnterNode, data: Unit): CFGNode<*> {
-        return FakeExpressionEnterNode(get(node.owner), node.level)
+    override fun visitFakeExpressionEnterNode(node: FakeExpressionTerminalNode, data: Unit): CFGNode<*> {
+        return FakeExpressionTerminalNode(get(node.owner), node.level)
     }
 }

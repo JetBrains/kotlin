@@ -1467,10 +1467,10 @@ class ControlFlowGraphBuilder private constructor(
         return LambdaExitLayer(node, lambdaExitNodes)
     }
 
-    fun exitAnnotationCall(): CFGNode<*> {
-        val node = currentGraph.exitNode
-        unifyDataFlowFromPostponedLambdas(node, callCompleted = true)
-        return node
+    fun exitAnnotationCall(): LambdaExitLayer<FakeExpressionTerminalNode> {
+        val node = currentGraph.exitNode as FakeExpressionTerminalNode
+        val lambdaExitNodes = unifyDataFlowFromPostponedLambdas(node, callCompleted = true)
+        return LambdaExitLayer(node, lambdaExitNodes)
     }
 
     @CfgInternals
@@ -1554,11 +1554,11 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Fake expressions -----------------------------------
 
-    fun enterFakeExpression(): FakeExpressionEnterNode {
+    fun enterFakeExpression(): FakeExpressionTerminalNode {
         // Things like annotations and `contract { ... }` use normal call resolution, but aren't real expressions
         // and are never evaluated. We'll push all nodes created in the process into a stub graph, then throw it away.
         return enterGraph(null, "<compile-time expression graph>", ControlFlowGraph.Kind.FakeCall) {
-            createFakeExpressionEnterNode() to createFakeExpressionEnterNode()
+            createFakeExpressionTerminalNode() to createFakeExpressionTerminalNode()
         }
     }
 

@@ -1127,8 +1127,9 @@ abstract class FirDataFlowAnalyzer(
     fun exitAnnotationCall() {
         context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
 
-        val annotationExitNode = graphBuilder.exitAnnotationCall()
-        annotationExitNode.mergeIncomingFlow()
+        val (lambdaExitNodes, node = value) = graphBuilder.exitAnnotationCall()
+        lambdaExitNodes.forEach { it.mergeIncomingFlow() }
+        node.mergeIncomingFlow()
     }
 
     @CfgInternals
