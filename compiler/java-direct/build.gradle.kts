@@ -18,12 +18,13 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
-    compileOnly(libs.org.jetbrains.syntax.api)
-    compileOnly(libs.org.jetbrains.java.syntax.jvm)
-    "implementation"(project(":compiler:frontend.java"))
-    implementation(project(":compiler:plugin-api"))
+
     implementation(project(":compiler:cli"))
 
+    // temporary solution while we're still experimenting with this module.
+    // it should be `implementation`, but now it would require changing the repositories in the compiler jar module and maybe fixing cache redirector
+    compileOnly(libs.org.jetbrains.syntax.api)
+    compileOnly(libs.org.jetbrains.java.syntax.jvm)
     embedded(libs.org.jetbrains.syntax.api) { isTransitive = false }
     embedded(libs.org.jetbrains.java.syntax.jvm) { isTransitive = false }
 
@@ -62,10 +63,7 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         )
-    ) {
-        useJUnitPlatform()
-        workingDir = rootDir
-    }
+    ) {}
     testGenerator("org.jetbrains.kotlin.java.direct.TestGeneratorKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler:fir:analysis-tests").isolated, "testData")
     testData(project(":compiler").isolated, "testData/codegen")
