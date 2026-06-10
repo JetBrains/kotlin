@@ -519,6 +519,9 @@ sealed class SwiftPMDependency : Serializable {
  * to the corresponding set of [SwiftPMDependency.Platform] values.
  *
  * Names that don't map to an Apple platform (non-Apple targets) are silently ignored.
+ * Returns an empty set when [this] is empty or contains only non-Apple target names;
+ * callers should treat an empty result as "no implicit constraint" (backward-compatible
+ * with artifacts published before konanTargets was added in 2.4.0).
  */
 internal fun Set<String>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
     mapNotNull { name ->
@@ -526,6 +529,14 @@ internal fun Set<String>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
             runCatching { target.swiftPMPlatform() }.getOrNull()
         }
     }.toSet()
+
+/**
+ * Converts a set of [KonanTarget]s to the corresponding set of [SwiftPMDependency.Platform] values.
+ * Non-Apple targets are silently ignored.
+ */
+@JvmName("konanTargetsToSwiftPMPlatforms")
+internal fun Set<KonanTarget>.toSwiftPMPlatforms(): Set<SwiftPMDependency.Platform> =
+    mapNotNull { target -> runCatching { target.swiftPMPlatform() }.getOrNull() }.toSet()
 
 
 /** Controls persisted `Package.resolved` synchronization for SwiftPM import. */
