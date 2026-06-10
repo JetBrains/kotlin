@@ -131,26 +131,6 @@ open class KotlinxBenchmarkingPlugin : BenchmarkingPlugin() {
             compilerFlags.addAll(linkTaskProvider.map { it.toolOptions.freeCompilerArgs.get() })
         }
         afterEvaluate {
-            // For some reason, the generated `*Benchmark` compilations do not inherit a dependency on cinterops from
-            // the main compilations (even though they `associateWith` them). Just create a new cinterop in the new
-            // compilation and copy the important configuration bits over.
-            // See https://github.com/Kotlin/kotlinx-benchmark/issues/190
-            kotlin.apply {
-                targets.filterIsInstance<KotlinNativeTarget>().forEach {
-                    val main by it.compilations.getting
-
-                    it.compilations.findByName("${it.name}Benchmark")?.apply {
-                        cinterops {
-                            main.cinterops.forEach {
-                                create(it.name) {
-                                    this.headers = it.headers
-                                    this.extraOpts = it.extraOpts
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             benchmark.runBenchmark.configure {
                 // We do not want to cache benchmarking runs; we want the task to run whenever requested.
                 outputs.upToDateWhen { false }

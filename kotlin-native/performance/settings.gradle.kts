@@ -22,13 +22,13 @@ plugins {
 
 val knownGroups = buildList {
     add("ring")
-//    add("cinterop")
+    add("cinterop")
     add("helloworld")
-//    add("numerical")
+    add("numerical")
     add("startup")
     add("logging")
     if (System.getProperty("os.name") == "Mac OS X") {
-//        add("objcinterop")
+        add("objcinterop")
         add("swiftinterop")
     }
 }
