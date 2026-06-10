@@ -55,7 +55,7 @@ class CInteropKlibMetadata2IRTransformer(
     private val getReferencedDeclarationSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
     private val irProviderForLazyAnnotations: IrProvider,
 ) {
-    private val signatureComputer = PublicIdSignatureComputer(KonanManglerIr, markAllAsCInterop = true)
+    private val signatureComputer = PublicIdSignatureComputer(KonanManglerIr)
 
     fun transformTopLevelClass(kmClass: KmClass): IrClass {
         val irPackage = getOrCreateContainingPackageFragment(kmClass)

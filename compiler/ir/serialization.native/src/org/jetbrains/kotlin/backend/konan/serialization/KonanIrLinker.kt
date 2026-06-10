@@ -104,7 +104,6 @@ class KonanIrLinker(
             cInteropModuleDeserializerFactory.createIrModuleDeserializer(
                 moduleDescriptor,
                 klib,
-                this,
             )
         }
         else -> {
