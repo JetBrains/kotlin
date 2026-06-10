@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-val cMacroDefinitions = setOf("NULL")
+// The DEBUG macro is injected when using Xcode irrespective of language.
+val cMacroDefinitions = setOf("NULL", "DEBUG")
 
 @InternalKotlinNativeApi
 val cKeywords = setOf(

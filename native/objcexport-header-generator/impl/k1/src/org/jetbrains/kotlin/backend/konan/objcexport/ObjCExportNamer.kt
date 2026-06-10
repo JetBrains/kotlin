@@ -410,7 +410,9 @@ class ObjCExportNamerImpl(
     }
 
     private inner class PropertyNameMapping(val forSwift: Boolean) : Mapping<PropertyDescriptor, String>() {
-        override fun reserved(name: String) = name in Reserved.propertyNames
+        // None of the macros we currently track need to be mangled for Swift and we do not want to break any backwards
+        // compatibility.
+        override fun reserved(name: String) = if (forSwift && objCMacroDefinitions.contains(name)) false else name in Reserved.propertyNames
 
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
             if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.

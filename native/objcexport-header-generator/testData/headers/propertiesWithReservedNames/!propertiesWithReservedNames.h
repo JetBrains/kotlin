@@ -26,13 +26,13 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)foo __attribute__((swift_name("init()")));
 @property (class, readonly, getter=shared) Foo *shared __attribute__((swift_name("shared")));
-@property (setter=setDEBUG:) BOOL DEBUG_ __attribute__((swift_name("DEBUG_")));
-@property (readonly) NSString *NULL_ __attribute__((swift_name("NULL_")));
+@property (setter=setDEBUG:) BOOL DEBUG_ __attribute__((swift_name("DEBUG")));
+@property (readonly) NSString *NULL_ __attribute__((swift_name("NULL")));
 @end
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) NSString *NULL_ __attribute__((swift_name("NULL_")));
+@property (class, readonly) NSString *NULL_ __attribute__((swift_name("NULL")));
 @end
 
 #pragma pop_macro("_Nullable_result")
