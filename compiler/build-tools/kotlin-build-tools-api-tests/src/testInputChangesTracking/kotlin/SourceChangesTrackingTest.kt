@@ -95,7 +95,7 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("IC recompiles only the visibility-changed class and its direct users (externally tracked)")
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (externally tracked)")
     @TestMetadata("class-visibility-change")
     fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
@@ -104,7 +104,7 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     }
 
     @DefaultStrategyAgnosticCompilationTest
-    @DisplayName("IC recompiles only the visibility-changed class and its direct users (internally tracked)")
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (internally tracked)")
     @TestMetadata("class-visibility-change")
     fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
@@ -113,8 +113,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
     }
 
     private fun ScenarioModule.changeClassVisibilityAndAssertDirtySet() {
-        // Flip `Curry` to `internal`; `UseCurry.kt` references it, `Dummy.kt` does not.
-        changeFile("Curry.kt") { it.replace("class Curry", "internal class Curry") }
+        // KT-13204: flip `Curry` to `internal`; `UseCurry.kt` references it via typealias FN2, `Dummy.kt` does not.
+        replaceFileWithVersion("Curry.kt", "internal")
 
         compile {
             // `Dummy.kt` is intentionally absent: only the changed class and its direct user recompile.
