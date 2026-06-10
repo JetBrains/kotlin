@@ -3,15 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.localfs.KotlinLocalFileSystem
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
+import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
+import org.jetbrains.kotlin.java.direct.util.JavaSourceFileReader
 import java.nio.file.Path
 
 /**
@@ -28,10 +34,8 @@ internal fun Path.toVirtualFile(): VirtualFile =
 /**
  * Light-tree snapshot used by tests that need direct AST navigation.
  *
- * Destructuring order is `(root, context, tree)` so existing call sites that wrote
- * `val (root, context) = parseSource(source)` continue to work unchanged after the Phase 3
- * migration from `JavaSyntaxNode` to [parse.JavaLightTree]. The owning [tree] is available via
- * the third component or the [tree] property for tests that need direct AST navigation.
+ * Destructuring order is `(root, context, tree)`. The owning [tree] is available via the third
+ * component or the [tree] property for tests that need direct AST navigation.
  */
 data class ParsedSource(
     val root: JavaLightNode,
@@ -55,3 +59,27 @@ open class JavaParsingTestBase {
         return JavaClassOverAst(classNode, parsed.tree, parsed.context)
     }
 }
+
+/**
+ * Test-only [JavaClassFinderOverAstImpl] factory that supplies a dummy source-kind [FirSession].
+ */
+internal fun JavaClassFinderOverAstImpl(
+    sourceRoots: List<VirtualFile>,
+    sourceFileReader: JavaSourceFileReader = DefaultJavaSourceFileReader,
+): JavaClassFinderOverAstImpl =
+    JavaClassFinderOverAstImpl(
+        createDummyFirSessionForTests(),
+        JavaSourceRootEntry.fromRootsWithoutPrefix(sourceRoots),
+        sourceFileReader,
+    )
+
+/**
+ * Constructs a minimal [FirSession] with no registered components, intended only for parsing-level
+ * unit tests of the `java-direct` module.
+ */
+internal fun createDummyFirSessionForTests(): FirSession =
+    DummyJavaDirectFirSession(FirSession.Kind.Source)
+
+@OptIn(PrivateSessionConstructor::class)
+private class DummyJavaDirectFirSession(kind: Kind) : FirSession(kind)
+

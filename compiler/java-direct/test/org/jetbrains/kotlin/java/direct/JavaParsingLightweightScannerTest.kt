@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.java.direct.util.DefaultJavaSourceFileReader
 import org.jetbrains.kotlin.java.direct.util.extractFileInfoLightweight
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -20,13 +21,15 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerBasic(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Foo.java")
-        file.writeText("""
+        file.writeText(
+            """
             package com.example;
 
             public class Foo {
                 int x;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -41,11 +44,13 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         // error-tolerant Java parser. PACKAGE_REGEX must accept both forms so that source-side
         // resolution stays consistent with PSI once `BinaryJavaClassFinder` is the binary half.
         val file = tempDir.resolve("Foo.java")
-        file.writeText("""
+        file.writeText(
+            """
             package com.example
 
             public class Foo {}
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -56,9 +61,11 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerDefaultPackage(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Bar.java")
-        file.writeText("""
+        file.writeText(
+            """
             public class Bar {}
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -69,14 +76,16 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerMultipleClasses(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Multi.java")
-        file.writeText("""
+        file.writeText(
+            """
             package test;
 
             public class Multi {}
             class Helper {}
             interface Service {}
             enum Color { RED, GREEN, BLUE }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -89,7 +98,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerIgnoresComments(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Comments.java")
-        file.writeText("""
+        file.writeText(
+            """
             package test;
 
             // class NotAClass {}
@@ -101,7 +111,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
             public class Comments {
                 // class InnerNotAClass {}
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -113,7 +124,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerIgnoresNestedClasses(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Outer.java")
-        file.writeText("""
+        file.writeText(
+            """
             package test;
 
             public class Outer {
@@ -121,7 +133,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
                 static class StaticNested {}
                 interface NestedIface {}
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -133,7 +146,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerBlockCommentAcrossLines(@TempDir tempDir: Path) {
         val file = tempDir.resolve("BlockComment.java")
-        file.writeText("""
+        file.writeText(
+            """
             package test;
 
             /*
@@ -141,7 +155,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
             }
             */
             public class BlockComment {}
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -153,11 +168,13 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerRecordDeclaration(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Point.java")
-        file.writeText("""
+        file.writeText(
+            """
             package geometry;
 
             public record Point(int x, int y) {}
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -168,10 +185,12 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerNoClasses(@TempDir tempDir: Path) {
         val file = tempDir.resolve("Empty.java")
-        file.writeText("""
+        file.writeText(
+            """
             package test;
             // Just a file with no classes
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info == null) { "Expected null for file with no class declarations" }
@@ -180,13 +199,15 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     @Test
     fun testLightweightScannerAnnotationType(@TempDir tempDir: Path) {
         val file = tempDir.resolve("MyAnnotation.java")
-        file.writeText("""
+        file.writeText(
+            """
             package annotations;
 
             public @interface MyAnnotation {
                 String value() default "";
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val info = extractFileInfoLightweight(file.toVirtualFile(), DefaultJavaSourceFileReader)
         assert(info != null) { "Expected non-null LightweightFileInfo" }
@@ -201,18 +222,20 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
     fun testSmallFileCachedDuringIndexing(@TempDir tempDir: Path) {
         val pkgDir = tempDir.resolve("com/example")
         pkgDir.toFile().mkdirs()
-        pkgDir.resolve("Small.java").writeText("""
+        pkgDir.resolve("Small.java").writeText(
+            """
             package com.example;
             public class Small {
                 public int field;
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
         // findClass should succeed (class was cached during indexing for small files)
         val classId = ClassId(FqName("com.example"), Name.identifier("Small"))
-        val request = org.jetbrains.kotlin.load.java.JavaClassFinder.Request(classId)
+        val request = JavaClassFinder.Request(classId)
         val javaClass = finder.findClass(request)
 
         assert(javaClass != null) { "Expected to find Small class" }
@@ -225,11 +248,13 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         val pkgDir = tempDir.resolve("test")
         pkgDir.toFile().mkdirs()
         // Small file with two top-level classes
-        pkgDir.resolve("Main.java").writeText("""
+        pkgDir.resolve("Main.java").writeText(
+            """
             package test;
             public class Main {}
             class Helper {}
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val finder = JavaClassFinderOverAstImpl(listOf(tempDir.toVirtualFile()))
 
@@ -237,8 +262,8 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         val mainId = ClassId(FqName("test"), Name.identifier("Main"))
         val helperId = ClassId(FqName("test"), Name.identifier("Helper"))
 
-        val mainClass = finder.findClass(org.jetbrains.kotlin.load.java.JavaClassFinder.Request(mainId))
-        val helperClass = finder.findClass(org.jetbrains.kotlin.load.java.JavaClassFinder.Request(helperId))
+        val mainClass = finder.findClass(JavaClassFinder.Request(mainId))
+        val helperClass = finder.findClass(JavaClassFinder.Request(helperId))
 
         assert(mainClass != null) { "Expected to find Main class" }
         assert(helperClass != null) { "Expected to find Helper class" }
@@ -270,7 +295,7 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
 
         // Class should be indexed and findable despite using lightweight scanning
         val classId = ClassId(FqName("com.big"), Name.identifier("Large"))
-        val request = org.jetbrains.kotlin.load.java.JavaClassFinder.Request(classId)
+        val request = JavaClassFinder.Request(classId)
         val javaClass = finder.findClass(request)
 
         assert(javaClass != null) { "Expected to find Large class" }
@@ -303,11 +328,11 @@ class JavaParsingLightweightScannerTest : JavaParsingTestBase() {
         val mainId = ClassId(FqName("test"), Name.identifier("BigMain"))
         val helperId = ClassId(FqName("test"), Name.identifier("BigHelper"))
 
-        val mainClass = finder.findClass(org.jetbrains.kotlin.load.java.JavaClassFinder.Request(mainId))
+        val mainClass = finder.findClass(JavaClassFinder.Request(mainId))
         assert(mainClass != null) { "Expected to find BigMain class" }
 
         // BigHelper should also be cached from the same parse (no additional file I/O)
-        val helperClass = finder.findClass(org.jetbrains.kotlin.load.java.JavaClassFinder.Request(helperId))
+        val helperClass = finder.findClass(JavaClassFinder.Request(helperId))
         assert(helperClass != null) { "Expected to find BigHelper class" }
     }
 }

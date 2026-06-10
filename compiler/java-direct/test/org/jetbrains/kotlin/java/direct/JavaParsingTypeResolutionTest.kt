@@ -3,11 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -51,7 +54,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         // Base has implicit java.lang.Object supertype
         assert(base.supertypes.size == 1) { "Base should have 1 supertype (implicit Object), got ${base.supertypes.size}" }
         assert(base.supertypes.first().classifierQualifiedName == "java.lang.Object") { "Base should extend Object" }
-        
+
         assert(derived.supertypes.size == 1) { "Derived should have 1 supertype, got ${derived.supertypes.size}" }
 
         val supertype = derived.supertypes.first()
@@ -117,11 +120,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         assert(supertype.classifierQualifiedName == "java.util.ArrayList") { "Expected qualified name java.util.ArrayList, got ${supertype.classifierQualifiedName}" }
 
         val listField = javaClass.fields.first { it.name.asString() == "list" }
-        val listType = listField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val listType = listField.type as JavaClassifierType
         assert(listType.classifierQualifiedName == "java.util.List") { "Expected qualified name java.util.List for list field, got ${listType.classifierQualifiedName}" }
 
         val counterField = javaClass.fields.first { it.name.asString() == "counter" }
-        val counterType = counterField.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val counterType = counterField.type as JavaClassifierType
         assert(counterType.classifierQualifiedName == "AtomicInteger") { "Expected simple name AtomicInteger for star import, got ${counterType.classifierQualifiedName}" }
     }
 
@@ -136,7 +139,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         assert(javaClass.fields.size == 1) { "Expected 1 field, got ${javaClass.fields.size}" }
         val field = javaClass.fields.first()
-        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val fieldType = field.type as JavaClassifierType
 
         assert(fieldType.classifierQualifiedName == "Object") { "Expected 'Object', got '${fieldType.classifierQualifiedName}'" }
         assert(fieldType.classifier == null) { "Expected classifier=null for external type without a wired symbol provider" }
@@ -154,12 +157,12 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         val field = javaClass.fields.first { it.name.asString() == "field" }
-        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val fieldType = field.type as JavaClassifierType
         assert(fieldType.classifier != null) { "Field type 'B' should have resolved classifier" }
         assert(fieldType.classifier?.name?.asString() == "B") { "Field type classifier should be 'B'" }
 
         val method = javaClass.methods.first { it.name.asString() == "method" }
-        val returnType = method.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val returnType = method.returnType as JavaClassifierType
         assert(returnType.classifier != null) { "Method return type 'B' should have resolved classifier" }
         assert(returnType.classifier?.name?.asString() == "B") { "Method return type classifier should be 'B'" }
     }
@@ -182,22 +185,22 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         val field1 = javaClass.fields.first { it.name.asString() == "field1" }
-        val type1 = field1.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val type1 = field1.type as JavaClassifierType
         assert(type1.classifier != null) { "field1 type 'Inner' should resolve" }
         assert(type1.classifier?.name?.asString() == "Inner") { "field1 type should be 'Inner'" }
 
         val field2 = javaClass.fields.first { it.name.asString() == "field2" }
-        val type2 = field2.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val type2 = field2.type as JavaClassifierType
         assert(type2.classifier != null) { "field2 type 'Outer.Inner' should resolve" }
         assert(type2.classifier?.name?.asString() == "Inner") { "field2 type should be 'Inner'" }
 
         val field3 = javaClass.fields.first { it.name.asString() == "field3" }
-        val type3 = field3.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val type3 = field3.type as JavaClassifierType
         assert(type3.classifier != null) { "field3 type 'Outer.Inner.Deep' should resolve" }
         assert(type3.classifier?.name?.asString() == "Deep") { "field3 type should be 'Deep'" }
 
         val field4 = javaClass.fields.first { it.name.asString() == "field4" }
-        val type4 = field4.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val type4 = field4.type as JavaClassifierType
         assert(type4.classifier != null) { "field4 type 'Inner.Deep' should resolve" }
         assert(type4.classifier?.name?.asString() == "Deep") { "field4 type should be 'Deep'" }
     }
@@ -216,18 +219,18 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
                 }
             }
         """.trimIndent()
-        
+
         val parsed = parseSource(source)
         val root = parsed.root
         val tree = parsed.tree
         val context = parsed.context
         val classA = JavaClassOverAst(tree.getChildren(root).first { tree.getType(it).toString() == "CLASS" }, tree, context)
-        
+
         // Verify we can find nested class b
-        val nestedB = classA.findInnerClass(org.jetbrains.kotlin.name.Name.identifier("b"))
+        val nestedB = classA.findInnerClass(Name.identifier("b"))
         assert(nestedB != null) { "Should find nested class b in class a" }
         assert(nestedB!!.fqName?.asString() == "a.b") { "Nested class fqName should be 'a.b', got ${nestedB.fqName}" }
-        
+
         // Now test resolution of "a.b" as a type reference in another class (same file)
         val source2 = """
             public class c2 {
@@ -238,7 +241,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
                 public class b {}
             }
         """.trimIndent()
-        
+
         val parsed2 = parseSource(source2)
         val root2 = parsed2.root
         val tree2 = parsed2.tree
@@ -250,12 +253,10 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             },
             tree2, context2
         )
-        
+
         val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }
-        val returnType = getBMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-        
-        println("Return type classifierQualifiedName: ${returnType.classifierQualifiedName}")
-        println("Return type classifier: ${returnType.classifier}")
+        val returnType = getBMethod.returnType as JavaClassifierType
+
 
         // The return type "a.b" should resolve to nested class a.b (class a has priority over package a)
         assert(returnType.classifier != null) { "Return type 'a.b' should resolve to local nested class" }
@@ -266,14 +267,14 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
     fun testQualifiedTypeResolutionCrossFile() {
         // Test cross-file scenario: c2.java references a.b where class a is in another file
         // This is the scenario that fails in TopLevelClassVsPackage test
-        
+
         // c2.java - uses qualified a.b, class a is NOT in this file
         val sourceC2 = """
             public class c2 {
                 public a.b getB() { return null; }
             }
         """.trimIndent()
-        
+
         val parsedC2 = parseSource(sourceC2)
         val rootC2 = parsedC2.root
         val treeC2 = parsedC2.tree
@@ -282,13 +283,9 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             treeC2.getChildren(rootC2).first { treeC2.getType(it).toString() == "CLASS" },
             treeC2, contextC2
         )
-        
+
         val getBMethod = c2Class.methods.first { it.name.asString() == "getB" }
-        val returnType = getBMethod.returnType as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-        
-        println("Cross-file test:")
-        println("  classifierQualifiedName: ${returnType.classifierQualifiedName}")
-        println("  classifier: ${returnType.classifier}")
+        val returnType = getBMethod.returnType as JavaClassifierType
 
         // When class 'a' is NOT in the same file, classifier should be null (external,
         // parsing-level fixture has no `FirSession` wired so the cross-file branch
@@ -342,7 +339,7 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val inheritedCopyBuilder = simpleFuncDesc!!.findInnerClass(Name.identifier("CopyBuilder"))
         assert(inheritedCopyBuilder != null) {
             "SimpleFunctionDescriptor.findInnerClass('CopyBuilder') should find inherited inner class. " +
-            "innerClassNames=${simpleFuncDesc.innerClassNames}"
+                    "innerClassNames=${simpleFuncDesc.innerClassNames}"
         }
 
         // Now check the supertype resolution in the actual type reference
@@ -356,14 +353,14 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         // Check classifierQualifiedName resolves the FQN properly
         assert(supertypeQualified != "SimpleFunctionDescriptor.CopyBuilder") {
             "classifierQualifiedName should resolve to the actual FQN, not raw text. " +
-            "Got '$supertypeQualified'. This means classifierQualifiedName did not resolve via findInnerClass."
+                    "Got '$supertypeQualified'. This means classifierQualifiedName did not resolve via findInnerClass."
         }
 
         // Critical: the classifier should actually resolve (not be null)
         val classifier = copyBuilderSupertype.classifier
         assert(classifier != null) {
             "Expected supertype classifier to resolve for SimpleFunctionDescriptor.CopyBuilder " +
-            "(inherited inner class). classifierQualifiedName='$supertypeQualified'"
+                    "(inherited inner class). classifierQualifiedName='$supertypeQualified'"
         }
     }
 }

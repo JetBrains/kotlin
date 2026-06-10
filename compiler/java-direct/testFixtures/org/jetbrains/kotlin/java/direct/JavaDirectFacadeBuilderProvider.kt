@@ -31,8 +31,7 @@ class JavaDirectFacadeBuilderProvider(@Suppress("UNUSED_PARAMETER") testServices
         createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
 
     /**
-     * Stage 2 §6.3 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
-     * the deserializer-side companion. Returns a builder that produces a
+     * Deserializer-side companion to [createBuilder]. Returns a builder that produces a
      * [JvmBinaryClassFinderInputs] adapter backed by the same `BinaryJavaClassFinder` used by
      * the production CLI for the library scope, so `JvmClassFileBasedSymbolProvider` reads
      * binary `.class`/`.sig` files directly from the index instead of routing through

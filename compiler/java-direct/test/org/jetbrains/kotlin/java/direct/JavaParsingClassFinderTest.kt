@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -70,37 +71,31 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
     }
 
     @Test
-    fun testClassFinderWithPackage() {
-        // Create temporary files with Java classes in packages
-        val tempDir = kotlin.io.path.createTempDirectory("java-direct-test")
-        try {
-            val helloFile = tempDir.resolve("Hello.java")
-            helloFile.toFile().writeText(
-                """
-                package example;
-                
-                public class Hello {
-                    public void greet() {}
-                }
-            """.trimIndent()
-            )
+    fun testClassFinderWithPackage(@TempDir tempDir: Path) {
+        val helloFile = tempDir.resolve("Hello.java")
+        helloFile.toFile().writeText(
+            """
+            package example;
+            
+            public class Hello {
+                public void greet() {}
+            }
+        """.trimIndent()
+        )
 
-            val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toVirtualFile()))
+        val finder = JavaClassFinderOverAstImpl(listOf(helloFile.toVirtualFile()))
 
-            // Try to find example.Hello
-            val classId = ClassId(
-                FqName("example"),
-                Name.identifier("Hello")
-            )
-            val request = JavaClassFinder.Request(classId)
-            val javaClass = finder.findClass(request)
+        // Try to find example.Hello
+        val classId = ClassId(
+            FqName("example"),
+            Name.identifier("Hello")
+        )
+        val request = JavaClassFinder.Request(classId)
+        val javaClass = finder.findClass(request)
 
-            assert(javaClass != null) { "Expected to find example.Hello class" }
-            assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
-            assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }
-        } finally {
-            tempDir.toFile().deleteRecursively()
-        }
+        assert(javaClass != null) { "Expected to find example.Hello class" }
+        assert(javaClass?.name?.asString() == "Hello") { "Expected class name 'Hello', got ${javaClass?.name?.asString()}" }
+        assert(javaClass?.fqName?.asString() == "example.Hello") { "Expected fqName 'example.Hello', got ${javaClass?.fqName?.asString()}" }
     }
 
     @Test
@@ -419,7 +414,7 @@ class JavaParsingClassFinderTest : JavaParsingTestBase() {
         val sub = finder.findClass(JavaClassFinder.Request(subId)) as JavaClassOverAst
 
         val field = sub.fields.single()
-        val fieldType = field.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val fieldType = field.type as JavaClassifierType
 
         // The simple name "Conflict" should resolve to Base.Conflict (inherited inner),
         // not to the top-level pkg.Conflict.

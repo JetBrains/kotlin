@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.junit.jupiter.api.Test
 
@@ -96,13 +99,13 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         val method1 = javaClass.methods.first { it.name.asString() == "method1" }
-        assert(method1.valueParameters.size == 0) { "method1 should have 0 parameters, got ${method1.valueParameters.size}" }
+        assert(method1.valueParameters.isEmpty()) { "method1 should have 0 parameters, got ${method1.valueParameters.size}" }
 
         val method2 = javaClass.methods.first { it.name.asString() == "method2" }
         assert(method2.valueParameters.size == 1) { "method2 should have 1 parameter, got ${method2.valueParameters.size}" }
         val param2 = method2.valueParameters.first()
         assert(param2.name?.asString() == "a") { "Expected parameter name 'a', got ${param2.name}" }
-        assert(param2.type is org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType) { "Expected int to be JavaPrimitiveType" }
+        assert(param2.type is JavaPrimitiveType) { "Expected int to be JavaPrimitiveType" }
 
         val method3 = javaClass.methods.first { it.name.asString() == "method3" }
         assert(method3.valueParameters.size == 3) { "method3 should have 3 parameters, got ${method3.valueParameters.size}" }
@@ -111,17 +114,17 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         assert(params3[1].name?.asString() == "b") { "Expected parameter name 'b', got ${params3[1].name}" }
         assert(params3[2].name?.asString() == "c") { "Expected parameter name 'c', got ${params3[2].name}" }
 
-        val paramAType = params3[0].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val paramAType = params3[0].type as JavaClassifierType
         assert(paramAType.classifierQualifiedName == "String") { "Expected String, got ${paramAType.classifierQualifiedName}" }
 
-        val paramBType = params3[1].type as org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-        assert(paramBType.type == org.jetbrains.kotlin.builtins.PrimitiveType.INT) { "Expected INT primitive type" }
+        val paramBType = params3[1].type as JavaPrimitiveType
+        assert(paramBType.type == PrimitiveType.INT) { "Expected INT primitive type" }
 
-        val paramCType = params3[2].type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val paramCType = params3[2].type as JavaClassifierType
         assert(paramCType.classifierQualifiedName == "java.util.List") { "Expected java.util.List, got ${paramCType.classifierQualifiedName}" }
 
-        val constructor0 = javaClass.constructors.first { it.valueParameters.size == 0 }
-        assert(constructor0.valueParameters.size == 0) { "Constructor should have 0 parameters" }
+        val constructor0 = javaClass.constructors.first { it.valueParameters.isEmpty() }
+        assert(constructor0.valueParameters.isEmpty()) { "Constructor should have 0 parameters" }
 
         val constructor1 = javaClass.constructors.first { it.valueParameters.size == 1 }
         assert(constructor1.valueParameters.size == 1) { "Constructor should have 1 parameter, got ${constructor1.valueParameters.size}" }
@@ -150,7 +153,7 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val param = equalsMethod.valueParameters.first()
         assert(param.name?.asString() == "o") { "Expected parameter name 'o', got ${param.name}" }
 
-        val paramType = param.type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val paramType = param.type as JavaClassifierType
         assert(paramType.classifierQualifiedName == "Object") { "Expected 'Object', got '${paramType.classifierQualifiedName}'" }
         assert(paramType.classifier == null) { "Object should have null classifier without a wired symbol provider" }
     }
@@ -226,19 +229,18 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val javaClass = parseFirstClass(source)
 
         // Regular parameter: structural shape only — type is JavaClassifierType for `String`.
-        // Annotation placement on the parameter's *type* is no longer assertable in parsing-only
-        // mode after the 2026-05-25 TYPE_USE cleanup: `JavaTypeOverAst.annotations` now pre-filters
-        // member annotations via `JavaResolutionContext.isTypeUseAnnotationClass`, which needs a
-        // session with a `FirSymbolProvider` to resolve `@Target`. The dummy session used by
-        // `parseFirstClass` has none, so the filter drops every member annotation. The parser
-        // itself still captures the annotation correctly — see `regularParam.annotations` below —
-        // and the end-to-end propagation contract (member annotation flowing into the type's
-        // attributes) is covered by the `JavaUsingAst*` integration suite, which runs against a
-        // full FIR session.
+        // Annotation placement on the parameter's *type* is not assertable in parsing-only mode:
+        // `JavaTypeOverAst.annotations` pre-filters member annotations via
+        // `JavaResolutionContext.isTypeUseAnnotationClass`, which needs a session with a
+        // `FirSymbolProvider` to resolve `@Target`. The dummy session used by `parseFirstClass`
+        // has none, so the filter drops every member annotation. The parser itself still captures
+        // the annotation correctly — see `regularParam.annotations` below — and the end-to-end
+        // propagation contract is covered by the `JavaUsingAst*` integration suite, which runs
+        // against a full FIR session.
         val regular = javaClass.methods.first { it.name.asString() == "ofRegular" }
         val regularParam = regular.valueParameters.first()
         assert(!regularParam.isVararg) { "Regular param should not be vararg" }
-        assert(regularParam.type is org.jetbrains.kotlin.load.java.structure.JavaClassifierType) {
+        assert(regularParam.type is JavaClassifierType) {
             "Regular param type should be JavaClassifierType, got ${regularParam.type::class.simpleName}"
         }
         assert(regularParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {
@@ -251,12 +253,12 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         val vararg = javaClass.methods.first { it.name.asString() == "ofJspecify" }
         val varargParam = vararg.valueParameters.first()
         assert(varargParam.isVararg) { "Vararg param should be vararg" }
-        assert(varargParam.type is org.jetbrains.kotlin.load.java.structure.JavaArrayType) {
+        assert(varargParam.type is JavaArrayType) {
             "Vararg param type should be JavaArrayType, got ${varargParam.type::class.simpleName}"
         }
-        val arrayType = varargParam.type as org.jetbrains.kotlin.load.java.structure.JavaArrayType
+        val arrayType = varargParam.type as JavaArrayType
         val componentType = arrayType.componentType
-        assert(componentType is org.jetbrains.kotlin.load.java.structure.JavaClassifierType) {
+        assert(componentType is JavaClassifierType) {
             "Vararg component type should be JavaClassifierType, got ${componentType::class.simpleName}"
         }
         assert(varargParam.annotations.any { it.classId?.asString()?.contains("NonNull") == true }) {

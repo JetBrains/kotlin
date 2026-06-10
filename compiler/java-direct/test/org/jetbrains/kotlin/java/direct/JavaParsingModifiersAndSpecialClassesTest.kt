@@ -3,10 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Test
 
@@ -202,7 +205,7 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         assert(getMethod.typeParameters.first().name.asString() == "T") { "get method type param should be 'T'" }
         assert(getMethod.valueParameters.size == 1) { "get method should have 1 parameter" }
 
-        val paramType = getMethod.valueParameters.first().type as org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+        val paramType = getMethod.valueParameters.first().type as JavaClassifierType
         // The type reference I<T> resolves to A.I since it's used within class A
         assert(paramType.classifierQualifiedName == "A.I") { "Parameter type name should be 'A.I', got ${paramType.classifierQualifiedName}" }
         assert(paramType.classifier == nestedInterface) { "Parameter type should resolve to nested interface" }

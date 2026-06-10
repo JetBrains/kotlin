@@ -80,6 +80,7 @@ class JavaCycleBreakerTest {
         val directSupertypes = mapOf(a to listOf(b), b to listOf(a))
 
         var visits = 0
+
         // Mirrors how directSupertypeClassIds / findInheritedNestedClass recurse through the
         // supertype graph under session.cycleGuardedSupertypeWalk(...).
         fun walk(classId: ClassId): Unit = session.cycleGuardedSupertypeWalk(classId, default = Unit) {

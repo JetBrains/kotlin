@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
-import org.jetbrains.kotlin.java.direct.parse.dump
-import org.jetbrains.kotlin.java.direct.parse.parseJavaToLightTree
 import org.junit.jupiter.api.Test
 
 class JavaParsingBasicTest : JavaParsingTestBase() {
@@ -91,51 +91,8 @@ class JavaParsingBasicTest : JavaParsingTestBase() {
         }
     }
 
-    @Test fun testJavaClassWithImport() {
-        val source = """
-            // FILE: JavaClass.java
-            import java.util.concurrent.atomic.*;
-
-            public class JavaClass {
-                public String foo(AtomicInteger i) {
-                    return "JavaClass";
-                }
-                public AtomicInteger a = new AtomicInteger(1);
-            }
-        """.trimIndent()
-        val tree = parseJavaToLightTree(source, 0)
-        println(tree.dump())
-    }
-
     @Test
-    fun testDebugTypeArgumentsAST() {
-        val source = """
-            import java.util.List;
-
-            public class MyClass {
-                public List<String> items;
-            }
-        """.trimIndent()
-        val parsed = parseSource(source)
-        val tree = parsed.tree
-
-        fun printTree(node: JavaLightNode, indent: String = "") {
-            println("$indent${tree.getType(node)}: '${tree.getText(node).toString().take(50).replace("\n", "\\n")}'")
-            for (child in tree.getChildren(node)) {
-                printTree(child, "$indent  ")
-            }
-        }
-
-        val classNode = tree.findChildByType(parsed.root, JavaSyntaxElementType.CLASS)!!
-        val fieldNode = tree.findChildByType(classNode, JavaSyntaxElementType.FIELD)!!
-        val typeNode = tree.findChildByType(fieldNode, JavaSyntaxElementType.TYPE)!!
-
-        println("=== TYPE node structure ===")
-        printTree(typeNode)
-    }
-
-    @Test
-    fun testDebugWildcardAST() {
+    fun testWildcardAST() {
         val source = """
             import java.util.List;
 
