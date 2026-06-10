@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenTestB
 
 abstract class AbstractJavaUsingAstBoxTest : AbstractJvmBlackBoxCodegenTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
         with(builder) {
             useMetaTestConfigurators(
                 ::OnlyTestsWithJavaSourcesMetaConfigurator
@@ -19,6 +20,5 @@ abstract class AbstractJavaUsingAstBoxTest : AbstractJvmBlackBoxCodegenTestBase(
             useConfigurators(::JavaDirectConfigurator)
             useAdditionalService<JavaFacadeBuilderProvider>(::JavaDirectFacadeBuilderProvider)
         }
-        super.configure(builder)
     }
 }

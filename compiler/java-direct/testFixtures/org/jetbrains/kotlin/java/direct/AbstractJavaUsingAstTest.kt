@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.runners.AbstractFirPhasedDiagnosticTest
 
 abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
         with(builder) {
             useMetaTestConfigurators(
                 ::OnlyTestsWithJavaSourcesMetaConfigurator
@@ -19,6 +20,5 @@ abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirPar
             useConfigurators(::JavaDirectConfigurator)
             useAdditionalService<JavaFacadeBuilderProvider>(::JavaDirectFacadeBuilderProvider)
         }
-        super.configure(builder)
     }
 }

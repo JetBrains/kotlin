@@ -22,13 +22,9 @@ fun main(args: Array<String>) {
                     "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
-                    "testData/diagnostics/jvmIntegration",
-                    "fir/analysis-tests/testData/resolve",
-                    "fir/analysis-tests/testData/resolveWithStdlib",
                 ).forEach { testDataRoot ->
                     model(
                         testDataRoot,
-                        excludeDirs = listOf("declarations/multiplatform/k1"),
                         skipTestAllFilesCheck = true,
                         pattern = TestGeneratorUtil.KT,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
@@ -37,18 +33,17 @@ fun main(args: Array<String>) {
                 }
             }
 
-            val k1BoxTestDir = listOf("multiplatform/k1")
             val excludedScriptDirs = listOf("script")
 
             testClass<AbstractJavaUsingAstBoxTest>("JavaUsingAstBoxTestGenerated") {
                 model(
                     "testData/codegen/box",
-                    excludeDirs = k1BoxTestDir + excludedScriptDirs,
+                    excludeDirs = excludedScriptDirs,
                     additionalFileFilter = additionalFileFilter,
                 )
                 model(
                     "testData/codegen/boxJvm",
-                    excludeDirs = k1BoxTestDir + excludedScriptDirs,
+                    excludeDirs = excludedScriptDirs,
                     additionalFileFilter = additionalFileFilter,
                 )
             }
