@@ -78,6 +78,7 @@ enum class ClassLevelProperty(val shortName: String) {
     C_INTERFACE_MODE("cInterfaceMode"),
     XCTEST_FRAMEWORK("xctest"),
     BINARY_OPTIONS("binaryOptions"),
+    DEPEND_ON_PLATFORM_LIBS("dependOnPlatformLibs")
     ;
 
     internal val propertyName = fullPropertyName(shortName)
