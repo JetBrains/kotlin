@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.gradle.targets.wasm
 
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
@@ -21,7 +27,10 @@ import org.jetbrains.kotlin.gradle.targets.wasm.internal.NoOpWasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryAttribute
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.WasmBinaryTransform
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 
 @OptIn(ExperimentalWasmDsl::class)
 internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEffect { compilation ->
@@ -52,6 +61,17 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
             )
         }
 
+        val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
+        val buildIdService = BuildIdService.registerIfAbsent(project)
+        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
+        val buildSessionService = BuildSessionService.registerIfAbsent(project)
+        val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = linkTaskProvider.map {
+            project.objects.newInstance<GradleCompileTaskProvider>(
+                it,
+                project,
+                project.objects.property<IncrementalModuleInfoProvider>()
+            )
+        }
         project.dependencies.registerTransform(
             WasmBinaryTransform::class.java,
         ) { transform ->
@@ -67,6 +87,12 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
             )
 
             transform.parameters { parameters ->
+                parameters.classLoadersCachingService.set(classLoadersCachingService)
+                parameters.buildIdService.set(buildIdService)
+                parameters.buildFinishedListenerService.set(buildFinishedListenerService)
+                parameters.buildSessionService.set(buildSessionService)
+                parameters.warningModeIsAll.set(gradleCompileTaskProvider.map { it.warningModeIsAll.get() })
+                parameters.compilerDiagnosticsProblemsReporterFactory.set(gradleCompileTaskProvider.map { it.compilerDiagnosticsProblemsReporterFactory.get() })
                 parameters.currentJvmJdkToolsJar.set(
                     linkTaskProvider.flatMap { it.defaultKotlinJavaToolchain }
                         .flatMap { it.currentJvmJdkToolsJar }
@@ -117,6 +143,7 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
                 project.plugins.apply(BinaryenPlugin::class.java)
                 parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java)!!.executable)
                 parameters.mode.set(binary.mode)
+                parameters.runViaBuildToolsApi.set(propertiesProvider.runKotlinWasmCompilerViaBuildToolsApi)
 
                 parameters.toolingDiagnosticsContext.set(ToolingDiagnosticsContext.fromProject(project))
                 parameters.toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
