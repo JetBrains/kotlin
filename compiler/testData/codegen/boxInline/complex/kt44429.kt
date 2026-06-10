@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI, NATIVE
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
+// DISABLE_BACKEND: NATIVE
 // The expected behaviour of the cast in this test is not fully specified.
 // Currently the test crashes on Native:
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
