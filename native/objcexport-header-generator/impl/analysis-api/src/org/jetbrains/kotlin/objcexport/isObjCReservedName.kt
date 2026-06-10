@@ -16,7 +16,7 @@ private val reservedPropertyNames = cKeywords +
  * When processing ["alloc", "copy", "mutableCopy", "new", "init"] names the `get` prefix should be added.
  * Other reserved names are mangled by adding `_` suffix.
  */
-val reservedClassOrObjectNames = setOf(
+private val reservedClassOrObjectNames = setOf(
     "retain", "release", "autorelease",
     "initialize", "load", "alloc", "new", "class", "superclass",
     "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
