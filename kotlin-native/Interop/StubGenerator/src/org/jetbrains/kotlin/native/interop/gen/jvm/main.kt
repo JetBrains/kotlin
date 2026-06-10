@@ -353,6 +353,7 @@ private fun processCLib(
             disableExperimentalAnnotation = cinteropArguments.disableExperimentalAnnotation ?: false,
             target = target,
             cCallMode = cinteropArguments.cCallMode,
+            headerMode = cinteropArguments.headerMode,
     )
 
 
@@ -434,41 +435,45 @@ private fun processCLib(
     }
 
     val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
-    val nativeOutputPath: String? = when (flavor) {
-        KotlinPlatform.JVM -> {
-            val outOFile = tempFiles.create(libName,".o")
-            val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
-            runCmd(compilerCmd, verbose)
-            val linkerOpts =
-                    def.config.linkerOpts.toTypedArray() +
-                            tool.getDefaultCompilerOptsForLanguage(library.language) +
-                            additionalLinkerOpts
-            val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
-            val linkerCmd = arrayOf(linker,
-                    outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
-                    *linkerOpts)
-            runCmd(linkerCmd, verbose)
-            outOFile.absolutePath
-        }
-        KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
-            // Don't generate the bitcode (and don't pack it into the resulting klib),
-            // because indirect CCall is the main reason for having it.
-            // We could introduce another flag to control that, but let's keep things simple for now.
-            null
-        }
-        KotlinPlatform.NATIVE -> {
-            val outLib = File(nativeLibsDir, "$libName.bc")
-            // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
-            // The source file is passed in via stdin to ensure the output library is deterministic.
-            val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
-            runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
-            outLib.absolutePath
+    val nativeOutputPath: String? = if (cinteropArguments.headerMode) null else {
+        when (flavor) {
+            KotlinPlatform.JVM -> {
+                val outOFile = tempFiles.create(libName,".o")
+                val compilerCmd = arrayOf(compiler, *compilerArgs,
+                        "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
+                runCmd(compilerCmd, verbose)
+                val linkerOpts =
+                        def.config.linkerOpts.toTypedArray() +
+                                tool.getDefaultCompilerOptsForLanguage(library.language) +
+                                additionalLinkerOpts
+                val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
+                val linkerCmd = arrayOf(linker,
+                        outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
+                        *linkerOpts)
+                runCmd(linkerCmd, verbose)
+                outOFile.absolutePath
+            }
+            KotlinPlatform.NATIVE if configuration.cCallMode == CCallMode.DIRECT -> {
+                // Don't generate the bitcode (and don't pack it into the resulting klib),
+                // because indirect CCall is the main reason for having it.
+                // We could introduce another flag to control that, but let's keep things simple for now.
+                null
+            }
+            KotlinPlatform.NATIVE -> {
+                val outLib = File(nativeLibsDir, "$libName.bc")
+                // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
+                // The source file is passed in via stdin to ensure the output library is deterministic.
+                val compilerCmd = arrayOf(compiler, *compilerArgs,
+                        "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
+                runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
+                outLib.absolutePath
+            }
         }
     }
 
-    val compiledFiles = compileSources(nativeLibsDir, tool, cinteropArguments)
+    val compiledFiles = if (cinteropArguments.headerMode) emptyList() else {
+        compileSources(nativeLibsDir, tool, cinteropArguments)
+    }
 
     return when (stubIrOutput) {
         is StubIrDriver.Result.SourceCode -> {

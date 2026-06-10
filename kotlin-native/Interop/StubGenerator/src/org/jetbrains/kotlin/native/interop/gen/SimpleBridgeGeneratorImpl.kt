@@ -30,6 +30,7 @@ class SimpleBridgeGeneratorImpl(
         private val pkgName: String,
         private val jvmFileClassName: String,
         private val libraryForCStubs: Compilation,
+        private val headerMode: Boolean,
         override val topLevelNativeScope: NativeScope,
         private val topLevelKotlinScope: KotlinScope
 ) : SimpleBridgeGenerator {
@@ -216,6 +217,19 @@ class SimpleBridgeGeneratorImpl(
     private val nativeBridges = mutableListOf<Pair<NativeBacked, NativeBridge>>()
 
     override fun prepare(): NativeBridges {
+        // In header mode we return a stub NativeBridges implementation to bypass
+        // native verification since native bridge code is not compiled or generated.
+        if (headerMode) {
+            return object : NativeBridges {
+                override val kotlinLines: Sequence<String>
+                    get() = nativeBridges.asSequence().flatMap { it.second.kotlinLines.asSequence() }
+
+                override val nativeLines: Sequence<String>
+                    get() = nativeBridges.asSequence().flatMap { it.second.nativeLines.asSequence() }
+
+                override fun isSupported(nativeBacked: NativeBacked): Boolean = true
+            }
+        }
         val includedBridges = mutableListOf<NativeBridge>()
         val excludedClients = mutableSetOf<NativeBacked>()
 

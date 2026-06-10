@@ -86,6 +86,8 @@ open class CInteropArguments(argParser: ArgParser =
                                 ArgParser("cinterop",
                                         prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
     val target by argParser.option(ArgType.String, description = "native target to compile to").default("host")
+    val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
+            description = "Generate only metadata, skip bitcode compilation").default(false)
     val def by argParser.option(ArgType.String, description = "the library definition file")
     val header by argParser.option(ArgType.String, description = "header file to produce kotlin bindings for")
             .multiple().delimiter(",")
