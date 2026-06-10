@@ -35,7 +35,6 @@ fun roundTripThroughJsCode(value: String): String =
 fun box(): String = "OK"
 
 // FILE: entry.mjs
-import * as jsStringBuiltins from "./index.js-builtins.mjs";
 import { importObject } from "./index.import-object.mjs";
 import { box, codeUnitAt, compareAndCopyThroughChars, concatAndSlice, makeFromChars, roundTripThroughJsCode } from "./index.mjs";
 
@@ -43,21 +42,35 @@ function artifactUrl(name) {
     return import.meta.url.substring(0, import.meta.url.lastIndexOf("/") + 1) + name;
 }
 
+// js-string builtins are existing in single-module/multi-module mode in stdlib module
+// ownerBase should resolve to either test directory (whole-program mode),
+// or to stdlib directory (single-module/multi-module)
+const indexImportObjectSource = read(artifactUrl("index.import-object.mjs"));
+
+let ownerBase = "./index";
+const stdlibImport = indexImportObjectSource.match(/from\s*['"]([^'"]*kotlin-kotlin-stdlib)\.mjs['"]/);
+if (stdlibImport != null) {
+    ownerBase = stdlibImport[1];
+}
+
 const wrapperSource = read(artifactUrl("index.mjs"));
-if (!wrapperSource.includes("builtins: ['js-string']")) {
-    throw "index.mjs does not request js-string builtins";
+const ownerSource = read(artifactUrl(ownerBase + ".mjs"));
+const ownerImportObjectSource = read(artifactUrl(ownerBase + ".import-object.mjs"));
+if (!ownerSource.includes("builtins: ['js-string']")) {
+    throw "owner index.mjs does not request js-string builtins";
 }
 if (!wrapperSource.includes("importedStringConstants: \"'\"")) {
     throw "index.mjs does not request imported string constants";
 }
+if (!ownerImportObjectSource.includes("StringConstantsProxy")) {
+    throw "owner import-object does not define StringConstantsProxy";
+}
+if (!ownerImportObjectSource.includes("'wasm:js-string'")) {
+    throw "owner import-object does not import wasm:js-string";
+}
 
-const importObjectSource = read(artifactUrl("index.import-object.mjs"));
-if (!importObjectSource.includes("StringConstantsProxy")) {
-    throw "index.import-object.mjs does not define StringConstantsProxy";
-}
-if (!importObjectSource.includes("'wasm:js-string'")) {
-    throw "index.import-object.mjs does not import wasm:js-string";
-}
+const jsStringBuiltins = await import(artifactUrl(ownerBase + ".js-builtins.mjs"));
+const ownerImportObject = (await import(artifactUrl(ownerBase + ".import-object.mjs"))).importObject;
 
 const requiredBuiltins = [
     "length",
@@ -76,8 +89,8 @@ for (const name of requiredBuiltins) {
     }
 }
 
-if (importObject["wasm:js-string"] !== jsStringBuiltins) {
-    throw "importObject does not wire wasm:js-string to index.js-builtins.mjs";
+if (ownerImportObject["wasm:js-string"] !== jsStringBuiltins) {
+    throw "importObject does not wire wasm:js-string to the js-builtins module";
 }
 
 const stringConstants = importObject["'"];
