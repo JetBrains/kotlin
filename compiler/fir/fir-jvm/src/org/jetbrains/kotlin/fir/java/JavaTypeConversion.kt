@@ -8,16 +8,12 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -227,25 +223,6 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             val lookupTag = classId.toLookupTag()
-            // Recover implicit outer-class type arguments for inherited inner-class references when
-            // the classifier does not carry a fully-shaped `outerClass` chain — i.e. the
-            // `FirBackedJavaClassAdapter` for cross-file references in `java-direct`
-            // PSI/binary classifiers populate the outer chain themselves, so the explicit path
-            // below is sufficient there. `findOuterTypeArgsFromHierarchy` returns `null` early
-            // when the stack does not carry a containing-class symbol (non-`FirJavaClass`-conversion
-            // callers) or when the resolved classId is top-level — those paths are zero-cost.
-            // Mirrors the `null ->` branch's recovery generalised from `typeArguments.isEmpty()`
-            // to a missing-tail case (`typeArguments.size < typeParameterSymbols.size`).
-            val outerTypeArgs: Array<out ConeTypeProjection>? = if (
-                !isRaw &&
-                classId.relativeClassName.pathSegments().size > 1 &&
-                mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
-            ) {
-                val tps = lookupTag.toRegularClassSymbol(session)?.typeParameterSymbols
-                if (!tps.isNullOrEmpty() && typeArguments.size < tps.size) {
-                    findOuterTypeArgsFromHierarchy(classId, javaTypeParameterStack, session)
-                } else null
-            } else null
 
             // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
             // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
@@ -262,8 +239,6 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                             ?: Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
                     }
                 }
-                outerTypeArgs != null && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag) + outerTypeArgs
-                outerTypeArgs != null -> outerTypeArgs
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
                 else -> lowerBound?.typeArguments
             }
@@ -325,116 +300,6 @@ private fun resolveTypeName(
         findClassIdByFqNameString(name, session)?.let { return it }
     }
     return ClassId.topLevel(FqName(name))
-}
-
-/**
- * Finds the outer class type arguments for an inherited inner class type by walking
- * the containing class hierarchy's FIR supertypes.
- *
- * For example, for `NestedInSuperClass` in `J1.NestedSubClass extends NestedInSuperClass`,
- * where `J1 → KFirst → SuperClass<String>`, this finds `SuperClass<String>` and returns `[String]`.
- *
- * the lexical containing-class chain is read from the [MutableJavaTypeParameterStack] populated
- * at [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir] time — no longer
- * threaded through `JavaClassifierType.containingClassIds` on the public Java-model interface.
- * The chain starts from the type reference's containing class's **outer** class (skipping the
- * containing class itself, whose supertypes are currently being resolved). Returns `null` (no recovery)
- * when the stack does not carry a containing-class symbol — i.e., for callers outside
- * `convertJavaClassToFir`'s scope.
- *
- * @param classId the resolved ClassId of the inner class (e.g., SuperClass.NestedInSuperClass)
- * @param javaTypeParameterStack carries the containing FirJavaClass's symbol via
- *   [MutableJavaTypeParameterStack.containingClassSymbol]
- * @param session the FIR session
- * @return the outer type arguments, or null if they can't be determined
- */
-private fun findOuterTypeArgsFromHierarchy(
-    classId: ClassId,
-    javaTypeParameterStack: JavaTypeParameterStack,
-    session: FirSession,
-): Array<out ConeTypeProjection>? {
-    val outerClassId = classId.outerClassId ?: return null
-    val containingSymbol = (javaTypeParameterStack as? MutableJavaTypeParameterStack)?.containingClassSymbol ?: return null
-    // Walk outer classes of the containing class (skipping the containing class itself, whose
-    // supertypes are currently being resolved — accessing its superTypeRefs would recurse).
-    // Outer classes have their supertypes resolved already because FIR resolves outer class
-    // supertypes before inner class supertypes.
-    var currentOuter: ClassId? = containingSymbol.classId.outerClassId
-    while (currentOuter != null) {
-        val containingFir = currentOuter.toLookupTag().toRegularClassSymbol(session)?.fir
-        if (containingFir != null) {
-            for (superRef in containingFir.superTypeRefs) {
-                val superType = (superRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType ?: continue
-                val result = findTypeArgsForClassInHierarchy(superType, outerClassId, session, mutableSetOf())
-                if (result != null) return result
-            }
-        }
-        currentOuter = currentOuter.outerClassId
-    }
-    return null
-}
-
-/**
- * Recursively searches for a target class in a type's supertype hierarchy and returns
- * its type arguments.
- *
- * @param type the current supertype being examined
- * @param targetClassId the outer class ClassId we're looking for
- * @param session the FIR session
- * @param visited set of already-visited ClassIds to avoid cycles
- * @return the type arguments for the target class, or null if not found
- */
-private fun findTypeArgsForClassInHierarchy(
-    type: ConeClassLikeType,
-    targetClassId: ClassId,
-    session: FirSession,
-    visited: MutableSet<ClassId>,
-): Array<out ConeTypeProjection>? {
-    val typeClassId = type.lookupTag.classId
-    if (typeClassId == targetClassId) return type.typeArguments
-    if (!visited.add(typeClassId)) return null
-
-    val classSymbol = typeClassId.toLookupTag().toRegularClassSymbol(session) ?: return null
-    classSymbol.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
-    val firClass = classSymbol.fir
-
-    for (superRef in firClass.superTypeRefs) {
-        val superType = (superRef as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType ?: continue
-        // Substitute type arguments when walking through intermediate classes.
-        // E.g., class A<X> : SuperClass<X>, A<String> → SuperClass<String>
-        val substitutedType = substituteTypeArgs(superType, type, firClass)
-        val result = findTypeArgsForClassInHierarchy(substitutedType, targetClassId, session, visited)
-        if (result != null) return result
-    }
-    return null
-}
-
-/**
- * Substitutes type parameter references in a declared supertype with concrete type arguments
- * from the actual type. E.g., if `A<X> : SuperClass<X>` and the actual type is `A<String>`,
- * substitutes `SuperClass<X>` to `SuperClass<String>`.
- */
-private fun substituteTypeArgs(
-    declaredSupertype: ConeClassLikeType,
-    actualType: ConeClassLikeType,
-    declaringClass: FirRegularClass,
-): ConeClassLikeType {
-    if (actualType.typeArguments.isEmpty() || declaringClass.typeParameters.isEmpty()) return declaredSupertype
-    // Build substitution map: type parameter -> actual type argument
-    val substitutionMap = mutableMapOf<ConeTypeParameterLookupTag, ConeTypeProjection>()
-    for ([index, typeParam] in declaringClass.typeParameters.withIndex()) {
-        if (index < actualType.typeArguments.size) {
-            substitutionMap[typeParam.symbol.toLookupTag()] = actualType.typeArguments[index]
-        }
-    }
-    if (substitutionMap.isEmpty()) return declaredSupertype
-    val newArgs = Array(declaredSupertype.typeArguments.size) { index ->
-        when (val arg = declaredSupertype.typeArguments[index]) {
-            is ConeTypeParameterType -> substitutionMap[arg.lookupTag] ?: arg
-            else -> arg
-        }
-    }
-    return declaredSupertype.lookupTag.constructClassType(newArgs, declaredSupertype.isMarkedNullable)
 }
 
 /**

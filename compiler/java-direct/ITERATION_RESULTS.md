@@ -36,6 +36,21 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-10 — Relocate inherited-inner outer-arg recovery from shared FIR into the model
+- **Change**: Give `FirBackedJavaClassAdapter` a real on-air-resolved `supertypes` chain (mirroring
+  `FirJavaElementFinder.resolveSupertypesOnAir`) and move the implicit-outer-class-type-argument
+  recovery for bare inherited inner-class refs into `JavaClassifierTypeOverAst.computeTypeArguments`;
+  delete the java-direct-specific recovery (`outerTypeArgs` branch + 3 helpers) and the
+  `containingClassSymbol` side-channel from shared FIR. Design: `implDocs/MODEL_SIDE_OUTER_ARG_RECOVERY_2026_06_10.md`.
+- **Files**: `resolution/FirBackedJavaClassAdapter.kt` (real `supertypes` + on-air resolver),
+  `model/JavaTypeOverAst.kt` (+`FirBackedJavaClassifierType`/`FirBackedJavaWildcardType`/`firBackedJavaType`),
+  `resolution/JavaTypeResolver.kt` (+`recoverInheritedOuterTypeArguments` + cone walk/substitute);
+  fir-jvm `java/JavaTypeConversion.kt` (−recovery branch, −3 helpers, −4 imports) /
+  `MutableJavaTypeParameterStack.kt` (−`containingClassSymbol`) / `FirJavaFacade.kt` (−setter).
+- **Tests**: java-direct phased+box + `JavaCycleBreakerTest` + `JavaParsingTest` green; PSI gate
+  `PhasedJvmDiagnosticLightTreeTestGenerated.*` green; `CompileKotlinAgainstKotlin` gate green.
+- **Result**: green; no public Java-model interface member added (rule 7) — all new types are model-private.
+
 ### 2026-06-10 — Populate real `source` for java-direct FIR declarations
 - **Change**: java-direct `*OverAst` elements now carry a real, AST-backed `KtLightSourceElement`
   (reaching parity with the PSI loader) instead of `null`. Added a `JavaLightTree` →

@@ -10,8 +10,17 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionIn
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
+import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
 import org.jetbrains.kotlin.java.direct.resolution.classifierAdapterFor
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
@@ -20,6 +29,7 @@ import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
 import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
 import org.jetbrains.kotlin.java.direct.resolution.isImportTargetAvailableAsJavaClass
 import org.jetbrains.kotlin.java.direct.resolution.isTypeUseAnnotationClass
+import org.jetbrains.kotlin.java.direct.resolution.recoverInheritedOuterTypeArguments
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
@@ -278,6 +288,16 @@ class JavaClassifierTypeOverAst(
         }
 
         if (outerTypeParams.isEmpty()) {
+            // Inherited case: the inner class is non-static but its outer arguments are neither
+            // written in source nor lexically in scope (the outer class is top-level / cross-file,
+            // so the lexical walk above stops). Recover them from the containing class's supertype
+            // hierarchy — the model-side replacement for the deleted FIR-side recovery. E.g.
+            // `J1.NestedSubClass extends NestedInSuperClass` ⇒ `SuperClass<String>.NestedInSuperClass`.
+            val classId = javaClass.classId
+            if (classId != null) {
+                val recovered = with(resolutionContext) { recoverInheritedOuterTypeArguments(classId) }
+                if (recovered != null) return explicitArgs + recovered
+            }
             return explicitArgs
         }
 
@@ -690,3 +710,81 @@ class SimpleClassifierType(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 }
+
+/**
+ * [JavaClassifierType] backed by a resolved FIR [ConeClassLikeType]. Used to expose
+ * [FirBackedJavaClassAdapter.supertypes] (and, recursively, their cone type arguments) back
+ * through the public Java-model interface so FIR's `JavaTypeConversion` can re-convert them.
+ *
+ * The model-side inherited-outer-argument recovery in [JavaClassifierTypeOverAst.computeTypeArguments]
+ * reads [coneType] directly (it is `internal`) to walk the supertype hierarchy and substitute type
+ * arguments at the cone level — the model-side analog of the deleted FIR-side
+ * `findTypeArgsForClassInHierarchy` / `substituteTypeArgs`.
+ *
+ * This is a model-private class — it adds no member to the public Java-model interfaces (rule 7).
+ */
+internal class FirBackedJavaClassifierType(
+    val coneType: ConeClassLikeType,
+    private val session: FirSession,
+) : JavaClassifierType {
+    override val classifier: JavaClassifier = FirBackedJavaClassAdapter(coneType.lookupTag.classId, session)
+    override val classifierQualifiedName: String get() = coneType.lookupTag.classId.asSingleFqName().asString()
+    override val presentableText: String get() = classifierQualifiedName
+
+    // Resolved supertypes are never raw; raw-ness is represented by `ConeRawType`, which does not
+    // appear among a class's resolved `superTypeRefs`.
+    override val isRaw: Boolean get() = false
+
+    override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        coneType.typeArguments.map { firBackedJavaType(it, session) }
+    }
+
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+
+    override fun toString(): String = "FirBackedJavaClassifierType($coneType)"
+}
+
+/**
+ * [JavaWildcardType] backed by a cone projection's bound. Reproduces FIR's own
+ * `JavaWildcardType -> ConeKotlinTypeProjectionIn/Out/Star` mapping when the cone arguments of a
+ * [FirBackedJavaClassifierType] are re-converted by `JavaTypeConversion`.
+ */
+internal class FirBackedJavaWildcardType(
+    override val bound: JavaType?,
+    override val isExtends: Boolean,
+) : JavaWildcardType {
+    override val annotations: Collection<JavaAnnotation> get() = emptyList()
+    override val isDeprecatedInJavaDoc: Boolean get() = false
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+}
+
+/**
+ * Wraps a cone [ConeTypeProjection] as a [JavaType] so FIR's `JavaTypeConversion` reproduces the
+ * original projection when re-converting a [FirBackedJavaClassifierType]'s type arguments:
+ *  - star projection      → unbounded wildcard (`? `) → `ConeStarProjection`
+ *  - `in`/`out` projection → bounded wildcard           → `ConeKotlinTypeProjection{In,Out}`
+ *  - invariant class type  → [FirBackedJavaClassifierType]
+ *
+ * Type-parameter (and other non-class-like) invariant projections fall back to an unbounded
+ * wildcard: the recovery substitutes them to concrete arguments at the cone level before any
+ * wrapper is produced, so this fallback is only reached for unsubstituted residual projections.
+ */
+internal fun firBackedJavaType(projection: ConeTypeProjection, session: FirSession): JavaType {
+    return when (projection) {
+        is ConeStarProjection -> FirBackedJavaWildcardType(bound = null, isExtends = true)
+        is ConeKotlinTypeProjectionIn ->
+            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(projection.type, session), isExtends = false)
+        is ConeKotlinTypeProjectionOut ->
+            FirBackedJavaWildcardType(bound = firBackedClassifierOrNull(projection.type, session), isExtends = true)
+        is ConeClassLikeType -> FirBackedJavaClassifierType(projection, session)
+        // Type-parameter / flexible / conflicting / error projections: fall back to an unbounded
+        // wildcard. The recovery substitutes type parameters to concrete arguments at the cone
+        // level before wrapping, so this fallback is only reached for unsubstituted residuals.
+        else -> FirBackedJavaWildcardType(bound = null, isExtends = true)
+    }
+}
+
+private fun firBackedClassifierOrNull(type: ConeKotlinType, session: FirSession): JavaType? =
+    (type as? ConeClassLikeType)?.let { FirBackedJavaClassifierType(it, session) }

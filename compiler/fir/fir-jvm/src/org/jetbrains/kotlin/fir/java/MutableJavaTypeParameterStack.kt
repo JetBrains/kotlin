@@ -5,23 +5,11 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 
 class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
     private val typeParameterMap = mutableMapOf<JavaTypeParameter, FirTypeParameterSymbol>()
-
-    /**
-     * The [FirRegularClassSymbol] of the [org.jetbrains.kotlin.fir.java.declarations.FirJavaClass]
-     * this stack belongs to. Set by [org.jetbrains.kotlin.fir.java.FirJavaFacade.convertJavaClassToFir].
-     *
-     * Used by `JavaTypeConversion.findOuterTypeArgsFromHierarchy` to walk the
-     * lexical containing-class chain at the type-reference site without requiring the model
-     * to expose `JavaClassifierType.containingClassIds`. [addStack] does not propagate this
-     * field — each [MutableJavaTypeParameterStack] owns its own containing-class identity.
-     */
-    var containingClassSymbol: FirRegularClassSymbol? = null
 
     fun addParameter(javaTypeParameter: JavaTypeParameter, symbol: FirTypeParameterSymbol) {
         typeParameterMap[javaTypeParameter] = symbol
@@ -41,7 +29,6 @@ class MutableJavaTypeParameterStack : JavaTypeParameterStack() {
 
     fun copy(): MutableJavaTypeParameterStack = MutableJavaTypeParameterStack().also {
         it.typeParameterMap += typeParameterMap
-        it.containingClassSymbol = containingClassSymbol
     }
 }
 
