@@ -19,5 +19,19 @@ fun main(args: Array<String>) {
                 model("box")
             }
         }
+        testGroup(testsRoot = args[0], testDataRoot = "prepare/compiler-native-image/testData/projects/box") {
+            testClass<AbstractNativeImagePluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageLegacyPluginBoxTest> {
+                model("")
+            }
+            testClass<AbstractNativeImagePluginReachabilityMetadataTest> {
+                model("")
+            }
+            testClass<AbstractNativeImageLegacyPluginReachabilityMetadataTest> {
+                model("")
+            }
+        }
     }
 }
