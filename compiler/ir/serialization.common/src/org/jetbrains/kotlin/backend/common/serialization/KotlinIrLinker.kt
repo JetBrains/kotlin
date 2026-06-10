@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -234,9 +233,8 @@ abstract class KotlinIrLinker(
     }
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
-        return deserializersForModules.values.firstNotNullOfOrNull {
-            it.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind))
-        }.also {
+        val moduleDeserializer = resolveModuleDeserializer(signature) ?: return null
+        return moduleDeserializer.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
             if (finished) deserializeAllReachableTopLevels()
         }
     }
