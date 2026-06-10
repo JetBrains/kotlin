@@ -172,6 +172,11 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 }
             }
             dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.forEach { (dependencyIdentifier, swiftPMDependencies) ->
+                // Derive implicit platform constraints from the dependency's declared konanTargets.
+                // If the declared targets cover the same platforms as the umbrella, no condition is needed.
+                val implicitConstraints: Set<SwiftPMDependency.Platform>? =
+                    swiftPMDependencies.konanTargets.toSwiftPMPlatforms().takeIf { it.isNotEmpty() }
+
                 generatePackageManifest(
                     identifier = dependencyIdentifier.identifier,
                     packageRoot = packageRoot.resolve("${SUBPACKAGES}/${dependencyIdentifier.identifier}"),
@@ -185,6 +190,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     transitiveSyntheticPackages = setOf(),
                     transitiveSyntheticPackagesPath = "..",
                     binaryTarget = null,
+                    implicitPlatformConstraints = implicitConstraints,
                 )
             }
         }
@@ -228,6 +234,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
         transitiveSyntheticPackagesPath: String,
         binaryTarget: BinaryTarget?,
+        implicitPlatformConstraints: Set<SwiftPMDependency.Platform>? = null,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -263,6 +270,11 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         } + transitiveSyntheticPackages.map {
             ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
         })
+        val umbrellaPlatforms: Set<SwiftPMDependency.Platform> =
+            konanTargets.get().mapNotNull { target ->
+                runCatching { target.swiftPMPlatform() }.getOrNull()
+            }.toSet()
+
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
             dependency.products.map { product -> product to dependency.packageName }
         }.map { dependency ->
@@ -271,9 +283,19 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 val dependencyArguments = mutableListOf<String>()
                 dependencyArguments += "  name: \"${dependency.first.name}\""
                 dependencyArguments += "  package: \"${dependency.second}\""
-                val platformConstraints = dependency.first.platformConstraints
-                if (platformConstraints != null) {
-                    val platformsString = platformConstraints.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
+                val effectiveConstraint: Set<SwiftPMDependency.Platform>? = run {
+                    val explicit = dependency.first.platformConstraints
+                    when {
+                        explicit != null && implicitPlatformConstraints != null ->
+                            explicit.intersect(implicitPlatformConstraints).takeIf { it.isNotEmpty() }
+                        explicit != null -> explicit
+                        implicitPlatformConstraints != null -> implicitPlatformConstraints
+                        else -> null
+                    }
+                }
+                // Only emit a condition when the effective platforms are a proper subset of the umbrella
+                if (effectiveConstraint != null && effectiveConstraint != umbrellaPlatforms) {
+                    val platformsString = effectiveConstraint.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
                     dependencyArguments += "  condition: .when(platforms: [${platformsString}])"
                 }
                 appendLine(dependencyArguments.joinToString(",\n"))
