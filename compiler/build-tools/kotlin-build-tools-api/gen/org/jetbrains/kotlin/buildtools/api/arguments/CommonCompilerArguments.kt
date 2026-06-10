@@ -482,6 +482,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_INTRINSIC_CONST_EVALUATION", KotlinReleaseVersion(2, 4, 0))
 
     /**
+     * Enables lateinit val language feature.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_LATEINIT_VALS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_LATEINIT_VALS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * List backend phases.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

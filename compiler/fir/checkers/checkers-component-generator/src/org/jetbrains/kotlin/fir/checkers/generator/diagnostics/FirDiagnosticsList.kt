@@ -657,6 +657,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_LATEINIT_MODIFIER by error<KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
+        val UNSUPPORTED_LATEINIT_VAL_MODIFIER by error<KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER)
 
         val POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF by error<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME)
         val NULLABLE_RETURN_TYPE_OF_OPERATOR_OF by error<KtNamedFunction>(PositioningStrategy.DECLARATION_RETURN_TYPE)
@@ -1453,6 +1454,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             PositioningStrategy.DECLARATION_NAME,
         ) {
             parameter<FirClassSymbol<*>>("classOrObject")
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
+        val LATEINIT_VAL_OVERRIDDEN_BY_VAL by error<KtNamedDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<FirCallableSymbol<*>>("overridingDeclaration")
             parameter<FirCallableSymbol<*>>("overriddenDeclaration")
         }

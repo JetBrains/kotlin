@@ -65,6 +65,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
+    to.lateinitVals = from.lateinitVals
     to.lenientMode = from.lenientMode
     to.listPhases = from.listPhases
     to.localTypeAliases = from.localTypeAliases

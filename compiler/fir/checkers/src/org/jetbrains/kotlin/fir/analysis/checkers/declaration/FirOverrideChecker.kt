@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -210,6 +209,14 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     ): FirCallableSymbol<*>? {
         if (isVar) return null
         return overriddenSymbols.find { (it as? FirPropertySymbol)?.isVar == true }
+    }
+
+    private fun FirPropertySymbol.checkLateinitVal(
+        overriddenSymbols: List<FirCallableSymbol<*>>,
+    ): FirCallableSymbol<*>? {
+        // 'val' is not allowed to override 'lateinit val'
+        if (isVar || isLateInit) return null
+        return overriddenSymbols.find { it is FirPropertySymbol && it.isLateInit && it.isVal }
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)
@@ -431,6 +438,9 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
             member.checkMutability(overriddenMemberSymbols)?.let {
                 reporter.reportVarOverriddenByVal(member, it)
             }
+            member.checkLateinitVal(overriddenMemberSymbols)?.let {
+                reporter.reportLateinitOverriddenByVal(member, it)
+            }
         }
 
         member.checkVisibility(containingClass, overriddenMemberSymbols)
@@ -494,7 +504,6 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    @OptIn(SymbolInternals::class)
     private fun checkOverriddenExperimentalities(
         memberSymbol: FirCallableSymbol<*>,
         overriddenMemberSymbols: List<FirCallableSymbol<*>>,
@@ -552,6 +561,14 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overridden: FirCallableSymbol<*>
     ) {
         reportOn(overriding.source, FirErrors.VAR_OVERRIDDEN_BY_VAL, overridden, overriding)
+    }
+
+    context(context: CheckerContext)
+    private fun DiagnosticReporter.reportLateinitOverriddenByVal(
+        overriding: FirCallableSymbol<*>,
+        overridden: FirCallableSymbol<*>
+    ) {
+        reportOn(overriding.source, FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL, overridden, overriding)
     }
 
     context(context: CheckerContext)

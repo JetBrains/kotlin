@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.hasGeneratedDelegateBody
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -67,7 +68,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
         val setter = property.setter ?: return
         val propertyType = property.returnTypeRef.coneType
 
-        if (property.isVal) {
+        if (property.isVal && !property.isLateInit) {
             reporter.reportOn(setter.source, FirErrors.VAL_WITH_SETTER)
         }
         checkAccessorForDelegatedProperty(property, setter)

@@ -3480,6 +3480,12 @@ private fun KaDiagnosticConverterBuilder.addConversions76() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions77() {
+    add(FirErrors.UNSUPPORTED_LATEINIT_VAL_MODIFIER) { firDiagnostic ->
+        UnsupportedLateinitValModifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DYNAMIC_UPPER_BOUND) { firDiagnostic ->
         DynamicUpperBoundImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4937,6 +4943,14 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
     }
     add(FirErrors.EMPTY_CHARACTER_LITERAL) { firDiagnostic ->
         EmptyCharacterLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL) { firDiagnostic ->
+        LateinitValOverriddenByValImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

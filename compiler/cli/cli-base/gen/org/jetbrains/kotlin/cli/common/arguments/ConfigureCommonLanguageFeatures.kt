@@ -93,6 +93,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.IntrinsicConstEvaluation, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.lateinitVals) {
+        put(LanguageFeature.LateinitVals, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.localTypeAliases) {
         put(LanguageFeature.LocalTypeAliases, LanguageFeature.State.ENABLED)
     }

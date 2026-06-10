@@ -10,11 +10,11 @@ typealias AN = Any?
 
 public abstract class A<T: Any, V: String?, Z: AN>(<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var p2: String) {
 
-    public <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val a: String
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val b: T
+    public <!UNSUPPORTED_LATEINIT_VAL_MODIFIER!>lateinit<!> val a: String
+    <!UNSUPPORTED_LATEINIT_VAL_MODIFIER!>lateinit<!> val b: T
     private lateinit var c: CharSequence
 
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val d: String
+    <!UNSUPPORTED_LATEINIT_VAL_MODIFIER!>lateinit<!> val d: String
         get
 
     public lateinit var e: String
@@ -50,7 +50,7 @@ public abstract class A<T: Any, V: String?, Z: AN>(<!INAPPLICABLE_LATEINIT_MODIF
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var String.e12: String
 }
 
-<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val topLevel: String
+<!UNSUPPORTED_LATEINIT_VAL_MODIFIER!>lateinit<!> val topLevel: String
 lateinit var topLevelMutable: String
 
 public interface Intf {

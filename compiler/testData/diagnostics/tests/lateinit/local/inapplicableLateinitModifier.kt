@@ -10,7 +10,7 @@ object Delegate {
 
 
 fun test() {
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val test0: Any
+    <!UNSUPPORTED_LATEINIT_VAL_MODIFIER!>lateinit<!> val test0: Any
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var test1: Int
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var test2: Any?
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var test3: String = ""

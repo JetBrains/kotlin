@@ -1477,6 +1477,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface UnsupportedLateinitValModifier : KaFirDiagnostic<KtModifierListOwner> {
+        override val diagnosticClass get() = UnsupportedLateinitValModifier::class
+    }
+
     interface PotentiallyNullableReturnTypeOfOperatorOf : KaFirDiagnostic<KtNamedFunction> {
         override val diagnosticClass get() = PotentiallyNullableReturnTypeOfOperatorOf::class
     }
@@ -2836,6 +2840,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface VarImplementedByInheritedValWarning : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = VarImplementedByInheritedValWarning::class
         val classOrObject: KaClassLikeSymbol
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
+    }
+
+    interface LateinitValOverriddenByVal : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = LateinitValOverriddenByVal::class
         val overridingDeclaration: KaCallableSymbol
         val overriddenDeclaration: KaCallableSymbol
     }

@@ -1426,4 +1426,19 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
+
+    compilerArgument {
+        name = "Xlateinit-vals"
+        description = """
+            Enables lateinit val language feature.
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.LateinitVals)
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
 }

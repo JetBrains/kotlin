@@ -653,6 +653,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xlateinit-vals",
+        description = "Enables lateinit val language feature.",
+    )
+    @Enables(LanguageFeature.LateinitVals)
+    var lateinitVals: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xlist-phases",
         description = "List backend phases.",
     )

@@ -661,6 +661,7 @@ enum class LanguageFeature(
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904"),
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188"),
+    LateinitVals(sinceVersion = null, issue = "KT-28413"),
 
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = true),
     InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),

@@ -1,0 +1,17 @@
+/lateinitValApplicability.kt:11:1: error: 'lateinit' modifier is not allowed on delegated properties.
+
+/lateinitValApplicability.kt:16:5: error: 'lateinit' modifier is not allowed on properties with initializer.
+
+/lateinitValApplicability.kt:25:5: error: 'lateinit' modifier is not allowed on properties with a custom getter or setter.
+
+/lateinitValApplicability.kt:39:14: error: 'lateinit' modifier is not allowed on abstract properties.
+
+/lateinitValApplicability.kt:51:14: error: 'lateinit val' property 'val bar: String' defined in 'Base' cannot be overridden by 'val' property 'val bar: String'.
+
+/lateinitValApplicability.kt:56:5: error: 'lateinit' modifier is only allowed on mutable local variables.
+
+/lateinitValApplicability.kt:57:5: error: 'lateinit' modifier is only allowed on mutable local variables.
+
+/lateinitValApplicability.kt:58:5: error: 'lateinit' modifier is not allowed on local variables with initializer.
+
+/lateinitValApplicability.kt:58:5: error: 'lateinit' modifier is only allowed on mutable local variables.
