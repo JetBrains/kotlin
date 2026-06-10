@@ -172,6 +172,9 @@ open class CInteropArguments(argParser: ArgParser =
             fullName = KLIB_ABI_COMPATIBILITY_LEVEL,
             description = "Generate a library compatible with the specified KLIB ABI version"
     ).default(KlibAbiCompatibilityLevel.LATEST_STABLE)
+
+    val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
+            description = "Generate only metadata, skip bitcode compilation").default(false)
 }
 
 internal fun warn(msg: String) {

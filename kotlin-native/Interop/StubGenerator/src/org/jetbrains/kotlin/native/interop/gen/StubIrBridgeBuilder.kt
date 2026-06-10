@@ -51,10 +51,11 @@ class StubIrBridgeBuilder(
 
     private val simpleBridgeGenerator: SimpleBridgeGenerator =
             SimpleBridgeGeneratorImpl(
-                    context.platform,
-                    context.configuration.pkgName,
-                    context.jvmFileClassName,
-                    context.libraryForCStubs,
+                    platform = context.platform,
+                    pkgName = context.configuration.pkgName,
+                    jvmFileClassName = context.jvmFileClassName,
+                    libraryForCStubs = context.libraryForCStubs,
+                    headerMode = context.configuration.headerMode,
                     topLevelNativeScope = object : NativeScope {
                         override val mappingBridgeGenerator: MappingBridgeGenerator
                             get() = this@StubIrBridgeBuilder.mappingBridgeGenerator
