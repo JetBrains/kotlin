@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.file.*
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -17,13 +18,21 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.btapi.BtaToolchain
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
+import org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.normalizeJvmArgs
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import java.io.File
@@ -35,7 +44,7 @@ import javax.inject.Inject
  * Gradle Artifact Transform that converts Kotlin/Wasm KLib files into Wasm binaries.
  *
  * This transform is essential for preparing external KLib dependencies (like library files)
- * so they can be run in a WebAssembly environment. It uses the Kotlin/JS (IR) compiler
+ * so they can be run in a WebAssembly environment. It uses the Kotlin/Wasm (IR) compiler
  * to generate the Wasm artifact from the input KLib.
  *
  * In [KotlinJsBinaryMode.PRODUCTION], it also runs Binaryen optimizations on the generated Wasm file.
@@ -93,6 +102,27 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
 
         @get:Input
         internal abstract val mode: Property<KotlinJsBinaryMode>
+
+        @get:Internal
+        internal abstract val runViaBuildToolsApi: Property<Boolean>
+
+        @get:Internal
+        internal abstract val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+
+        @get:Internal
+        internal abstract val buildFinishedListenerService: Property<BuildFinishedListenerService>
+
+        @get:Internal
+        internal abstract val buildIdService: Property<BuildIdService>
+
+        @get:Internal
+        internal abstract val buildSessionService: Property<BuildSessionService>
+
+        @get:Internal
+        internal abstract val warningModeIsAll: Property<Boolean>
+
+        @get:Internal
+        abstract val compilerDiagnosticsProblemsReporterFactory: Property<CompilerDiagnosticsProblemsReporter.Factory>
     }
 
     @get:Inject
@@ -107,6 +137,9 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
     @get:InputArtifact
     @get:PathSensitive(PathSensitivity.NAME_ONLY)
     abstract val inputArtifact: Provider<FileSystemLocation>
+
+    @get:Inject
+    abstract val objectFactory: ObjectFactory
 
     override fun transform(outputs: TransformOutputs) {
         val inputFile = inputArtifact.get().asFile
@@ -128,10 +161,24 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         }
 
         val workArgs = prepareWasmCompilationArgs(compilerOutputDir, inputFile)
-
-        GradleKotlinCompilerWork(
-            workArgs
-        ).run()
+        if (parameters.runViaBuildToolsApi.get()) {
+            val btaWorkParams = objectFactory.newInstance<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters>().apply {
+                buildSessionService.set(parameters.buildSessionService)
+                buildIdService.set(parameters.buildIdService)
+                buildFinishedListenerService.set(parameters.buildFinishedListenerService)
+                classLoadersCachingService.set(parameters.classLoadersCachingService)
+                compilerWorkArguments.set(workArgs)
+                compilerDiagnosticsProblemsReporterFactory.set(parameters.compilerDiagnosticsProblemsReporterFactory)
+                warningModeIsAll.set(parameters.warningModeIsAll)
+            }
+            object : BuildToolsApiCompilationWork(fs, objectFactory) {
+                override fun getParameters(): BuildToolsApiCompilationParameters = btaWorkParams
+            }.execute()
+        } else {
+            GradleKotlinCompilerWork(
+                workArgs
+            ).run()
+        }
 
         if (mode == KotlinJsBinaryMode.DEVELOPMENT) return
         val binaryenOutputDirectory = Files.createTempDirectory("wasm-transform-binaryen").toFile()
@@ -224,6 +271,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
                 )
             } ?: KotlinVersion.DEFAULT,
             compilerArgumentsLogLevel = KotlinCompilerArgumentsLogLevel.DEFAULT,
+            btaToolchain = BtaToolchain.WASM_LINKING,
         )
         return workArgs
     }
