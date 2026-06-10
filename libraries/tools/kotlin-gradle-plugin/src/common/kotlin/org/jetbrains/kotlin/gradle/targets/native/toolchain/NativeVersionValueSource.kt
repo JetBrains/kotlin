@@ -121,8 +121,14 @@ internal abstract class NativeVersionValueSource :
             toDirectory: File,
         ) {
             logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.absolutePath}")
+            // Remove stale incomplete bundle from a previous interrupted run. KT-86251.
+            // We are inside the NativeDistributionCommonizerLock so no other process races here.
             if (!toDirectory.list().isNullOrEmpty()) {
-                logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
+                logger.info(
+                    "Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty " +
+                        "(stale incomplete installation). Removing before fresh extraction."
+                )
+                toDirectory.deleteRecursively()
             }
             unzipTo(fromDirectory, toDirectory.parentFile)
 

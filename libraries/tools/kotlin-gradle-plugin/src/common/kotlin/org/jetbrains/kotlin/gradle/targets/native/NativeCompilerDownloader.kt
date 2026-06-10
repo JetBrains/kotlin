@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
@@ -50,8 +51,10 @@ class NativeCompilerDownloader(
         /**
          * Marker file written inside [compilerDirectory] after a successful extraction.
          * Presence indicates a complete installation. See KT-86251.
+         * Must match [NativeVersionValueSource.MARKER_FILE] so both the legacy downloader
+         * and the modern toolchain path recognise each other's installations.
          */
-        internal const val MARKER_FILE = ".provisioned.ok"
+        internal const val MARKER_FILE = NativeVersionValueSource.MARKER_FILE
 
         internal fun getCompilerDependencyNotation(project: Project): String {
             val group = KOTLIN_GROUP_ID
