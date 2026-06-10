@@ -32,5 +32,7 @@ public inline fun KaModuleContainerBuilder.buildKtSdkModule(init: KtSdkModuleBui
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtSdkModuleBuilder(coreApplicationEnvironment, project).apply(init).build()
+    val builder = KtSdkModuleBuilder(coreApplicationEnvironment, project)
+    builder.libraryScopeConstructionMode = libraryScopeConstructionMode
+    return builder.apply(init).build()
 }

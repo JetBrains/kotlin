@@ -31,7 +31,13 @@ public open class KtLibraryModuleBuilder(
         val binaryVirtualFiles = getBinaryVirtualFiles()
 
         val contentScope = contentScope
-            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project)
+            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(
+                binaryRoots,
+                binaryVirtualFiles,
+                libraryScopeConstructionMode,
+                coreApplicationEnvironment,
+                project,
+            )
 
         return KaLibraryModuleImpl(
             directRegularDependencies,
@@ -54,5 +60,7 @@ public inline fun KaModuleContainerBuilder.buildKtLibraryModule(init: KtLibraryM
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibraryModuleBuilder(coreApplicationEnvironment, project, isSdk = false).apply(init).build()
+    val builder = KtLibraryModuleBuilder(coreApplicationEnvironment, project, isSdk = false)
+    builder.libraryScopeConstructionMode = libraryScopeConstructionMode
+    return builder.apply(init).build()
 }
