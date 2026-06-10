@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.PrintStream
 import java.nio.file.*
 import java.util.zip.ZipEntry
@@ -133,34 +134,44 @@ class FirebaseCloudXCTestExecutor(
             ?.removeSuffixIfPresent("/")
             ?: error("Unable to match URL against pattern, the input was: \"$firebaseStderrString\"")
 
-        // Fetch results from the storage
-        hostExecutor.executeWithRepeatOnTimeout(
-            ExecuteRequest(
-                executableAbsolutePath = "gcloud",
-                workingDirectory = projectDir.toFile(),
-                args = mutableListOf("storage", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
-            ),
-            // This command sometimes just hangs on certain agents, see KT-72581.
-            // Let's try repeating.
-            timeouts = listOf(
-                10.seconds, // 3 seconds is always enough, so let's make it 10 just in case.
-                1.minutes, // Is 10 seconds not enough? Not typical, but I'll allow it.
-                2.minutes, // Ok, give it one last chance.
-            )
-        ).assertSuccess()
-        val executionLog = projectDir.listDirectoryEntries("iphone*")
-            .first()
-            .resolve("xcodebuild_output.log")
-            .readText()
+        val executionLog = fetchXcodebuildOutput(resultsBucketURL)
 
         // Fill in the request's stdout with the execution result
-        request.stdout.writer()
-            .append(executionLog)
-            .close()
+        request.stdout.write(executionLog)
 
         bundle.cleanup()
 
         return firebaseResponse
+    }
+
+    private fun fetchXcodebuildOutput(resultsBucketURL: String): ByteArray {
+        // This command sometimes just hangs on certain agents, see KT-72581.
+        // Let's try repeating.
+        val timeouts = listOf(
+            10.seconds, // 3 seconds is always enough, so let's make it 10 just in case.
+            1.minutes, // Is 10 seconds not enough? Not typical, but I'll allow it.
+            2.minutes, // Ok, give it one last chance.
+        )
+
+        for (timeout in timeouts) {
+            val xcodebuildOutput = ByteArrayOutputStream()
+            val response = hostExecutor.execute(
+                ExecuteRequest(
+                    executableAbsolutePath = "gcloud",
+                    workingDirectory = File("").absoluteFile,
+                    args = mutableListOf("storage", "cat", "gs://${resultsBucketURL}/iphone*/xcodebuild_output.log"),
+                    stdout = xcodebuildOutput,
+                    timeout = timeout,
+                )
+            )
+            if (response.exitCode != null) {
+                response.assertSuccess()
+                return xcodebuildOutput.toByteArray()
+            } else {
+                // It was killed by a timeout, let's repeat.
+            }
+        }
+        error("Timed out")
     }
 
     private fun Path.createZip(sourceFolder: Path) {
