@@ -542,19 +542,6 @@ enum class LanguageFeature(
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
 
     CallCompletionRefinementsFor25(sinceVersion = KOTLIN_2_5, "KT-86042"),
-    UnitConversionsOnArbitraryExpressions(sinceVersion = KOTLIN_2_5, "KT-84393"),
-    InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
-
-    EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107") {
-        context(context: CrossFeatureChecksResultsCollector)
-        override fun crossFeatureChecks() {
-            checkEnabledNotEarlierThan(
-                CallCompletionRefinementsFor25,
-                UnitConversionsOnArbitraryExpressions,
-                InferThrowableTypeParameterToUpperBound,
-            )
-        }
-    },
 
     ForbidValueClassRecursionViaTypeParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-85848"),
 
@@ -674,6 +661,20 @@ enum class LanguageFeature(
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     FullValueClasses(sinceVersion = null, "KT-84904"),
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188"),
+
+    UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = true),
+    InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),
+
+    EagerLambdaAnalysis(sinceVersion = null, issue = "KT-51107", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(
+                CallCompletionRefinementsFor25,
+                UnitConversionsOnArbitraryExpressions,
+                InferThrowableTypeParameterToUpperBound,
+            )
+        }
+    },
     ;
 
     constructor(
