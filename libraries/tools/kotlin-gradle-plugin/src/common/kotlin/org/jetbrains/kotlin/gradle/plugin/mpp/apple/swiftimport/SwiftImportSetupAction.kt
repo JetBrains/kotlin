@@ -565,7 +565,7 @@ private fun Project.locateOrRegisterUmbrellaPackageGenerateTask(
 
 private fun KotlinTarget.supportsSwiftPMImport() = this is KotlinNativeTarget && this.konanTarget.family.isAppleFamily
 
-private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (this) {
+internal fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (this) {
     KonanTarget.IOS_ARM64,
     KonanTarget.IOS_SIMULATOR_ARM64,
     KonanTarget.IOS_X64,
