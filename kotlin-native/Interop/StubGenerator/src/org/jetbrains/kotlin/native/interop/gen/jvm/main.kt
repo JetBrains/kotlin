@@ -332,6 +332,7 @@ private fun processCLib(
     }.load()
     // TODO: check loading result
     val loadedLibraries = loadingResult.librariesStdlibFirst
+    val stdlib = loadedLibraries.first { it.isNativeStdlib }
 
     /**
      * What should be in the test:
