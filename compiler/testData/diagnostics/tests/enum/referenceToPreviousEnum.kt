@@ -13,11 +13,14 @@ enum class E(val higherPriority: E?) {
             entries
         }
     },
+    QuuxTa(<!UNINITIALIZED_ENUM_COMPANION!>TA<!>.companionProp)
     ;
 
     companion object {
         val companionProp: E? = null
     }
 }
+
+typealias TA = E
 
 /* GENERATED_FIR_TAGS: enumDeclaration, enumEntry, nullableType, primaryConstructor, propertyDeclaration */
