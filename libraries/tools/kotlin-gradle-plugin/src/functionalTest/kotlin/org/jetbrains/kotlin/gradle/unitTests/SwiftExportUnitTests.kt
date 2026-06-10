@@ -1238,6 +1238,32 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test reexported cinterop of exported project dependency`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val dependency = project.subProject("dependency") {
+            iosSimulatorArm64().compilations.getByName("main").cinterops.create("foo")
+        }
+        project.setupForSwiftExport(
+            multiplatform = { iosSimulatorArm64() },
+            swiftExport = {
+                export(dependency) {
+                    reexportCinterop("foo", "FooKit")
+                }
+            }
+        )
+        project.evaluate()
+        dependency.evaluate()
+
+        val reexported = project.reexportedCinteropModules().single()
+
+        assertEquals("FooKit", reexported.objCModuleName)
+        assertEquals("dependency-cinterop-foo", reexported.artifact.name)
+    }
+
+    @Test
     fun `test reexported host cinterop search paths are passed to the package build`() {
         val moduleMap = "/custom/FooKit/module.modulemap"
         val includeDir = java.nio.file.Files.createTempDirectory("fooKitInclude").toFile()
@@ -1261,6 +1287,9 @@ class SwiftExportUnitTests {
             listOf("-I", includeDir.absolutePath, "-Xcc", "-fmodule-map-file=$moduleMap", "-I/custom/include"),
             packageBuild.swiftcExtraArgs.get()
         )
+        // Host cinterops are provided by this build; only re-exported cinterops of resolved
+        // dependencies rely on the outer Xcode build's search paths.
+        assertTrue(packageBuild.dependencyCinteropModuleNames.get().isEmpty())
     }
 }
 

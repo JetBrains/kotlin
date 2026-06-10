@@ -13,6 +13,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
@@ -67,6 +69,49 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
      */
     @get:Input
     abstract val swiftcExtraArgs: ListProperty<String>
+
+    /**
+     * Objective-C module names of cinterop klibs of resolved dependencies that are re-exported by
+     * Swift Export. The generated Swift code imports these modules, and the consuming Xcode build is
+     * responsible for providing them — so the inner xcodebuild inherits the outer build's search paths
+     * (see [outerBuiltProductsDir], [outerObjroot]).
+     */
+    @get:Input
+    abstract val dependencyCinteropModuleNames: SetProperty<String>
+
+    /**
+     * The outer Xcode build's BUILT_PRODUCTS_DIR, set when KGP runs inside an Xcode Run Script phase.
+     * Points the inner xcodebuild's swiftc at products that the outer Xcode build has already resolved —
+     * e.g. Swift Package products providing the Objective-C modules of [dependencyCinteropModuleNames].
+     * Unset when KGP runs outside Xcode, in which case no extra search paths are injected.
+     */
+    @get:Optional
+    @get:Input
+    val outerBuiltProductsDir: Property<String> = objectFactory.property<String>().convention(
+        providerFactory.environmentVariable("BUILT_PRODUCTS_DIR")
+    )
+
+    /**
+     * The outer Xcode build's OBJROOT — the root of `Intermediates.noindex`, where Xcode emits
+     * `GeneratedModuleMaps<EffectivePlatformName>/<TargetName>.modulemap` files for SPM-resolved Clang
+     * modules. Combined with [outerEffectivePlatformName], lets the inner build pass those module maps
+     * to swiftc via `-Xcc -fmodule-map-file=`.
+     */
+    @get:Optional
+    @get:Input
+    val outerObjroot: Property<String> = objectFactory.property<String>().convention(
+        providerFactory.environmentVariable("OBJROOT")
+    )
+
+    /**
+     * The outer Xcode build's EFFECTIVE_PLATFORM_NAME (e.g. `-iphonesimulator`) — the suffix of the
+     * `GeneratedModuleMaps` directory under [outerObjroot].
+     */
+    @get:Optional
+    @get:Input
+    val outerEffectivePlatformName: Property<String> = objectFactory.property<String>().convention(
+        providerFactory.environmentVariable("EFFECTIVE_PLATFORM_NAME")
+    )
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -128,6 +173,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
              */
             addAll(listOf("-Xfrontend", "-public-autolink-library", "-Xfrontend", swiftModuleName))
             addAll(swiftcExtraArgs.get())
+            addAll(outerXcodeBuildSearchPathArgs())
         }
 
         val buildArguments = mapOf(
@@ -163,6 +209,35 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
                 directory(packageRootPath)
             }
         )
+    }
+
+    /**
+     * The generated Swift code imports the Objective-C modules of [dependencyCinteropModuleNames], and the
+     * modules are provided by the consuming Xcode build (e.g. as Swift Package products declared in the
+     * consumer's project). When KGP runs inside an Xcode Run Script phase, the outer build's search paths
+     * and generated module maps make those modules visible to the inner swiftc.
+     */
+    private fun outerXcodeBuildSearchPathArgs(): List<String> {
+        if (dependencyCinteropModuleNames.get().isEmpty()) return emptyList()
+
+        val builtProductsDir = outerBuiltProductsDir.orNull ?: return emptyList()
+
+        return buildList {
+            addAll(listOf("-F", builtProductsDir))
+            addAll(listOf("-I", "$builtProductsDir/include"))
+
+            // Xcode emits Clang module maps for SPM-resolved targets under
+            // `$OBJROOT/GeneratedModuleMaps<EffectivePlatformName>/<TargetName>.modulemap`. Forward them
+            // to the Clang importer so that `import <Name>` resolves.
+            val objroot = outerObjroot.orNull
+            val platformName = outerEffectivePlatformName.orNull
+            if (objroot != null && platformName != null) {
+                val moduleMapsDir = File(objroot, "GeneratedModuleMaps$platformName")
+                moduleMapsDir.listFiles { _, name -> name.endsWith(".modulemap") }?.forEach { moduleMap ->
+                    addAll(listOf("-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}"))
+                }
+            }
+        }
     }
 
     private fun packObjectFilesIntoLibrary() {

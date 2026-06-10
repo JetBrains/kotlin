@@ -112,6 +112,9 @@ internal fun Project.registerSwiftExportTask(
         swiftApiLibraryName = swiftApiLibraryName,
         packageGenerationTask = packageGenerationTask,
         cinteropSwiftcArgs = reexportedHostCinteropsSwiftcArgs(swiftExportExtension.reexportedCinterops, mainCompilation),
+        dependencyCinteropModuleNames = dependencyModules.map { modules ->
+            modules.filterIsInstance<SwiftExportedModule.CinteropReexported>().map { it.objCModuleName }
+        },
     )
     val mergeLibrariesTask = registerMergeLibraryTask(
         taskGroup = taskGroup,
@@ -266,6 +269,7 @@ private fun Project.registerSPMPackageBuild(
     swiftApiLibraryName: Provider<String>,
     packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
     cinteropSwiftcArgs: Provider<List<String>>,
+    dependencyCinteropModuleNames: Provider<List<String>>,
 ): TaskProvider<BuildSPMSwiftExportPackage> {
     val buildTaskName = lowerCamelCaseName(
         taskNamePrefix,
@@ -283,6 +287,7 @@ private fun Project.registerSPMPackageBuild(
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.target.set(target.konanTarget)
         task.swiftcExtraArgs.set(cinteropSwiftcArgs)
+        task.dependencyCinteropModuleNames.set(dependencyCinteropModuleNames)
 
         // Output
         task.packageBuildDir.set(layout.buildDirectory.dir("SPMBuild/${target.name}/$configuration"))
