@@ -112,9 +112,7 @@ internal fun createDumbVirtualFile(
 
         override fun isValid(): Boolean = ktFile.isValid
 
-        override fun getParent(): VirtualFile {
-            error("Not yet implemented")
-        }
+        override fun getParent(): VirtualFile? = null
 
         override fun getChildren(): Array<VirtualFile> = emptyArray()
 
