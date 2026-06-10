@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import static org.jetbrains.kotlin.testFramework.inputchecking.UndeclaredInputsGuard.DetectorState.*;
 
 public class UndeclaredInputsGuard {
 
@@ -28,7 +29,7 @@ public class UndeclaredInputsGuard {
 
     public static UndeclaredInputsGuard getInstance() {
         if (INSTANCE == null) {
-            throw new RuntimeException("The UndeclaredInputsGuard instance is not yet available!");
+            throw new IllegalStateException("The UndeclaredInputsGuard instance is not yet available!");
         }
         return INSTANCE;
     }
@@ -60,25 +61,7 @@ public class UndeclaredInputsGuard {
     }
 
     private boolean isUndeclaredInput(File file) {
-        // The order of expressions matters here, the Set::contains is the most expensive operation
-        return insideRootProjectDir(file) &&
-               notInsideCurrentProjectBuildDir(file) &&
-               !declaredInputs.contains(file.getPath());
-    }
-
-    /**
-     * Filter out files outside the root project directory (like Gradle caches)
-     */
-    private boolean insideRootProjectDir(File file) {
-        return file.getPath().startsWith(rootDir);
-    }
-
-    /**
-     * Filter out files inside the current project's build directory
-     * (tests sometimes write files there and then read them back)
-     */
-    private boolean notInsideCurrentProjectBuildDir(File file) {
-        return !file.getPath().startsWith(buildDir);
+        return new Detector(file).detectUndeclaredInput();
     }
 
     /**
@@ -97,7 +80,47 @@ public class UndeclaredInputsGuard {
         return file;
     }
 
-    public Set<String> getUndeclaredInputs() {
-        return Collections.unmodifiableSet(undeclaredInputs);
+    private class Detector {
+
+        private final File file;
+        private DetectorState state = UNKNOWN;
+
+        private Detector(File file) {
+            this.file = file;
+        }
+
+        public boolean detectUndeclaredInput() {
+            excludeIfOutsideRootDir();
+            excludeIfInsideBuildDir();
+            includeIfNotFoundAmongDeclaredInputs();
+            return state == INCLUDED;
+        }
+
+        /**
+         * Filter out files outside the root project directory (like Gradle caches)
+         */
+        private void excludeIfOutsideRootDir() {
+            if (state == UNKNOWN && !file.getPath().startsWith(rootDir)) {
+                state = EXCLUDED;
+            }
+        }
+
+        /**
+         * Filter out files inside the current project's build directory
+         * (tests sometimes write files there and then read them back)
+         */
+        private void excludeIfInsideBuildDir() {
+            if (state == UNKNOWN && file.getPath().startsWith(buildDir)) {
+                state = EXCLUDED;
+            }
+        }
+
+        private void includeIfNotFoundAmongDeclaredInputs() {
+            if (state == UNKNOWN && !declaredInputs.contains(file.getPath())) {
+                state = INCLUDED;
+            }
+        }
     }
+
+    enum DetectorState { INCLUDED, EXCLUDED, UNKNOWN }
 }
