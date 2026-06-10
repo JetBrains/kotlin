@@ -120,13 +120,17 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         when (claim) {
             is CoordinationClaim.Existing -> {
                 coordinationService.get().awaitSwiftResolved(claim.bucket)
+                finalizeFetchTask(claim.bucket)
             }
 
             is CoordinationClaim.Owner -> {
-                runOwnerSwiftResolve(claim.bucket)
+                runOwnerSwiftResolve(
+                    claim.bucket.ownerSyntheticImportProjectRoot,
+                    claim.bucket.ownerSwiftPMDependenciesCheckout,
+                    ownerHash
+                )
             }
         }
-        finalizeFetchTask(claim.bucket)
 
     }
 
@@ -158,34 +162,37 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
 
 
     private fun runOwnerSwiftResolve(
-        bucket: SwiftResolveBucket,
+        syntheticImportProjectRoot: File,
+        swiftPMDependenciesCheckout: File,
+        syntheticPackageHash: String,
     ) {
-        try {
-            // The owner writes directly to the root-build bucket, while still building this task's synthetic package and
-            // using this task's SwiftPM checkout.
-            submitSwiftResolveWorkAction(
-                ownerSyntheticImportProjectRoot = bucket.ownerSyntheticImportProjectRoot,
-                ownerSwiftPMDependenciesCheckout = bucket.ownerSwiftPMDependenciesCheckout,
-            )
-            workerExecutor.await()
-            // Completion stamps the shared dump and releases any tasks waiting on the same bucket.
-            coordinationService.get().markSwiftResolveCompleted(bucket)
-        } catch (failure: Throwable) {
-            // Propagate the same failure to every task that joined this bucket.
-            coordinationService.get().markSwiftResolveFailed(bucket, failure)
-            throw failure
-        }
+        submitSwiftResolveWorkAction(
+            ownerSyntheticImportProjectRoot = syntheticImportProjectRoot,
+            ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
+            syntheticPackageHash = syntheticPackageHash,
+            markCompletion = true,
+        )
     }
 
     fun submitSwiftResolveWorkAction(
         ownerSyntheticImportProjectRoot: File,
         ownerSwiftPMDependenciesCheckout: File,
+        syntheticPackageHash: String? = null,
+        markCompletion: Boolean = false,
     ) {
         workerExecutor.noIsolation().submit(SwiftResolveWorkAction::class.java) { params ->
             params.syntheticImportProjectRoot.set(ownerSyntheticImportProjectRoot)
             params.swiftPMDependenciesCheckout.set(ownerSwiftPMDependenciesCheckout)
             params.additionalSwiftPackageResolveArgs.set(additionalSwiftPackageResolveArgs)
             params.gitIgnoreCheckoutDir.set(gitIgnoreCheckoutDir)
+            params.markCompletion.set(markCompletion)
+
+            if (markCompletion) {
+                params.coordinationService.set(coordinationService)
+                params.syntheticPackageHash.set(syntheticPackageHash!!)
+                params.syntheticLockFile.set(syntheticLockFile)
+                params.workspaceStateJson.set(workspaceStateJson)
+            }
         }
     }
 

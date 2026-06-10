@@ -135,10 +135,10 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             return
         }
 
-        val xcodebuildExecutionHash = xcodebuildFingerprintFile.readText().trim()
+        val xcodebuildExecutionFingerprint = xcodebuildFingerprintFile.readText().trim()
 
         val claim = coordinationService.claimOrJoinXcodeDump(
-            xcodebuildExecutionHash = xcodebuildExecutionHash,
+            xcodebuildExecutionHash = xcodebuildExecutionFingerprint,
             xcodebuildSdk = xcodebuildSdk.get(),
         )
 
@@ -149,11 +149,11 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                 }
 
                 runOwnerXcodeDump(
-                    bucket = claim.bucket,
                     dumpDir = claim.bucket.ownerDumpDir,
                     derivedDataDir = claim.bucket.ownerDerivedDataDir,
                     syntheticImportProjectRoot = fetchBucket.ownerSyntheticImportProjectRoot,
                     swiftPMDependenciesCheckout = fetchBucket.ownerSwiftPMDependenciesCheckout,
+                    xcodebuildExecutionHash = xcodebuildExecutionFingerprint,
                 )
             }
 
@@ -164,25 +164,20 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     }
 
     private fun runOwnerXcodeDump(
-        bucket: XcodeDumpBucket,
         dumpDir: File,
         derivedDataDir: File,
         syntheticImportProjectRoot: File,
         swiftPMDependenciesCheckout: File,
+        xcodebuildExecutionHash: String,
     ) {
-        try {
-            submitXcodebuildArgsDumpWorkAction(
-                dumpDir = dumpDir,
-                derivedDataDir = derivedDataDir,
-                syntheticImportProjectRoot = syntheticImportProjectRoot,
-                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
-            )
-            workerExecutor.await()
-            fingerprintCoordinationService.get().markXcodeDumpCompleted(bucket)
-        } catch (failure: Throwable) {
-            fingerprintCoordinationService.get().markXcodeDumpFailed(bucket, failure)
-            throw failure
-        }
+        submitXcodebuildArgsDumpWorkAction(
+            dumpDir = dumpDir,
+            derivedDataDir = derivedDataDir,
+            syntheticImportProjectRoot = syntheticImportProjectRoot,
+            swiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
+            xcodebuildExecutionHash = xcodebuildExecutionHash,
+            markCompletion = true,
+        )
     }
 
     private fun submitXcodebuildArgsDumpWorkAction(
@@ -190,6 +185,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         derivedDataDir: File,
         syntheticImportProjectRoot: File,
         swiftPMDependenciesCheckout: File,
+        xcodebuildExecutionHash: String? = null,
+        markCompletion: Boolean = false,
     ) {
         workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
             params.xcodebuildPlatform.set(xcodebuildPlatform)
@@ -200,6 +197,12 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             params.syntheticImportDd.fileValue(derivedDataDir)
             params.dumpedXcodeBuildArgsDir.fileValue(dumpDir)
             params.additionalXcodeArgs.set(additionalXcodeArgs)
+            params.markCompletion.set(markCompletion)
+
+            if (markCompletion) {
+                params.fingerprintCoordinationService.set(fingerprintCoordinationService)
+                params.xcodebuildExecutionFingerprint.set(xcodebuildExecutionHash!!)
+            }
         }
     }
 

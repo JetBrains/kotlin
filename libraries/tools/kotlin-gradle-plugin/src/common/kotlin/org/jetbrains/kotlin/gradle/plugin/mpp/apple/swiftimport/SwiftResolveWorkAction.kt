@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -19,13 +20,46 @@ internal interface SwiftResolveWorkParameters : WorkParameters {
     val swiftPMDependenciesCheckout: RegularFileProperty
     val additionalSwiftPackageResolveArgs: ListProperty<String>
     val gitIgnoreCheckoutDir: Property<Boolean>
+    val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
+    val syntheticPackageHash: Property<String>
+    val markCompletion: Property<Boolean>
+    val syntheticLockFile: RegularFileProperty
+    val workspaceStateJson: RegularFileProperty
 }
 
 
 internal abstract class SwiftResolveWorkAction @Inject constructor(
     private val execOps: ExecOperations,
+    private val fs: FileSystemOperations,
 ) : WorkAction<SwiftResolveWorkParameters> {
     override fun execute() {
+        try {
+            doExecute()
+            if (parameters.markCompletion.get()) {
+                copySwiftLockFile(
+                    fs,
+                    parameters.syntheticImportProjectRoot.get().asFile.resolve("Package.resolved"),
+                    parameters.syntheticLockFile.get().asFile,
+                )
+
+                copySwiftLockFile(
+                    fs,
+                    parameters.swiftPMDependenciesCheckout.get().asFile.resolve("workspace-state.json"),
+                    parameters.workspaceStateJson.get().asFile,
+                )
+                parameters.coordinationService.get()
+                    .markSwiftResolveCompleted(parameters.syntheticPackageHash.get())
+            }
+        } catch (failure: Throwable) {
+            if (parameters.markCompletion.get()) {
+                parameters.coordinationService.get()
+                    .markSwiftResolveFailed(parameters.syntheticPackageHash.get(), failure)
+            }
+            throw failure
+        }
+    }
+
+    private fun doExecute() {
         execOps.exec { exec ->
 
             exec.workingDir(parameters.syntheticImportProjectRoot.get().asFile)

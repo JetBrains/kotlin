@@ -34,6 +34,9 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     /** Directory where wrapper scripts and captured clang/ld argument files are written. */
     val dumpedXcodeBuildArgsDir: DirectoryProperty
     val additionalXcodeArgs: ListProperty<String>
+    val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
+    val xcodebuildExecutionFingerprint: Property<String>
+    val markCompletion: Property<Boolean>
 }
 
 /**
@@ -46,6 +49,28 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
 ) : WorkAction<XcodebuildArgsDumpWorkParameters> {
 
     override fun execute() {
+        try {
+            doExecute()
+            if (parameters.markCompletion.get()) {
+                parameters.fingerprintCoordinationService.get().markXcodeDumpCompleted(
+                    xcodebuildExecutionHash = parameters.xcodebuildExecutionFingerprint.get(),
+                    xcodebuildSdk = parameters.xcodebuildSdk.get(),
+
+                    )
+            }
+        } catch (failure: Throwable) {
+            if (parameters.markCompletion.get()) {
+                parameters.fingerprintCoordinationService.get().markXcodeDumpFailed(
+                    xcodebuildExecutionHash = parameters.xcodebuildExecutionFingerprint.get(),
+                    xcodebuildSdk = parameters.xcodebuildSdk.get(),
+                    failure = failure,
+                )
+            }
+            throw failure
+        }
+    }
+
+    private fun doExecute() {
         // Start from an empty dump directory. xcodebuild can skip parts of the build on incremental runs, so keeping
         // stale captured invocations would make the def-file phase see calls from a previous package graph.
         val dumpedXcodeBuildArgsDir = parameters.dumpedXcodeBuildArgsDir.getFile().also {

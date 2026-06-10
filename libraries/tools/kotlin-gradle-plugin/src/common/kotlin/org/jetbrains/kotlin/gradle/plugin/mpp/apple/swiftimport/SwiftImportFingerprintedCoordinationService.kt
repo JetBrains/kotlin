@@ -178,6 +178,21 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         }
     }
 
+    fun markXcodeDumpCompleted(
+        xcodebuildExecutionHash: String,
+        xcodebuildSdk: String,
+    ) {
+        synchronized(stateLock) {
+            val key = XcodeDumpBucketMapKey(xcodebuildExecutionHash, xcodebuildSdk)
+            val bucket = dumpBucketsByXcodebuildFingerprint[key]
+                ?: error("Xcode dump bucket is missing for $key")
+            bucket.completed = true
+            bucket.completion.countDown()
+        }
+
+    }
+
+
     fun markXcodeDumpCompleted(bucket: XcodeDumpBucket) {
         synchronized(stateLock) {
             // The stamp protects root-build directory reuse: existing files alone are not enough because a later dump
@@ -187,8 +202,43 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         }
     }
 
+    fun markXcodeDumpFailed(
+        xcodebuildExecutionHash: String,
+        xcodebuildSdk: String,
+        failure: Throwable,
+    ) {
+        synchronized(stateLock) {
+            val key = XcodeDumpBucketMapKey(xcodebuildExecutionHash, xcodebuildSdk)
+            val bucket = dumpBucketsByXcodebuildFingerprint[key]
+                ?: error("Xcode dump bucket is missing for $key")
+            bucket.failure = failure
+            bucket.completion.countDown()
+        }
+
+    }
+
     fun markXcodeDumpFailed(bucket: XcodeDumpBucket, failure: Throwable) {
         synchronized(stateLock) {
+            bucket.failure = failure
+            bucket.completion.countDown()
+        }
+    }
+
+    fun markSwiftResolveCompleted(packageHash: String) {
+        synchronized(stateLock) {
+            val bucket = fetchBucketsBySyntheticPackageFingerprint[packageHash]
+                ?: error("Swift resolve bucket is missing for package hash $packageHash")
+
+            bucket.completed = true
+            bucket.completion.countDown()
+        }
+    }
+
+    fun markSwiftResolveFailed(packageHash: String, failure: Throwable) {
+        synchronized(stateLock) {
+            val bucket = fetchBucketsBySyntheticPackageFingerprint[packageHash]
+                ?: error("Swift resolve bucket is missing for package hash $packageHash")
+
             bucket.failure = failure
             bucket.completion.countDown()
         }
