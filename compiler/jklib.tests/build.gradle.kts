@@ -31,7 +31,7 @@ projectTests {
 
     testTask(
         jUnitMode = JUnitMode.JUnit5,
-        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0)
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
     ) {
         val klibProvider = objects.newInstance<SystemPropertyClasspathProvider>().apply {
             property.set("kotlin.stdlib.jklib.for.test")
