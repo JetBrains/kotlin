@@ -66,10 +66,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                                  CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG name: CONST String type=kotlin.String value="name"
+                                TRY type=kotlin.String
+                                  try: BLOCK type=kotlin.String origin=null
+                                    TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                                      CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG name: CONST String type=kotlin.String value="name"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'name': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'name': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'name'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:name type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-name> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
@@ -78,10 +112,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                                  CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG columnName: CONST String type=kotlin.String value="name"
+                                TRY type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                                  try: BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=null
+                                    TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                                      CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG columnName: CONST String type=kotlin.String value="name"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'name': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'name': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'name'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-name>' type=kotlin.Throwable origin=null
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:age type:kotlin.Int visibility:private [final]
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-age> visibility:public modality:FINAL returnType:kotlin.Int
@@ -90,10 +158,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
-                                  CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG name: CONST String type=kotlin.String value="age"
+                                TRY type=kotlin.Int
+                                  try: BLOCK type=kotlin.Int origin=null
+                                    TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+                                      CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG name: CONST String type=kotlin.String value="age"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'age': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'age': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'age'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:age type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> visibility:private [final]
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-age> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
@@ -102,10 +204,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-                                  CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG columnName: CONST String type=kotlin.String value="age"
+                                TRY type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                                  try: BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
+                                    TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                                      CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG columnName: CONST String type=kotlin.String value="age"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'age': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'age': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'age'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-age>' type=kotlin.Throwable origin=null
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:myCol type:kotlin.String visibility:private [final]
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-myCol> visibility:public modality:FINAL returnType:kotlin.String
@@ -114,10 +250,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
-                                  CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG name: CONST String type=kotlin.String value="myCol"
+                                TRY type=kotlin.String
+                                  try: BLOCK type=kotlin.String origin=null
+                                    TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+                                      CALL 'public abstract fun get (name: kotlin.String): kotlin.Any? [operator] declared in org.jetbrains.kotlinx.dataframe.DataRow' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG name: CONST String type=kotlin.String value="myCol"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'myCol': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'myCol': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'myCol'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
                         PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                           FIELD PROPERTY_BACKING_FIELD name:myCol type:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> visibility:private [final]
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-myCol> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
@@ -126,10 +296,44 @@ MODULE_FRAGMENT
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
-                                TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
-                                  CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
-                                    ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
-                                    ARG columnName: CONST String type=kotlin.String value="myCol"
+                                TRY type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                                  try: BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=null
+                                    TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
+                                      CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
+                                        ARG <this>: GET_VAR '<this>(index:1): org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I> origin=null
+                                        ARG columnName: CONST String type=kotlin.String value="myCol"
+                                  CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>
+                                    VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
+                                    BLOCK type=kotlin.Nothing origin=null
+                                      VAR name:msg type:kotlin.String [val]
+                                        WHEN type=kotlin.String origin=null
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.IllegalArgumentException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Column not found exception in the generated DataFrame extension property 'myCol': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.ClassCastException
+                                              GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Incorrect column type exception in generated DataFrame extension property 'myCol': "
+                                              CALL 'public open fun getLocalizedMessage (): @[FlexibleNullability] kotlin.String? declared in kotlin.Throwable' type=kotlin.String? origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value=". See https://kotlin.github.io/dataframe/data-schemas-and-extension-properties-troubleshooting.html for more information."
+                                          BRANCH
+                                            if: CONST Boolean type=kotlin.Boolean value=true
+                                            then: STRING_CONCATENATION type=kotlin.String
+                                              CONST String type=kotlin.String value="Unexpected exception in generated DataFrame extension property 'myCol'. Please report it to https://github.com/Kotlin/dataframe/issues. Exception message: "
+                                              CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Throwable' type=kotlin.String origin=null
+                                                ARG <this>: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
+                                              CONST String type=kotlin.String value="."
+                                      THROW type=kotlin.Nothing
+                                        CONSTRUCTOR_CALL 'public constructor <init> (message: @[FlexibleNullability] kotlin.String?, cause: @[FlexibleNullability] kotlin.Throwable?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+                                          ARG message: GET_VAR 'val msg: kotlin.String [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.String origin=null
+                                          ARG cause: GET_VAR 'val e: kotlin.Throwable [val] declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0.<get-myCol>' type=kotlin.Throwable origin=null
                         CONSTRUCTOR GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFrameTokenContentKey] visibility:public returnType:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0 [primary]
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
