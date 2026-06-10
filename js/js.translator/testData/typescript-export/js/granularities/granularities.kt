@@ -18,5 +18,7 @@ fun baz() = listOf(7, 8, 9)
 
 // MODULE: main(lib1, lib2)
 // FILE: main.kt
+@file:JsFileName("myMain")
+
 @JsExport
 fun box(): String = "OK"
