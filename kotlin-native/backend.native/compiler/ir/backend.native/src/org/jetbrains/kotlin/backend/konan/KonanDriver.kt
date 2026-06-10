@@ -115,11 +115,11 @@ class KonanDriver(
         val hasCompilerInput = configuration.kotlinSourceRoots.isNotEmpty()
                 || hasIncludedLibraries
                 || configuration.exportedLibraries.isNotEmpty()
-                || config.libraryToCache != null
                 || config.compileFromBitcode?.isNotEmpty() == true
                 || isProducingExecutableFromLibraries
 
-        if (!hasCompilerInput) return
+        // Return early if no input was provided.
+        if (!hasCompilerInput && config.libraryToCache == null) return
 
         if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
@@ -150,6 +150,9 @@ class KonanDriver(
         if (cacheBuilder.needToBuild()) {
             cacheBuilder.build()
             config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
+            // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
+            if (!hasCompilerInput && config.libraryToCache == null)
+                return
         }
 
         if (!config.produce.isHeaderCache) {
