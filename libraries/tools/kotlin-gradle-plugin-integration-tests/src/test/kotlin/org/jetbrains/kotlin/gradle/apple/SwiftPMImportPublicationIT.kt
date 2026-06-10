@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
@@ -23,15 +24,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 
 @OsCondition(
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@OptIn(EnvironmentalVariablesOverride::class)
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportPublicationIT : KGPBaseTest() {
 
@@ -229,7 +227,7 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
                 }
             }
 
-            build("generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump") {
+            build(GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName) {
                 // Find the transitive subpackage manifest for the local package
                 val subpackagesDir = projectPath
                     .resolve("build/kotlin/swiftImport/subpackages")
