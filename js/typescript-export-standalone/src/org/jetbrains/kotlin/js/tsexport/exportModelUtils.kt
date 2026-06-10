@@ -287,7 +287,8 @@ private fun KaNamedClassSymbol.shouldContainNotImplementableProperty(
 context(_: KaSession)
 internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
     klass: KaNamedClassSymbol,
-    superTypes: List<KaType>,
+    superTypes: Collection<KaType>,
+    superTypeApproximator: SuperTypeApproximator?,
     typeParameterScope: TypeParameterScope,
     config: TypeScriptExportConfig,
     hasNonExportedAbstractMembers: Boolean,
@@ -315,7 +316,7 @@ internal fun MutableList<ExportedDeclaration>.addSuperTypesSpecialProperties(
                 }
             }
             ExportedType.PropertyType(
-                TypeExporter(config, typeParameterScope, null).exportType(superTypeWithDynamicArguments),
+                TypeExporter(config, typeParameterScope, null, superTypeApproximator).exportType(superTypeWithDynamicArguments),
                 ExportedType.LiteralType.StringLiteralType(notImplementablePropertyName),
             )
         }

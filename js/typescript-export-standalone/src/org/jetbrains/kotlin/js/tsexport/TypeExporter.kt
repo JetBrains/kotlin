@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 
 internal class TypeExporter(
     private val config: TypeScriptExportConfig,
     private val scope: TypeParameterScope,
     private val transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>?,
+    private val superTypeApproximator: SuperTypeApproximator?,
 ) {
     /**
      * Memoize already processed types during recursive traversal of a type to avoid stack overflow on self-referential types,
@@ -173,8 +175,16 @@ internal class TypeExporter(
                 val name = symbol
                     .getExportedFqName(shouldIncludePackage = !isNonExportedExternal && config.generateNamespacesForPackages, config)
 
-                // TODO(KT-82340): Approximate to actual supertype
-                val exportedSupertype = Primitive.Any
+                val exportedSupertype = if (isImplicitlyExported && superTypeApproximator != null) {
+                    val transitiveExportedTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(type)
+                    if (transitiveExportedTypes.isEmpty()) {
+                        Primitive.Any
+                    } else {
+                        transitiveExportedTypes.foldMap({ exportType(it) }, ExportedType::IntersectionType)
+                    }
+                } else {
+                    Primitive.Any
+                }
 
                 val classType = ClassType(
                     name = name,

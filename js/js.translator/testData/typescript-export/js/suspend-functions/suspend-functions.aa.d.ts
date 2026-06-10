@@ -114,9 +114,10 @@ declare namespace JS_TESTS {
                 readonly "foo.HolderOfParentSuspendFun1": unique symbol;
             };
         }
-        class ExportedChild /* extends foo.NotExportedParent */ {
+        class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

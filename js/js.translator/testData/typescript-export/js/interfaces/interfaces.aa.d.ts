@@ -476,9 +476,10 @@ declare namespace JS_TESTS {
                 readonly "foo.HolderOfInheritedSuspend": unique symbol;
             };
         }
-        class ExportedSuspendChild /* extends foo.HiddenSuspendParent */ {
+        class ExportedSuspendChild /* extends foo.HiddenSuspendParent */ implements foo.HolderOfInheritedSuspend {
             constructor();
             childSuspend(): Promise<string>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfInheritedSuspend["__doNotUseOrImplementIt"];
         }
         namespace ExportedSuspendChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

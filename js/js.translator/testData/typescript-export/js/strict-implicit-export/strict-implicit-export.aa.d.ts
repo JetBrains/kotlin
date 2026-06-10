@@ -4,7 +4,7 @@ declare namespace JS_TESTS {
     namespace foo {
         const console: Console;
         const error: CompileError;
-        const forth: any/* foo.Forth */;
+        const forth: (foo.Third & foo.IA)/* foo.Forth */;
         function producer(value: number): any/* foo.NonExportedType */;
         function consumer(value: any/* foo.NonExportedType */): number;
         function childProducer(value: number): any/* foo.NotExportedChildClass */;
@@ -15,8 +15,8 @@ declare namespace JS_TESTS {
         function bazVoid(a: number): Promise<void>;
         function bar(): Error;
         function pep<T extends unknown/* foo.NonExportedInterface */ & unknown/* foo.NonExportedGenericInterface<number> */>(x: T): void;
-        function acceptForthLike<T extends unknown/* foo.Forth */>(forth: T): void;
-        function acceptMoreGenericForthLike<T extends unknown/* foo.IB */ & unknown/* foo.IC */ & foo.Third>(forth: T): void;
+        function acceptForthLike<T extends (foo.Third & foo.IA)/* foo.Forth */>(forth: T): void;
+        function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.Third>(forth: T): void;
         interface ExportedInterface {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.ExportedInterface": unique symbol;
@@ -123,7 +123,7 @@ declare namespace JS_TESTS {
                 readonly "foo.IA": unique symbol;
             };
         }
-        class Third /* extends foo.Second */ {
+        class Third extends /* foo.Second */ foo.First.$metadata$.constructor {
             constructor();
         }
         namespace Third {
@@ -132,8 +132,9 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Third;
             }
         }
-        class Sixth /* extends foo.Fifth */ /* implements foo.IC */ {
+        class Sixth extends /* foo.Fifth */ foo.Third.$metadata$.constructor implements foo.IA/*, foo.IC */ {
             constructor();
+            readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */

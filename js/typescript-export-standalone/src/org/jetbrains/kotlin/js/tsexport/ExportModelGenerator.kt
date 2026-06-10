@@ -35,6 +35,7 @@ private typealias WholeWorldExportModel = MutableMap<KaLibraryModule, MutableMap
 
 internal class ExportModelGenerator(private val config: TypeScriptExportConfig) {
     private var pendingTransitivelyExportedClasses = linkedSetOf<KaClassLikeSymbol>()
+    private val superTypeApproximator = SuperTypeApproximator()
 
     context(_: KaSession)
     private fun generateExport(topLevelDeclarations: Sequence<KaDeclarationSymbol>, output: WholeWorldExportModel) {
@@ -117,7 +118,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         parent: KaDeclarationSymbol?,
         outerClassTypeParameterScope: TypeParameterScope,
     ): ExportedClass? {
-        val superTypes = klass.superTypes // TODO: Collect supertype transitive hierarchy
+        val superTypes = superTypeApproximator.collectSuperTypesTransitiveHierarchyFor(klass.defaultType) + klass.superTypes
 
         when (val exportability = classExportability(klass, parent)) {
             is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
@@ -130,6 +131,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             container = klass,
             config = config,
             transitivelyExportedClasses = pendingTransitivelyExportedClasses,
+            superTypeApproximator = superTypeApproximator,
             outerScope = if (klass.isInner) outerClassTypeParameterScope else emptyMap(),
             renameOuterTypeParameters = true,
         )
@@ -199,7 +201,13 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 val isStatic = function.isStatic || function.isJsStatic()
                 val inlineClassesShouldBeUnboxed = function.isExternal
                 val outerScope = if (!isStatic || isFactoryPropertyForInnerClass) classTypeParameterScope else emptyMap()
-                val functionTypeParameterScope = TypeParameterScope(function, config, pendingTransitivelyExportedClasses, outerScope)
+                val functionTypeParameterScope = TypeParameterScope(
+                    function,
+                    config,
+                    pendingTransitivelyExportedClasses,
+                    superTypeApproximator,
+                    outerScope
+                )
                 val typeParameters = if (isExportedDefaultImplementation) {
                     (parent as KaNamedClassSymbol).typeParameters + function.typeParameters
                 } else {
@@ -361,7 +369,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             }
             for (parameter in function.valueParameters) {
                 val type = if (parameter.isVararg) {
-                    TypeExporter(config, functionTypeParameterScope, pendingTransitivelyExportedClasses)
+                    TypeExporter(config, functionTypeParameterScope, pendingTransitivelyExportedClasses, superTypeApproximator)
                         .exportSpecializedArrayWithElementType(parameter.returnType)
                 } else {
                     exportType(
@@ -611,7 +619,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     context(_: KaSession)
     private fun exportClassMembers(
         klass: KaNamedClassSymbol,
-        superTypes: List<KaType>,
+        superTypes: Collection<KaType>,
         typeParameterScope: TypeParameterScope,
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
@@ -745,7 +753,14 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         if (!klass.isExternal) {
-            members.addSuperTypesSpecialProperties(klass, superTypes, typeParameterScope, config, classHasNonExportedAbstractMember)
+            members.addSuperTypesSpecialProperties(
+                klass,
+                superTypes,
+                superTypeApproximator,
+                typeParameterScope,
+                config,
+                classHasNonExportedAbstractMember,
+            )
         }
 
         if (defaultImplementations.isNotEmpty()) {
@@ -832,7 +847,13 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
      */
     context(_: KaSession)
     private fun KaNamedClassSymbol.toFactoryPropertyForInnerClass(outerClassTypeParameterScope: TypeParameterScope): ExportedPropertyGetter {
-        val typeParameterScope = TypeParameterScope(this, config, pendingTransitivelyExportedClasses, outerClassTypeParameterScope)
+        val typeParameterScope = TypeParameterScope(
+            this,
+            config,
+            pendingTransitivelyExportedClasses,
+            superTypeApproximator,
+            outerClassTypeParameterScope
+        )
         val typeMembers = declaredMemberScope.constructors.mapNotNull {
             exportConstructor(it, this, typeParameterScope, isFactoryPropertyForInnerClass = true)
         }.toList().compactIfPossible()
@@ -849,7 +870,12 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         scope: TypeParameterScope,
         shouldCalculateExportedSupertypeForImplicit: Boolean = true,
         inlineClassesShouldBeUnboxed: Boolean = false,
-    ): ExportedType = TypeExporter(config, scope, pendingTransitivelyExportedClasses).exportType(type, inlineClassesShouldBeUnboxed)
+    ): ExportedType = TypeExporter(
+        config,
+        scope,
+        pendingTransitivelyExportedClasses,
+        superTypeApproximator.takeIf { shouldCalculateExportedSupertypeForImplicit }
+    ).exportType(type, inlineClassesShouldBeUnboxed)
 
     context(_: KaSession)
     private fun functionExportability(function: KaNamedFunctionSymbol, parent: KaDeclarationSymbol?): Exportability {

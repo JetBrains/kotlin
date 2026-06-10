@@ -25,7 +25,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => SomeBaseClass;
             }
         }
-        class SomeExtendingClass /* extends foo.IntermediateClass1 */ {
+        class SomeExtendingClass extends /* foo.IntermediateClass1 */ foo.SomeBaseClass.$metadata$.constructor {
             private constructor();
         }
         namespace SomeExtendingClass {
@@ -34,7 +34,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => SomeExtendingClass;
             }
         }
-        class FinalClassInChain /* extends foo.IntermediateClass2 */ {
+        class FinalClassInChain extends /* foo.IntermediateClass2 */ foo.SomeExtendingClass.$metadata$.constructor {
             constructor();
         }
         namespace FinalClassInChain {
