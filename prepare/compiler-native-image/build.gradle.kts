@@ -19,10 +19,36 @@ val nativeImageClasspath by configurations.creating {
     isCanBeResolved = true
 }
 
+val pluginsRuntime by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val bundledCompilerPluginProjects = listOf(
+    ":kotlin-allopen-compiler-plugin.embeddable",
+    ":kotlin-noarg-compiler-plugin.embeddable",
+    ":kotlin-sam-with-receiver-compiler-plugin.embeddable",
+    ":kotlin-assignment-compiler-plugin.embeddable",
+    ":kotlin-lombok-compiler-plugin.embeddable",
+    ":kotlin-power-assert-compiler-plugin.embeddable",
+    ":kotlinx-serialization-compiler-plugin.embeddable",
+    ":plugins:compose-compiler-plugin:compiler",
+)
+
 dependencies {
     nativeImageClasspath(project(":kotlin-compiler-embeddable", configuration = "runtimeElements"))
 
+    bundledCompilerPluginProjects.forEach {
+        nativeImageClasspath(project(it))
+    }
+
+    pluginsRuntime(libs.kotlinx.serialization.core)
+    pluginsRuntime(composeRuntime())
+    pluginsRuntime(composeRuntimeAnnotations())
+    pluginsRuntime(libs.androidx.collections)
+
     testFixturesApi(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
@@ -43,19 +69,12 @@ val graalLauncher = javaToolchains.launcherFor {
 
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
+    testData(project.isolated, "testData/projects/box")
 
     testGenerator(
         "org.jetbrains.kotlin.compiler.nativeimage.GenerateNativeImageTestsKt",
         generateTestsInBuildDirectory = true,
     )
-
-    nativeImageTestTask("nativeImageBoxTest") {
-        description = "Compares native-image kotlinc against default kotlinc on " +
-                "compiler/testData/codegen/box."
-        exclude("**/*ReachabilityMetadataTest*.class")
-        exclude("**/*SmokeTest*.class")
-        useNativeImageDist()
-    }
 
     nativeImageTestTask("nativeImageSmokeTest") {
         description = "Smoke test: compiles a hello-world with the native-image kotlinc " +
@@ -66,22 +85,34 @@ projectTests {
 
     nativeImageTestTask("generateReachabilityMetadataSmoke") {
         description = "Quick reachability metadata regen: runs JVM kotlinc with the " +
-                "native-image-agent on the smoke test."
+                "reachability metadata collector agent on the smoke test."
         include("**/ReachabilityMetadataSmokeTest.class")
         useReachabilityMetadataResources()
+        @OptIn(KotlinCompilerDistUsage::class)
+        withDist()
+    }
+
+    nativeImageTestTask("nativeImageBoxTest") {
+        description = "Runs native-image kotlinc against default kotlinc on box tests"
+        include("**/NativeImageBoxTestGenerated.class")
+        include("**/NativeImagePluginBoxTestGenerated.class")
+        include("**/NativeImageLegacyPluginBoxTestGenerated.class")
+        useNativeImageDist()
+        usePluginsRuntime()
     }
 
     nativeImageTestTask("generateReachabilityMetadataBox") {
-        description = "Runs JVM kotlinc with reachability metadata collector agent on " +
-                "compiler/testData/codegen/box."
-        exclude("**/*BoxTest*.class")
-        exclude("**/*SmokeTest*.class")
+        description = "Runs JVM kotlinc with reachability metadata collector agent on box tests"
+        include("**/NativeImageReachabilityMetadataTestGenerated.class")
+        include("**/NativeImagePluginReachabilityMetadataTestGenerated.class")
+        include("**/NativeImageLegacyPluginReachabilityMetadataTestGenerated.class")
         // We can't run in parallel because of the tracing agent
         systemProperty(
             "junit.jupiter.execution.parallel.enabled",
             "false",
         )
         useReachabilityMetadataResources()
+        usePluginsRuntime()
     }
 
     withJvmStdlibAndReflect()
@@ -92,9 +123,10 @@ projectTests {
 val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     description = "Build a native image of the kotlin-compiler-embeddable"
 
+    val launcher = graalLauncher
     val resources = layout.projectDirectory.dir("resources")
     val classpathFiles = files(nativeImageClasspath, resources)
-    inputs.files(nativeImageClasspath, resources)
+    inputs.files(nativeImageClasspath, resources, launcher.map { it.metadata.installationPath.asFile })
         .withNormalizer(ClasspathNormalizer::class)
         .withPropertyName("nativeImageClasspath")
 
@@ -107,7 +139,6 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val executableFile = layout.buildDirectory.file("bin/kotlinc-native-image$executableExtension")
     outputs.file(executableFile)
 
-    val launcher = graalLauncher
     doFirst {
         val javaHome = launcher.get().executablePath.asFile.toPath().parent.parent
 
@@ -180,8 +211,15 @@ fun Test.useNativeImageDist() {
 }
 
 @OptIn(KotlinCompilerDistUsage::class)
-fun Test.useReachabilityMetadataResources() {
+fun Test.usePluginsRuntime() {
     withDist()
+    addClasspathProperty(
+        pluginsRuntime,
+        "kotlin.native-image.plugins-runtime.classpath",
+    )
+}
+
+fun Test.useReachabilityMetadataResources() {
     addClasspathProperty(
         nativeImageClasspath,
         "kotlin.compiler-embeddable.classpath",

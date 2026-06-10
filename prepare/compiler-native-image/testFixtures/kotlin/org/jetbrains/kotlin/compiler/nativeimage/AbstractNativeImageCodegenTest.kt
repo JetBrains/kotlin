@@ -72,7 +72,7 @@ abstract class AbstractNativeImageCodegenTest {
             arguments = buildCompilerArgs(boxFile, outDir, directives, withFullJdk),
             classpath = buildClasspath(withReflect, withFullJdk),
         )
-        assertEquals(0, exitCode, "compilation failed:\n$compilerStdout")
+        assertCompilerOutput(exitCode, compilerStdout, directives)
 
         val result = invokeBox(outDir, boxClassName(source), withReflect)
         assertEquals("OK", result, "box() != 'OK'")
@@ -83,7 +83,22 @@ abstract class AbstractNativeImageCodegenTest {
         classpath: List<File>,
     ): Pair<Int, String>
 
-    private fun buildCompilerArgs(
+    protected open fun assertCompilerOutput(exitCode: Int, compilerStdout: String, directives: RegisteredDirectives) {
+        assertEquals(0, exitCode, "compilation failed:\n$compilerStdout")
+    }
+
+    protected open fun shouldSkip(source: String, directives: RegisteredDirectives): String? = when {
+        MULTI_FILE_MARKER.containsMatchIn(source) -> "multi-file (// FILE:) tests are not supported"
+        HELPERS_IMPORT.containsMatchIn(source) -> "tests importing helpers.* are not supported"
+        "+MultiPlatformProjects" in directives[LanguageSettingsDirectives.LANGUAGE] -> "multiplatform projects are not supported"
+        isBackendIgnored(directives) -> "ignored on $BACKEND via directive"
+        else -> null
+    }
+
+    protected open fun runtimeClasspath(withReflect: Boolean): List<File> =
+        if (withReflect) listOf(reflectClasspath) else emptyList()
+
+    protected open fun buildCompilerArgs(
         boxFile: File,
         outDir: File,
         directives: RegisteredDirectives,
@@ -103,7 +118,7 @@ abstract class AbstractNativeImageCodegenTest {
         add(outDir.absolutePath)
     }
 
-    private fun buildClasspath(withReflect: Boolean, withFullJdk: Boolean): List<File> = buildList {
+    protected open fun buildClasspath(withReflect: Boolean, withFullJdk: Boolean): List<File> = buildList {
         addAll(compilationClasspath)
         if (withReflect) add(reflectClasspath)
         if (!withFullJdk) add(mockJdkRtJar)
@@ -123,7 +138,10 @@ abstract class AbstractNativeImageCodegenTest {
     ): String? = this[directive].singleOrNull()?.let { "$flagPrefix=${render(it)}" }
 
     private fun invokeBox(classDir: File, boxClass: String, withReflect: Boolean): String? {
-        URLClassLoader(arrayOf(classDir.toURI().toURL()), sharedRuntimeLoader(withReflect)).use { loader ->
+        URLClassLoader(
+            arrayOf(classDir.toURI().toURL()),
+            sharedRuntimeLoader(runtimeClasspath(withReflect))
+        ).use { loader ->
             val method = loader.loadClass(boxClass).getMethod("box")
             val thread = Thread.currentThread()
             val previous = thread.contextClassLoader
@@ -147,19 +165,21 @@ abstract class AbstractNativeImageCodegenTest {
         }
     }
 
-    private fun sharedRuntimeLoader(withReflect: Boolean): URLClassLoader =
-        sharedRuntimeLoaders.computeIfAbsent(withReflect) {
-            val cp = compilationClasspath + if (withReflect) listOf(reflectClasspath) else emptyList()
+    private fun sharedRuntimeLoader(runtimeClasspath: List<File>): URLClassLoader {
+        val cp = compilationClasspath + runtimeClasspath
+        val key = cp.map { it.absolutePath }
+        return sharedRuntimeLoaders.computeIfAbsent(key) {
             URLClassLoader(
                 cp.map { it.toURI().toURL() }.toTypedArray(),
                 ClassLoader.getSystemClassLoader().parent,
             )
         }
+    }
 
     companion object {
         private val BACKEND = TargetBackend.JVM_IR
 
-        private val sharedRuntimeLoaders = ConcurrentHashMap<Boolean, URLClassLoader>()
+        private val sharedRuntimeLoaders = ConcurrentHashMap<List<String>, URLClassLoader>()
 
         private const val HELPERS_PATH = "diagnostics/helpers"
 
@@ -178,10 +198,12 @@ abstract class AbstractNativeImageCodegenTest {
             CodegenTestDirectives,
             JvmEnvironmentConfigurationDirectives,
             AdditionalFilesDirectives,
+            NativeImagePluginDirectives,
         )
 
         private val MULTI_FILE_MARKER = Regex("""(?m)^// FILE:""")
         private val HELPERS_IMPORT = Regex("""(?m)^import helpers\.""")
+        private val LOADED_PLUGINS = Regex("""(?i)loading bundled compiler plugin '([^']+)'""")
 
         private fun prepareSource(source: String): String =
             clearTextFromDiagnosticMarkup(JvmInlineSourceTransformer.computeModifier(BACKEND).invoke(source))
@@ -192,14 +214,6 @@ abstract class AbstractNativeImageCodegenTest {
                 if (line.startsWith("//")) parser.parse(line)
             }
             return parser.build()
-        }
-
-        private fun shouldSkip(source: String, directives: RegisteredDirectives): String? = when {
-            MULTI_FILE_MARKER.containsMatchIn(source) -> "multi-file (// FILE:) tests are not supported"
-            HELPERS_IMPORT.containsMatchIn(source) -> "tests importing helpers.* are not supported"
-            "+MultiPlatformProjects" in directives[LanguageSettingsDirectives.LANGUAGE] -> "multiplatform projects are not supported"
-            isBackendIgnored(directives) -> "ignored on $BACKEND via directive"
-            else -> null
         }
 
         private fun isBackendIgnored(directives: RegisteredDirectives): Boolean {
