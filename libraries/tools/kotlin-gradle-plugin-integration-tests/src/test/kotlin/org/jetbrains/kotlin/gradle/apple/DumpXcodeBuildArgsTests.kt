@@ -33,58 +33,6 @@ import kotlin.test.assertNotEquals
 @SwiftPMImportGradlePluginTests
 class DumpXcodeBuildArgsTests : KGPBaseTest() {
 
-    internal fun LockFileTestFixture.includeKmpMapsConsumerProjects(
-        version: GradleVersion,
-        mapsProjectName: String,
-        leftProjectName: String,
-        rightProjectName: String,
-        repoName: String,
-        leftPackageResolvedIdentifier: String = "default",
-        rightPackageResolvedIdentifier: String = "default",
-    ) {
-        val sharedRepo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
-
-        project.initSwiftPmProject(cacheDirFile) {}
-
-        val mapsProject = project("empty", version) {
-            initSwiftPmProject(cacheDirFile) {
-                swiftPMDependencies {
-                    swiftPackage(
-                        url = url(sharedRepo.url),
-                        version = exact("1.0.0"),
-                        products = listOf(product(sharedRepo.name)),
-                    )
-                }
-            }
-        }
-
-        val leftProject = project("empty", version) {
-            initSwiftPmProject(cacheDirFile) {
-                swiftPMDependencies {
-                    packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(leftPackageResolvedIdentifier)
-                }
-                sourceSets.getByName("iosArm64Main").dependencies {
-                    implementation(project(":$mapsProjectName"))
-                }
-            }
-        }
-
-        val rightProject = project("empty", version) {
-            initSwiftPmProject(cacheDirFile) {
-                swiftPMDependencies {
-                    packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(rightPackageResolvedIdentifier)
-                }
-                sourceSets.getByName("iosArm64Main").dependencies {
-                    implementation(project(":$mapsProjectName"))
-                }
-            }
-        }
-
-        project.include(mapsProject, mapsProjectName)
-        project.include(leftProject, leftProjectName)
-        project.include(rightProject, rightProjectName)
-    }
-
     @GradleTest
     fun `smoke test - xcodebuild args are dumped into task output directory`(version: GradleVersion) {
         project("empty", version) {

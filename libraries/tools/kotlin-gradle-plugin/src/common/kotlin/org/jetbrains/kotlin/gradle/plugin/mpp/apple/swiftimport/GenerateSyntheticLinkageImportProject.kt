@@ -234,6 +234,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
                     transitiveSyntheticPackages = setOf(),
                     transitiveSyntheticPackagesPath = "..",
+                    isGenerateStubModuleMapEnabled = syntheticPackageFingerprint.isPresent
                 )
             }
         }
@@ -277,6 +278,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
         transitiveSyntheticPackagesPath: String,
+        isGenerateStubModuleMapEnabled: Boolean = false,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -374,8 +376,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         }
 
         val productType = when (syntheticProductType) {
-            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC -> ".dynamic"
-            GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED -> ".none"
+            SyntheticProductType.DYNAMIC -> ".dynamic"
+            SyntheticProductType.INFERRED -> ".none"
         }
 
         val manifest = packageRoot.resolve(MANIFEST_NAME)
@@ -400,6 +402,20 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         packageRoot.resolve(objcHeader).also {
             it.parentFile.mkdirs()
         }.writeText("")
+
+        if (isGenerateStubModuleMapEnabled) {
+            val moduleMap = "Sources/${identifier}/include/module.modulemap"
+            packageRoot.resolve(moduleMap).also {
+                it.parentFile.mkdirs()
+            }.writeText(
+                """
+                module $SYNTHETIC_IMPORT_TARGET_MAGIC_NAME {
+                    header "${identifier}.h"
+                    export *
+                }   
+                """.trimIndent()
+            )
+        }
     }
 
     /**
