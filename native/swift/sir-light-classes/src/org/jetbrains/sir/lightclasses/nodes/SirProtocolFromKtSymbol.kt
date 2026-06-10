@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
@@ -199,7 +200,7 @@ internal class SirImplementationMarkerProtocolFromKtSymbol(
     override val origin: KotlinSource get() = KotlinImplementationMarkerProtocol(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null
-    override val attributes: List<SirAttribute> get() = emptyList()
+    override val attributes: List<SirAttribute> by lazy { translatedOptInAttributes }
     override val name: String get() = "__${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
@@ -512,8 +513,9 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
     override val extendedType: SirType = SirNominalType(targetProtocol)
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
-        ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations()
+        val members = ktSymbol.combinedDeclaredMemberScope.extractDeclarations().toList()
+
+        val typeAliases = members
             .filterIsInstance<SirScopeDefiningDeclaration>()
             .filter { it.visibility == SirVisibility.PUBLIC }
             .filter { it.origin !is KotlinMarkerProtocol && it.origin !is KotlinImplementationMarkerProtocol }
@@ -526,7 +528,25 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                     type = SirNominalType(declaration) // Has to be nominal even for protocol declarations
                 }.also { it.parent = this }
             }
-            .toMutableList()
+
+        // Per swift rules, @_spi-requirements in non-@_spi protocols require default implementations.
+        val protocolSpiGroups = targetProtocol.attributes
+            .filterIsInstance<SirAttribute.SPI>()
+            .mapTo(mutableSetOf()) { it.name }
+        val spiRequirementTraps = members
+            .filterIsInstance<SirFunction>()
+            .filter { function -> function.attributes.any { it is SirAttribute.SPI && it.name !in protocolSpiGroups } }
+            .map { function ->
+                buildFunctionCopy(function) {
+                    origin = SirOrigin.Trampoline(function)
+                    isOverride = false
+                    modality = SirModality.UNSPECIFIED
+                    bridges.clear() // pure Swift trap, no Kotlin bridge (avoids duplicating the witness's bridge)
+                    body = SirFunctionBody(listOf("fatalError(\"'${function.name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
+                }.also { it.parent = this }
+            }
+
+        (typeAliases + spiRequirementTraps).toMutableList()
     }
 }
 

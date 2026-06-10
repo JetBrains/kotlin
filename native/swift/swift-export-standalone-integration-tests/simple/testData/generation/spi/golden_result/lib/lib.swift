@@ -31,10 +31,13 @@ public protocol _InterfaceTwo {
 @objc(_InternalLibInterface)
 public protocol _InternalLibInterface {
 }
+@_spi(InterfaceOptInOne)
 public protocol __InterfaceOne: KotlinRuntimeSupport._KotlinBridgeable {
 }
+@_spi(InterfaceOptInTwo)
 public protocol __InterfaceTwo: KotlinRuntimeSupport._KotlinBridgeable {
 }
+@_spi(InternalLibApi)
 public protocol __InternalLibInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 @_spi(ExperimentalLibApi)

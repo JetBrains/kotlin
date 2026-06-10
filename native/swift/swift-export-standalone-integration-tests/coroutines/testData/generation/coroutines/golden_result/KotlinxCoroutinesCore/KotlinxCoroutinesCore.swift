@@ -87,6 +87,10 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow where
     }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableSharedFlow {
+    @_spi(kotlinx$coroutines$ExperimentalCoroutinesApi)
+    public func resetReplayCache() -> Swift.Void {
+        fatalError("'resetReplayCache' is an @_spi requirement that must be implemented by Swift conformers")
+    }
 }
 extension ExportedKotlinPackages.kotlinx.coroutines.flow.MutableStateFlow where Self : ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableStateFlow {
     public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
