@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-@OptIn(DirectDeclarationsAccess::class)
 abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private const val TO_BUILDER = "toBuilder"
@@ -64,7 +64,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected val lombokService: LombokService
         get() = session.lombokService
 
-    protected val builderClassesCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaClass>?, Nothing?> =
+    protected val builderClassesCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaClass>?, NestedClassGenerationContext> =
         session.firCachesFactory.createCache(::createAndInitializeBuilders)
 
     private val builderWithDeclarationsCache: FirCache<FirClassSymbol<*>, List<BuilderWithDeclaration<T>>?, Nothing?> =
@@ -72,7 +72,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     // Lombok doesn't add a new function if a function with the same name already exists disregarding parameters
     // It means the multimap with several functions on the same name is unnecessary
-    private val functionsCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
+    private val functionsCache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, MemberGenerationContext?> =
         session.firCachesFactory.createCache(::createFunctions)
 
     protected abstract val builderModality: Modality
@@ -92,22 +92,26 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         existingFunctionNames: Set<Name>,
     )
 
-    protected abstract fun FirJavaClassBuilder.completeBuilder(classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>)
+    protected abstract fun FirJavaClassBuilder.completeBuilder(
+        classSymbol: FirClassSymbol<*>,
+        builderSymbol: FirClassSymbol<*>,
+        context: NestedClassGenerationContext,
+    )
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        return functionsCache.getValue(classSymbol)?.keys.orEmpty()
+        return functionsCache.getValue(classSymbol, context)?.keys.orEmpty()
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        val classesMap = builderClassesCache.getValue(classSymbol) ?: return emptySet()
+        val classesMap = builderClassesCache.getValue(classSymbol, context) ?: return emptySet()
         return classesMap.keys
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val classSymbol = context?.owner ?: return emptyList()
-        return functionsCache.getValue(classSymbol)?.get(callableId.callableName)?.let { listOf(it.symbol) } ?: emptyList()
+        return functionsCache.getValue(classSymbol, context)?.get(callableId.callableName)?.let { listOf(it.symbol) } ?: emptyList()
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -116,21 +120,21 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         if (!owner.isSuitableJavaClass()) return null
-        return builderClassesCache.getValue(owner)?.get(name)?.symbol
+        return builderClassesCache.getValue(owner, context)?.get(name)?.symbol
     }
 
-    private fun createFunctions(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
+    private fun createFunctions(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Map<Name, FirJavaMethod>? {
         // The same class can have both builder and entity methods in case of names clashing.
         return buildMap {
-            addBuilderMethods(classSymbol)
+            addBuilderMethods(classSymbol, context)
 
             builderWithDeclarationsCache.getValue(classSymbol)?.let { builderWithDeclarations ->
-                addEntityMethods(builderWithDeclarations, classSymbol)
+                addEntityMethods(builderWithDeclarations, classSymbol, context)
             }
         }.takeIf { it.isNotEmpty() }
     }
 
-    private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(classSymbol: FirClassSymbol<*>) {
+    private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?) {
         val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
         val className = classSymbol.classId.shortClassName.asString()
@@ -145,13 +149,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 builderDeclaration = declaration,
                 builderSymbol = classSymbol,
                 entitySymbol = containingClassSymbol,
+                context,
             )
         }
     }
 
     private fun MutableMap<Name, FirJavaMethod>.addEntityMethods(
         builderWithDeclarations: List<BuilderWithDeclaration<T>>,
-        entitySymbol: FirClassSymbol<*>
+        entitySymbol: FirClassSymbol<*>,
+        context: MemberGenerationContext?,
     ) {
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
@@ -159,7 +165,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
             val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
 
-            val existingFunctionNames = entitySymbol.getExistingFunctionNames()
+            val existingFunctionNames = context.getExistingFunctionNames()
 
             fun createBuilderTypeRef(typeParameterSymbols: List<FirTypeParameterSymbol>): FirResolvedTypeRef {
                 return builderClassId
@@ -204,10 +210,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    private fun FirClassSymbol<*>.getExistingFunctionNames(): Set<Name> =
-        declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>().mapTo(mutableSetOf()) { it.name }
+    private fun MemberGenerationContext?.getExistingFunctionNames(): Set<Name> = buildSet {
+        this@getExistingFunctionNames?.declaredScope?.collectAllFunctions()?.mapTo(this) { it.name }
+    }
 
-    private fun createAndInitializeBuilders(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaClass>? {
+    private fun createAndInitializeBuilders(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Map<Name, FirJavaClass>? {
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(classSymbol) ?: return null
 
         @OptIn(SymbolInternals::class)
@@ -228,6 +235,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     builderName,
                     visibility,
                     builderDeclaration,
+                    context,
                 )
                 if (builderClass != null) {
                     this[builderName] = builderClass
@@ -236,7 +244,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }.takeIf { it.isNotEmpty() }
     }
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
         val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
         return buildList {
@@ -258,16 +266,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     private data class BuilderWithDeclaration<T>(val builder: T, val declaration: FirDeclaration)
 
-    @OptIn(SymbolInternals::class)
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(
         builder: T,
         builderDeclaration: FirDeclaration,
         builderSymbol: FirClassSymbol<*>,
         entitySymbol: FirClassSymbol<*>,
+        context: MemberGenerationContext?,
     ) {
         val entityJavaClass = entitySymbol.fir as FirJavaClass
 
-        val existingFunctionNames = builderSymbol.getExistingFunctionNames()
+        val existingFunctionNames = context.getExistingFunctionNames()
 
         addSpecialBuilderMethods(builder, builderSymbol, builderDeclaration, existingFunctionNames)
 
@@ -440,6 +449,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         name: Name,
         visibility: Visibility,
         builderDeclaration: FirDeclaration,
+        context: NestedClassGenerationContext,
     ): FirJavaClass? {
         val containingClass = this.fir as? FirJavaClass ?: return null
         val classId = containingClass.classId.createNestedClassId(name)
@@ -480,7 +490,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 isFun = classKind == ClassKind.INTERFACE
             }
 
-            completeBuilder(this@createEmptyBuilderClass, builderSymbol)
+            completeBuilder(this@createEmptyBuilderClass, builderSymbol, context)
         }
     }
 
