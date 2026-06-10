@@ -26,6 +26,44 @@ class ClasspathEntrySnapshotImplTest {
     }
 
     @Test
+    fun testHashCodeAndEqualsAreOrderIndependent() {
+        val snapshot1 = createSnapshot(linkedMapOf("com/example/A.class" to 1L, "com/example/B.class" to 2L))
+        val snapshot2 = createSnapshot(linkedMapOf("com/example/B.class" to 2L, "com/example/A.class" to 1L))
+
+        assertEquals(snapshot1, snapshot2)
+        assertEquals(snapshot1.hashCode(), snapshot2.hashCode())
+    }
+
+    @Test
+    fun testEmptySnapshots() {
+        val snapshot1 = createSnapshot(emptyMap())
+        val snapshot2 = createSnapshot(emptyMap())
+
+        assertEquals(snapshot1, snapshot2)
+        assertEquals(snapshot1.hashCode(), snapshot2.hashCode())
+    }
+
+    @Test
+    fun testSnapshotWithInaccessibleClasses() {
+        val origin1 = ClasspathEntrySnapshot(
+            linkedMapOf(
+                "com/example/A.class" to InaccessibleClassSnapshot,
+            )
+        )
+        val origin2 = ClasspathEntrySnapshot(
+            linkedMapOf(
+                "com/example/A.class" to InaccessibleClassSnapshot,
+            )
+        )
+
+        val snapshot1 = ClasspathEntrySnapshotImpl(origin1)
+        val snapshot2 = ClasspathEntrySnapshotImpl(origin2)
+
+        assertEquals(snapshot1, snapshot2)
+        assertEquals(snapshot1.hashCode(), snapshot2.hashCode())
+    }
+
+    @Test
     fun testDifferentAbiHashProducesDifferentSnapshot() {
         val snapshot1 = createSnapshot(mapOf("com/example/A.class" to 42L))
         val snapshot2 = createSnapshot(mapOf("com/example/A.class" to 99L))
@@ -42,34 +80,36 @@ class ClasspathEntrySnapshotImplTest {
     }
 
     @Test
-    fun testEmptySnapshots() {
-        val snapshot1 = createSnapshot(emptyMap())
-        val snapshot2 = createSnapshot(emptyMap())
+    fun testSnapshotIsNotEqualToSnapshotWithFewerClasses() {
+        val snapshot1 = createSnapshot(mapOf("com/example/A.class" to 1L, "com/example/B.class" to 2L))
+        val snapshot2 = createSnapshot(mapOf("com/example/A.class" to 1L))
 
-        assertEquals(snapshot1, snapshot2)
-        assertEquals(snapshot1.hashCode(), snapshot2.hashCode())
+        assertNotEquals(snapshot1, snapshot2)
     }
 
     @Test
-    fun testSnapshotWithInaccessibleClasses() {
-        val origin1 = ClasspathEntrySnapshot(linkedMapOf(
-            "com/example/A.class" to InaccessibleClassSnapshot,
-        ))
-        val origin2 = ClasspathEntrySnapshot(linkedMapOf(
-            "com/example/A.class" to InaccessibleClassSnapshot,
-        ))
+    fun testAccessibleAndInaccessibleAtSamePathAreNotEqual() {
+        val accessible = createSnapshot(mapOf("com/example/A.class" to 42L))
+        val inaccessible = ClasspathEntrySnapshotImpl(
+            ClasspathEntrySnapshot(
+                linkedMapOf(
+                    "com/example/A.class" to InaccessibleClassSnapshot,
+                )
+            )
+        )
 
-        val snapshot1 = ClasspathEntrySnapshotImpl(origin1)
-        val snapshot2 = ClasspathEntrySnapshotImpl(origin2)
-
-        assertEquals(snapshot1, snapshot2)
-        assertEquals(snapshot1.hashCode(), snapshot2.hashCode())
+        assertNotEquals(accessible, inaccessible)
     }
 
     @Test
     fun testToString() {
         val snapshot = createSnapshot(mapOf("com/example/A.class" to 42L, "com/example/B.class" to 100L))
         assertEquals("ClasspathEntrySnapshot(classCount=2)", snapshot.toString())
+    }
+
+    @Test
+    fun testToStringEmptySnapshot() {
+        assertEquals("ClasspathEntrySnapshot(classCount=0)", createSnapshot(emptyMap()).toString())
     }
 
     @Test
@@ -106,7 +146,11 @@ class ClasspathEntrySnapshotImplTest {
     private fun createSnapshot(classes: Map<String, Long>): org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot {
         val classSnapshots = linkedMapOf<String, org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot>()
         for ([path, abiHash] in classes) {
-            val classId = ClassId(FqName(path.substringBeforeLast("/").replace("/", ".")), FqName(path.substringAfterLast("/").removeSuffix(".class")), false)
+            val classId = ClassId(
+                FqName(path.substringBeforeLast("/").replace("/", ".")),
+                FqName(path.substringAfterLast("/").removeSuffix(".class")),
+                false
+            )
             classSnapshots[path] = JavaClassSnapshot(classId, abiHash, null, emptyList())
         }
         return ClasspathEntrySnapshotImpl(ClasspathEntrySnapshot(classSnapshots))
