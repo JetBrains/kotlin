@@ -899,7 +899,7 @@ internal class KonanInteropModuleDeserializer(
         // Also, when a given metadata declaration is converted into an IR declaration, the entry is replaced with a `null` value, as its
         // metadata representation is no longer needed. The entry is not removed completely, so that the map still has keys for all the
         // defined declarations.
-        val allMetadataDeclarations: MutableMap<MetadataDeclarationId, SoftReference<List<Any>>?> = hashMapOf()
+        val allMetadataDeclarations: MutableMap<MetadataDeclarationId, SoftReference<List<Any>>?> = mutableMapOf()
 
         private fun ensureDeclarationIdsLoaded() {
             // Metadata has to be loaded at least once to populate the IDs of available declarations.
