@@ -18,17 +18,59 @@ import java.nio.file.Path
 internal fun createLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
+    mode: StandaloneLibraryScopeConstructionMode,
+    environment: CoreApplicationEnvironment,
+    project: Project,
+): GlobalSearchScope =
+    when (mode) {
+        StandaloneLibraryScopeConstructionMode.ParentTraversal ->
+            createParentTraversalLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+
+        StandaloneLibraryScopeConstructionMode.Trie ->
+            // The trie relies on on-disk paths, so fall back to enumeration when a root lacks one (e.g. in-memory).
+            if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
+                createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+            } else {
+                createTrieLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+            }
+
+        StandaloneLibraryScopeConstructionMode.Enumeration ->
+            createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+
+        // The sealed hierarchy has a private subtype to keep `when` expressions non-exhaustive for API evolution; it is never passed here.
+        else -> error("Unexpected library scope construction mode: $mode")
+    }
+
+internal fun createParentTraversalLibrarySearchScope(
+    binaryRoots: Collection<Path>,
+    binaryVirtualFiles: Collection<VirtualFile>,
     environment: CoreApplicationEnvironment,
     project: Project,
 ): GlobalSearchScope {
-    return if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
-        // I.e., in-memory file system
-        // Fall back: file-based search scope
-        createEnumerationLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
-    } else {
-        // Optimization: Trie-based search scope
-        createTrieLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+    val virtualFiles = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
+    return ParentTraversalLibrarySearchScope(virtualFiles, project)
+}
+
+private class ParentTraversalLibrarySearchScope(
+    roots: List<VirtualFile>,
+    project: Project,
+) : GlobalSearchScope(project) {
+    private val rootFiles: Set<VirtualFile> = roots.toHashSet()
+
+    override fun contains(file: VirtualFile): Boolean {
+        var current: VirtualFile? = file
+        while (current != null) {
+            if (current in rootFiles) return true
+            current = current.parent
+        }
+        return false
     }
+
+    override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+    override fun isSearchInLibraries(): Boolean = true
+
+    override fun toString(): String = "Parent-traversal library search scope over $rootFiles"
 }
 
 internal fun createTrieLibrarySearchScope(
@@ -52,6 +94,8 @@ private class TrieLibrarySearchScope(
     override fun isSearchInModuleContent(aModule: Module): Boolean = false
 
     override fun isSearchInLibraries(): Boolean = true
+
+    override fun toString(): String = "Trie-based library search scope"
 }
 
 private class SimpleTrie(paths: List<String>) {
@@ -110,5 +154,5 @@ private class EnumerationLibrarySearchScope(
 
     override fun isSearchInLibraries(): Boolean = true
 
-    override fun toString(): String = virtualFileUrls.toString()
+    override fun toString(): String = "Enumeration-based library search scope over $virtualFileUrls"
 }
