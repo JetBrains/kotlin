@@ -484,13 +484,6 @@ public class CliTestGenerated extends AbstractCliTest {
       run("fullyQualifiedDeepJavaWholeRoot.args");
     }
 
-    @Test
-    @TestMetadata("inapplicableLateinitModifier.args")
-    public void testInapplicableLateinitModifier() {
-      run("inapplicableLateinitModifier.args");
-    }
-
-    @Test
     @TestMetadata("inlineCycle.args")
     public void testInlineCycle() {
       run("inlineCycle.args");

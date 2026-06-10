@@ -684,6 +684,7 @@ enum class LanguageFeature(
         }
     },
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false),
+    LateinitVals(sinceVersion = null, issue = "KT-28413"),
 
     InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),
     EagerLambdaAnalysis(sinceVersion = null, issue = "KT-51107", enabledInLatestLVTests = true) {

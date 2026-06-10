@@ -1,0 +1,35 @@
+/lateinitVarApplicability.kt:8:1: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:9:1: error: 'lateinit' modifier is not allowed on delegated properties.
+
+/lateinitVarApplicability.kt:14:5: error: 'lateinit' modifier is allowed only on mutable properties.
+
+/lateinitVarApplicability.kt:14:5: error: 'lateinit' modifier is not allowed on properties with initializer.
+
+/lateinitVarApplicability.kt:16:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound.
+
+/lateinitVarApplicability.kt:17:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:18:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:19:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:20:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:21:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:22:5: error: 'lateinit' modifier is not allowed on properties of primitive types.
+
+/lateinitVarApplicability.kt:23:5: error: 'lateinit' modifier is allowed only on mutable properties.
+
+/lateinitVarApplicability.kt:23:5: error: 'lateinit' modifier is not allowed on properties with a custom getter or setter.
+
+/lateinitVarApplicability.kt:28:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound.
+
+/lateinitVarApplicability.kt:33:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound.
+
+/lateinitVarApplicability.kt:37:14: error: 'lateinit' modifier is not allowed on abstract properties.
+
+/lateinitVarApplicability.kt:55:5: error: 'lateinit' modifier is not allowed on local variables of primitive types.
+
+/lateinitVarApplicability.kt:57:5: error: 'lateinit' modifier is not allowed on local variables with initializer.
