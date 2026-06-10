@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.toNioPathOrNull
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -32,7 +31,13 @@ public open class KtLibraryModuleBuilder(
         val binaryVirtualFiles = getBinaryVirtualFiles()
 
         val contentScope = contentScope
-            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project)
+            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(
+                binaryRoots,
+                binaryVirtualFiles,
+                libraryScopeConstructionMode,
+                coreApplicationEnvironment,
+                project,
+            )
 
         return KaLibraryModuleImpl(
             directRegularDependencies,
@@ -55,5 +60,7 @@ public inline fun KtModuleProviderBuilder.buildKtLibraryModule(init: KtLibraryMo
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
-    return KtLibraryModuleBuilder(coreApplicationEnvironment, project, isSdk = false).apply(init).build()
+    val builder = KtLibraryModuleBuilder(coreApplicationEnvironment, project, isSdk = false)
+    builder.libraryScopeConstructionMode = libraryScopeConstructionMode
+    return builder.apply(init).build()
 }

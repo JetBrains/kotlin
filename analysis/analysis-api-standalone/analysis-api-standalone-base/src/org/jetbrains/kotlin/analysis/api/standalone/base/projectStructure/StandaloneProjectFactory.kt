@@ -362,7 +362,26 @@ object StandaloneProjectFactory {
         environment: CoreApplicationEnvironment,
         project: Project,
     ): GlobalSearchScope =
-        createLibrarySearchScope(binaryRoots, binaryVirtualFiles, environment, project)
+        createLibraryModuleSearchScope(
+            binaryRoots,
+            binaryVirtualFiles,
+            StandaloneLibraryScopeConstructionMode.ParentTraversal,
+            environment,
+            project,
+        )
+
+    /**
+     * Builds the content search scope for a library module from its [binaryRoots] and [binaryVirtualFiles], using the
+     * given [mode] to choose how containment in the scope is determined.
+     */
+    fun createLibraryModuleSearchScope(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        mode: StandaloneLibraryScopeConstructionMode,
+        environment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope =
+        createLibrarySearchScope(binaryRoots, binaryVirtualFiles, mode, environment, project)
 
     @Deprecated(
         "This function will become private. Use `createLibraryModuleSearchScope` instead.",

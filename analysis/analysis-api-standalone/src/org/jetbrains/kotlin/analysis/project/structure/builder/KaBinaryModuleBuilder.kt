@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import java.nio.file.Path
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneLibraryScopeConstructionMode
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
@@ -15,6 +16,15 @@ public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
     private val binaryVirtualFiles: MutableList<VirtualFile> = mutableListOf()
 
     public var contentScope: GlobalSearchScope? = null
+
+    /**
+     * The [StandaloneLibraryScopeConstructionMode] used to build this module's content scope when [contentScope] is not set explicitly.
+     *
+     * The default construction mode is seeded from the owning provider's [KtModuleProviderBuilder.libraryScopeConstructionMode] and may be
+     * overridden here.
+     */
+    public var libraryScopeConstructionMode: StandaloneLibraryScopeConstructionMode =
+        StandaloneLibraryScopeConstructionMode.ParentTraversal
 
     /**
      * Adds a [root] to the current library.
