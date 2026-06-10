@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.java.javaSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -207,37 +207,34 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     private fun FirClassSymbol<*>.getExistingFunctionNames(): Set<Name> =
         declarationSymbols.filterIsInstance<FirNamedFunctionSymbol>().mapTo(mutableSetOf()) { it.name }
 
-    @OptIn(SymbolInternals::class)
     private fun createAndInitializeBuilders(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaClass>? {
-        val entityClass = classSymbol.fir as? FirJavaClass ?: return null
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(classSymbol) ?: return null
-        val builderClasses = mutableMapOf<Name, FirJavaClass>()
 
-        for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
-            val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
-            val builderClassId = entityClass.classId.createNestedClassId(builderName)
+        @OptIn(SymbolInternals::class)
+        val existingClassifiers =
+            classSymbol.fir.scopeProvider.getNestedClassifierScope(classSymbol.fir, session, ScopeSession())?.getClassifierNames()
+                ?: emptySet()
 
-            val existingJavaBuilderSymbol = session.javaSymbolProvider?.getClassLikeSymbolByClassId(builderClassId)
+        return buildMap {
+            for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
+                val visibility = builder.visibility ?: continue
 
-            // Extend existing classes using `generateFunctions` instead of generating a new class
-            if (existingJavaBuilderSymbol != null) continue
+                val builderName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
 
-            // Lombok ignores generates builder classes with the same name
-            if (builderClasses.containsKey(builderName)) continue
+                // Don't generate classes if they already exist
+                if (containsKey(builderName) || existingClassifiers.contains(builderName)) continue
 
-            val visibility = builder.visibility ?: continue
-            val builderClass = classSymbol.createEmptyBuilderClass(
-                session,
-                builderName,
-                visibility,
-                builderDeclaration,
-            )
-            if (builderClass != null) {
-                builderClasses[builderName] = builderClass
+                val builderClass = classSymbol.createEmptyBuilderClass(
+                    session,
+                    builderName,
+                    visibility,
+                    builderDeclaration,
+                )
+                if (builderClass != null) {
+                    this[builderName] = builderClass
+                }
             }
-        }
-
-        return builderClasses
+        }.takeIf { it.isNotEmpty() }
     }
 
     @OptIn(SymbolInternals::class)
