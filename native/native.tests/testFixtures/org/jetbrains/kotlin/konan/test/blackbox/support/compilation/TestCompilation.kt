@@ -497,7 +497,8 @@ class CInteropCompilation(
     defFile: File,
     sources: List<File> = emptyList(),
     dependencies: Iterable<CompiledDependency<KLIB>>,
-    expectedArtifact: KLIB
+    expectedArtifact: KLIB,
+    noDefaultLibs: Boolean = true,
 ) : TestCompilation<KLIB>() {
     private val targets: KotlinNativeTargets = settings.get()
     private val classLoader: KotlinNativeClassLoader = settings.get()
@@ -531,7 +532,9 @@ class CInteropCompilation(
             add(targets.testTarget.name)
             add("-o")
             add(expectedArtifact.klibFile.canonicalPath)
-            add("-no-default-libs")
+            if (noDefaultLibs) {
+                add("-no-default-libs")
+            }
             dependencies.forEach {
                 add("-l")
                 add(it.artifact.path)
