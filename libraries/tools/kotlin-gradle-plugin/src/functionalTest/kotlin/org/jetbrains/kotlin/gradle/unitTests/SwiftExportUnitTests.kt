@@ -362,10 +362,10 @@ class SwiftExportUnitTests {
 
         assertEquals(
             expectedModules,
-            actualModules.filter { it.shouldBeFullyExported }.toModulesForAssertion(),
+            actualModules.kotlinModules.filter { it.shouldBeFullyExported }.toModulesForAssertion(),
         )
 
-        val KotlinxIoCore = actualModules.single { it.moduleName == "OrgJetbrainsKotlinxKotlinxIoCore" }
+        val KotlinxIoCore = actualModules.kotlinModules.single { it.moduleName == "OrgJetbrainsKotlinxKotlinxIoCore" }
         assertFalse(KotlinxIoCore.shouldBeFullyExported, "Compilation dependency kotlinx-io-core should not be exported")
     }
 
@@ -380,7 +380,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).kotlinModules.filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(SwiftExportModuleForAssertion("OrgJetbrainsKotlinxKotlinxDatetime", "kotlinx-datetime.klib", true))
@@ -391,7 +391,7 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
 
-        val kotlinXCoroutines = actualModules.singleOrNull { it.moduleName == "OrgJetbrainsKotlinxKotlinxCoroutinesCore" }
+        val kotlinXCoroutines = actualModules.kotlinModules.singleOrNull { it.moduleName == "OrgJetbrainsKotlinxKotlinxCoroutinesCore" }
         assertNull(kotlinXCoroutines, "Transitive dependency kotlinx-coroutines-core should not be exported")
     }
 
@@ -413,7 +413,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).kotlinModules.filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
@@ -453,7 +453,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).kotlinModules.filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
@@ -493,7 +493,7 @@ class SwiftExportUnitTests {
         project.evaluate()
 
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
-        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).filter { it.shouldBeFullyExported }
+        val actualModules = swiftExportTask.parameters.swiftModules.getOrElse(emptyList()).kotlinModules.filter { it.shouldBeFullyExported }
 
         val expectedModules = SmartSet.create<SwiftExportModuleForAssertion>().apply {
             add(
@@ -1218,7 +1218,56 @@ class SwiftExportUnitTests {
             actualModules.toModulesForAssertion(),
         )
     }
+
+    @Test
+    fun `test reexported host cinterop with explicit module name`() {
+        val project = swiftExportProject(
+            projectBuilder = { withName("shared") },
+            multiplatform = {
+                iosSimulatorArm64().compilations.getByName("main").cinterops.create("fooKit")
+            },
+            swiftExport = {
+                reexportCinterop("fooKit", "CustomFooKit")
+            }
+        )
+        project.evaluate()
+
+        val reexported = project.reexportedCinteropModules().single()
+
+        assertEquals("CustomFooKit", reexported.objCModuleName)
+    }
+
+    @Test
+    fun `test reexported host cinterop search paths are passed to the package build`() {
+        val moduleMap = "/custom/FooKit/module.modulemap"
+        val includeDir = java.nio.file.Files.createTempDirectory("fooKitInclude").toFile()
+        val project = swiftExportProject(
+            projectBuilder = { withName("shared") },
+            multiplatform = {
+                iosSimulatorArm64().compilations.getByName("main").cinterops.create("fooKit") { interop ->
+                    interop.compilerOpts("-fmodule-map-file=$moduleMap", "-I/custom/include")
+                    interop.includeDirs(includeDir)
+                }
+            },
+            swiftExport = {
+                reexportCinterop("fooKit", "FooKit")
+            }
+        )
+        project.evaluate()
+
+        val packageBuild = project.tasks.withType(BuildSPMSwiftExportPackage::class.java).single()
+
+        assertEquals(
+            listOf("-I", includeDir.absolutePath, "-Xcc", "-fmodule-map-file=$moduleMap", "-I/custom/include"),
+            packageBuild.swiftcExtraArgs.get()
+        )
+    }
 }
+
+private fun ProjectInternal.reexportedCinteropModules(): List<SwiftExportedModule.CinteropReexported> =
+    tasks.withType(SwiftExportTask::class.java).single()
+        .parameters.swiftModules.getOrElse(emptyList())
+        .filterIsInstance<SwiftExportedModule.CinteropReexported>()
 
 private fun multiModuleSwiftExportProject(
     mainProjectName: String = "shared",
@@ -1310,12 +1359,22 @@ private fun ProjectInternal.subProject(
     }
 )
 
+private val List<SwiftExportedModule>.kotlinModules: List<SwiftExportedModule.KotlinModule>
+    get() = filterIsInstance<SwiftExportedModule.KotlinModule>()
+
 private fun List<SwiftExportedModule>.toModulesForAssertion() = mapToSetOrEmpty { module ->
-    SwiftExportModuleForAssertion(
-        module.moduleName,
-        module.artifact.name,
-        module.shouldBeFullyExported
-    )
+    when (module) {
+        is SwiftExportedModule.KotlinModule -> SwiftExportModuleForAssertion(
+            module.moduleName,
+            module.artifact.name,
+            module.shouldBeFullyExported
+        )
+        is SwiftExportedModule.CinteropReexported -> SwiftExportModuleForAssertion(
+            module.objCModuleName,
+            module.artifact.name,
+            false
+        )
+    }
 }
 
 private data class SwiftExportModuleForAssertion(

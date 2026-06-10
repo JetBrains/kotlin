@@ -40,15 +40,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
     override fun execute() {
         val exportSettings = parameters.swiftExportSettings
         val exportModules = parameters.swiftModules.zip(exportSettings) { modules, settings ->
-            modules.map { module ->
-                module.toInputModule(
-                    createModuleConfig(
-                        module.flattenPackage,
-                        module.shouldBeFullyExported,
-                        settings
-                    )
-                )
-            }.toSet()
+            modules.map { module -> module.toInputModule(settings) }.toSet()
         }.get()
 
         val modules = GradleSwiftExportModules(
@@ -60,17 +52,32 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         parameters.swiftModulesFile.getFile().writeText(json)
     }
 
-    private fun createModuleConfig(
-        flattenPackage: String?,
-        shouldBeFullyExported: Boolean,
-        settings: Map<String, String>,
-    ): SwiftModuleConfig {
-        return SwiftModuleConfig(
-            bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME),
-            rootPackage = flattenPackage,
-            experimentalFeatures = settings,
-            shouldBeFullyExported = shouldBeFullyExported,
-        )
+    private fun SwiftExportedModule.toInputModule(settings: Map<String, String>): InputModule {
+        val bridgeModuleName = parameters.bridgeModuleName.getOrElse(SwiftModuleConfig.DEFAULT_BRIDGE_MODULE_NAME)
+        return when (this) {
+            is SwiftExportedModule.KotlinModule -> InputModule(
+                name = moduleName,
+                path = artifact.toPath(),
+                config = SwiftModuleConfig(
+                    bridgeModuleName = bridgeModuleName,
+                    rootPackage = flattenPackage,
+                    experimentalFeatures = settings,
+                    shouldBeFullyExported = shouldBeFullyExported,
+                )
+            )
+            is SwiftExportedModule.CinteropReexported -> InputModule(
+                // The standalone contract: InputModule.name of a module provided through cinterop
+                // is the Objective-C module name to import in the generated Swift code.
+                name = objCModuleName,
+                path = artifact.toPath(),
+                config = SwiftModuleConfig(
+                    bridgeModuleName = bridgeModuleName,
+                    experimentalFeatures = settings,
+                    shouldBeFullyExported = false,
+                    moduleProvidedThroughCinterop = true,
+                )
+            )
+        }
     }
 
     private fun createSwiftExportConfig(): SwiftExportConfig {
@@ -96,14 +103,6 @@ internal fun Set<SwiftExportModule>.toPlainList(): List<GradleSwiftExportModule>
     }
 
     return modules.toList()
-}
-
-private fun SwiftExportedModule.toInputModule(config: SwiftModuleConfig): InputModule {
-    return InputModule(
-        name = moduleName,
-        path = artifact.toPath(),
-        config = config
-    )
 }
 
 private fun SwiftExportModule.toKGPModule(): GradleSwiftExportModule {

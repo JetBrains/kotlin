@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
@@ -59,6 +60,13 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     val targetDeviceIdentifier: Property<String> = objectFactory.property<String>().convention(
         providerFactory.environmentVariable("TARGET_DEVICE_IDENTIFIER")
     )
+
+    /**
+     * Additional arguments for the Swift compilation of the synthetic package, e.g. search paths and
+     * module maps making the Objective-C modules of re-exported local cinterops visible to swiftc.
+     */
+    @get:Input
+    abstract val swiftcExtraArgs: ListProperty<String>
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -112,18 +120,22 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
         val deploymentTargetSettingName = deploymentTargetSettingName.get()
         val deploymentTarget = deploymentTarget.get()
 
-        val buildArguments = mapOf(
-            "ARCHS" to target.map { it.appleArchitecture }.get().xcodebuildArch,
-            "CONFIGURATION" to configuration.get(),
-            "DEPLOYMENT_TARGET_SETTING_NAME" to deploymentTargetSettingName,
-            deploymentTargetSettingName to deploymentTarget,
-
+        val swiftFlags = buildList {
             /*
             We need to add -public-autolink-library flag because bridge module is imported with @_implementationOnly
             All object files will be merged in `lib${swiftApiModuleName}.a`
             More information can be found here: https://github.com/swiftlang/swift/pull/35936
              */
-            "OTHER_SWIFT_FLAGS" to "-Xfrontend -public-autolink-library -Xfrontend $swiftModuleName"
+            addAll(listOf("-Xfrontend", "-public-autolink-library", "-Xfrontend", swiftModuleName))
+            addAll(swiftcExtraArgs.get())
+        }
+
+        val buildArguments = mapOf(
+            "ARCHS" to target.map { it.appleArchitecture }.get().xcodebuildArch,
+            "CONFIGURATION" to configuration.get(),
+            "DEPLOYMENT_TARGET_SETTING_NAME" to deploymentTargetSettingName,
+            deploymentTargetSettingName to deploymentTarget,
+            "OTHER_SWIFT_FLAGS" to swiftFlags.joinToString(" ")
         )
 
         val derivedData = packageDerivedData.getFile()

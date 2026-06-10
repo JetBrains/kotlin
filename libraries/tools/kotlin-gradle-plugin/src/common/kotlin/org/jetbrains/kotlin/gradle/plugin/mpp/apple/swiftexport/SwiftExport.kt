@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -53,19 +54,31 @@ internal fun Project.registerSwiftExportTask(
         buildType.getName(),
     )
 
+    val exportConfiguration = target.exportedSwiftExportApiConfiguration(
+        buildType,
+        mainCompilation.internal.configurations.compileDependencyConfiguration
+    )
+    val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
+    val dependencyModules = collectModules(
+        configurationProvider,
+        swiftExportExtension.exportedModules
+    )
+    val hostCinteropModules = collectReexportedHostCinterops(
+        swiftExportExtension.reexportedCinterops,
+        mainCompilation
+    )
+
     val swiftExportTask = registerSwiftExportRun(
         taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
         target = target,
         configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
-        exportConfiguration = target.exportedSwiftExportApiConfiguration(
-            buildType,
-            mainCompilation.internal.configurations.compileDependencyConfiguration
-        ),
+        exportConfiguration = exportConfiguration,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportExtension.flattenPackage,
-        exportedModules = swiftExportExtension.exportedModules,
+        swiftModules = dependencyModules.zip(hostCinteropModules) { dependency, host -> dependency + host },
+        hostCinteropKlibs = mainCompilation.cinteropOutputs,
         customSetting = swiftExportExtension.advancedConfiguration.settings
     )
 
@@ -97,7 +110,8 @@ internal fun Project.registerSwiftExportTask(
         configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
         swiftApiLibraryName = swiftApiLibraryName,
-        packageGenerationTask = packageGenerationTask
+        packageGenerationTask = packageGenerationTask,
+        cinteropSwiftcArgs = reexportedHostCinteropsSwiftcArgs(swiftExportExtension.reexportedCinterops, mainCompilation),
     )
     val mergeLibrariesTask = registerMergeLibraryTask(
         taskGroup = taskGroup,
@@ -127,7 +141,8 @@ private fun Project.registerSwiftExportRun(
     exportConfiguration: Configuration,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
-    exportedModules: Provider<Set<SwiftExportedDependency>>,
+    swiftModules: Provider<List<SwiftExportedModule>>,
+    hostCinteropKlibs: FileCollection,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -138,7 +153,6 @@ private fun Project.registerSwiftExportRun(
     val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
@@ -146,18 +160,14 @@ private fun Project.registerSwiftExportRun(
 
         task.inputs.files(exportConfiguration)
         task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
+        task.inputs.files(hostCinteropKlibs)
 
         // Input
         task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
         task.parameters.konanTarget.set(target.konanTarget)
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
-        task.parameters.swiftModules.set(
-            collectModules(
-                configurationProvider,
-                exportedModules
-            )
-        )
+        task.parameters.swiftModules.set(swiftModules)
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
@@ -255,6 +265,7 @@ private fun Project.registerSPMPackageBuild(
     swiftApiModuleName: Provider<String>,
     swiftApiLibraryName: Provider<String>,
     packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
+    cinteropSwiftcArgs: Provider<List<String>>,
 ): TaskProvider<BuildSPMSwiftExportPackage> {
     val buildTaskName = lowerCamelCaseName(
         taskNamePrefix,
@@ -271,6 +282,7 @@ private fun Project.registerSPMPackageBuild(
         task.swiftApiModuleName.set(swiftApiModuleName)
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.target.set(target.konanTarget)
+        task.swiftcExtraArgs.set(cinteropSwiftcArgs)
 
         // Output
         task.packageBuildDir.set(layout.buildDirectory.dir("SPMBuild/${target.name}/$configuration"))

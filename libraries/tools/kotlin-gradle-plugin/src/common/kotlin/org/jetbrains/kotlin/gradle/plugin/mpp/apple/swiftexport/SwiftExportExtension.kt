@@ -45,6 +45,31 @@ interface SwiftExportedModuleMetadata {
      * Configure package collapsing rule.
      */
     val flattenPackage: Property<String>
+
+    /**
+     * Cinterop klibs of this module to re-export as pre-existing Objective-C modules.
+     *
+     * Keys are cinterop names, as declared in the producing `cinterops { ... }` block. Values are the
+     * Objective-C module names that the generated Swift code imports for the cinterop types.
+     *
+     * Prefer the [reexportCinterop] function over mutating this property directly.
+     */
+    val reexportedCinterops: MapProperty<String, String>
+
+    /**
+     * Re-exports the [cinteropName] cinterop klib of this module as the pre-existing Objective-C module
+     * [objCModuleName].
+     *
+     * Swift Export does not generate a Swift wrapper for the cinterop klib: the generated Swift code
+     * emits `import <objCModuleName>` and refers to the cinterop types as `<objCModuleName>.<Type>`.
+     * [objCModuleName] must match the Clang module name under which the consuming Xcode project (or any
+     * other final Swift compilation) sees the library — typically the `modules` property of the cinterop
+     * definition file.
+     */
+    @ExperimentalSwiftExportDsl
+    fun reexportCinterop(cinteropName: String, objCModuleName: String) {
+        reexportedCinterops.put(cinteropName, objCModuleName)
+    }
 }
 
 /**

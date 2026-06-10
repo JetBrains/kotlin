@@ -16,44 +16,49 @@ import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import java.io.File
 import java.io.Serializable
 
-/**
- * Represents a module that will be exported to Swift.
- *
- * @property moduleName The name of the module in Swift
- * @property flattenPackage Optional package flattening configuration
- * @property artifact The artifact file containing the module
- * @property shouldBeFullyExported Whether this module was explicitly requested for export through the swiftExport { export("foo:bar") } DSL
- */
-internal interface SwiftExportedModule : Serializable {
-    val moduleName: String
-    val flattenPackage: String?
+internal sealed interface SwiftExportedModule : Serializable {
+    /** The klib artifact backing this module. */
     val artifact: File
-    val shouldBeFullyExported: Boolean
-}
 
-internal fun createFullyExportedSwiftExportedModule(
-    moduleName: String,
-    flattenPackage: String?,
-    artifact: File,
-): SwiftExportedModule {
-    return SwiftExportedModuleImp(
-        moduleName,
-        flattenPackage,
-        artifact,
-        true
-    )
-}
+    /**
+     * A Kotlin module translated by Swift Export.
+     *
+     * @property moduleName The name of the module in Swift
+     * @property flattenPackage Optional package flattening configuration
+     * @property shouldBeFullyExported Whether this module was explicitly requested for export through the
+     * swiftExport { export("foo:bar") } DSL
+     */
+    sealed interface KotlinModule : SwiftExportedModule {
+        val moduleName: String
+        val flattenPackage: String?
+        val shouldBeFullyExported: Boolean
+    }
 
-internal fun createTransitiveSwiftExportedModule(
-    moduleName: String,
-    artifact: File,
-): SwiftExportedModule {
-    return SwiftExportedModuleImp(
-        moduleName,
-        null,
-        artifact,
-        false
-    )
+    data class FullyExported(
+        override val moduleName: String,
+        override val flattenPackage: String?,
+        override val artifact: File,
+    ) : KotlinModule {
+        override val shouldBeFullyExported: Boolean get() = true
+    }
+
+    data class Transitive(
+        override val moduleName: String,
+        override val artifact: File,
+    ) : KotlinModule {
+        override val flattenPackage: String? get() = null
+        override val shouldBeFullyExported: Boolean get() = false
+    }
+
+    /**
+     * A cinterop klib whose types Swift Export treats as belonging to the pre-existing Objective-C
+     * module [objCModuleName]. No Swift wrapper is generated for it; the consumer is responsible for
+     * making the Objective-C module visible to the Swift compiler and linker.
+     */
+    data class CinteropReexported(
+        val objCModuleName: String,
+        override val artifact: File,
+    ) : SwiftExportedModule
 }
 
 internal fun Project.collectModules(
@@ -140,7 +145,7 @@ private fun Project.findAndCreateSwiftExportedModules(
 
         if (matchingArtifact != null) {
             result.add(
-                createFullyExportedSwiftExportedModule(
+                SwiftExportedModule.FullyExported(
                     explicitModule.moduleName.orElse(
                         normalizedAndValidatedModuleName(explicitModule.inheritedName)
                     ).get(),
@@ -168,7 +173,7 @@ private fun Project.findAndCreateSwiftExportedModules(
         .filterNot { artifact -> artifact in processedComponents }
         .forEach { artifact ->
             result.add(
-                createTransitiveSwiftExportedModule(
+                SwiftExportedModule.Transitive(
                     artifact.moduleVersion.inheritedName.normalizedSwiftExportModuleName,
                     artifact.artifact.file
                 )
@@ -177,13 +182,6 @@ private fun Project.findAndCreateSwiftExportedModules(
 
     return result
 }
-
-private data class SwiftExportedModuleImp(
-    override val moduleName: String,
-    override val flattenPackage: String?,
-    override val artifact: File,
-    override val shouldBeFullyExported: Boolean,
-) : SwiftExportedModule
 
 private fun Project.normalizedAndValidatedModuleName(moduleName: String) =
     moduleName.normalizedSwiftExportModuleName.also { validateSwiftExportModuleName(it) }

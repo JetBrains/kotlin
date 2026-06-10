@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportTaskParameters
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.createFullyExportedSwiftExportedModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -75,7 +75,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         val swiftModules = parameters.swiftModules.map {
             it.toMutableList().apply {
                 add(
-                    createFullyExportedSwiftExportedModule(
+                    SwiftExportedModule.FullyExported(
                         mainModuleInput.moduleName.get(),
                         mainModuleInput.flattenPackage.orNull,
                         mainModuleInput.artifact.getFile()
