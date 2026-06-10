@@ -50,11 +50,19 @@ abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
                     finalCommand
             }
 
+            // Since Binaryen 130, for MacOS x86_64, there is an appendix -14 in archive name.
+            val isMacosX8664 = platformValue.platform == "${BinaryenPlatform.X64}-${BinaryenPlatform.DARWIN}"
+            val macOsAppendix = if (versionValue.toInt() >= 130 && isMacosX8664) {
+                "-14"
+            } else {
+                ""
+            }
+
             BinaryenEnv(
                 download = downloadValue,
                 downloadBaseUrl = downloadBaseUrl.orNull,
                 allowInsecureProtocol = allowInsecureProtocol.get(),
-                ivyDependency = "com.github.webassembly:binaryen:$versionValue:${platformValue.platform}@tar.gz",
+                ivyDependency = "com.github.webassembly:binaryen:$versionValue:${platformValue.platform}$macOsAppendix@tar.gz",
                 executable = getExecutable("wasm-opt", command.get(), "exe"),
                 dir = targetPath,
                 isWindows = isWindows,
