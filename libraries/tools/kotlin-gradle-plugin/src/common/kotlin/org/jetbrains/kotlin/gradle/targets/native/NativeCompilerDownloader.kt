@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
@@ -45,6 +46,12 @@ class NativeCompilerDownloader(
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
         internal const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
+
+        /**
+         * Marker file written inside [compilerDirectory] after a successful extraction.
+         * Presence indicates a complete installation. See KT-86251.
+         */
+        internal const val MARKER_FILE = ".provisioned.ok"
 
         internal fun getCompilerDependencyNotation(project: Project): String {
             val group = KOTLIN_GROUP_ID
@@ -191,28 +198,52 @@ class NativeCompilerDownloader(
     private fun extractKotlinNativeFromArchive(archive: File) {
         logger.kotlinInfo("Using Kotlin/Native compiler archive: ${archive.absolutePath}")
 
-        logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
-        logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
-            val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
-            try {
-                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
-                project.copy {
-                    it.from(archiveFileTree(archive))
-                    it.into(tmpDir)
+        val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
+        NativeDistributionCommonizerLock(kotlinNativeDir) { msg -> logger.kotlinInfo(msg) }
+            .withLock {
+                val marker = compilerDirectory.resolve(MARKER_FILE)
+                if (marker.exists()) {
+                    logger.kotlinInfo(
+                        "Kotlin/Native compiler already installed at $compilerDirectory; skipping extraction."
+                    )
+                    return@withLock
                 }
-                val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                if (!compilerTmp.renameTo(compilerDirectory)) {
-                    project.copy {
-                        it.from(compilerTmp)
-                        it.into(compilerDirectory)
+
+                logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
+                logger.lifecycleWithDuration(
+                    "Unpack Kotlin/Native compiler to $compilerDirectory finished,"
+                ) {
+                    val tmpDir =
+                        Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
+                    try {
+                        logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                        project.copy {
+                            it.from(archiveFileTree(archive))
+                            it.into(tmpDir)
+                        }
+                        val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
+                        if (!compilerTmp.renameTo(compilerDirectory)) {
+                            if (compilerDirectory.exists()) {
+                                logger.kotlinInfo(
+                                    "renameTo failed; removing stale $compilerDirectory before fresh copy."
+                                )
+                                compilerDirectory.deleteRecursively()
+                            }
+                            project.copy {
+                                it.from(compilerTmp)
+                                it.into(compilerDirectory)
+                            }
+                        }
+                        check(compilerDirectory.exists()) {
+                            "Kotlin/Native installation directory $compilerDirectory was not created"
+                        }
+                        marker.createNewFile()
+                        logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+                    } finally {
+                        tmpDir.deleteRecursively()
                     }
                 }
-                logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
-            } finally {
-                tmpDir.deleteRecursively()
             }
-        }
     }
 
     fun downloadIfNeeded() {
