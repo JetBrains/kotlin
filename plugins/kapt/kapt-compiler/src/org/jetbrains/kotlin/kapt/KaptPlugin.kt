@@ -89,7 +89,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             JAVAC_OPTION_OPTION -> setKeyValue(value) { k, v -> javacOptions[k] = v }
 
             VERBOSE_MODE_OPTION -> setFlag(KaptFlag.VERBOSE, value)
-            USE_LIGHT_ANALYSIS_OPTION -> setFlag(KaptFlag.USE_LIGHT_ANALYSIS, value)
+            USE_LIGHT_ANALYSIS_OPTION -> {}
             CORRECT_ERROR_TYPES_OPTION -> setFlag(KaptFlag.CORRECT_ERROR_TYPES, value)
             DUMP_DEFAULT_PARAMETER_VALUES -> setFlag(KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES, value)
             MAP_DIAGNOSTIC_LOCATIONS_OPTION -> setFlag(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS, value)
