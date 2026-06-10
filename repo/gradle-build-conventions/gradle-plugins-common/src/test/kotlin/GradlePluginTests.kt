@@ -5,7 +5,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.repositories
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
 import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
@@ -35,6 +35,19 @@ class GradlePluginTests {
         producerPluginDependency.version = "1.0"
         producerPluginDependency.beforeEvaluate {
             plugins.apply(GRADLE_PLUGIN_DEPENDENCY_CONFIGURATION_CONVENTION_PLUGIN)
+            project.repositories {
+                exclusiveContent {
+                    forRepository {
+                        maven {
+                            name = "gradle-releases"
+                            setUrl("https://repo.gradle.org/gradle/libs-releases")
+                        }
+                    }
+                    filter {
+                        includeGroup("org.gradle.experimental")
+                    }
+                }
+            }
         }
 
         val producerPlugin = createKotlinSubproject("producerPlugin", root)
@@ -46,6 +59,19 @@ class GradlePluginTests {
         val consumerPlugin = createKotlinSubproject("consumerPlugin", root)
         consumerPlugin.beforeEvaluate {
             plugins.apply(GRADLE_PLUGIN_COMMON_CONFIGURATION_CONVENTION_PLUGIN)
+            project.repositories {
+                exclusiveContent {
+                    forRepository {
+                        maven {
+                            name = "gradle-releases"
+                            setUrl("https://repo.gradle.org/gradle/libs-releases")
+                        }
+                    }
+                    filter {
+                        includeGroup("org.gradle.experimental")
+                    }
+                }
+            }
             dependencies.add("commonImplementation", dependencies.project(":producerPlugin"))
             dependencies.add("commonImplementation", dependencies.project(":producerPluginDependency"))
         }
