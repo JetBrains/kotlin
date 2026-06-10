@@ -206,8 +206,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         val effectiveArgCount =
             if (typeParameterSymbols != null) minOf(typeArguments.size, typeParameterSymbols.size) else typeArguments.size
         return Array(effectiveArgCount) { index ->
-            // Type arguments of a type used in an annotation member are themselves regular types,
-            // so they should be converted with DEFAULT mode (not the annotation-specific modes).
+            // TODO: check this
             val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
             val argument = typeArguments[index]
             val variance = typeParameterSymbols?.getOrNull(index)?.fir?.variance ?: Variance.INVARIANT
