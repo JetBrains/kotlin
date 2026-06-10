@@ -232,7 +232,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     private static List<String> readArgs(@NotNull String testArgsFilePath, @NotNull String tempDir) {
         File testArgsFile = new File(testArgsFilePath);
         List<String> lines = FilesKt.readLines(testArgsFile, Charsets.UTF_8);
-        return CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile(), tempDir));
+        List<String> args = CollectionsKt.mapNotNull(lines, arg -> readArg(arg, testArgsFile.getParentFile(), tempDir));
+        args.add("-no-default-libs");
+        return args;
     }
 
     private static String readArg(String arg, @NotNull File testDataDir, @NotNull String tempDir) {
