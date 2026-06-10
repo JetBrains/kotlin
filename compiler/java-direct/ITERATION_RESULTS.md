@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-10 — Populate real `source` for java-direct FIR declarations
+- **Change**: java-direct `*OverAst` elements now carry a real, AST-backed `KtLightSourceElement`
+  (reaching parity with the PSI loader) instead of `null`. Added a `JavaLightTree` →
+  `FlyweightCapableTreeStructure<LighterASTNode>` adapter (`JavaLightTreeStructure` + `JavaLightAstNode`,
+  shared non-registering placeholder `IElementType`), wired via a fir-jvm-owned seam interface
+  `JavaDirectSourceElementOwner` implemented by `JavaElementOverAst`; `FirJavaFacade.toSourceElement()`
+  falls through to it. Reverted the enum-entries `&& classSource != null` guard to master
+  (`fromSource -> Source`) and changed the record `isPrimary` branch from `source == null` to
+  `source?.psi == null` (non-PSI canonical-record detection). Offsets/text exact; element-type fidelity
+  intentionally out of scope.
+- **Files**: `parse/JavaLightTreeStructure.kt` (new), `parse/JavaLightTree.kt` (memoized adapter),
+  `model/JavaElementOverAst.kt` (seam impl), fir-jvm `java/JavaDirectSourceElementOwner.kt` (new) +
+  `java/FirJavaFacade.kt`; test `JavaLightSourceElementTest.kt` (new).
+- **Tests**: `:compiler:java-direct:test` box+phased green (0 failures); PSI gate
+  `PhasedJvmDiagnosticLightTreeTestGenerated.*` green; `CompileKotlinAgainstKotlin` gate green.
+- **Result**: green; PSI behaviour unchanged (enum revert matches master; `source?.psi == null` never
+  fires for PSI).
+
 ### 2026-06-09 — Minify supertype cycle breaker to a session-keyed guard
 - **Change**: Replaced the per-file `JavaSupertypeCycleChecker` (thread-local deque + dead
   `recordCycleEdge`/`consumeCycleEdges` diagnostic machinery, never wired to a diagnostic) with a

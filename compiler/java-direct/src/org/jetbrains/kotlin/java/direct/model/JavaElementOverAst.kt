@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.java.direct.model
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.fir.java.JavaDirectSourceElementOwner
+import org.jetbrains.kotlin.java.direct.parse.JavaLightAstNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.load.java.structure.JavaElement
@@ -12,13 +17,21 @@ import org.jetbrains.kotlin.load.java.structure.JavaElement
 abstract class JavaElementOverAst(
     val node: JavaLightNode,
     val tree: JavaLightTree,
-) : JavaElement {
+) : JavaElement, JavaDirectSourceElementOwner {
+    override fun toKtSourceElement(kind: KtSourceElementKind): KtSourceElement =
+        KtLightSourceElement(
+            JavaLightAstNode(tree, node),
+            tree.getStartOffset(node),
+            tree.getEndOffset(node),
+            tree.lightSourceTreeStructure,
+            kind,
+        )
+
     override fun equals(other: Any?): Boolean =
         other is JavaElementOverAst && node == other.node && tree === other.tree
 
     override fun hashCode(): Int = node.hashCode()
 
     override fun toString(): String =
-        @Suppress("UnstableApiUsage")
         tree.getType(node).toString()
 }

@@ -362,12 +362,8 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
                 origin = mappedJavaEnumFunctionsOrigin,
             )
 
-            // For java-direct source classes (classSource == null): use Library to avoid the
-            // FirPropertyAccessorImpl source-element validation that fires only on the entries
-            // getter (not on values()/valueOf()). Library still produces a proper getter that
-            // EnumExternalEntriesLowering can intercept for the correct intrinsic mapping.
             val enumEntriesOrigin = when {
-                firJavaClass.origin.fromSource && classSource != null -> FirDeclarationOrigin.Source
+                firJavaClass.origin.fromSource -> FirDeclarationOrigin.Source
                 else -> FirDeclarationOrigin.Library
             }
 
@@ -708,7 +704,9 @@ private fun convertJavaConstructorToFir(
         // TODO get rid of dependency on PSI KT-63046
         isPrimary = javaConstructor == null
                 || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
-                || (source == null && javaClass.isRecord && isCanonicalRecordConstructorForSource(javaConstructor, javaClass))
+                // For non-PSI (java-direct) sources `source?.psi` is null, so detect the canonical
+                // record constructor structurally instead of via PSI.
+                || (source?.psi == null && javaClass.isRecord && isCanonicalRecordConstructorForSource(javaConstructor, javaClass))
         returnTypeRef = buildResolvedTypeRef {
             coneType = classSymbol.defaultType()
         }
@@ -781,6 +779,7 @@ private fun FqName.topLevelName() = asString().substringBefore(".")
 
 internal fun JavaElement.toSourceElement(sourceElementKind: KtSourceElementKind = KtRealSourceElementKind): KtSourceElement? {
     return (this as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement(sourceElementKind)
+        ?: (this as? JavaDirectSourceElementOwner)?.toKtSourceElement(sourceElementKind)
 }
 
 private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {
