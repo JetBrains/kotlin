@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.generators.tree.AbstractElementPrinter
 import org.jetbrains.kotlin.generators.tree.AbstractFieldPrinter
+import org.jetbrains.kotlin.generators.tree.ElementOrRef
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.imports.ArbitraryImportable
 import org.jetbrains.kotlin.generators.tree.nullable
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.ir.generator.irVisitorType
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
+import org.jetbrains.kotlin.ir.generator.model.MapField
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
@@ -77,6 +79,23 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                                 }
                                 println(".accept(visitor, data) }")
                             }
+                            is MapField -> {
+                                println("forEach { [key, value] -> ")
+                                if (child.keyType is ElementOrRef<*>) {
+                                    print("key")
+                                    if (child.keyType.nullable) {
+                                        print("?")
+                                    }
+                                    println(".accept(visitor, data) }")
+                                }
+                                if (child.valueType is ElementOrRef<*>) {
+                                    print("value")
+                                    if (child.valueType.nullable) {
+                                        print("?")
+                                    }
+                                    println(".accept(visitor, data) }")
+                                }
+                            }
                         }
                     }
                 }
@@ -117,6 +136,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
                                     println("transformInPlace(transformer, data)")
                                 }
                             }
+                            is MapField -> error("Not supported. Please implement if required.")
                         }
                     }
                 }
