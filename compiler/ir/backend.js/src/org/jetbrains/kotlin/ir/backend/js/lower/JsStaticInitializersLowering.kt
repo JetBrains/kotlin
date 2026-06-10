@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitializer
+import org.jetbrains.kotlin.ir.backend.js.staticInitializerProcessed
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -103,10 +104,11 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         })
     }
 
-    private val visited = hashSetOf<IrClass>()
     private fun processDeclarationContainer(container: IrClass) {
-        if (container in visited) return
         if (container.isEffectivelyExternal()) return
+
+        // A class may already have been processed by a lowering instance bound to another module, see the comment below.
+        if (container.staticInitializerProcessed) return
 
         // Before building child static_init, we need to be sure that all super classes are processed in order before the child.
         // This is needed for 2 reasons:
@@ -168,16 +170,23 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
             }
         }
 
-        visited += container
+        container.staticInitializerProcessed = true
         if (initializers.isEmpty() && container.superClass?.staticInitializer == null) return
 
-        val staticInitCalledField = createStaticInitCalledField(container)
-        val staticInitFunction = createInitFunction(
-            container = container,
-            origin = STATIC_CLASS_INITIALIZER,
-            initCalledVar = staticInitCalledField,
-            initializers = initializers
-        )
+        // It is important to define stable signature via restrictTo to be able to reference static_init of super class
+        // defined in a separate module.
+        val staticInitDeclarations = context.irFactory.stageController.restrictTo(container) {
+            val initCalledField = createStaticInitCalledField(container)
+            val initFunction = createInitFunction(
+                container = container,
+                origin = STATIC_CLASS_INITIALIZER,
+                initCalledVar = initCalledField,
+                initializers = initializers
+            )
+            initCalledField to initFunction
+        }
+        val staticInitCalledField = staticInitDeclarations.first
+        val staticInitFunction = staticInitDeclarations.second
 
         for (declaration in container.declarations.asSequence().filterIsInstance<IrFunction>()) {
             if (declaration is IrSimpleFunction || declaration is IrConstructor) {
