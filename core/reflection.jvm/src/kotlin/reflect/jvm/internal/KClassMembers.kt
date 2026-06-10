@@ -66,7 +66,7 @@ internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> 
             addAll(getDescriptorBasedMembers(staticScope, INHERITED))
         }
     } else {
-        val fakeOverrideMembers = data.value.fakeOverrideMembers.members
+        val fakeOverrideMembers = data.value.fakeOverrideMembers
         val isKotlin = java.isKotlin
         val members = fakeOverrideMembers.filterNotTo(
             newHashMapWithExpectedSize(

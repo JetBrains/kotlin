@@ -41,23 +41,9 @@ private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
     }
 }
 
-private typealias MembersJavaSignatureMap = Map<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
+internal typealias MembersJavaSignatureMap = Map<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
 private typealias MutableMembersJavaSignatureMap = MutableMap<EquatableCallableSignature<EqualityMode.JavaSignature>, ReflectKCallable<*>>
 private typealias MutableMembersKotlinSignatureMap = MutableMap<EquatableCallableSignature<EqualityMode.KotlinSignature>, ReflectKCallable<*>>
-
-/**
- * Auxiliary class to help build 'KClass.members' for every KClass.
- *
- * User facing 'KClass.members' is not "transitive". This auxiliary class is "transitive".
- *
- * By "transitive" we mean that 'KClass.members' of every inheritor class/interface are a strict superset
- * of their parent classes' `KClass.members`
- */
-internal data class FakeOverrideMembers(
-    val members: MembersJavaSignatureMap,
-    val containsInheritedStatics: Boolean,
-    val containsPackagePrivate: Boolean,
-)
 
 private fun ReflectKCallable<*>.isStaticMethodInInterface(kClass: KClassImpl<*>): Boolean =
     isStatic && kClass.classKind == ClassKind.INTERFACE && !isJavaField
@@ -70,10 +56,16 @@ internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallab
             // static methods (but not fields) in interfaces are never inherited (neither in Java nor in Kotlin)
             member.isStaticMethodInInterface(kClass)
 
-internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: Collection<ReflectKCallable<*>>): FakeOverrideMembers {
+/**
+ * Builds the "transitive" member map used to compute 'KClass.members' for every KClass.
+ *
+ * User facing 'KClass.members' is not "transitive". This map is "transitive".
+ *
+ * By "transitive" we mean that the map of every inheritor class/interface is a strict superset
+ * of their parent classes' maps.
+ */
+internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: Collection<ReflectKCallable<*>>): MembersJavaSignatureMap {
     val javaSignaturesMap: MutableMembersJavaSignatureMap = HashMap()
-    var containsInheritedStatics = false
-    var containsPackagePrivate = false
     val isKotlin = kClass.java.isKotlin
     val declaredTransitiveKotlinMembers: MutableMembersKotlinSignatureMap = HashMap()
     if (isKotlin) {
@@ -90,9 +82,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: 
             )
         val substitutor = KTypeSubstitutor.create(supertype)
         val supertypeMembers = supertypeKClass.fakeOverrideMembers // Recursive call
-        containsInheritedStatics = containsInheritedStatics || supertypeMembers.containsInheritedStatics
-        containsPackagePrivate = containsPackagePrivate || supertypeMembers.containsPackagePrivate
-        for ((_, notSubstitutedMember) in supertypeMembers.members) {
+        for ((_, notSubstitutedMember) in supertypeMembers) {
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
                 .copy(
@@ -125,19 +115,15 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: 
         }
     }
     for ((kotlinSignature, member) in declaredTransitiveKotlinMembers) {
-        containsInheritedStatics = containsInheritedStatics || member.isStatic
-        containsPackagePrivate = containsPackagePrivate || member.isPackagePrivate
         javaSignaturesMap[kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)] = member
     }
     if (!isKotlin) {
         for (member in declaredMembers) {
             if (isNonTransitiveMember(kClass, member)) continue
-            containsInheritedStatics = containsInheritedStatics || member.isStatic
-            containsPackagePrivate = containsPackagePrivate || member.isPackagePrivate
             javaSignaturesMap[member.toEquatableCallableSignature(EqualityMode.JavaSignature)] = member
         }
     }
-    return FakeOverrideMembers(javaSignaturesMap, containsInheritedStatics, containsPackagePrivate)
+    return javaSignaturesMap
 }
 
 internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
@@ -158,8 +144,7 @@ internal fun computeOverriddenFunctions(
     for (supertype in container.supertypes) {
         val supertypeKClass = supertype.classifier as? KClass<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
-        val supertypeMembers = supertypeKClass.fakeOverrideMembers
-        for ((_, notSubstitutedMember) in supertypeMembers.members) {
+        for ((_, notSubstitutedMember) in supertypeKClass.fakeOverrideMembers) {
             if (notSubstitutedMember !is ReflectKFunction) continue
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
@@ -206,7 +191,7 @@ internal val ReflectKCallable<*>.isStatic: Boolean
 private val ReflectKCallable<*>.isJavaField: Boolean
     get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlin == false
 
-private val KClass<*>.fakeOverrideMembers: FakeOverrideMembers
+private val KClass<*>.fakeOverrideMembers: MembersJavaSignatureMap
     get() = when (this) {
         is KClassImpl<*> -> data.value.fakeOverrideMembers
         is MutableCollectionKClass<*> -> readonlyClass.fakeOverrideMembers

@@ -423,7 +423,7 @@ internal class KClassImpl<T : Any>(
 
         val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeAllMembers)
 
-        val fakeOverrideMembers: FakeOverrideMembers by ReflectProperties.lazySoft {
+        val fakeOverrideMembers: MembersJavaSignatureMap by ReflectProperties.lazySoft {
             computeFakeOverrideMembers(this@KClassImpl, declaredMembers)
         }
     }
