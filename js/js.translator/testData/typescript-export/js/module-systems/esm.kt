@@ -77,6 +77,73 @@ interface InterfaceWithNamedCompanion {
     }
 }
 
+// KT-84332
+@JsExport
+interface InterfaceWithNestedClass {
+    fun createNested(value: Int): Nested
+
+    fun consumeNested(nested: Nested): Int
+
+    class Nested(val value: Int) {
+        class DeepNested(val value: String)
+    }
+
+    class GenericNested<T>(val value: T)
+
+    data class DataNested(val value: String)
+
+    abstract class AbstractNested {
+        abstract fun box(): String
+    }
+
+    class ConcreteNested : AbstractNested() {
+        override fun box(): String = "OK"
+    }
+
+    class ConstructorWithDefaultsAndVarargs(val prefix: String = "", vararg val parts: String)
+
+    value class NestedValue(val value: Int)
+}
+
+@JsExport
+fun interface FunInterfaceWithNestedClass {
+    fun run(value: String): String
+
+    class Nested(val value: String)
+}
+
+@JsExport
+fun createInterfaceNested(value: Int): InterfaceWithNestedClass.Nested =
+    InterfaceWithNestedClass.Nested(value)
+
+@JsExport
+fun consumeInterfaceNested(nested: InterfaceWithNestedClass.Nested): Int =
+    nested.value
+
+@JsExport
+fun createGenericInterfaceNested(value: String): InterfaceWithNestedClass.GenericNested<String> =
+    InterfaceWithNestedClass.GenericNested(value)
+
+@JsExport
+fun copyInterfaceDataNested(nested: InterfaceWithNestedClass.DataNested): InterfaceWithNestedClass.DataNested =
+    nested.copy(value = "copy")
+
+@JsExport
+fun createDeepInterfaceNested(value: String): InterfaceWithNestedClass.Nested.DeepNested =
+    InterfaceWithNestedClass.Nested.DeepNested(value)
+
+@JsExport
+fun createConcreteInterfaceNested(): InterfaceWithNestedClass.ConcreteNested =
+    InterfaceWithNestedClass.ConcreteNested()
+
+@JsExport
+fun createValueInterfaceNested(value: Int): InterfaceWithNestedClass.NestedValue =
+    InterfaceWithNestedClass.NestedValue(value)
+
+@JsExport
+fun createFunInterfaceNested(value: String): FunInterfaceWithNestedClass.Nested =
+    FunInterfaceWithNestedClass.Nested(value)
+
 @JsExport
 interface InterfaceWithCompanionWithStaticFun {
     companion object {

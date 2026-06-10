@@ -2,7 +2,6 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
-// LANGUAGE: +AllowInterfaceNestedClassesInJsExport +AllowNamedCompanionForJsExport +JsAllowExportingValueClasses
 
 package foo
 
@@ -47,11 +46,6 @@ interface InterfaceWithNamedCompanion {
     companion object Named {
         fun foo() = 42
     }
-}
-
-@JsExport
-interface OuterInterface {
-    class Nested
 }
 
 @JsExport
