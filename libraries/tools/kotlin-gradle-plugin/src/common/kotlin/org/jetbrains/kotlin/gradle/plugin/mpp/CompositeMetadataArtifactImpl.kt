@@ -17,6 +17,8 @@ import java.nio.file.Paths
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import kotlin.io.path.createDirectories
+import kotlin.io.path.extension
 
 internal class CompositeMetadataArtifactImpl(
     override val moduleDependencyIdentifier: ModuleDependencyIdentifier,
@@ -129,14 +131,14 @@ internal class CompositeMetadataArtifactImpl(
         })
 
         override fun copyTo(file: Path): Boolean {
-            val extension = file.fileName.toString().substringAfterLast('.', "")
+            val extension = file.extension
             require(extension == archiveExtension) {
                 "Expected file.extension == '$archiveExtension'. Found $extension"
             }
 
             val libraryPath = "${containingSourceSetContent.sourceSetName}/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
-            file.parent?.let { Files.createDirectories(it) }
+            file.parent?.createDirectories()
             artifactFile.zip.copyPartially(file, libraryPath)
 
             return true

@@ -20,6 +20,9 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.isDirectory
 
 internal fun Uklib.serializeToZipArchive(
     outputZip: File,
@@ -101,16 +104,16 @@ private fun zipUklibContents(
 
         fragmentToArtifact.forEach { (identifier, file) ->
             // Assume we are handling unpacked metadata and platform klibs
-            if (!Files.exists(file)) {
+            if (!file.exists()) {
                 throw MissingUklibFragmentFile(file.toFile())
             }
-            if (Files.isDirectory(file)) {
+            if (file.isDirectory()) {
                 packDirectory(
                     directory = file,
                     identifier = identifier,
                     zipOutputStream = zipOutputStream,
                 )
-            } else if (file.fileName.toString().substringAfterLast('.', "") in packArchiveAsIs) {
+            } else if (file.extension in packArchiveAsIs) {
                 packFile(
                     file = file,
                     identifier = identifier,

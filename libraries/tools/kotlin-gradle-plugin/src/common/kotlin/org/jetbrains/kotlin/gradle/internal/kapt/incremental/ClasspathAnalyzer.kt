@@ -18,6 +18,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.zip.ZipFile
+import kotlin.io.path.inputStream
+import kotlin.io.path.isDirectory
 
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
 private const val MODULE_INFO = "module-info.class"
@@ -61,7 +63,7 @@ abstract class StructureTransformLegacyAction : TransformAction<TransformParamet
 }
 
 internal fun transform(input: Path, outputs: TransformOutputs) {
-    val data = if (Files.isDirectory(input)) {
+    val data = if (input.isDirectory()) {
         visitDirectory(input)
     } else {
         visitJar(input)
@@ -81,7 +83,7 @@ private fun visitDirectory(directory: Path): ClasspathEntryData {
                     && it.fileName.toString() != MODULE_INFO
         }.forEach {
             val internalName = directory.relativize(it).invariantSeparatorsPathString.dropLast(".class".length)
-            BufferedInputStream(Files.newInputStream(it)).use { inputStream ->
+            it.inputStream().buffered().use { inputStream ->
                 analyzeInputStream(inputStream, internalName, entryData)
             }
         }

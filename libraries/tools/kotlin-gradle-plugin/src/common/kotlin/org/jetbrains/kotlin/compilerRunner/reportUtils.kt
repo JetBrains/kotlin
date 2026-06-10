@@ -38,6 +38,9 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.readText
 
 
 internal fun loadCompilerVersion(compilerClasspath: Iterable<Path>): String {
@@ -60,7 +63,7 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<Path>): String {
     try {
         val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
         for (cpPath in compilerClasspath) {
-            if (Files.isRegularFile(cpPath) && cpPath.fileName.toString().substringAfterLast('.', "").toLowerCaseAsciiOnly() == "jar") {
+            if (cpPath.isRegularFile() && cpPath.fileName.toString().substringAfterLast('.', "").toLowerCaseAsciiOnly() == "jar") {
                 ZipFile(cpPath.toFile()).use { jar ->
                     val versionFileEntry = jar.getEntry(KotlinCompilerVersion.VERSION_FILE_PATH)
                     if (versionFileEntry != null) {
@@ -70,10 +73,10 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<Path>): String {
                         checkVersion(bytes)
                     }
                 }
-            } else if (Files.isDirectory(cpPath)) {
+            } else if (cpPath.isDirectory()) {
                 val versionFile = cpPath.resolve(KotlinCompilerVersion.VERSION_FILE_PATH)
-                if (Files.isRegularFile(versionFile)) {
-                    result = Files.newBufferedReader(versionFile).use { it.readText() }
+                if (versionFile.isRegularFile()) {
+                    result = versionFile.readText()
                 } else {
                     cpPath.resolve(versionClassFileName).takeIf { Files.isRegularFile(it) }?.let {
                         checkVersion(Files.readAllBytes(it))
