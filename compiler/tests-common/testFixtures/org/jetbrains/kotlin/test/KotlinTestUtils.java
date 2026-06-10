@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.util.CurrentJavaVersion.currentJavaVersion;
+
 public class KotlinTestUtils {
 
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
@@ -145,7 +147,7 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.FULL_JDK_21) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk21Home());
         }
-        else if (JavaVersion.current().compareTo(JavaVersion.compose(9)) >= 0) {
+        else if (currentJavaVersion().compareTo(JavaVersion.compose(9)) >= 0) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 

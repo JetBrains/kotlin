@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.utils
 
+import com.intellij.util.currentJavaVersion
 import java.io.File
 import java.lang.IllegalStateException
 import com.intellij.util.lang.JavaVersion
@@ -118,8 +119,8 @@ interface KotlinPaths {
         Empty(),
         StdLib(Jar.StdLib, gen = {
             when {
-                JavaVersion.current() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
-                JavaVersion.current() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
+                currentJavaVersion() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
+                currentJavaVersion() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
                 else -> emptyList()
             }
         }),

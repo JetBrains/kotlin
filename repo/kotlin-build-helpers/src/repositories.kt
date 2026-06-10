@@ -110,7 +110,15 @@ fun RepositoryHandler.intellijDependencies() {
             }
         }
         exclusive.filter { content ->
-            content.includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+            content.includeModule("org.jetbrains.intellij.deps", "jdom")
+            content.includeModule("org.jetbrains.intellij.deps", "log4j")
+            content.includeModule("org.jetbrains.intellij.deps", "asm-all")
+            content.includeModule("org.jetbrains.intellij.deps", "gradle-api")
+            content.includeModule("org.jetbrains.intellij.deps", "rwmutex-idea")
+            content.includeGroupByRegex("org.jetbrains.intellij.deps.jflex.*")
+            content.includeGroupByRegex("org.jetbrains.intellij.deps.android.tools.*")
+            content.includeGroupByRegex("org.jetbrains.intellij.deps.fastutil.*")
+            content.includeGroupByRegex("org.jetbrains.intellij.deps.jna.*")
             content.includeGroupByRegex("com.intellij.platform.*")
             content.includeGroupByRegex("org.jetbrains.jps.*")
             content.includeVersion("org.jetbrains.jps", "jps-javac-extension", "7")
