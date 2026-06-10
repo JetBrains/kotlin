@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
+import org.jetbrains.kotlin.gradle.uklibs.addPublishedProjectToRepositories
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.condition.OS
@@ -20,6 +21,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportMet
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeSwiftPMImportMetadata
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 
 @OsCondition(
@@ -174,5 +179,82 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
         }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
 
         assertFalse(producer.rootComponent.swiftPmMetadata.exists(), "SwiftPM metadata file should be published")
+    }
+
+    @GradleTest
+    fun `transitive iOS-only SwiftPM dependency is constrained to iOS on a consumer with macOS target`(version: GradleVersion) {
+        // --- Producer: iosArm64 + iosSimulatorArm64, local stub SwiftPM package ---
+        val localPackageName = "iOSOnlyLib"
+        val producer = project("empty", version) {
+            val localSwiftPackageRelativePath = "../$localPackageName"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            createLocalSwiftPackage(localPackageDir, packageName = localPackageName)
+
+            plugins { kotlin("multiplatform") }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(localPackageName),
+                        )
+                    }
+                }
+            }
+        }.publish(publisherConfiguration = PublisherConfiguration(group = "dependency"))
+
+        // --- Consumer: iosArm64 + iosSimulatorArm64 + macosArm64, depends on producer ---
+        project("empty", version) {
+            plugins { kotlin("multiplatform") }
+
+            addPublishedProjectToRepositories(producer)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+                    macosArm64()
+
+                    sourceSets.commonMain {
+                        compileStubSourceWithSourceSetName()
+                        dependencies {
+                            implementation(producer.rootCoordinate)
+                        }
+                    }
+                }
+            }
+
+            build("generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump") {
+                // Find the transitive subpackage manifest for the local package
+                val subpackagesDir = projectPath
+                    .resolve("build/kotlin/swiftImport/subpackages")
+                    .toFile()
+
+                val manifests = subpackagesDir.walkTopDown()
+                    .filter { it.name == "Package.swift" }
+                    .toList()
+
+                assert(manifests.isNotEmpty()) {
+                    "Expected at least one transitive Package.swift under $subpackagesDir"
+                }
+
+                val manifestWithProduct = manifests.firstOrNull { it.readText().contains(localPackageName) }
+                assertNotNull(manifestWithProduct) {
+                    "Expected a Package.swift referencing $localPackageName but found none. Manifests:\n" +
+                            manifests.joinToString("\n") { "${it.path}:\n${it.readText()}" }
+                }
+
+                val manifestText = manifestWithProduct.readText()
+                assertTrue(
+                    manifestText.contains("condition: .when(platforms: [.iOS])"),
+                    "Expected iOS platform condition for $localPackageName product but got:\n$manifestText"
+                )
+            }
+        }
     }
 }
