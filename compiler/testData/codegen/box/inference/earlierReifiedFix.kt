@@ -1,6 +1,8 @@
 // WITH_REFLECT
 // WITH_STDLIB
 // ISSUE: KT-86728
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: 2.4
+// KT-86728 is fixed in 2.4.20-Beta1
 import kotlin.reflect.KClass
 
 // Records which type argument the compiler reified at the call site.
