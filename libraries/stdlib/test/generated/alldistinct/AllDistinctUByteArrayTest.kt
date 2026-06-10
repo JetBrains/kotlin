@@ -36,4 +36,11 @@ class AllDistinctUByteArrayTest {
         assertFalse(ubyteArrayOf(1u, 2u).allDistinctBy { 0 })
         assertFalse(ubyteArrayOf(1u, 2u).allDistinctBy { null })
     }
+
+    @Test
+    fun allDistinctValueDomainBounds() {
+        assertTrue(UByteArray(256) { it.toUByte() }.allDistinct())
+        assertFalse(UByteArray(256) { (it / 2).toUByte() }.allDistinct())
+        assertFalse(UByteArray(257) { it.toUByte() }.allDistinct())
+    }
 }

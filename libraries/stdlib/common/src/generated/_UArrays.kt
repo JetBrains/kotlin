@@ -6102,9 +6102,14 @@ public fun ULongArray.allDistinct(): Boolean {
 @ExperimentalUnsignedTypes
 public fun UByteArray.allDistinct(): Boolean {
     if (size < 2) return true
-    val seen = HashSet<UByte>()
+    if (size > 256) return false
+    val seen = LongArray(4)
     for (element in this) {
-        if (!seen.add(element)) return false
+        val index = element.toInt()
+        val mask = 1L shl (index and 0x3F)
+        val wordIndex = index shr 6
+        if (seen[wordIndex] and mask != 0L) return false
+        seen[wordIndex] = seen[wordIndex] or mask
     }
     return true
 }
@@ -6125,6 +6130,7 @@ public fun UByteArray.allDistinct(): Boolean {
 @ExperimentalUnsignedTypes
 public fun UShortArray.allDistinct(): Boolean {
     if (size < 2) return true
+    if (size > 65536) return false
     val seen = HashSet<UShort>()
     for (element in this) {
         if (!seen.add(element)) return false
