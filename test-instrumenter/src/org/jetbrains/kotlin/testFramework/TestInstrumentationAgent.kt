@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.testFramework.inputchecking.UndeclaredInputsGuard
 import java.io.File
 import java.lang.instrument.ClassFileTransformer
 import java.lang.instrument.Instrumentation
+import java.nio.file.Paths
+import kotlin.io.path.pathString
 
 object TestInstrumentationAgent {
     @JvmStatic
@@ -51,7 +53,18 @@ object TestInstrumentationAgent {
             .readLines()
             .filter(String::isNotEmpty)
 
-        UndeclaredInputsGuard.initialize(rootDir, buildDir, declaredInputs);
+        val nativeHome = System.getProperty("kotlin.internal.native.test.nativeHome")?.let(Paths::get)
+        val nativeTestTarget = System.getProperty("kotlin.internal.native.test.target")
+        val klibCacheDir = nativeHome?.resolve("klib/cache")
+        val klibStdlibCacheDir = klibCacheDir?.resolve("$nativeTestTarget-gSTATIC-system/stdlib-per-file-cache")
+
+        UndeclaredInputsGuard.initialize(
+            rootDir,
+            buildDir,
+            klibCacheDir?.pathString,
+            klibStdlibCacheDir?.pathString,
+            declaredInputs
+        )
     }
 
     /**

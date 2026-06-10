@@ -4,13 +4,6 @@ plugins {
     kotlin("jvm")
 }
 
-dependencies {
-    compileOnly(libs.intellij.asm)
-
-    implementation(kotlinStdlib())
-    implementation(libs.bytebuddy)
-}
-
 sourceSets {
     "bootClasspath" {
         java.srcDirs("bootClasspath")
@@ -26,6 +19,16 @@ sourceSets {
         compileClasspath += sourceSets["bootClasspath"].output
         runtimeClasspath += sourceSets["bootClasspath"].output
     }
+}
+
+val bootClasspathCompileOnly by configurations.getting
+
+dependencies {
+    compileOnly(libs.intellij.asm)
+    bootClasspathCompileOnly(libs.org.jetbrains.annotations)
+
+    implementation(kotlinStdlib())
+    implementation(libs.bytebuddy)
 }
 
 val agentJar by task<ShadowJar> {
