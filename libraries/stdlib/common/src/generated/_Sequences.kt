@@ -1469,13 +1469,14 @@ public fun <T> Sequence<T>.allDistinct(): Boolean {
 public inline fun <T, K> Sequence<T>.allDistinctBy(selector: (T) -> K): Boolean {
     val iterator = iterator()
     if (!iterator.hasNext()) return true
-    val first = iterator.next()
+    var element = iterator.next()
     if (!iterator.hasNext()) return true
     val seen = HashSet<K>()
-    seen.add(selector(first))
-    do {
-        if (!seen.add(selector(iterator.next()))) return false
-    } while (iterator.hasNext())
+    while (true) {
+        if (!seen.add(selector(element))) return false
+        if (!iterator.hasNext()) break
+        element = iterator.next()
+    }
     return true
 }
 
