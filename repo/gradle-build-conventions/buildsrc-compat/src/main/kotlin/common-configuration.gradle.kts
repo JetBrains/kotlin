@@ -375,7 +375,6 @@ fun Project.configureTests() {
             ":native:objcexport-header-generator-analysis-api",
             ":native:objcexport-header-generator-k1",
 
-            ":native:unsafe-mem", // KTI-3068.
             ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
             ":plugins:scripting:scripting-tests",
             ":repo:artifacts-tests",
