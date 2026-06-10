@@ -49,17 +49,24 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             emulator.startAdbServer()
 
             val emulatorJob = launch { emulator.runEmulator() }
-            val logcatJob = launch { emulator.printLog() }
 
             try {
                 emulator.waitEmulatorStart()
                 emulator.waitForInstallStabilization()
 
-                for (flavor in flavorsToRun) {
-                    installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
-                    val className = flavor.capitalizeAsciiOnly()
-                    runTestsOnEmulator(emulator, className, TestSuite(className)).apply {
-                        rootSuite.addTest(this)
+                val logcatJob = launch { emulator.printLog() }
+
+                try {
+                    for (flavor in flavorsToRun) {
+                        installAndroidDebugTestWithRetry(gradleRunner, emulator, flavor)
+                        val className = flavor.capitalizeAsciiOnly()
+                        runTestsOnEmulator(emulator, className, TestSuite(className)).apply {
+                            rootSuite.addTest(this)
+                        }
+                    }
+                } finally {
+                    withContext(NonCancellable) {
+                        logcatJob.cancelAndJoin()
                     }
                 }
             } catch (e: RuntimeException) {
@@ -67,7 +74,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 throw e
             } finally {
                 withContext(NonCancellable) {
-                    logcatJob.cancelAndJoin()
                     emulatorJob.cancelAndJoin()
                     emulator.stopAdbServer()
                 }
