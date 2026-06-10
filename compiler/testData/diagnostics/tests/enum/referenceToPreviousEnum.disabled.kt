@@ -1,10 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +FixedUninitializedEnumCompanionCheck
+// LANGUAGE_FEATURE_TOGGLED: FixedUninitializedEnumCompanionCheck
 
 enum class E(val higherPriority: E?) {
     Foo(null),
     Bar(Foo),
-    Baz(E.Foo),
+    Baz(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.Foo),
     Qux(<!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>),
     Quux(<!UNINITIALIZED_ENUM_COMPANION!>E<!>.companionProp) {
         init {
