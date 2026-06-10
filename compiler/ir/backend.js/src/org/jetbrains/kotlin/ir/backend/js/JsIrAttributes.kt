@@ -83,11 +83,6 @@ var IrValueDeclaration.valueParameterForOldEnumConstructor: IrValueParameter? by
 var IrEnumEntry.correspondingField: IrField? by irAttribute(copyByDefault = false)
 var IrField.correspondingEnumEntry: IrEnumEntry? by irAttribute(copyByDefault = false)
 
-/**
- * If the object being lowered is nested inside an enum class, we want to also initialize the enum entries when initializing the object.
- */
-var IrClass.initEntryInstancesFun: IrSimpleFunction? by irAttribute(copyByDefault = false)
-
 var IrClass.hasPureInitialization: Boolean? by irAttribute(copyByDefault = false)
 
 /**
@@ -119,7 +114,7 @@ var IrClass.staticInitializer: IrSimpleFunction? by irAttribute(copyByDefault = 
 
 /**
  * Marks that [org.jetbrains.kotlin.ir.backend.js.lower.JsStaticInitializersLowering] has already processed this class.
- * The attribute exist to process each class no more than 1 time, regardless of module lowering instance that processed static initializer
+ * The attribute exist to process each class no more than once, regardless of module lowering instance that processed static initializer
  * of specific class.
  */
 internal var IrClass.staticInitializerProcessed: Boolean by irFlag(copyByDefault = false)

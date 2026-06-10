@@ -190,7 +190,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::AnnotationConstructorLowering,
     ::EnumEntryInstancesLowering,
     ::EnumEntryInstancesBodyLowering,
-    ::EnumClassCreateInitializerLowering,
     ::EnumEntryCreateGetInstancesFunsLowering,
     ::EnumSyntheticFunctionsAndPropertiesLowering,
     ::ObjectDeclarationLowering,

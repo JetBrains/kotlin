@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -14,8 +13,10 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.correspondingField
+import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitializer
@@ -79,10 +80,9 @@ import org.jetbrains.kotlin.name.Name
  */
 @PhasePrerequisites(
     ObjectDeclarationLowering::class,
-    EnumClassCreateInitializerLowering::class,
     EnumEntryCreateGetInstancesFunsLowering::class,
 )
-internal class JsStaticInitializersLowering(private val context: JsIrBackendContext) : FileLoweringPass {
+class JsStaticInitializersLowering(private val context: JsCommonBackendContext) : FileLoweringPass {
     companion object {
         val STATIC_FIELD_INITIALIZER by IrStatementOriginImpl
         val STATIC_CLASS_INITIALIZER by IrDeclarationOriginImpl.Synthetic
@@ -117,26 +117,25 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         container.superClass?.let { processDeclarationContainer(it) }
 
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
-        val staticDeclarationsByFields = buildMap {
+        val staticFieldsToInitializers = buildMap {
             for (declaration in container.declarations) {
-                val field = declaration as? IrField ?: (declaration as? IrProperty)?.backingField ?: continue
+                val [field, initializerBody] = when (declaration) {
+                    is IrEnumEntry -> declaration.correspondingField to declaration.initializerExpression
+                    is IrField -> declaration to declaration.initializer
+                    is IrProperty -> declaration.backingField to declaration.backingField?.initializer
+                    else -> null to null
+                }
+                if (field == null || initializerBody == null) continue
                 if (!field.isStatic) continue
-                val initializer = field.initializer?.expression ?: continue
-                put(declaration, field to initializer)
+                put(declaration, field to initializerBody.expression)
             }
         }
 
         val initializers = buildList {
-            // Enum cases initializers always go first.
-            // Call _initEntries in static_init instead of get_instance, to initialize entries when static members got accessed.
-            container.initEntryInstancesFun?.let { initEntries ->
-                add(builder.irCall(initEntries.symbol))
-            }
-
             for (declaration in container.declarations) {
                 when (declaration) {
-                    in staticDeclarationsByFields -> {
-                        staticDeclarationsByFields[declaration]?.let { [field, initializer] ->
+                    in staticFieldsToInitializers -> {
+                        staticFieldsToInitializers[declaration]?.let { [field, initializer] ->
                             val initBuilder = context.irBuiltIns.createIrBuilder(
                                 container.symbol, declaration.startOffset, declaration.endOffset
                             )
@@ -151,7 +150,7 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
                             field.initializer = null
                         }
                     }
-                    is IrClass if declaration.isCompanion && staticDeclarationsByFields.isNotEmpty() -> {
+                    is IrClass if declaration.isCompanion && staticFieldsToInitializers.isNotEmpty() -> {
                         // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
                         // body should be moved to the static_init body to preserve the correct order of initialization.
                         // _getInstance then calls static_init instead.
@@ -175,7 +174,7 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
 
         // It is important to define stable signature via restrictTo to be able to reference static_init of super class
         // defined in a separate module.
-        val staticInitDeclarations = context.irFactory.stageController.restrictTo(container) {
+        val [staticInitCalledField, staticInitFunction] = context.irFactory.stageController.restrictTo(container) {
             val initCalledField = createStaticInitCalledField(container)
             val initFunction = createInitFunction(
                 container = container,
@@ -185,28 +184,21 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
             )
             initCalledField to initFunction
         }
-        val staticInitCalledField = staticInitDeclarations.first
-        val staticInitFunction = staticInitDeclarations.second
 
-        for (declaration in container.declarations.asSequence().filterIsInstance<IrFunction>()) {
-            if (declaration is IrSimpleFunction || declaration is IrConstructor) {
-                if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
-                val body = declaration.body as? IrBlockBody ?: continue
-                staticInitFunction.let { body.statements.add(0, builder.irCall(it.symbol)) }
-            }
-        }
-
-        container.initEntryInstancesFun?.let { initEntries ->
-            // Replace the call to a _initEntries function to a static_init call. This ensures touching enum entries will trigger
-            // static initializers too.
-            container.parent.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-                override fun visitCall(expression: IrCall): IrExpression {
-                    val enclosingFunction = currentFunction?.irElement as? IrSimpleFunction ?: return super.visitCall(expression)
-                    if (expression.symbol == initEntries.symbol && enclosingFunction != staticInitFunction)
-                        return builder.irCall(staticInitFunction.symbol)
-                    return super.visitCall(expression)
+        for (declaration in container.declarations) {
+            when (declaration) {
+                is IrEnumEntry -> {
+                    declaration.getInstanceFun?.let { getInstance ->
+                        val body = getInstance.body as? IrBlockBody
+                        staticInitFunction.let { body?.statements?.add(0, builder.irCall(it.symbol)) }
+                    }
                 }
-            })
+                is IrSimpleFunction, is IrConstructor -> {
+                    if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
+                    val body = declaration.body as? IrBlockBody ?: continue
+                    staticInitFunction.let { body.statements.add(0, builder.irCall(it.symbol)) }
+                }
+            }
         }
 
         // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
