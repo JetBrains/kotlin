@@ -3,7 +3,7 @@ declare namespace JS_TESTS {
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
         const console: Console;
-        const error: CompileError;
+        const error: WebAssembly.CompileError;
         const forth: any/* foo.Forth */;
         function producer(value: number): any/* foo.NonExportedType */;
         function consumer(value: any/* foo.NonExportedType */): number;

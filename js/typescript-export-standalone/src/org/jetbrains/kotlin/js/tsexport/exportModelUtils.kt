@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.*
@@ -87,13 +88,18 @@ private val strictModeReservedWords = setOf(
 
 internal val allReservedWords = reservedWords + strictModeReservedWords
 
-private fun KaAnnotated.getSingleAnnotationArgumentString(annotationClassId: ClassId): String? {
-    val annotation = annotations[annotationClassId].singleOrNull() ?: return null
+private fun KaAnnotationList.getSingleAnnotationArgumentString(annotationClassId: ClassId): String? {
+    val annotation = this[annotationClassId].singleOrNull() ?: return null
     return ((annotation.arguments[0].expression as? KaAnnotationValue.ConstantValue)?.value as? KaConstantValue.StringValue)?.value
 }
 
-private fun KaAnnotated.getJsQualifier(): String? =
+private fun KaAnnotated.getSingleAnnotationArgumentString(annotationClassId: ClassId): String? =
+    annotations.getSingleAnnotationArgumentString(annotationClassId)
+
+private fun KaAnnotationList.getJsQualifier(): String? =
     getSingleAnnotationArgumentString(JsStandardClassIds.Annotations.JsQualifier)
+
+private fun KaAnnotated.getJsQualifier(): String? = annotations.getJsQualifier()
 
 context(_: KaSession)
 private fun KaSymbol.getSingleAnnotationArgumentStringForOverriddenDeclaration(annotationClassId: ClassId): String? {
@@ -182,9 +188,10 @@ internal fun KaNamedSymbol.getExportedFqName(shouldIncludePackage: Boolean, conf
     }
 }
 
+context(_: KaSession)
 private fun KaNamedSymbol.getTopLevelQualifier(shouldIncludePackage: Boolean): FqName {
-    // TODO(KT-82224): Respect file-level @JsQualifier
     val jsQualifier = (this as? KaAnnotated)?.getJsQualifier()
+        ?: (this as? KaDeclarationSymbol)?.containingFileAnnotations?.getJsQualifier()
     if (jsQualifier != null) {
         return FqName(jsQualifier)
     }
