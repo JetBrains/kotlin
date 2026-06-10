@@ -402,6 +402,13 @@ internal fun assertStableResult(
         else -> {}
     }
 
+    val symbols = symbolResolutionAttempt?.symbols?.let { sortedSymbols(it) }.orEmpty()
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+    if (mainElement is KtOperationReferenceExpression) {
+        assertions.assertContainsElements(symbolsFromCall, symbols)
+        return
+    }
+
     assertions.assertNotNull(symbolResolutionAttempt) {
         "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
     }
@@ -409,8 +416,6 @@ internal fun assertStableResult(
     // Cannot check name reference expressions or enum entry super-type references:
     // their symbol-resolution prefers the class while call-resolution maps to the constructor.
     if (mainElement !is KtNameReferenceExpression && mainElement !is KtEnumEntrySuperclassReferenceExpression) {
-        val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-        val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
         assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
     }
 }

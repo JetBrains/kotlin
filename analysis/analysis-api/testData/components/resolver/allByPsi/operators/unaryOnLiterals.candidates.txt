@@ -38,7 +38,7 @@ KtPrefixExpression(24,26): '+1'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(24,25): '+'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -83,7 +83,7 @@ KtPrefixExpression(31,33): '-2'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(31,32): '-'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -128,7 +128,7 @@ KtPrefixExpression(38,41): '+3L'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(38,39): '+'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -173,7 +173,7 @@ KtPrefixExpression(46,49): '-4L'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(46,47): '-'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

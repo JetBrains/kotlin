@@ -113,7 +113,7 @@ KtNameReferenceExpression(142,159): 'ClientTransaction'
   null
 
 KtOperationReferenceExpression(160,162): '+='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -191,7 +191,7 @@ KtNameReferenceExpression(170,187): 'ClientTransaction'
   null
 
 KtOperationReferenceExpression(188,190): '-='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

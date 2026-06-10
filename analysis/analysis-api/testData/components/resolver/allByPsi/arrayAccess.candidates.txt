@@ -218,7 +218,7 @@ KtNameReferenceExpression(40,44): 'list'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(45,47): '+='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -256,7 +256,7 @@ KtOperationReferenceExpression(45,47): '+='
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -295,7 +295,7 @@ KtOperationReferenceExpression(45,47): '+='
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Array<Int>' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -334,7 +334,7 @@ KtOperationReferenceExpression(45,47): '+='
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Iterable<Int>' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -901,7 +901,7 @@ KtConstantExpression(164,165): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(168,170): '+='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1202,7 +1202,7 @@ KtConstantExpression(183,184): '2'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(187,189): '+='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1573,7 +1573,7 @@ KtPrefixExpression(245,254): '--list[i]'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(245,247): '--'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1872,7 +1872,7 @@ KtPrefixExpression(266,277): '++(list[2])'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(266,268): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundArrayAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC

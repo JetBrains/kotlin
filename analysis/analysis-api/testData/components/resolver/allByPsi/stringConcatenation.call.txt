@@ -98,7 +98,7 @@ KtLiteralStringTemplateEntry(31,32): '1'
   null
 
 KtOperationReferenceExpression(34,35): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -140,7 +140,7 @@ KtLiteralStringTemplateEntry(37,38): '2'
   null
 
 KtOperationReferenceExpression(40,41): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

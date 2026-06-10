@@ -37,7 +37,7 @@ KtPrefixExpression(17,48): '-(l1@ +(@Anno(33) (-(-(+1L)))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(17,18): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -89,7 +89,7 @@ KtPrefixExpression(23,47): '+(@Anno(33) (-(-(+1L))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(23,24): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -252,7 +252,7 @@ KtPrefixExpression(36,45): '-(-(+1L))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(36,37): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -295,7 +295,7 @@ KtPrefixExpression(38,44): '-(+1L)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(38,39): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -338,7 +338,7 @@ KtPrefixExpression(40,43): '+1L'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(40,41): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -381,7 +381,7 @@ KtPrefixExpression(54,84): '-(l2@ +(@Anno(44) (-(-(+2)))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(54,55): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -433,7 +433,7 @@ KtPrefixExpression(60,83): '+(@Anno(44) (-(-(+2))))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(60,61): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -506,7 +506,7 @@ KtPrefixExpression(73,81): '-(-(+2))'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(73,74): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -549,7 +549,7 @@ KtPrefixExpression(75,80): '-(+2)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(75,76): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -592,7 +592,7 @@ KtPrefixExpression(77,79): '+2'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(77,78): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

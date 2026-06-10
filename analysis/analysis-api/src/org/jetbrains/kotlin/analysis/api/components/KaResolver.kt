@@ -26,17 +26,20 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
      *
      * @see KaSymbolResolutionSuccess
      * @see KaSymbolResolutionError
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -50,16 +53,19 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * @see tryResolveSymbols
      * @see resolveSymbol
      * @see KaSymbolResolutionSuccess
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -72,16 +78,19 @@ public interface KaResolver : KaSessionComponent {
      *
      * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
      *
-     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
-     * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+     * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+     * - [KtNameReferenceExpression]
+     * - [KtOperationReferenceExpression]
+     * - [KtEnumEntrySuperclassReferenceExpression]
+     *
+     * For which the behavior could be different depending on the context.
      *
      * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
-     * and not the parent call. For more details, see [KtNameReferenceExpression].
+     * and not the parent call. For more details, see the mentioned elements.
      *
      * @see tryResolveSymbols
      * @see resolveSymbols
      * @see KaSymbolResolutionSuccess
-     * @see KtNameReferenceExpression
      */
     @KaExperimentalApi
     @OptIn(KtExperimentalApi::class)
@@ -1323,17 +1332,20 @@ public interface KaResolver : KaSessionComponent {
  *
  * In contract to [tryResolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [tryResolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
  * @see KaSymbolResolutionSuccess
  * @see KaSymbolResolutionError
- * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -1354,16 +1366,19 @@ public fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? {
  *
  * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [resolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
  * @see resolveSymbol
  * @see KaSymbolResolutionSuccess
- * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
@@ -1383,16 +1398,19 @@ public fun KtResolvable.resolveSymbols(): Collection<KaSymbol> {
  *
  * In contract to [resolveCall], it could represent any [KaSymbol], not only [KaCallableSymbol].
  *
- * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exception is
- * [KtNameReferenceExpression] for which the behavior could be different depending on the context.
+ * In most cases, a not-null result of [resolveCall] will represent the same symbol. The only exceptions are:
+ * - [KtNameReferenceExpression]
+ * - [KtOperationReferenceExpression]
+ * - [KtEnumEntrySuperclassReferenceExpression]
+ *
+ * For which the behavior could be different depending on the context.
  *
  * The main idea is that [resolveSymbol] could represent more cases, so it prefers exactly the referenced symbol
- * and not the parent call. For more details, see [KtNameReferenceExpression].
+ * and not the parent call. For more details, see the mentioned elements.
  *
  * @see tryResolveSymbols
  * @see resolveSymbols
  * @see KaSymbolResolutionSuccess
- * @see KtNameReferenceExpression
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi

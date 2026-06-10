@@ -950,7 +950,7 @@ KtNameReferenceExpression(119,128): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(129,130): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -1135,7 +1135,7 @@ KtNameReferenceExpression(147,156): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(157,159): '+='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -1340,7 +1340,7 @@ KtNameReferenceExpression(176,185): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(185,187): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1424,7 +1424,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(192,194): '--'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -1672,7 +1672,7 @@ KtNameReferenceExpression(219,228): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(228,230): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1840,7 +1840,7 @@ KtNameReferenceExpression(236,245): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(246,248): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1989,7 +1989,7 @@ KtNameReferenceExpression(254,263): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(265,266): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
@@ -2163,7 +2163,7 @@ KtNameReferenceExpression(284,293): 'something'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(295,296): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

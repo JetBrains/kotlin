@@ -161,7 +161,7 @@ KtPrefixExpression(215,217): '+A'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(215,216): '+'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -222,7 +222,7 @@ KtPrefixExpression(222,224): '-A'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(222,223): '-'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -283,7 +283,7 @@ KtPrefixExpression(229,231): '!A'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(229,230): '!'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -344,7 +344,7 @@ KtPrefixExpression(236,239): '++A'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(236,238): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -389,7 +389,7 @@ KtPrefixExpression(244,247): '--A'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(244,246): '--'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -437,7 +437,7 @@ KtNameReferenceExpression(252,253): 'A'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(253,255): '++'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -482,7 +482,7 @@ KtNameReferenceExpression(260,261): 'A'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(261,263): '--'
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

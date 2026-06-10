@@ -33,8 +33,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     final override fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? = withValidityAssertion {
         when (this) {
-            is KtResolvableCall -> tryResolveSymbolsForResolvableCall()
             is KtOperationReferenceExpression -> tryResolveSymbolsForOperationReference()
+            is KtResolvableCall -> tryResolveSymbolsForResolvableCall()
             is KtElement -> tryResolveSymbolsForElement()
             else -> null
         }
@@ -76,8 +76,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
      * @see tryResolveSymbolsForResolvableCall
      */
     private fun KtOperationReferenceExpression.tryResolveSymbolsForOperationReference(): KaSymbolResolutionAttempt? {
-        val resolvableCall = parent as? KtResolvableCall ?: return null
-        return when (val callAttempt = resolvableCall.tryResolveCall()) {
+        return when (val callAttempt = tryResolveCall()) {
             is KaCallResolutionError -> callAttempt.toSingleSymbolResolutionAttempt()
 
             // Single variable access is not expected to be a result of the symbol resolve (the assignment use case)
@@ -326,8 +325,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 
     private fun KtElement.unwrapResolvableCall(): KtElement? = when (this) {
-        // Most likely we will drop call resolution for operators, and only resolveSymbol will be available for them.
-        // Call resolution API is available on a parent expression (like binary or unary operator)
         is KtOperationReferenceExpression -> parent as? KtElement
         else -> this
     }?.takeIf(::canBeResolvedAsCall)

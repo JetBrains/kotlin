@@ -206,7 +206,7 @@ KtNameReferenceExpression(211,214): 'baz'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(215,216): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -357,7 +357,7 @@ KtNameReferenceExpression(229,232): 'baz'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(233,234): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -637,7 +637,7 @@ KtNameReferenceExpression(327,330): 'baz'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(331,332): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -788,7 +788,7 @@ KtNameReferenceExpression(349,352): 'baz'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(353,354): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -948,7 +948,7 @@ KtNameReferenceExpression(377,380): 'foo'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(381,382): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:
@@ -1099,7 +1099,7 @@ KtNameReferenceExpression(399,402): 'foo'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(403,404): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaSmartCastedReceiverValue:

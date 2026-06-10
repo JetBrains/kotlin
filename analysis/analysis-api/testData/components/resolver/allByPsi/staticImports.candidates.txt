@@ -1036,7 +1036,7 @@ KtNameReferenceExpression(899,902): 'doo'
     isInBestCandidates = true
 
 KtOperationReferenceExpression(903,904): '='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

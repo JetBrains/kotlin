@@ -1006,7 +1006,7 @@ KtValueArgumentList(992,994): '()'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(995,997): '=='
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

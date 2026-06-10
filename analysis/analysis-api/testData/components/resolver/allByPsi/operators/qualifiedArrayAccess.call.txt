@@ -1949,7 +1949,7 @@ KtNameReferenceExpression(820,825): 'child'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(826,828): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

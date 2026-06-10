@@ -615,7 +615,7 @@ KtConstantExpression(231,232): '0'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(233,234): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -652,7 +652,7 @@ KtOperationReferenceExpression(233,234): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -689,7 +689,7 @@ KtOperationReferenceExpression(233,234): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -726,7 +726,7 @@ KtOperationReferenceExpression(233,234): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -762,7 +762,7 @@ KtOperationReferenceExpression(233,234): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -799,7 +799,7 @@ KtOperationReferenceExpression(233,234): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1212,7 +1212,7 @@ KtConstantExpression(253,254): '1'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(255,256): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1249,7 +1249,7 @@ KtOperationReferenceExpression(255,256): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1286,7 +1286,7 @@ KtOperationReferenceExpression(255,256): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1323,7 +1323,7 @@ KtOperationReferenceExpression(255,256): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1359,7 +1359,7 @@ KtOperationReferenceExpression(255,256): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1396,7 +1396,7 @@ KtOperationReferenceExpression(255,256): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1809,7 +1809,7 @@ KtConstantExpression(275,276): '2'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(277,278): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1846,7 +1846,7 @@ KtOperationReferenceExpression(277,278): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1883,7 +1883,7 @@ KtOperationReferenceExpression(277,278): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1920,7 +1920,7 @@ KtOperationReferenceExpression(277,278): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1956,7 +1956,7 @@ KtOperationReferenceExpression(277,278): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1993,7 +1993,7 @@ KtOperationReferenceExpression(277,278): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2422,7 +2422,7 @@ KtConstantExpression(316,317): '4'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(318,319): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2459,7 +2459,7 @@ KtOperationReferenceExpression(318,319): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2496,7 +2496,7 @@ KtOperationReferenceExpression(318,319): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2533,7 +2533,7 @@ KtOperationReferenceExpression(318,319): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2569,7 +2569,7 @@ KtOperationReferenceExpression(318,319): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2606,7 +2606,7 @@ KtOperationReferenceExpression(318,319): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3019,7 +3019,7 @@ KtConstantExpression(340,341): '5'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(342,343): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3056,7 +3056,7 @@ KtOperationReferenceExpression(342,343): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3093,7 +3093,7 @@ KtOperationReferenceExpression(342,343): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3130,7 +3130,7 @@ KtOperationReferenceExpression(342,343): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3166,7 +3166,7 @@ KtOperationReferenceExpression(342,343): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3203,7 +3203,7 @@ KtOperationReferenceExpression(342,343): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6013,7 +6013,7 @@ KtConstantExpression(406,407): '6'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(408,409): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6050,7 +6050,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6087,7 +6087,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6124,7 +6124,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6161,7 +6161,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6198,7 +6198,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6235,7 +6235,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6272,7 +6272,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigDecimal.plus(other: BigDecimal): BigDecimal' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6309,7 +6309,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigInteger.plus(other: BigInteger): BigInteger' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6346,7 +6346,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(element: T): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6383,7 +6383,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Array<out T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6420,7 +6420,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Collection<T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6457,7 +6457,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(element: Boolean): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6494,7 +6494,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: BooleanArray): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6531,7 +6531,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6568,7 +6568,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(element: Byte): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6605,7 +6605,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: ByteArray): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6642,7 +6642,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: Collection<Byte>): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6679,7 +6679,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Char.plus(other: String): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6716,7 +6716,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(element: Char): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6753,7 +6753,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: CharArray): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6790,7 +6790,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: Collection<Char>): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6827,7 +6827,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(element: Double): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6864,7 +6864,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: DoubleArray): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6901,7 +6901,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: Collection<Double>): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6938,7 +6938,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(element: Float): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -6975,7 +6975,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: FloatArray): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7012,7 +7012,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: Collection<Float>): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7049,7 +7049,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(element: Int): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7086,7 +7086,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: IntArray): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7123,7 +7123,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: Collection<Int>): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7160,7 +7160,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(element: Long): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7197,7 +7197,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: LongArray): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7234,7 +7234,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: Collection<Long>): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7271,7 +7271,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(element: Short): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7308,7 +7308,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: ShortArray): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7345,7 +7345,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: Collection<Short>): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7382,7 +7382,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun String?.plus(other: Any?): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7419,7 +7419,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(element: UByte): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7456,7 +7456,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: UByteArray): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7493,7 +7493,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: Collection<UByte>): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7530,7 +7530,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(element: UInt): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7567,7 +7567,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: UIntArray): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7604,7 +7604,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: Collection<UInt>): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7641,7 +7641,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(element: ULong): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7678,7 +7678,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: ULongArray): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7715,7 +7715,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: Collection<ULong>): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7752,7 +7752,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(element: UShort): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7789,7 +7789,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: UShortArray): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7826,7 +7826,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: Collection<UShort>): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7863,7 +7863,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7900,7 +7900,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7937,7 +7937,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -7974,7 +7974,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8011,7 +8011,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8048,7 +8048,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8085,7 +8085,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8122,7 +8122,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8159,7 +8159,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8196,7 +8196,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8233,7 +8233,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8270,7 +8270,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8307,7 +8307,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8344,7 +8344,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(element: T): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8381,7 +8381,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Array<out T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8418,7 +8418,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8455,7 +8455,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8492,7 +8492,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(element: T): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8529,7 +8529,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -8566,7 +8566,7 @@ KtOperationReferenceExpression(408,409): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11348,7 +11348,7 @@ KtConstantExpression(428,429): '7'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(430,431): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11385,7 +11385,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11422,7 +11422,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11459,7 +11459,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11496,7 +11496,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11533,7 +11533,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11570,7 +11570,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11607,7 +11607,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigDecimal.plus(other: BigDecimal): BigDecimal' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11644,7 +11644,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigInteger.plus(other: BigInteger): BigInteger' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11681,7 +11681,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(element: T): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11718,7 +11718,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Array<out T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11755,7 +11755,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Collection<T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11792,7 +11792,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(element: Boolean): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11829,7 +11829,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: BooleanArray): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11866,7 +11866,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11903,7 +11903,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(element: Byte): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11940,7 +11940,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: ByteArray): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -11977,7 +11977,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: Collection<Byte>): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12014,7 +12014,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Char.plus(other: String): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12051,7 +12051,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(element: Char): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12088,7 +12088,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: CharArray): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12125,7 +12125,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: Collection<Char>): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12162,7 +12162,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(element: Double): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12199,7 +12199,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: DoubleArray): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12236,7 +12236,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: Collection<Double>): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12273,7 +12273,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(element: Float): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12310,7 +12310,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: FloatArray): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12347,7 +12347,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: Collection<Float>): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12384,7 +12384,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(element: Int): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12421,7 +12421,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: IntArray): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12458,7 +12458,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: Collection<Int>): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12495,7 +12495,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(element: Long): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12532,7 +12532,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: LongArray): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12569,7 +12569,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: Collection<Long>): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12606,7 +12606,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(element: Short): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12643,7 +12643,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: ShortArray): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12680,7 +12680,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: Collection<Short>): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12717,7 +12717,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun String?.plus(other: Any?): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12754,7 +12754,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(element: UByte): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12791,7 +12791,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: UByteArray): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12828,7 +12828,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: Collection<UByte>): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12865,7 +12865,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(element: UInt): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12902,7 +12902,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: UIntArray): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12939,7 +12939,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: Collection<UInt>): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -12976,7 +12976,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(element: ULong): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13013,7 +13013,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: ULongArray): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13050,7 +13050,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: Collection<ULong>): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13087,7 +13087,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(element: UShort): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13124,7 +13124,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: UShortArray): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13161,7 +13161,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: Collection<UShort>): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13198,7 +13198,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13235,7 +13235,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13272,7 +13272,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13309,7 +13309,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13346,7 +13346,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13383,7 +13383,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13420,7 +13420,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13457,7 +13457,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13494,7 +13494,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13531,7 +13531,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13568,7 +13568,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13605,7 +13605,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13642,7 +13642,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13679,7 +13679,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(element: T): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13716,7 +13716,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Array<out T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13753,7 +13753,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13790,7 +13790,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13827,7 +13827,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(element: T): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13864,7 +13864,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13901,7 +13901,7 @@ KtOperationReferenceExpression(430,431): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16683,7 +16683,7 @@ KtConstantExpression(450,451): '8'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(452,453): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16720,7 +16720,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Double' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16757,7 +16757,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Float' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16794,7 +16794,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Byte' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16831,7 +16831,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16868,7 +16868,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Short' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16905,7 +16905,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Long' was expected.>
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16942,7 +16942,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigDecimal.plus(other: BigDecimal): BigDecimal' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -16979,7 +16979,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BigInteger.plus(other: BigInteger): BigInteger' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17016,7 +17016,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(element: T): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17053,7 +17053,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Array<out T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17090,7 +17090,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Array<T>.plus(elements: Collection<T>): Array<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17127,7 +17127,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(element: Boolean): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17164,7 +17164,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: BooleanArray): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17201,7 +17201,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17238,7 +17238,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(element: Byte): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17275,7 +17275,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: ByteArray): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17312,7 +17312,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ByteArray.plus(elements: Collection<Byte>): ByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17349,7 +17349,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun Char.plus(other: String): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17386,7 +17386,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(element: Char): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17423,7 +17423,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: CharArray): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17460,7 +17460,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun CharArray.plus(elements: Collection<Char>): CharArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17497,7 +17497,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(element: Double): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17534,7 +17534,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: DoubleArray): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17571,7 +17571,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun DoubleArray.plus(elements: Collection<Double>): DoubleArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17608,7 +17608,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(element: Float): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17645,7 +17645,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: FloatArray): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17682,7 +17682,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun FloatArray.plus(elements: Collection<Float>): FloatArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17719,7 +17719,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(element: Int): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17756,7 +17756,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: IntArray): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17793,7 +17793,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun IntArray.plus(elements: Collection<Int>): IntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17830,7 +17830,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(element: Long): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17867,7 +17867,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: LongArray): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17904,7 +17904,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun LongArray.plus(elements: Collection<Long>): LongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17941,7 +17941,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(element: Short): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -17978,7 +17978,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: ShortArray): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18015,7 +18015,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ShortArray.plus(elements: Collection<Short>): ShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18052,7 +18052,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun String?.plus(other: Any?): String' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18089,7 +18089,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(element: UByte): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18126,7 +18126,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: UByteArray): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18163,7 +18163,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UByteArray.plus(elements: Collection<UByte>): UByteArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18200,7 +18200,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(element: UInt): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18237,7 +18237,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: UIntArray): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18274,7 +18274,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UIntArray.plus(elements: Collection<UInt>): UIntArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18311,7 +18311,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(element: ULong): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18348,7 +18348,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: ULongArray): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18385,7 +18385,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun ULongArray.plus(elements: Collection<ULong>): ULongArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18422,7 +18422,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(element: UShort): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18459,7 +18459,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: UShortArray): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18496,7 +18496,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun UShortArray.plus(elements: Collection<UShort>): UShortArray' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18533,7 +18533,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18570,7 +18570,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18607,7 +18607,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18644,7 +18644,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Collection<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18681,7 +18681,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(element: T): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18718,7 +18718,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Array<out T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18755,7 +18755,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18792,7 +18792,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18829,7 +18829,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(map: Map<out K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18866,7 +18866,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pair: Pair<K, V>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18903,7 +18903,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Array<out Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18940,7 +18940,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -18977,7 +18977,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <K, V> Map<out K, V>.plus(pairs: Sequence<Pair<K, V>>): Map<K, V>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19014,7 +19014,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(element: T): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19051,7 +19051,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Array<out T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19088,7 +19088,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Iterable<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19125,7 +19125,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Set<T>.plus(elements: Sequence<T>): Set<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19162,7 +19162,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(element: T): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19199,7 +19199,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19236,7 +19236,7 @@ KtOperationReferenceExpression(452,453): '+'
     diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Candidate 'fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T>' is inapplicable because of a receiver type mismatch.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19673,7 +19673,7 @@ KtConstantExpression(565,566): '9'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(567,568): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19710,7 +19710,7 @@ KtOperationReferenceExpression(567,568): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19747,7 +19747,7 @@ KtOperationReferenceExpression(567,568): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19784,7 +19784,7 @@ KtOperationReferenceExpression(567,568): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19820,7 +19820,7 @@ KtOperationReferenceExpression(567,568): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -19857,7 +19857,7 @@ KtOperationReferenceExpression(567,568): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20289,7 +20289,7 @@ KtConstantExpression(589,591): '10'
   NO_CANDIDATES
 
 KtOperationReferenceExpression(592,593): '+'
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20326,7 +20326,7 @@ KtOperationReferenceExpression(592,593): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Double' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20363,7 +20363,7 @@ KtOperationReferenceExpression(592,593): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Float' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20400,7 +20400,7 @@ KtOperationReferenceExpression(592,593): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Byte' was expected.>
     isInBestCandidates = false
 
-  KaApplicableCallCandidateInfo:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20436,7 +20436,7 @@ KtOperationReferenceExpression(592,593): '+'
       }
     isInBestCandidates = true
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -20473,7 +20473,7 @@ KtOperationReferenceExpression(592,593): '+'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'Short' was expected.>
     isInBestCandidates = false
 
-  KaInapplicableCallCandidateInfo:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

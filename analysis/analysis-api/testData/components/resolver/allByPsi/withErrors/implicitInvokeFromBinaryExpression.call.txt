@@ -155,7 +155,7 @@ KtNameReferenceExpression(66,67): 'n'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(68,71): 'bar'
-  KaErrorCallInfo:
+  KaCallResolutionError:
     candidateCalls = [
       KaImplicitInvokeCall:
         contextArgumentMapping = {}
@@ -260,7 +260,7 @@ KtNameReferenceExpression(73,74): 'n'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(75,76): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
