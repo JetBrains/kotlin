@@ -200,12 +200,14 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         return isInline && !isNoinline && !isCrossinline && returnTypeRef.coneType.isNonReflectFunctionType(session)
     }
 
-    private fun FirExpression.qualifiedAccessSymbol(): FirCallableSymbol<*>? =
-        when (val callee = (unwrapArgument() as? FirQualifiedAccessExpression)?.calleeReference) {
+    private fun FirExpression.qualifiedAccessSymbol(): FirCallableSymbol<*>? {
+        val unwrapped = unwrapArgument().let { (it as? FirCheckedSafeCallSubject)?.originalReceiverRef?.value ?: it }
+        return when (val callee = (unwrapped as? FirQualifiedAccessExpression)?.calleeReference) {
             is FirResolvedNamedReference -> callee.resolvedSymbol as? FirCallableSymbol
             is FirThisReference -> (callee.boundSymbol as? FirReceiverParameterSymbol)?.containingDeclarationSymbol as? FirCallableSymbol
             else -> null
         }
+    }
 }
 
 private typealias LambdaInvocationEvent = FirBasedSymbol<*>

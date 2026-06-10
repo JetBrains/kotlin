@@ -31,10 +31,11 @@ import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
@@ -43,6 +44,8 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private const val INVALID_CONTRACT_BLOCK = "Contract block could not be resolved"
     private const val CALLS_IN_PLACE_ON_CONTEXT_PARAMETER =
         "callsInPlace contract cannot be applied to context parameter because context arguments can never be lambdas."
+    private const val CALLS_IN_PLACE_ON_NULLABLE_LAMBDA =
+        "callsInPlace contract with EXACTLY_ONCE or AT_LEAST_ONCE kind cannot be applied to a nullable lambda."
     private const val CONDITIONAL_RETURNS_EXPRESSION_NOT_SUPPORTED =
         "Arbitrary expressions are not supported in this contract, only 'null'` and 'is' checks are supported"
 
@@ -66,6 +69,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 checkUnresolvedEffects(contractDescription, declaration)
                 checkDuplicateCallsInPlace(contractDescription)
                 checkComplexArgumentConditions(contractDescription)
+                checkCallsInPlaceOnNullableLambda(contractDescription, declaration)
                 if (declaration.contextParameters.isNotEmpty()) {
                     checkCallsInPlaceOnContextParameter(contractDescription, declaration.valueParameters.size)
                 }
@@ -231,6 +235,27 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (effect !is ConeCallsEffectDeclaration) continue
             if (effect.valueParameterReference.parameterIndex >= valueParametersCount) {
                 reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, CALLS_IN_PLACE_ON_CONTEXT_PARAMETER)
+            }
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkCallsInPlaceOnNullableLambda(
+        description: FirResolvedContractDescription,
+        declaration: FirFunction,
+    ) {
+        for (effectDeclaration in description.effects) {
+            val effect = effectDeclaration.effect
+            if (effect !is ConeCallsEffectDeclaration) continue
+            if (!effect.kind.isDefinitelyVisited()) continue
+
+            val coneType = when (val index = effect.valueParameterReference.parameterIndex) {
+                -1 -> declaration.receiverParameter?.typeRef?.coneType
+                in declaration.valueParameters.indices -> declaration.valueParameters[index].returnTypeRef.coneType
+                else -> null
+            } ?: continue
+            if (coneType.isMarkedNullable) {
+                reporter.reportOn(description.source, FirErrors.ERROR_IN_CONTRACT_DESCRIPTION, CALLS_IN_PLACE_ON_NULLABLE_LAMBDA)
             }
         }
     }
@@ -427,3 +452,4 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         }
     }
 }
+

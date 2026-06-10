@@ -94,7 +94,7 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceExactlyOnceContract
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
-    @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+    @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>?, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
 
     /**
      * Specifies the effect that will be observed if the condition passed as a receiver argument holds.
