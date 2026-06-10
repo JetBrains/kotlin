@@ -28,10 +28,10 @@ dependencies {
     api("com.jetbrains.intellij.platform:core:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:core-impl:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:extensions:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-frontback-psi:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-psi:$intellijVersion") { isTransitive = false }
-    api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
+    //api("com.jetbrains.intellij.java:java-frontback-psi:$intellijVersion") { isTransitive = false }
+    //api("com.jetbrains.intellij.java:java-frontback-psi-impl:$intellijVersion") { isTransitive = false }
+    //api("com.jetbrains.intellij.java:java-psi:$intellijVersion") { isTransitive = false }
+    //api("com.jetbrains.intellij.java:java-psi-impl:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:diagnostic-telemetry:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:util-progress:$intellijVersion") { isTransitive = false }
