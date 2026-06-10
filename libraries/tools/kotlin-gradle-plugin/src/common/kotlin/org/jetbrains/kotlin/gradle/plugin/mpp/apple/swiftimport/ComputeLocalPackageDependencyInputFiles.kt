@@ -77,7 +77,7 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
     private fun findLocalPackageSources(path: Path): List<Path> {
         val jsonBuffer = ByteArrayOutputStream()
         execOps.exec { exec ->
-            exec.workingDir(path.toFile())
+            exec.workingDir(path)
             exec.standardOutput = jsonBuffer
             exec.commandLine("swift", "package", "describe", "--type", "json")
             exec.environment.keys.filter {

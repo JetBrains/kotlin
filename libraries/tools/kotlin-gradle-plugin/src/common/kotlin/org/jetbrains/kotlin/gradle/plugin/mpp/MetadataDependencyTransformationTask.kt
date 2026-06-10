@@ -31,6 +31,9 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.isDirectory
 
 /* Keep typealias for source compatibility */
 @Suppress("unused")
@@ -180,10 +183,10 @@ abstract class MetadataDependencyTransformationTask
             },
         )
 
-        if (Files.isDirectory(outputsDirPath)) {
-            outputsDirPath.toFile().deleteRecursively()
+        if (outputsDirPath.isDirectory()) {
+            outputsDirPath.deleteExisting()
         }
-        Files.createDirectories(outputsDirPath)
+        outputsDirPath.createDirectories()
 
         val metadataDependencyResolutions = transformation.metadataDependencyResolutions
         val transformedLibrariesRecords = metadataDependencyResolutions.toTransformedLibrariesRecords()

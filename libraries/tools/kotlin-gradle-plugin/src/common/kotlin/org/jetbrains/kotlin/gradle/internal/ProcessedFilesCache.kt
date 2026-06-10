@@ -15,6 +15,10 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 /**
  * Cache for preventing processing some files twice.
@@ -160,17 +164,17 @@ internal open class ProcessedFilesCache(
     private val state: State
 
     init {
-        Files.createDirectories(targetDir)
+        targetDir.createDirectories()
 
-        state = (if (Files.exists(stateFile)) {
+        state = (if (stateFile.exists()) {
             try {
-                Files.newBufferedReader(stateFile).use { reader ->
+                stateFile.bufferedReader().use { reader ->
                     GsonBuilder().setPrettyPrinting().create().newJsonReader(reader).use { readFrom(it) }
                 }
             } catch (e: Throwable) {
                 System.err.println("Cannot read $stateFile")
                 e.printStackTrace()
-                if (Files.exists(targetDir)) {
+                if (targetDir.exists()) {
                     targetDir.toFile().deleteRecursively()
                 }
                 null
@@ -214,12 +218,12 @@ internal open class ProcessedFilesCache(
 
     private fun checkTarget(target: String?): Boolean {
         if (target == null) return true
-        return Files.exists(targetDir.resolve(target))
+        return targetDir.resolve(target).exists()
     }
 
     override fun close() {
-        Files.createDirectories(stateFile.parent)
-        Files.newBufferedWriter(stateFile).use { writer ->
+        stateFile.parent.createDirectories()
+        stateFile.bufferedWriter().use { writer ->
             GsonBuilder().setPrettyPrinting().create().newJsonWriter(writer).use {
                 state.writeTo(it)
             }

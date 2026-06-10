@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.file.Path
+import kotlin.io.path.pathString
 
 internal open class JsonElementBacked {
     @Transient
@@ -218,7 +219,7 @@ internal fun deserializeXcodeProject(
         it.commandLine(
             "/usr/bin/plutil",
             "-convert", "json",
-            pbxprojPath.toFile(),
+            pbxprojPath.pathString,
             "-o", "-"
         )
     }

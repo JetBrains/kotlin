@@ -47,9 +47,8 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.io.ObjectInputStream
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
+import kotlin.io.path.*
 import kotlin.io.readLines
 import kotlin.io.resolve
 
@@ -758,9 +757,9 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
 internal fun searchForGradlew(path: Path?): Path? {
     if (path == null) return null
-    Files.list(path).use { paths ->
-        paths.filter { it.fileName.toString() == "gradlew" }.findFirst().orElse(null)?.let { return it }
-    }
+    path.listDirectoryEntries()
+        .firstOrNull { it.name == "gradlew" }
+        ?.let { return it }
     return searchForGradlew(path.parent)
 }
 

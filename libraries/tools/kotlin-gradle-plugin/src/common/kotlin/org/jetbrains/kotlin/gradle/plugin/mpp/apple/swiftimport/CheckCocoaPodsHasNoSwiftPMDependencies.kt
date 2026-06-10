@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.*
 
 @DisableCachingByDefault(because = "No outputs to cache")
 internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
@@ -49,9 +50,9 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
         val transitiveSwiftPMDependencies = transitiveSwiftPMDependencies.get().metadataByDependencyIdentifier
         if (directSwiftPMDependencies.isNotEmpty() || transitiveSwiftPMDependencies.isNotEmpty()) {
             val xcodeProjectPath = workspacePath.orNull?.let {
-                Files.list(Paths.get(it)).use { paths ->
-                    paths.filter { path -> path.fileName.toString().endsWith(".xcodeproj") }.findFirst().orElse(null)
-                }
+                Path(it)
+                    .listDirectoryEntries("*.xcodeproj")
+                    .firstOrNull()
             } ?: "/path/to/iosApp.xcodeproj"
             val gradlewPath = searchForGradlew(projectPath.get().toPath())
             val message = buildString {
