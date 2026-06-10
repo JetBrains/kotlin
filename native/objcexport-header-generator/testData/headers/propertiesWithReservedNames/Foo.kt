@@ -3,4 +3,4 @@ object Foo {
     var DEBUG = false
 }
 
-val NULL = Foo.NULL
+val YES = Foo.NULL

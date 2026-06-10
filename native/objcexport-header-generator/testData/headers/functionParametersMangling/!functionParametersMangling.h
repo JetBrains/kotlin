@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-+ (void)barNULL:(id _Nullable)NULL_ a:(id _Nullable)a b:(int64_t)b __attribute__((swift_name("bar(NULL:a:b:)")));
-+ (void)barNULL:(id _Nullable)NULL_ a:(int32_t)a b_:(id _Nullable)b __attribute__((swift_name("bar(NULL:a:b_:)")));
++ (void)barYES:(id _Nullable)YES_ a:(id _Nullable)a b:(int64_t)b __attribute__((swift_name("bar(YES:a:b:)")));
++ (void)barNO:(id _Nullable)NO_ a:(int32_t)a b:(id _Nullable)b __attribute__((swift_name("bar(NO:a:b:)")));
 + (void)fooNULL:(unichar)NULL_ a:(int32_t)a DEBUG_:(int64_t)DEBUG_ __attribute__((swift_name("foo(NULL:a:DEBUG:)")));
 @end
 

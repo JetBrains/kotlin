@@ -40,4 +40,16 @@ class Foo {
      */
     fun DEBUG() {
     }
+
+    /**
+     * Documented [YES] method.
+     */
+    fun YES() {
+    }
+
+    /**
+     * Documented [NO] method.
+      */
+    fun NO() {
+    }
 }

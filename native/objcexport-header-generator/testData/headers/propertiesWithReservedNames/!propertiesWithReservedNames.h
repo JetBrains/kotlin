@@ -32,7 +32,7 @@ __attribute__((objc_subclassing_restricted))
 
 __attribute__((objc_subclassing_restricted))
 @interface FooKt : Base
-@property (class, readonly) NSString *NULL_ __attribute__((swift_name("NULL")));
+@property (class, readonly) NSString *YES_ __attribute__((swift_name("YES")));
 @end
 
 #pragma pop_macro("_Nullable_result")

@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-val objCMacroDefinitions = cMacroDefinitions + setOf("DEBUG")
+val objCMacroDefinitions = cMacroDefinitions + setOf("DEBUG", "YES", "NO")
 
 fun String.mangleIfStdMacro(): String = if (objCMacroDefinitions.contains(this)) this + "_" else this
