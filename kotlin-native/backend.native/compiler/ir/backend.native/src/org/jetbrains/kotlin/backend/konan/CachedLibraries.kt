@@ -278,6 +278,11 @@ class CachedLibraries(
         /**
          * Marker file written inside a monolithic cache directory after a successful
          * atomic rename. Absence means the cache is incomplete. KT-86251.
+         *
+         * Must match `PlatformLibrariesGenerator.CACHE_COMPLETE_MARKER` in the
+         * Kotlin Gradle Plugin. The two constants live in separate Gradle modules
+         * (compiler backend vs. KGP) with no shared dependency, so the value
+         * is duplicated intentionally. Keep them in sync.
          */
         const val MONOLITHIC_CACHE_COMPLETE_MARKER = ".cache-complete"
 

@@ -302,6 +302,11 @@ internal class PlatformLibrariesGenerator(
         /**
          * Marker file written inside the monolithic stdlib cache directory after
          * a successful build. Absence means the cache is incomplete. KT-86251.
+         *
+         * Must match `CachedLibraries.MONOLITHIC_CACHE_COMPLETE_MARKER` in the
+         * compiler backend. The two constants live in separate Gradle modules
+         * (KGP vs. compiler backend) with no shared dependency, so the value
+         * is duplicated intentionally. Keep them in sync.
          */
         internal const val CACHE_COMPLETE_MARKER = ".cache-complete"
     }
