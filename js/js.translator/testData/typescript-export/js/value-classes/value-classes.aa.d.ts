@@ -41,6 +41,7 @@ declare namespace JS_TESTS {
         function useGenericValueClass<T>(g: foo.GenericValueClass<T>): T;
         function createValueArray(): Array<foo.IntValueClass>;
         function acceptNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<number>;
+        function echoNullableValueClass(v: Nullable<foo.IntValueClass>): Nullable<foo.IntValueClass>;
         function compareValueClasses(a: foo.IntValueClass, b: foo.IntValueClass): boolean;
         function createValueClassList(): any/* kotlin.collections.List<foo.IntValueClass> */;
         function createValueClassSet(): any/* kotlin.collections.Set<foo.StringValueClass> */;

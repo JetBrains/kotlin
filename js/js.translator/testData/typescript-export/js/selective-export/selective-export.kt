@@ -48,4 +48,10 @@ fun fileLevelExportedFun() = 10
 class FileLevelExportedClass {
     val value = 10
 }
+
+value class FileLevelExportedValueClass(val value: Int)
+
+fun createFileLevelExportedValueClass(value: Int): FileLevelExportedValueClass =
+    FileLevelExportedValueClass(value)
+
 external interface FileLevelExportedExternalInterface

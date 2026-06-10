@@ -36,5 +36,19 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => FileLevelExportedClass;
             }
         }
+        class FileLevelExportedValueClass {
+            constructor(value: number);
+            get value(): number;
+            toString(): string;
+            hashCode(): number;
+            equals(other: Nullable<any>): boolean;
+        }
+        namespace FileLevelExportedValueClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FileLevelExportedValueClass;
+            }
+        }
+        function createFileLevelExportedValueClass(value: number): foo.FileLevelExportedValueClass;
     }
 }
