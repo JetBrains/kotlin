@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -134,11 +135,21 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
             javaTypeParameterStack.addStack(parentStack)
         }
 
-        // Annotations, type-parameter bounds, and supertypes can refer back into this class via
-        // the symbol-resolver cache during enhancement. To keep that cycle from observing an
-        // unenhanced FirJavaTypeRef where FirResolvedTypeRef is expected, all three are published
-        // lazily via FirJavaClass.annotations / typeParameters / superTypeRefs (see
-        // FirLazyJavaDeclarationList for staging order).
+        /**
+         * This is where the problems begin. We need to enhance nullability of super types and type parameter bounds,
+         * for which we need the annotations of this class as they may specify default nullability.
+         * However, all three - annotations, type parameter bounds, and supertypes - can refer to other classes,
+         * which will cause the type parameter bounds and supertypes of *those* classes to get enhanced first,
+         * but they may refer back to this class again - which, thanks to the magic of symbol resolver caches,
+         * will be observed in a state where we've not done the enhancement yet. For those cases, we must publish
+         * at least unenhanced resolved types,
+         * or else FIR may crash upon encountering a [org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef]
+         * where [FirResolvedTypeRef] is expected.
+         *
+         * 1. (will happen lazily in [FirJavaClass.annotations]) Resolve annotations
+         * 2. (will happen lazily in [FirJavaClass.typeParameters]) Enhance type parameter bounds in [FirJavaTypeParameter] - may refer to each other, take default nullability from annotations
+         * 3. (will happen lazily in [FirJavaClass.superTypeRefs]) Enhance super types - may refer to type parameter bounds, take default nullability from annotations
+         */
         return createFirJavaClass(javaClass, classSymbol, parentClassSymbol, classId, javaTypeParameterStack)
     }
 
