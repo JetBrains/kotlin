@@ -1455,6 +1455,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridingDeclaration")
             parameter<FirCallableSymbol<*>>("overriddenDeclaration")
         }
+        val LATEINIT_VAL_OVERRIDDEN_BY_VAL by error<KtNamedDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE) {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
         val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val NON_FINAL_MEMBER_IN_OBJECT by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val VIRTUAL_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {

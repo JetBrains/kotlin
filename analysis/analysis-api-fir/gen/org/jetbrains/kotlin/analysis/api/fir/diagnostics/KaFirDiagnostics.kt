@@ -2836,6 +2836,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val overriddenDeclaration: KaCallableSymbol
     }
 
+    interface LateinitValOverriddenByVal : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass get() = LateinitValOverriddenByVal::class
+        val overridingDeclaration: KaCallableSymbol
+        val overriddenDeclaration: KaCallableSymbol
+    }
+
     interface NonFinalMemberInFinalClass : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = NonFinalMemberInFinalClass::class
     }

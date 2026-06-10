@@ -2647,6 +2647,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL_WITH_CONTAINING_DECLARATION,
             SYMBOL_WITH_CONTAINING_DECLARATION
         )
+        map.put(
+            FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL,
+            "''lateinit val'' property {0} cannot be overridden by ''val'' property ''{1}''.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL
+        )
         map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect on a final class.")
         map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect on object.")
         map.put(

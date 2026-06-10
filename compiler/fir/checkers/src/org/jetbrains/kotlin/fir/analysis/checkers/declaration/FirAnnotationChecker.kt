@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
@@ -192,6 +193,9 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                     if (propertySymbol.delegateFieldSymbol != null && !propertySymbol.hasBackingField) {
                         reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD)
                         return true
+                    } else if (propertySymbol.isVal && propertySymbol.isLateInit) {
+                        reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD)
+                        return true
                     }
                 }
                 false
@@ -207,7 +211,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
                 checkPropertyGetter(annotated, annotation, target, FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY) -> {
                     true
                 }
-                !annotated.isVar -> {
+                !annotated.isVar && !annotated.isLateInit -> {
                     reporter.reportOn(annotation.source, FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, target.renderName)
                     true
                 }
