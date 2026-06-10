@@ -81,6 +81,7 @@ fun Project.testsJarToBeUsedAlongWithFixtures() {
 fun Project.setPublishableArtifact(
     jarTask: TaskProvider<out Jar>
 ) {
+    noDefaultJar()
     addArtifact("runtimeElements", jarTask)
     addArtifact("apiElements", jarTask)
     tasks.named("assemble").configure { dependsOn(jarTask) }

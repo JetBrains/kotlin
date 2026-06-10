@@ -57,8 +57,6 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
-
 val embeddedConfiguration = configurations.named("embedded")
 val relocatedJar by task<ShadowJar> {
     configurations.set(setOf(embeddedConfiguration.get()))
