@@ -270,10 +270,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         } + transitiveSyntheticPackages.map {
             ".package(path: \"${transitiveSyntheticPackagesPath}/${it.identifier}\")"
         })
-        val umbrellaPlatforms: Set<SwiftPMDependency.Platform> =
-            konanTargets.get().mapNotNull { target ->
-                runCatching { target.swiftPMPlatform() }.getOrNull()
-            }.toSet()
+        // The set of platforms the umbrella package supports — used to omit conditions that
+        // would cover every platform anyway (avoids churn when producer == consumer targets).
+        val umbrellaPlatforms: Set<SwiftPMDependency.Platform> = konanTargets.get().toSwiftPMPlatforms()
 
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
             dependency.products.map { product -> product to dependency.packageName }
@@ -286,6 +285,9 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 val effectiveConstraint: Set<SwiftPMDependency.Platform>? = run {
                     val explicit = dependency.first.platformConstraints
                     when {
+                        // When both constraints are present, intersect them. If the intersection is
+                        // empty (e.g. explicit={macOS} but implicit={iOS}) the product effectively
+                        // has no valid platform — emit no condition and let SwiftPM surface the error.
                         explicit != null && implicitPlatformConstraints != null ->
                             explicit.intersect(implicitPlatformConstraints).takeIf { it.isNotEmpty() }
                         explicit != null -> explicit
