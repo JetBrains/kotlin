@@ -234,9 +234,8 @@ abstract class KotlinIrLinker(
     }
 
     override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
-        return deserializersForModules.values.firstNotNullOfOrNull {
-            it.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind))
-        }.also {
+        val moduleDescriptor = resolveModuleDeserializer(signature) ?: return null
+        return moduleDescriptor.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
             if (finished) deserializeAllReachableTopLevels()
         }
     }
