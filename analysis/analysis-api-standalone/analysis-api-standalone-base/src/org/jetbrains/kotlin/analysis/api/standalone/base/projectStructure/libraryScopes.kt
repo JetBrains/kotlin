@@ -31,31 +31,6 @@ internal fun createLibrarySearchScope(
     }
 }
 
-internal fun createEnumerationLibrarySearchScope(
-    binaryRoots: Collection<Path>,
-    binaryVirtualFiles: Collection<VirtualFile>,
-    environment: CoreApplicationEnvironment,
-    project: Project,
-): GlobalSearchScope {
-    @OptIn(KaImplementationDetail::class)
-    val virtualFileUrls = buildSet {
-        for (root in StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
-            LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
-                .mapTo(this) { it.url }
-        }
-    }
-
-    return object : GlobalSearchScope(project) {
-        override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
-
-        override fun isSearchInModuleContent(aModule: Module): Boolean = false
-
-        override fun isSearchInLibraries(): Boolean = true
-
-        override fun toString(): String = virtualFileUrls.toString()
-    }
-}
-
 internal fun createTrieLibrarySearchScope(
     binaryRoots: Collection<Path>,
     binaryVirtualFiles: Collection<VirtualFile>,
@@ -63,7 +38,20 @@ internal fun createTrieLibrarySearchScope(
     project: Project,
 ): GlobalSearchScope {
     val virtualFiles = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
-    return LibraryRootsSearchScope(virtualFiles, project)
+    return TrieLibrarySearchScope(virtualFiles, project)
+}
+
+private class TrieLibrarySearchScope(
+    roots: List<VirtualFile>,
+    project: Project,
+) : GlobalSearchScope(project) {
+    private val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
+
+    override fun contains(file: VirtualFile): Boolean = trie.contains(file.path)
+
+    override fun isSearchInModuleContent(aModule: Module): Boolean = false
+
+    override fun isSearchInLibraries(): Boolean = true
 }
 
 private class SimpleTrie(paths: List<String>) {
@@ -86,7 +74,7 @@ private class SimpleTrie(paths: List<String>) {
     fun contains(s: String): Boolean {
         var p = root
         for (d in s.trim('/').split('/')) {
-            p = m.get(Pair(p, d))?.also {
+            p = m[Pair(p, d)]?.also {
                 if (it.isTerminal)
                     return true
             } ?: return false
@@ -95,17 +83,32 @@ private class SimpleTrie(paths: List<String>) {
     }
 }
 
-private class LibraryRootsSearchScope(
-    roots: List<VirtualFile>,
+internal fun createEnumerationLibrarySearchScope(
+    binaryRoots: Collection<Path>,
+    binaryVirtualFiles: Collection<VirtualFile>,
+    environment: CoreApplicationEnvironment,
+    project: Project,
+): GlobalSearchScope {
+    @OptIn(KaImplementationDetail::class)
+    val virtualFileUrls = buildSet {
+        for (root in StandaloneProjectFactory.getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles) {
+            LibraryUtils.getAllVirtualFilesFromRoot(root, includeRoot = true)
+                .mapTo(this) { it.url }
+        }
+    }
+
+    return EnumerationLibrarySearchScope(virtualFileUrls, project)
+}
+
+private class EnumerationLibrarySearchScope(
+    private val virtualFileUrls: Set<String>,
     project: Project,
 ) : GlobalSearchScope(project) {
-    val trie: SimpleTrie = SimpleTrie(roots.map { it.path })
-
-    override fun contains(file: VirtualFile): Boolean {
-        return trie.contains(file.path)
-    }
+    override fun contains(file: VirtualFile): Boolean = file.url in virtualFileUrls
 
     override fun isSearchInModuleContent(aModule: Module): Boolean = false
 
     override fun isSearchInLibraries(): Boolean = true
+
+    override fun toString(): String = virtualFileUrls.toString()
 }
