@@ -36,4 +36,11 @@ class AllDistinctCharArrayTest {
         assertFalse(charArrayOf('a', 'b').allDistinctBy { 0 })
         assertFalse(charArrayOf('a', 'b').allDistinctBy { null })
     }
+
+    @Test
+    fun allDistinctValueDomainBounds() {
+        assertTrue(CharArray(65536) { it.toChar() }.allDistinct())
+        assertFalse(CharArray(65536) { (it / 2).toChar() }.allDistinct())
+        assertFalse(CharArray(65537) { it.toChar() }.allDistinct())
+    }
 }

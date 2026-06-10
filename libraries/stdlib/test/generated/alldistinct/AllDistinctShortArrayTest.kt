@@ -36,4 +36,11 @@ class AllDistinctShortArrayTest {
         assertFalse(shortArrayOf(1, 2).allDistinctBy { 0 })
         assertFalse(shortArrayOf(1, 2).allDistinctBy { null })
     }
+
+    @Test
+    fun allDistinctValueDomainBounds() {
+        assertTrue(ShortArray(65536) { it.toShort() }.allDistinct())
+        assertFalse(ShortArray(65536) { (it / 2).toShort() }.allDistinct())
+        assertFalse(ShortArray(65537) { it.toShort() }.allDistinct())
+    }
 }

@@ -36,4 +36,19 @@ class AllDistinctBooleanArrayTest {
         assertFalse(booleanArrayOf(true, false).allDistinctBy { 0 })
         assertFalse(booleanArrayOf(true, false).allDistinctBy { null })
     }
+
+    @Test
+    fun allDistinctBooleanCases() {
+        assertTrue(booleanArrayOf().allDistinct())
+        assertTrue(booleanArrayOf(true).allDistinct())
+        assertTrue(booleanArrayOf(false).allDistinct())
+        assertTrue(booleanArrayOf(true, false).allDistinct())
+        assertTrue(booleanArrayOf(false, true).allDistinct())
+        assertFalse(booleanArrayOf(true, true).allDistinct())
+        assertFalse(booleanArrayOf(false, false).allDistinct())
+        assertFalse(booleanArrayOf(true, true, true).allDistinct())
+        assertFalse(booleanArrayOf(true, false, true).allDistinct())
+        assertFalse(booleanArrayOf(false, true, false).allDistinct())
+        assertFalse(booleanArrayOf(true, false, false, true).allDistinct())
+    }
 }

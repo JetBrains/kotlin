@@ -30,6 +30,12 @@ object AllDistinctTestGenerator {
             writeHeader(className, importTestPlatform = fpTypes.isNotEmpty())
             writeAllDistinctTest(ctor, config, emptyCollection)
             writeAllDistinctByTest(ctor, config, emptyCollection)
+            if (primitive == PrimitiveType.Boolean) {
+                writeBooleanCasesTest()
+            }
+            valueDomainSize(primitive)?.let { domainSize ->
+                writeValueDomainBoundsTest(collectionClass, primitive!!, domainSize)
+            }
             for (fpType in fpTypes) {
                 writeFpTests(ctor, fpType)
             }
@@ -91,6 +97,50 @@ object AllDistinctTestGenerator {
         assertFalse($ctor($v1, $v2).allDistinctBy { null })
     }"""
         )
+    }
+
+    private fun BufferedWriter.writeBooleanCasesTest() {
+        appendLine(
+            """
+    @Test
+    fun allDistinctBooleanCases() {
+        assertTrue(booleanArrayOf().allDistinct())
+        assertTrue(booleanArrayOf(true).allDistinct())
+        assertTrue(booleanArrayOf(false).allDistinct())
+        assertTrue(booleanArrayOf(true, false).allDistinct())
+        assertTrue(booleanArrayOf(false, true).allDistinct())
+        assertFalse(booleanArrayOf(true, true).allDistinct())
+        assertFalse(booleanArrayOf(false, false).allDistinct())
+        assertFalse(booleanArrayOf(true, true, true).allDistinct())
+        assertFalse(booleanArrayOf(true, false, true).allDistinct())
+        assertFalse(booleanArrayOf(false, true, false).allDistinct())
+        assertFalse(booleanArrayOf(true, false, false, true).allDistinct())
+    }"""
+        )
+    }
+
+    private fun BufferedWriter.writeValueDomainBoundsTest(collectionClass: String, primitive: PrimitiveType, domainSize: Int) {
+        val name = primitive.name
+        val byteBitsetCases = if (primitive == PrimitiveType.Byte)
+            """
+        assertTrue(byteArrayOf(0, -128, 127, -1).allDistinct())
+        assertFalse(byteArrayOf(0, -128, 127, -1, -128).allDistinct())"""
+        else ""
+        appendLine(
+            """
+    @Test
+    fun allDistinctValueDomainBounds() {
+        assertTrue($collectionClass($domainSize) { it.to$name() }.allDistinct())
+        assertFalse($collectionClass($domainSize) { (it / 2).to$name() }.allDistinct())
+        assertFalse($collectionClass(${domainSize + 1}) { it.to$name() }.allDistinct())$byteBitsetCases
+    }"""
+        )
+    }
+
+    private fun valueDomainSize(primitive: PrimitiveType?): Int? = when (primitive) {
+        PrimitiveType.Byte, PrimitiveType.UByte -> 256
+        PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char -> 65536
+        else -> null
     }
 
     private fun BufferedWriter.writeFpTests(ctor: String, fpType: PrimitiveType) {

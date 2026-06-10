@@ -413,14 +413,48 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (size < 2) return true
-            val seen = HashSet<T>()
-            for (element in this) {
-                if (!seen.add(element)) return false
+            when (primitive) {
+                PrimitiveType.Boolean ->
+                    """
+                    if (size < 2) return true
+                    return size == 2 && this[0] != this[1]
+                    """
+                PrimitiveType.Byte, PrimitiveType.UByte -> {
+                    val toIndex = if (primitive == PrimitiveType.Byte) "element.toInt() and 0xFF" else "element.toInt()"
+                    """
+                    if (size < 2) return true
+                    if (size > 256) return false
+                    val seen = LongArray(4)
+                    for (element in this) {
+                        val index = $toIndex
+                        val mask = 1L shl (index and 0x3F)
+                        val wordIndex = index shr 6
+                        if (seen[wordIndex] and mask != 0L) return false
+                        seen[wordIndex] = seen[wordIndex] or mask
+                    }
+                    return true
+                    """
+                }
+                PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char ->
+                    """
+                    if (size < 2) return true
+                    if (size > 65536) return false
+                    val seen = HashSet<T>()
+                    for (element in this) {
+                        if (!seen.add(element)) return false
+                    }
+                    return true
+                    """
+                else ->
+                    """
+                    if (size < 2) return true
+                    val seen = HashSet<T>()
+                    for (element in this) {
+                        if (!seen.add(element)) return false
+                    }
+                    return true
+                    """
             }
-            return true
-            """
         }
     }
 

@@ -36,4 +36,13 @@ class AllDistinctByteArrayTest {
         assertFalse(byteArrayOf(1, 2).allDistinctBy { 0 })
         assertFalse(byteArrayOf(1, 2).allDistinctBy { null })
     }
+
+    @Test
+    fun allDistinctValueDomainBounds() {
+        assertTrue(ByteArray(256) { it.toByte() }.allDistinct())
+        assertFalse(ByteArray(256) { (it / 2).toByte() }.allDistinct())
+        assertFalse(ByteArray(257) { it.toByte() }.allDistinct())
+        assertTrue(byteArrayOf(0, -128, 127, -1).allDistinct())
+        assertFalse(byteArrayOf(0, -128, 127, -1, -128).allDistinct())
+    }
 }
