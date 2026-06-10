@@ -56,7 +56,6 @@ sourceSets {
 
 publish()
 
-noDefaultJar()
 sourcesJar()
 javadocJar()
 
