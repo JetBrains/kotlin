@@ -54,7 +54,8 @@ class DataFrameEnvironmentConfigurator(testServices: TestServices) : Environment
             """.trimIndent()
 
         val testData = mapOf("Schema" to schema)
-        val dumpSchemas = testServices.moduleStructure.allDirectives.contains(DataFrameDirectives.DUMP_SCHEMAS)
+        val allDirectives = testServices.moduleStructure.allDirectives
+        val dumpSchemas = allDirectives.contains(DataFrameDirectives.DUMP_SCHEMAS)
         FirExtensionRegistrar.registerExtension(
             FirDataFrameExtensionRegistrar(
                 isTest = true,
@@ -62,6 +63,10 @@ class DataFrameEnvironmentConfigurator(testServices: TestServices) : Environment
                 contextReader = ImportedSchemasData.getReader(testData)
             )
         )
-        IrGenerationExtension.registerExtension(IrBodyFiller())
+        val handleExtensionPropertyExceptionId = when {
+            allDirectives.contains(DataFrameDirectives.WITHOUT_HANDLE_EXTENSION_PROPERTY_EXCEPTIONS) -> null
+            else -> IrBodyFiller.HANDLE_EXTENSION_PROPERTY_EXCEPTION_ID
+        }
+        IrGenerationExtension.registerExtension(IrBodyFiller(handleExtensionPropertyExceptionId))
     }
 }

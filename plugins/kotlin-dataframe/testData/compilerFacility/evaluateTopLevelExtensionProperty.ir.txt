@@ -9,7 +9,15 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:Regular name:p0 index:0 type:org.jetbrains.kotlinx.dataframe.DataFrame<test.MySchema>
         EXPRESSION_BODY
           BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
-            TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
-              CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
-                ARG <this>: GET_VAR 'p0: org.jetbrains.kotlinx.dataframe.DataFrame<test.MySchema> declared in <root>.CodeFragment.run' type=org.jetbrains.kotlinx.dataframe.DataFrame<test.MySchema> origin=null
-                ARG columnName: CONST String type=kotlin.String value="i"
+            TRY type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+              try: BLOCK type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
+                TYPE_OP type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=CAST typeOperand=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
+                  CALL 'public abstract fun get (columnName: kotlin.String): org.jetbrains.kotlinx.dataframe.DataColumn<*> [operator] declared in org.jetbrains.kotlinx.dataframe.ColumnsScope' type=kotlin.Any? origin=null
+                    ARG <this>: GET_VAR 'p0: org.jetbrains.kotlinx.dataframe.DataFrame<test.MySchema> declared in <root>.CodeFragment.run' type=org.jetbrains.kotlinx.dataframe.DataFrame<test.MySchema> origin=null
+                    ARG columnName: CONST String type=kotlin.String value="i"
+              CATCH parameter=val e: java.lang.Exception [val] declared in <root>.CodeFragment.run
+                VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
+                BLOCK type=kotlin.Nothing origin=null
+                  CALL 'public final fun handleExtensionPropertyException (e: java.lang.Exception, columnName: kotlin.String): kotlin.Unit declared in org.jetbrains.kotlinx.dataframe.exceptions' type=kotlin.Unit origin=null
+                    ARG e: GET_VAR 'val e: java.lang.Exception [val] declared in <root>.CodeFragment.run' type=java.lang.Exception origin=null
+                    ARG columnName: CONST String type=kotlin.String value="i"
