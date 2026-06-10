@@ -21,5 +21,6 @@ declare namespace JS_TESTS {
             function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
         }
     }
+    const exportedProperty: any/* NonExportedSet */;
     function foo(ml: kotlin.collections.KtMutableList<number>): void;
 }

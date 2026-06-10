@@ -2,6 +2,15 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin.collections {
+        interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlySetView(): ReadonlySet<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtSet": unique symbol;
+            };
+        }
+        namespace KtSet {
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
+        }
         interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlyArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
@@ -10,6 +19,15 @@ declare namespace JS_TESTS {
         }
         namespace KtList {
             function fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        }
+        interface KtMutableSet<E> extends kotlin.collections.KtSet<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsSetView(): Set<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtMutableSet": unique symbol;
+            } & kotlin.collections.KtSet<any>["__doNotUseOrImplementIt"];
+        }
+        namespace KtMutableSet {
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtMutableSet<E>;
         }
         interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
@@ -22,4 +40,5 @@ declare namespace JS_TESTS {
         }
     }
     function foo(ml: kotlin.collections.KtMutableList<number>): void;
+    const exportedProperty: kotlin.collections.KtMutableSet<string>/* NonExportedSet */;
 }
