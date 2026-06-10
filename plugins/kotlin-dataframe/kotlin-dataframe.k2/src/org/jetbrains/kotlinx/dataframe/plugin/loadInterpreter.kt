@@ -181,6 +181,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherValuesInto
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCountDistinct0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCumSum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
@@ -711,6 +712,7 @@ private fun String.loadImpl(isTest: Boolean): Interpreter<*>? {
         "DataFrameCumSum" -> DataFrameCumSum()
         "DataFrameCumSum0" -> DataFrameCumSum0()
         "GroupByCount0" -> GroupByCount0()
+        "GroupByCountDistinct0" -> GroupByCountDistinct0()
         "GroupByMean0" -> GroupByMean0()
         "GroupByMean1" -> GroupByMean1()
         "GroupByMean2" -> GroupByMean2()
