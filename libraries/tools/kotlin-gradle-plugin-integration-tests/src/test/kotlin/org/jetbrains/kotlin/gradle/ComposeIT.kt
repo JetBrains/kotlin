@@ -385,6 +385,10 @@ class ComposeIT : KGPBaseTest() {
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Kotlin 1.9.2x is not compatible with Gradle 9+
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC],
+        enabledOnCI = [OS.LINUX],
+    )
     fun testComposeDefaultParamsInOpenFunctionK1ToK2(
         gradleVersion: GradleVersion,
         agpVersion: String,
