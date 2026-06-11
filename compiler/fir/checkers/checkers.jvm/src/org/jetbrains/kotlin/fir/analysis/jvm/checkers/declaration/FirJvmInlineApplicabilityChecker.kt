@@ -48,7 +48,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
                 when {
                     // should not advise switching to Full Value Classes, that would NOT help
                     primaryConstructorParameterCount == null || primaryConstructorParameterCount == 0 -> {
-                        reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
+                        // do nothing, enabling the feature won't help here, another corresponding error is reported
                     }
 
                     // should advise switching to Full Value Classes, that would help

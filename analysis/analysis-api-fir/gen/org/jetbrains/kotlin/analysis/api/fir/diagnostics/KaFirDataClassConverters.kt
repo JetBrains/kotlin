@@ -7506,12 +7506,6 @@ private fun KaDiagnosticConverterBuilder.addConversions168() {
             token,
         )
     }
-    add(FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION) { firDiagnostic ->
-        ValueClassWithoutJvmInlineAnnotationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions169() {
