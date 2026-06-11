@@ -94,11 +94,12 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             else -> error("Unexpected declaration kind: $declaration")
         }
 
-        // TODO(KT-82224): Respect @JsFileName
         @OptIn(KaNonPublicApi::class)
-        val fileName = declaration.klibSourceFileName ?: return null
+        val fileName = declaration.containingFileAnnotations?.getJsFileName()
+            ?: declaration.klibSourceFileName?.removeSuffix(".kt")
+            ?: return null
 
-        val key = FileArtifactKey(packageFqName, fileName.removeSuffix(".kt"))
+        val key = FileArtifactKey(packageFqName, fileName)
         val exportedDeclarations = when (declaration) {
             is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
             is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
