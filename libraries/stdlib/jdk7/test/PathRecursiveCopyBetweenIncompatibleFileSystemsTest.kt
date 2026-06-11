@@ -71,7 +71,10 @@ class PathRecursiveCopyBetweenIncompatibleFileSystemsTest : AbstractPathTest() {
         var failed = false
         src.copyToRecursively(mockedDst, followLinks = false, overwrite = false, onError = { srcPath, dstPath, exception ->
             assertIs<IllegalFileNameException>(exception)
-            assertEquals("a/b#test.txt", srcPath.relativeTo(src).toString())
+            assertEquals(
+                src.fileSystem.getPath("a", "b#test.txt").toString(),
+                srcPath.relativeTo(src).toString()
+            )
             assertEquals("a#b#test.txt", dstPath.relativeTo(mockedDst).toString())
             failed = true
             OnErrorResult.SKIP_SUBTREE
