@@ -7,4 +7,4 @@ package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object SerializationPluginKey : GeneratedDeclarationKey()
+data object SerializationPluginKey : GeneratedDeclarationKey()

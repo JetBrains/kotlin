@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.parcelize.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object ParcelizePluginKey : GeneratedDeclarationKey()
+data object ParcelizePluginKey : GeneratedDeclarationKey()
