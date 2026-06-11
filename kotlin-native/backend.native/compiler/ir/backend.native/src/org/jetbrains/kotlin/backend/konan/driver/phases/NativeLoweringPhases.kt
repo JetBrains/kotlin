@@ -345,10 +345,15 @@ private val removeCastsFromNothing = createFileLoweringPhase(
         name = "RemoveCastsFromNothing",
 )
 
-private val builtinOperatorPhase = createFileLoweringPhase(
+private val builtinOperatorPhaseFirstRun = createFileLoweringPhase(
         ::BuiltinOperatorLowering,
-        name = "BuiltinOperators",
-        prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase, enumWhenPhase)
+        name = "BuiltinOperatorsFirstRun",
+)
+
+private val builtinOperatorPhaseSecondRun = createFileLoweringPhase(
+        ::BuiltinOperatorLowering,
+        name = "BuiltinOperatorsSecondRun",
+        prerequisite = setOf(builtinOperatorPhaseFirstRun, defaultParameterExtentPhase, singleAbstractMethodPhase, enumWhenPhase)
 )
 
 /**
@@ -503,7 +508,7 @@ private val lowerCastsPhase = createFileLoweringPhase(
 private val computeTypesPhaseFirstRun = createFileLoweringPhase(
         name = "ComputeTypesFirstRun",
         lowering = { context: Context -> ComputeTypesPass(context) },
-        prerequisite = setOf(finallyBlocksPhase)
+        prerequisite = setOf(finallyBlocksPhase, builtinOperatorPhaseFirstRun)
 )
 
 private val computeTypesPhaseSecondRun = createFileLoweringPhase(
@@ -655,6 +660,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         inventNamesForLocalFunctions,
         localFunctionsPhase,
         tailrecPhase,
+        builtinOperatorPhaseFirstRun, // First run must be before the following computeTypes pass. See KT-86678 for details.
         finallyBlocksPhase,
         computeTypesPhaseFirstRun, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         forLoopsPhase,
@@ -683,7 +689,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
-        builtinOperatorPhase,
+        builtinOperatorPhaseSecondRun,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { this.produce.isCache },
         useInternalAbiPhase,
