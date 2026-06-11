@@ -319,7 +319,7 @@ constructor(
          */
         @JvmField
         @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in a future version.")
+        @Deprecated("The FIR runner is deprecated. This message will become an error in Kotlin 2.5.0, and the FIR runner will be removed in Kotlin 2.6.0.")
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", KotlinReleaseVersion(2, 3, 0))
 
         /**
@@ -473,7 +473,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions : BaseIncremental
          */
         @JvmField
         @ExperimentalCompilerArgument
-        @Deprecated("The FIR runner is deprecated and will be removed in a future version.")
+        @Deprecated("The FIR runner is deprecated. This message will become an error in Kotlin 2.5.0, and the FIR runner will be removed in Kotlin 2.6.0.")
         public val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER")
 
         /**
