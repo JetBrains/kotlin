@@ -610,8 +610,9 @@ private fun findTypeArgsForClassInHierarchy(
     for (supertype in FirBackedJavaClassAdapter(typeClassId, session).supertypes) {
         val declaredSupertype = (supertype as? FirBackedJavaClassifierType)?.coneType ?: continue
         val substituted = substituteTypeArgs(declaredSupertype, type, session)
-        val result = findTypeArgsForClassInHierarchy(substituted, targetClassId, session, visited)
-        if (result != null) return result
+        findTypeArgsForClassInHierarchy(substituted, targetClassId, session, visited)?.let {
+            return it
+        }
     }
     return null
 }
