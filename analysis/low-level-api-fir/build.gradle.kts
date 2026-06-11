@@ -68,7 +68,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testFixturesImplementation(project(":kotlin-scripting-common"))
-    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
 
     testFixturesRuntimeOnly(project(":plugins:plugin-sandbox"))
     testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))

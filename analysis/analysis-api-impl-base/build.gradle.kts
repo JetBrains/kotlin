@@ -38,6 +38,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))

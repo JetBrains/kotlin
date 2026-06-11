@@ -4,13 +4,14 @@ plugins {
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { none() }
 }
 
 dependencies {
     implementation(project(":core:deserialization"))
-    api(project(":compiler:psi:psi-api"))
-    api(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    api(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
 
     implementation(project(":js:js.serializer"))
 
