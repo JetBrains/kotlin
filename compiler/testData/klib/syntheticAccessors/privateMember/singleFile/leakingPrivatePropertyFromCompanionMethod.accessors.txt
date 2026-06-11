@@ -8,7 +8,7 @@ internal class UndoManager<R : Any?>
     public companion object Companion
         public inline fun <reified T : Any?> getValue(value: UndoManager<T>): String
             /* ACCESSOR use-site */ access$<get-capacity><R>($this = value)
-    /* ACCESSOR declaration */ internal /* static */ fun <R : Any?> access$<get-capacity>($this: UndoManager<R>): String
+    /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-capacity>($this: UndoManager<R>): String
         /* TARGET use-site */ $this.<get-capacity>()
 public fun box(): String
     /* ACCESSOR use-site */ access$<get-capacity><R>($this = value)

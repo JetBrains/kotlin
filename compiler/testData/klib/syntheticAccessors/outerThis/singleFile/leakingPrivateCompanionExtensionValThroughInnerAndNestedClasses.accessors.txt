@@ -2,9 +2,9 @@
 
 /* FILE package=<root> fileName=leakingPrivateCompanionExtensionValThroughInnerAndNestedClasses.kt */
 
-private val o: String
+private companion val o: String
     /* TARGET declaration */ private companion fun Outer.<get-o>(): String
-private val k: String
+private companion val k: String
     /* TARGET declaration */ private companion fun Outer.<get-k>(): String
 public class Outer
     public inner class Inner
