@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import java.io.File
 import java.nio.file.*
 import java.util.*
@@ -592,7 +592,7 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
         libraryProviders(
                 KlibNativeDistributionLibraryProvider(File(distribution.konanHome)) {
                     withStdlib()
-                    runIf(!noDefaultLibs) { withPlatformLibs(target) }
+                    runUnless(noDefaultLibs) { withPlatformLibs(target) }
                 }
         )
         platformChecker(KlibPlatformChecker.Native(target.name))
