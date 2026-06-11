@@ -56,7 +56,7 @@ abstract class CheckUndeclaredInputs : DefaultTask() {
 
         if (undeclaredInputs.isNotEmpty()) {
             error(buildString {
-                appendLine("Undeclared inputs found! (${undeclaredInputs.size})")
+                appendLine("Undeclared test inputs found! (${undeclaredInputs.size})")
                 if (!teamcityBuild.get()) {
                     appendLine("Open the JFR snapshot in IDEA, then go to: Events | Uncategorized | jetbrains.UndeclaredInput")
                     appendLine("You can find your ${jfrFile.name} here -> ${jfrFile.parentFile.absolutePath}")

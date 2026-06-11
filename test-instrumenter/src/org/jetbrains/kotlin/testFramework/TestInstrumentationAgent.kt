@@ -32,7 +32,7 @@ object TestInstrumentationAgent {
 
         instrumentMockApplicationCreationTracing(instrumentation, debug)
 
-        if (System.getProperty("test.instrumenter.inputs.check.enabled") == "true") {
+        if (System.getProperty("test.instrumenter.inputs.check.enabled").toBoolean()) {
             instrumentEmittingCustomJfrEvents(instrumentation)
         }
     }
@@ -49,6 +49,7 @@ object TestInstrumentationAgent {
     private fun initializeUndeclaredInputsGuard() {
         val rootDir = System.getProperty("test.instrumenter.root.dir")
         val buildDir = System.getProperty("test.instrumenter.build.dir")
+        val failFast = System.getProperty("test.instrumenter.fail.fast").toBoolean()
         val declaredInputs = File(System.getProperty("test.instrumenter.declared.inputs.file"))
             .readLines()
             .filter(String::isNotEmpty)
@@ -63,7 +64,8 @@ object TestInstrumentationAgent {
             buildDir,
             klibCacheDir?.pathString,
             klibStdlibCacheDir?.pathString,
-            declaredInputs
+            declaredInputs,
+            failFast
         )
     }
 
