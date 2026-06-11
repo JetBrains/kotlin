@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -255,111 +254,12 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            // `classifier == null` is reached only by java-direct synthetic types whose
-            // `classifier` getter is hard-coded null (post-D2-A: only the residual
-            // `JavaClassifierTypeOverAst` JLS-misses + binary `PlainJavaClassifierType`
-            // unresolvables). Empirical probing of the full java-direct suite showed every
-            // hit on this branch goes through the minimal `resolveTypeName → constructClassType`
-            // path with either `buildTypeProjections` or `lowerBound?.typeArguments` for the
-            // type arguments — never through a `JavaToKotlinClassMap` mapping, a
-            // `readOnlyToMutable` rewrite, a `findOuterTypeArgsFromHierarchy` recovery, or a
-            // raw-type construction. See `implDocs/JTC_CLEANUP_2026_05_24.md` for the
-            // sub-block hit table that justifies this shape.
-            val classId = resolveTypeName(this.classifierQualifiedName, this, session, mode)
-            val lookupTag = classId.toLookupTag()
-            val mappedTypeArguments = when {
-                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> buildTypeProjections(lookupTag)
-                else -> lowerBound?.typeArguments
-            }
-            lookupTag.constructClassType(
-                mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY,
-                isMarkedNullable = lowerBound != null,
-                attributes
-            )
+            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
-}
-
-/**
- * Resolves a Java-source type-reference name to a [ClassId].
- *
- * for every reference (cross-file too, via `FirBackedJavaClassAdapter`); reading
- * `(classifier as? JavaClass)?.classId` is now reliable across all impls (PSI/binary/java-direct).
- */
-private fun resolveTypeName(
-    name: String,
-    javaType: JavaClassifierType,
-    session: FirSession,
-    mode: FirJavaTypeConversionMode,
-): ClassId {
-    (javaType.classifier as? JavaClass)?.classId?.let { return it }
-    if (mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND) {
-        findClassIdByFqNameString(name, session)?.let { return it }
-    }
-    return ClassId.topLevel(FqName(name))
-}
-
-/**
- * Splits a dot-separated FQN into a `(packageFqName, relativeClassName)` pair and returns the
- * longest-package [ClassId] that the session's symbol provider can resolve. Needed because an FQN
- * like `"java.util.Map.Entry"` cannot be unambiguously split without the symbol resolver.
- * Uses [FirSymbolNamesProvider] to skip impossible packages when available, otherwise falls back
- * to probing every split.
- */
-private fun findClassIdByFqNameString(fqnameString: String, session: FirSession): ClassId? {
-    if (fqnameString.isEmpty()) return null
-    val parts = fqnameString.split('.')
-    if (parts.isEmpty()) return null
-
-    val symbolProvider = session.symbolProvider
-    val namesProvider = symbolProvider.symbolNamesProvider
-    val knownPackages = namesProvider.getPackageNames()
-
-    fun resolves(candidate: ClassId): Boolean =
-        symbolProvider.getClassLikeSymbolByClassId(candidate) != null
-
-    if (knownPackages != null) {
-        // Fast path: only check splits whose package prefix is known to exist in this session.
-        // Iterate from longest package prefix to shortest so the first hit corresponds to the
-        // deepest known package — matching the "most specific" JLS-style resolution a caller
-        // would expect (e.g. `java.util.Map.Entry` → `java.util.Map#Entry`, not
-        // `java#util.Map.Entry`).
-        for (classStartIndex in (parts.size - 1) downTo 1) {
-            val pkg = parts.subList(0, classStartIndex).joinToString(".")
-            if (pkg !in knownPackages) continue
-            val candidate = ClassId(
-                FqName.fromSegments(parts.subList(0, classStartIndex)),
-                FqName.fromSegments(parts.subList(classStartIndex, parts.size)),
-                isLocal = false,
-            )
-            // Skip candidates the provider can cheaply prove it does not contain before paying
-            // for the full symbol-load probe.
-            if (!namesProvider.mayHaveTopLevelClassifier(candidate.outermostClassId)) continue
-            if (resolves(candidate)) return candidate
-        }
-        // Root-package case — only meaningful if the provider reports the root package as known.
-        if ("" in knownPackages) {
-            val rootCandidate = ClassId(FqName.ROOT, FqName.fromSegments(parts), isLocal = false)
-            if (namesProvider.mayHaveTopLevelClassifier(rootCandidate.outermostClassId) && resolves(rootCandidate)) {
-                return rootCandidate
-            }
-        }
-        return null
-    }
-
-    // Fallback: the name provider cannot enumerate packages (e.g. some LL-FIR providers). Probe
-    // every candidate split — this preserves the original behavior and is the reason callers must
-    // be able to tolerate the probing cost when using an opaque provider.
-    for (classStartIndex in (parts.size - 1) downTo 0) {
-        val packageFqName = if (classStartIndex == 0) FqName.ROOT
-        else FqName.fromSegments(parts.subList(0, classStartIndex))
-        val relativeClassName = FqName.fromSegments(parts.subList(classStartIndex, parts.size))
-        val candidate = ClassId(packageFqName, relativeClassName, isLocal = false)
-        if (resolves(candidate)) return candidate
-    }
-    return null
 }
 
 private fun JavaClass.allTypeParametersNumber(): Int {
