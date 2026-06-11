@@ -52,6 +52,8 @@ fun registerCheckUndeclaredInputsFor(testTask: TaskProvider<Test>) {
         this.teamcityBuild.value(kotlinBuildProperties.isTeamcityBuild).finalizeValue()
     }
     testTask.configure {
-        finalizedBy(checkUndeclaredInputs)
+        if (enabled) {
+            finalizedBy(checkUndeclaredInputs)
+        }
     }
 }
