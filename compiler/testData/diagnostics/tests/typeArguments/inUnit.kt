@@ -83,7 +83,7 @@ fun testTypeAlias() {
     bar(MyUnitT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Any><!>)
 
     unitBar(UnitT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Any><!>)
-    myUnitBar(<!ARGUMENT_TYPE_MISMATCH!>MyUnitT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Any><!><!>)
+    myUnitBar(MyUnitT<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!><Any><!>)
 }
 
 /* GENERATED_FIR_TAGS: callableReference, classReference, funWithExtensionReceiver, functionDeclaration, nullableType,
