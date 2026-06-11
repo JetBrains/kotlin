@@ -62,8 +62,7 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
         }
 
         private fun collectAllKnownSignatures() {
-            val maxSignatureIndex =
-                IrArrayReader(ir.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
+            val maxSignatureIndex = IrArrayReader(ir.signatures(fileIndex)).entryCount() - 1 // Index of the latest signature in the current file.
             (0..maxSignatureIndex).mapTo(allKnownSignatures, signatureDeserializer::deserializeIdSignature)
         }
 
