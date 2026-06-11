@@ -7,22 +7,26 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
+@OptIn(KaImplementationDetail::class)
 internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>>(
     protected val owner: T,
     private val modifiersBox: ModifiersBox,
     private val annotationsBox: AnnotationsBox,
 ) : KtLightElementBase(owner),
     PsiModifierList,
-    KtLightElement<KtModifierList, PsiModifierListOwner> {
+    KtLightElement<KtModifierList, PsiModifierListOwner>, KaSymbolJavaView<KaSymbol> {
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {
             visitor.visitModifierList(this)

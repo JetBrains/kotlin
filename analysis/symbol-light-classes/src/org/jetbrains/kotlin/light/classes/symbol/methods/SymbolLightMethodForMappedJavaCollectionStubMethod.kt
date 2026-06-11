@@ -136,6 +136,8 @@ internal class SymbolLightMethodForMappedJavaCollectionStubMethod(
                 annotationsProvider = EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = MethodAdditionalAnnotationsProvider,
             ),
+            symbolPointer = null,
+            useSiteModule = useSiteModule
         )
     }
 

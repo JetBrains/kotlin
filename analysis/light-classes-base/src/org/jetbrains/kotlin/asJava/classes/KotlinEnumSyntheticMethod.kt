@@ -39,19 +39,26 @@ import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import java.util.Objects
 
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
 private class KotlinEnumSyntheticMethod(
     private val enumClass: KtExtensibleLightClass,
     private val kind: Kind
-) : LightElement(enumClass.manager, enumClass.language), KtLightMethod, SyntheticElement {
+) : LightElement(enumClass.manager, enumClass.language), KtLightMethod, SyntheticElement, KaSymbolJavaView<KaNamedClassSymbol> {
     enum class Kind(val methodName: String) {
         VALUE_OF("valueOf"), VALUES("values"), ENTRIES("getEntries"),
     }
@@ -176,7 +183,12 @@ private class KotlinEnumSyntheticMethod(
 
     override val isMangled: Boolean get() = false
     override val lightMemberOrigin: LightMemberOrigin? get() = null
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>?
+        @Suppress("UNCHECKED_CAST")
+        get() = (enumClass as? KaSymbolJavaView<KaNamedClassSymbol>)?.symbolPointer
     override val kotlinOrigin: KtDeclaration? get() = null
+    override val useSiteModule: KaModule?
+        get() = (enumClass as? KaSymbolJavaView<*>)?.useSiteModule
 
     override fun getText(): String = ""
     override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE

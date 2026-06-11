@@ -65,8 +65,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
-                symbolWithTypeParameterPointer = functionSymbolPointer,
-                ktModule = ktModule,
+                symbolWithTypeParameterPointer = symbolPointer,
+                useSiteModule = useSiteModule,
                 ktDeclaration = functionDeclaration,
             )
         }
@@ -96,7 +96,7 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
-            GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+            GranularModifiersBox.computeVisibilityForMember(useSiteModule, symbolPointer)
         }
 
         PsiModifier.STATIC -> {
@@ -153,8 +153,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = functionSymbolPointer,
+                    useSiteModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
@@ -181,7 +181,9 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
                 ),
-            )
+            ),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 

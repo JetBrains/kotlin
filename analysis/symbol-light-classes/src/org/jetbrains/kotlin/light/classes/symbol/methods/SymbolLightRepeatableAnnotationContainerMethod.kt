@@ -36,6 +36,8 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.ABSTRACT),
+            symbolPointer = null,
+            useSiteModule = useSiteModule
         )
     }
 

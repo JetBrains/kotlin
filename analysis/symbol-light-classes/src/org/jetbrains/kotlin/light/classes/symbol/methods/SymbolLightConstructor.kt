@@ -71,12 +71,14 @@ internal class SymbolLightConstructor private constructor(
             ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = functionSymbolPointer,
+                    useSiteModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
             ),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 
@@ -246,7 +248,7 @@ internal class SymbolLightConstructor private constructor(
             visibility = visibility,
             methodIndex = methodIndex,
             isJvmExposedBoxed = isJvmExposedBoxed,
-            functionSymbolPointer = functionSymbolPointer,
+            symbolPointer = functionSymbolPointer,
         )
     }
 }

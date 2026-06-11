@@ -53,7 +53,10 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
             this,
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
                 listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
-            })
+            },
+            symbolPointer = null,
+            useSiteModule = useSiteModule
+        )
     }
 
     override fun hasModifierProperty(name: String): Boolean = false

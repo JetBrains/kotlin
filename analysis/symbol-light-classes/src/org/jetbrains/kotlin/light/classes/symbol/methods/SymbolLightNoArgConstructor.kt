@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.JvmExposeBoxedAdditionalAnnotationsProvider
@@ -21,19 +23,20 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifi
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightNoArgConstructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     private val visibility: String,
     methodIndex: Int,
     isJvmExposedBoxed: Boolean,
-    private val functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
+    override val symbolPointer: KaSymbolPointer<KaConstructorSymbol>? = null,
 ) : SymbolLightMethodBase(
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
-) {
+), KaSymbolJavaView<KaConstructorSymbol> {
     override fun getName(): String = containingClass.name ?: ""
 
     override fun isConstructor(): Boolean = true
@@ -51,18 +54,20 @@ internal class SymbolLightNoArgConstructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(visibility),
-            annotationsBox = if (functionSymbolPointer == null) {
+            annotationsBox = if (symbolPointer == null) {
                 EmptyAnnotationsBox
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = ktModule,
-                        annotatedSymbolPointer = functionSymbolPointer,
+                        useSiteModule = useSiteModule,
+                        annotatedSymbolPointer = symbolPointer,
                     ),
                     annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                     additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
                 )
-            }
+            },
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 

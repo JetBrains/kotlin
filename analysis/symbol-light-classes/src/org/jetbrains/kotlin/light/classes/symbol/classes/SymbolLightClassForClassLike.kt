@@ -14,6 +14,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -30,25 +31,27 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+@OptIn(KaImplementationDetail::class)
 internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> protected constructor(
     val classOrObjectDeclaration: KtClassOrObject?,
-    val classSymbolPointer: KaSymbolPointer<SType>,
-    ktModule: KaModule,
+    override val symbolPointer: KaSymbolPointer<SType>,
+    override val useSiteModule: KaModule,
     manager: PsiManager,
-) : SymbolLightClassBase(ktModule, manager),
+) : SymbolLightClassBase(manager),
+    KaSymbolJavaView<SType>,
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     @Suppress("RemoveRedundantQualifierName") // KTIJ-33595
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: SType,
         manager: PsiManager,
     ) : this(
         classOrObjectDeclaration = classSymbol.sourcePsiSafe(),
-        classSymbolPointer = kotlin.run {
+        symbolPointer = kotlin.run {
             @Suppress("UNCHECKED_CAST")
             classSymbol.createPointer() as KaSymbolPointer<SType>
         },
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 
@@ -59,7 +62,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override val kotlinOrigin: KtClassOrObject? get() = classOrObjectDeclaration
 
     internal inline fun <T> withClassSymbol(crossinline action: context(KaSession) (SType) -> T): T =
-        classSymbolPointer.withSymbol(ktModule, action)
+        symbolPointer.withSymbol(useSiteModule, action)
 
     /**
      * Psi-based [KtClassOrObject.isTopLevel] is needed to properly handle classes inside scripts
@@ -86,8 +89,8 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
         hasTypeParameters().ifTrue {
             SymbolLightTypeParameterList(
                 owner = this,
-                symbolWithTypeParameterPointer = classSymbolPointer,
-                ktModule = ktModule,
+                symbolWithTypeParameterPointer = symbolPointer,
+                useSiteModule = useSiteModule,
                 ktDeclaration = classOrObjectDeclaration,
             )
         }
@@ -123,7 +126,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
 
         if (other == null ||
             this::class != other::class ||
-            (other as SymbolLightClassForClassLike<*>).ktModule != ktModule ||
+            (other as SymbolLightClassForClassLike<*>).useSiteModule != useSiteModule ||
             other.manager != manager
         ) {
             return false
@@ -133,7 +136,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             return other.classOrObjectDeclaration == classOrObjectDeclaration
         }
 
-        return compareSymbolPointers(classSymbolPointer, other.classSymbolPointer)
+        return compareSymbolPointers(symbolPointer, other.symbolPointer)
     }
 
     override fun hashCode(): Int = classOrObjectDeclaration.hashCode()
@@ -151,7 +154,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun isAnnotationType(): Boolean = classKind() == KaClassKind.ANNOTATION_CLASS
     override fun isEnum(): Boolean = classKind() == KaClassKind.ENUM_CLASS
 
-    override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: symbolPointer.isValid(useSiteModule)
 
     override fun getUseScope(): SearchScope = classOrObjectDeclaration?.useScope ?: GlobalSearchScope.projectScope(project)
 
@@ -182,7 +185,7 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
             is KtClassOrObject -> parent.toLightClass()
             is KtScript -> parent.toLightClass()
             null -> withClassSymbol { s ->
-                (s.containingDeclaration as? KaNamedClassSymbol)?.let { createLightClassNoCache(it, ktModule, manager) }
+                (s.containingDeclaration as? KaNamedClassSymbol)?.let { createLightClassNoCache(it, useSiteModule, manager) }
             }
             else -> null
         }

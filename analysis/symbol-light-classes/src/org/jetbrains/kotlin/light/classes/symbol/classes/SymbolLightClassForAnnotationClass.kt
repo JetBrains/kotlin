@@ -16,30 +16,30 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
         require(classSymbol.classKind == KaClassKind.ANNOTATION_CLASS)
     }
 
-    constructor(classOrObject: KtClassOrObject, ktModule: KaModule) : super(classOrObject, ktModule) {
+    constructor(classOrObject: KtClassOrObject, useSiteModule: KaModule) : super(classOrObject, useSiteModule) {
         require(classOrObject is KtClass && classOrObject.isAnnotation())
     }
 
     constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 
@@ -68,8 +68,8 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
 
     override fun copy(): SymbolLightClassForAnnotationClass = SymbolLightClassForAnnotationClass(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        classSymbolPointer = symbolPointer,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 }

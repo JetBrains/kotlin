@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaScriptSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -18,6 +22,7 @@ import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightScriptMai
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
+@OptIn(KaImplementationDetail::class)
 internal sealed class SymbolLightMethodForScript(
     private val ktScript: KtScript,
     containingClass: SymbolLightClassBase,
@@ -27,11 +32,10 @@ internal sealed class SymbolLightMethodForScript(
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = false,
-) {
+), KaSymbolJavaView<KaScriptSymbol> {
     abstract override fun getName(): String
 
     override fun getNameIdentifier(): PsiIdentifier = KtLightIdentifier(this, ktDeclaration = null, name)
-
     override fun hasTypeParameters(): Boolean = false
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
@@ -61,6 +65,7 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
     ktScript: KtScript,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>?,
 ) : SymbolLightMethodForScript(
     ktScript,
     containingClass,
@@ -71,7 +76,9 @@ internal class SymbolLightMethodForScriptDefaultConstructor(
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptDefaultConstructor,
-            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC)
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 
@@ -86,6 +93,7 @@ internal class SymbolLightMethodForScriptMain(
     ktScript: KtScript,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
+    override val symbolPointer: KaSymbolPointer<KaScriptSymbol>?,
 ) : SymbolLightMethodForScript(
     ktScript,
     containingClass,
@@ -96,7 +104,9 @@ internal class SymbolLightMethodForScriptMain(
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this@SymbolLightMethodForScriptMain,
-            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 

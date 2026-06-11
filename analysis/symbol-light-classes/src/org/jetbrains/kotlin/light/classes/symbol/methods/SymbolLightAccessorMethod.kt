@@ -39,13 +39,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightAccessorMethod private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isGetter: Boolean,
     private val propertyAccessorDeclaration: KtPropertyAccessor?,
-    private val propertyAccessorSymbolPointer: KaSymbolPointer<KaPropertyAccessorSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaPropertyAccessorSymbol>,
     private val containingPropertyDeclaration: KtCallableDeclaration?,
     private val containingPropertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val isTopLevel: Boolean,
@@ -56,7 +57,7 @@ internal class SymbolLightAccessorMethod private constructor(
     containingClass = containingClass,
     methodIndex = methodIndex,
     isJvmExposedBoxed = isJvmExposedBoxed,
-) {
+), KaSymbolJavaView<KaPropertyAccessorSymbol> {
     private constructor(
         propertyAccessorSymbol: KaPropertyAccessorSymbol,
         containingPropertySymbol: KaPropertySymbol,
@@ -71,7 +72,7 @@ internal class SymbolLightAccessorMethod private constructor(
         methodIndex = if (propertyAccessorSymbol is KaPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER,
         isGetter = propertyAccessorSymbol is KaPropertyGetterSymbol,
         propertyAccessorDeclaration = propertyAccessorSymbol.sourcePsiSafe(),
-        propertyAccessorSymbolPointer = propertyAccessorSymbol.createPointer(),
+        symbolPointer = propertyAccessorSymbol.createPointer(),
         containingPropertyDeclaration = containingPropertySymbol.sourcePsiSafe(),
         containingPropertySymbolPointer = containingPropertySymbol.createPointer(),
         isTopLevel = isTopLevel,
@@ -83,10 +84,10 @@ internal class SymbolLightAccessorMethod private constructor(
         get() = if (isGetter) getter!! else setter!!
 
     private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T =
-        containingPropertySymbolPointer.withSymbol(ktModule, action)
+        containingPropertySymbolPointer.withSymbol(useSiteModule, action)
 
     private inline fun <T> withAccessorSymbol(crossinline action: context(KaSession) (KaPropertyAccessorSymbol) -> T): T =
-        propertyAccessorSymbolPointer.withSymbol(ktModule, action)
+        symbolPointer.withSymbol(useSiteModule, action)
 
     private fun String.abiName() = if (isGetter) getterName(this) else setterName(this)
 
@@ -116,7 +117,7 @@ internal class SymbolLightAccessorMethod private constructor(
             SymbolLightTypeParameterList(
                 owner = this,
                 symbolWithTypeParameterPointer = containingPropertySymbolPointer,
-                ktModule = ktModule,
+                useSiteModule = useSiteModule,
                 ktDeclaration = containingPropertyDeclaration,
             )
         }
@@ -147,8 +148,8 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(
-            ktModule,
-            propertyAccessorSymbolPointer,
+            useSiteModule,
+            symbolPointer,
         )
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
@@ -189,8 +190,8 @@ internal class SymbolLightAccessorMethod private constructor(
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = propertyAccessorSymbolPointer,
+                    useSiteModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
@@ -214,6 +215,8 @@ internal class SymbolLightAccessorMethod private constructor(
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 
@@ -271,7 +274,7 @@ internal class SymbolLightAccessorMethod private constructor(
             other.isTopLevel != isTopLevel ||
             other.suppressStatic != suppressStatic ||
             other.isJvmExposedBoxed != isJvmExposedBoxed ||
-            other.ktModule != ktModule
+            other.useSiteModule != useSiteModule
         ) return false
 
         if (propertyAccessorDeclaration != null || other.propertyAccessorDeclaration != null) {
@@ -282,7 +285,7 @@ internal class SymbolLightAccessorMethod private constructor(
             return containingPropertyDeclaration == other.containingPropertyDeclaration
         }
 
-        return compareSymbolPointers(propertyAccessorSymbolPointer, other.propertyAccessorSymbolPointer)
+        return compareSymbolPointers(symbolPointer, other.symbolPointer)
     }
 
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
@@ -324,7 +327,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun isValid(): Boolean =
         super.isValid() && propertyAccessorDeclaration?.isValid
                 ?: containingPropertyDeclaration?.isValid
-                ?: propertyAccessorSymbolPointer.isValid(ktModule)
+                ?: symbolPointer.isValid(useSiteModule)
 
     private val _isOverride: Boolean by lazyPub {
         if (isTopLevel) {

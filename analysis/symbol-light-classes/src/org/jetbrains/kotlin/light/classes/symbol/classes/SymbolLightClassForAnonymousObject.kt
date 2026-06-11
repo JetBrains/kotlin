@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
@@ -22,23 +21,22 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
-    @OptIn(KaImplementationDetail::class)
     constructor(
         anonymousObjectDeclaration: KtClassOrObject,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
     ) : this(
         classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(ktModule),
-        ktModule = ktModule,
+        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(useSiteModule),
+        useSiteModule = useSiteModule,
         manager = anonymousObjectDeclaration.manager,
     )
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
-    ) : super(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    ) : super(classOrObjectDeclaration, classSymbolPointer, useSiteModule, manager)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()
@@ -112,5 +110,5 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
 }

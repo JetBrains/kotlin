@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import kotlinx.collections.immutable.persistentHashMapOf
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightFieldForProperty private constructor(
     private val propertySymbolPointer: KaSymbolPointer<KaPropertySymbol>,
     private val fieldName: String,
@@ -46,8 +48,8 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
-    private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
-) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
+    override val symbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
+) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware, KaSymbolJavaView<KaBackingFieldSymbol> {
     internal constructor(
         propertySymbol: KaPropertySymbol,
         fieldName: String,
@@ -61,11 +63,11 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
+        symbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
-        return propertySymbolPointer.withSymbol(ktModule, action)
+        return propertySymbolPointer.withSymbol(useSiteModule, action)
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -211,8 +213,8 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
-                    SymbolAnnotationsProvider(ktModule = ktModule, annotatedSymbolPointer = pointer)
+                annotationsProvider = (symbolPointer)?.let { pointer ->
+                    SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = pointer)
                 } ?: EmptyAnnotationsProvider,
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
@@ -224,6 +226,8 @@ internal class SymbolLightFieldForProperty private constructor(
                     }
                 }
             ),
+            symbolPointer = symbolPointer,
+            useSiteModule = useSiteModule
         )
     }
 
@@ -284,7 +288,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightFieldForProperty || other.ktModule != ktModule || other.fieldName != fieldName) return false
+        if (other !is SymbolLightFieldForProperty || other.useSiteModule != useSiteModule || other.fieldName != fieldName) return false
         if (kotlinOrigin != null || other.kotlinOrigin != null) {
             return kotlinOrigin == other.kotlinOrigin
         }
@@ -295,5 +299,5 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: fieldName.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(useSiteModule)
 }

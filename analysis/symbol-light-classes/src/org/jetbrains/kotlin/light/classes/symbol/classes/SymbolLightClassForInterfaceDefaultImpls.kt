@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
     SymbolLightClassForInterface(
         containingClass.classOrObjectDeclaration,
-        containingClass.classSymbolPointer,
-        containingClass.ktModule,
+        containingClass.symbolPointer,
+        containingClass.useSiteModule,
         containingClass.manager,
     ) {
     override fun getQualifiedName(): String? = containingClass.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
@@ -43,6 +43,8 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,
         modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
+        symbolPointer = symbolPointer,
+        useSiteModule = useSiteModule
     )
 
     override fun classKind(): KaClassKind = KaClassKind.CLASS
