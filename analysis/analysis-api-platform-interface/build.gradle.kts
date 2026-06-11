@@ -9,23 +9,19 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    implementation(project(":analysis:decompiled:decompiler-to-psi"))
-    implementation(project(":analysis:decompiled:decompiler-native"))
+    implementation(project(":core:compiler.common.jvm"))
+    implementation(project(":core:deserialization.common.jvm"))
+    implementation(project(":core:language.targets.jvm"))
     implementation(intellijCore())
     implementation(libs.opentelemetry.api)
     implementation(libs.caffeine)
 
-    testFixturesApi(kotlinTest("junit"))
     testFixturesApi(platform(libs.junit.bom))
-    testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testRuntimeOnly(libs.junit.jupiter.engine)
-
-    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 }
 
 kotlin {

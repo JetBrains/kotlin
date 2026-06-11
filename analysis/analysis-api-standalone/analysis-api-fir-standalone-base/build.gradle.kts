@@ -19,6 +19,9 @@ dependencies {
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":analysis:low-level-api-fir"))
+    implementation(project(":compiler:fir:raw-fir:psi2fir"))
+    implementation(project(":compiler:fir:entrypoint"))
 }
 
 sourceSets {
