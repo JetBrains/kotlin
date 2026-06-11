@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder
 
-import com.intellij.mock.MockVirtualFileSystem
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.singleFunctionCallOrNull
@@ -94,7 +94,7 @@ internal fun createDumbVirtualFile(
     project: Project,
     fileName: String,
     text: String,
-    fileSystem: VirtualFileSystem = MockVirtualFileSystem(),
+    fileSystem: VirtualFileSystem = CoreLocalFileSystem(),
 ): VirtualFile {
     val factory = KtPsiFactory(project, markGenerated = false)
     val ktFile = factory.createFile(fileName, text)

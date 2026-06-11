@@ -21,6 +21,8 @@ dependencies {
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:ir.psi2ir"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
@@ -54,6 +56,7 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {

@@ -17,6 +17,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesImplementation(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
+    testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
 }
 
 sourceSets {

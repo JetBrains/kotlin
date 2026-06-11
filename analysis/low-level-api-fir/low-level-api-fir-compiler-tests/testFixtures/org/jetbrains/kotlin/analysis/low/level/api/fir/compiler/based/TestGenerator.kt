@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLSourceLikeStubB
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.*
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
-import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
@@ -53,13 +53,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLScriptWithCustomDefDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     scriptDiagnosticsInit()
                 }
 
                 testClass<AbstractLLReversedScriptWithCustomDefDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     scriptDiagnosticsInit()
                 }
@@ -75,13 +75,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLReplDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     replDiagnosticsInit()
                 }
 
                 testClass<AbstractLLReversedReplDiagnosticsTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     replDiagnosticsInit()
                 }
@@ -98,13 +98,13 @@ fun main(args: Array<String>) {
                 }
 
                 testClass<AbstractLLScriptWithCustomDefBlackBoxTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     scriptCustomDefBackBoxInit()
                 }
 
                 testClass<AbstractLLReversedScriptWithCustomDefBlackBoxTest>(
-                    annotations = listOf(provider<AffectedByCompilerPlugins>())
+                    annotations = listOf(annotation(AffectedByCompilerPlugins::class.java))
                 ) {
                     scriptCustomDefBackBoxInit()
                 }

@@ -14,6 +14,8 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":kotlin-util-klib"))
 }
 
 sourceSets {
