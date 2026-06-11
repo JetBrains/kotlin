@@ -248,7 +248,7 @@ private fun IrDeclaration.propagatedOrImplicitJvmExposeBoxed(context: JvmBackend
 
 // Do not duplicate function without inline classes in parameters, since it would lead to CONFLICTING_JVM_DECLARATIONS
 private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Boolean): Boolean {
-    if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER) return false
+    if (this !is IrFunction || origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) return false
     // No sense in exposing suspend functions - they cannot be called from Java in normal way anyway
     if (isSuspend) return false
     // Ditto for suspend lambda methods
@@ -595,7 +595,7 @@ fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
 
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = false)
+val IrClass.isInlineClass: Boolean get() = isInlineClass(treatCompatibleFullValueClassesAsInline = false)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = false)

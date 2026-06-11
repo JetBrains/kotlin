@@ -1919,6 +1919,6 @@ fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
     return if (this is IrSimpleType && classifier.owner is IrScript) {
         false
     } else {
-        erasedUpperBound.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = !isJvm)
+        erasedUpperBound.isInlineClass(treatCompatibleFullValueClassesAsInline = !isJvm)
     }
 }

@@ -51,8 +51,8 @@ internal class DataClassMembersGenerator(
     private val generateBodies: Boolean
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
-    fun generateSingleFieldValueClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
-        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generate()
+    fun generateInlineClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate()
     }
 
     fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {

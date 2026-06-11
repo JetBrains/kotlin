@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -68,7 +68,7 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = true)
+val IrClass.isInlineClass get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = true)

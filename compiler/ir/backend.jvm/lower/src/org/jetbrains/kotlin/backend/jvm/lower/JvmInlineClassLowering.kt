@@ -86,7 +86,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
             if (source.shouldBeExposedByAnnotationOrFlag(context) &&
-                source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+                source.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
             ) {
                 annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation() +
                         source.copyPropagatedJvmStaticAnnotation()
@@ -132,7 +132,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             }
         }
 
-        if (declaration.isSingleFieldValueClass) {
+        if (declaration.isInlineClass) {
             handleSpecificNewClass(declaration)
         }
 
@@ -470,7 +470,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     private val IrClass.canUseSpecializedEqMethod: Boolean
         get() {
-            if (!isSingleFieldValueClass) return false
+            if (!isInlineClass) return false
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
             return !isClassWithFqName(StandardNames.RESULT_FQ_NAME) ||
                     context.config.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
@@ -481,7 +481,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         val parent = field.parent
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
-            parent.isSingleFieldValueClass &&
+            parent.isInlineClass &&
             field.name == parent.inlineClassFieldName
         ) {
             val receiver = expression.receiver!!.transform(this, null)
@@ -691,7 +691,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                 } else {
                     val underlyingClass = underlyingType.getClass()
                     // We can't directly compare unboxed values of underlying inline class as this class can have custom equals
-                    if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                    if (underlyingClass?.isInlineClass == true && !underlyingType.isNullable()) {
                         val underlyingClassEq =
                             context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
                         irCall(underlyingClassEq).apply {
@@ -713,7 +713,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
     }
 
     private fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
-        if (function is IrConstructor && function.isPrimary && function.constructedClass.isSingleFieldValueClass) {
+        if (function is IrConstructor && function.isPrimary && function.constructedClass.isInlineClass) {
             return null
         }
 
@@ -779,7 +779,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
     private fun IrConstructor.shouldBeExposed(): Boolean =
         shouldBeExposedByAnnotationOrFlag(context) &&
                 parameters.any { it.type.isInlineClassType() } &&
-                !constructedClass.isSingleFieldValueClass
+                !constructedClass.isInlineClass
 
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.parameters.forEach {
@@ -878,7 +878,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     // Anonymous initializers in inline classes are processed when building the primary constructor.
     override fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer): IrStatement =
-        if ((declaration.parent as? IrClass)?.isSingleFieldValueClass == true && !declaration.isStatic)
+        if ((declaration.parent as? IrClass)?.isInlineClass == true && !declaration.isStatic)
             declaration
         else
             super.visitAnonymousInitializerNew(declaration)
@@ -917,7 +917,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
 
         // Replace the function body with a wrapper
-        if (bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isSingleFieldValueClass) {
+        if (bridgeFunction.isFakeOverride && bridgeFunction.parentAsClass.isInlineClass) {
             // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
             createBridgeBody(replacement, bridgeFunction, function, true)
         } else {

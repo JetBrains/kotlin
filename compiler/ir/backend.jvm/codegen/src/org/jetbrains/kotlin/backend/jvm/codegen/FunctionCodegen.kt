@@ -375,7 +375,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 IrDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
+                IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,

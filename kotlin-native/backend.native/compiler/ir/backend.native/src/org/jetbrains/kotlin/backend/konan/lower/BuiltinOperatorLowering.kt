@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -116,7 +116,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
     }
 
     private fun inlinedClassHasDefaultEquals(irClass: IrClass): Boolean {
-        if (!irClass.isSingleFieldValueClass) {
+        if (!irClass.isInlineClass) {
             // Implicitly-inlined class, e.g. primitive one.
             return true
         }
@@ -124,7 +124,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         val equals = irClass.simpleFunctions()
                 .single { it.name.asString() == "equals" && it.parameters.size == 2 && it.overrides(anyEquals) }
 
-        return equals.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
     }
 
     fun IrBuilderWithScope.genInlineClassEquals(

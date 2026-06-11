@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
 import org.jetbrains.kotlin.backend.jvm.ir.isBasicValueClassType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -121,13 +121,13 @@ object InlineClassAbi {
 
 fun IrType.getRequiresMangling(): Boolean {
     val irClass = erasedUpperBound
-    return irClass.isSingleFieldValueClass && !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME)
+    return irClass.isInlineClass && !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME)
 }
 
 fun IrFunction.hasMangledParameters(): Boolean =
-    (dispatchReceiverParameter != null && parentAsClass.isSingleFieldValueClass) ||
+    (dispatchReceiverParameter != null && parentAsClass.isInlineClass) ||
             nonDispatchParameters.any { it.type.getRequiresMangling() } ||
-            (this is IrConstructor && constructedClass.isSingleFieldValueClass)
+            (this is IrConstructor && constructedClass.isInlineClass)
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
@@ -136,6 +136,6 @@ val IrClass.inlineClassFieldName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction &&
+    get() = (parent as? IrClass)?.isInlineClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true

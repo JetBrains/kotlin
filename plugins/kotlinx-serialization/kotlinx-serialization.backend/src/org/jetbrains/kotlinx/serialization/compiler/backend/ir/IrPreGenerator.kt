@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.copyTo
@@ -119,7 +119,7 @@ class IrPreGenerator(
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
         ) return
-        if (irClass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = !compilerContext.platform.isJvm())) return
+        if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = !compilerContext.platform.isJvm())) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN

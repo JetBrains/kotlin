@@ -95,8 +95,8 @@ internal class ClassGenerator(
                 type.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: $classDescriptor")
             }
 
-            if (irClass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = false) && ktClassOrObject is KtClassOrObject) {
-                generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+            if (irClass.isInlineClass(treatCompatibleFullValueClassesAsInline = false) && ktClassOrObject is KtClassOrObject) {
+                generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
             }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
@@ -414,8 +414,8 @@ internal class ClassGenerator(
         return typeArguments
     }
 
-    private fun generateAdditionalMembersForSingleFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateSingleFieldValueClassMembers(ktClassOrObject, irClass)
+    private fun generateAdditionalMembersForInlineClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateInlineClassMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {

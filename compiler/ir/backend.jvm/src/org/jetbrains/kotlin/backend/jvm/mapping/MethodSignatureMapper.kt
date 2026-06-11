@@ -211,7 +211,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private fun isBoxMethodForInlineClass(function: IrFunction): Boolean =
-        function.parent.let { it is IrClass && it.isSingleFieldValueClass } &&
+        function.parent.let { it is IrClass && it.isInlineClass } &&
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
 

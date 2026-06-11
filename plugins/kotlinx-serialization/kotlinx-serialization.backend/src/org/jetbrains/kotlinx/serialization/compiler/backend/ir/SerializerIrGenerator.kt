@@ -638,7 +638,7 @@ open class SerializerIrGenerator(
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
-                serializableDesc.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()) ->
+                serializableDesc.isInlineClass(treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()) ->
                     SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context)
             }

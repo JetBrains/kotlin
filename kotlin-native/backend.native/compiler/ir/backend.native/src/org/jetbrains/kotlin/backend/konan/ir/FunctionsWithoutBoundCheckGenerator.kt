@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -64,7 +63,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     fun generate() {
         context.irBuiltIns.arrays.forEach { classSymbol ->
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
-                    .types.single().takeIf { classSymbol.owner.isSingleFieldValueClass }
+                    .types.single().takeIf { classSymbol.owner.isInlineClass }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
             val setDelegatingToFunction = underlyingClass?.functions?.single { it.name == OperatorNameConventions.SET }
             classSymbol.owner.addMember(generateFunction(setFunction, setDelegatingToFunction, KonanNameConventions.setWithoutBoundCheck))

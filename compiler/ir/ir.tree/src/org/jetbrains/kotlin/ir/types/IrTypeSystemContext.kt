@@ -463,7 +463,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic) == true
+        (this as? IrClassSymbol)?.owner?.isInlineClass(treatFullValueClassesWithOneFieldAsBasic) == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
         (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes

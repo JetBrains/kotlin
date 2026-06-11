@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.isArray
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
-import org.jetbrains.kotlin.backend.konan.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.konan.ir.isInlineClass
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -132,7 +132,7 @@ internal class PreCodegenInliner(
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
                                 && !calleeIrFunction.overrides(invokeSuspendFunction.owner)
                                 && calleeIrFunction.correspondingPropertySymbol?.owner?.let {
-                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+                            it.parentClassOrNull?.isInlineClass == true && it.backingField != null
                         } != true
                                 && calleeIrFunction.originalConstructor?.constructedClass?.let { it.isArray || it.symbol == string } != true
                                 && calleeIrFunction.originalConstructor?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true

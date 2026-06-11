@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -76,7 +76,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         if (a.isNullConst() || b.isNullConst()) {
             val irValue = if (a.isNullConst()) b else a
             val value = irValue.accept(codegen, data)
-            return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isSingleFieldValueClass != true || irValue.type.isNullable()))
+            return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isInlineClass != true || irValue.type.isNullable()))
                 BooleanNullCheck(expression, value)
             else {
                 value.discard()

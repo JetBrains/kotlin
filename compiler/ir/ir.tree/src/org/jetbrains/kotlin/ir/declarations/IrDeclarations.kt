@@ -50,7 +50,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  * the class is a full value class compatible with inline classes; otherwise, `false`.
  */
 @ValueClassBackendAgnosticApi
-fun IrClass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
+fun IrClass.isInlineClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
     inlineClassRepresentation(treatCompatibleFullValueClassesAsInline) != null
 
 val IrClass.isFullValueClass: Boolean
