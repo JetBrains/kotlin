@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
+import java.io.File
 import javax.inject.Inject
 
 internal interface SwiftResolveWorkParameters : WorkParameters {
@@ -36,16 +37,12 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
         try {
             doExecute()
             if (parameters.markCompletion.get()) {
-                copySwiftLockFile(
+                finalizeFetchTask(
                     fs,
                     parameters.syntheticImportProjectRoot.get().asFile.resolve("Package.resolved"),
                     parameters.syntheticLockFile.get().asFile,
-                )
-
-                copySwiftLockFile(
-                    fs,
                     parameters.swiftPMDependenciesCheckout.get().asFile.resolve("workspace-state.json"),
-                    parameters.workspaceStateJson.get().asFile,
+                    parameters.workspaceStateJson.get().asFile
                 )
                 parameters.coordinationService.get()
                     .markSwiftResolveCompleted(parameters.syntheticPackageHash.get())
@@ -104,6 +101,23 @@ internal abstract class SwiftResolveWorkAction @Inject constructor(
 
         exclude.writeText(entry)
     }
+}
 
-
+internal fun finalizeFetchTask(
+    fs: FileSystemOperations,
+    sourcePackageResolvedFile: File,
+    destinationPackageResolved: File,
+    sourceWorkspaceStateFile: File,
+    destinationWorkspaceStateFile: File,
+) {
+    copySwiftLockFile(
+        fs,
+        sourcePackageResolvedFile,
+        destinationPackageResolved,
+    )
+    copySwiftLockFile(
+        fs,
+        sourceWorkspaceStateFile,
+        destinationWorkspaceStateFile
+    )
 }

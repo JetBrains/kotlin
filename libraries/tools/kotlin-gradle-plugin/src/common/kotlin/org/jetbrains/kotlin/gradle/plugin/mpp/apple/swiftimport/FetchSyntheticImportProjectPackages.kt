@@ -120,7 +120,13 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
         when (claim) {
             is CoordinationClaim.Existing -> {
                 coordinationService.get().awaitSwiftResolved(claim.bucket)
-                finalizeFetchTask(claim.bucket)
+                finalizeFetchTask(
+                    fs,
+                    claim.bucket.ownerPackageResolvedFile,
+                    syntheticLockFile.get().asFile,
+                    claim.bucket.ownerWorkspaceStateFile,
+                    workspaceStateJson.get().asFile
+                )
             }
 
             is CoordinationClaim.Owner -> {
@@ -132,32 +138,6 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
             }
         }
 
-    }
-
-    private fun finalizeFetchTask(
-        bucket: SwiftResolveBucket
-    ) {
-        copyPasteFromOwner(
-            bucket.ownerPackageResolvedFile,
-            syntheticLockFile.get().asFile,
-        )
-        copyPasteFromOwner(
-            bucket.ownerWorkspaceStateFile,
-            workspaceStateJson.get().asFile
-        )
-    }
-
-    private fun copyPasteFromOwner(
-        source: File,
-        destination: File,
-    ) {
-        if (!source.exists()) {
-            if (destination.exists()) {
-                destination.delete()
-            }
-            return
-        }
-        copySwiftLockFile(fs, source, destination)
     }
 
 
