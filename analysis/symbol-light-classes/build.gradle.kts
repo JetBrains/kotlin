@@ -17,11 +17,13 @@ dependencies {
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
     implementation(libs.caffeine)
 
     testFixturesApi(project(":analysis:decompiled:light-classes-for-decompiled"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
