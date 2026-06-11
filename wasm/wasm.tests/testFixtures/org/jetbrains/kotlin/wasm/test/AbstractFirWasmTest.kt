@@ -170,17 +170,6 @@ open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : Abstrac
     }
 }
 
-open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
-    "compiler/testData/codegen/boxInline/",
-    "codegen/firBoxInline/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureCodegenFirHandlerSteps()
-        builder.configureCodegenIrHandlerSteps()
-    }
-}
-
 open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     "compiler/testData/codegen/boxWasmJsInterop",
     "codegen/firWasmJsInterop"

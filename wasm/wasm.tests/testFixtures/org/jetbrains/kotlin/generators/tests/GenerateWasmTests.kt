@@ -153,10 +153,6 @@ fun main(args: Array<String>) {
                 model("codegen/boxInline", pattern = jsTranslatorTestPattern)
             }
 
-            testClass<AbstractFirWasmJsCodegenBoxInlineTest> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirWasmJsCodegenInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
