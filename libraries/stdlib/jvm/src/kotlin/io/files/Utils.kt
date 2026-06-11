@@ -475,3 +475,32 @@ public fun File.resolveSibling(relative: File): File {
  * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: String): File = resolveSibling(File(relative))
+
+/**
+ * Returns a list of abstract pathnames denoting the files and
+ * directories in the directory denoted by this abstract pathname that
+ * satisfy the specified filter.  The behavior of this method is the same
+ * as that of the {@link java.io.File.listFiles()} method, except that the pathnames in
+ * the returned list must satisfy the filter.   If the given {@code filter}
+ * is {@code null} then all pathnames are accepted.  Otherwise, a pathname
+ * satisfies the filter if and only if the value {@code true} results when
+ * the {@link java.io.FileFilter#accept java.io.FileFilter.accept(File)} method of the
+ * filter is invoked on the pathname.
+ * @param [filter] A file filter
+ *
+ * @return  A list of abstract pathnames denoting the files and
+ *          directories in the directory denoted by this abstract pathname.
+ *          The list will be empty if the directory is empty.  Returns
+ *          {@code null} if this abstract pathname does not denote a
+ *          directory, or if an I/O error occurs.
+ * @throws  SecurityException If a security manager exists and its {@link
+ *          SecurityManager#checkRead(String)} method denies read access to
+ *          the directory
+ */
+public fun File.filesInDirectory(filter: FileFilter? = null): List<File> {
+    return this.list()?.let { fileNames ->
+        fileNames.mapNotNull { fileName ->
+            File(this, fileName).takeIf { file -> filter == null || filter.accept(file) }
+        }
+    } ?: emptyList()
+}
