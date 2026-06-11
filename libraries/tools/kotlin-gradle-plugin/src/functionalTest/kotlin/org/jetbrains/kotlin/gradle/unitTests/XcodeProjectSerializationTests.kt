@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.unitTests
 
 import kotlinx.serialization.decodeFromString
@@ -272,7 +274,7 @@ class XcodeProjectSerializationTests {
     }
 
     @Test
-    fun `mutating XCBuildConfiguration preserves sandboxing override` () {
+    fun `mutating XCBuildConfiguration preserves sandboxing override`() {
         val inputProject = """
             {
               "rootObject": "1",
