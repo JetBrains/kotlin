@@ -129,9 +129,11 @@ internal fun KmType.toKType(
         kClassifier,
         arguments,
         isNullable,
-        annotations
-            .filter { !it.className.toClassId().asSingleFqName().isCompilerInternalSyntheticAnnotation }
-            .map { it.toAnnotation(classLoader) },
+        lazy(PUBLICATION) {
+            annotations
+                .filter { !it.className.toClassId().asSingleFqName().isCompilerInternalSyntheticAnnotation }
+                .map { it.toAnnotation(classLoader) }
+        },
         abbreviatedType?.toKType(classLoader, typeParameterTable),
         isDefinitelyNonNull,
         (classifier as? KmClassifier.Class)?.name == "kotlin/Nothing",
@@ -161,7 +163,7 @@ private fun unwrapSuspendFunctionType(type: SimpleKType, computeJavaType: (() ->
         type.classifier,
         type.arguments.dropLast(2) + KTypeProjection.invariant(returnType),
         type.isMarkedNullable,
-        type.annotations,
+        type.lazyAnnotations,
         type.abbreviation,
         type.isDefinitelyNotNullType,
         type.isNothingType,

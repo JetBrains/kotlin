@@ -58,8 +58,8 @@ internal class FlexibleKType private constructor(
     override fun lowerBoundIfFlexible(): AbstractKType? = lowerBound
     override fun upperBoundIfFlexible(): AbstractKType? = upperBound
 
-    override val annotations: List<Annotation>
-        get() = lowerBound.annotations
+    override val lazyAnnotations: Lazy<List<Annotation>>
+        get() = lowerBound.lazyAnnotations
 
     companion object {
         fun create(

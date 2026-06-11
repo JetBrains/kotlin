@@ -176,7 +176,7 @@ private fun AbstractKType.enhanceInflexible(
         typeConstructor,
         enhancedArguments.zip(arguments) { enhanced, original -> enhanced ?: original },
         enhancedNullability ?: isMarkedNullable,
-        annotations, // In contrast to the compiler, we're not adding synthetic EnhancedNullability/EnhancedMutability annotations.
+        lazyAnnotations, // In contrast to the compiler, we're not adding synthetic EnhancedNullability/EnhancedMutability annotations.
         abbreviation,
         isDefinitelyNotNullType || effectiveQualifiers.definitelyNotNull,
         isNothingType,

@@ -18,7 +18,7 @@ internal object StandardKTypes {
     val SERIALIZABLE: KType = typeOf<Serializable>()
 
     val UNIT_RETURN_TYPE: KType = SimpleKType(
-        Unit::class, arguments = emptyList(), isMarkedNullable = false, annotations = emptyList(), abbreviation = null,
+        Unit::class, arguments = emptyList(), isMarkedNullable = false, lazyAnnotations = lazyOf(emptyList()), abbreviation = null,
         isDefinitelyNotNullType = false, isNothingType = false, isSuspendFunctionType = false, mutableCollectionClass = null,
     ) { Void.TYPE }
 }
