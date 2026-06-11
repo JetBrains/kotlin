@@ -35,7 +35,7 @@ fun Job.alsoCancel(another: Job) {
  */
 @OptIn(InternalCoroutinesApi::class, kotlin.concurrent.atomics.ExperimentalAtomicApi::class)
 class SwiftJob private constructor(
-    val backingJob: Job,
+    private val backingJob: Job,
     private val _cancellationCallback: AtomicReference<(Boolean) -> Boolean>,
 ) : Job by backingJob {
     var cancellationCallback: (Boolean) -> Boolean
@@ -46,16 +46,14 @@ class SwiftJob private constructor(
     constructor(parentJob: Job) : this(backingJob = Job(parentJob), _cancellationCallback = AtomicReference({ it }))
 
     init {
-        // It is necessary to forward cancellation as soon as it is triggered to make it visible before the job completes,
-        // hence onCancelling=true
-        backingJob.invokeOnCompletion(onCancelling = true) {
-            if (it is CancellationException) {
-                cancellationCallback(true)
-            }
-        }
         if (cancellationCallback(false)) {
             cancelExternally()
         }
+    }
+
+    override fun cancel(cause: CancellationException?) {
+        backingJob.cancel(cause)
+        cancellationCallback(true)
     }
 
     fun cancelExternally() {
@@ -63,6 +61,7 @@ class SwiftJob private constructor(
     }
 }
 
+@OptIn(InternalCoroutinesApi::class)
 public fun <T> swiftCoroutine(
     continuation: (T) -> Unit,
     exception: (Any?) -> Unit,
@@ -73,13 +72,14 @@ public fun <T> swiftCoroutine(
         try {
             continuation(block())
         } catch (error: CancellationException) {
-            cancellation.cancel(error)
             exception(null)
-            throw error
         } catch (error: Throwable) {
             exception(error)
         }
-    }.alsoCancel(cancellation)
+    }.invokeOnCompletion(onCancelling = true) {
+        if (it !is CancellationException) return@invokeOnCompletion
+        cancellation.cancel(it)
+    }
 }
 
 @ExportedBridge("__root___SwiftJob_init_allocate")
