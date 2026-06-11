@@ -122,11 +122,11 @@ private fun JavaType?.toConeTypeProjection(
             if (mode.insideAnnotation) {
                 return lowerBound
             }
-
             if (!isRaw && classifier?.isTriviallyFlexible() == true) {
                 lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
+
                 if (isRaw) {
                     ConeRawType.create(lowerBound, upperBound)
                 } else {
@@ -223,7 +223,6 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             }
 
             val lookupTag = classId.toLookupTag()
-
             // When converting type parameter bounds we should not attempt to load any classes, as this may trigger
             // enhancement of type parameter bounds on some other class that depends on this one. Also, in case of raw
             // types specifically there could be an infinite recursion on the type parameter itself.
@@ -391,4 +390,3 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
 }
-

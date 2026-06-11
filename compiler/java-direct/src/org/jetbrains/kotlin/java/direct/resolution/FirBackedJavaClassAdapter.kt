@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -131,6 +130,7 @@ internal class FirBackedJavaClassAdapter(
         get() = emptyList()
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
+
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 
     override val isAbstract: Boolean
@@ -144,7 +144,8 @@ internal class FirBackedJavaClassAdapter(
      * Real, fully-shaped resolved supertype chain — the `java-direct` analog of the PSI light
      * class's `EXTENDS_LIST` (see [org.jetbrains.kotlin.fir.java.FirJavaElementFinder]). Mirrors
      * its `resolveSupertypesOnAir` strategy: prefer already-resolved `superTypeRefs`; otherwise
-     * resolve in a throwaway `FirSupertypeResolverVisitor` / `SupertypeComputationSession`.
+     * resolve on-air using a fresh, throwaway `SupertypeComputationSession` / `ScopeSession` and
+     * `FirSupertypeResolverVisitor`, against the adapter's existing shared [session].
      *
      * Each resolved [ConeClassLikeType] is exposed as a [FirBackedJavaClassifierType] so the
      * model-side inherited-outer-argument recovery in `JavaClassifierTypeOverAst.computeTypeArguments`
@@ -168,6 +169,7 @@ internal class FirBackedJavaClassAdapter(
     }
     override val innerClassNames: Collection<Name>
         get() = emptyList()
+
     override fun findInnerClass(name: Name): JavaClass? = null
 
     override val isInterface: Boolean
@@ -193,6 +195,7 @@ internal class FirBackedJavaClassAdapter(
         get() = emptyList()
     override val recordComponents: Collection<JavaRecordComponent>
         get() = emptyList()
+
     override fun hasDefaultConstructor(): Boolean = false
 
     override fun equals(other: Any?): Boolean = other is FirBackedJavaClassAdapter && resolvedClassId == other.resolvedClassId
@@ -233,10 +236,13 @@ internal class FirBackedJavaTypeParameter(
 }
 
 /**
- * Resolves this class's supertypes in a throwaway [SupertypeComputationSession], mirroring
- * `FirJavaElementFinder.resolveSupertypesOnAir`. Used by [FirBackedJavaClassAdapter.supertypes]
- * only when `superTypeRefs` are not yet all [FirResolvedTypeRef] (the common case for already
- * resolved outer/super classes reuses `superTypeRefs` directly and never reaches this path).
+ * Resolves this class's supertypes on-air using a fresh, throwaway [SupertypeComputationSession]
+ * and [ScopeSession] (and the [FirSupertypeResolverVisitor] itself) against the given shared
+ * [session] — the [FirSession] is the real, long-lived compiler session and is **not** disposable;
+ * only the per-call computation/scope caches are. Mirrors `FirJavaElementFinder.resolveSupertypesOnAir`.
+ * Used by [FirBackedJavaClassAdapter.supertypes] only when `superTypeRefs` are not yet all
+ * [FirResolvedTypeRef] (the common case for already resolved outer/super classes reuses
+ * `superTypeRefs` directly and never reaches this path).
  */
 private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
     val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())

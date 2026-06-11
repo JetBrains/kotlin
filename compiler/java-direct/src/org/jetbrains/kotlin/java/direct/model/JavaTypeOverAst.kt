@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isRaw
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.FirBackedJavaClassAdapter
@@ -718,10 +719,7 @@ class SimpleClassifierType(
  *
  * The model-side inherited-outer-argument recovery in [JavaClassifierTypeOverAst.computeTypeArguments]
  * reads [coneType] directly (it is `internal`) to walk the supertype hierarchy and substitute type
- * arguments at the cone level — the model-side analog of the deleted FIR-side
- * `findTypeArgsForClassInHierarchy` / `substituteTypeArgs`.
- *
- * This is a model-private class — it adds no member to the public Java-model interfaces (rule 7).
+ * arguments at the cone level.
  */
 internal class FirBackedJavaClassifierType(
     val coneType: ConeClassLikeType,
@@ -730,10 +728,7 @@ internal class FirBackedJavaClassifierType(
     override val classifier: JavaClassifier = FirBackedJavaClassAdapter(coneType.lookupTag.classId, session)
     override val classifierQualifiedName: String get() = coneType.lookupTag.classId.asSingleFqName().asString()
     override val presentableText: String get() = classifierQualifiedName
-
-    // Resolved supertypes are never raw; raw-ness is represented by `ConeRawType`, which does not
-    // appear among a class's resolved `superTypeRefs`.
-    override val isRaw: Boolean get() = false
+    override val isRaw: Boolean get() = coneType.isRaw()
 
     override val typeArguments: List<JavaType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         coneType.typeArguments.map { firBackedJavaType(it, session) }
@@ -763,8 +758,8 @@ internal class FirBackedJavaWildcardType(
 /**
  * Wraps a cone [ConeTypeProjection] as a [JavaType] so FIR's `JavaTypeConversion` reproduces the
  * original projection when re-converting a [FirBackedJavaClassifierType]'s type arguments:
- *  - star projection      → unbounded wildcard (`? `) → `ConeStarProjection`
- *  - `in`/`out` projection → bounded wildcard           → `ConeKotlinTypeProjection{In,Out}`
+ *  - star projection → unbounded wildcard (`? `) → `ConeStarProjection`
+ *  - `in`/`out` projection → bounded wildcard → `ConeKotlinTypeProjection{In, Out}`
  *  - invariant class type  → [FirBackedJavaClassifierType]
  *
  * Type-parameter (and other non-class-like) invariant projections fall back to an unbounded

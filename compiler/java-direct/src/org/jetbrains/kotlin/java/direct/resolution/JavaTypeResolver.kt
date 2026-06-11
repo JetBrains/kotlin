@@ -549,16 +549,14 @@ internal fun classifierAdapterFor(classId: ClassId): JavaClass? {
  * e.g. `J1.NestedSubClass extends NestedInSuperClass` with `J1 → KFirst → SuperClass<String>`
  * yields `[String]`, so the supertype is `SuperClass<String>.NestedInSuperClass`.
  *
- * Model-side replacement for the deleted FIR-side `findOuterTypeArgsFromHierarchy` /
- * `findTypeArgsForClassInHierarchy` / `substituteTypeArgs`. The lexical containing class is read
- * from [JavaScopeContext.containingClass] (no `MutableJavaTypeParameterStack` side-channel). The
- * walk starts from the containing class's **outer** class — never the containing class itself,
- * whose supertypes are still being resolved — and descends each outer class's
- * [FirBackedJavaClassAdapter.supertypes] looking for [innerClassId]'s outer class.
+ * The lexical containing class is read from [JavaScopeContext.containingClass]. The
+ * walk starts from the containing class's **outer** class, whose supertypes are still
+ * being resolved — and descends each outer class's [FirBackedJavaClassAdapter.supertypes]
+ * looking for [innerClassId]'s outer class.
  *
  * Returns the recovered arguments as FIR-backed [JavaType]s (so FIR's `JavaTypeConversion`
- * reconstructs the cone), or `null` when nothing is recovered (top-level inner class, no
- * containing class, or the outer class is not found in the hierarchy).
+ * reconstructs the cone type), or `null` when nothing is recovered (top-level inner class,
+ * no containing class, or the outer class is not found in the hierarchy).
  */
 context(c: JavaResolutionContext)
 internal fun recoverInheritedOuterTypeArguments(innerClassId: ClassId): List<JavaType>? {
