@@ -31,12 +31,10 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSubstitutorProvider(
     override val analysisSessionProvider: () -> KaFirSession
@@ -276,8 +274,9 @@ internal class KaFirSubstitutorProvider(
      * Creates a fresh constraint system and registers [freeTypeParameters].
      * Returns a substitutor that maps registered type parameter symbols to their default types.
      *
-     * This is mostly a copy of [ConeSimpleConstraintSystemImpl.registerTypeVariables].
-     * However, we need a custom implementation to be able to replace type parameters in their recursive bounds with star projections.
+     * If a passed parameter has a recursive bound, the given type parameter in the corresponding bound is replaced with a star projection.
+     * `T: Comparable<T>, SomeInterface` is seen as `T: Comparable<*>, SomeInterface`.
+     * See KT-86935 for more info.
      */
     private fun ConeSimpleConstraintSystemImpl.registerTypeVariablesAndGetSubstitutor(freeTypeParameters: Collection<KaTypeParameterSymbol>): ConeSubstitutor {
         val coneTypeParameterList = freeTypeParameters.map { kaTypeParameter ->
@@ -285,30 +284,9 @@ internal class KaFirSubstitutorProvider(
             ConeTypeParameterLookupTag(kaTypeParameter.firSymbol)
         }
 
-        val csBuilder = system.getBuilder()
-        val substitutionMap = coneTypeParameterList.associateBy({ it.typeParameterSymbol }) {
-            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol)
-            csBuilder.registerVariable(variable)
-
-            variable.defaultType
+        return registerTypeVariablesWithCustomUpperBounds(coneTypeParameterList) { typeParameter, upperBound ->
+            upperBound.replaceRecursiveTypeParameterWithStarProjection(typeParameter)
         }
-
-        val typeSubstitutor = substitutorByMap(substitutionMap, analysisSession.firSession)
-        for (typeParameter in coneTypeParameterList) {
-            for (upperBound in typeParameter.symbol.resolvedBounds) {
-                addSubtypeConstraint(
-                    substitutionMap[typeParameter.typeParameterSymbol]
-                        ?: errorWithAttachment("No ${typeParameter.symbol.fir::class.java} in substitution map") {
-                            withFirEntry("typeParameter", typeParameter.symbol.fir)
-                        },
-                    typeSubstitutor.substituteOrSelf(
-                        upperBound.coneType.replaceRecursiveTypeParameterWithStarProjection(typeParameter)
-                    ),
-                )
-            }
-        }
-
-        return typeSubstitutor
     }
 
     /**

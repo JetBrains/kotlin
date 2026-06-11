@@ -1,3 +1,4 @@
+// False positive due to KT-86935
 interface Base<T>
 
 fun <T: Base<T>> usage(left: Base<Base<Base<Int>>>, right: Base<T>) {

@@ -91,11 +91,11 @@
       ]
 
 <caret_15>:
-  KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
+  KDocName(1047,1098): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
     null
 
 <caret_16>:
-  KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
+  KDocName(1104,1152): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
     KaSymbolResolutionSuccess:
       symbols = [
         /extStar(<extension receiver>: Base<*>): kotlin.Unit

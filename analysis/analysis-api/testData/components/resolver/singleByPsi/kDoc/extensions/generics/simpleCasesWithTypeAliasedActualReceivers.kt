@@ -27,7 +27,7 @@ typealias ChildGenericAliasWithAnotherNothingAlias = Base<ChildGenericAliasWithN
  * [ChildGenericAliasWithNothing.ext<caret_12>Star]
  *
  * [ChildGenericAliasWithAnotherNothingAlias.ex<caret_13>t]
- * [ChildGenericAliasWithAnotherNothingAlias.extR<caret_14>ecursive]
+ * [ChildGenericAliasWithAnotherNothingAlias.extR<caret_14>ecursive] - False positive due to KT-86935
  * [ChildGenericAliasWithAnotherNothingAlias.extN<caret_15>othing]
  * [ChildGenericAliasWithAnotherNothingAlias.ext<caret_16>Star]
  */

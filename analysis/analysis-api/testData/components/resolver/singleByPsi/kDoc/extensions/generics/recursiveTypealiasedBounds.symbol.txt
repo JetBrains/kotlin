@@ -27,42 +27,42 @@
       ]
 
 <caret_5>:
-  KDocName(426,451): 'ChildGenericAliasInt.ext1'
+  KDocName(459,484): 'ChildGenericAliasInt.ext1'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext1(<extension receiver>: {BaseAlias<T>=} Base<T>): kotlin.Unit
       ]
 
 <caret_6>:
-  KDocName(457,471): 'BaseAlias.ext2'
+  KDocName(523,537): 'BaseAlias.ext2'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_7>:
-  KDocName(477,487): 'Child.ext2'
+  KDocName(543,553): 'Child.ext2'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_8>:
-  KDocName(493,508): 'ChildAlias.ext2'
+  KDocName(559,574): 'ChildAlias.ext2'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_9>:
-  KDocName(514,536): 'ChildGenericAlias.ext2'
+  KDocName(580,602): 'ChildGenericAlias.ext2'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
       ]
 
 <caret_10>:
-  KDocName(542,567): 'ChildGenericAliasInt.ext2'
+  KDocName(641,666): 'ChildGenericAliasInt.ext2'
     KaSymbolResolutionSuccess:
       symbols = [
         /ext2(<extension receiver>: Base<T>): kotlin.Unit
