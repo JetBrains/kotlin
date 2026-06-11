@@ -1,0 +1,20 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle.targets.wasm
+
+enum class WasmCompilationMode {
+    MONOLITH,
+    MULTI_OPEN_WORLD,
+    MULTI_CLOSED_WORLD;
+
+    internal fun isOpenWorld() = this == MULTI_OPEN_WORLD
+
+    companion object {
+        fun byArgument(argument: String): WasmCompilationMode? =
+            WasmCompilationMode.values()
+                .firstOrNull { it.name.replace("_", "-").equals(argument, ignoreCase = true) }
+    }
+}

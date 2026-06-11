@@ -5365,6 +5365,19 @@ public abstract class org/jetbrains/kotlin/gradle/targets/native/tasks/PodSetupB
 	public final fun setupBuild ()V
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode : java/lang/Enum {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode$Companion;
+	public static final field MONOLITH Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+	public static final field MULTI_CLOSED_WORLD Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+	public static final field MULTI_OPEN_WORLD Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode$Companion {
+	public final fun byArgument (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
