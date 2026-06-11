@@ -57,14 +57,15 @@ internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallab
             member.isStaticMethodInInterface(kClass)
 
 /**
- * Builds the "transitive" member map used to compute 'KClass.members' for every KClass.
+ * Builds the "transitive" member map, for a single member [name], used to compute 'KClass.members' for every KClass.
  *
  * User facing 'KClass.members' is not "transitive". This map is "transitive".
  *
  * By "transitive" we mean that the map of every inheritor class/interface is a strict superset
  * of their parent classes' maps.
  */
-internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: Collection<ReflectKCallable<*>>): MembersJavaSignatureMap {
+internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: String): MembersJavaSignatureMap {
+    val declaredMembers = kClass.data.value.getDeclaredMembersByName(name)
     val javaSignaturesMap: MutableMembersJavaSignatureMap = HashMap()
     val isKotlin = kClass.java.isKotlin
     val declaredTransitiveKotlinMembers: MutableMembersKotlinSignatureMap = HashMap()
@@ -81,7 +82,7 @@ internal fun computeFakeOverrideMembers(kClass: KClassImpl<*>, declaredMembers: 
                         "Supertype '$supertype' appears non-denotable in class '$kClass'"
             )
         val substitutor = KTypeSubstitutor.create(supertype)
-        val supertypeMembers = supertypeKClass.fakeOverrideMembers // Recursive call
+        val supertypeMembers = supertypeKClass.getFakeOverrideMembersByName(name) // Recursive call
         for ((_, notSubstitutedMember) in supertypeMembers) {
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
@@ -144,7 +145,7 @@ internal fun computeOverriddenFunctions(
     for (supertype in container.supertypes) {
         val supertypeKClass = supertype.classifier as? KClass<*> ?: continue
         val substitutor = KTypeSubstitutor.create(supertype)
-        for ((_, notSubstitutedMember) in supertypeKClass.fakeOverrideMembers) {
+        for ((_, notSubstitutedMember) in supertypeKClass.getFakeOverrideMembersByName(signature.name)) {
             if (notSubstitutedMember !is ReflectKFunction) continue
             val overriddenStorage = notSubstitutedMember.overriddenStorage
                 .withChainedClassTypeParametersSubstitutor(substitutor)
@@ -191,10 +192,10 @@ internal val ReflectKCallable<*>.isStatic: Boolean
 private val ReflectKCallable<*>.isJavaField: Boolean
     get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlin == false
 
-private val KClass<*>.fakeOverrideMembers: MembersJavaSignatureMap
-    get() = when (this) {
-        is KClassImpl<*> -> data.value.fakeOverrideMembers
-        is MutableCollectionKClass<*> -> readonlyClass.fakeOverrideMembers
+internal fun KClass<*>.getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
+    when (this) {
+        is KClassImpl<*> -> getFakeOverrideMembersByName(name)
+        is MutableCollectionKClass<*> -> readonlyClass.getFakeOverrideMembersByName(name)
         else -> error("Unknown type ${this::class}")
     }
 

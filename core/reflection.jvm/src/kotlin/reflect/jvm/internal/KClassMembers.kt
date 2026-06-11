@@ -8,11 +8,11 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.reflect.KClass
@@ -26,23 +26,50 @@ import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
 
-internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable<*>> = buildList {
-    val kClass = this@computeDeclaredMembers
+private const val ENUM_ENTRIES_PROPERTY_NAME = "entries"
+
+internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable<*>> =
+    data.value.declaredMemberNames.flatMap(data.value::getDeclaredMembersByName)
+
+internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> {
+    val names: Collection<String> =
+        if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
+            getMemberNamesFromDescriptors()
+        } else buildSet {
+            // All member names of this class are the _declared_ member names of this class plus declared member names of all its direct and
+            // indirect supertypes. We can't obtain names from each supertype's `members`, because those have already had inherited statics
+            // and cross-package package-private members filtered out, even though such members may still be visible in a subclass (e.g. a
+            // Java static method inherited through a Kotlin class).
+            collectDeclaredMemberNamesTransitively(this, hashSetOf())
+        }
+    return names.flatMap(data.value::getMembersByName)
+}
+
+private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: MutableSet<String>, visited: MutableSet<KClassImpl<*>>) {
+    if (!visited.add(this)) return
+    result.addAll(data.value.declaredMemberNames)
+    for (supertype in supertypes) {
+        (supertype.classifier as? KClassImpl<*>)?.collectDeclaredMemberNamesTransitively(result, visited)
+    }
+}
+
+internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
+    val kClass = this@computeDeclaredMembersByName
     if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
-        addAll(getDescriptorBasedMembers(memberScope, DECLARED))
-        addAll(getDescriptorBasedMembers(staticScope, DECLARED))
+        addAll(getDescriptorBasedMembers(memberScope, DECLARED, name))
+        addAll(getDescriptorBasedMembers(staticScope, DECLARED, name))
     } else {
-        getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
-        getDescriptorBasedMembers(memberScope, DECLARED).filterTo(this) { it is KProperty<*> }
+        getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
+        getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
         for (method in jClass.declaredMethods) {
-            if (Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
+            if (method.name == name && Modifier.isStatic(method.modifiers) && !method.isSynthetic) {
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
             }
         }
 
         for (field in jClass.declaredFields) {
             if (field.isEnumConstant) continue
-            if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
+            if (field.name == name && Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
                 if (Modifier.isFinal(field.modifiers)) {
                     add(JavaKProperty0<Any>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
                 } else {
@@ -51,51 +78,68 @@ internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable
             }
         }
 
-        if (jClass.isEnum) {
+        if (jClass.isEnum && name == ENUM_ENTRIES_PROPERTY_NAME) {
             @Suppress("UNCHECKED_CAST")
             add(JavaEnumEntriesKProperty(kClass as KClassImpl<out Enum<*>>))
         }
     }
 }
 
-internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> =
+internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<ReflectKCallable<*>> =
     if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
         buildList {
-            addAll(data.value.declaredMembers)
-            addAll(getDescriptorBasedMembers(memberScope, INHERITED))
-            addAll(getDescriptorBasedMembers(staticScope, INHERITED))
+            addAll(data.value.getDeclaredMembersByName(name))
+            addAll(getDescriptorBasedMembers(memberScope, INHERITED, name))
+            addAll(getDescriptorBasedMembers(staticScope, INHERITED, name))
         }
     } else {
-        val fakeOverrideMembers = data.value.fakeOverrideMembers
         val isKotlin = java.isKotlin
-        val members = fakeOverrideMembers.filterNotTo(
-            newHashMapWithExpectedSize(
-                // We expect that all non-transitive operations below (like filtering out statics or adding privates)
-                // do not change the final size of the collection significantly.
-                // We expect the size to stay more or less the same.
-                expectedSize = fakeOverrideMembers.size
-            )
-        ) { (_, member) ->
+        val members = getFakeOverrideMembersByName(name).filterNot { (_, member) ->
             // Kotlin classes never inherit static members (neither from Java, nor from Kotlin).
             (isKotlin && member.isStatic && member.overriddenStorage.isFakeOverride) ||
                     (member.isPackagePrivate && member.originalContainer.jClass.`package` != java.`package`)
         }
-        members.values + data.value.declaredMembers.filter { isNonTransitiveMember(this, it) }
+        members.values + data.value.getDeclaredMembersByName(name).filter { isNonTransitiveMember(this, it) }
     }
 
+internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
+    if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
+        getMemberNamesFromDescriptors()
+    } else buildSet {
+        if (!jClass.isAnnotation) {
+            for (method in jClass.declaredMethods) {
+                if (!method.isSynthetic) add(method.name)
+            }
+        }
+        for (field in jClass.declaredFields) {
+            if (!field.isEnumConstant && Modifier.isStatic(field.modifiers) && !field.isSynthetic) add(field.name)
+        }
+        memberScope.getVariableNames().mapTo(this, Name::asString)
+        if (jClass.isEnum) {
+            add(ENUM_ENTRIES_PROPERTY_NAME)
+        }
+    }
+
+private fun KClassImpl<*>.getMemberNamesFromDescriptors(): Set<String> = buildSet {
+    memberScope.getFunctionNames().mapTo(this, Name::asString)
+    memberScope.getVariableNames().mapTo(this, Name::asString)
+    staticScope.getFunctionNames().mapTo(this, Name::asString)
+    staticScope.getVariableNames().mapTo(this, Name::asString)
+}
+
 private fun KClassImpl<*>.getDescriptorBasedMembers(
-    scope: MemberScope, belonginess: MemberBelonginess,
+    scope: MemberScope, belonginess: MemberBelonginess, name: String,
 ): Collection<DescriptorKCallable<*>> {
     val visitor = object : CreateKCallableVisitor(this) {
         override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit): DescriptorKCallable<*> =
             throw IllegalStateException("No constructors should appear here: $descriptor")
     }
-    return scope.getContributedDescriptors().mapNotNull { descriptor ->
-        if (descriptor is CallableMemberDescriptor &&
-            descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
-            belonginess.accept(descriptor)
-        ) descriptor.accept(visitor, Unit) else null
-    }.toList()
+    val identifier = Name.identifier(name)
+    return (scope.getContributedFunctions(identifier, NoLookupLocation.FROM_REFLECTION) +
+            scope.getContributedVariables(identifier, NoLookupLocation.FROM_REFLECTION)).mapNotNull { descriptor ->
+        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE && belonginess.accept(descriptor))
+            descriptor.accept(visitor, Unit) else null
+    }
 }
 
 private enum class MemberBelonginess {
@@ -124,11 +168,11 @@ internal fun KClassImpl<*>.isVisibleAsFunctionInCurrentClass(function: JavaKName
     return true
 }
 
-internal fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(): List<JavaKNamedFunction> {
+internal fun KClassImpl<*>.getDeclaredNonStaticMethodsFromJavaClass(name: String? = null): List<JavaKNamedFunction> {
     require(kmClass == null) { "Should be called only for Java classes: $this" }
     if (jClass.isAnnotation) return emptyList()
     return jClass.declaredMethods.mapNotNull { method ->
-        if (Modifier.isStatic(method.modifiers) || method.isSynthetic) null
+        if ((name != null && method.name != name) || Modifier.isStatic(method.modifiers) || method.isSynthetic) null
         else JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
     }
 }

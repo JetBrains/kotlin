@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.jvm.internal.KotlinGenericDeclaration
@@ -419,13 +420,29 @@ internal class KClassImpl<T : Any>(
                     Number::class.java.isAssignableFrom(jClass)
         }
 
+        val declaredMemberNames: Set<String> by ReflectProperties.lazySoft(::computeDeclaredMemberNames)
+
+        private val declaredMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        private val allMembersByName: ConcurrentHashMap<String, Collection<ReflectKCallable<*>>>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
+                by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
+            declaredMembersByName.getOrPut(name) { computeDeclaredMembersByName(name) }
+
+        fun getMembersByName(name: String): Collection<ReflectKCallable<*>> =
+            allMembersByName.getOrPut(name) { computeMembersByName(name) }
+
+        fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
+            fakeOverrideMembersByName.getOrPut(name) { computeFakeOverrideMembersForName(this@KClassImpl, name) }
+
         val declaredMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeDeclaredMembers)
 
         val allMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::computeAllMembers)
-
-        val fakeOverrideMembers: MembersJavaSignatureMap by ReflectProperties.lazySoft {
-            computeFakeOverrideMembers(this@KClassImpl, declaredMembers)
-        }
     }
 
     val data = lazy(PUBLICATION) { Data() }
@@ -452,6 +469,8 @@ internal class KClassImpl<T : Any>(
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
     override val members: Collection<KCallable<*>> get() = data.value.allMembers
+
+    internal fun getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap = data.value.getFakeOverrideMembersByName(name)
 
     val isComplicatedBuiltinSubclass: Boolean get() = data.value.isComplicatedBuiltinSubclass
 
