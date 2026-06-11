@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
-import org.jetbrains.kotlin.analysis.api.components.memberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -20,7 +19,7 @@ internal val KaDeclarationSymbol.parentDeclarationsWithSelf: Sequence<KaDeclarat
     get() = generateSequence(this) { it.containingDeclaration }
 
 context(_: KaSession)
-internal val KaClassSymbol.singleFieldValueClassUnderlyingType: KaType?
+internal val KaClassSymbol.inlineClassUnderlyingType: KaType?
     get() {
         val memberScope = combinedDeclaredMemberScope
         val primaryConstructor = memberScope.constructors.firstOrNull { it.isPrimary }

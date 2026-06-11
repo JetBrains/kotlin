@@ -1025,7 +1025,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                 ?: error("Type parameter '${classifier.owner.render()}' is not in scope")
 
             classifier is IrClassSymbol -> {
-                if (inlineClassesShouldBeUnboxed && !isMarkedNullable && classifier.owner.isSingleFieldValueClass) {
+                if (inlineClassesShouldBeUnboxed && !isMarkedNullable && classifier.owner.isInlineClass) {
                     val underlyingType = context.inlineClassesUtils.getInlineClassUnderlyingType(classifier.owner)
                     val substitutedType = underlyingType.substitute(
                         classifier.owner.typeParameters,
@@ -1036,7 +1036,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                         typeParameterScope,
                         typeOwner,
                         shouldCalculateExportedSupertypeForImplicit,
-                        underlyingType.classOrNull?.owner?.isSingleFieldValueClass == true
+                        underlyingType.classOrNull?.owner?.isInlineClass == true
                     )
                 } else {
                     val klass = classifier.owner

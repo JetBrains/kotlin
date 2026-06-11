@@ -41,7 +41,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 }
 
 /**
- * Determines whether the current [IrClass] is compatible with being a single-field value class.
+ * Determines whether the current [IrClass] is compatible with being an inline value class.
  *
  * The compatibility is assessed based on the type of value class representation associated with the [IrClass].
  *
@@ -59,10 +59,10 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  *                                                                Therefore, full value classes with one field are actually preexisting value classes on other platforms.
  *                                                                However, if the class has a superclass, it is not considered a basic value class anymore.
  *                                                                `false` must be used for JVM, `true` for other backends.
- * @return `true` if the [IrClass] is compatible with being a single-field value class; `false` otherwise.
+ * @return `true` if the [IrClass] is compatible with being an inline class; `false` otherwise.
  */
 @ValueClassBackendAgnosticApi
-fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic: Boolean): Boolean =
+fun IrClass.isInlineClass(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic: Boolean): Boolean =
     inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic) != null
 
 val IrClass.isJvmInlineMultiFieldValueClass: Boolean

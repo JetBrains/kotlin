@@ -153,7 +153,7 @@ internal class TypeExporter(
         return when (symbol) {
             is KaNamedClassSymbol -> {
                 if (inlineClassesShouldBeUnboxed && symbol.isInline) {
-                    val underlyingType = symbol.singleFieldValueClassUnderlyingType
+                    val underlyingType = symbol.inlineClassUnderlyingType
 
                     if (underlyingType != null) {
                         val substitutedType = buildSubstitutor {

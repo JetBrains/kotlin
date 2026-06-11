@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
@@ -140,7 +140,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
 
     fun boxType(irType: IrType): Type {
         val irClass = irType.classOrNull?.owner
-        if (irClass != null && irClass.isSingleFieldValueClass) {
+        if (irClass != null && irClass.isInlineClass) {
             return mapTypeAsDeclaration(irType)
         }
         val type = AbstractTypeMapper.mapType(this, irType)

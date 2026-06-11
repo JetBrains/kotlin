@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
 import org.jetbrains.kotlin.backend.jvm.ir.isNonExposedConstructorOfOrdinaryClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
@@ -84,7 +84,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             // Exposed functions should have no @JvmName annotation, since it does not affect them,
             // but always @JvmExposeBoxed, so users can use reflection to get all exposed functions, if they so desire.
             if (source.shouldBeExposedByAnnotationOrFlag(context) &&
-                source.origin != IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
+                source.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
             ) {
                 annotations = source.annotations.withJvmExposeBoxedAnnotation(source, context).withoutJvmNameAnnotation() +
                         source.copyPropagatedJvmStaticAnnotation()
@@ -110,7 +110,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         return propertyIfAccessor.annotations.filter { it.isAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) }.map { it.deepCopyWithSymbols() }
     }
 
-    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
+    override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isInlineClass
 
     override val specificMangle: SpecificMangle
         get() = SpecificMangle.Inline
@@ -480,7 +480,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     private val IrClass.canUseSpecializedEqMethod: Boolean
         get() {
-            if (!isSingleFieldValueClass) return false
+            if (!isInlineClass) return false
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
             return !isClassWithFqName(StandardNames.RESULT_FQ_NAME) ||
                     context.config.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
@@ -491,7 +491,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val parent = field.parent
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
-            parent.isSingleFieldValueClass &&
+            parent.isInlineClass &&
             field.name == parent.inlineClassFieldName
         ) {
             val receiver = expression.receiver!!.transform(this, null)
@@ -701,7 +701,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
                 } else {
                     val underlyingClass = underlyingType.getClass()
                     // We can't directly compare unboxed values of underlying inline class as this class can have custom equals
-                    if (underlyingClass?.isSingleFieldValueClass == true && !underlyingType.isNullable()) {
+                    if (underlyingClass?.isInlineClass == true && !underlyingType.isNullable()) {
                         val underlyingClassEq =
                             context.inlineClassReplacements.getSpecializedEqualsMethod(underlyingClass, context.irBuiltIns)
                         irCall(underlyingClassEq).apply {

@@ -44,7 +44,7 @@ value class UnitWrapper(val x: Unit)
 
 
 @JvmInline
-value class BasicSingleFieldValueClass(val x: Int)
+value class BasicInlineClass(val x: Int)
 
 @JvmInline
 value class BasicMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
