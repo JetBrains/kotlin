@@ -102,7 +102,7 @@ MODULE_FRAGMENT
                     ARG dirty2: CONST Int type=kotlin.Int value=-1
                     ARG info: CONST String type=kotlin.String value="home.Greeting (main.kt:46)"
               CALL 'public final fun Text (text: kotlin.String, modifier: androidx.compose.ui.Modifier, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in com.example.ui' type=kotlin.Unit origin=null
-                ARG text: CALL 'public final fun foo (name: kotlin.String): kotlin.String declared in com.example.moduleWithoutInline.FooKt' type=kotlin.String origin=null
+                ARG text: CALL 'public final fun foo (name: kotlin.String): kotlin.String [companion] declared in com.example.moduleWithoutInline.FooKt' type=kotlin.String origin=null
                   ARG name: GET_VAR 'name: kotlin.String declared in home.Greeting' type=kotlin.String origin=null
                 ARG modifier: TYPE_OP type=androidx.compose.ui.Modifier origin=IMPLICIT_CAST typeOperand=androidx.compose.ui.Modifier
                   GET_VAR 'modifier: androidx.compose.ui.Modifier? [assignable] declared in home.Greeting' type=androidx.compose.ui.Modifier? origin=null

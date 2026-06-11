@@ -113,13 +113,13 @@ MODULE_FRAGMENT
                           ARG sourceInformation: CONST String type=kotlin.String value="C58@304L28,59@341L66:main.kt#1wrmn"
                         COMPOSITE type=kotlin.Unit origin=null
                           VAR name:dominantColorState type:util.DominantColorState [val]
-                            CALL 'public final fun rememberDominantColorState (defaultOnColor: compose.ui.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): util.DominantColorState declared in util.DominantColorStateKt' type=util.DominantColorState origin=null
+                            CALL 'public final fun rememberDominantColorState (defaultOnColor: compose.ui.Color?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): util.DominantColorState [companion] declared in util.DominantColorStateKt' type=util.DominantColorState origin=null
                               ARG defaultOnColor: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
                                 CONST Null type=kotlin.Nothing? value=null
                               ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
                               ARG $changed: CONST Int type=kotlin.Int value=0
                               ARG $default: CONST Int type=kotlin.Int value=1
-                          CALL 'public final fun DynamicThemePrimaryColorsFromImage (dominantColorState: util.DominantColorState?, content: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in util.DominantColorStateKt' type=kotlin.Unit origin=null
+                          CALL 'public final fun DynamicThemePrimaryColorsFromImage (dominantColorState: util.DominantColorState?, content: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit [companion] declared in util.DominantColorStateKt' type=kotlin.Unit origin=null
                             ARG dominantColorState: GET_VAR 'val dominantColorState: util.DominantColorState [val] declared in home.Home.<anonymous>' type=util.DominantColorState origin=null
                             ARG content: CALL 'internal final fun <get-lambda$-1263890955> (): kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in home.ComposableSingletons$MainKt' type=kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=null
                               ARG <this>: GET_OBJECT 'CLASS OBJECT name:ComposableSingletons$MainKt modality:FINAL visibility:internal superTypes:[]' type=home.ComposableSingletons$MainKt

@@ -74,12 +74,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<@[FlexibleNullability] kotlin.Int?>
       overridden:
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.LinkedHashSet> declared in java.util.LinkedHashSet
-    FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.A.newHashSet?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.A.newHashSet?>? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:
         public open fun newHashSet <T> (p0: kotlin.Int): @[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of java.util.LinkedHashSet.newHashSet?>? declared in java.util.LinkedHashSet
-    FUN FAKE_OVERRIDE name:newLinkedHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.LinkedHashSet<@[FlexibleNullability] T of <root>.A.newLinkedHashSet?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newLinkedHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.LinkedHashSet<@[FlexibleNullability] T of <root>.A.newLinkedHashSet?>? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:
@@ -242,12 +242,12 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.HashSet<@[FlexibleNullability] kotlin.Int?>
       overridden:
         public open fun iterator (): @[EnhancedNullability] kotlin.collections.MutableIterator<@[EnhancedNullability] E of java.util.LinkedHashSet> declared in java.util.LinkedHashSet
-    FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.B.newHashSet?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of <root>.B.newHashSet?>? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:
         public open fun newHashSet <T> (p0: kotlin.Int): @[FlexibleNullability] java.util.HashSet<@[FlexibleNullability] T of java.util.LinkedHashSet.newHashSet?>? declared in java.util.LinkedHashSet
-    FUN FAKE_OVERRIDE name:newLinkedHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.LinkedHashSet<@[FlexibleNullability] T of <root>.B.newLinkedHashSet?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newLinkedHashSet visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.LinkedHashSet<@[FlexibleNullability] T of <root>.B.newLinkedHashSet?>? [fake_override,companion]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
       overridden:

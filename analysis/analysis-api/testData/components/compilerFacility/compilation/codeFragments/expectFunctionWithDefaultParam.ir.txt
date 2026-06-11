@@ -5,9 +5,9 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.Int [companion]
         EXPRESSION_BODY
           BLOCK type=kotlin.Int origin=null
             CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
-              ARG <this>: CALL 'public final fun foo (default: kotlin.Int): kotlin.Int declared in <root>.JvmKt' type=kotlin.Int origin=null
-              ARG other: CALL 'public final fun bar (): kotlin.Int declared in <root>.JvmKt' type=kotlin.Int origin=null
+              ARG <this>: CALL 'public final fun foo (default: kotlin.Int): kotlin.Int [companion] declared in <root>.JvmKt' type=kotlin.Int origin=null
+              ARG other: CALL 'public final fun bar (): kotlin.Int [companion] declared in <root>.JvmKt' type=kotlin.Int origin=null

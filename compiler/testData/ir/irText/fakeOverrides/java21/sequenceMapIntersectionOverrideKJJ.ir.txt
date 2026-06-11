@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun merge (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] {V of java.util.HashMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of java.util.HashMap & Any}, in @[EnhancedNullability] {V of java.util.HashMap & Any}, out @[EnhancedNullability] V of java.util.HashMap?>): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public open fun merge (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[EnhancedNullability] {V of java.util.SequencedMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, out @[EnhancedNullability] V of java.util.SequencedMap?>): @[EnhancedNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
-    FUN FAKE_OVERRIDE name:newHashMap visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] K of <root>.A.newHashMap?, @[FlexibleNullability] V of <root>.A.newHashMap?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newHashMap visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] K of <root>.A.newHashMap?, @[FlexibleNullability] V of <root>.A.newHashMap?>? [fake_override,companion]
       TYPE_PARAMETER name:K index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       TYPE_PARAMETER name:V index:1 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
@@ -342,7 +342,7 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun merge (p0: @[EnhancedNullability] K of java.util.HashMap, p1: @[EnhancedNullability] {V of java.util.HashMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of java.util.HashMap & Any}, in @[EnhancedNullability] {V of java.util.HashMap & Any}, out @[EnhancedNullability] V of java.util.HashMap?>): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap
         public open fun merge (p0: @[EnhancedNullability] @[FlexibleNullability] K of java.util.SequencedMap?, p1: @[EnhancedNullability] {V of java.util.SequencedMap & Any}, p2: @[EnhancedNullability] java.util.function.BiFunction<in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, in @[EnhancedNullability] {V of java.util.SequencedMap & Any}, out @[EnhancedNullability] V of java.util.SequencedMap?>): @[EnhancedNullability] V of java.util.SequencedMap? declared in java.util.SequencedMap
-    FUN FAKE_OVERRIDE name:newHashMap visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] K of <root>.B.newHashMap?, @[FlexibleNullability] V of <root>.B.newHashMap?>? [fake_override]
+    FUN FAKE_OVERRIDE name:newHashMap visibility:public modality:OPEN returnType:@[FlexibleNullability] java.util.HashMap<@[FlexibleNullability] K of <root>.B.newHashMap?, @[FlexibleNullability] V of <root>.B.newHashMap?>? [fake_override,companion]
       TYPE_PARAMETER name:K index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       TYPE_PARAMETER name:V index:1 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
       VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int

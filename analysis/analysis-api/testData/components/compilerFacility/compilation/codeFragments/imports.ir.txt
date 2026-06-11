@@ -5,7 +5,7 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:java.util.TreeSet<@[FlexibleNullability] kotlin.String?>
+      FUN name:run visibility:public modality:FINAL returnType:java.util.TreeSet<@[FlexibleNullability] kotlin.String?> [companion]
         EXPRESSION_BODY
           BLOCK type=java.util.TreeSet<@[FlexibleNullability] kotlin.String?> origin=null
             CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] E of java.util.TreeSet?>?) declared in java.util.TreeSet' type=java.util.TreeSet<@[FlexibleNullability] kotlin.String?> origin=null
