@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_STDLIB_DOM_API_INCLUDED
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_YARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JVM_ADD_CLASSES_VARIANT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ENABLE_UKLIBS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_APPLY_DEFAULT_HIERARCHY_TEMPLATE
@@ -45,16 +47,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FILTER_RESOURCES_BY_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_KMP_ALLOW_MATCHING_BY_REQUESTED_COORDINATES_IN_GMDT
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
-
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_PER_MODULE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
@@ -62,6 +60,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionSt
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -181,10 +180,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
             } ?: KotlinIrJsGeneratedTSValidationStrategy.IGNORE
 
     /**
-     * Enable open world per module wasm compilation mode.
+     * Configures the compilation mode for Kotlin/Wasm.
      */
-    val wasmPerModule: Boolean
-        get() = booleanProperty(KOTLIN_WASM_PER_MODULE) ?: false
+    val wasmCompilationMode: WasmCompilationMode
+        get() = property(PropertyNames.KOTLIN_WASM_COMPILATION_MODE)
+            .orNull?.let {
+                WasmCompilationMode.byArgument(it)
+            } ?: WasmCompilationMode.MONOLITH
 
     val incrementalMultiplatform: Boolean?
         get() = booleanProperty("kotlin.incremental.multiplatform")
@@ -638,7 +640,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Speed up findMacros in SwiftPM import cinterops: KT-85797
      */
     val swiftPMMacroCollectingMode: CInteropProcess.MacroNamesCollectingMode
-        get() = enumProperty(PropertyNames.KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE, CInteropProcess.MacroNamesCollectingMode.LIBCLANGEXT_PARALLEL)
+        get() = enumProperty(
+            PropertyNames.KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE,
+            CInteropProcess.MacroNamesCollectingMode.LIBCLANGEXT_PARALLEL
+        )
 
     /**
      * Suppress Xcode integration checks that SwiftPM does during the embedAndSign integration
@@ -810,7 +815,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SUPPRESS_XCODE_INTEGRATION_CHECK = property("kotlin.suppressSwiftPMXcodeIntegrationCheck")
         val KOTLIN_DISABLE_SWIFTPM_IMPORT = property("kotlin.disableSwiftPMImport")
 
-        val KOTLIN_WASM_PER_MODULE = property("$KOTLIN_INTERNAL_NAMESPACE.wasm.perModule")
+        val KOTLIN_WASM_COMPILATION_MODE = property("kotlin.wasm.compilationMode")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

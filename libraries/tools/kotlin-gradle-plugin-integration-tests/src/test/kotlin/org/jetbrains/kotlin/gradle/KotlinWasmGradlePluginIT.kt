@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
@@ -39,7 +40,7 @@ import kotlin.test.assertTrue
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(perModule = false)
+            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MONOLITH)
         )
 
     @DisplayName("Check js target with browser")
@@ -59,15 +60,16 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
             buildScriptInjection {
                 kotlinMultiplatform.wasmJs {
-                    binaries.executable().forEach {
-                        it.linkTask.configure {
-                            compilerOptions.freeCompilerArgs.add("-Xwasm-generate-closed-world-multimodule")
-                        }
-                    }
+                    binaries.executable()
                 }
             }
 
-            build("assemble") {
+            build(
+                "assemble",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                )
+            ) {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
@@ -89,7 +91,12 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     }
             }
 
-            build(":wasmJsD8ProductionRun") {
+            build(
+                ":wasmJsD8ProductionRun",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                )
+            ) {
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
@@ -102,7 +109,12 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                 )
             }
 
-            build(":wasmJsD8ProductionRun") {
+            build(
+                ":wasmJsD8ProductionRun",
+                buildOptions = defaultBuildOptions.copy(
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                )
+            ) {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
@@ -399,7 +411,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(perModule = true)
+            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_OPEN_WORLD)
         )
 
     @DisplayName("Check js target with browser")
