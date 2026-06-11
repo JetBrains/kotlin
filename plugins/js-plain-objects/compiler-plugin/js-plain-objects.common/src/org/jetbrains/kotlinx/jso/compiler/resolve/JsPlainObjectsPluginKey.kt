@@ -7,4 +7,4 @@ package org.jetbrains.kotlinx.jspo.compiler.resolve
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object JsPlainObjectsPluginKey : GeneratedDeclarationKey()
+data object JsPlainObjectsPluginKey : GeneratedDeclarationKey()

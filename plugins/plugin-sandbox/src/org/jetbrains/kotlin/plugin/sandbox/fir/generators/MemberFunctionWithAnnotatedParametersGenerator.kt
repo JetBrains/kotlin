@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
-object MemberFunctionWithAnnotatedParametersGeneratorKey : GeneratedDeclarationKey()
+data object MemberFunctionWithAnnotatedParametersGeneratorKey : GeneratedDeclarationKey()
 
 class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
