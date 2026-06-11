@@ -14,6 +14,7 @@ import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.*
 
 /**
  * Search modules in node_modules according to https://nodejs.org/api/modules.html.
@@ -67,8 +68,8 @@ open class NpmProjectModules(
     private fun resolveAsDirectory(dir: Path): Path? {
         val packageJsonFile = dir.resolve(PACKAGE_JSON)
 
-        val main: String? = if (Files.isRegularFile(packageJsonFile)) {
-            val packageJson = Files.newBufferedReader(packageJsonFile).use {
+        val main: String? = if (packageJsonFile.isRegularFile()) {
+            val packageJson = packageJsonFile.bufferedReader().use {
                 Gson().fromJson(it, JsonObject::class.java)
             }
 
@@ -104,11 +105,11 @@ open class NpmProjectModules(
     }
 
     private fun resolveAsFile(file: Path): Path? {
-        if (Files.isRegularFile(file)) return file
+        if (file.isRegularFile()) return file
 
         indexFileSuffixes.forEach {
-            val js = Paths.get(file.toString() + it)
-            if (Files.isRegularFile(js)) return js
+            val js = Path(file.toString() + it)
+            if (js.isRegularFile()) return js
         }
 
         return null

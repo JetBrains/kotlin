@@ -30,6 +30,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 import javax.inject.Inject
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 @CacheableTask
 abstract class KaptTask @Inject constructor(
@@ -248,10 +250,10 @@ abstract class KaptTask @Inject constructor(
 
         try {
             when {
-                Files.isDirectory(file) -> {
+                file.isDirectory() -> {
                     return Files.exists(file.resolve(processorEntryPath))
                 }
-                Files.isRegularFile(file) && file.fileName.toString().substringAfterLast('.', "").equals("jar", ignoreCase = true) -> {
+                file.isRegularFile() && file.fileName.toString().substringAfterLast('.', "").equals("jar", ignoreCase = true) -> {
                     return JarFile(file.toFile()).use { jar ->
                         jar.getJarEntry(processorEntryPath) != null
                     }

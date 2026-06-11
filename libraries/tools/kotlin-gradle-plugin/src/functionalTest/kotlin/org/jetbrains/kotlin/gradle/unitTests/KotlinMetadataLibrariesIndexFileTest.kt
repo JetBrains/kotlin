@@ -15,6 +15,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -37,13 +39,13 @@ class KotlinMetadataLibrariesIndexFileTest {
     @Test
     fun `test - file does not exist - read`() {
         assertFailsWith<NoSuchFileException> {
-            KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { Files.createDirectories(it) }.resolve("does-not-exist")).read()
+            KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { it.createDirectories() }.resolve("does-not-exist")).read()
         }
     }
 
     @Test
     fun `test - file and parent file does not exist - write`() {
-        KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { Files.createDirectories(it) }.resolve("does-not-exist")).apply {
+        KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("test").also { it.createDirectories() }.resolve("does-not-exist")).apply {
             write(emptyList())
             assertEquals(emptyList(), read())
         }
@@ -51,7 +53,7 @@ class KotlinMetadataLibrariesIndexFileTest {
 
     @Test
     fun `test - different KmpModuleIdentifier types`() {
-        val index = KotlinMetadataLibrariesIndexFile(Files.createFile(temporaryFolder.resolve("index")))
+        val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index").createFile())
         val records = listOf(
             TransformedMetadataLibraryRecord(
                 moduleId = KmpModuleIdentifier(
@@ -84,7 +86,7 @@ class KotlinMetadataLibrariesIndexFileTest {
 
 
     private fun testWriteRead(files: Iterable<File>) {
-        val index = KotlinMetadataLibrariesIndexFile(Files.createFile(temporaryFolder.resolve("index")))
+        val index = KotlinMetadataLibrariesIndexFile(temporaryFolder.resolve("index").createFile())
         val records = files.map {
             TransformedMetadataLibraryRecord(
                 moduleId = KmpModuleIdentifier(

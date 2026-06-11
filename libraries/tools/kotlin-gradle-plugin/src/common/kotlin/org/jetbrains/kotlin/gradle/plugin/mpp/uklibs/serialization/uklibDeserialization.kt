@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.exists
 
 internal data class IncompatibleUklibVersion(
     val uklibDirectory: File,
@@ -34,8 +36,8 @@ private fun deserializeUklibFromDirectory(
     directory: Path,
 ): Uklib {
     val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
-    if (!Files.exists(umanifest)) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
-    return Files.newBufferedReader(umanifest).use { umanifestStream ->
+    if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
+    return umanifest.bufferedReader().use { umanifestStream ->
         @Suppress("UNCHECKED_CAST")
         val json = Gson().fromJson(umanifestStream, Map::class.java) as Map<String, Any>
 

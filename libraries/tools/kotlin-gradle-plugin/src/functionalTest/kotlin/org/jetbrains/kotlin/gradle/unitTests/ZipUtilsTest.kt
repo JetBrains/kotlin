@@ -23,6 +23,7 @@ import java.nio.file.attribute.FileTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.outputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -133,7 +134,7 @@ class ZipUtilsTest : WithTemporaryFolder {
     @Test
     fun `test copyZipFilePartially - retains folder entries`() {
         val sourceZipFile = newTempFile()
-        ZipOutputStream(Files.newOutputStream(sourceZipFile)).use { zipOutputStream ->
+        ZipOutputStream(sourceZipFile.outputStream()).use { zipOutputStream ->
             zipOutputStream.putNextEntry(ZipEntry("a/"))
             zipOutputStream.closeEntry()
 

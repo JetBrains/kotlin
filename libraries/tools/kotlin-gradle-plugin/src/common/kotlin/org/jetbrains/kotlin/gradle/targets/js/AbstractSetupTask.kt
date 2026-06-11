@@ -22,6 +22,10 @@ import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 @DisableCachingByDefault
 abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
@@ -167,13 +171,13 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
 
         logger.info("[$path] Extracting distribution ${dist.fileName} to $destination")
 
-        if (Files.isDirectory(destination)) {
+        if (destination.isDirectory()) {
             destination.toFile().deleteRecursively()
         }
 
         extract(dist.toFile())
 
-        Files.newBufferedWriter(destinationHashFile).use {
+        destinationHashFile.bufferedWriter().use {
             it.write(
                 CACHE_VERSION +
                         " " +
@@ -194,16 +198,16 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
             return false
         }
 
-        if (!Files.exists(destinationHashFile)) {
+        if (!destinationHashFile.exists()) {
             return notUpToDate("no hash file $destinationHashFile")
         }
 
-        val cacheData = Files.newBufferedReader(destinationHashFile).useLines { seq ->
+        val cacheData = destinationHashFile.bufferedReader().useLines { seq ->
             seq.firstOrNull().orEmpty().split(" ")
         }
 
         if (cacheData.size != 3) {
-            val hashFileText = Files.newBufferedReader(destinationHashFile).use { it.readText() }
+            val hashFileText = destinationHashFile.bufferedReader().readText()
             return notUpToDate("invalid format $hashFileText")
         }
 

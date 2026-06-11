@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.getPlatformCinteropDe
 import org.jetbrains.kotlin.gradle.utils.crc32ChecksumString
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 internal class IdePlatformCinteropDependencyResolver(
     private val errorReporter: IdeMultiplatformImportLogger,
@@ -37,15 +40,15 @@ internal class IdePlatformCinteropDependencyResolver(
      * Copies the file into a directory specifically for the IDE, so it survives ./gradlew clean
      */
     private fun Project.copyCInteropFileForIdeIfNecessary(file: Path): Path {
-        if (!Files.exists(file)) return file
+        if (!file.exists()) return file
         val fileName = file.fileName.toString()
         val newFileName = "${fileName.substringBeforeLast('.')}-${file.crc32ChecksumString()}.${fileName.substringAfterLast('.', "")}"
         val outputPath = kotlinCInteropLibraryDirectoryPathForIde.resolve(newFileName)
 
         /* Copy only if really necessary */
-        if (!Files.exists(outputPath)) {
-            outputPath.parent?.let { Files.createDirectories(it) }
-            Files.copy(file, outputPath)
+        if (!outputPath.exists()) {
+            outputPath.parent?.createDirectories()
+            file.copyTo(outputPath)
         }
 
         return outputPath

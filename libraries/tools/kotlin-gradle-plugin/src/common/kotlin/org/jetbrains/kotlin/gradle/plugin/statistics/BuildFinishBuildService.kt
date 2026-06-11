@@ -33,6 +33,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.isDirectory
 
 internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildService.Parameters>, AutoCloseable,
     OperationCompletionListener {
@@ -106,7 +108,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
                     }
 
                 val fusFile = fusReportDirectory.resolve("$buildUid.profile")
-                Files.newBufferedWriter(fusFile).use {
+                fusFile.bufferedWriter().use {
                     it.appendLine("Build: $buildUid")
                     it.appendLine("Kotlin version: $kotlinVersion")
                     metricContainer.createValidateAndAnonymizeCopy().flush(it)

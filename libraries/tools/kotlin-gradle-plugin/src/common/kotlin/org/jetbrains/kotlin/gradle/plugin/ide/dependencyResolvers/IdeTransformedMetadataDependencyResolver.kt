@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.nio.file.Files
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -43,10 +45,10 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                     .toPath()
                     .resolve(sourceSetMetadataBinary.relativeFile)
 
-                metadataLibraryOutputFile.parent?.let { Files.createDirectories(it) }
-                if (!Files.exists(metadataLibraryOutputFile)) {
+                metadataLibraryOutputFile.parent?.createDirectories()
+                if (!metadataLibraryOutputFile.exists()) {
                     sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
-                    if (!Files.exists(metadataLibraryOutputFile)) return@mapNotNull null
+                    if (!metadataLibraryOutputFile.exists()) return@mapNotNull null
                 }
 
                 IdeaKotlinResolvedBinaryDependency(

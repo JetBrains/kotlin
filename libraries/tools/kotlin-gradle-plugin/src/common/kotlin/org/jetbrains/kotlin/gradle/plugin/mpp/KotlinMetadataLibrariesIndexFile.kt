@@ -13,6 +13,8 @@ import java.lang.reflect.Type
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.bufferedWriter
 
 private val gson = GsonBuilder()
     .setStrictness(Strictness.LENIENT)
@@ -76,12 +78,12 @@ internal data class TransformedMetadataLibraryRecord(
 internal class KotlinMetadataLibrariesIndexFile(private val file: Path) {
     private val typeToken = object : TypeToken<Collection<TransformedMetadataLibraryRecord>>() {}
 
-    fun read(): List<TransformedMetadataLibraryRecord> = Files.newBufferedReader(file, Charset.defaultCharset()).use {
+    fun read(): List<TransformedMetadataLibraryRecord> = file.bufferedReader(Charset.defaultCharset()).use {
         gson.fromJson<Collection<TransformedMetadataLibraryRecord>>(it, typeToken.type).toList()
     }
 
     fun write(records: List<TransformedMetadataLibraryRecord>) {
-        Files.newBufferedWriter(file, Charset.defaultCharset()).use {
+        file.bufferedWriter(Charset.defaultCharset()).use {
             gson.toJson(records, typeToken.type, it)
         }
     }

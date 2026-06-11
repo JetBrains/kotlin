@@ -21,6 +21,14 @@ import java.nio.file.StandardCopyOption
 import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.outputStream
 
 internal class TaskOutputsBackup(
     private val fileSystemOperations: FileSystemOperations,
@@ -52,9 +60,9 @@ internal class TaskOutputsBackup(
             } else if (!outputPath.exists()) {
                 logger.debug("Creating is-empty marker file for ${outputPath.invariantSeparatorsPath} as it does not exist")
                 val markerFile = snapshotsDir.get().asFile.toPath().resolve(index.asNotExistsMarkerFile)
-                Files.createDirectories(markerFile.parent)
-                if (!Files.exists(markerFile)) {
-                    Files.createFile(markerFile)
+                markerFile.parent.createDirectories()
+                if (!markerFile.exists()) {
+                    markerFile.createFile()
                 }
             } else { // it's not a directory, but it exists -> it's a file
                 val personalSnapshotDir = snapshotsDir.map { it.file(index.asSnapshotHolderDirectory).asFile }.get()
@@ -77,17 +85,17 @@ internal class TaskOutputsBackup(
             val possibleArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile.toPath()
             val possibleNotExistsMarker = snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.toPath()
 
-            if (Files.exists(possibleArchive)) {
+            if (possibleArchive.exists()) {
                 logger.debug("Unpacking ${possibleArchive.invariantSeparatorsPathString} into ${outputPath.invariantSeparatorsPath} to restore from backup")
-                Files.createDirectories(outputPath.toPath())
+                outputPath.toPath().createDirectories()
                 uncompressZipIntoDirectory(possibleArchive, outputPath.toPath())
-            } else if (Files.exists(possibleDir)) {
+            } else if (possibleDir.exists()) {
                 logger.debug("Copying file from ${possibleDir.invariantSeparatorsPathString} into ${outputPath.parentFile.invariantSeparatorsPath} to restore ${outputPath.name} from backup")
                 fileSystemOperations.copy { spec ->
                     spec.from(possibleDir.toFile())
                     spec.into(outputPath.parentFile)
                 }
-            } else if (Files.exists(possibleNotExistsMarker)) {
+            } else if (possibleNotExistsMarker.exists()) {
                 // do nothing
                 logger.debug("Found marker ${possibleNotExistsMarker.invariantSeparatorsPathString} for ${outputPath.invariantSeparatorsPath}, doing nothing")
             } else {
@@ -124,22 +132,22 @@ internal class TaskOutputsBackup(
         snapshotFile: Path,
         outputPath: Path
     ) {
-        Files.createDirectories(snapshotFile.parent)
-        if (!Files.exists(snapshotFile)) {
-            Files.createFile(snapshotFile)
+        snapshotFile.parent.createDirectories()
+        if (!snapshotFile.exists()) {
+            snapshotFile.createFile()
         }
 
-        ZipOutputStream(Files.newOutputStream(snapshotFile).buffered()).use { zip ->
+        ZipOutputStream(snapshotFile.outputStream().buffered()).use { zip ->
             zip.setLevel(Deflater.NO_COMPRESSION)
             Files.walk(outputPath).use { paths ->
                 paths
-                    .filter { file -> !Files.isDirectory(file) || file.isEmptyDirectory }
+                    .filter { file -> !file.isDirectory() || file.isEmptyDirectory }
                     .forEach { file ->
-                        val suffix = if (Files.isDirectory(file)) "/" else ""
+                        val suffix = if (file.isDirectory()) "/" else ""
                         val entry = ZipEntry(outputPath.relativize(file).invariantSeparatorsPathString + suffix)
                         zip.putNextEntry(entry)
-                        if (!Files.isDirectory(file)) {
-                            Files.newInputStream(file).buffered().use { it.copyTo(zip) }
+                        if (!file.isDirectory()) {
+                            file.inputStream().buffered().use { it.copyTo(zip) }
                         }
                         zip.closeEntry()
                     }
@@ -157,10 +165,10 @@ internal class TaskOutputsBackup(
             zipFs.rootDirectories.forEach { rootDir ->
                 Files.walk(rootDir).use { paths ->
                     paths.forEach {
-                        if (Files.isDirectory(it)) {
-                            Files.createDirectories(outputPath.resolve(it.normalizedToBeRelative))
-                        } else if (Files.isRegularFile(it)) {
-                            Files.copy(it, outputPath.resolve(it.normalizedToBeRelative), StandardCopyOption.REPLACE_EXISTING)
+                        if (it.isDirectory()) {
+                            outputPath.resolve(it.normalizedToBeRelative).createDirectories()
+                        } else if (it.isRegularFile()) {
+                            it.copyTo(outputPath.resolve(it.normalizedToBeRelative), StandardCopyOption.REPLACE_EXISTING)
                         }
                     }
                 }

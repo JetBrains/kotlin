@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import java.io.File
 import java.io.Serializable
 import java.nio.file.Files
+import kotlin.io.path.bufferedReader
 
 /**
  * Fake NodeJS module directory created from Gradle external module
@@ -20,7 +21,7 @@ data class GradleNodeModule(val name: String, val version: String, val path: Fil
 
     @get:Synchronized
     val dependencies: Set<NpmDependencyDeclaration> by lazy {
-        val pJson = Files.newBufferedReader(path.toPath().resolve("package.json")).use {
+        val pJson = path.toPath().resolve("package.json").bufferedReader().use {
             Gson().fromJson(it, JsonObject::class.java)
         }
         val normal = pJson.getAsJsonObject("dependencies")

@@ -11,6 +11,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.MessageDigest
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 /**
  * Representation of the uklib used in the GMT
@@ -111,8 +113,8 @@ private class UklibCompositeMetadataBinary(
 
     override fun copyTo(file: Path): Boolean {
         val metadataSlice = fragment.singleExpectedFileFromModularUklib
-        if (!Files.exists(metadataSlice.toPath())) return false
-        file.parent?.let { Files.createDirectories(it) }
+        if (!metadataSlice.toPath().exists()) return false
+        file.parent?.createDirectories()
         return metadataSlice.copyRecursively(
             file.toFile(),
             overwrite = true,

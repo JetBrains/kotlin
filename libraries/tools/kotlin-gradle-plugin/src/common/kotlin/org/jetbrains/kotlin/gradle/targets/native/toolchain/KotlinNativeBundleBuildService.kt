@@ -41,7 +41,11 @@ import org.jetbrains.kotlin.konan.target.loadConfigurables
 import org.jetbrains.kotlin.konan.util.ArchiveExtractor
 import org.jetbrains.kotlin.konan.util.ArchiveType
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.attribute.PosixFilePermission
+import java.util.zip.GZIPInputStream
 import javax.inject.Inject
+import kotlin.io.path.*
 
 internal interface UsesKotlinNativeBundleBuildService : Task {
     @get:Internal

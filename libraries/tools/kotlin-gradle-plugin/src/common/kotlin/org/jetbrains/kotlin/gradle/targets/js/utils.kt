@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
 
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
@@ -33,10 +35,10 @@ const val HTML = "html"
 
 internal fun writeWasmUnitTestRunner(workingDir: Path, compiledFile: Path): Path {
     val static = workingDir.resolve("static")
-    Files.createDirectories(static)
+    static.createDirectories()
 
     val testRunnerFile = static.resolve("runUnitTests.mjs")
-    Files.newBufferedWriter(testRunnerFile).use {
+    testRunnerFile.bufferedWriter().use {
         it.write(
             """
             import * as exports from './${static.relativize(compiledFile).invariantSeparatorsPathString}';

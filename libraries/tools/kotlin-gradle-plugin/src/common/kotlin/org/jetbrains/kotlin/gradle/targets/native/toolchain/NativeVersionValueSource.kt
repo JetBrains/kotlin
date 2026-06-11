@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {
@@ -78,7 +81,7 @@ internal abstract class NativeVersionValueSource :
 
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
-            if (!Files.exists(bundleDir.resolve(MARKER_FILE))) {
+            if (!bundleDir.resolve(MARKER_FILE).exists()) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
@@ -123,7 +126,7 @@ internal abstract class NativeVersionValueSource :
             toDirectory: Path,
         ) {
             logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.toAbsolutePath()}")
-            if (Files.isDirectory(toDirectory) && Files.list(toDirectory).use { it.findAny().isPresent }) {
+            if (toDirectory.isDirectory() && Files.list(toDirectory).use { it.findAny().isPresent }) {
                 logger.warn("Kotlin/Native bundle directory ${toDirectory.toAbsolutePath()} is not empty. Native bundle files will be overwritten.")
             }
             unzipTo(fromDirectory, toDirectory.parent)
@@ -139,7 +142,7 @@ internal abstract class NativeVersionValueSource :
             gradleKotlinNativeDir: Path,
         ) {
             //check that native was actually downloaded and unpacked and there is something except .lock file
-            if (!Files.exists(gradleKotlinNativeDir) || Files.list(gradleKotlinNativeDir).use { it.count() <= 1 }) {
+            if (!gradleKotlinNativeDir.exists() || Files.list(gradleKotlinNativeDir).use { it.count() <= 1 }) {
                 error(
                     "Kotlin Native bundle dependency was used. " +
                             "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
@@ -156,7 +159,7 @@ internal abstract class NativeVersionValueSource :
         }
 
         private fun createSuccessfulInstallationFile(bundleDir: Path) {
-            Files.createFile(bundleDir.resolve(MARKER_FILE))
+            bundleDir.resolve(MARKER_FILE).createFile()
         }
     }
 }

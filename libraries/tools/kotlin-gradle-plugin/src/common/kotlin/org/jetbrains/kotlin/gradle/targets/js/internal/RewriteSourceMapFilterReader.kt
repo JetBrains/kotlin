@@ -12,6 +12,7 @@ import java.io.StringWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 import kotlin.math.min
 
 open class RewriteSourceMapFilterReader(
@@ -168,7 +169,7 @@ open class RewriteSourceMapFilterReader(
             .normalize()
 
         val transformedPath = sourceFileResolved
-            .takeIf { Files.exists(it) }
+            .takeIf { it.exists() }
             ?.relativeToOrNull(targetSourceRootResolved)
             ?.toString()
             ?: return value

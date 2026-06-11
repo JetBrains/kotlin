@@ -32,6 +32,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.reader
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : DefaultTask() {
@@ -191,7 +193,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
 
         private fun readLocalPackageSourcePaths(file: Path): List<Path> {
-            return Files.newBufferedReader(file).useLines { lines ->
+            return file.bufferedReader().useLines { lines ->
                 lines.filter { line -> line.isNotEmpty() }.map { line -> file.fileSystem.getPath(line) }.toList()
             }
         }

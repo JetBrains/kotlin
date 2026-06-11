@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 
 /**
  * Returns a map from 'visibleSourceSetName' to the transformed metadata libraries.
@@ -66,10 +68,10 @@ private fun transformMetadataLibrariesForIde(
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
             val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataBinary.relativeFile)
-            metadataLibraryOutputFile.parent?.let { Files.createDirectories(it) }
-            if (!Files.exists(metadataLibraryOutputFile)) {
+            metadataLibraryOutputFile.parent?.createDirectories()
+            if (!metadataLibraryOutputFile.exists()) {
                 sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
-                if (!Files.exists(metadataLibraryOutputFile)) return@mapNotNull null
+                if (!metadataLibraryOutputFile.exists()) return@mapNotNull null
             }
 
             visibleSourceSetName to listOf(metadataLibraryOutputFile.toFile())
@@ -99,7 +101,7 @@ private fun transformMetadataLibrariesForBuild(
             val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
             val metadataLibraryFile = outputDirectory.resolve(metadataBinary.relativeFile)
             if (materializeFiles) {
-                metadataLibraryFile.parent?.let { Files.createDirectories(it) }
+                metadataLibraryFile.parent?.createDirectories()
                 metadataBinary.copyTo(metadataLibraryFile)
             }
             visibleSourceSetName to listOf(metadataLibraryFile.toFile())

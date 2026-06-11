@@ -10,6 +10,7 @@ import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.outputStream
 
 internal fun copyZipFilePartially(sourceZipFile: Path, destinationZipFile: Path, path: String) {
     requireValidZipDirectoryPath(path)
@@ -21,7 +22,7 @@ internal fun ZipFile.copyPartially(destinationZipFile: Path, path: String) {
     val entries = listDescendants(path).toList()
     if (entries.isEmpty()) return
 
-    ZipOutputStream(Files.newOutputStream(destinationZipFile)).use { destinationZipOutputStream ->
+    ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
         entries.forEach { sourceEntry ->
             val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
 

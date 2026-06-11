@@ -51,6 +51,8 @@ import java.io.File
 import java.io.PrintWriter
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -620,10 +622,10 @@ internal fun basify(npmProjectDir: Path, file: Path): String {
 
 internal fun createLoadWasm(npmProjectDir: Path, file: Path): Path {
     val static = npmProjectDir.resolve("static").also {
-        Files.createDirectories(it)
+        it.createDirectories()
     }
     val loadJs = static.resolve("load.mjs")
-    Files.newBufferedWriter(loadJs).use { writer ->
+    loadJs.bufferedWriter().use { writer ->
         val relativePath = static.relativize(file).invariantSeparatorsPathString
         writer.appendLine(
             """

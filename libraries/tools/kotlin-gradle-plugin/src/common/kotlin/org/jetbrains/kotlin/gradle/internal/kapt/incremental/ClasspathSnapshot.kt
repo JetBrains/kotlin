@@ -10,6 +10,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
+import kotlin.io.path.outputStream
 
 private const val CLASSPATH_ENTRIES_FILE = "classpath-entries.bin"
 private const val ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE = "ap-classpath-entries.bin"
@@ -27,23 +30,23 @@ open class ClasspathSnapshot protected constructor(
             val classpathEntries = cacheDirPath.resolve(CLASSPATH_ENTRIES_FILE)
             val classpathStructureData = cacheDirPath.resolve(CLASSPATH_STRUCTURE_FILE)
             val annotationProcessorClasspathEntries= cacheDirPath.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
-            if (!Files.exists(classpathEntries) || !Files.exists(classpathStructureData) || !Files.exists(annotationProcessorClasspathEntries)) {
+            if (!classpathEntries.exists() || !classpathStructureData.exists() || !annotationProcessorClasspathEntries.exists()) {
                 return UnknownSnapshot
             }
 
-            val classpathFiles = ObjectInputStream(BufferedInputStream(Files.newInputStream(classpathEntries))).use {
+            val classpathFiles = ObjectInputStream(classpathEntries.inputStream().buffered()).use {
                 @Suppress("UNCHECKED_CAST")
                 it.readObject() as List<File>
             }
 
             val annotationProcessorClasspathFiles =
-                ObjectInputStream(BufferedInputStream(Files.newInputStream(annotationProcessorClasspathEntries))).use {
+                ObjectInputStream(annotationProcessorClasspathEntries.inputStream().buffered()).use {
                     @Suppress("UNCHECKED_CAST")
                     it.readObject() as List<File>
                 }
 
             val dataForFiles =
-                ObjectInputStream(BufferedInputStream(Files.newInputStream(classpathStructureData))).use {
+                ObjectInputStream(classpathStructureData.inputStream().buffered()).use {
                     @Suppress("UNCHECKED_CAST")
                     it.readObject() as MutableMap<File, ClasspathEntryData?>
                 }
@@ -146,17 +149,18 @@ open class ClasspathSnapshot protected constructor(
 
         val cacheDirPath = cacheDir.toPath()
         val classpathEntries = cacheDirPath.resolve(CLASSPATH_ENTRIES_FILE)
-        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(classpathEntries))).use {
+
+        ObjectOutputStream(classpathEntries.outputStream().buffered()).use {
             it.writeObject(classpath)
         }
 
         val annotationProcessorClasspathEntries = cacheDirPath.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
-        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(annotationProcessorClasspathEntries))).use {
+        ObjectOutputStream(annotationProcessorClasspathEntries.outputStream().buffered()).use {
             it.writeObject(annotationProcessorClasspath)
         }
 
         val classpathStructureData = cacheDirPath.resolve(CLASSPATH_STRUCTURE_FILE)
-        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(classpathStructureData))).use {
+        ObjectOutputStream(classpathStructureData.outputStream().buffered()).use {
             it.writeObject(dataForFiles)
         }
     }

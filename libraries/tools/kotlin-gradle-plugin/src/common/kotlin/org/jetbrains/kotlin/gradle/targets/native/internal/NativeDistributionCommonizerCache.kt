@@ -16,6 +16,10 @@ import java.io.Serializable
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createFile
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 class NativeDistributionCommonizerCache(
     private val outputDirectory: File,
@@ -43,7 +47,7 @@ class NativeDistributionCommonizerCache(
 
         todoOutputTargets
             .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget).toPath() }
-            .filter { commonizedDirectory -> Files.isDirectory(commonizedDirectory) }
+            .filter { commonizedDirectory -> commonizedDirectory.isDirectory() }
             .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
     }
 
@@ -86,12 +90,12 @@ class NativeDistributionCommonizerCache(
         return missingOutputTargets.allLeaves()
             .map { target -> target.konanTarget }
             .map { konanTarget -> KonanDistribution(konanHome).platformLibsDir.resolve(konanTarget.name).toPath() }
-            .none { platformLibsDir -> Files.exists(platformLibsDir) }
+            .none { platformLibsDir -> platformLibsDir.exists() }
     }
 
     private fun isCached(directory: Path): Boolean {
         val successMarkerFile = directory.resolve(".success")
-        return Files.isRegularFile(successMarkerFile)
+        return successMarkerFile.isRegularFile()
     }
 
     private val outputDirectoryPath: Path
@@ -99,7 +103,7 @@ class NativeDistributionCommonizerCache(
 
     private fun Path.createNewFile() {
         try {
-            Files.createFile(this)
+            this.createFile()
         } catch (_: FileAlreadyExistsException) {
         }
     }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_J
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.isRegularFile
 
 data class NpmDependency(
     val objectFactory: ObjectFactory,
@@ -80,7 +81,7 @@ internal fun fileVersion(directory: Path): String =
 internal fun moduleName(directory: Path): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
 
-    if (Files.isRegularFile(packageJson)) {
+    if (packageJson.isRegularFile()) {
         return fromSrcPackageJson(packageJson)!!.name
     }
 

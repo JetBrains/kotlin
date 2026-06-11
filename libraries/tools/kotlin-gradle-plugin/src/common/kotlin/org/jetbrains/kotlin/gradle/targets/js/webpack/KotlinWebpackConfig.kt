@@ -25,6 +25,8 @@ import java.lang.reflect.Type
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.collections.joinToString
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.isDirectory
 
 /**
  * Configuration options used to generate [webpack](https://webpack.js.org/)
@@ -268,7 +270,7 @@ data class KotlinWebpackConfig(
     }
 
     private fun save(configFile: Path) {
-        Files.newBufferedWriter(configFile).use {
+        configFile.bufferedWriter().use {
             appendTo(it)
         }
     }
@@ -328,7 +330,7 @@ data class KotlinWebpackConfig(
 
     private fun Appendable.appendFromConfigDir() {
         val configDirectory = configDirectory?.toPath()
-        if (configDirectory == null || !Files.isDirectory(configDirectory)) return
+        if (configDirectory == null || !configDirectory.isDirectory()) return
 
         appendLine()
         appendConfigsFromDir(configDirectory)
