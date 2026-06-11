@@ -1358,6 +1358,17 @@ object FirTree : AbstractFirTreeBuilder() {
         kDoc = """A class or package qualifier.
             |
             |If [qualifierSymbol] is `null`, [this] is a package qualifier, otherwise this is a class qualifier.
+            |
+            |The [coneTypeOrNull] is `Unit` when [qualifierSymbol] is `null` or resolves to a class without companion object.
+            |Otherwise, it's the type of the resolved object or the class' companion object.
+            |
+            |Note that even when the qualifier is **not** used as an expression ([accessedObjectSymbol] is `null`), but the resolved class
+            |has a companion object, the [coneTypeOrNull] is the type of the companion object
+            |This is relied upon by AA & the IDE plugin (mostly in completion) and is difficult to change.
+            |Because this can lead to subtle bugs, the overload of |[org.jetbrains.kotlin.fir.types.resolvedType]
+            |with a [FirResolvedQualifier] receiver requires an opt-in.
+            |
+            |TODO for fixing it: KT-87036.
         """.trimMargin()
 
         +field("packageFqName", fqNameType)

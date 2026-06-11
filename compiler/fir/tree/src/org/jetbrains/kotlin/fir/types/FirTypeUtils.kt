@@ -57,6 +57,15 @@ val FirExpression.resolvedType: ConeKotlinType
             withFirEntry("expression", this@resolvedType)
         }
 
+@RequiresOptIn("""The type of the qualifier to a class depends on whether the class has a companion object,
+but **not** on whether it's used as an expression, which can lead to subtle bugs.
+Refer to the KDoc of FirResolvedQualifier for its contract or consider using other properties like `accessedObjectSymbol`.""")
+annotation class ResolvedQualifierTypeAccess
+
+@ResolvedQualifierTypeAccess
+val FirResolvedQualifier.resolvedType: ConeKotlinType
+    get() = (this as FirExpression).resolvedType
+
 /**
  * @return true if [this] expression has an already resolved type. This means that [resolvedType]
  * can be used safely (without a threat to get an exception),

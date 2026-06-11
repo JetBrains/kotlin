@@ -1108,6 +1108,7 @@ class CallAndReferenceGenerator(
     internal fun convertToGetObject(qualifier: FirResolvedQualifier): IrExpression {
         return convertToGetObject(qualifier, null)
             ?: qualifier.convertWithOffsets { startOffset, endOffset ->
+                @OptIn(ResolvedQualifierTypeAccess::class)
                 IrErrorCallExpressionImpl(
                     startOffset, endOffset, qualifier.resolvedType.toIrType(),
                     "Resolved qualifier ${qualifier.render()} does not have correctly resolved type"
@@ -1126,6 +1127,7 @@ class CallAndReferenceGenerator(
         }
 
         return qualifier.convertWithOffsets { startOffset, endOffset ->
+            @OptIn(ResolvedQualifierTypeAccess::class)
             IrGetObjectValueImpl(
                 startOffset, endOffset, qualifier.resolvedType.toIrType(),
                 classSymbol.toIrSymbol() as IrClassSymbol

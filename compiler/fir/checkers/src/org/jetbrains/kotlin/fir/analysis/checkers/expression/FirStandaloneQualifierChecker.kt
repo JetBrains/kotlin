@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.types.ResolvedQualifierTypeAccess
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.resolvedType
 
+@OptIn(ResolvedQualifierTypeAccess::class)
 object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
