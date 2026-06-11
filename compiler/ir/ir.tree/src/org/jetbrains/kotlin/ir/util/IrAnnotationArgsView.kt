@@ -29,7 +29,7 @@ class IrAnnotationArgsView(
 
     override fun get(key: Name): IrExpression? {
         val parameters = symbol.owner.parameters
-        val parameter = parameters.first { it.name == key }
+        val parameter = parameters.firstOrNull { it.name == key } ?: return null
         return original[parameter.indexInParameters]
     }
 
