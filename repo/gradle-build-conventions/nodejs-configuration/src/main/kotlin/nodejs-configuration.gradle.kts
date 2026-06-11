@@ -2,8 +2,12 @@ import org.jetbrains.kotlin.build.nodejs.NodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 
-val nodeJs = NodeJsPlugin.apply(project)
-val wasmNodeJs = WasmNodeJsPlugin.apply(project)
+val nodeJs = NodeJsPlugin.apply(project).apply {
+    downloadBaseUrl = null
+}
+val wasmNodeJs = WasmNodeJsPlugin.apply(project).apply {
+    downloadBaseUrl = null
+}
 
 val nodeJsKotlinBuild = extensions.create<NodeJsExtension>(
     "nodeJsKotlinBuild",
