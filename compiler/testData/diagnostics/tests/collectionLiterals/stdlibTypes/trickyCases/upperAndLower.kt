@@ -185,10 +185,10 @@ fun testWhen() {
             }
             else -> [42]
         }
-    val _: MutableCollection<Any> <!INITIALIZER_TYPE_MISMATCH!>=<!>
+    val _: MutableCollection<Any> =
         when {
             cond() -> mutableSetOf()
-            else -> [42]
+            else -> <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
         }
 }
 

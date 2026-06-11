@@ -14,7 +14,7 @@ public class SuperA {
 class A : SuperA()
 
 private fun test() {
-    val a: A = <!UNRESOLVED_REFERENCE!>[42]<!>
+    val a: A = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
 }
 
 // FILE: SuperB.java
@@ -30,7 +30,7 @@ public class SuperB {
 class B : SuperB()
 
 private fun test() {
-    val b: B = <!UNRESOLVED_REFERENCE!>[42]<!>
+    val b: B = <!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>
 }
 
 // FILE: SuperC.java

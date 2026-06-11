@@ -250,6 +250,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_COLLECTION_LITERAL by error<KtCollectionLiteralExpression> {
             parameter<List<FirRegularClassSymbol>>("candidatesWithOf")
         }
+        val UNRESOLVED_COLLECTION_LITERAL by error<KtCollectionLiteralExpression> {
+            parameter<ConeKotlinType>("incompatibleBound")
+        }
         val IMPLICIT_PROPERTY_TYPE_MAKES_BEHAVIOR_ORDER_DEPENDANT by warning<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }

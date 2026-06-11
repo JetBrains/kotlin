@@ -29,11 +29,11 @@ fun <T> accept(t: T) {}
 
 class Derived : Base {
     fun testDerived() {
-        accept<Base>(<!UNRESOLVED_REFERENCE!>[]<!>)
-        accept<Base>(<!UNRESOLVED_REFERENCE!>[1]<!>)
-        accept<Base>(<!UNRESOLVED_REFERENCE!>[1, 2]<!>)
-        accept<Base>(<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>)
-        accept<Base>(<!UNRESOLVED_REFERENCE!>[1, 2, 3, 4]<!>)
+        accept<Base>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+        accept<Base>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+        accept<Base>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2]<!>)
+        accept<Base>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
+        accept<Base>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3, 4]<!>)
     }
 }
 

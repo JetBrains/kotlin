@@ -11,8 +11,8 @@ fun test() {
     val d: MutableSet<String> = [<!ARGUMENT_TYPE_MISMATCH!>"" as CharSequence<!>]
     val e: Sequence<Int> = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>, <!ARGUMENT_TYPE_MISMATCH!>2L<!>, <!ARGUMENT_TYPE_MISMATCH!>3L<!>]
 
-    val f: Array<Array<Int>> = [[<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>]]
-    val g: IntArray = [<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>]
+    val f: Array<Array<Int>> = [[<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]]
+    val g: IntArray = [<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]
     val h: LongArray = [<!ARGUMENT_TYPE_MISMATCH!>0.0<!>]
     val i: ShortArray = [<!ARGUMENT_TYPE_MISMATCH!>1_000_000_000<!>]
     val j: ByteArray = [if (true) 42.toByte() else 42]

@@ -38,19 +38,19 @@ public interface Generic<T> {
 fun <T> accept(x: T) { }
 
 fun test() {
-    accept<NonGeneric>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<NonGeneric>(<!UNRESOLVED_REFERENCE!>["42"]<!>)
-    accept<NonGeneric>(<!UNRESOLVED_REFERENCE!>[42]<!>)
-    accept<NonGeneric>(<!UNRESOLVED_REFERENCE!>[42, "42"]<!>)
+    accept<NonGeneric>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<NonGeneric>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<NonGeneric>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<NonGeneric>(<!UNRESOLVED_COLLECTION_LITERAL!>[42, "42"]<!>)
 
-    accept<Generic<*>>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<Generic<*>>(<!UNRESOLVED_REFERENCE!>["42"]<!>)
-    accept<Generic<*>>(<!UNRESOLVED_REFERENCE!>[42]<!>)
-    accept<Generic<*>>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
-    accept<Generic<String>>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<Generic<Int>>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<Generic<CharSequence>>(<!UNRESOLVED_REFERENCE!>[]<!>)
-    accept<Generic<String>>(<!UNRESOLVED_REFERENCE!>["1", "2", "3"]<!>)
+    accept<Generic<*>>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<Generic<*>>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<Generic<*>>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<Generic<*>>(<!UNRESOLVED_COLLECTION_LITERAL!>["1", "2", "3"]<!>)
+    accept<Generic<String>>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<Generic<Int>>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<Generic<CharSequence>>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<Generic<String>>(<!UNRESOLVED_COLLECTION_LITERAL!>["1", "2", "3"]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, javaType, nullableType, starProjection,
