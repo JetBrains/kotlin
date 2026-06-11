@@ -3,12 +3,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
-    api(project(":compiler:frontend.common-psi"))
-    api(project(":compiler:frontend.common.jvm"))
-    api(project(":compiler:resolution.common.jvm"))
-    api(project(":core:compiler.common.jvm"))
+    implementation(project(":compiler:util"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
 }
 

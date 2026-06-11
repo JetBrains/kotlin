@@ -16,6 +16,9 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":analysis:light-classes-base"))
+    implementation(project(":compiler:frontend.common.jvm"))
 }
 
 sourceSets {

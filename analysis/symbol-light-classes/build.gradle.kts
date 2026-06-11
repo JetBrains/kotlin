@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:frontend.common.jvm"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
