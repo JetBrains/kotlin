@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val llvmDevBinaryDataUsage by configurations.creating {
@@ -109,12 +109,6 @@ fun Project.customCompilerTest(
                 .withPathSensitivity(PathSensitivity.NONE)
         }
         useJUnitPlatform { includeTags(tag) }
-        testInputsCheck {
-            isNative.set(true)
-            // Permissions for older compiler, for unnecessarily performed access to root dir, already fixed in 2.2.20, commit dbd8ac94
-            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib")}", "read";""")
-            extraPermissions.add("""permission java.io.FilePermission "${projectDir.resolve("stdlib.klib")}", "read";""")
-        }
         val rawVersion = version.rawVersion
 
         val unarchiveCustomCompilerFiles: File = unarchiveCustomCompiler.get().outputs.files.singleFile
