@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,25 +27,9 @@ import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
  * generate `.d.ts` files from Kotlin metadata serialized in those KLIBs, and verify them without running the generated code.
  */
 @AffectedByAnalysisApi
-abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerTest() {
-    protected fun TestConfigurationBuilder.configureTypeScriptExport() {
-        defaultDirectives {
-            LANGUAGE with listOf(
-                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
-            DIAGNOSTICS with "-warnings"
-        }
-
-        facadeStep(::AnalysisApiBasedDtsGeneratorFacade)
-        jsArtifactsHandlersStep()
-
-        // TODO(KT-82224): Add a separate test runner with isWholeFileJsExport = true when we implement support for file-level @JsExport
-        //  in Analysis API-based TypeScript Export
-        configureJsTypeScriptExportTest(isWholeFileJsExport = false, expectedDtsSuffix = "aa")
-    }
-}
-
-abstract class AbstractJsAnalysisApiTypeScriptExportTest : AbstractAnalysisApiTypeScriptExportTest() {
+abstract class AbstractJsAnalysisApiTypeScriptExportTest(
+    private val isWholeFileJsExport: Boolean = false,
+) : AbstractKotlinCompilerTest() {
     open val targetBackend: TargetBackend
         get() = TargetBackend.JS_IR
 
@@ -54,14 +38,26 @@ abstract class AbstractJsAnalysisApiTypeScriptExportTest : AbstractAnalysisApiTy
             targetBackend = this@AbstractJsAnalysisApiTypeScriptExportTest.targetBackend
         }
         setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
+        defaultDirectives {
+            LANGUAGE with listOf(
+                "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
+            )
+            DIAGNOSTICS with "-warnings"
+        }
         commonConfigurationForJsBackendFirstStageTest(
             customIgnoreDirective = IGNORE_ANALYSIS_API_BASED_TYPESCRIPT_EXPORT,
         )
-        configureTypeScriptExport()
+        facadeStep(::AnalysisApiBasedDtsGeneratorFacade)
+        jsArtifactsHandlersStep()
+        configureJsTypeScriptExportTest(isWholeFileJsExport, expectedDtsSuffix = "aa")
     }
 }
 
-abstract class AbstractJsES6AnalysisApiTypeScriptExportTest : AbstractJsAnalysisApiTypeScriptExportTest() {
+abstract class AbstractJsAnalysisApiTypeScriptWholeFileExportTest : AbstractJsAnalysisApiTypeScriptExportTest(isWholeFileJsExport = true)
+
+abstract class AbstractJsES6AnalysisApiTypeScriptExportTest(
+    isWholeFileJsExport: Boolean = false
+) : AbstractJsAnalysisApiTypeScriptExportTest(isWholeFileJsExport) {
     override val targetBackend: TargetBackend
         get() = TargetBackend.JS_IR_ES6
 
@@ -72,3 +68,6 @@ abstract class AbstractJsES6AnalysisApiTypeScriptExportTest : AbstractJsAnalysis
         }
     }
 }
+
+abstract class AbstractJsES6AnalysisApiTypeScriptWholeFileExportTest :
+    AbstractJsES6AnalysisApiTypeScriptExportTest(isWholeFileJsExport = true)

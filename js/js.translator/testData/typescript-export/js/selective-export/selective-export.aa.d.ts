@@ -17,6 +17,36 @@ declare namespace JS_TESTS {
         interface ExportedInternalInterface {
         }
     }
+    namespace foo {
+        const fileLevelExportedVal: number;
+        function fileLevelExportedFun(): number;
+        function createFileLevelExportedValueClass(value: number): foo.FileLevelExportedValueClass;
+        class FileLevelExportedClass {
+            constructor();
+            get value(): number;
+        }
+        namespace FileLevelExportedClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FileLevelExportedClass;
+            }
+        }
+        class FileLevelExportedValueClass {
+            constructor(value: number);
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get value(): number;
+        }
+        namespace FileLevelExportedValueClass {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => FileLevelExportedValueClass;
+            }
+        }
+        interface FileLevelExportedExternalInterface {
+        }
+    }
 }
 
 

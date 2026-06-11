@@ -166,8 +166,7 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(includingImplicitExport: 
         return parent.isEffectivelyExported(includingImplicitExport)
     }
 
-    // FIXME(KT-82224): `containingFile` is always null for declarations deserialized from KLIBs
-    return containingFile?.isJsExport() ?: false
+    return containingFileAnnotations?.contains(JsExport) ?: false
 }
 
 internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
