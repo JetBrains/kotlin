@@ -210,13 +210,17 @@ class RunInAlienClassLoader {
             val jClass = loader.loadClass(fqn)
             val metadata = jClass.annotations.firstIsInstanceOrNull<Metadata>()
             if (shouldSkipClass(jClass, metadata)) continue
-            when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
-                null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
-                2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
-                3 -> {} // Synthetic class
-                4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
-                5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
-                else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+            try {
+                when (metadata?.kind) { // See kotlin.Metadata.kind for numbers meanings
+                    null, 1 -> out.dumpKClass(jClass.kotlin) // Kotlin and Java classes
+                    2 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Facade file
+                    3 -> {} // Synthetic class
+                    4 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class facade
+                    5 -> out.dumpKDeclarationContainer(Reflection.getOrCreateKotlinPackage(jClass)) // Multi-file class part
+                    else -> error("Unknown kotlin.Metadata kind ${metadata.kind}")
+                }
+            } catch (e: Throwable) {
+                throw AssertionError("Exception when dumping contents of $jClass", e)
             }
         }
         return out.toString()
