@@ -13,7 +13,9 @@ See [java-flight-recorder/README.md](../java-flight-recorder/README.md) for avai
 ```kotlin
 id("test-inputs-check-v2")
 
-// zero configuration :)
+testInputsCheck {
+    failFast = true // false by default
+}
 ```
 
 Run your tests, for example:
