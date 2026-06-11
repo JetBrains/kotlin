@@ -52,6 +52,7 @@ public class SirTrampolineDeclarationsProviderImpl(
                 documentation = declaration.documentation
                 name = declaration.name
                 type = SirNominalType(declaration)
+                attributes += declaration.attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
             }
         }
         is SirFunction -> SirTrampolineFunction(declaration)

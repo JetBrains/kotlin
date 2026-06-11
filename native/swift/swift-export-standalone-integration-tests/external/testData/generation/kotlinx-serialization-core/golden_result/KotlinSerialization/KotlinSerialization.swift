@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
-import KotlinRuntime
 import KotlinStdlib
+import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
@@ -12,6 +12,7 @@ public typealias encoding = ExportedKotlinPackages.kotlinx.serialization.encodin
 public typealias BinaryFormat = ExportedKotlinPackages.kotlinx.serialization.BinaryFormat
 public typealias _BinaryFormat = ExportedKotlinPackages.kotlinx.serialization._BinaryFormat
 public typealias __BinaryFormat = ExportedKotlinPackages.kotlinx.serialization.__BinaryFormat
+@_spi(kotlinx$serialization$ExperimentalSerializationApi)
 public typealias ContextualSerializer = ExportedKotlinPackages.kotlinx.serialization.ContextualSerializer
 public typealias DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy
 public typealias _DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy
@@ -19,8 +20,11 @@ public typealias __DeserializationStrategy = ExportedKotlinPackages.kotlinx.seri
 public typealias KSerializer = ExportedKotlinPackages.kotlinx.serialization.KSerializer
 public typealias _KSerializer = ExportedKotlinPackages.kotlinx.serialization._KSerializer
 public typealias __KSerializer = ExportedKotlinPackages.kotlinx.serialization.__KSerializer
+@_spi(kotlinx$serialization$ExperimentalSerializationApi)
 public typealias MissingFieldException = ExportedKotlinPackages.kotlinx.serialization.MissingFieldException
+@_spi(kotlinx$serialization$InternalSerializationApi)
 public typealias PolymorphicSerializer = ExportedKotlinPackages.kotlinx.serialization.PolymorphicSerializer
+@_spi(kotlinx$serialization$InternalSerializationApi)
 public typealias SealedClassSerializer = ExportedKotlinPackages.kotlinx.serialization.SealedClassSerializer
 public typealias SerialFormat = ExportedKotlinPackages.kotlinx.serialization.SerialFormat
 public typealias _SerialFormat = ExportedKotlinPackages.kotlinx.serialization._SerialFormat
