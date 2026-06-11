@@ -135,8 +135,6 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                     KotlinToolingVersion(kotlinToolchains.getCompilerVersion()) >= KotlinToolingVersion(2, 1, 20, "Beta1"),
                     "Internal tracking is supported only since Kotlin 2.1.20-Beta1: KT-70556, the current version is ${kotlinToolchains.getCompilerVersion()}"
                 )
-                assumeFalse(this is JsScenarioDsl) // internal tracking currently doesn't fully work for JS
-                assumeFalse(this is WasmScenarioDsl) // internal tracking currently doesn't fully work for Wasm
             }
             val module1 = if (useTrackedModules) {
                 trackedModule("jvm-module-1")

@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.snapshots.ConfigurationInputsMap
+import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
@@ -97,6 +100,7 @@ abstract class IncrementalCompilerRunner<
         transaction = transaction,
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,
+        trackLibrarySetChanges = shouldTrackLibrarySetChanges,
         storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
         icFeatures = icFeatures,
         fragmentContext = fragmentContext,
@@ -104,10 +108,33 @@ abstract class IncrementalCompilerRunner<
 
     protected abstract val shouldTrackChangesInLookupCache: Boolean
 
+    /**
+     * Whether this runner needs the IC layer to maintain its own snapshot of the library set on the classpath.
+     * True for runners that use the build-history-files-based IC approach (JS/Wasm); false for runners using
+     * the classpath-snapshot-based approach (JVM), which has its own library change detection.
+     */
+    protected open val shouldTrackLibrarySetChanges: Boolean = false
+
     protected abstract val shouldStoreFullFqNamesInLookupCache: Boolean
 
     protected abstract fun createCacheManager(icContext: IncrementalCompilationContext, args: Args): CacheManager
     protected abstract fun destinationDir(args: Args): File
+
+    /**
+     * The set of library files (JARs, KLIBs, or class directories) the IC layer snapshots on its own,
+     * so that library changes are detected even when the build system passes [ChangedFiles.DeterminableFiles.ToBeComputed].
+     *
+     * Only called when [shouldTrackLibrarySetChanges] is true; subclasses that flip that flag must override this.
+     */
+    protected open fun classpathForLibrarySetSnapshot(args: Args): List<File> =
+        error("classpathForLibrarySetSnapshot must be overridden when shouldTrackLibrarySetChanges is true")
+
+    /**
+     * The multi-project module info corresponding to the libraries returned by [classpathForLibrarySetSnapshot].
+     * Used to derive stable, path-independent identities for local-module libraries; external libraries fall back
+     * to a content-hash identity.
+     */
+    protected open val modulesApiHistory: ModulesApiHistory get() = EmptyModulesApiHistory
 
     fun compile(
         allSourceFiles: List<File>,
@@ -234,7 +261,7 @@ abstract class IncrementalCompilerRunner<
             fun compile(): ICResult {
                 // Step 1: Get changed files
                 val knownChangedFiles: DeterminableFiles.Known = try {
-                    getChangedFiles(changedFiles, allSourceFiles, caches)
+                    getChangedFiles(changedFiles, allSourceFiles, args, caches)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
@@ -320,6 +347,12 @@ abstract class IncrementalCompilerRunner<
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
+            // Refresh the library-set snapshot on rebuild too, so that the next incremental build sees
+            // an accurate baseline and doesn't treat all classpath entries as "new" again.
+            caches.inputsCache.librarySetSnapshotMap?.compareAndUpdate(
+                classpathForLibrarySetSnapshot(args),
+                modulesApiHistory.modulesInfo,
+            )
             val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
                 AbiSnapshotData(snapshot = AbiSnapshotImpl(mutableMapOf()), classpathAbiSnapshot = getClasspathAbiSnapshot(args))
             } else null
@@ -360,9 +393,10 @@ abstract class IncrementalCompilerRunner<
     private fun getChangedFiles(
         changedFiles: DeterminableFiles,
         allSourceFiles: List<File>,
+        args: Args,
         caches: CacheManager,
     ): DeterminableFiles.Known {
-        return when (changedFiles) {
+        val sourceLevelChanges: DeterminableFiles.Known = when (changedFiles) {
             is DeterminableFiles.ToBeComputed -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             is DeterminableFiles.Known -> {
                 if (changedFiles.forDependencies) {
@@ -376,6 +410,30 @@ abstract class IncrementalCompilerRunner<
                 }
             }
         }
+
+        // Library set snapshotting runs in both branches for runners that opted in via shouldTrackLibrarySetChanges.
+        // SourcesChanges only models source changes; library changes flow through this separate, path-independent
+        // snapshot map so that dirtyFiles/getClasspathChanges can pick up rebuilt local modules (via history files)
+        // and any change to an external library (which has no history file → full rebuild).
+        val librarySetSnapshotMap = caches.inputsCache.librarySetSnapshotMap ?: return sourceLevelChanges
+        val librarySetChanges = librarySetSnapshotMap.compareAndUpdate(
+            classpathForLibrarySetSnapshot(args),
+            modulesApiHistory.modulesInfo,
+        )
+        if (librarySetChanges.modifiedFiles.isEmpty() && librarySetChanges.removedKeys.isEmpty()) {
+            return sourceLevelChanges
+        }
+        // Removed library identities can't be expressed as real Files (we store no path for them), so we
+        // carry them as sentinel Files. getClasspathChanges recognizes the sentinel prefix and treats them
+        // as "something on the classpath was removed" → ChangesEither.Unknown → full rebuild, which is the
+        // only sound answer for any library removal in the history-files-based IC pipeline.
+        // Anyway, the history files-based approach does not have any solution for changes in dependencies
+        // with no history files other than rebuild.
+        val removedLibrarySentinels = librarySetChanges.removedKeys.map { librarySetRemovedSentinel(it) }
+        return DeterminableFiles.Known(
+            modified = sourceLevelChanges.modified + librarySetChanges.modifiedFiles,
+            removed = sourceLevelChanges.removed + removedLibrarySentinels,
+        )
     }
 
     protected abstract fun calculateSourcesToCompile(

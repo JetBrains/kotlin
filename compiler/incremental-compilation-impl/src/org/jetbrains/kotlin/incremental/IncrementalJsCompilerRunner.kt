@@ -60,6 +60,9 @@ fun makeJsIncrementally(
     }
 }
 
+private fun parseLibrariesArgument(libraries: String?): List<File> =
+    (libraries ?: "").split(File.pathSeparator).filter { it.isNotEmpty() }.map { File(it) }
+
 @Suppress("DEPRECATION")
 inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
     val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
@@ -79,7 +82,7 @@ class IncrementalJsCompilerRunner(
     workingDir: File,
     reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     buildHistoryFile: File?,
-    private val modulesApiHistory: ModulesApiHistory,
+    override val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
 ) : IncrementalCompilerRunner<CommonJsAndWasmCompilerArguments, IncrementalJsCachesManager>(
@@ -93,6 +96,9 @@ class IncrementalJsCompilerRunner(
     override val shouldTrackChangesInLookupCache
         get() = false
 
+    override val shouldTrackLibrarySetChanges
+        get() = true
+
     override val shouldStoreFullFqNamesInLookupCache
         get() = icFeatures.withAbiSnapshot
 
@@ -102,6 +108,9 @@ class IncrementalJsCompilerRunner(
     override fun destinationDir(args: CommonJsAndWasmCompilerArguments): File {
         return File(args.outputDir!!)
     }
+
+    override fun classpathForLibrarySetSnapshot(args: CommonJsAndWasmCompilerArguments): List<File> =
+        parseLibrariesArgument(args.libraries)
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJsCachesManager,
@@ -120,7 +129,7 @@ class IncrementalJsCompilerRunner(
 
         val dirtyFiles = dirtyFilesProvider.getInitializedDirtyFiles(caches, changedFiles)
 
-        val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
+        val libs = parseLibrariesArgument(args.libraries)
         //TODO(valtman) check for JS
         val classpathChanges = getClasspathChanges(
             libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter,
