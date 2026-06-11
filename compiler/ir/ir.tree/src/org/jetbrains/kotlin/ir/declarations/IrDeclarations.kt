@@ -63,8 +63,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic: Boolean): Boolean =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic) != null &&
-            (!treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic || superClass == null)
+    inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic) != null
 
 val IrClass.isJvmInlineMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
@@ -124,9 +123,10 @@ val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValu
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation
-        ?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic)
-        ?.takeIf { !treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic || superClass == null }
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
+        treatFullValueClassesWithOneFieldAsBasic = treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic,
+        hasSuperClass = { superClass != null }
+    )
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

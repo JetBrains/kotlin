@@ -86,12 +86,13 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
  *
  * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
  *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
+ * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field and no superclass.
  *
  * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
  *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
  *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
  *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
+ *                                                 However, if the class has a superclass, it is not considered a basic value class anymore.
  *                                                 `false` must be used for JVM, `true` for other backends.
  * @return An [InlineClassRepresentation] if the class has a compatible value class
  *         representation and meets the conditions specified by the [treatFullValueClassesWithOneFieldAsBasic]
@@ -99,12 +100,14 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
  */
 @ValueClassBackendAgnosticApi
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.interpretAsInlineClassRepresentationOrNull(
-    treatFullValueClassesWithOneFieldAsBasic: Boolean
+    treatFullValueClassesWithOneFieldAsBasic: Boolean,
+    hasSuperClass: () -> Boolean,
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
     is JvmInlineMultiFieldValueClassRepresentation -> null
     is FullValueClassRepresentation if !treatFullValueClassesWithOneFieldAsBasic -> null
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
+        ?.takeIf { !hasSuperClass() }
         ?.let { [name, type] -> InlineClassRepresentation(name, type) }
 }
 
