@@ -258,10 +258,10 @@ MODULE_FRAGMENT
                                                           ARG dirty1: GET_VAR '$changed: kotlin.Int declared in home.ReplyNavHost.<anonymous>.<anonymous>.<anonymous>' type=kotlin.Int origin=null
                                                           ARG dirty2: CONST Int type=kotlin.Int value=-1
                                                           ARG info: CONST String type=kotlin.String value="home.ReplyNavHost.<anonymous>.<anonymous>.<anonymous> (main.kt:115)"
-                                                    CALL 'public final fun ReplyInboxScreen (replyHomeUIState: com.example.reply.ui.ReplyHomeUIState, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in com.example.reply.ui.ReplyInboxScreenKt' type=kotlin.Unit origin=null
+                                                    CALL 'public final fun ReplyInboxScreen (replyHomeUIState: com.example.reply.ui.ReplyHomeUIState, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit [companion] declared in com.example.reply.ui.ReplyInboxScreenKt' type=kotlin.Unit origin=null
                                                       ARG replyHomeUIState: GET_VAR 'replyHomeUIState: com.example.reply.ui.ReplyHomeUIState declared in home.ReplyNavHost' type=com.example.reply.ui.ReplyHomeUIState origin=null
                                                       ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost.<anonymous>.<anonymous>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
-                                                      ARG $changed: CALL 'public final fun com_example_reply_ui_ReplyHomeUIState$stableprop_getter (): kotlin.Int declared in com.example.reply.ui.ReplyHomeUIState' type=kotlin.Int origin=null
+                                                      ARG $changed: CALL 'public final fun com_example_reply_ui_ReplyHomeUIState$stableprop_getter (): kotlin.Int [companion] declared in com.example.reply.ui.ReplyHomeUIState' type=kotlin.Int origin=null
                                                     WHEN type=kotlin.Unit origin=IF
                                                       BRANCH
                                                         if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null

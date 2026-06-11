@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/basicBlockAndExtension.kt
       FIELD PROPERTY_BACKING_FIELD name:compBlockVal type:kotlin.String visibility:private [final,static]
         EXPRESSION_BODY
           CONST String type=kotlin.String value="blockVal "
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-compBlockVal> visibility:public modality:FINAL returnType:kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-compBlockVal> visibility:public modality:FINAL returnType:kotlin.String [companion]
         correspondingProperty: PROPERTY name:compBlockVal visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-compBlockVal> (): kotlin.String declared in <root>.A'
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/basicBlockAndExtension.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN name:compBlockFun visibility:public modality:FINAL returnType:kotlin.String
+    FUN name:compBlockFun visibility:public modality:FINAL returnType:kotlin.String [companion]
       VALUE_PARAMETER kind:Regular name:k index:0 type:kotlin.String
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""

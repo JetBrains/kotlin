@@ -43,10 +43,10 @@ MODULE_FRAGMENT
             JvmField
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
-        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_Color$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int
+        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_Color$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int [companion]
           correspondingProperty: PROPERTY name:$stable visibility:public modality:FINAL [val]
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun home_Color$stableprop_getter (): kotlin.Int declared in home.Color'
+            RETURN type=kotlin.Nothing from='public final fun home_Color$stableprop_getter (): kotlin.Int [companion] declared in home.Color'
               GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in home.Color' type=kotlin.Int origin=null
       CONSTRUCTOR visibility:public returnType:home.Color [primary]
         VALUE_PARAMETER kind:Regular name:r index:0 type:kotlin.Int
@@ -120,10 +120,10 @@ MODULE_FRAGMENT
             JvmField
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
-        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_DominantColorState$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int
+        FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:home_DominantColorState$stableprop_getter visibility:public modality:FINAL returnType:kotlin.Int [companion]
           correspondingProperty: PROPERTY name:$stable visibility:public modality:FINAL [val]
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun home_DominantColorState$stableprop_getter (): kotlin.Int declared in home.DominantColorState'
+            RETURN type=kotlin.Nothing from='public final fun home_DominantColorState$stableprop_getter (): kotlin.Int [companion] declared in home.DominantColorState'
               GET_FIELD 'FIELD name:$stable type:kotlin.Int visibility:public [final,static] declared in home.DominantColorState' type=kotlin.Int origin=null
       CONSTRUCTOR visibility:public returnType:home.DominantColorState [primary]
         VALUE_PARAMETER kind:Regular name:defaultColor index:0 type:home.Color
