@@ -1124,14 +1124,6 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    fun exitAnnotationCall() {
-        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
-
-        val (lambdaExitNodes, node = value) = graphBuilder.exitAnnotationCall()
-        lambdaExitNodes.forEach { it.mergeIncomingFlow() }
-        node.mergeIncomingFlow()
-    }
-
     @CfgInternals
     fun updateCollectionLiteralNodes(
         collectionLiteral: FirCollectionLiteral,
@@ -1581,6 +1573,9 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Annotations -----------------------------------
 
+    // `enterAnnotationCall` / `exitAnnotationCall` should be used only in combination with
+    // `enterCallArguments` / `exitCallArguments`. Otherwise, use `enterAnnotation` / `exitAnnotation`.
+
     fun enterAnnotation() {
         graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
@@ -1588,6 +1583,23 @@ abstract class FirDataFlowAnalyzer(
     fun exitAnnotation() {
         graphBuilder.exitFakeExpression()
         resetSmartCastPosition() // rollback to position before annotation
+    }
+
+    fun enterAnnotationCall() {
+        enterAnnotation()
+    }
+
+    // See also `exitFunctionCall`
+    fun exitAnnotationCall() {
+        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
+
+        // node is exit node of fake graph
+        // this graph will be dropped later as part of `exitAnnotation()` call
+        val (lambdaExitNodes, node = value) = graphBuilder.exitAnnotationCall()
+        lambdaExitNodes.forEach { it.mergeIncomingFlow() }
+        node.mergeIncomingFlow()
+
+        exitAnnotation()
     }
 
     // ----------------------------------- Init block -----------------------------------

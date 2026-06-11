@@ -1838,7 +1838,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             return transformAnnotationCallPreCollectionLiterals(annotationCall)
         }
 
-        dataFlowAnalyzer.enterAnnotation()
+        dataFlowAnalyzer.enterAnnotationCall()
         dataFlowAnalyzer.enterCallArguments(annotationCall, annotationCall.arguments)
         transformCallArguments(annotationCall, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments() // annotationCall
@@ -1851,7 +1851,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             evaluateAndReplaceArgumentMapping(annotationCall)
         }
         dataFlowAnalyzer.exitAnnotationCall()
-        dataFlowAnalyzer.exitAnnotation()
         annotationCall
     }
 
