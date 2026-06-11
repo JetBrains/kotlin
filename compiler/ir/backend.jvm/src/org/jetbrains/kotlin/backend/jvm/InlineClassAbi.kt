@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
 import org.jetbrains.kotlin.backend.jvm.ir.isBasicValueClassType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -129,7 +129,7 @@ object InlineClassAbi {
 fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
     val irClass = erasedUpperBound
     return !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME) && when {
-        irClass.isSingleFieldValueClass -> includeInline
+        irClass.isInlineClass -> includeInline
         irClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }
@@ -137,12 +137,12 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
 
 fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
     (dispatchReceiverParameter != null && when {
-        parentAsClass.isSingleFieldValueClass -> includeInline
+        parentAsClass.isInlineClass -> includeInline
         parentAsClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }) || nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) }
             || (this is IrConstructor && when {
-        constructedClass.isSingleFieldValueClass -> includeInline
+        constructedClass.isInlineClass -> includeInline
         constructedClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     })
@@ -154,7 +154,7 @@ val IrClass.inlineClassFieldName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction &&
+    get() = (parent as? IrClass)?.isInlineClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 

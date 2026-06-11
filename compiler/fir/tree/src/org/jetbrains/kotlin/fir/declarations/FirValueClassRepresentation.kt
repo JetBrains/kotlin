@@ -28,31 +28,12 @@ val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<Con
         return fir.valueClassRepresentation
     }
 
-/**
- * Determines whether the current [FirRegularClassSymbol] is compatible with being a single-field value class.
- *
- * The compatibility is assessed based on the type of value class representation associated with the [FirRegularClassSymbol].
- *
- * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
- *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
- *
- * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
- *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
- *
- * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
- *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
- *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
- *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
- *                                                 `false` must be used for JVM, `true` for other backends.
- * @return An [InlineClassRepresentation] if the class has a compatible value class
- *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
- *         parameter; otherwise, `null`.
- */
-@ValueClassBackendAgnosticApi
-fun FirRegularClassSymbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic)
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun FirRegularClassSymbol.inlineClassRepresentationInJvm(): InlineClassRepresentation<ConeRigidType>? =
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
+        treatFullValueClassesWithOneFieldAsBasic = false,
+        hasSuperClass = { error("No super class check must be called for inline classes in JVM") }
+    )
 
 val FirRegularClassSymbol.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>

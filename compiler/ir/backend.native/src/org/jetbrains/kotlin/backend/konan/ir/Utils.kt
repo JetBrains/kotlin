@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
+import org.jetbrains.kotlin.ir.declarations.isInlineClass
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -85,9 +85,9 @@ val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
     }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass: Boolean
-    get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+val IrClass.isInlineClass: Boolean
+    get() = isInlineClass(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic = true)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
-    get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+    get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic = true)

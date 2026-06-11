@@ -246,7 +246,7 @@ class Fir2IrConverter(
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
             declarationStorage.withScope(irConstructor.symbol) {
                 allDeclarations += when (irClass.valueClassRepresentation) {
-                    is InlineClassRepresentation -> dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
+                    is InlineClassRepresentation -> dataClassMembersGenerator.generateInlineClassMembers(klass, irClass)
                     is JvmInlineMultiFieldValueClassRepresentation -> dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
                     is FullValueClassRepresentation if irClass.modality != Modality.ABSTRACT && irClass.modality != Modality.SEALED ->
                         dataClassMembersGenerator.generateFullValueClassMembers(klass, irClass)

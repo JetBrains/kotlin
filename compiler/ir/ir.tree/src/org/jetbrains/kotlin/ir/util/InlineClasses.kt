@@ -23,18 +23,19 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
  *
  * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
  *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
+ * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field and no superclass.
  *
- * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
- *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
- *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
- *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
- *                                                 `false` must be used for JVM, `true` for other backends.
+ * @param treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
+ *                                                                On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
+ *                                                                On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
+ *                                                                Therefore, full value classes with one field are actually preexisting value classes on other platforms.
+ *                                                                However, if the class has a superclass, it is not considered a basic value class anymore.
+ *                                                                `false` must be used for JVM, `true` for other backends.
  * @return The underlying type of the inline class if it exists, otherwise throws an error.
  */
 @ValueClassBackendAgnosticApi
-fun getInlineClassUnderlyingType(irClass: IrClass, treatFullValueClassesWithOneFieldAsBasic: Boolean): IrSimpleType {
-    val representation = irClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic) ?: error("Not an inline class: ${irClass.render()}")
+fun getInlineClassUnderlyingType(irClass: IrClass, treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic: Boolean): IrSimpleType {
+    val representation = irClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAndNoSuperClassAsBasic) ?: error("Not an inline class: ${irClass.render()}")
     return representation.underlyingType
 }
 

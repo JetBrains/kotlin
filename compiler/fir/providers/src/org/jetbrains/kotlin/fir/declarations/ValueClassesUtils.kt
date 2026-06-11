@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 @OptIn(ValueClassBackendAgnosticApi::class)
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClassInJvm(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
-    // All the usages are JVM-only, so treatFullValueClassesWithOneFieldAsBasic is effectively false
-    return symbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)?.underlyingType
+    return symbol.inlineClassRepresentationInJvm()?.underlyingType
 }
 
 @OptIn(SuspiciousValueClassCheck::class)
@@ -46,7 +45,7 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
     fields.singleOrNull()?.let { [name, type] ->
-        if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
+        if (isRecursiveInlineClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
         }
     }
@@ -59,13 +58,13 @@ private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSessio
     return primaryConstructorIfAny(session)?.fir?.valueParameters
 }
 
-private fun isRecursiveSingleFieldValueClass(
+private fun isRecursiveInlineClass(
     type: ConeRigidType,
     session: FirSession,
     visited: MutableSet<ConeRigidType>
 ): Boolean {
     val nextType = type.basicValueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
-    return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
+    return !visited.add(nextType) || isRecursiveInlineClass(nextType, session, visited)
 }
 
 private fun ConeRigidType.basicValueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
