@@ -2,9 +2,9 @@
 
 /* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFun.kt */
 
-private val k: String
+private companion val k: String
     /* TARGET declaration */ private companion fun A.<get-k>(): String
-private var empty: String
+private companion var empty: String
     /* TARGET declaration */ private companion fun A.<get-empty>(): String
     /* TARGET declaration */ private companion fun A.<set-empty>(<set-?>: String)
 /* TARGET declaration */ private companion fun A.o(): String

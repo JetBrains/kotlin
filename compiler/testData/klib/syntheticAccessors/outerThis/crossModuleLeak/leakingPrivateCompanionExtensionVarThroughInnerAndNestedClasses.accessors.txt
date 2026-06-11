@@ -2,10 +2,10 @@
 
 /* FILE package=<root> fileName=Outer.kt */
 
-private var o: String
+private companion var o: String
     /* TARGET declaration */ private companion fun Outer.<get-o>(): String
     /* TARGET declaration */ private companion fun Outer.<set-o>(<set-?>: String)
-private var k: String
+private companion var k: String
     /* TARGET declaration */ private companion fun Outer.<get-k>(): String
     /* TARGET declaration */ private companion fun Outer.<set-k>(<set-?>: String)
 public class Outer

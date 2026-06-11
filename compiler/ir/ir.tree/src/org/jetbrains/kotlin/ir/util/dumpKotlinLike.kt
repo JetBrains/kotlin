@@ -642,10 +642,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
         if (declaration.isExpect && !options.printExpectDeclarations) return
         val keyword = buildString {
-            if (declaration.isStatic) {
-                append(customModifier("static"))
-                append(' ')
-            }
             append("fun ")
         }
         declaration.printSimpleFunction(
@@ -738,7 +734,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     isInline = isInline,
                     isInfix = isInfix,
                     isOperator = isOperator,
-                    isCompanion = companionExtensionClass != null
+                    isCompanion = isStatic || companionExtensionClass != null
                 ),
             )
             p.printWithNoIndent(keyword)
@@ -865,6 +861,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                     isSuspend = getter?.isSuspend == true,
                     // could be used on property if all accessors have same state, otherwise must be defined on each accessor
                     isInline = false,
+                    isCompanion = declaration.getter?.isStatic == true || declaration.getter?.companionExtensionClass != null
                 ),
             )
         }
@@ -873,7 +870,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO we can omit type for set parameter
 
         p(declaration.isConst, "const")
-        p(declaration.getter?.isStatic == true, customModifier("static"))
         p.printWithNoIndent(if (declaration.isVar) "var" else "val")
         p.printWithNoIndent(" ")
 

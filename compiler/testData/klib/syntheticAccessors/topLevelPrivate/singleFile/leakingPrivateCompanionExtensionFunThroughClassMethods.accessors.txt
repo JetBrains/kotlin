@@ -3,7 +3,7 @@
 /* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunThroughClassMethods.kt */
 
 public class A
-    internal inline /* static */ fun internalInlineStaticMethod(): String
+    internal inline companion fun internalInlineStaticMethod(): String
         /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$k$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()

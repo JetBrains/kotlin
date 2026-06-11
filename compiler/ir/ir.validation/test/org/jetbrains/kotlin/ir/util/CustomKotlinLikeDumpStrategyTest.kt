@@ -84,6 +84,7 @@ class CustomKotlinLikeDumpStrategyTest {
             name = Name.identifier("Example")
         }.apply {
             parent = pkg
+            createThisReceiverParameter()
         }
 
         val useFun = IrFactoryImpl.buildFun {
@@ -91,6 +92,7 @@ class CustomKotlinLikeDumpStrategyTest {
             returnType = TestIrBuiltins.unitType
         }.apply {
             parent = example
+            parameters += createDispatchReceiverParameterWithClassParent()
         }
 
         val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, createFun.symbol)
@@ -111,7 +113,7 @@ class CustomKotlinLikeDumpStrategyTest {
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     create()
                   }
 
@@ -137,7 +139,7 @@ class CustomKotlinLikeDumpStrategyTest {
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     InstanceFactory.Companion.create()
                   }
 
@@ -164,7 +166,7 @@ class CustomKotlinLikeDumpStrategyTest {
         assertEquals(
             """
                 class Example {
-                  /* static */ fun use() {
+                  fun use() {
                     InstanceFactory.create()
                   }
 

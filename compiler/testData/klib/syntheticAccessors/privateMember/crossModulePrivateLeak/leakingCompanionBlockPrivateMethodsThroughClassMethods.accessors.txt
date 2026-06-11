@@ -3,15 +3,15 @@
 /* FILE package=<root> fileName=A.kt */
 
 public class A
-    /* TARGET declaration */ private /* static */ fun o(): String
-    /* TARGET declaration */ private /* static */ fun k(): String
-    internal inline /* static */ fun internalInlineStaticMethod(): String
+    /* TARGET declaration */ private companion fun o(): String
+    /* TARGET declaration */ private companion fun k(): String
+    internal inline companion fun internalInlineStaticMethod(): String
         /* ACCESSOR use-site */ access$o()
     internal inline fun internalInlineMethod(): String
         /* ACCESSOR use-site */ access$k()
-    /* ACCESSOR declaration */ internal /* static */ fun access$o(): String
+    /* ACCESSOR declaration */ internal companion fun access$o(): String
         /* TARGET use-site */ o()
-    /* ACCESSOR declaration */ internal /* static */ fun access$k(): String
+    /* ACCESSOR declaration */ internal companion fun access$k(): String
         /* TARGET use-site */ k()
 
 

@@ -2,7 +2,7 @@
 
 /* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunAndPropertyThroughCompanionExtensionFun.kt */
 
-private val k: String
+private companion val k: String
     /* TARGET declaration */ private companion fun A.<get-k>(): String
 /* TARGET declaration */ private companion fun A.o(): String
 internal inline companion fun A.internalInlineFun(): String
