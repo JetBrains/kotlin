@@ -500,15 +500,22 @@ private val lowerCastsPhase = createFileLoweringPhase(
         lowering = ::CastsLowering,
 )
 
-private val computeTypesPhase = createFileLoweringPhase(
-        name = "ComputeTypes",
+private val computeTypesPhaseFirstRun = createFileLoweringPhase(
+        name = "ComputeTypesFirstRun",
         lowering = { context: Context -> ComputeTypesPass(context) },
         prerequisite = setOf(finallyBlocksPhase)
+)
+
+private val computeTypesPhaseSecondRun = createFileLoweringPhase(
+        name = "ComputeTypesSecondRun",
+        lowering = { context: Context -> ComputeTypesPass(context) },
+        prerequisite = setOf(computeTypesPhaseFirstRun)
 )
 
 private val optimizeCastsPhase = createFileLoweringPhase(
         name = "OptimizeCasts",
         lowering = { context: Context -> CastsOptimization(context) },
+        prerequisite = setOf(computeTypesPhaseSecondRun)
 )
 
 private val expressionBodyTransformPhase = createFileLoweringPhase(
@@ -649,7 +656,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         localFunctionsPhase,
         tailrecPhase,
         finallyBlocksPhase,
-        computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
+        computeTypesPhaseFirstRun, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         forLoopsPhase,
         flattenStringConcatenationPhase,
         stringConcatenationPhase,
@@ -672,7 +679,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         objectClassesPhase,
         staticInitializersPhase,
         // Running 2nd time not only helps the following heavy analysis but also corrects some lowerings' inaccuracies in IR types.
-        computeTypesPhase,
+        computeTypesPhaseSecondRun,
         removeCastsFromNothing,
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
