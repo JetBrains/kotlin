@@ -438,6 +438,20 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         }
 
     @Argument(
+        value = "-Xeager-lambda-analysis",
+        description = "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.",
+    )
+    @Enables(LanguageFeature.EagerLambdaAnalysis)
+    @Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions)
+    @Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound)
+    @Enables(LanguageFeature.CallCompletionRefinementsFor25)
+    var eagerLambdaAnalysis: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xenable-additional-ir-checkers",
         valueDescription = "<checker1>,<checker2>",
         description = """A list of IR checkers to enable, specified by a simple name of the checker class.

@@ -1165,6 +1165,29 @@ public class CliTestGenerated extends AbstractCliTest {
     }
   }
 
+  @TestMetadata("compiler/testData/cli/jvm/XeagerLambdaAnalysis")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class XeagerLambdaAnalysis extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInXeagerLambdaAnalysis() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XeagerLambdaAnalysis"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("executorSubmitDefault.args")
+    public void testExecutorSubmitDefault() {
+      runTest("compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmitDefault.args");
+    }
+
+    @TestMetadata("executorSubmitEnabled.args")
+    public void testExecutorSubmitEnabled() {
+      runTest("compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmitEnabled.args");
+    }
+  }
+
   @TestMetadata("compiler/testData/cli/jvm/XnewInference")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)

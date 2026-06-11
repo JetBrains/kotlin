@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_DIRECTORY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_FQNAME
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_DUMP_PERF
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EAGER_LAMBDA_ANALYSIS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ENABLE_ADDITIONAL_IR_CHECKERS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_ENABLE_INCREMENTAL_COMPILATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_EXPECT_ACTUAL_CLASSES
@@ -233,6 +234,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_DUMP_DIRECTORY in this) { arguments.dumpDirectory = get(X_DUMP_DIRECTORY)?.absolutePathStringOrThrow()}
     if (X_DUMP_FQNAME in this) { arguments.dumpOnlyFqName = get(X_DUMP_FQNAME)}
     if (X_DUMP_PERF in this) { arguments.dumpPerf = get(X_DUMP_PERF)?.absolutePathStringOrThrow()}
+    if (X_EAGER_LAMBDA_ANALYSIS in this) { arguments.eagerLambdaAnalysis = get(X_EAGER_LAMBDA_ANALYSIS)}
     if (X_ENABLE_ADDITIONAL_IR_CHECKERS in this) { arguments.enableAdditionalIrCheckers = get(X_ENABLE_ADDITIONAL_IR_CHECKERS) ?: emptyArray()}
     if (X_ENABLE_INCREMENTAL_COMPILATION in this) { arguments.incrementalCompilation = get(X_ENABLE_INCREMENTAL_COMPILATION)}
     if (X_EXPECT_ACTUAL_CLASSES in this) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES)}
@@ -345,6 +347,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_DUMP_DIRECTORY] = arguments.dumpDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName } catch (_: NoSuchMethodError) {  }
     try { this[X_DUMP_PERF] = arguments.dumpPerf?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
+    try { this[X_EAGER_LAMBDA_ANALYSIS] = arguments.eagerLambdaAnalysis } catch (_: NoSuchMethodError) {  }
     try { this[X_ENABLE_ADDITIONAL_IR_CHECKERS] = arguments.enableAdditionalIrCheckers } catch (_: NoSuchMethodError) {  }
     try { this[X_ENABLE_INCREMENTAL_COMPILATION] = arguments.incrementalCompilation } catch (_: NoSuchMethodError) {  }
     try { this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses } catch (_: NoSuchMethodError) {  }
@@ -452,6 +455,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_DISABLE_PHASES in this) { arguments.disablePhases = get(X_DISABLE_PHASES).toTypedArray()}
     if (X_DONT_SORT_SOURCE_FILES in this) { arguments.dontSortSourceFiles = get(X_DONT_SORT_SOURCE_FILES)}
     if (X_DONT_WARN_ON_ERROR_SUPPRESSION in this) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION)}
+    if (X_EAGER_LAMBDA_ANALYSIS in this) { arguments.eagerLambdaAnalysis = get(X_EAGER_LAMBDA_ANALYSIS)}
     if (X_ENABLE_ADDITIONAL_IR_CHECKERS in this) { arguments.enableAdditionalIrCheckers = get(X_ENABLE_ADDITIONAL_IR_CHECKERS) ?: emptyArray()}
     if (X_ENABLE_INCREMENTAL_COMPILATION in this) { arguments.incrementalCompilation = get(X_ENABLE_INCREMENTAL_COMPILATION)}
     if (X_EXPECT_ACTUAL_CLASSES in this) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES)}
@@ -639,6 +643,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_DUMP_PERF: CommonCompilerArgument<java.nio.`file`.Path?> =
         CommonCompilerArgument("X_DUMP_PERF")
+
+    public val X_EAGER_LAMBDA_ANALYSIS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EAGER_LAMBDA_ANALYSIS")
 
     public val X_ENABLE_ADDITIONAL_IR_CHECKERS: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS")

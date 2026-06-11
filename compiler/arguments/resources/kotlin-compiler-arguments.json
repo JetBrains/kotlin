@@ -3632,6 +3632,50 @@
                         }
                     },
                     {
+                        "name": "Xeager-lambda-analysis",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        }
+                    },
+                    {
                         "name": "Xenable-additional-ir-checkers",
                         "shortName": null,
                         "deprecatedName": null,

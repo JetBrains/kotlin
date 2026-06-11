@@ -359,6 +359,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DUMP_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
+     * Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_EAGER_LAMBDA_ANALYSIS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EAGER_LAMBDA_ANALYSIS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * A list of IR checkers to enable, specified by a simple name of the checker class.
      * It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
      *

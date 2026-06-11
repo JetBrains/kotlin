@@ -200,6 +200,7 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
                              Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
                              Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
+  -Xeager-lambda-analysis    Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
   -Xenable-additional-ir-checkers=<checker1>,<checker2>
                              A list of IR checkers to enable, specified by a simple name of the checker class.
                              It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.

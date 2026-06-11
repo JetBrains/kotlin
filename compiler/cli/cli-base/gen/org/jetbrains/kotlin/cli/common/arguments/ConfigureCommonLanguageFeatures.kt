@@ -77,6 +77,13 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.eagerLambdaAnalysis) {
+        put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.UnitConversionsOnArbitraryExpressions, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CallCompletionRefinementsFor25, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.explicitBackingFields) {
         put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
     }

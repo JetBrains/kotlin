@@ -32,6 +32,7 @@ fun main(args: Array<String>) {
                 model("cli/jvm/XjdkRelease", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/XjspecifyAnnotation", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/Xjsr305", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/XeagerLambdaAnalysis", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/XnewInference", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/XsupressWarnings", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/XXmultiPlatformProject", extension = "args", testMethod = "doJvmTest", recursive = false)

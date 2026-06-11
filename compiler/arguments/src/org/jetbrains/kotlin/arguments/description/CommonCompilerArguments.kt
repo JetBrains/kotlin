@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.*
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
@@ -844,6 +843,25 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
+    }
+
+
+    compilerArgument {
+        name = "Xeager-lambda-analysis"
+        description =
+            "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.EagerLambdaAnalysis),
+            Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions),
+            Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound),
+            Enables(LanguageFeature.CallCompletionRefinementsFor25),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
