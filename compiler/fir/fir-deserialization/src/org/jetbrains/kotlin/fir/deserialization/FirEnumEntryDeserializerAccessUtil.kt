@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -19,12 +18,20 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.constructClassType
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
-fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression(session: FirSession): FirPropertyAccessExpression =
-    buildPropertyAccessExpression {
+fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression(session: FirSession): FirPropertyAccessExpression {
+    return buildEnumEntryAccessExpression(this.enumClassId, this.enumEntryName, session)
+}
+
+fun buildEnumEntryAccessExpression(
+    enumClassId: ClassId,
+    enumEntryName: Name,
+    session: FirSession,
+): FirPropertyAccessExpression {
+    return buildPropertyAccessExpression {
         val entryPropertySymbol = session.getClassDeclaredPropertySymbols(
             enumClassId, enumEntryName,
         ).firstOrNull { it.isStatic }
@@ -47,20 +54,19 @@ fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression
             }
         }
 
-        val receiver = enumClassId.toResolvedQualifier(session)
-        coneTypeOrNull = receiver.resolvedType
+        val lookupTag = enumClassId.toLookupTag()
+        val type = lookupTag.constructClassType()
+        val receiver = buildResolvedQualifier {
+            coneTypeOrNull = type
+            packageFqName = enumClassId.packageFqName
+            relativeClassFqName = enumClassId.relativeClassName
+            qualifierSymbol = lookupTag.toSymbol(session)
+            resolvedToCompanionObject = false
+        }
+
+        coneTypeOrNull = type
         dispatchReceiver = receiver
         explicitReceiver = receiver
     }
-
-fun ClassId.toResolvedQualifier(session: FirSession): FirResolvedQualifier {
-    val lookupTag = toLookupTag()
-
-    return buildResolvedQualifier {
-        coneTypeOrNull = lookupTag.constructClassType()
-        packageFqName = this@toResolvedQualifier.packageFqName
-        relativeClassFqName = relativeClassName
-        qualifierSymbol = lookupTag.toSymbol(session)
-        resolvedToCompanionObject = false
-    }
 }
+
