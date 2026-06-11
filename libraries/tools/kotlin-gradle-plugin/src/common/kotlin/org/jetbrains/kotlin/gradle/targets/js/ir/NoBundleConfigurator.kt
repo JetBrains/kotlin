@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmDevServer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.SimpleDistributionTask.Companion.VENDORS_FOLDER
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
@@ -22,8 +23,8 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class NoBundleConfigurator(
-    private val subTarget: KotlinJsIrSubTarget,
-) : SubTargetConfigurator<KotlinSimpleDevServerTask, KotlinSimpleDevServerTask> {
+    private val subTarget: KotlinBrowserJsIr,
+) : SubTargetConfigurator<KotlinWasmDevServer, KotlinWasmDevServer> {
 
     private val project = subTarget.project
 
@@ -32,7 +33,7 @@ internal class NoBundleConfigurator(
         { project.rootProject.wasmKotlinNodeJsRootExtension },
     )
 
-    private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinSimpleDevServerTask>>()
+    private val runTaskConfigurations = project.objects.domainObjectSet<Action<KotlinWasmDevServer>>()
 
     private lateinit var importMapTaskHolder: TaskProvider<KotlinImportMapGenerateTask>
 
@@ -105,7 +106,7 @@ internal class NoBundleConfigurator(
 
                 val linkSyncTask = binary.linkSyncTask
 
-                subTarget.registerSubTargetTask<KotlinSimpleDevServerTask>(
+                subTarget.registerSubTargetTask<KotlinWasmDevServerTaskImpl>(
                     subTarget.disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         DEV_SERVER_TASK_NAME
@@ -128,11 +129,11 @@ internal class NoBundleConfigurator(
             }
     }
 
-    override fun configureBuild(body: Action<KotlinSimpleDevServerTask>) {
+    override fun configureBuild(body: Action<KotlinWasmDevServer>) {
         // Dev server doesn't produce build artifacts
     }
 
-    override fun configureRun(body: Action<KotlinSimpleDevServerTask>) {
+    override fun configureRun(body: Action<KotlinWasmDevServer>) {
         runTaskConfigurations.add(body)
     }
 

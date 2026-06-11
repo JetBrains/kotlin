@@ -6,42 +6,30 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmDevServer
 import java.io.File
-import java.net.HttpURLConnection
 import java.net.ServerSocket
-import java.net.URL
-import java.net.URLConnection
 import javax.inject.Inject
 
 @DisableCachingByDefault
-internal abstract class KotlinSimpleDevServerTask
+internal abstract class KotlinWasmDevServerTaskImpl
 @Inject constructor(
     private val workerExecutor: WorkerExecutor,
-) : DefaultTask() {
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val contentDirectory: DirectoryProperty
+) : DefaultTask(), KotlinWasmDevServer {
 
     private val rootDirectory: File = project.rootDir
 
-    @get:Input
-    @get:Optional
-    @get:Option(description = "Set a port for the dev server.")
-    abstract val port: Property<Int>
-
-    @get:Input
-    @get:Option(description = "Set a HOST for the dev server.")
-    val host: Property<String> = project.objects.property(String::class.java).convention("localhost")
+    override val host: Property<String> = project.objects.property(String::class.java).convention("localhost")
 
     private val isContinuous = project.gradle.startParameter.isContinuous
 
@@ -53,7 +41,7 @@ internal abstract class KotlinSimpleDevServerTask
 
         if (isContinuous) {
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
-            val deploymentHandle = deploymentRegistry.get("simpleDevServer", Handle::class.java)
+            val deploymentHandle = deploymentRegistry.get("wasmDevServer", Handle::class.java)
             if (deploymentHandle == null) {
                 val workQueue = workerExecutor.processIsolation()
 

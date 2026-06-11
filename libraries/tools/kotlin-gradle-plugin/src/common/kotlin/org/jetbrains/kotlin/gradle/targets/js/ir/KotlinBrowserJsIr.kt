@@ -6,8 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.Task
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmDevServer
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
@@ -19,7 +24,8 @@ import javax.inject.Inject
 
 abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrNpmBasedSubTarget(target, "browser"),
-    KotlinJsBrowserDsl {
+    KotlinJsBrowserDsl,
+    KotlinWasmJsBrowserDsl {
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -80,6 +86,14 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .withType<WebpackConfigurator>()
             .configureEach {
                 it.configureBuild(body)
+            }
+    }
+
+    override fun devServer(body: Action<KotlinWasmDevServer>) {
+        subTargetConfigurators
+            .withType<NoBundleConfigurator>()
+            .configureEach {
+                it.configureRun(body)
             }
     }
 

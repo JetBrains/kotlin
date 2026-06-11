@@ -146,12 +146,12 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
      *
      * @see KotlinJsBrowserDsl
      */
-    fun browser(useWebpack: Boolean, body: KotlinJsBrowserDsl.() -> Unit)
+    fun browser(useWebpack: Boolean, body: KotlinWasmJsBrowserDsl.() -> Unit)
 
     /**
      * [Action] based version of [browser] with a [useWebpack] parameter above.
      */
-    fun browser(useWebpack: Boolean, fn: Action<KotlinJsBrowserDsl>) {
+    fun browser(useWebpack: Boolean, fn: Action<KotlinWasmJsBrowserDsl>) {
         browser(useWebpack) {
             fn.execute(this)
         }

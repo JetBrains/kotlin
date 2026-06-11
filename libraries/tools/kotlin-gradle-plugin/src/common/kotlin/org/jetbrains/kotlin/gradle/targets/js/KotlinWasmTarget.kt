@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -40,7 +39,7 @@ internal constructor(
     // because the corresponding configurator registers its tasks during configuration.
     private var useWebpack: Boolean? = null
 
-    override fun KotlinJsIrSubTarget.bundleConfigurator() {
+    override fun KotlinBrowserJsIr.bundleConfigurator() {
         if (useWebpack!!) {
             subTargetConfigurators.add(WebpackConfigurator(this))
         } else {
@@ -50,10 +49,10 @@ internal constructor(
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         useWebpack = true
-        super<KotlinJsIrTarget>.browser(body)
+        browser.body()
     }
 
-    override fun browser(useWebpack: Boolean, body: KotlinJsBrowserDsl.() -> Unit) {
+    override fun browser(useWebpack: Boolean, body: KotlinWasmJsBrowserDsl.() -> Unit) {
         if (this@KotlinWasmTarget.useWebpack == null) {
             this@KotlinWasmTarget.useWebpack = useWebpack
         } else if (this@KotlinWasmTarget.useWebpack != useWebpack) {
@@ -63,7 +62,7 @@ internal constructor(
                         "The bundler must be specified on the first 'browser { }' call."
             )
         }
-        body(browser)
+        (browser as KotlinBrowserJsIr).body()
     }
 
     //region d8

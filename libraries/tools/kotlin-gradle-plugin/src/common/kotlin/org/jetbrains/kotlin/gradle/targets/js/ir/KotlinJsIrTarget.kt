@@ -194,7 +194,7 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
-    internal open fun KotlinJsIrSubTarget.bundleConfigurator() {
+    internal open fun KotlinBrowserJsIr.bundleConfigurator() {
         subTargetConfigurators.add(WebpackConfigurator(this))
     }
 
