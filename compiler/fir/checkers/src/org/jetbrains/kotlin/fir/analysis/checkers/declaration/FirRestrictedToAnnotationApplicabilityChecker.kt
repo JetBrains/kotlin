@@ -10,17 +10,17 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirUnsupportedRestrictedToChecker : FirValueParameterChecker(MppCheckerKind.Common) {
+object FirRestrictedToAnnotationApplicabilityChecker : FirValueParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirValueParameter) {
         declaration.annotations.forEach { annotation ->
@@ -30,14 +30,10 @@ object FirUnsupportedRestrictedToChecker : FirValueParameterChecker(MppCheckerKi
                 reporter.reportOn(
                     annotation.source,
                     FirErrors.UNSUPPORTED,
-                    "'RestrictedTo' annotation is only applicable to parameters of 'equals' operator"
+                    "'RestrictedTo' annotation is only supported for parameters of 'equals' operator"
                 )
-            } else if (LanguageFeature.StrictEquals.isDisabled()) {
-                reporter.reportOn(
-                    annotation.source,
-                    FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.StrictEquals to context.languageVersionSettings
-                )
+            } else {
+                annotation.requireFeatureSupport(LanguageFeature.StrictEquals)
             }
         }
     }
