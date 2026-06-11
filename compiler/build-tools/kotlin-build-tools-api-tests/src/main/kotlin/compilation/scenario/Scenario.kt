@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.AbstractProject
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Dependency
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.FileDependency
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.SnapshotConfig
 
 interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> {
@@ -34,7 +37,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      */
     fun module(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioDependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
@@ -60,7 +63,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      */
     fun trackedModule(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioDependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
@@ -70,14 +73,28 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
 }
 
 private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilationConfiguration.Builder> Scenario<B, IC>.createModule(
-    dependencies: List<ScenarioModule>,
+    dependencies: List<ScenarioDependency>,
     moduleName: String,
     snapshotConfig: SnapshotConfig,
     compilationConfigAction: (B) -> Unit,
     icOptionsConfigAction: (IC) -> Unit,
     tracked: Boolean = false,
 ): ScenarioModule {
-    val transformedDependencies = dependencies.map { (it as BaseScenarioModule<*, *>).module }
+    val scenarioModuleDependencies = mutableListOf<ScenarioModule>()
+    val regularDependencies = mutableListOf<Dependency>() // dependencies that should not be managed by the scenario DSL
+    for (dependency in dependencies) {
+        when (dependency) {
+            is ScenarioModule -> scenarioModuleDependencies.add(dependency)
+            is FileDependency -> regularDependencies.add(dependency)
+            is Module<*, *, *> -> error("Regular modules should not be passed as dependencies to Scenario.module, but wrapped through ScenarioModule instead for automatic handling")
+            else -> error("Unsupported ScenarioDependency type: ${dependency::class.simpleName}. Please add handling for ${dependency::class.simpleName} dependencies in createModule")
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    val transformedDependencies: List<Dependency> =
+        scenarioModuleDependencies.map { (it as BaseScenarioModule<*, *>).module } + regularDependencies
+
     val module =
         project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
     return GlobalCompiledProjectsCache.getProjectFromCache(
@@ -86,7 +103,7 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
         snapshotConfig,
         icOptionsConfigAction,
         tracked,
-        dependencies,
+        scenarioModuleDependencies,
     )
         ?: GlobalCompiledProjectsCache.putProjectIntoCache(
             module,
@@ -94,6 +111,6 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
             snapshotConfig,
             icOptionsConfigAction,
             tracked,
-            dependencies,
+            scenarioModuleDependencies,
         )
 }

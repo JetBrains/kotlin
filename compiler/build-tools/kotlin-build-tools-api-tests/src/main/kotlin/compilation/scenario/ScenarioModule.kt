@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.ExecutionOutcome
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 
-interface ScenarioModule {
+interface ScenarioDependency
+
+interface ScenarioModule : ScenarioDependency {
     /**
      * Performs registered existing file modification.
      *

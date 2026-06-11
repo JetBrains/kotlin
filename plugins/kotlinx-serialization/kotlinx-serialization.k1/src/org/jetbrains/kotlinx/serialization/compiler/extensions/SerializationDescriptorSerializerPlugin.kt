@@ -24,7 +24,7 @@ class SerializationDescriptorSerializerPlugin : DescriptorSerializerPlugin {
     private val descriptorMetadataMap: MutableMap<ClassDescriptor, SerializableProperties> = hashMapOf()
 
     private val ClassDescriptor.needSaveProgramOrder: Boolean
-        get() = shouldHaveInternalSerializer && (modality == Modality.OPEN || modality == Modality.ABSTRACT)
+        get() = shouldHaveInternalSerializer && (modality == Modality.OPEN || modality == Modality.ABSTRACT || modality == Modality.SEALED)
 
     internal fun putIfNeeded(descriptor: ClassDescriptor, properties: SerializableProperties) {
         if (!descriptor.needSaveProgramOrder) return
