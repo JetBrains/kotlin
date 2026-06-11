@@ -80,7 +80,7 @@ IMPORTANT formatting rules:
 - Reference YouTrack issues (KT-XXXXX) in commit messages when applicable.
 - Use `^KT-XXXXX` in the commit body to link an issue or `^KT-XXXXX Fixed` to auto-close it.
 - Keep the subject line and body under 72 characters, use imperative mood.
-- Prefix the subject line with an appropriate tag for the subsystem (such as, but not exhaustive, `[AA]`, `[FIR]`, `[K/N]`).
+- Prefix the subject line with an appropriate tag for the subsystem (such as, but not exhaustive, `[FIR]`, `[K/N]`, or `[BTA]`).
   - Consult the Subsystem Tags list below for the most popular tags. If unsure which tag to use, ask the user.
 - Commit messages must explain not just WHAT but also WHY and HOW.
 - Commit tests together with corresponding code changes.
@@ -107,12 +107,11 @@ Where a tag maps to an [Area](#areas), the area name is given so you can read it
 - `KDF` — The Kotlin DataFrame compiler plugin (under *Compiler plugins*).
 - `LL` — Low-Level FIR API, part of the *Analysis API* area.
 - `K/JS` — *Backend: JS* area (Kotlin/JS).
-- `AA` — *Analysis API* area.
 - `CLI` — Compiler command-line interface and the top-level compilation pipeline.
 - `stubs` — PSI stub building for source and binary declarations (used by the *Analysis API*).
 - `Reflection` — kotlin-reflect, the runtime reflection library.
 - `K2` — The K2 compiler as a whole (FIR-based frontend and related machinery).
-- `FE` — K2/FIR frontend work, especially type inference, call resolution, and checkers (a finer-grained sibling of `FIR`, not the K1 frontend).
+- `FE` — K2/FIR frontend work, especially type inference, call resolution, and checkers (a finer-grained sibling of `FIR`).
 - `Swift Export` — Generating Swift API from Kotlin for Apple interop (Kotlin/Native).
 - `Lombok` — The Lombok compiler plugin (under *Compiler plugins*).
 - `Maven` — The Kotlin Maven plugin and Maven build integration.
