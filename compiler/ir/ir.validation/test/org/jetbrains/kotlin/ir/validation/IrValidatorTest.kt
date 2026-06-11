@@ -107,6 +107,7 @@ class IrValidatorTest {
         body.statements.add(functionCall)
         function2.body = body
         val file = createIrFile()
+        file.addChild(function1)
         file.addChild(function2)
         return file
     }
@@ -222,7 +223,7 @@ class IrValidatorTest {
                     $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -276,7 +277,7 @@ class IrValidatorTest {
             $$"""
             expected: <[error: IT'S THE INTENTIONALLY WRONG MESSAGE TO VERIFY THE ASSERTION ERROR WOULD HAPPEN]> but was: <[error: [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
             STRING_CONCATENATION type=kotlin.Any
-              inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+              inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                 inside BLOCK_BODY
                   inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                     inside FILE fqName:org.sample fileName:test.kt]>
@@ -296,7 +297,7 @@ class IrValidatorTest {
                     $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
