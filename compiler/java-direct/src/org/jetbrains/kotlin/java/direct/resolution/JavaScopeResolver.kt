@@ -102,7 +102,7 @@ internal fun JavaClass.declaredOrSameFileInherited(name: Name): JavaClass? =
  * | Aspect            | This function (same-file AST walk)                     | `JavaInheritedMemberResolver`                          |
  * |-------------------|--------------------------------------------------------|--------------------------------------------------------|
  * | Input             | Raw `EXTENDS_LIST` / `IMPLEMENTS_LIST` AST text        | Resolved `javaClass.supertypes` (full `JavaClassifierType`) |
- * | Resolution depth  | Simple-name lookup via [findClassInCurrentScope]       | Full classifier resolution + cross-file ambiguity check |
+ * | Resolution depth  | Reference navigation via [resolveSameFileSupertypeRefToClass] | Full classifier resolution + cross-file ambiguity check |
  * | Recursion guard   | `visited: MutableSet<String>` of FQN strings           | `visited: MutableSet<JavaClass>` of model instances    |
  *
  * The two paths cannot be unified because **this walk must avoid triggering full type
@@ -111,7 +111,7 @@ internal fun JavaClass.declaredOrSameFileInherited(name: Name): JavaClass? =
  * Conversely, the inherited-member resolver requires resolved supertypes to detect cross-file
  * ambiguities that simple-name AST scanning cannot see.
  *
- * Each supertype simple name is resolved within the walked class's *own* [JavaClassOverAst.resolutionContext]
+ * Each supertype reference is resolved within the walked class's *own* [JavaClassOverAst.resolutionContext]
  * (its own imports/scope), exactly as the model-side walk used to do — using the caller's ambient
  * context instead would mis-resolve names and can loop.
  */
@@ -122,13 +122,43 @@ internal fun findInnerClassInSameFileSupertypes(
 ): JavaClass? {
     if (!visited.add(cls.fqName.asString())) return null
     for (supertypeRef in cls.directSupertypeRefNames) {
-        val simpleName = supertypeRef.substringBefore('.')
         val supertypeClass = with(cls.resolutionContext) {
-            findClassInCurrentScope(Name.identifier(simpleName))
-        } as? JavaClassOverAst ?: continue
+            resolveSameFileSupertypeRefToClass(supertypeRef)
+        } ?: continue
         // Declared-only probe (findInnerClass no longer walks supertypes itself).
         supertypeClass.findInnerClass(name)?.let { return it }
         findInnerClassInSameFileSupertypes(supertypeClass, name, visited)?.let { return it }
     }
     return null
+}
+
+/**
+ * Resolves a raw same-file supertype reference — a [JavaClassOverAst.directSupertypeRefNames]
+ * entry such as `S`, `x.S`, or `com.example.Base` — to the [JavaClassOverAst] it denotes within the
+ * current (same-file) scope, navigating every dotted segment through the module's own reference
+ * resolution rather than guessing with `substringBefore('.')`.
+ *
+ * Behaviour on the two cases the old first-segment shortcut mishandled:
+ * - **Qualified-nested same-file supertype** (`class x1 extends x.S`, both top-level in this file):
+ *   resolves the head `x` via [findClassInCurrentScope] and then navigates `.S` via
+ *   [JavaClass.findInnerClass], yielding `x.S` — so member types inherited from `x.S` are found.
+ *   The old shortcut stopped at `x` and probed the inner class on the wrong class.
+ * - **Package-qualified supertype** (`extends com.example.Base`): the head `com` is not a class in
+ *   scope, so navigation returns `null` and the reference is correctly *declined* by this same-file
+ *   walk — it is owned by the cross-file / `ClassId` paths
+ *   ([JavaInheritedMemberResolver.findInnerClassFromSupertypes], [resolve]). The old shortcut
+ *   instead mistook the package root `com` for a class name.
+ *
+ * The tail segments are navigated with the declared-only [JavaClass.findInnerClass] (a written
+ * `x.S` names a concrete declared nested type), which also keeps this resolution from re-entering
+ * the supertype walk and preserves the recursion bound carried by the caller's `visited` set.
+ */
+context(c: JavaResolutionContext)
+private fun resolveSameFileSupertypeRefToClass(supertypeRef: String): JavaClassOverAst? {
+    val parts = supertypeRef.split('.')
+    var current = findClassInCurrentScope(Name.identifier(parts[0])) as? JavaClassOverAst ?: return null
+    for (i in 1 until parts.size) {
+        current = current.findInnerClass(Name.identifier(parts[i])) as? JavaClassOverAst ?: return null
+    }
+    return current
 }

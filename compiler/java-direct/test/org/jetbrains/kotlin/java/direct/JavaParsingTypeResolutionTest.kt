@@ -368,4 +368,47 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
                     "(inherited inner class). classifierQualifiedName='$supertypeQualified'"
         }
     }
+
+    @Test
+    fun testInheritedInnerClassFromQualifiedNestedSameFileSupertype() {
+        // Regression for the fragile `substringBefore('.')` supertype-ref shortcut in the same-file
+        // supertype walk: here the supertype is a *qualified-nested* same-file class `x.S`, and `B`
+        // is a member type declared in `x.S` and inherited by `x1`. Resolving the bare `B` in x1's
+        // scope must navigate the full `x.S` reference (resolve `x`, then `.S`) — the old shortcut
+        // stopped at the outer class `x` and missed `B`.
+        val source = """
+            public class x {
+                public static class S {
+                    public static class B {}
+                }
+            }
+            public class x1 extends x.S {
+                public B getB() { return null; }
+            }
+        """.trimIndent()
+        val parsed = parseSource(source)
+        val root = parsed.root
+        val tree = parsed.tree
+        val context = parsed.context
+
+        val x1Node = tree.getChildren(root).first {
+            tree.getType(it).toString() == "CLASS" &&
+                    tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() } == "x1"
+        }
+        val x1Class = JavaClassOverAst(x1Node, tree, context)
+
+        val getBMethod = x1Class.methods.first { it.name.asString() == "getB" }
+        val returnType = getBMethod.returnType as JavaClassifierType
+
+        // `B` is inherited from the qualified-nested supertype `x.S`; the same-file supertype walk
+        // must resolve it by navigating the full reference, not just its first segment.
+        assert(returnType.classifier != null) {
+            "Return type 'B' should resolve to the inherited nested class x.S.B via the same-file " +
+                    "supertype walk, but classifier was null " +
+                    "(classifierQualifiedName='${returnType.classifierQualifiedName}')"
+        }
+        assert(returnType.classifier?.name?.asString() == "B") {
+            "Classifier should be 'B', got '${returnType.classifier?.name}'"
+        }
+    }
 }

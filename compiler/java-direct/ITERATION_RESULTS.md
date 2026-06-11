@@ -36,6 +36,24 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-11 — Fix fragile `substringBefore('.')` in the same-file supertype walk (reviewer concern)
+- **Change**: `findInnerClassInSameFileSupertypes` (relocated walk) no longer takes only the first
+  dot-segment of a supertype reference. New `resolveSameFileSupertypeRefToClass` navigates the full
+  reference, reusing the module's own resolution: head via `findClassInCurrentScope`, tail via
+  declared-only `findInnerClass`. Fixes the qualified-nested same-file case (`class x1 extends x.S`
+  now resolves `x.S`, not just `x`) and makes package-qualified refs (`extends com.example.Base`)
+  cleanly decline (head `com` isn't a class → owned by the cross-file / `ClassId` paths) instead of
+  mistaking the package root for a class.
+- **Key subtlety**: tail segments use declared-only `findInnerClass` (a written `x.S` names a
+  concrete declared type), keeping the walk from re-entering the supertype recursion.
+- **Files**: `resolution/JavaScopeResolver.kt` (−first-segment shortcut, +`resolveSameFileSupertypeRefToClass`),
+  `test/JavaParsingTypeResolutionTest.kt` (+`testInheritedInnerClassFromQualifiedNestedSameFileSupertype`).
+- **Tests**: java-direct `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` + all
+  `JavaParsing*` unit tests green (0 failures, test task executed).
+- **Result**: green; model/resolution-only change, no shared FIR or test data touched. The identical
+  shortcut in `JavaInheritedMemberResolver.findInnerClassFromSupertypes` (resolved-`supertypes` arm)
+  is left as-is — out of this concern's scope and on a separate path.
+
 ### 2026-06-11 — Make `JavaClassOverAst.findInnerClass` declared-only (reviewer contract concern)
 - **Change**: `findInnerClass` now returns only directly declared member types, matching
   `JavaClassImpl` (PSI, `findInnerClassByName(name, false)`) and `BinaryJavaClass`
