@@ -64,7 +64,7 @@ KtNameReferenceExpression(245,255): 'EnumValue1'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /MyEnum
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -831,7 +831,7 @@ KtNameReferenceExpression(985,995): 'EnumValue1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = EnumValue1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read

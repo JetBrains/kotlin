@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.name.FqName
  *
  * If [qualifierSymbol] is `null`, this is a package qualifier, otherwise this is a class qualifier.
  *
+ * If [accessedObjectSymbol] is not-null, the [coneTypeOrNull] is the type of the object. Otherwise, it's `Unit`.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedQualifier]
  */
 abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSensitiveAlternative {

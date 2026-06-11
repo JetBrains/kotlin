@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.isVisible
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -397,10 +398,12 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     }.build()
 }
 
+context(holder: SessionHolder)
 fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
     if (condition && resolvedToCompanionObject) {
         replaceResolvedToCompanionObject(false)
         replaceAccessedObjectSymbol(null)
+        resultType = holder.session.builtinTypes.unitType.coneType
     }
 }
 
@@ -418,7 +421,9 @@ internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
             handleObjectAccess()
         }
     }.apply {
-        unsetResolvedToCompanionIf(definitelyNotCompanion)
+        context(bodyResolveComponents) {
+            unsetResolvedToCompanionIf(definitelyNotCompanion)
+        }
     }
     return resolvedQualifier
 }

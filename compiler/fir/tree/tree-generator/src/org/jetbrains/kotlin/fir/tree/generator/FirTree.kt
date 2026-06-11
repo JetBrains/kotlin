@@ -1340,6 +1340,8 @@ object FirTree : AbstractFirTreeBuilder() {
         kDoc = """A class or package qualifier.
             |
             |If [qualifierSymbol] is `null`, this is a package qualifier, otherwise this is a class qualifier.
+            |
+            |If [accessedObjectSymbol] is not-null, the [coneTypeOrNull] is the type of the object. Otherwise, it's `Unit`.
         """.trimMargin()
 
         +field("packageFqName", fqNameType)
