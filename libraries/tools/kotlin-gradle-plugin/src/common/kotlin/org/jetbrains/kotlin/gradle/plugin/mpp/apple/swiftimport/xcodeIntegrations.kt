@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
+import kotlinx.serialization.json.JsonPrimitive
 import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
@@ -12,6 +13,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleXcodeTasks
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCBuildConfiguration
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -121,6 +123,15 @@ internal abstract class IntegrateEmbedAndSignIntoXcodeProject : DefaultTask() {
             it.buildPhases?.add(0, scriptPhaseReference)
             project.objects[scriptPhaseReference] = scriptPhase
         }
+
+        project.objects.values
+            .filterIsInstance<XCBuildConfiguration>()
+            .forEach { config ->
+                if (config.buildSettings == null) {
+                    config.buildSettings = mutableMapOf()
+                }
+                config.buildSettings?.put("ENABLE_USER_SCRIPT_SANDBOXING", JsonPrimitive("NO"))
+            }
 
         saveJsonBackIntoPbxproj(
             execOps,
