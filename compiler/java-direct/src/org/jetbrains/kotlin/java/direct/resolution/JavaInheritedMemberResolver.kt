@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
  * - [findInnerClassFromSupertypes] returns a [JavaClass] (with its full AST-side outer-class
  *   chain) for inherited inner classes, including cross-file Java-source supertypes via the
  *   [classFinder]. Used by [findClassInCurrentScope] step 3 so that the rest of the
- *   AST pipeline (`JavaTypeOverAst.computeClassifier`, `JavaClassOverAst.findInnerClassInSupertypes`)
+ *   AST pipeline (`JavaTypeOverAst.computeClassifier`, [findInnerClassInSameFileSupertypes])
  *   can thread outer-class type arguments through the AST chain — the substitution context
  *   FIR needs for cases like
  *   `compiler/testData/diagnostics/tests/generics/innerClasses/j+k_complex.kt`.

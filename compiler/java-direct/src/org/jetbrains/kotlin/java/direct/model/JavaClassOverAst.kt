@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.java.direct.resolution.JavaResolutionContext
-import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.util.computeTypeParameters
 import org.jetbrains.kotlin.java.direct.util.isDeprecatedInJavaDoc
 import org.jetbrains.kotlin.load.java.structure.*
@@ -158,67 +157,38 @@ class JavaClassOverAst(
             return JavaClassOverAst(innerClassNode, tree, contextForInner, outerClass = this)
         }
 
-        // Inner class is not directly declared — search supertypes (JLS 8.5: inherited member types).
-        // This handles cases like SimpleFunctionDescriptor.CopyBuilder where CopyBuilder is
-        // declared in FunctionDescriptor (superinterface) but referenced via SimpleFunctionDescriptor.
-        return findInnerClassInSupertypes(name, mutableSetOf())
+        // Inner class is not directly declared. Like the PSI (`JavaClassImpl.findInnerClassByName(name, false)`)
+        // and binary (`BinaryJavaClass.ownInnerClassNameToAccess`) implementations, `findInnerClass` returns
+        // only directly declared member types. Inherited member types (JLS 8.5) are resolved by the resolution
+        // layer (see [org.jetbrains.kotlin.java.direct.resolution.findInnerClassInSameFileSupertypes] and
+        // [org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver]).
+        return null
     }
 
     /**
-     * Searches for an inner class in the supertypes of this class, working purely on raw AST text.
+     * Direct supertype reference names exactly as written in the source — the raw `EXTENDS_LIST` and
+     * `IMPLEMENTS_LIST` `JAVA_CODE_REFERENCE` text, with any generic arguments stripped.
      *
-     * This is intentionally distinct from [org.jetbrains.kotlin.java.direct.resolution.JavaInheritedMemberResolver.findInnerClassFromSupertypes]:
-     *
-     * | Aspect            | This method (`JavaClassOverAst`)                       | `JavaInheritedMemberResolver`                          |
-     * |-------------------|--------------------------------------------------------|--------------------------------------------------------|
-     * | Input             | Raw `EXTENDS_LIST` / `IMPLEMENTS_LIST` AST text        | Resolved `javaClass.supertypes` (full [JavaClassifierType]) |
-     * | Resolution depth  | Simple-name lookup via [findClassInCurrentScope] | Full classifier resolution + cross-file ambiguity check |
-     * | Caller context    | Inside [findInnerClass] — recursion sentinel for the model layer | Top-level resolver entry point used by [org.jetbrains.kotlin.java.direct.resolution.JavaScopeResolver] |
-     * | Recursion guard   | `visited: MutableSet<String>` of FQN strings           | `visited: MutableSet<JavaClass>` of model instances    |
-     *
-     * The two paths cannot be unified because **this method must avoid triggering full type
-     * resolution** — calling `javaClass.supertypes` here would re-enter type construction, which
-     * itself calls `classifier → findLocalClass → findInnerClass`, producing infinite recursion.
-     * Conversely, the inherited-member resolver requires resolved supertypes to detect cross-file
-     * ambiguities that simple-name AST scanning cannot see.
+     * This is purely **syntactic**: it does NOT resolve the references, so it is safe to read during
+     * resolution without re-entering type construction (touching `supertypes` would call
+     * `classifier → findLocalClass → findInnerClass` and recurse). The resolution layer uses it for the
+     * recursion-safe same-file supertype walk that resolves inherited member types.
      */
-    private fun findInnerClassInSupertypes(name: Name, visited: MutableSet<String>): JavaClass? {
-        val myId = fqName.asString()
-        if (myId in visited) return null
-        visited.add(myId)
-
-        val supertypeRefNames = mutableListOf<String>()
-        tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
-            tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypeRefNames.add(tree.getText(ref).toString().substringBefore('<').trim())
+    internal val directSupertypeRefNames: List<String>
+        get() {
+            val result = mutableListOf<String>()
+            tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_LIST)?.let { extList ->
+                tree.getChildrenByType(extList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
+                    result.add(tree.getText(ref).toString().substringBefore('<').trim())
+                }
             }
+            tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
+                tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
+                    result.add(tree.getText(ref).toString().substringBefore('<').trim())
+                }
+            }
+            return result
         }
-        tree.findChildByType(node, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { implList ->
-            tree.getChildrenByType(implList, JavaSyntaxElementType.JAVA_CODE_REFERENCE).forEach { ref ->
-                supertypeRefNames.add(tree.getText(ref).toString().substringBefore('<').trim())
-            }
-        }
-
-        val nameString = name.asString()
-        for (supertypeRef in supertypeRefNames) {
-            val simpleName = supertypeRef.substringBefore('.')
-            val supertypeClass = with(resolutionContext) { findClassInCurrentScope(Name.identifier(simpleName)) }
-                    as? JavaClassOverAst ?: continue
-
-            val directInner = supertypeClass.tree.getChildren(supertypeClass.node).find { child ->
-                supertypeClass.tree.getType(child) == JavaSyntaxElementType.CLASS &&
-                        supertypeClass.tree.findChildByType(child, JavaSyntaxTokenType.IDENTIFIER)?.let {
-                            supertypeClass.tree.textEquals(it, nameString)
-                        } == true
-            }
-            if (directInner != null) {
-                return supertypeClass.findInnerClass(name)
-            }
-
-            supertypeClass.findInnerClassInSupertypes(name, visited)?.let { return it }
-        }
-        return null
-    }
 
     override val isInterface: Boolean
         get() = tree.findChildByType(node, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null

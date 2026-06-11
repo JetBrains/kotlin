@@ -333,16 +333,21 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val supertypes = copyConfig!!.supertypes.toList()
         assert(supertypes.isNotEmpty()) { "CopyConfiguration should have supertypes" }
 
-        // First verify that findInnerClass on SimpleFunctionDescriptor finds CopyBuilder
+        // Declared-only contract: findInnerClass returns ONLY directly declared member types,
+        // matching JavaClassImpl (PSI) / BinaryJavaClass. CopyBuilder is inherited (declared in
+        // FunctionDescriptor), so a direct findInnerClass on SimpleFunctionDescriptor must NOT find it;
+        // inherited lookup is the resolution layer's job (validated via the type reference below).
         val simpleFuncDesc = outerClass.findInnerClass(Name.identifier("SimpleFunctionDescriptor"))
         assert(simpleFuncDesc != null) { "Expected to find SimpleFunctionDescriptor" }
         val inheritedCopyBuilder = simpleFuncDesc!!.findInnerClass(Name.identifier("CopyBuilder"))
-        assert(inheritedCopyBuilder != null) {
-            "SimpleFunctionDescriptor.findInnerClass('CopyBuilder') should find inherited inner class. " +
-                    "innerClassNames=${simpleFuncDesc.innerClassNames}"
+        assert(inheritedCopyBuilder == null) {
+            "SimpleFunctionDescriptor.findInnerClass('CopyBuilder') must return null for an inherited " +
+                    "(not directly declared) member type. innerClassNames=${simpleFuncDesc.innerClassNames}"
         }
 
-        // Now check the supertype resolution in the actual type reference
+        // Inherited resolution must still work end-to-end through the resolver / type-reference path:
+        // CopyConfiguration's supertype `SimpleFunctionDescriptor.CopyBuilder` resolves CopyBuilder as a
+        // member type inherited by SimpleFunctionDescriptor from FunctionDescriptor.
         val allQualifiedNames = supertypes.map { it.classifierQualifiedName }
         val copyBuilderSupertype = supertypes.find { it.classifierQualifiedName.contains("CopyBuilder") }
         assert(copyBuilderSupertype != null) {

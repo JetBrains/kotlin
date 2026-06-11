@@ -54,14 +54,6 @@ class JavaAnnotationOverAst(
     private fun computeClassId(): ClassId? {
         val reference = annotationName ?: return null
 
-        // Prefer the model's full JLS resolver. It correctly handles:
-        //   * nested-class explicit imports such as `import a.b.C.D;` where `D` is nested in
-        //     `C`, producing the symbol-provider-validated `ClassId(a.b, "C.D")`. The trivial
-        //     `ClassId.topLevel(imported)` would yield `ClassId(a.b.C, "D")`, which the FIR
-        //     symbol provider rejects because `a.b.C` is not a package.
-        //   * unqualified names that need `java.lang` / star-import / inherited-inner resolution.
-        //   * fully-qualified annotation references `@a.b.C.D` (the resolver splits via
-        //     `resolveQualifiedNameToClassId` rather than a trivial last-dot split).
         with(resolutionContext) { resolve(reference) }?.let { return it }
 
         // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null

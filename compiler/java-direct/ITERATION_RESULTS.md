@@ -36,6 +36,23 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-11 — Make `JavaClassOverAst.findInnerClass` declared-only (reviewer contract concern)
+- **Change**: `findInnerClass` now returns only directly declared member types, matching
+  `JavaClassImpl` (PSI, `findInnerClassByName(name, false)`) and `BinaryJavaClass`
+  (`ownInnerClassNameToAccess`). The recursion-safe same-file AST-text supertype walk was
+  relocated out of the model into the resolution layer (`findInnerClassInSameFileSupertypes` +
+  `declaredOrSameFileInherited`); use-sites (scope steps 1/2/4, multi-part type navigation)
+  invoke it explicitly, preserving resolution order.
+- **Key subtlety**: the relocated walk must resolve each supertype simple name within the
+  *walked* class's own `resolutionContext` (not the caller's ambient context) — using the
+  ambient context loops (`StackOverflowError`).
+- **Files**: `model/JavaClassOverAst.kt` (−`findInnerClassInSupertypes`, +`directSupertypeRefNames`),
+  `resolution/JavaScopeResolver.kt` (+walk/helper, rewire), `model/JavaTypeOverAst.kt` (multi-part hop),
+  `resolution/JavaInheritedMemberResolver.kt` (KDoc), `test/JavaParsingTypeResolutionTest.kt`.
+- **Tests**: java-direct `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` + all
+  `JavaParsing*` unit tests green (0 failures).
+- **Result**: green; model-only change, no shared FIR or test data touched.
+
 ### 2026-06-11 — Add static-boundary stop to inherited outer-arg recovery (reviewer concern)
 - **Change**: `recoverInheritedOuterTypeArguments` in `JavaTypeResolver.kt` now stops at a `static`
   nested class along the lexical containing chain — a `static` class has no enclosing instance, so it
