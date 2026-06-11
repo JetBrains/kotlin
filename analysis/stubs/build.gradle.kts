@@ -12,11 +12,8 @@ dependencies {
     implementation(intellijCore())
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
-    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
     testFixturesImplementation(project(":analysis:analysis-internal-utils"))
     testFixturesApi(libs.junit.jupiter.api)
