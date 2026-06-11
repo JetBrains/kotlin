@@ -36,6 +36,33 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-11 — Add static-boundary stop to inherited outer-arg recovery (reviewer concern)
+- **Change**: `recoverInheritedOuterTypeArguments` in `JavaTypeResolver.kt` now stops at a `static`
+  nested class along the lexical containing chain — a `static` class has no enclosing instance, so it
+  severs the implicit-outer-arg chain (JLS), matching PSI's `getTypeParameters` static break and the
+  model's lexical walk. Closes a latent PSI divergence (over-recovery on already-illegal code).
+- **Key subtlety**: static-ness is read from the AST-backed source chain (`containingClass.outerClass`
+  → `JavaClassOverAst.isStatic`), **not** `FirBackedJavaClassAdapter.isStatic` — the latter is a FIR
+  heuristic that misreports a non-static inner of a *non-generic* outer (e.g. `J1`) as static (first
+  attempt regressed `KJKComplexHierarchyWithNested`) and reports `true` for top-level classes.
+- **Files**: `resolution/JavaTypeResolver.kt` (ClassId-chain walk → JavaClass-chain walk + static break).
+- **Tests**: java-direct `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` +
+  `JavaCycleBreakerTest` + `JavaParsingTest` green.
+- **Result**: green; model-only change, no shared FIR or test data touched.
+
+### 2026-06-11 — Reuse FIR's substitutor for inherited outer-arg substitution (reviewer "partial reuse")
+- **Change**: `substituteTypeArgs` in `JavaTypeResolver.kt` now builds a real `ConeSubstitutor` via
+  `substitutorByMap` and applies it with `substituteOrSelf` (mirroring FIR's `createSubstitutionForSupertype`),
+  instead of the hand-rolled top-level-only rewrite. Fixes the latent nested-occurrence gap
+  (`Super<List<X>>` → `Super<List<String>>`) and handles variance/star projections. The adapter-driven
+  `findTypeArgsForClassInHierarchy` DFS is kept, so all supertype reads stay on the
+  `cycleGuardedSupertypeWalk`/on-air cycle-safe path; the declaring class's params are still read via
+  `cycleSafeClassLikeSymbol`.
+- **Files**: `resolution/JavaTypeResolver.kt` (−naive rewrite, +`substitutorByMap`; −3 unused imports, +5).
+- **Tests**: java-direct `JavaUsingAstPhasedTestGenerated` + `JavaUsingAstBoxTestGenerated` +
+  `JavaCycleBreakerTest` green.
+- **Result**: green; model-only change, no shared FIR or test data touched.
+
 ### 2026-06-10 — Relocate inherited-inner outer-arg recovery from shared FIR into the model
 - **Change**: Give `FirBackedJavaClassAdapter` a real on-air-resolved `supertypes` chain (mirroring
   `FirJavaElementFinder.resolveSupertypesOnAir`) and move the implicit-outer-class-type-argument
