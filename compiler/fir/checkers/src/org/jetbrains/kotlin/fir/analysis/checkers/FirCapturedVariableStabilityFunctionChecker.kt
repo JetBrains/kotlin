@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -23,9 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 /**
  * Checks captured variables inside non-in-place lambdas and determines their stability
@@ -71,11 +70,17 @@ object FirCapturedVariableStabilityFunctionChecker : AbstractFirPropertyInitiali
             }
         })
 
+        val userEntries = context.session.languageVersionSettings.getFlag(AnalysisFlags.escapingFunctionsAllowlist)
+        val added = userEntries.filter { it.startsWith("+") }.map { it.drop(1) }
+        val removed = userEntries.filter { it.startsWith("-") }.map { it.drop(1) }
+        val effectiveAllowlist = defaultAllowlist + added - removed.toSet()
+
         data.graph.traverse(
             CapturedVariableVisitor(
                 visibleWrites,
                 propertyDeclarationGraphs,
                 lambdaOwnerCalls,
+                effectiveAllowlist,
                 reporter,
                 context,
             )
@@ -87,13 +92,15 @@ private class CapturedVariableVisitor(
     private val visibleWrites: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>>,
     private val propertyDeclarationGraphs: Map<FirPropertySymbol, ControlFlowGraph>,
     private val lambdaOwnerCalls: Map<FirAnonymousFunctionSymbol, FirFunctionCall>,
+    private val allowlist: Set<String>,
     private val reporter: DiagnosticReporter,
     private val context: CheckerContext,
 ) : ControlFlowGraphVisitorVoid() {
 
+
     private fun isAllowlistedDispatcher(call: FirFunctionCall): Boolean {
         val symbol = call.calleeReference.toResolvedFunctionSymbol() ?: return false
-        return symbol.callableId in allowlistCallableIds
+        return symbol.callableId.asSingleFqName().asString() in allowlist
     }
 
     override fun visitNode(node: CFGNode<*>) {}
@@ -148,15 +155,15 @@ private class CapturedVariableVisitor(
     }
 }
 
-private val allowlistCallableIds: Set<CallableId> = setOf(
-    CallableId(FqName("kotlinx.coroutines"), Name.identifier("launch")),
-    CallableId(FqName("kotlinx.coroutines"), Name.identifier("async")),
-    CallableId(FqName("kotlinx.coroutines"), FqName("Job"), Name.identifier("invokeOnCompletion")),
-    CallableId(FqName("javax.swing"), FqName("SwingUtilities"), Name.identifier("invokeLater")),
-    CallableId(FqName("java.awt"), FqName("EventQueue"), Name.identifier("invokeLater")),
-    CallableId(FqName("com.intellij.openapi.application"), FqName("Application"), Name.identifier("invokeLater")),
-    CallableId(FqName("java.util.concurrent"), FqName("Executor"), Name.identifier("execute")),
-    CallableId(FqName("java.util.concurrent"), FqName("ExecutorService"), Name.identifier("submit")),
+private val defaultAllowlist: Set<String> = setOf(
+    "kotlinx.coroutines.launch",
+    "kotlinx.coroutines.async",
+    "kotlinx.coroutines.Job.invokeOnCompletion",
+    "javax.swing.SwingUtilities.invokeLater",
+    "java.awt.EventQueue.invokeLater",
+    "com.intellij.openapi.application.Application.invokeLater",
+    "java.util.concurrent.Executor.execute",
+    "java.util.concurrent.ExecutorService.submit",
     // Constructor with escaping functional argument.
-    CallableId(FqName("java.lang"), FqName("Thread"), Name.identifier("Thread")),
+    "java.lang.Thread.Thread",
 )

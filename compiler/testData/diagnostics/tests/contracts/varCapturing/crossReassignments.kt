@@ -70,3 +70,7 @@ fun testSmartCastReassignedInAnotherLambda() {
         baz(flag.toString())
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, classDeclaration, elvisExpression,
+functionDeclaration, ifExpression, integerLiteral, isExpression, javaFunction, lambdaLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, samConversion, stringLiteral */

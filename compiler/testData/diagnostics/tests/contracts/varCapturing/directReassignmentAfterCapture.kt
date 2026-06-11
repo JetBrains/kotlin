@@ -68,3 +68,7 @@ fun testObjectReferenceReassignment() {
     }
     root2 = root3
 }
+
+/* GENERATED_FIR_TAGS: assignment, checkNotNullCall, classDeclaration, equalityExpression, functionDeclaration,
+ifExpression, javaFunction, lambdaLiteral, localProperty, nullableType, primaryConstructor, propertyDeclaration,
+safeCall, samConversion, stringLiteral */

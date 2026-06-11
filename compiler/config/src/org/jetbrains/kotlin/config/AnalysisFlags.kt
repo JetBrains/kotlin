@@ -41,6 +41,9 @@ object AnalysisFlags {
     val optIn by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic
+    val escapingFunctionsAllowlist by AnalysisFlag.Delegates.ListOfStrings
+
+    @JvmStatic
     val explicitApiVersion by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

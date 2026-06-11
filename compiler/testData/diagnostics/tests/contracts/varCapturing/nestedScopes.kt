@@ -96,3 +96,7 @@ fun testNestedNotCapturedRead() = Thread {
 
     println(computeCount)
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, assignment, classDeclaration, functionDeclaration,
+incrementDecrementExpression, integerLiteral, javaFunction, lambdaLiteral, localClass, localFunction, localProperty,
+propertyDeclaration, samConversion, secondaryConstructor, stringLiteral */

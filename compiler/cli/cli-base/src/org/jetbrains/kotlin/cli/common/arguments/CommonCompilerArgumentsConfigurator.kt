@@ -41,6 +41,7 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             putAnalysisFlag(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             putAnalysisFlag(AnalysisFlags.optIn, optIn?.toList().orEmpty())
+            putAnalysisFlag(AnalysisFlags.escapingFunctionsAllowlist, escapingFunctions?.toList().orEmpty())
             putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             putAnalysisFlag(AnalysisFlags.explicitApiVersion, apiVersion != null)
             ExplicitApiMode.fromString(explicitApi)?.also { putAnalysisFlag(AnalysisFlags.explicitApiMode, it) }
