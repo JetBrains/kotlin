@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCBuildConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodeProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -209,10 +208,15 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
 
     @GradleTest
     fun `integrateEmbedAndSign disables ENABLE_USER_SCRIPT_SANDBOXING in all build configurations`(version: GradleVersion) {
-        project("emptyxcode-no-embedandsign-sandboxed", version) {
+        project("emptyxcode-no-embedandsign", version) {
             initDefaultKmpWithLocalSPM()
 
             val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
+
+            // Simulate a project that starts out with sandboxing enabled so the test exercises the mutation.
+            pbxFile.toFile().writeText(
+                pbxFile.readText().replace("ENABLE_USER_SCRIPT_SANDBOXING = NO", "ENABLE_USER_SCRIPT_SANDBOXING = YES")
+            )
 
             build(
                 "integrateEmbedAndSign",
