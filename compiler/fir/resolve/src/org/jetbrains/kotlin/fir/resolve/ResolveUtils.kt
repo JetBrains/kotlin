@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -428,7 +429,8 @@ fun FirAbstractResolvedQualifierBuilder.initTypeAndObjectAccess() {
     resolvedToCompanionObject = false
     val classSymbol = qualifierSymbol
     if (classSymbol != null) {
-        if (classSymbol !is FirTypeAliasSymbol || typeArguments.isEmpty()) {
+        // This crazy condition is required to keep backward compatibility to before KT-84281
+        if (classSymbol !is FirTypeAliasSymbol || typeArguments.isEmpty() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
             val objectSymbol = classSymbol
                 .fullyExpandedClass(components.session)
                 ?.let { regularClass ->

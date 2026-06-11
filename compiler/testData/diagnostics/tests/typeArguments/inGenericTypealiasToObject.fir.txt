@@ -10,9 +10,9 @@ FILE: inGenericTypealiasToObject.kt
     public final fun test(): R|kotlin/Unit| {
         lval p1: R|Obj| = Q|TObj|
         lval p2: R|kotlin/Unit| = Q|TUnit|
-        lval p3: R|kotlin/Unit| = Q|TObj|<R|kotlin/Nothing|>
+        lval p3: R|Obj| = Q|TObj|<R|kotlin/Nothing|>
         lval p4: R|kotlin/Unit| = Q|TUnit|<R|kotlin/Nothing|>
-        lval p5: R|kotlin/Unit| = Q|TObj|<R|kotlin/Int|, R|kotlin/Int|>
+        lval p5: R|Obj| = Q|TObj|<R|kotlin/Int|, R|kotlin/Int|>
         lval p6: R|kotlin/Unit| = Q|TUnit|<R|kotlin/Int|, R|kotlin/Int|>
         lval p7: R|kotlin/reflect/KClass<TObj<*>>| = <getClass>(Q|TObj|)
         lval p8: R|kotlin/reflect/KClass<TUnit<*>>| = <getClass>(Q|TUnit|)
