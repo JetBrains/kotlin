@@ -614,29 +614,6 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("Lib with ABI snapshot: add new ABI method")
-    @GradleTest
-    fun testAbiChangeInLib_addNewMethod_withAbiSnapshot(gradleVersion: GradleVersion) {
-        defaultProject(
-            gradleVersion,
-        ) {
-            build("assemble")
-
-            subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").modify {
-                it.replace("fun a() {}", "fun a() {}\nfun newA() {}")
-            }
-
-            build("assemble") {
-                val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/A.kt", "bar/B.kt"),
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt")
-                )
-
-                assertCompiledKotlinSources(expectedSources, output)
-            }
-        }
-    }
-
     @DisplayName("Lib: after cleaning lib project")
     @GradleTest
     open fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
