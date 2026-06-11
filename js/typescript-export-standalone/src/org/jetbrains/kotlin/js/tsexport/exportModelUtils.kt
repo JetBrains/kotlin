@@ -101,6 +101,9 @@ private fun KaAnnotationList.getJsQualifier(): String? =
 
 private fun KaAnnotated.getJsQualifier(): String? = annotations.getJsQualifier()
 
+internal fun KaAnnotationList.getJsFileName(): String? =
+    getSingleAnnotationArgumentString(JsStandardClassIds.Annotations.JsFileName)
+
 context(_: KaSession)
 private fun KaSymbol.getSingleAnnotationArgumentStringForOverriddenDeclaration(annotationClassId: ClassId): String? {
     val argument = (this as? KaAnnotated)?.getSingleAnnotationArgumentString(annotationClassId)
