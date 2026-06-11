@@ -120,6 +120,7 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
             val newBucket = XcodeDumpBucket(
                 ownerDumpDir = sharedDumpDir(bucketRoot, xcodebuildSdk),
                 ownerDerivedDataDir = sharedDerivedDataDir(bucketRoot),
+                ownerMarkerFile = sharedDumpBucketMarker(bucketRoot, xcodebuildSdk)
             )
             dumpBucketsByXcodebuildFingerprint[executionKey] = newBucket
             return CoordinationClaim.Owner(newBucket)
@@ -128,6 +129,9 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
 
     private fun sharedDumpBucketRoot(bucketId: String): File =
         parameters.sharedXcodeDumpRoot.get().asFile.resolve(bucketId)
+
+    private fun sharedDumpBucketMarker(bucketRoot: File, xcodebuildSdk: String): File =
+        bucketRoot.resolve("$xcodebuildSdk.marker")
 
     private fun sharedDumpDir(bucketRoot: File, xcodebuildSdk: String): File =
         bucketRoot.resolve("swiftImportClangDump/$xcodebuildSdk")
@@ -341,18 +345,21 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         val bucketRoot = sharedDumpBucketRoot(xcodebuildExecutionHash)
         val ownerDumpDir = sharedDumpDir(bucketRoot, xcodebuildSdk)
         val ownerDerivedDataDir = sharedDerivedDataDir(bucketRoot)
+        val ownerMarkerFile = sharedDumpBucketMarker(bucketRoot, xcodebuildSdk)
 
         // A root-build bucket is reusable only if both logical outputs still exist: dumped clang/ld args and the SDK
         // DerivedData directory that contains the products referenced by those args.
         if (!ownerDumpDir.resolve("clang_args_dump").isDirectory) return null
         if (!ownerDumpDir.resolve("ld_args_dump").isDirectory) return null
         if (!ownerDerivedDataDir.resolve(sdkDerivedDataDirName).exists()) return null
+        if (!ownerMarkerFile.exists()) return null
 
         return completedBucket { completion ->
             XcodeDumpBucket(
                 ownerDumpDir = ownerDumpDir,
                 ownerDerivedDataDir = ownerDerivedDataDir,
                 completion = completion,
+                ownerMarkerFile = ownerMarkerFile
             )
         }
     }
@@ -403,10 +410,12 @@ internal open class CoordinationBucket(
 internal class XcodeDumpBucket(
     val ownerDumpDir: File,
     val ownerDerivedDataDir: File,
+    val ownerMarkerFile: File,
     completion: CountDownLatch = CountDownLatch(1),
 ) : CoordinationBucket(completion)
 
 internal class SwiftResolveBucket(
+    // these first two are already markers for swift package resolve
     val ownerPackageResolvedFile: File,
     val ownerWorkspaceStateFile: File,
     val ownerSwiftPMDependenciesCheckout: File,

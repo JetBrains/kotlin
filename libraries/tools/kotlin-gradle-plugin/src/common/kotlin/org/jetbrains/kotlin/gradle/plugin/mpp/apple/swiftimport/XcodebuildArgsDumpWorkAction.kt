@@ -19,7 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFil
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.KOTLIN_LD_ARGS_DUMP_FILE_ENV
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.exists
+import kotlin.io.path.writeText
 
 internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val xcodebuildPlatform: Property<String>
@@ -37,6 +43,8 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
     val xcodebuildExecutionFingerprint: Property<String>
     val markCompletion: Property<Boolean>
+    val localDumpMarker: RegularFileProperty
+    val sharedDumpMarker: RegularFileProperty
 }
 
 /**
@@ -49,14 +57,16 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
 ) : WorkAction<XcodebuildArgsDumpWorkParameters> {
 
     override fun execute() {
+        val markerPath: Path = parameters.localDumpMarker.get().asFile.toPath()
         try {
             doExecute()
             if (parameters.markCompletion.get()) {
                 parameters.fingerprintCoordinationService.get().markXcodeDumpCompleted(
                     xcodebuildExecutionHash = parameters.xcodebuildExecutionFingerprint.get(),
                     xcodebuildSdk = parameters.xcodebuildSdk.get(),
-
-                    )
+                )
+                markDumpFile(markerPath, parameters.xcodebuildExecutionFingerprint.get())
+                markDumpFile(parameters.sharedDumpMarker.get().asFile.toPath(), parameters.xcodebuildExecutionFingerprint.get())
             }
         } catch (failure: Throwable) {
             if (parameters.markCompletion.get()) {
@@ -65,6 +75,7 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                     xcodebuildSdk = parameters.xcodebuildSdk.get(),
                     failure = failure,
                 )
+                markDumpFile(markerPath, "failed")
             }
             throw failure
         }
@@ -173,4 +184,17 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
             }
         }
     }
+}
+
+internal fun markDumpFile(
+    markerFile: Path,
+    text: String,
+) {
+    markerFile.parent?.createDirectories()
+
+    if (markerFile.exists()) {
+        markerFile.deleteExisting()
+    }
+
+    markerFile.createFile().writeText(text)
 }
