@@ -269,8 +269,11 @@ class CacheBuilder(
         configuration.reportLog( "CACHING ${library.location}")
         filesToCache.forEach { configuration.reportLog( "    $it") }
 
-        // Produce monolithic caches for external libraries for now.
-        val makePerFileCache = !isExternal && !library.isCInteropLibrary()
+        // Produce monolithic caches for external libraries for now, with the exception of the stdlib:
+        // its cache is per-file by default (see [NativeSecondStageCompilationConfig.perFileCacheForStdlib]),
+        // so when it has to be rebuilt here it must match the per-file layout the distribution ships.
+        val makePerFileCache = !library.isCInteropLibrary() &&
+                (!isExternal || (library.isNativeStdlib && config.perFileCacheForStdlib))
 
         val libraryCacheDirectory = when {
             library.isImplicitlyLoadedFromKotlinNativeDistribution || library.isNativeStdlib -> config.systemCacheDirectory
@@ -292,11 +295,13 @@ class CacheBuilder(
          * this happens during some tests which specify certain binary options which won't allow to use the precompiled caches.
          */
         val lockFileName = "${libraryCache.absolutePath}.lock"
-        val lockFile = if (makePerFileCache) {
-            // For now, per-file caches are only used for the incremental compilation which can't be run in parallel.
-            null
-        } else {
+        val lockFile = if (isExternal) {
+            // External (system/auto) caches are shared between processes and may be built
+            // in parallel so guard their construction with a file lock.
             File(lockFileName)
+        } else {
+            // Incremental caches live in a per-project directory and are never built in parallel.
+            null
         }
 
         buildUnderFileLock(lockFile, skipBuildAction = {
@@ -387,15 +392,17 @@ class CacheBuilder(
             }
             val message = (t as? CompilationErrorException)?.message
                     ?: run {
+                        val workaround = when {
+                            // The stdlib per-file cache is a system cache, not part of incremental compilation.
+                            makePerFileCache && !library.isNativeStdlib ->
+                                "incremental compilation (kotlin.incremental.native=false)"
+                            else ->
+                                "compiler caches (https://kotl.in/disable-native-cache)"
+                        }
                         @Suppress("IncorrectFormatting") val extraUserInfo =
                                 """
                                     Failed to build cache for ${library.location}.
-                                    As a workaround, please try to disable ${
-                                        if (makePerFileCache)
-                                            "incremental compilation (kotlin.incremental.native=false)"
-                                        else
-                                            "compiler caches (https://kotl.in/disable-native-cache)"
-                                    }
+                                    As a workaround, please try to disable $workaround
 
                                     Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
                                     """.trimIndent()
