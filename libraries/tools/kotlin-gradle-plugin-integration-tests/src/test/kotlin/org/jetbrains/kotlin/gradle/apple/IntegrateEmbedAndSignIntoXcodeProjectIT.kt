@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.apple
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PbxShellScriptBuildPhase
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XCBuildConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodeProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.deserializeXcodeProject
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -22,6 +23,8 @@ import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -200,6 +203,28 @@ class IntegrateEmbedAndSignIntoXcodeProjectIT : KGPBaseTest() {
                 )
             ) {
                 assertOutputContains("Please specify path to gradle project in GRADLE_PROJECT_PATH environment variable")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateEmbedAndSign disables ENABLE_USER_SCRIPT_SANDBOXING in all build configurations`(version: GradleVersion) {
+        project("emptyxcode-no-embedandsign-sandboxed", version) {
+            initDefaultKmpWithLocalSPM()
+
+            val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
+
+            build(
+                "integrateEmbedAndSign",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
+                    "GRADLE_PROJECT_PATH" to ":",
+                )
+            ) {
+                val pbxContents = pbxFile.readText()
+                assertTrue(pbxContents.contains("ENABLE_USER_SCRIPT_SANDBOXING = NO"), "Every configuration should explicitly set sandboxing to NO")
+                assertFalse(pbxContents.contains("ENABLE_USER_SCRIPT_SANDBOXING = YES"), "No configuration should keep sandboxing enabled")
             }
         }
     }
