@@ -77,7 +77,6 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * and the produced substitutor will only contain mappings for these parameters.
      */
     @KaIdeApi
-    @KaK1Unsupported
     @OptIn(KaExperimentalApi::class)
     public fun createSubtypingUnificationSubstitutor(
         leftTypesToRightTypes: List<Pair<KaType, KaType>>,
@@ -435,7 +434,6 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaK1Unsupported
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
