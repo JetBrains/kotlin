@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 internal class SymbolLightClassForRepeatableAnnotationContainer(private val containerOwner: SymbolLightClassForAnnotationClass) :
     SymbolLightClassForAnnotationClass(
         containerOwner.classOrObjectDeclaration,
-        containerOwner.classSymbolPointer,
-        containerOwner.ktModule,
+        containerOwner.symbolPointer,
+        containerOwner.useSiteModule,
         containerOwner.manager,
     ) {
     override fun getQualifiedName(): String? = containerOwner.qualifiedName?.let { "$it.${JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME}" }
@@ -41,8 +41,8 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
         annotationsBox = GranularAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(
-                ktModule = ktModule,
-                annotatedSymbolPointer = classSymbolPointer,
+                useSiteModule = useSiteModule,
+                annotatedSymbolPointer = symbolPointer,
             ),
             additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                 CollectionAdditionalAnnotationsProvider(KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER),

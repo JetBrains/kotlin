@@ -6,13 +6,17 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.light.classes.symbol.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
@@ -25,11 +29,13 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassM
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtEnumEntry
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
+    override val symbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
     private val enumClass: SymbolLightClassBase,
-    ktModule: KaModule,
-) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
+    override val useSiteModule: KaModule,
+) : SymbolLightClassBase(enumConstant.manager), PsiEnumConstantInitializer, KaSymbolJavaView<KaAnonymousObjectSymbol> {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement = SymbolLightPsiJavaCodeReferenceElementWithNoReference(
@@ -45,7 +51,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun isInQualifiedNew(): Boolean = false
 
-    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, ktModule)
+    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, symbolPointer, enumClass, useSiteModule)
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightClassForEnumEntry && other.enumConstant == enumConstant

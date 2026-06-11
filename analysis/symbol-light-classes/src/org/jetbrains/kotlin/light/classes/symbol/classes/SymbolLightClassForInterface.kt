@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceOrAnnotationClass {
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
         manager: PsiManager
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
         manager = manager,
     ) {
@@ -39,12 +39,12 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
         classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         manager = manager,
     )
 
@@ -64,7 +64,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     protected open fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean = true
 
     override fun copy(): SymbolLightClassForInterface =
-        SymbolLightClassForInterface(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+        SymbolLightClassForInterface(classOrObjectDeclaration, symbolPointer, useSiteModule, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
         withClassSymbol { classSymbol ->

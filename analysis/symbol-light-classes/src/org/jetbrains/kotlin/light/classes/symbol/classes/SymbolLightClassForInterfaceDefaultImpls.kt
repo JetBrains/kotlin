@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 internal class SymbolLightClassForInterfaceDefaultImpls(private val containingClass: SymbolLightClassForInterface) :
     SymbolLightClassForInterface(
         containingClass.classOrObjectDeclaration,
-        containingClass.classSymbolPointer,
-        containingClass.ktModule,
+        containingClass.symbolPointer,
+        containingClass.useSiteModule,
         containingClass.manager,
     ) {
     override fun getQualifiedName(): String? = containingClass.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }

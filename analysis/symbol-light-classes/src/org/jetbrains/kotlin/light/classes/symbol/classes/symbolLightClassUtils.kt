@@ -88,19 +88,19 @@ internal fun createLightClassNoCache(
     manager: PsiManager,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
-        ktModule = ktModule,
+        useSiteModule = ktModule,
         classSymbol = classSymbol,
         manager = manager,
     )
@@ -479,9 +479,10 @@ internal fun createField(
     if (!hasBackingField(declaration)) return null
 
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
-
+    val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
+        backingFieldSymbol = backingFieldSymbol,
         fieldName = fieldName,
         containingClass = lightClass,
         lightMemberOrigin = null,
@@ -490,7 +491,7 @@ internal fun createField(
 }
 
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
-    if (property is KaSyntheticJavaPropertySymbol) return true
+    if (property is KaSyntheticJavaPropertySymbol) return false
 
     requireWithAttachment(
         property is KaKotlinPropertySymbol,
@@ -501,7 +502,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
         }
     )
 
-    if (property.origin.cannotHasBackingField() || property.isStatic) return false
+    if (property.origin.cannotHaveBackingField() || property.isStatic) return false
     if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
@@ -516,7 +517,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     return hasBackingFieldByPsi ?: property.hasBackingField
 }
 
-private fun KaSymbolOrigin.cannotHasBackingField(): Boolean =
+private fun KaSymbolOrigin.cannotHaveBackingField(): Boolean =
     this == KaSymbolOrigin.SOURCE_MEMBER_GENERATED ||
             this == KaSymbolOrigin.DELEGATED ||
             this == KaSymbolOrigin.INTERSECTION_OVERRIDE ||
@@ -625,7 +626,7 @@ internal fun createInnerClasses(
         if (classOrObjectDeclaration != null) {
             classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
         } else {
-            createLightClassNoCache(it, ktModule = containingClass.ktModule, manager)
+            createLightClassNoCache(it, ktModule = containingClass.useSiteModule, manager)
         }
     }
 
