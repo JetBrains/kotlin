@@ -10,13 +10,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import java.util.zip.CRC32
+import kotlin.io.path.inputStream
 
 private val checksumStringEncoder: Base64.Encoder = Base64.getUrlEncoder().withoutPadding()
 
 internal fun Path.crc32Checksum(): Int {
     val crc32 = CRC32()
     val buffer = ByteArray(2048)
-    Files.newInputStream(this).buffered().use { fileStream ->
+    this.inputStream().buffered().use { fileStream ->
         while (true) {
             val read = fileStream.read(buffer)
             if (read < 0) break

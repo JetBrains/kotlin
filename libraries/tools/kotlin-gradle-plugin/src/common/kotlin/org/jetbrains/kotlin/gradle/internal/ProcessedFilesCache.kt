@@ -15,10 +15,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.bufferedReader
-import kotlin.io.path.bufferedWriter
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
+import kotlin.io.path.*
 
 /**
  * Cache for preventing processing some files twice.
@@ -206,7 +203,7 @@ internal open class ProcessedFilesCache(
         val key = compute()?.toPath()?.let { targetDir.relativize(it) }?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
-            if (!Files.exists(Paths.get(existedTarget.src))) {
+            if (!Path(existedTarget.src).exists()) {
                 System.err.println("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }

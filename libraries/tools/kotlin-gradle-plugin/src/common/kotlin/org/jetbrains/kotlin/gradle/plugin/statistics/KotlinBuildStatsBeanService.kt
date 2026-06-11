@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import javax.management.MBeanServer
 import javax.management.ObjectName
+import kotlin.io.path.exists
 
 /**
  * Interface for populating statistics collection method via JXM interface
@@ -100,7 +101,7 @@ internal abstract class KotlinBuildStatsBeanService internal constructor(
             gradle: Gradle,
             providerFactory: ProviderFactory,
         ): Boolean {
-            return if (Files.exists(gradle.gradleUserHomeDir.toPath().resolve(DISABLE_STATISTICS_FILE_NAME))) {
+            return if (gradle.gradleUserHomeDir.toPath().resolve(DISABLE_STATISTICS_FILE_NAME).exists()) {
                 false
             } else {
                 providerFactory.gradleProperty(ENABLE_STATISTICS_PROPERTY_NAME)

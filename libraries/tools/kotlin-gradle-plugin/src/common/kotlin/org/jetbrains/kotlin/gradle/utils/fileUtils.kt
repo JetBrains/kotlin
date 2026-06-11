@@ -16,6 +16,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
 import java.util.function.Consumer
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 /**
  * Create all possible case-sensitive permutations for given [String].
@@ -86,9 +91,9 @@ internal fun newTmpPath(prefix: String, suffix: String? = null, directory: Path?
     } catch (e: NoSuchFileException) {
         val parentDir = e.file.toPath().parent
 
-        if (Files.isRegularFile(parentDir)) throw IOException("Temp folder $parentDir is not a directory")
-        if (!Files.isDirectory(parentDir)) {
-            Files.createDirectories(parentDir)
+        if (parentDir.isRegularFile()) throw IOException("Temp folder $parentDir is not a directory")
+        if (!parentDir.isDirectory()) {
+            parentDir.createDirectories()
         }
 
         Files.createTempFile(parentDir, prefix, suffix)
@@ -114,8 +119,8 @@ fun contentEquals(file1: File, file2: File): Boolean {
 }
 
 internal fun contentEqualsIgnoringLineEndings(file1: Path, file2: Path): Boolean {
-    Files.newBufferedReader(file1).useLines { seq1 ->
-        Files.newBufferedReader(file2).useLines { seq2 ->
+    file1.bufferedReader().useLines { seq1 ->
+        file2.bufferedReader().useLines { seq2 ->
             val iterator1 = seq1.iterator()
             val iterator2 = seq2.iterator()
 
@@ -193,13 +198,13 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
 internal fun getJdkClassesRootPaths(home: Path, isJre: Boolean): List<Path> {
     val jarDirs: Array<Path>
     val fileName = home.fileName
-    if (fileName != null && "Home" == fileName.toString() && Files.exists(home.resolve("../Classes/classes.jar"))) {
+    if (fileName != null && "Home" == fileName.toString() && home.resolve("../Classes/classes.jar").exists()) {
         val libDir = home.resolve("lib")
         val classesDir = home.resolveSibling("Classes")
         val libExtDir = libDir.resolve("ext")
         val libEndorsedDir = libDir.resolve("endorsed")
         jarDirs = arrayOf(libEndorsedDir, libDir, classesDir, libExtDir)
-    } else if (Files.exists(home.resolve("lib/jrt-fs.jar"))) {
+    } else if (home.resolve("lib/jrt-fs.jar").exists()) {
         jarDirs = emptyArray()
     } else {
         val libDir = home.resolve(if (isJre) "lib" else "jre/lib")
@@ -212,7 +217,7 @@ internal fun getJdkClassesRootPaths(home: Path, isJre: Boolean): List<Path> {
 
     val pathFilter: MutableSet<String?> = hashSetOf()
     for (jarDir in jarDirs) {
-        if (Files.isDirectory(jarDir)) {
+        if (jarDir.isDirectory()) {
             try {
                 Files.newDirectoryStream(jarDir, "*.jar").use { stream ->
                     for (jarFile in stream) {
@@ -245,13 +250,13 @@ internal fun getJdkClassesRootPaths(home: Path, isJre: Boolean): List<Path> {
     }
 
     val classesZip = home.resolve("lib/classes.zip")
-    if (Files.isRegularFile(classesZip)) {
+    if (classesZip.isRegularFile()) {
         rootFiles.add(classesZip)
     }
 
     if (rootFiles.isEmpty()) {
         val classesDir = home.resolve("classes")
-        if (Files.isDirectory(classesDir)) {
+        if (classesDir.isDirectory()) {
             rootFiles.add(classesDir)
         }
     }

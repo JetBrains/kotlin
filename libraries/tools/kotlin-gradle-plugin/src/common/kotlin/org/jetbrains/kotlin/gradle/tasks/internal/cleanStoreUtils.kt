@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.gradle.tasks.internal
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
+import kotlin.io.path.getLastModifiedTime
 
 internal fun Path.cleanDir(expirationDate: Instant) {
     fun modificationDate(file: Path): Instant {
-        return Files.getLastModifiedTime(file).toInstant()
+        return file.getLastModifiedTime().toInstant()
     }
 
     toFile().listFiles()

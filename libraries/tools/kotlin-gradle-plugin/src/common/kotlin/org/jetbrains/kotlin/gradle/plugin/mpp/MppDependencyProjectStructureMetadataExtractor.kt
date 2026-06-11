@@ -11,6 +11,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import javax.xml.parsers.DocumentBuilderFactory
+import kotlin.io.path.bufferedReader
 
 sealed class MppDependencyProjectStructureMetadataExtractor {
     abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
@@ -40,7 +41,7 @@ internal class ProjectStructureMetadataFileExtractor(
 ) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(null) {
 
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata {
-        return parseKotlinSourceSetMetadataFromJson(Files.newBufferedReader(projectStructureMetadataFile).use { it.readText() })
+        return parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.bufferedReader().use { it.readText() })
     }
 }
 

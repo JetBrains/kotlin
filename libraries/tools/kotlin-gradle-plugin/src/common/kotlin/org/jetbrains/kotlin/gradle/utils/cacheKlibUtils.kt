@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.MessageDigest
+import kotlin.io.path.exists
 
 internal fun getCacheDirectory(
     rootCacheDirectory: Path,
@@ -84,7 +85,7 @@ internal fun getDependenciesCacheDirectories(
                         resolvedConfiguration = resolvedConfiguration,
                         logger = logger,
                     )
-                    if (!Files.exists(cacheDirectory)) return null
+                    if (!cacheDirectory.exists()) return null
                     cacheDirectory
                 } else {
                     null
@@ -92,7 +93,7 @@ internal fun getDependenciesCacheDirectories(
             }
         }
         .filterNotNull()
-        .filter { Files.exists(it) }
+        .filter { it.exists() }
 }
 
 internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<ResolvedDependencyResult> {

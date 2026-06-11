@@ -41,14 +41,12 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.loadConfigurables
 import org.jetbrains.kotlin.konan.util.ArchiveExtractor
 import org.jetbrains.kotlin.konan.util.ArchiveType
-import java.io.BufferedInputStream
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
+import kotlin.io.path.*
 
 internal interface UsesKotlinNativeBundleBuildService : Task {
     @get:Internal
@@ -187,7 +185,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         }
 
         private fun unzipTarGz(archive: Path, targetDir: Path) {
-            GZIPInputStream(BufferedInputStream(Files.newInputStream(archive))).use { gzipInputStream ->
+            GZIPInputStream(archive.inputStream().buffered()).use { gzipInputStream ->
                 val hardLinks = HashMap<Path, Path>()
 
                 TarArchiveInputStream(gzipInputStream).use { tarInputStream ->
@@ -196,23 +194,23 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     }.forEach { entry: TarArchiveEntry ->
                         val outputFile = targetDir.resolve(entry.name)
                         if (entry.isDirectory) {
-                            Files.createDirectories(outputFile)
+                            outputFile.createDirectories()
                         } else {
                             if (entry.isSymbolicLink) {
-                                Files.createSymbolicLink(outputFile, Paths.get(entry.linkName))
+                                outputFile.createSymbolicLinkPointingTo(Path(entry.linkName))
                             } else if (entry.isLink) {
                                 hardLinks.put(outputFile, targetDir.resolve(entry.linkName))
                             } else {
-                                Files.newOutputStream(outputFile).use {
+                                outputFile.outputStream().use {
                                     tarInputStream.copyTo(it)
                                 }
-                                Files.setPosixFilePermissions(outputFile, getPosixFilePermissions(entry.mode))
+                                outputFile.setPosixFilePermissions(getPosixFilePermissions(entry.mode))
                             }
                         }
                     }
                 }
                 hardLinks.forEach {
-                    Files.createLink(it.key, it.value)
+                    it.key.createLinkPointingTo(it.value)
                 }
             }
         }

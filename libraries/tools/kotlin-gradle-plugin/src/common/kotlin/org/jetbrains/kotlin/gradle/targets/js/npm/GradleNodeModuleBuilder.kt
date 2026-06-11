@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.isRegularFile
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
@@ -96,13 +100,13 @@ internal val File.isCompatibleArchive
     get() = toPath().isCompatibleArchive
 
 internal val Path.isCompatibleArchive
-    get() = Files.isRegularFile(this)
+    get() = this.isRegularFile()
             && (fileName.toString().substringAfterLast('.', "") == "jar"
             || fileName.toString().substringAfterLast('.', "") == "zip"
             || fileName.toString().substringAfterLast('.', "") == KLIB_TYPE)
 
 private fun isKotlinJsRuntimeFile(file: Path): Boolean {
-    if (!Files.isRegularFile(file)) return false
+    if (!file.isRegularFile()) return false
     val name = file.fileName.toString()
     return name.endsWith(".js")
             || name.endsWith(".mjs")
@@ -119,9 +123,9 @@ private fun createNodeModule(
     /** imported package directory */
     val dir = container.resolve(packageJson.name).resolve(packageJson.version)
 
-    if (Files.exists(dir)) dir.toFile().deleteRecursively()
+    if (dir.exists()) dir.toFile().deleteRecursively()
 
-    check(Files.createDirectories(dir) != null) {
+    checkNotNull(dir.createDirectories()) {
         "Cannot create directory: $dir"
     }
 
@@ -132,7 +136,7 @@ private fun createNodeModule(
 
     files(dir)
 
-    Files.newBufferedWriter(dir.resolve("package.json")).use {
+    dir.resolve("package.json").bufferedWriter().use {
         gson.toJson(packageJson, it)
     }
 

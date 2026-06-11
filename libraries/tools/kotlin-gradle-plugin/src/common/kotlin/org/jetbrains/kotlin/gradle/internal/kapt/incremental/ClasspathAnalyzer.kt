@@ -20,6 +20,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipFile
 import kotlin.io.path.inputStream
 import kotlin.io.path.isDirectory
+import kotlin.io.path.outputStream
 
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
 private const val MODULE_INFO = "module-info.class"
@@ -138,7 +139,7 @@ class ClasspathEntryData : Serializable {
         }
 
         fun loadFrom(file: Path): ClasspathEntryData {
-            ObjectInputStream(BufferedInputStream(Files.newInputStream(file))).use {
+            ObjectInputStream(file.inputStream().buffered()).use {
                 return it.readObject() as ClasspathEntryData
             }
         }
@@ -248,7 +249,7 @@ class ClasspathEntryData : Serializable {
     }
 
     fun saveTo(file: Path) {
-        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(file))).use {
+        ObjectOutputStream(file.outputStream().buffered()).use {
             it.writeObject(this)
         }
     }

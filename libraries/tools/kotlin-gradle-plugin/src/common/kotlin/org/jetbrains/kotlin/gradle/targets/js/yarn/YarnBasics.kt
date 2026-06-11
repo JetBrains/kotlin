@@ -17,6 +17,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.outputStream
 
 abstract class YarnBasics internal constructor(
     private val execOps: ExecOperations,
@@ -75,7 +76,7 @@ abstract class YarnBasics internal constructor(
     }
 
     private fun prepareTooling(dir: Path) {
-        Files.newOutputStream(dir.resolve("yarn.lock")).use { out ->
+        dir.resolve("yarn.lock").outputStream().use { out ->
             YarnBasics::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
                 ?.copyTo(out)
         }

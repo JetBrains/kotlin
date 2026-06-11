@@ -37,6 +37,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 internal class PlatformLibrariesGenerator(
     objectFactory: ObjectFactory,
@@ -86,7 +88,7 @@ internal class PlatformLibrariesGenerator(
                 konanCacheKind.get() != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
-        if (!Files.isDirectory(defDirectory)) emptySet()
+        if (!defDirectory.isDirectory()) emptySet()
         else Files.newDirectoryStream(defDirectory, "*.def").use { stream ->
             stream.map { it.fileName.toString().removeSuffix(".def") }.toSet()
         }
@@ -99,9 +101,9 @@ internal class PlatformLibrariesGenerator(
      * Checks that all platform libs for [konanTarget] actually exist in the [distribution].
      */
     private fun checkLibrariesInDistribution(): Boolean {
-        val presentPlatformLibs = if (!Files.isDirectory(platformLibsDirectory)) emptySet()
+        val presentPlatformLibs = if (!platformLibsDirectory.isDirectory()) emptySet()
         else Files.newDirectoryStream(platformLibsDirectory).use { stream ->
-            stream.filter { Files.isDirectory(it) }.map { it.fileName.toString() }.toSet()
+            stream.filter { it.isDirectory() }.map { it.fileName.toString() }.toSet()
         }
 
         // TODO: Check that all directories in presentPlatformLibs are real klibs when klib componentization is merged.
@@ -194,7 +196,7 @@ internal class PlatformLibrariesGenerator(
         // Don't run the generator if libraries/caches for this target were already built during this Gradle invocation.
         val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsDirectory)
         val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind.get())
-        if ((alreadyGenerated && alreadyCached) || !Files.exists(defDirectory)) {
+        if ((alreadyGenerated && alreadyCached) || !defDirectory.exists()) {
             return
         }
 
@@ -251,7 +253,7 @@ internal class PlatformLibrariesGenerator(
     }
 
     private fun Path.isNotEmptyDirectory(): Boolean =
-        Files.isDirectory(this) && Files.list(this).use { it.findAny().isPresent }
+        this.isDirectory() && Files.list(this).use { it.findAny().isPresent }
 
     internal class PlatformLibsInfo {
         private val generated: MutableSet<Path> = Collections.newSetFromMap(ConcurrentHashMap<Path, Boolean>())

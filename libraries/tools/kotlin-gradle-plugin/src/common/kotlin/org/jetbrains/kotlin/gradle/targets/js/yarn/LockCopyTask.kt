@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockStoreTask
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.exists
 
 @DisableCachingByDefault
 abstract class YarnLockCopyTask : LockCopyTask()
@@ -85,8 +87,8 @@ abstract class YarnLockStoreTask : LockStoreTask() {
 
 private fun isEmptyYarnLock(file: Path?): Boolean =
     file == null ||
-            !Files.exists(file) ||
-            Files.newBufferedReader(file).useLines { lines ->
+            !file.exists() ||
+            file.bufferedReader().useLines { lines ->
                 lines.all { it.startsWith("#") || it.isBlank() }
             }
 

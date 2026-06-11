@@ -12,6 +12,7 @@ import java.io.Reader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.bufferedReader
 
 data class PodBuildSettingsProperties(
     internal val buildDir: String,
@@ -56,7 +57,7 @@ data class PodBuildSettingsProperties(
         const val FRAMEWORK_SEARCH_PATHS = "FRAMEWORK_SEARCH_PATHS"
 
         internal fun readSettingsFromFile(file: Path): PodBuildSettingsProperties {
-            return Files.newBufferedReader(file).use { readSettingsFromReader(it) }
+            return file.bufferedReader().use { readSettingsFromReader(it) }
         }
 
         fun readSettingsFromReader(reader: Reader): PodBuildSettingsProperties {

@@ -13,6 +13,9 @@ import java.io.File
 import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.exists
 
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
@@ -105,14 +108,14 @@ class PackageJson(
 
         packageJsonFile.ensureParentDirsCreated()
         val jsonTree = gson.toJsonTree(this)
-        val previous = if (Files.exists(packageJsonFile)) {
-            Files.newBufferedReader(packageJsonFile).use {
+        val previous = if (packageJsonFile.exists()) {
+            packageJsonFile.bufferedReader().use {
                 JsonParser.parseReader(it)
             }
         } else null
 
         if (jsonTree != previous) {
-            Files.newBufferedWriter(packageJsonFile).use {
+            packageJsonFile.bufferedWriter().use {
                 gson.toJson(jsonTree, it)
             }
         }
@@ -123,7 +126,7 @@ fun fromSrcPackageJson(packageJson: File?): PackageJson? =
     fromSrcPackageJson(packageJson?.toPath())
 
 internal fun fromSrcPackageJson(packageJson: Path?): PackageJson? =
-    packageJson?.let { Files.newBufferedReader(it) }?.use {
+    packageJson?.bufferedReader()?.use {
         Gson().fromJson(it, PackageJson::class.java)
     }
 

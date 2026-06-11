@@ -11,6 +11,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.isDirectory
 
 private val MODULE_NAME_REGEX = Regex("\\bmodule ([A-Za-z0-9_.]+) ")
 
@@ -220,7 +222,7 @@ internal object XcodebuildDefFileUtils {
         val modules = clangModules.joinToString(" ") { "\"${it}\"" }
 
         val defFile = defFilesDir.resolve("${architecture.xcodebuildArch}.def")
-        Files.newBufferedWriter(defFile).use { writer ->
+        defFile.bufferedWriter().use { writer ->
             writer.write(
                 buildString {
                     appendLine("language = Objective-C")
@@ -263,7 +265,7 @@ internal object XcodebuildDefFileUtils {
     """.trimIndent()
 
     private fun Path.listChildrenOrEmpty(): List<Path> {
-        if (!Files.isDirectory(this)) return emptyList()
+        if (!this.isDirectory()) return emptyList()
         return Files.newDirectoryStream(this).use { children -> children.toList() }
     }
 }

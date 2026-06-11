@@ -10,18 +10,22 @@ import org.gradle.internal.hash.Hashing.defaultFunction
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.isSymbolicLink
 
 internal fun Appendable.appendConfigsFromDir(confDir: Path) {
-    if (!Files.isDirectory(confDir)) return
+    if (!confDir.isDirectory()) return
 
     Files.list(confDir).use { files ->
         files
-            .filter { Files.isRegularFile(it) }
+            .filter { it.isRegularFile() }
             .filter { it.fileName.toString().substringAfterLast('.', "") == "js" }
             .sorted(compareBy<Path> { it.fileName.toString() })
             .forEach {
                 appendLine("// ${it.fileName}")
-                append(Files.newBufferedReader(it).use { reader -> reader.readText() })
+                append(it.bufferedReader().use { reader -> reader.readText() })
                 appendLine()
                 appendLine()
             }
@@ -42,7 +46,7 @@ internal fun ByteArray.toHex(): String {
 internal fun FileHasher.calculateDirHash(
     dir: Path,
 ): String? {
-    if (!Files.isDirectory(dir)) return null
+    if (!dir.isDirectory()) return null
 
     val hasher = defaultFunction().newHasher()
     val baseDir = dir.toAbsolutePath()
@@ -50,8 +54,8 @@ internal fun FileHasher.calculateDirHash(
         .use { paths ->
             paths.forEach { file ->
                 hasher.putString(baseDir.relativize(file).toString())
-                if (Files.isRegularFile(file)) {
-                    if (!Files.isSymbolicLink(file)) {
+                if (file.isRegularFile()) {
+                    if (!file.isSymbolicLink()) {
                         hasher.putHash(hash(file.toFile()))
                     } else {
                         val absoluteFile = file.toAbsolutePath()

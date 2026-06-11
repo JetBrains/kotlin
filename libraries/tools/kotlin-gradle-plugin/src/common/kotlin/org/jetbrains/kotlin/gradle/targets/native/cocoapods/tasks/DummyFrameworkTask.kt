@@ -26,6 +26,9 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
+import kotlin.io.path.outputStream
 
 /**
  * Creates a dummy framework in the target directory.
@@ -77,8 +80,8 @@ abstract class DummyFrameworkTask @Inject constructor(
         get() = "/cocoapods/$linkageName/dummy.framework/"
 
     private fun copyResource(from: String, to: Path) {
-        Files.createDirectories(to.parent)
-        Files.newOutputStream(to).use { file ->
+        to.parent.createDirectories()
+        to.outputStream().use { file ->
             javaClass.getResourceAsStream(from)!!.use { resource ->
                 resource.copyTo(file)
             }
@@ -86,8 +89,8 @@ abstract class DummyFrameworkTask @Inject constructor(
     }
 
     private fun copyTextResource(from: String, to: Path, transform: (String) -> String = { it }) {
-        Files.createDirectories(to.parent)
-        Files.newBufferedWriter(to).use { file ->
+        to.parent.createDirectories()
+        to.bufferedWriter().use { file ->
             javaClass.getResourceAsStream(from)!!.use {
                 it.reader().forEachLine { str ->
                     file.append(transform(str))

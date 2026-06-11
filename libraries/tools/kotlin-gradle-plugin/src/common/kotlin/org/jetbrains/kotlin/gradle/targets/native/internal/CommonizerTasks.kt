@@ -42,6 +42,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.*
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
     KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
@@ -176,7 +177,7 @@ internal fun Project.commonizedNativeDistributionKlibsOrNull(target: SharedCommo
 }
 
 private fun getCommonizedPlatformLibrariesFor(commonizerFile: Path, target: SharedCommonizerTarget): List<File> {
-    val rootOutputDirectory = Files.newBufferedReader(commonizerFile).use { Paths.get(it.readText().trim()) }
+    val rootOutputDirectory = commonizerFile.bufferedReader().use { Path(it.readText().trim()) }
     val targetOutputDirectory = with(CommonizerOutputFileLayout) { rootOutputDirectory.resolve(target.fileName) }
     return targetOutputDirectory.toFile().listLibraryFiles()
 }

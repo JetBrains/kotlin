@@ -19,6 +19,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.exists
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class SyncPackageResolvedTask : DefaultTask() {
@@ -76,7 +77,7 @@ private fun copySwiftLockFile(
 }
 
 private fun hasSameContent(dest: Path, src: Path): Boolean =
-    Files.exists(dest) && Files.exists(src) && contentEqualsIgnoringLineEndings(src, dest)
+    dest.exists() && src.exists() && contentEqualsIgnoringLineEndings(src, dest)
 
 /**
  * One project's contribution to a shared lock bucket.

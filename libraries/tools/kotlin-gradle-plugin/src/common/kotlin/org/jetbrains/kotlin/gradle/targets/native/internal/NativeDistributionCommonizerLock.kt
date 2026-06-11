@@ -13,6 +13,7 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.io.path.createDirectories
 
 internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
     private val outputDirectory: Path,
@@ -33,7 +34,7 @@ internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
             }
 
             /* Lock output directory inter-process wide */
-            Files.createDirectories(outputDirectory)
+            outputDirectory.createDirectories()
             logInfo("Acquire lock: $lockFile ...")
             FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { channel ->
                 val lock: FileLock = channel.lockWithRetries(lockFile)

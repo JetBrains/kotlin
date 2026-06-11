@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.outputStream
 
 internal class MetricsWriter(
     private val outputFile: Path,
@@ -24,7 +26,7 @@ internal class MetricsWriter(
         if (build.failureMessages.isNotEmpty()) return
 
         try {
-            outputFile.parent?.let { Files.createDirectories(it) }
+            outputFile.parent?.createDirectories()
 
             val buildMetricsData = GradleBuildMetricsData()
             for (metric in allBuildTimeMetrics) {
@@ -46,7 +48,7 @@ internal class MetricsWriter(
                     )
             }
 
-            ObjectOutputStream(Files.newOutputStream(outputFile).buffered()).use { out ->
+            ObjectOutputStream(outputFile.outputStream().buffered()).use { out ->
                 out.writeObject(buildMetricsData)
             }
         } catch (e: Exception) {

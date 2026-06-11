@@ -18,6 +18,7 @@ import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
 import kotlin.io.path.extension
 
 internal class CompositeMetadataArtifactImpl(
@@ -30,7 +31,7 @@ internal class CompositeMetadataArtifactImpl(
 ) : CompositeMetadataArtifact {
 
     override fun exists(): Boolean {
-        return Files.exists(primaryArtifactFile) && hostSpecificArtifactFilesBySourceSetName.values.all { Files.exists(it) }
+        return primaryArtifactFile.exists() && hostSpecificArtifactFilesBySourceSetName.values.all { it.exists() }
     }
 
     override fun open(): CompositeMetadataArtifactContent {
@@ -184,7 +185,7 @@ internal class CompositeMetadataArtifactImpl(
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
-            file.parent?.let { Files.createDirectories(it) }
+            file.parent?.createDirectories()
             artifactFile.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
 
             return true
