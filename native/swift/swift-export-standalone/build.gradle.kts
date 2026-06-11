@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":native:swift:sir-providers"))
     implementation(project(":native:swift:sir-light-classes"))
     implementation(project(":native:swift:sir-printer"))
+    implementation(project(":compiler:util"))
 
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-api-standalone"))

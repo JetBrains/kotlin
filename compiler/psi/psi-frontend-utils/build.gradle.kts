@@ -1,15 +1,12 @@
 plugins {
     kotlin("jvm")
-    id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
 }
 
 dependencies {
-    api(project(":core:compiler.common"))
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend.common"))
-    api(project(":kotlin-script-runtime"))
+    implementation(project(":core:compiler.common"))
+    implementation(project(":compiler:frontend.common"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
@@ -17,19 +14,13 @@ dependencies {
 
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":compiler:psi:psi-impl"))
-    implementation(project(":compiler:psi:psi-utils"))
 
-    testFixturesApi(platform(libs.junit.bom))
-    testFixturesImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 
-    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
-    testFixturesCompileOnly(intellijCore())
-    testCompileOnly(intellijCore())
 }
 
 sourceSets {

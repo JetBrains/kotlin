@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":core:deserialization.common.jvm"))
     implementation(project(":core:language.targets.jvm"))
+    implementation(project(":core:language.version-settings"))
+    implementation(project(":compiler:util"))
     implementation(intellijCore())
     implementation(libs.opentelemetry.api)
     implementation(libs.caffeine)

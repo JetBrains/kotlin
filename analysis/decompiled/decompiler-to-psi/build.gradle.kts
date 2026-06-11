@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    implementation(project(":compiler:util"))
     implementation(intellijCore())
 }
 

@@ -21,6 +21,7 @@ dependencies {
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
     implementation(libs.caffeine)
+    implementation(project(":compiler:frontend.common"))
 
     testFixturesApi(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))

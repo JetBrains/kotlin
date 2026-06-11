@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:util"))
     implementation(intellijCore())
 }
 

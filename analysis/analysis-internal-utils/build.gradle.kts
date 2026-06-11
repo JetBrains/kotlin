@@ -7,6 +7,8 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation(intellijCore())
+    implementation(project(":compiler:util"))
+    implementation(project(":core:names"))
 }
 
 sourceSets {

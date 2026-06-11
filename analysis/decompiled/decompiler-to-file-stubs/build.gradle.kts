@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(intellijCore())
+    implementation(project(":compiler:util"))
 }
 
 sourceSets {

@@ -13,6 +13,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     implementation(project(":analysis:analysis-api"))
+    implementation(project(":compiler:frontend.common"))
     implementation(project(":analysis:analysis-api-standalone"))
     implementation(project(":core:compiler.common.js"))
     implementation(project(":core:util.runtime"))
