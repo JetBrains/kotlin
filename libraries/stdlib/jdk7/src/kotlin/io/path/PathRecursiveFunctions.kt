@@ -204,7 +204,8 @@ public fun Path.copyToRecursively(
 
     fun validatePathsWithDifferentNameCount(
         target: Path, relativeTargetPath: Path, resolvedTargetPath: Path,
-        source: Path, relativePath: Path, resolvedSourcePath: Path) {
+        source: Path, relativeSourcePath: Path, resolvedSourcePath: Path
+    ) {
         val targetNameCount = target.nameCount
         val sourceNameCount = source.nameCount
 
@@ -213,7 +214,7 @@ public fun Path.copyToRecursively(
         // To gracefully handle such discrepancies, let's only check that relative path's resolution
         // in one filesystem will increase the number of segments by the same amount as in another.
         if (resolvedTargetPath.nameCount - targetNameCount != resolvedSourcePath.nameCount - sourceNameCount) {
-            val sourceSegments = relativePath.joinToString(", ", prefix = "[", postfix = "]") { "\"${it}\"" }
+            val sourceSegments = relativeSourcePath.joinToString(", ", prefix = "[", postfix = "]") { "\"${it}\"" }
             val targetSegments = relativeTargetPath.joinToString(", ", prefix = "[", postfix = "]") { "\"${it}\"" }
             throw IllegalFileNameException(
                 resolvedSourcePath,
@@ -231,7 +232,7 @@ public fun Path.copyToRecursively(
         // Source and target filesystems may use different path separators,
         // so the only correct way to resolve a relative path from a source filesystem against
         // a directory in a destination filesystem is by taking all its segments individually
-        // and iteratively resolving a file path starting from the `target`.
+        // and resolving a file path starting from the `target`.
         val destination = if (source.fileSystem === target.fileSystem) {
             target.resolve(relativePath)
         } else if (relativePath.nameCount > 0) {
@@ -247,8 +248,8 @@ public fun Path.copyToRecursively(
             // Let's inspect the path and figure out if it's the case.
             if (!skipValidation && relativeTargetPath.nameCount != relativePath.nameCount) {
                 validatePathsWithDifferentNameCount(
-                    target, relativeTargetPath, resolved,
-                    this@copyToRecursively, relativePath, source
+                    target = target, relativeTargetPath = relativeTargetPath, resolvedTargetPath = resolved,
+                    source = this@copyToRecursively, relativeSourcePath = relativePath, resolvedSourcePath = source
                 )
             }
             resolved
