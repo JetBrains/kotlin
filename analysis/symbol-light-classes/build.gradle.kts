@@ -10,7 +10,6 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":compiler:backend.common.jvm"))
@@ -21,11 +20,9 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
     implementation(libs.caffeine)
 
-    testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
-    testFixturesApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(libs.junit.jupiter.api)
