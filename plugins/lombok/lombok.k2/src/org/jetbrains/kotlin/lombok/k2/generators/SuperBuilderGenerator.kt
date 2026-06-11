@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClassBuilder
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -55,7 +55,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         return builderSymbol.typeParameterSymbols.elementAtOrNull(builderSymbol.typeParameterSymbols.size - BUILDER_TYPE_PARAMETER_INDEX_FROM_END)?.defaultType
     }
 
-    override fun MutableMap<Name, FirJavaMethod>.addSpecialBuilderMethods(
+    override fun MutableMap<Name, FirNamedFunction>.addSpecialBuilderMethods(
         builder: SuperBuilder,
         builderSymbol: FirClassSymbol<*>,
         builderDeclaration: FirDeclaration,
@@ -88,7 +88,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         }
     }
 
-    override fun FirJavaClassBuilder.completeBuilder(
+    override fun FirRegularClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>,
         builderSymbol: FirClassSymbol<*>,
         context: NestedClassGenerationContext,
@@ -132,7 +132,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
 
         val superBuilderClassAndTypeRef = classSymbol.resolvedSuperTypeRefs.mapNotNull { superTypeRef ->
             val superTypeSymbol = superTypeRef.toRegularClassSymbol(session) ?: return@mapNotNull null
-            val superBuilders = builderClassesCache.getValue(superTypeSymbol, context) ?: return@mapNotNull null
+            val superBuilders = nestedClassesCache.getValue(superTypeSymbol, context) ?: return@mapNotNull null
             require(superBuilders.size <= 1) { "@SuperBuilder is only supported on types -> not more than one super type is possible" }
             val superBuilder = superBuilders.firstNotNullOfOrNull { it.component2() }
             return@mapNotNull if (superBuilder != null)

@@ -1,3 +1,4 @@
+// FIR_DUMP
 // FILE: User.java
 
 import lombok.Builder;
@@ -11,19 +12,29 @@ public class User {
   private int age;
 }
 
+// FILE: UserKotlin.kt
+
+import lombok.Builder;
+
+@Builder(toBuilder = true)
+class UserKotlin(val name: String, val age: Int)
 
 // FILE: test.kt
 
 fun box(): String {
-    val userBuilder = User.builder()
+    val user = User.builder()
         .created(10)
         .name("John")
         .age(42)
+    assertEquals(10, user.created)
+    assertEquals("John", user.name)
+    assertEquals(42, user.age)
 
-    val user = userBuilder.build()
-    return if (user.created == 10 && user.name == "John" && user.age == 42) {
-        "OK"
-    } else {
-        "Error: $user"
-    }
+    val userKotlin = UserKotlin.builder()
+        .name("John")
+        .age(42)
+    assertEquals(user.name, userKotlin.name)
+    assertEquals(user.age, userKotlin.age)
+
+    return "OK"
 }

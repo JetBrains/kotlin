@@ -63,6 +63,9 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         this[LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID] = listOf(
             KotlinTarget.PROPERTY,
         )
+        this[LombokNames.BUILDER_ID] = listOf(
+            KotlinTarget.CLASS,
+        )
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
