@@ -380,6 +380,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
 
     /**
+     * Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ESCAPING_FUNCTIONS: CommonCompilerArgument<List<String>> =
+        CommonCompilerArgument("X_ESCAPING_FUNCTIONS", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
      * Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
      *

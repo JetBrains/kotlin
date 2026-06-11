@@ -1,5 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: +ReportEscapingCapturedVariable
 
 fun baz(s: String) {}
 

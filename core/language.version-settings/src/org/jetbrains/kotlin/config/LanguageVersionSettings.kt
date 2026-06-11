@@ -514,6 +514,7 @@ enum class LanguageFeature(
     NativeTestProcessorBeforeSerialization(KOTLIN_2_4, "KT-83807"),
     JsAllowExportingValueClasses(sinceVersion = KOTLIN_2_4, "KT-72198"),
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = KOTLIN_2_4, "KT-64358"),
+    ReportEscapingCapturedVariable(sinceVersion = null, testOnly = true, issue = "KT-15514"),
 
     // 2.5
 

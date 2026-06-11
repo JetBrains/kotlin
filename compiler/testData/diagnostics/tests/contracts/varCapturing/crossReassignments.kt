@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // FULL_JDK
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: +ReportEscapingCapturedVariable
 
 fun baz(s: String) {}
 
@@ -9,13 +11,14 @@ private fun testReassignmentAcrossMultipleLambdas() {
 
     Thread { r = 3 }
     Thread { r = 4 }
+    println(r)
 }
 
 fun testReturnThread(): Thread {
     var isScheduled = false
     Thread { isScheduled = true }
     return Thread {
-        if (!<!CV_DIAGNOSTIC!>isScheduled<!>) {
+        if (!<!ESCAPING_CAPTURED_VARIABLE!>isScheduled<!>) {
             isScheduled = true
             baz("scheduled")
             isScheduled = false
@@ -33,7 +36,7 @@ fun testObjectReassignmentAcrossLambdas() {
     }
 
     Thread {
-        println(<!CV_DIAGNOSTIC!>mutObj<!>.toString())
+        println(<!ESCAPING_CAPTURED_VARIABLE!>mutObj<!>.toString())
     }
 }
 
@@ -41,7 +44,7 @@ fun testStringReassignment() {
     var x = "bla"
 
     Thread { x = "3" }
-    Thread { println(<!CV_DIAGNOSTIC!>x<!>) }
+    Thread { println(<!ESCAPING_CAPTURED_VARIABLE!>x<!>) }
 }
 
 fun testSmartCastReassignedInAnotherLambda() {
@@ -50,15 +53,15 @@ fun testSmartCastReassignedInAnotherLambda() {
     var obj: Any = "text"
     var nullableStr: String? = null
     Thread {
-        if (<!CV_DIAGNOSTIC!>flag<!> && true) {
+        if (<!ESCAPING_CAPTURED_VARIABLE!>flag<!> && true) {
             print(1)
         }
-        println("Hello ${<!CV_DIAGNOSTIC!>name<!>}")
-        if (<!CV_DIAGNOSTIC!>obj<!> is String) {
+        println("Hello ${<!ESCAPING_CAPTURED_VARIABLE!>name<!>}")
+        if (<!ESCAPING_CAPTURED_VARIABLE!>obj<!> is String) {
             print(1)
         }
-        val s = <!CV_DIAGNOSTIC!>obj<!> as String
-        val res = <!CV_DIAGNOSTIC!>nullableStr<!> ?: "default"
+        val s = <!ESCAPING_CAPTURED_VARIABLE!>obj<!> as String
+        val res = <!ESCAPING_CAPTURED_VARIABLE!>nullableStr<!> ?: "default"
     }
 
     Thread {
@@ -70,3 +73,7 @@ fun testSmartCastReassignedInAnotherLambda() {
         baz(flag.toString())
     }
 }
+
+/* GENERATED_FIR_TAGS: additiveExpression, andExpression, asExpression, assignment, classDeclaration, elvisExpression,
+functionDeclaration, ifExpression, integerLiteral, isExpression, javaFunction, lambdaLiteral, localProperty,
+nullableType, primaryConstructor, propertyDeclaration, samConversion, stringLiteral */

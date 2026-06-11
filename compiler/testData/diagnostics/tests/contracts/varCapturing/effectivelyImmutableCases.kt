@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: +ReportEscapingCapturedVariable
+// DIAGNOSTICS: -CAN_BE_VAL
 
 private fun testNoReassignment() {
     var another = "hello"
@@ -20,7 +23,7 @@ fun baz(s: String) {}
 
 class MutableObject(var mutableField: String = "initial")
 
-fun testEffectivelyImmutableObject(): Unit {
+fun testEffectivelyImmutableObject() {
     var mutObj = MutableObject()
     Thread {
         baz(mutObj.mutableField)

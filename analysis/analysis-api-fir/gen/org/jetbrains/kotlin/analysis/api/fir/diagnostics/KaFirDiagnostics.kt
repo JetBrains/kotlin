@@ -120,8 +120,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val error: String
     }
 
-    interface CvDiagnostic : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = CvDiagnostic::class
+    interface EscapingCapturedVariable : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = EscapingCapturedVariable::class
         val variable: KaVariableSymbol
     }
 

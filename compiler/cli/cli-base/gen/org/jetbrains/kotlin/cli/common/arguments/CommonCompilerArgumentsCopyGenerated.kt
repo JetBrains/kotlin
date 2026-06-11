@@ -45,6 +45,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpPerf = from.dumpPerf
     to.eagerLambdaAnalysis = from.eagerLambdaAnalysis
     to.enableAdditionalIrCheckers = from.enableAdditionalIrCheckers.copyOf()
+    to.escapingFunctions = from.escapingFunctions.copyOf()
     to.expectActualClasses = from.expectActualClasses
     to.explicitApi = from.explicitApi
     to.explicitBackingFields = from.explicitBackingFields

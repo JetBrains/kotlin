@@ -41,6 +41,7 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             putAnalysisFlag(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             putAnalysisFlag(AnalysisFlags.optIn, optIn?.toList().orEmpty())
+            putAnalysisFlag(AnalysisFlags.escapingFunctionsList, parseEscapingFunctions(arguments, reporter))
             putAnalysisFlag(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             putAnalysisFlag(AnalysisFlags.explicitApiVersion, apiVersion != null)
             ExplicitApiMode.fromString(explicitApi)?.also { putAnalysisFlag(AnalysisFlags.explicitApiMode, it) }
@@ -180,6 +181,28 @@ open class CommonCompilerArgumentsConfigurator {
                 "The following features cannot be disabled manually, because the version they first appeared in is no longer " +
                         "supported:\n${disabledFeaturesFromUnsupportedVersions.joinToString()}"
             )
+        }
+    }
+
+    // Expected entry form: '(+|-)<fq.name>'.
+    // Entries that don't start with '+' or '-', or have an empty name, are reported and skipped.
+    private fun parseEscapingFunctions(arguments: CommonCompilerArguments, reporter: Reporter): List<String> {
+        return arguments.escapingFunctions?.toList().orEmpty().filter { entry ->
+            when (entry.firstOrNull()) {
+                '+', '-' -> {
+                    if (entry.length == 1) {
+                        reporter.reportWarning("Empty callable name in -Xescaping-functions entry '$entry'.")
+                        return@filter false
+                    }
+                    true
+                }
+                else -> {
+                    reporter.reportWarning(
+                        "Incorrect -Xescaping-functions entry '$entry', each entry must start with '+' (to add) or '-' (to remove)."
+                    )
+                    false
+                }
+            }
         }
     }
 

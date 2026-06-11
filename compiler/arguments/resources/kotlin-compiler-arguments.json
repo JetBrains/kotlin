@@ -3810,6 +3810,50 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xescaping-functions",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": []
+                            },
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "<+|-><fq.name>",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.4.20",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
+                            "defaultValue": {
+                                "current": [],
+                                "valueInVersions": []
+                            },
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        }
+                    },
+                    {
                         "name": "Xexpect-actual-classes",
                         "shortName": null,
                         "deprecatedName": null,

@@ -474,6 +474,17 @@ It may only be used with specific checkers that are not enabled by default, and 
         }
 
     @Argument(
+        value = "-Xescaping-functions",
+        valueDescription = "<+|-><fq.name>",
+        description = "Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.",
+    )
+    var escapingFunctions: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xexpect-actual-classes",
         description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
 Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.""",

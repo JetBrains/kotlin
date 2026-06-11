@@ -1,6 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
 // OPT_IN: kotlin.contracts.ExperimentalContracts
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: +ReportEscapingCapturedVariable
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -27,7 +29,7 @@ fun testInlineExclusion() {
         baz(x)
     }
 
-    x = null
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> = null
 }
 
 fun testContractExclusion() {
@@ -37,7 +39,7 @@ fun testContractExclusion() {
         baz(x)
     }
 
-    x = null
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> = null
 }
 
 fun testStandartInlineFunctionExclusion() {

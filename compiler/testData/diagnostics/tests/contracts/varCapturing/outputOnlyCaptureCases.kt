@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// WITH_EXTRA_CHECKERS
+// LANGUAGE: +ReportEscapingCapturedVariable
+// DIAGNOSTICS: -CAN_BE_VAL
 
 fun testReassignmentInCurrentLambda() {
     var stable = ""
@@ -13,7 +16,7 @@ fun testReassignmentInCurrentLambda() {
 
 private fun testOutputOnlyUninitializedVar(a: Int, v: Any) = run {
     var oldVersionedValue: String? = null
-    var added : Boolean
+    var added : Boolean = false
     val aevtPrime = Thread {
         when {
             oldVersionedValue == null -> run { added = true }
@@ -21,6 +24,8 @@ private fun testOutputOnlyUninitializedVar(a: Int, v: Any) = run {
             else -> run { added = true }
         }
     }
+    println(added)
+    println(oldVersionedValue)
 }
 
 private fun testUnstableNotCaptured() {
