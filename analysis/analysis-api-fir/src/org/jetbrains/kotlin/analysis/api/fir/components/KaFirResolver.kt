@@ -1844,6 +1844,7 @@ internal class KaFirResolver(
 
             is FirResolvedQualifier if this.source?.kind is KtFakeSourceElementKind.ImplicitReceiver -> {
                 val symbol = this.qualifierSymbol ?: return null
+                @OptIn(ResolvedQualifierTypeAccess::class)
                 KaBaseImplicitReceiverValue(symbol.toKaSymbol(), resolvedType.asKaType())
             }
 

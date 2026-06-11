@@ -1718,6 +1718,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     )
                     type
                 } else {
+                    @OptIn(ResolvedQualifierTypeAccess::class)
                     lhs.resolvedType
                 }
             }

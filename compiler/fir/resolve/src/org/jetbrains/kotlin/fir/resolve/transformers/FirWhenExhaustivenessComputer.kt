@@ -694,6 +694,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
             val symbol = (argument as? FirResolvedQualifier)?.qualifierSymbol ?: return
 
             if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.OBJECT) {
+                @OptIn(ResolvedQualifierTypeAccess::class) // TODO(KT-86905) looks like a bug
                 data.add(argument.resolvedType)
             }
         }
