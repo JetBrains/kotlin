@@ -9,11 +9,13 @@ extension ExportedKotlinPackages.kotlinx.cinterop.ObjCObject {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.cinterop.ObjCObject where Wrapped : ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
+}
 extension ExportedKotlinPackages.kotlinx.cinterop {
-    public protocol ObjCObject: KotlinRuntime.KotlinBase {
+    public protocol ObjCObject: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
     }
     @objc(_ObjCObject)
-    package protocol _ObjCObject {
+    public protocol _ObjCObject {
     }
     open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
         package override init(

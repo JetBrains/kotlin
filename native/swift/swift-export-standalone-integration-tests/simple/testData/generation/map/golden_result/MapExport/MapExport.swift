@@ -2,10 +2,10 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Bar: KotlinRuntime.KotlinBase {
+public protocol Bar: KotlinRuntime.KotlinBase, MapExport._Bar {
 }
 @objc(_Bar)
-package protocol _Bar {
+public protocol _Bar {
 }
 public func testMapAnyLong(
     m: [Swift.AnyHashable: Swift.Int64]
@@ -68,4 +68,6 @@ extension MapExport.Bar where Self : KotlinRuntimeSupport._KotlinBridgeable {
 extension MapExport.Bar {
 }
 extension KotlinRuntimeSupport._KotlinExistential: MapExport.Bar where Wrapped : MapExport._Bar {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: MapExport._Bar {
 }

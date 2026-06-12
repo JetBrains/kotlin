@@ -3,6 +3,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+int32_t funinterface_FunctionalInterface_invoke__reverse_swift(void * self);
+
+int32_t funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(void * self);
+
+int32_t funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(void * self);
+
+int32_t funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(void * self);
+
+int32_t funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(void * self);
+
+int32_t funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(void * self);
+
 void * funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
 
 int32_t funinterface_FunctionalInterface_invoke(void * self);

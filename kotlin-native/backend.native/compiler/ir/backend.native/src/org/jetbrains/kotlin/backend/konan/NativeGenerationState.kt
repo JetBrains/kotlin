@@ -96,6 +96,9 @@ internal class NativeGenerationState(
 
     val virtualFunctionTrampolines = mutableMapOf<IrSimpleFunction, LlvmCallable>()
 
+    val bindClassToObjCNameClassAdapters = mutableMapOf<String, ConstPointer>()
+    val bindClassToObjCNameInterfaceAdapters = mutableMapOf<String, ConstPointer>()
+
     lateinit var objCExport: ObjCExport
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()

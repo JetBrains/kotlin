@@ -120,8 +120,9 @@ internal open class SirFunctionFromKtSymbol(
             SirParameter(null, "receiver", it.type)
         }
 
-        // For F-bounded methods, use the interface type as self type to generate direct cast
-        val effectiveSelfType = computeFBoundedInterfaceSirType() ?: selfType
+        // For interface methods (and F-bounded class methods that override interfaces),
+        // use the protocol existential as the self type.
+        val effectiveSelfType = computeInterfaceSelfType() ?: selfType
 
         generateFunctionBridge(
             baseBridgeName = baseName,
@@ -165,7 +166,7 @@ internal open class SirFunctionFromKtSymbol(
                     val args = this@SirFunctionFromKtSymbol.parameters
                         .zip(paramExprs)
                         .joinToString(", ") { [param, expr] ->
-                            param.argumentName?.let { "$it: $expr" } ?: expr
+                            param.argumentName?.takeIf { it.isNotEmpty() }?.let { "$it: $expr" } ?: expr
                         }
                     val tryPrefix = if (errorType != SirType.never) "try! " else ""
                     "$tryPrefix$selfExpr.$methodName($args)"
@@ -181,33 +182,49 @@ internal open class SirFunctionFromKtSymbol(
 
     private fun needsReverseBridge(): Boolean = withSessions {
         if (!isInstance) return@withSessions false
-        if (modality != SirModality.OPEN) return@withSessions false
         if (isUnavailable) return@withSessions false
-        val containingClass = parent as? SirClass ?: return@withSessions false
-        if (containingClass.modality != SirModality.OPEN) return@withSessions false
-        if (containingClass.isUnavailable) return@withSessions false
-        true
+        // TODO: Implement async reverse bridges with regular continuation machinery.
+        if (isAsync) return@withSessions false
+        when (val containingDecl = parent) {
+            is SirClass -> {
+                if (modality != SirModality.OPEN) return@withSessions false
+                if (containingDecl.modality != SirModality.OPEN) return@withSessions false
+                if (containingDecl.isUnavailable) return@withSessions false
+                return@withSessions true
+            }
+            is SirProtocol -> {
+                if (containingDecl.isUnavailable) return@withSessions false
+                return@withSessions true
+            }
+            else -> return@withSessions false
+        }
     }
 
     private fun effectiveReverseBridgeDeprecation(): SirAttribute.Available? {
         fun SirDeclaration.deprecatedAttr(): SirAttribute.Available? =
             attributes.firstOrNull { it is SirAttribute.Available && it.deprecated } as? SirAttribute.Available
-        return this.deprecatedAttr() ?: (parent as? SirClass)?.deprecatedAttr()
+        return this.deprecatedAttr()
+            ?: (parent as? SirClass)?.deprecatedAttr()
+            ?: (parent as? SirProtocol)?.deprecatedAttr()
     }
 
     /**
-     * For methods on F-bounded classes that override interface methods, computes the interface SirType
-     * to use as the self parameter type. This allows the bridge to cast self directly to the interface type
-     * (e.g., "Comparable<Any?>") instead of first casting to the class type and then to the interface.
-     * Returns null if not applicable (not an F-bounded method).
+     * Computes the self SirType for interface methods (covering both direct protocol parents
+     * and F-bounded class methods overriding interface methods). Returns `SirExistentialType(proto)`
+     * so that the bridge uses `AsExistential` — whose kotlinToSwift conversion produces
+     * `KotlinBase.__createProtocolWrapper(externalRCRef:) as! Foo`, required for reverse bridges
+     * where the concrete Swift conformer is unknown at compile time.
+     *
+     * Returns null if not applicable (e.g., plain class method with no interface origin).
      */
-    private fun computeFBoundedInterfaceSirType(): SirType? = withSessions {
-        // Only for instance methods on F-bounded classes
+    private fun computeInterfaceSelfType(): SirType? = withSessions {
         if (!isInstance) return@withSessions null
+
+        (parent as? SirProtocol)?.let { return@withSessions SirExistentialType(it) }
+
         val containingClass = (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>() ?: return@withSessions null
         if (!containingClass.hasFBoundedTypeParameters()) return@withSessions null
 
-        // Find the interface that declares this method
         val overriddenInterfaceMethod = ktSymbol.allOverriddenSymbols
             .filterIsInstance<KaNamedFunctionSymbol>()
             .firstOrNull { overridden ->
@@ -218,7 +235,6 @@ internal open class SirFunctionFromKtSymbol(
         val interfaceSymbol = overriddenInterfaceMethod.containingSymbol as? KaNamedClassSymbol
             ?: return@withSessions null
 
-        // Get the SirProtocol for the interface and wrap it in SirExistentialType
         val sirProtocol = interfaceSymbol.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()
             ?: return@withSessions null
 
