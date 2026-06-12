@@ -68,8 +68,19 @@ dependencies {
     )
     validateSwiftExportEmbeddable.configure { dependsOn(validateAllDependenciesWereInheritedCorrectly) }
 
+    // IntellijCoroutines (kotlinx.coroutines.internal.intellij.IntellijCoroutines) is referenced
+    // unconditionally by the embedded IntelliJ platform's ThreadContext on the parallel analysis
+    // thread pool path. It only exists in the IntelliJ-patched coroutines fork. We embed it directly
+    // into the fat jar so it is available on the worker classpath without publishing an unresolvable
+    // JetBrains-internal artifact as a transitive dependency (see KT-86899).
+    embedded(libs.analysis.api.intellij.patched.kotlinx.coroutines.core.jvm) { isTransitive = false }
     runtimeOnly(kotlinStdlib())
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-compiler-embeddable")) {
+        // Exclude standard kotlinx-coroutines-core since we embed the IntelliJ-patched fork above.
+        // Both forks share the same package/class names; keeping both would cause duplicate-class failures.
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core-jvm")
+    }
     runtimeOnly(libs.kotlinx.serialization.core)
 }
 
@@ -83,6 +94,12 @@ fun registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJarTask: T
              */
             dependencies.create(project(":kotlin-scripting-compiler-embeddable")),
             dependencies.create(project(":kotlin-assignment-compiler-plugin.embeddable")),
+            /**
+             * kotlin-tooling-core is a transitive dependency of analysis-api-based-klib-reader (via withClosureSequence).
+             * It is not on the worker runtime classpath (embedded transitively via the fat jar's shadow pass), so ProGuard
+             * cannot resolve references to it unless we provide it as a library jar here.
+             */
+            dependencies.create(project(":kotlin-tooling-core")),
         )
     )
 

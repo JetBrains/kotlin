@@ -796,4 +796,38 @@ class SwiftExportIT : KGPBaseTest() {
             }
         }
     }
+
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-86899: Swift Export of a large external dependency does not fail with IntellijCoroutines NCDFE")
+    @GradleTest
+    fun testSwiftExportLargeExternalDependencyNoIntellijCoroutines(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    with(swiftExport) {
+                        export("io.insert-koin:koin-core:4.2.1")
+                    }
+                }
+            }
+
+            build(
+                ":iosSimulatorArm64DebugSwiftExport",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir, sdk = "iphonesimulator"),
+            ) {
+                assertTasksExecuted(":iosSimulatorArm64DebugSwiftExport")
+                assertOutputDoesNotContain("kotlinx/coroutines/internal/intellij/IntellijCoroutines")
+                assertOutputDoesNotContain("Worker exited due to exception")
+            }
+        }
+    }
 }
