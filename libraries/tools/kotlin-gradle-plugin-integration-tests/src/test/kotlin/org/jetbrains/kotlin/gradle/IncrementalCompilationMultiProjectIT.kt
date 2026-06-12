@@ -26,7 +26,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions,
         test: TestProject.() -> Unit
-    ): TestProject = project(defaultProjectName, gradleVersion) {
+    ): TestProject = super.defaultProject(gradleVersion, buildOptions) {
         listOf("app", "lib", "another-lib").forEach {
             val subProject = subProject(it)
             subProject.javaSourcesDir().deleteRecursively()
