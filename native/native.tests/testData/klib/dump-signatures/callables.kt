@@ -1,4 +1,3 @@
-
 package callables
 
 class Foo(val list: List<*>)
