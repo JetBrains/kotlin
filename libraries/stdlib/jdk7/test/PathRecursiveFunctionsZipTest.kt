@@ -515,6 +515,16 @@ class PathRecursiveFunctionsZipTest : AbstractPathTest() {
             })
             assertTrue(failed)
         }
+        withZip("Archive4.zip", listOf("normal", "../../../../../test")) { root, zipRoot ->
+            val target = root.resolve("UnzipArchive4")
+            var failed = false
+            zipRoot.copyToRecursively(target, followLinks = false, onError = { _, _, exception ->
+                failed = true
+                assertIs<IllegalFileNameException>(exception)
+                OnErrorResult.SKIP_SUBTREE
+            })
+            assertTrue(failed)
+        }
     }
 
     // To demonstrate how recursive functions behave when the traversal starting path ends with "." or ".."

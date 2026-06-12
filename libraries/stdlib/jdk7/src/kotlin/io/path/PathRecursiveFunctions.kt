@@ -202,10 +202,10 @@ public fun Path.copyToRecursively(
 
     val normalizedTarget = target.normalize()
 
-    fun destination(source: Path): Path {
+    fun destination(source: Path, validatePath: Boolean = true): Path {
         val relativePath = source.relativeTo(this@copyToRecursively)
         val destination = target.resolve(relativePath.pathString)
-        if (!destination.normalize().startsWith(normalizedTarget)) {
+        if (validatePath && !destination.normalize().startsWith(normalizedTarget)) {
             throw IllegalFileNameException(
                 source,
                 destination,
@@ -216,7 +216,12 @@ public fun Path.copyToRecursively(
     }
 
     fun error(source: Path, exception: Exception): FileVisitResult {
-        return onError(source, destination(source), exception).toFileVisitResult()
+        // destination, when invoked with default validatePath value (true) may throw an exception.
+        // If this function was invoked to handle such an exception thrown elsewhere,
+        // there is no way to deliver exception to onError other than bypassing the validation.
+        // Thus, we call destination w/ validatePath = false.
+        val destinationPath = destination(source, validatePath = false)
+        return onError(source, destinationPath, exception).toFileVisitResult()
     }
 
     val stack = arrayListOf<Path>()
