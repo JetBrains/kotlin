@@ -136,14 +136,14 @@ constructor(
             npmProjectDir = npmProject.dir.get().asFile,
             nodeExecutable = npmProject.nodeExecutable,
             logger = logger,
-            configFile = webpackConfigFile.get().asFile,
+            configFile = webpackConfigFile.get().asFile.toPath(),
             tool = "webpack/bin/webpack.js",
             args = listOf("build"),
             nodeArgs = emptyList(),
             config = config,
             objects = objects,
             execOps = execOps,
-            npmToolingEnvDir = npmToolingEnv,
+            npmToolingEnvDir = npmToolingEnv.toPath(),
             resolveModulesFromKotlinToolingDir = isWasm,
         )
 
