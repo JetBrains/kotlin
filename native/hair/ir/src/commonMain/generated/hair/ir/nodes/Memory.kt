@@ -22,15 +22,22 @@ sealed interface AnyStore : MemoryOp {
 }
 
 
-sealed class DirectMemoryOp(form: Form, args: List<Node?>) : NodeBase(form, args), MemoryOp {
-    val locationIndex: Int = 0
+sealed class PinnedMemoryOp(form: Form, args: List<Node?>) : BlockBody(form, args), MemoryOp {
+    
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPinnedMemoryOp(this)
+}
+
+
+sealed class DirectMemoryOp(form: Form, args: List<Node?>) : PinnedMemoryOp(form, args), MemoryOp {
+    val locationIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDirectMemoryOp(this)
 }
 
 
-class Load internal constructor(form: Form, location: Node?) : DirectMemoryOp(form, listOf(location)), AnyLoad {
-    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class Load internal constructor(form: Form, control: Controlling?, location: Node?) : DirectMemoryOp(form, listOf(control, location)), AnyLoad {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
@@ -38,7 +45,8 @@ class Load internal constructor(form: Form, location: Node?) : DirectMemoryOp(fo
     
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "location"
+        0 -> "control"
+        1 -> "location"
         else -> error("Unexpected arg index: $index")
     }
     
@@ -49,8 +57,8 @@ class Load internal constructor(form: Form, location: Node?) : DirectMemoryOp(fo
 }
 
 
-class Store internal constructor(form: Form, location: Node?) : DirectMemoryOp(form, listOf(location)), AnyLoad {
-    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class Store internal constructor(form: Form, control: Controlling?, location: Node?) : DirectMemoryOp(form, listOf(control, location)), AnyLoad {
+    class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
@@ -58,7 +66,8 @@ class Store internal constructor(form: Form, location: Node?) : DirectMemoryOp(f
     
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "location"
+        0 -> "control"
+        1 -> "location"
         else -> error("Unexpected arg index: $index")
     }
     
@@ -76,16 +85,17 @@ sealed interface InstanceFieldOp : MemoryOp {
 }
 
 
-class LoadField internal constructor(form: Form, obj: Node?) : NodeBase(form, listOf(obj)), InstanceFieldOp, AnyLoad {
-    class Form internal constructor(metaForm: MetaForm, val field: Field) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class LoadField internal constructor(form: Form, control: Controlling?, obj: Node?) : PinnedMemoryOp(form, listOf(control, obj)), InstanceFieldOp, AnyLoad {
+    class Form internal constructor(metaForm: MetaForm, val field: Field) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(field)
     }
     
     override val field: Field by form::field
-    override val objIndex: Int = 0
+    override val objIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "obj"
+        0 -> "control"
+        1 -> "obj"
         else -> error("Unexpected arg index: $index")
     }
     
@@ -96,18 +106,19 @@ class LoadField internal constructor(form: Form, obj: Node?) : NodeBase(form, li
 }
 
 
-class StoreField internal constructor(form: Form, obj: Node?, value: Node?) : NodeBase(form, listOf(obj, value)), InstanceFieldOp, AnyStore {
-    class Form internal constructor(metaForm: MetaForm, val field: Field) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class StoreField internal constructor(form: Form, control: Controlling?, obj: Node?, value: Node?) : PinnedMemoryOp(form, listOf(control, obj, value)), InstanceFieldOp, AnyStore {
+    class Form internal constructor(metaForm: MetaForm, val field: Field) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(field)
     }
     
     override val field: Field by form::field
-    override val objIndex: Int = 0
-    override val valueIndex: Int = 1
+    override val objIndex: Int = 1
+    override val valueIndex: Int = 2
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "obj"
-        1 -> "value"
+        0 -> "control"
+        1 -> "obj"
+        2 -> "value"
         else -> error("Unexpected arg index: $index")
     }
     
@@ -125,8 +136,8 @@ sealed interface GlobalOp : MemoryOp {
 }
 
 
-class LoadGlobal internal constructor(form: Form) : NodeBase(form, listOf()), GlobalOp, AnyLoad {
-    class Form internal constructor(metaForm: MetaForm, val field: Global) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class LoadGlobal internal constructor(form: Form, control: Controlling?) : PinnedMemoryOp(form, listOf(control)), GlobalOp, AnyLoad {
+    class Form internal constructor(metaForm: MetaForm, val field: Global) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(field)
     }
     
@@ -134,6 +145,7 @@ class LoadGlobal internal constructor(form: Form) : NodeBase(form, listOf()), Gl
     
     
     override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
         else -> error("Unexpected arg index: $index")
     }
     
@@ -144,16 +156,17 @@ class LoadGlobal internal constructor(form: Form) : NodeBase(form, listOf()), Gl
 }
 
 
-class StoreGlobal internal constructor(form: Form, value: Node?) : NodeBase(form, listOf(value)), GlobalOp, AnyStore {
-    class Form internal constructor(metaForm: MetaForm, val field: Global) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class StoreGlobal internal constructor(form: Form, control: Controlling?, value: Node?) : PinnedMemoryOp(form, listOf(control, value)), GlobalOp, AnyStore {
+    class Form internal constructor(metaForm: MetaForm, val field: Global) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(field)
     }
     
     override val field: Global by form::field
-    override val valueIndex: Int = 0
+    override val valueIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
-        0 -> "value"
+        0 -> "control"
+        1 -> "value"
         else -> error("Unexpected arg index: $index")
     }
     
