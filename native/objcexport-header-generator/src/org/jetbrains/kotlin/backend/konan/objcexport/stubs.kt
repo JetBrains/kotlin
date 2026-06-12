@@ -120,7 +120,7 @@ class ObjCMethod(
     val selectors: List<String>,
     val parameters: List<ObjCParameter>,
     val attributes: List<String>,
-    override val extras: Extras = emptyExtras()
+    override val extras: Extras = emptyExtras(),
 ) : ObjCExportStub {
     override val name: String = buildMethodName(selectors, parameters)
 }
