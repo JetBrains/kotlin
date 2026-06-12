@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -ForbidAliasedRepeatedAnnotationsOnExpressionsInMultiplatform
-// SUPPRESS_NO_TYPE_ALIAS_EXPANSION_MODE
-// ^^^^ see KTLC-409
+// LANGUAGE: +ForbidAliasedRepeatedAnnotationsOnExpressionsInMultiplatform
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
