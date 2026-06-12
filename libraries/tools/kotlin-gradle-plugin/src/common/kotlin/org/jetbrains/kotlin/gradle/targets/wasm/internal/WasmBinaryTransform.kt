@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyOf
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -45,7 +46,7 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
     /**
      * Parameters for the [WasmBinaryTransform].
      */
-    abstract class Parameters : TransformParameters {
+    abstract class Parameters : TransformParameters, UsesKotlinToolingDiagnosticsParameters {
         @get:Internal
         abstract val compilerOptions: Property<KotlinWasmCompilerArguments>
 
@@ -130,7 +131,8 @@ internal abstract class WasmBinaryTransform : TransformAction<WasmBinaryTransfor
         val workArgs = prepareWasmCompilationArgs(compilerOutputDir, inputFile)
 
         GradleKotlinCompilerWork(
-            workArgs
+            workArgs,
+            parameters
         ).run()
 
         if (mode == KotlinJsBinaryMode.DEVELOPMENT) return

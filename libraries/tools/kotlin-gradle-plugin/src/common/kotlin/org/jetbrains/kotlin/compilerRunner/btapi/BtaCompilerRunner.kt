@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.wrapAndRethrowCompilationException
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
+import kotlin.io.path.absolutePathString
 
 internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
     private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
@@ -27,7 +28,7 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
         executionStrategy: KotlinCompilerExecutionStrategy,
         log: KotlinLogger,
         compilerMessageRenderer: ProblemsApiCompilerMessageRenderer,
-    ): CompilationResult {
+    ): Pair<CompilationResult, ExecutionPolicy> {
         try {
             val kotlinToolchains = buildSession.kotlinToolchains
             val compilationOperationBuilder = buildOperationFactory.createOperation(kotlinToolchains)
@@ -38,14 +39,16 @@ internal class BtaCompilerRunner<T : BaseCompilationOperation.Builder>(
             val executionConfig = when (executionStrategy) {
                 KotlinCompilerExecutionStrategy.DAEMON -> kotlinToolchains.daemonExecutionPolicy {
                     ExecutionPolicy.WithDaemon.JVM_ARGUMENTS(daemonJvmArgs)
+                    val daemonLogsPath = get(ExecutionPolicy.WithDaemon.LOGS_PATH)
                     if (log.isDebugEnabled) {
                         log.debug("Kotlin compile daemon JVM options: ${daemonJvmArgs.joinToString(" ")}")
+                        log.debug("Kotlin compile daemon logs path: ${daemonLogsPath.absolutePathString()}")
                     }
                 }
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinToolchains.createInProcessExecutionPolicy()
             }
             return metrics.measure(RUN_COMPILATION) {
-                buildSession.executeOperation(compilationOperation, executionConfig, log)
+                buildSession.executeOperation(compilationOperation, executionConfig, log) to executionConfig
             }.also { extractMetrics(metrics, compilationOperation) }
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)
