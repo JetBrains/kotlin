@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.snapshots.isLibrarySetAddedSentinel
 import org.jetbrains.kotlin.incremental.snapshots.isLibrarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
@@ -33,16 +34,25 @@ internal fun getClasspathChanges(
     val classpathSet = expandClasspathFiles(classpath)
 
     // additionally, declared libraries adds/removals are covered by tracking compiler arguments
-    // either on the client side or by enabling our tracking of the configuration inputs
+    // either on the client side or by enabling our tracking of the configuration inputs.
+    // Sentinels emitted by LibrarySetSnapshotMap encode classpath set membership changes (adds in `modified`,
+    // removes in `removed`) that don't correspond to real paths; they're explicitly admitted here so library
+    // add/remove triggers a full rebuild as intended.
+    val addedClasspath = changedFiles.modified.filterTo(HashSet()) { it.isLibrarySetAddedSentinel() }
     val modifiedClasspath = changedFiles.modified.filterTo(HashSet()) { it in classpathSet }
-    // Sentinels emitted by LibrarySetSnapshotMap encode library removals that have no current path —
-    // they're explicitly admitted here so library removal triggers a full rebuild as intended.
     val removedClasspath = changedFiles.removed.filterTo(HashSet()) { it in classpathSet || it.isLibrarySetRemovedSentinel() }
 
     // todo: removed classes could be processed normally
     if (removedClasspath.isNotEmpty()) {
         reporter.info { "Some files are removed from classpath: $removedClasspath" }
         return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
+    }
+
+    if (addedClasspath.isNotEmpty()) {
+        // We've never compiled against these libraries, so any incremental delta from their own histories
+        // would be partial — fall back to a full rebuild. See LibrarySetSnapshotMap for the sentinel mechanism.
+        reporter.info { "New entries are added to classpath: $addedClasspath" }
+        return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_ADDED_ENTRY)
     }
 
     if (modifiedClasspath.isEmpty()) return ChangesEither.Known()

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.snapshots.ConfigurationInputsMap
+import org.jetbrains.kotlin.incremental.snapshots.librarySetAddedSentinel
 import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
@@ -420,18 +421,24 @@ abstract class IncrementalCompilerRunner<
             classpathForLibrarySetSnapshot(args),
             modulesApiHistory.modulesInfo,
         )
-        if (librarySetChanges.modifiedFiles.isEmpty() && librarySetChanges.removedKeys.isEmpty()) {
+        if (librarySetChanges.modifiedFiles.isEmpty() &&
+            librarySetChanges.addedKeys.isEmpty() &&
+            librarySetChanges.removedKeys.isEmpty()
+        ) {
             return sourceLevelChanges
         }
-        // Removed library identities can't be expressed as real Files (we store no path for them), so we
-        // carry them as sentinel Files. getClasspathChanges recognizes the sentinel prefix and treats them
-        // as "something on the classpath was removed" → ChangesEither.Unknown → full rebuild, which is the
-        // only sound answer for any library removal in the history-files-based IC pipeline.
+        // Removed and added library identities can't be expressed as real Files (we store no path for them
+        // in the removed case, and we deliberately do not want the added case to flow through the normal
+        // modified-jar pipeline since the library's own history would only contain a partial delta).
+        // We carry both as sentinel Files; getClasspathChanges recognizes the sentinel prefixes and treats
+        // them as "the classpath set changed" → ChangesEither.Unknown → full rebuild, which is the only
+        // sound answer for any library add/remove in the history-files-based IC pipeline.
         // Anyway, the history files-based approach does not have any solution for changes in dependencies
         // with no history files other than rebuild.
         val removedLibrarySentinels = librarySetChanges.removedKeys.map { librarySetRemovedSentinel(it) }
+        val addedLibrarySentinels = librarySetChanges.addedKeys.map { librarySetAddedSentinel(it) }
         return DeterminableFiles.Known(
-            modified = sourceLevelChanges.modified + librarySetChanges.modifiedFiles,
+            modified = sourceLevelChanges.modified + librarySetChanges.modifiedFiles + addedLibrarySentinels,
             removed = sourceLevelChanges.removed + removedLibrarySentinels,
         )
     }

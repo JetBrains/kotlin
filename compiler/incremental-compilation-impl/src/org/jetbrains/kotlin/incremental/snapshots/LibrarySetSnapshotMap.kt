@@ -47,6 +47,7 @@ internal class LibrarySetSnapshotMap(
         val provider = SimpleFileSnapshotProviderImpl()
         val seenKeys = HashSet<String>()
         val modifiedFiles = HashSet<File>()
+        val addedKeys = HashSet<String>()
 
         for (file in expandClasspathFiles(classpath)) {
             if (!file.isFile) continue
@@ -58,7 +59,13 @@ internal class LibrarySetSnapshotMap(
             else "ext:${snapshot.hash.toHexString()}"
             seenKeys += key
 
-            if (this[key] != snapshot) {
+            val previous = this[key]
+            if (previous == null) {
+                // Never-seen key: the project has not compiled against this library before, so any incremental delta
+                // from the library's own history would be partial — we have to rebuild instead.
+                addedKeys += key
+                this[key] = snapshot
+            } else if (previous != snapshot) {
                 modifiedFiles += file
                 this[key] = snapshot
             }
@@ -66,12 +73,13 @@ internal class LibrarySetSnapshotMap(
 
         val removedKeys = keys.toSet() - seenKeys
         removedKeys.forEach { remove(it) }
-        return LibrarySetChanges(modifiedFiles, removedKeys)
+        return LibrarySetChanges(modifiedFiles, addedKeys, removedKeys)
     }
 }
 
 internal data class LibrarySetChanges(
     val modifiedFiles: Set<File>,
+    val addedKeys: Set<String>,
     val removedKeys: Set<String>,
 )
 
@@ -87,6 +95,19 @@ internal const val LIBRARY_SET_REMOVED_SENTINEL_PREFIX = "library-set-removed:"
 internal fun librarySetRemovedSentinel(key: String): File = File(LIBRARY_SET_REMOVED_SENTINEL_PREFIX + key)
 
 internal fun File.isLibrarySetRemovedSentinel(): Boolean = path.startsWith(LIBRARY_SET_REMOVED_SENTINEL_PREFIX)
+
+/**
+ * Symmetric to [LIBRARY_SET_REMOVED_SENTINEL_PREFIX]: marks a [File] that is not a real path but a sentinel for a
+ * library that was NOT on the classpath in the previous build but is on it now. The library's own build history
+ * (if any) only contains deltas since some past build, not the cumulative state — so an incremental delta would
+ * miss every symbol the library exposed before its first observed diff. Downstream code paths must recognize this
+ * prefix and treat such entries as a rebuild trigger; see usages in `getClasspathChanges`.
+ */
+internal const val LIBRARY_SET_ADDED_SENTINEL_PREFIX = "library-set-added:"
+
+internal fun librarySetAddedSentinel(key: String): File = File(LIBRARY_SET_ADDED_SENTINEL_PREFIX + key)
+
+internal fun File.isLibrarySetAddedSentinel(): Boolean = path.startsWith(LIBRARY_SET_ADDED_SENTINEL_PREFIX)
 
 private fun ByteArray.toHexString(): String =
     joinToString(separator = "") { "%02x".format(it) }
