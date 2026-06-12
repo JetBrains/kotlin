@@ -526,7 +526,5 @@
 gradlew "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 gradlew.bat "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
 
-/gradle.properties "Kotlin Build Infrastructure" sebastian.sellmair@jetbrains.com
-
 /.space/CODEOWNERS "Kotlin Build Infrastructure"
 /.editorconfig "Kotlin Build Infrastructure"

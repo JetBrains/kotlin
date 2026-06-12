@@ -9,6 +9,6 @@ When adding a design document, make sure that references to internal details are
 
 - [Restricted Analysis](restricted-analysis.md)
 
-### Project Structure
+#### Project Structure
 
 - [Architecture of content and resolution scopes](project-structure/content-and-resolution-scope-architecture.md)

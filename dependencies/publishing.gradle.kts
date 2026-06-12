@@ -5,7 +5,7 @@ buildscript {
 }
 
 apply(plugin = "maven-publish")
-
+// Test
 val archives by configurations
 
 configure<PublishingExtension> {

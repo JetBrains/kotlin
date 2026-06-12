@@ -1,4 +1,4 @@
-# Dumb Mode Support (Restricted Analysis)
+## Dumb Mode Support (Restricted Analysis)
 
 **Last update:** February 12, 2025
 

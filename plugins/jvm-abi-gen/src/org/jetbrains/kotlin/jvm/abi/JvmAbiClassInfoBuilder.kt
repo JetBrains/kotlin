@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.jvm.abi
  *
  * Private interface is a special case from the ABI standpoint because it is allowed to expose private interface by inheriting a public
  * class from it, see KT-20088. This code keeps all private interfaces which are implemented (perhaps indirectly) by at least one public
- * (in terms of ABI) class in the module. Also, in case such private interface is nested, all its outer classes should be kept but pruned.
+ * (in terms of ABI) class in the module. Also, in case such a private interface is nested, all its outer classes should be kept but pruned.
  */
 internal class JvmAbiClassInfoBuilder(private val removePrivateClasses: Boolean) {
     private val abiClassInfo = mutableMapOf<String, AbiClassInfo>()
