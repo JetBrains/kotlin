@@ -3,6 +3,7 @@ import gradle.publishGradlePluginsJavadoc
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.jetbrains.dokka.gradle.DokkaExtension
+import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
 import javax.inject.Inject
 
 /*
@@ -23,6 +24,16 @@ abstract class PluginApiReferenceExtension @Inject constructor(
     }
 
     fun additionalDokkaConfiguration(configuration: DokkaExtension.() -> Unit) {
+        project.dokkaExtension?.apply {
+            pluginsConfiguration.named("html", DokkaHtmlPluginParameters::class.java) {
+                val rootDir = project.parent?.projectDir
+                if (rootDir != null) {
+                    templatesDir.set(
+                        rootDir.resolve("build/api-reference/templates")
+                    )
+                }
+            }
+        }
         project.dokkaExtension?.run(configuration)
     }
 
