@@ -76,14 +76,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineMultiFieldValueClasses)) {
-            if (primaryConstructor.valueParameters.isEmpty()) {
-                (primaryConstructor.valueParameterList ?: declaration).let {
-                    trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
-                    return
-                }
-            }
-        } else if (primaryConstructor.valueParameters.size != 1) {
+        if (primaryConstructor.valueParameters.size != 1) {
             (primaryConstructor.valueParameterList ?: declaration).let {
                 trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
                 return
@@ -125,11 +118,6 @@ object ValueClassDeclarationChecker : DeclarationChecker {
                     trace.report(Errors.VALUE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
                     baseParametersOk = false
                     continue
-                }
-
-                if (descriptor.isMultiFieldValueClass() && baseParameter.defaultValue != null) {
-                    // todo fix when inline arguments are supported
-                    trace.report(Errors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER.on(baseParameter.defaultValue!!))
                 }
             }
         }

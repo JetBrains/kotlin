@@ -2,7 +2,6 @@
 // FULL_JDK
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineRunnable(val block: () -> Unit) : Runnable {

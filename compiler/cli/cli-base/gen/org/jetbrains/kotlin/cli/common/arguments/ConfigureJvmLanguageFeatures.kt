@@ -18,8 +18,4 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureJvmLang
     if (arguments.typeEnhancementImprovementsInStrictMode) {
         put(LanguageFeature.TypeEnhancementImprovementsInStrictMode, LanguageFeature.State.ENABLED)
     }
-
-    if (arguments.valueClasses) {
-        put(LanguageFeature.JvmInlineMultiFieldValueClasses, LanguageFeature.State.ENABLED)
-    }
 }

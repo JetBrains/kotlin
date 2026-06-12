@@ -1,4 +1,4 @@
-// LANGUAGE: +MultiPlatformProjects, +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-71656
 // WITH_STDLIB
 

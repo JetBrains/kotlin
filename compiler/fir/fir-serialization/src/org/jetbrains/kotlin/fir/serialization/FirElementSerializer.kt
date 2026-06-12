@@ -295,7 +295,7 @@ class FirElementSerializer private constructor(
                     }
                 }
             }
-            is JvmInlineMultiFieldValueClassRepresentation, is FullValueClassRepresentation, null -> {}
+            is FullValueClassRepresentation, null -> {}
         }
 
         if (klass is FirRegularClass) {

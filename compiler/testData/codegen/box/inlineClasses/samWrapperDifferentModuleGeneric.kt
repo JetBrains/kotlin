@@ -1,7 +1,6 @@
 // See KT-49659
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 // MODULE: lib
 // FILE: lib.kt

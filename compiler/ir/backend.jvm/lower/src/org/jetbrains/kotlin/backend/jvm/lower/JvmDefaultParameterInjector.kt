@@ -42,13 +42,10 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
 
     override fun useConstructorMarker(function: IrFunction): Boolean =
         function is IrConstructor ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
+                function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
 
     override fun isStatic(function: IrFunction): Boolean =
-        function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
-                function.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
-
+        function.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
 
     override fun IrBlockBuilder.argumentsForCall(
         expression: IrFunctionAccessExpression, stubFunction: IrFunction
@@ -61,24 +58,24 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
         val maskValues = IntArray((defaultableParametersSize + 31) / 32)
 
         var defaultableParameterIndex = -1
-        val mainArguments = this@JvmDefaultParameterInjector.context.multiFieldValueClassReplacements
-            .mapFunctionMfvcStructures(this, stubFunction, declaration) { sourceParameter: IrValueParameter, targetParameterType: IrType ->
-                if (sourceParameter.canHaveDefaultValue()) {
-                    ++defaultableParameterIndex
-                }
-                val valueArgument = expression.arguments[sourceParameter.indexInParameters]
-                if (valueArgument == null) {
-                    maskValues[defaultableParameterIndex / 32] =
-                        maskValues[defaultableParameterIndex / 32] or (1 shl (defaultableParameterIndex % 32))
-                }
-                valueArgument ?: IrCompositeImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    targetParameterType,
-                    IrStatementOrigin.DEFAULT_VALUE,
-                    listOf(nullConst(startOffset, endOffset, targetParameterType))
-                )
+        val mainArguments = (stubFunction.parameters zip declaration.parameters).associate { [targetParameter, sourceParameter] ->
+            if (sourceParameter.canHaveDefaultValue()) {
+                ++defaultableParameterIndex
             }
+            val originalArgument = expression.arguments[sourceParameter.indexInParameters]
+            if (originalArgument == null) {
+                maskValues[defaultableParameterIndex / 32] =
+                    maskValues[defaultableParameterIndex / 32] or (1 shl (defaultableParameterIndex % 32))
+            }
+            val argument = originalArgument ?: IrCompositeImpl(
+                expression.startOffset,
+                expression.endOffset,
+                targetParameter.type,
+                IrStatementOrigin.DEFAULT_VALUE,
+                listOf(nullConst(startOffset, endOffset, targetParameter.type))
+            )
+            targetParameter to argument
+        }
 
 
         assert(stubFunction.parameters.size - (mainArguments.size + maskValues.size) in 0..1) {

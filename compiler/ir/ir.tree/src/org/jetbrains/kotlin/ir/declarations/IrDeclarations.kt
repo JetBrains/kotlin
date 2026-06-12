@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
@@ -46,7 +45,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  *
  * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
  *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
+ * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md).
  *
  * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
  *
@@ -62,9 +61,6 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 @ValueClassBackendAgnosticApi
 fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic: Boolean): Boolean =
     valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic) != null
-
-val IrClass.isJvmInlineMultiFieldValueClass: Boolean
-    get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
 
 val IrClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation<*>
@@ -91,10 +87,6 @@ val IrFunction.isStaticMethodOfClass: Boolean
 val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
 
-
-val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>?
-    get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>
-
 /**
  * Retrieves the inline class representation of this class if available.
  *
@@ -103,7 +95,7 @@ val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValu
  *
  * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
  *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
+ * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md).
  *
  * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
  *

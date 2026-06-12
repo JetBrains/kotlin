@@ -918,18 +918,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xvalue-classes"
-        description = "Enable experimental value classes.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.JvmInlineMultiFieldValueClasses))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_8_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xuse-inline-scopes-numbers"
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

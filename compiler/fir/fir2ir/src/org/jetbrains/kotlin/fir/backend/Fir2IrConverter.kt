@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -247,7 +246,6 @@ class Fir2IrConverter(
             declarationStorage.withScope(irConstructor.symbol) {
                 allDeclarations += when (irClass.valueClassRepresentation) {
                     is InlineClassRepresentation -> dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
-                    is JvmInlineMultiFieldValueClassRepresentation -> dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
                     is FullValueClassRepresentation if irClass.modality != Modality.ABSTRACT && irClass.modality != Modality.SEALED ->
                         dataClassMembersGenerator.generateFullValueClassMembers(klass, irClass)
                     else if irClass.isData -> dataClassMembersGenerator.generateDataClassMembers(klass, irClass)

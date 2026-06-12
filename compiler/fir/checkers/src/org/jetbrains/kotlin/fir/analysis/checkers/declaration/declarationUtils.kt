@@ -137,12 +137,6 @@ val FirDeclaration.isLocalDeclaredInBlock: Boolean
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-fun FirTypeRef.needsJvmInlineMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsJvmInlineMultiFieldValueClassFlattening(session)
-
-fun ConeKotlinType.needsJvmInlineMultiFieldValueClassFlattening(session: FirSession): Boolean = with(session.typeContext) {
-    typeConstructor().isJvmInlineMultiFieldValueClass() && !fullyExpandedType().isMarkedNullable
-}
-
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
     get() {
         val returnTypeRef = resolvedReturnTypeRef

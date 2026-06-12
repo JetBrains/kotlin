@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +CustomEqualsInValueClasses, +JvmInlineMultiFieldValueClasses
+// LANGUAGE: +CustomEqualsInValueClasses
 
 <!UNSUPPORTED_FEATURE!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
@@ -16,14 +16,6 @@ class Val {
 }
 
 <!INLINE_CLASS_DEPRECATED!>inline<!> class ReservedMembers(val x: Int) {
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
-    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
-
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
-    override fun hashCode() = 1
-}
-
-<!INLINE_CLASS_DEPRECATED!>inline<!> class ReservedMembersMfvc(val x: Int, val y: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 

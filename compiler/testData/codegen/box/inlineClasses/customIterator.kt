@@ -1,7 +1,6 @@
 // WITH_STDLIB
 // KT-44529
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineDouble3(val values: DoubleArray) {

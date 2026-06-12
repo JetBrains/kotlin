@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @OptIn(ValueClassBackendAgnosticApi::class)
@@ -45,38 +45,14 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
     }
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
     val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
-    fields.singleOrNull()?.let { [name, type] ->
-        if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
-            return InlineClassRepresentation(name, type)
-        }
-    }
+    val [name, type] = fields.singleOrNull() ?: return null
 
-    return createValueClassRepresentation(session.typeContext, fields)
+    return InlineClassRepresentation(name, type)
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
     if (!isInlineOrValue) return null
     return primaryConstructorIfAny(session)?.fir?.valueParameters
-}
-
-private fun isRecursiveSingleFieldValueClass(
-    type: ConeRigidType,
-    session: FirSession,
-    visited: MutableSet<ConeRigidType>
-): Boolean {
-    val nextType = type.basicValueClassRepresentationTypeMarkersList(session)?.singleOrNull()?.second ?: return false
-    return !visited.add(nextType) || isRecursiveSingleFieldValueClass(nextType, session, visited)
-}
-
-private fun ConeRigidType.basicValueClassRepresentationTypeMarkersList(session: FirSession): List<Pair<Name, ConeRigidType>>? {
-    val symbol = this.toRegularClassSymbol(session) ?: return null
-    if (!symbol.fir.isInlineOrValue) return null
-    val valueClassRepresentation = symbol.fir.valueClassRepresentation
-    if (valueClassRepresentation is FullValueClassRepresentation) return null
-    valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
-
-    val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
-    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeRigidType }
 }
 
 fun FirNamedFunctionSymbol.isTypedEqualsInValueClass(session: FirSession): Boolean =

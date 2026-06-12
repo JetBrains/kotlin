@@ -6,51 +6,154 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
 var IrFunction.originalFunctionOfStaticInlineClassReplacement: IrFunction? by irAttribute(copyByDefault = false)
+
+private var IrProperty.replacementForValueClasses: IrProperty? by irAttribute(copyByDefault = false)
 
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
 class MemoizedInlineClassReplacements(
     private val mangleReturnTypes: Boolean,
-    irFactory: IrFactory,
-    context: JvmBackendContext
-) : MemoizedValueClassAbstractReplacements(irFactory, context, LockBasedStorageManager("inline-class-replacements")) {
+    private val irFactory: IrFactory,
+    private val context: JvmBackendContext,
+) {
+    private val storageManager: LockBasedStorageManager = LockBasedStorageManager("inline-class-replacements")
+
+    private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
+        origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
+                name.asString() == "remove" &&
+                hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.intType))
+
+    private fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean =
+        this is IrSimpleFunction && isFakeOverride && modality != Modality.ABSTRACT &&
+                context.cachedDeclarations.getClassFakeOverrideReplacement(this) == ClassFakeOverrideReplacement.None
+
+    private fun commonBuildReplacementInner(
+        function: IrFunction,
+        noFakeOverride: Boolean,
+        body: IrFunction.() -> Unit,
+        builderBody: IrFunctionBuilder.() -> Unit,
+    ): IrSimpleFunction = irFactory.buildFun {
+        updateFrom(function)
+        builderBody()
+        if (noFakeOverride) {
+            isFakeOverride = false
+        }
+        returnType = function.returnType
+    }.apply {
+        parent = function.parent
+        // Non-exposed methods and functions should not have @JvmExposeBoxed annotation, since we expect users to be able to
+        // distinguish exposed functions via reflection.
+        annotations = function.annotations.withoutJvmExposeBoxedAnnotation()
+        copyTypeParameters(function.allTypeParameters)
+        if (function.metadata != null) {
+            metadata = function.metadata
+            function.metadata = null
+        }
+
+        if (function is IrSimpleFunction) {
+            copyAttributes(function)
+            val propertySymbol = function.correspondingPropertySymbol
+            if (propertySymbol != null) {
+                val oldProperty = propertySymbol.owner
+                val property = oldProperty::replacementForValueClasses.getOrSetIfNull {
+                    irFactory.buildProperty {
+                        name = oldProperty.name
+                        updateFrom(oldProperty)
+                    }.apply {
+                        parent = oldProperty.parent
+                        copyAttributes(oldProperty)
+                        annotations = oldProperty.annotations
+                        // In case this property is declared in an object in another file which is not yet lowered, its backing field will
+                        // be made static later. We have to handle it here though, because this new property will be saved to the cache
+                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was not lowered.
+                        val newBackingField = context.cachedDeclarations.getStaticBackingField(oldProperty) ?: oldProperty.backingField
+                        if (newBackingField != null) {
+                            backingField = newBackingField
+                        }
+                    }
+                }
+                correspondingPropertySymbol = property.symbol
+                when (function) {
+                    oldProperty.getter -> property.getter = this
+                    oldProperty.setter -> property.setter = this
+                    else -> error("Orphaned property getter/setter: ${function.render()}")
+                }
+            }
+
+            overriddenSymbols = replaceOverriddenSymbols(function)
+        }
+
+        body()
+    }
+
+    private val replaceOverriddenSymbolsImpl: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
+        storageManager.createMemoizedFunction { irSimpleFunction ->
+            irSimpleFunction.overriddenSymbols.map {
+                val replacement = computeOverrideReplacement(it.owner)
+                replacement.symbol as? IrSimpleFunctionSymbol
+                    ?: error("Expected ${irSimpleFunction.render()} to be replaced by simple function, but got ${replacement.render()}")
+            }
+        }
+
+    fun replaceOverriddenSymbols(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
+        if (function.overriddenSymbols.isEmpty()) listOf()
+        else replaceOverriddenSymbolsImpl(function)
+
+    private fun computeOverrideReplacement(function: IrSimpleFunction): IrFunction =
+        getReplacementFunction(function) ?: function.also {
+            function.overriddenSymbols = replaceOverriddenSymbols(function)
+        }
+
+    private fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
+
     private val mangleCallsToJavaMethodsWithValueClasses =
         context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
 
     /**
      * Get a replacement for a function or a constructor.
      */
-    override val getReplacementFunctionImpl: (IrFunction) -> IrFunction? =
+    val getReplacementFunction: (IrFunction) -> IrFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
-                        it.isStaticValueClassReplacement ||
-                        it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        it.isStaticInlineClassReplacement ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
 
@@ -94,13 +197,10 @@ class MemoizedInlineClassReplacements(
         }
 
     private val IrSimpleFunction.needsReplacement: Boolean
-        get() {
-            if (!(shouldBeExposedByAnnotationOrFlag(context) ||
-                        hasMangledParameters(includeMFVC = false) ||
-                        mangleReturnTypes && hasMangledReturnType)
-            ) return false
-            if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
-            return true
+        get() = when {
+            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || mangleReturnTypes && hasMangledReturnType) -> false
+            isFromJava() -> mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
+            else -> true
         }
 
     /**
@@ -148,7 +248,7 @@ class MemoizedInlineClassReplacements(
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-                // TODO: Revisit this once we allow user defined equals methods in inline/multi-field value classes.
+                // TODO: Revisit this once we allow user defined equals methods in inline classes.
                 origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
                 returnType = irBuiltIns.booleanType
             }.apply {
@@ -168,7 +268,7 @@ class MemoizedInlineClassReplacements(
         }
     }
 
-    override fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
+    private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             parameters += function.parameters.map { parameter ->
                 parameter.copyTo(
@@ -184,10 +284,9 @@ class MemoizedInlineClassReplacements(
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
-            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
-    override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
+    private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
             this.originalFunctionOfStaticInlineClassReplacement = function
 
@@ -226,8 +325,6 @@ class MemoizedInlineClassReplacements(
                     }
                 }
             }
-
-            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
     private fun buildReplacement(
@@ -270,12 +367,12 @@ class MemoizedInlineClassReplacements(
             else ->
                 replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(context, function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
     }
 
     // When we expose regular class constructors, we add another constructor with BoxingMarker parameter
     // to be called from Kotlin, while original constructor is to be called from Java.
-    override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? {
+    fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? {
         if (constructor.isFromJava()) return null
         if (constructor.constructedClass.isSingleFieldValueClass) return null
         if (constructor.parameters.none { it.type.isInlineClassType() }) return null
@@ -313,5 +410,38 @@ private fun IrFunction.fromStdlib(): Boolean {
     while (true) {
         if (cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
         cursor = cursor.parentClassOrNull ?: return false
+    }
+}
+
+fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
+    this.toMutableList().apply {
+        removeAll {
+            it.isAnnotationWithEqualFqName(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        }
+    }
+
+fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, context: JvmBackendContext): List<IrAnnotation> {
+    if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+        val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        // If name is not provided, copy the name from @JvmName annotation, if the latter is present
+        if (jvmExposeBoxedAnnotation?.arguments[0] == null) {
+            val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+            if (jvmName != null) {
+                jvmExposeBoxedAnnotation?.arguments[0] = jvmName.deepCopyWithSymbols()
+            }
+        }
+        return this
+    }
+    // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
+    // or -Xjvm-expose-boxed is specified. Add the annotation.
+    val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
+    return this + IrAnnotationImpl.fromSymbolOwner(
+        constructor.owner.returnType,
+        constructor
+    ).apply {
+        // Copy the name from @JvmName if it is present
+        val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+        arguments[0] = jvmName?.deepCopyWithSymbols()
+            ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }
 }

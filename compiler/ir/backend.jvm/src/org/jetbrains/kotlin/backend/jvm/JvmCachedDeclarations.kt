@@ -221,7 +221,6 @@ class JvmCachedDeclarations(
                 visibility = defaultImplsVisibility,
                 isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters,
-                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
@@ -263,7 +262,6 @@ class JvmCachedDeclarations(
     private fun computeClassFakeOverrideReplacement(fakeOverride: IrSimpleFunction): ClassFakeOverrideReplacement? {
         val implementation = fakeOverride.findInterfaceImplementation(context.config.jvmDefaultMode, allowJvmDefault = true) ?: return null
         val newFunction = context.irFactory.createDefaultImplsRedirection(fakeOverride)
-        context.remapMultiFieldValueClassStructure(fakeOverride, newFunction, parametersMappingOrNull = null)
         val superFunction = firstSuperMethodFromKotlin(newFunction, implementation).owner
 
         findDefaultImplsRedirection(implementation, newFunction, superFunction)?.let { return it }

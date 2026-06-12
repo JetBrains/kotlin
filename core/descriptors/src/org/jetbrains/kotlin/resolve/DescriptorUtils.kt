@@ -460,6 +460,3 @@ fun <D : CallableDescriptor> D.shouldBeSubstituteWithStubTypes() =
 
 val ClassDescriptor?.inlineClassRepresentation: InlineClassRepresentation<SimpleType>?
     get() = this?.valueClassRepresentation as? InlineClassRepresentation<SimpleType>
-
-val ClassDescriptor?.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<SimpleType>?
-    get() = this?.valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<SimpleType>

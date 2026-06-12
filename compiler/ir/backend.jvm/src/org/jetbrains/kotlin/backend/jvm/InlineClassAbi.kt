@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
 import org.jetbrains.kotlin.backend.jvm.ir.isBasicValueClassType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
@@ -53,16 +52,13 @@ object InlineClassAbi {
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
      */
-    fun mangledNameFor(context: JvmBackendContext, irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
+    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
             assert(irFunction.constructedClass.isBasicValueClass) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
-        }
-        if (irFunction.isAlreadyMangledMfvcFunction(context)) {
-            return irFunction.name
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
@@ -83,9 +79,6 @@ object InlineClassAbi {
 
         return Name.identifier("$base-${suffix ?: "impl"}")
     }
-
-    private fun IrFunction.isAlreadyMangledMfvcFunction(context: JvmBackendContext) =
-        this.parameterTemplateStructureOfThisNewMfvcBidingFunction?.any { it is MultiFieldValueClassMapping } == true
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
         hashSuffix(
@@ -126,26 +119,15 @@ object InlineClassAbi {
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 }
 
-fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
+fun IrType.getRequiresMangling(): Boolean {
     val irClass = erasedUpperBound
-    return !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME) && when {
-        irClass.isSingleFieldValueClass -> includeInline
-        irClass.isJvmInlineMultiFieldValueClass -> includeMFVC
-        else -> false
-    }
+    return irClass.isSingleFieldValueClass && !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME)
 }
 
-fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
-    (dispatchReceiverParameter != null && when {
-        parentAsClass.isSingleFieldValueClass -> includeInline
-        parentAsClass.isJvmInlineMultiFieldValueClass -> includeMFVC
-        else -> false
-    }) || nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) }
-            || (this is IrConstructor && when {
-        constructedClass.isSingleFieldValueClass -> includeInline
-        constructedClass.isJvmInlineMultiFieldValueClass -> includeMFVC
-        else -> false
-    })
+fun IrFunction.hasMangledParameters(): Boolean =
+    (dispatchReceiverParameter != null && parentAsClass.isSingleFieldValueClass) ||
+            nonDispatchParameters.any { it.type.getRequiresMangling() } ||
+            (this is IrConstructor && constructedClass.isSingleFieldValueClass)
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
@@ -157,12 +139,3 @@ val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
-
-val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isJvmInlineMultiFieldValueClass == true && this is IrSimpleFunction &&
-            hasShape(dispatchReceiver = true) &&
-            correspondingPropertySymbol?.let {
-                val multiFieldValueClassRepresentation = parentAsClass.jvmInlineMultiFieldValueClassRepresentation
-                    ?: error("@JvmInline Multi-field value class must have jvmInlineMultiFieldValueClassRepresentation: ${parentAsClass.render()}")
-                it.owner.getter == this && multiFieldValueClassRepresentation.containsPropertyWithName(it.owner.name)
-            } == true
