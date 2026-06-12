@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+
 plugins {
     kotlin("jvm")
     `jvm-test-suite`
@@ -6,8 +8,6 @@ plugins {
     id("test-inputs-check")
 }
 
-val btaApiVersion = "2.3.20"
-
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
 val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplResolvable") {
     extendsFrom(buildToolsApiImpl.get())
@@ -15,8 +15,8 @@ val buildToolsApiImplResolvable = configurations.resolvable("buildToolsApiImplRe
 
 dependencies {
     api(kotlinStdlib())
+    api(project(":compiler:build-tools:kotlin-build-tools-api-forward-compatibility-tests:shared"))
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
-    compileOnly("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
     api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)
@@ -35,6 +35,11 @@ kotlin {
     }
 }
 
+val compatibilityTestsVersions = listOf(
+    KotlinToolingVersion(2, 3, 0, null),
+    KotlinToolingVersion(2, 3, 20, null),
+    KotlinToolingVersion(2, 4, 0, null),
+)
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
 
@@ -46,50 +51,57 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
     }
 }
 
+fun JvmTestSuite.addSpecificBuildToolsApi(version: String) {
+    dependencies {
+        implementation("org.jetbrains.kotlin:kotlin-build-tools-api:${version}")
+    }
+}
+
 testing {
     suites {
-        register<JvmTestSuite>("testCompatibility") {
-            addSnapshotBuildToolsImpl()
-            targets.all {
-                projectTests {
-                    testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-                        systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
-                        systemProperty(
-                            "kotlin.daemon.custom.run.files.path.for.tests",
-                            "build/daemon"
-                        )
-                        testInputsCheck {
-                            extraPermissions.set(
-                                listOfNotNull(
-                                    "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
-                                    "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";",
-
-                                    // paths below are not expected to exist,
-                                    // these are here to pass implicit `exists()` checks in the Kotlin compiler
-                                    "permission java.io.FilePermission \"<no_path>/lib\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";",
-                                    "permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";"
-                                )
+        for (apiVersion in compatibilityTestsVersions) {
+            register<JvmTestSuite>("testCompatibility${apiVersion}") {
+                addSnapshotBuildToolsImpl()
+                addSpecificBuildToolsApi(apiVersion.toString())
+                targets.all {
+                    projectTests {
+                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                            systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+                            systemProperty(
+                                "kotlin.daemon.custom.run.files.path.for.tests",
+                                "build/daemon"
                             )
+                            testInputsCheck {
+                                extraPermissions.set(
+                                    listOfNotNull(
+                                        "permission java.net.SocketPermission \"localhost\", \"connect,resolve,accept\";",
+                                        "permission java.util.PropertyPermission \"java.rmi.server.hostname\", \"write\";",
+
+                                        // paths below are not expected to exist,
+                                        // these are here to pass implicit `exists()` checks in the Kotlin compiler
+                                        "permission java.io.FilePermission \"<no_path>/lib\", \"read\";",
+                                        "permission java.io.FilePermission \"./kotlin-scripting-compiler.jar\", \"read\";",
+                                        "permission java.io.FilePermission \"./kotlin-scripting-compiler-impl.jar\", \"read\";",
+                                        "permission java.io.FilePermission \"./kotlin-scripting-common.jar\", \"read\";",
+                                        "permission java.io.FilePermission \"./kotlin-scripting-jvm.jar\", \"read\";"
+                                    )
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
 
+            withType<JvmTestSuite>().configureEach configureSuit@{
+                dependencies {
+                    useJUnitJupiter(libs.versions.junit5.get())
+                    runtimeOnly(libs.junit.platform.launcher)
 
-        withType<JvmTestSuite>().configureEach configureSuit@{
-            dependencies {
-                useJUnitJupiter(libs.versions.junit5.get())
-                runtimeOnly(libs.junit.platform.launcher)
-
-                implementation(project())
-                implementation(project(":kotlin-tooling-core"))
-                implementation(project(":compiler:test-security-manager"))
-                implementation("org.jetbrains.kotlin:kotlin-build-tools-api:$btaApiVersion")
-                implementation(project(":compiler:arguments"))
+                    implementation(project())
+                    implementation(project(":kotlin-tooling-core"))
+                    implementation(project(":compiler:test-security-manager"))
+                    implementation(project(":compiler:arguments"))
+                }
             }
         }
     }
