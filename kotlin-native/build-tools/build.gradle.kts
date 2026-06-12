@@ -42,6 +42,10 @@ dependencies {
     implementation(libs.gson)
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(kotlin("test"))
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -68,6 +72,10 @@ kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
     compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
     jvmToolchain(17)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 gradlePlugin {
