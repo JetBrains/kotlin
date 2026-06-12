@@ -96,6 +96,7 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
     fun claimOrJoinXcodeDump(
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
+        localPackageSourcesFingerprint: String
     ): CoordinationClaim<XcodeDumpBucket> {
         synchronized(stateLock) {
             val executionKey = XcodeDumpBucketMapKey(xcodebuildExecutionHash, xcodebuildSdk)
@@ -106,6 +107,7 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
                 xcodebuildExecutionHash = xcodebuildExecutionHash,
                 xcodebuildSdk = xcodebuildSdk,
                 sdkDerivedDataDirName = "dd_$xcodebuildSdk",
+                localPackagesFingerprint = localPackageSourcesFingerprint
             )
             if (reusableBucket != null) {
                 dumpBucketsByXcodebuildFingerprint[executionKey] = reusableBucket
@@ -120,7 +122,8 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
             val newBucket = XcodeDumpBucket(
                 ownerDumpDir = sharedDumpDir(bucketRoot, xcodebuildSdk),
                 ownerDerivedDataDir = sharedDerivedDataDir(bucketRoot),
-                ownerMarkerFile = sharedDumpBucketMarker(bucketRoot, xcodebuildSdk)
+                ownerMarkerFile = sharedDumpBucketMarker(bucketRoot, xcodebuildSdk),
+                localPackagesFingerprint = localPackageSourcesFingerprint
             )
             dumpBucketsByXcodebuildFingerprint[executionKey] = newBucket
             return CoordinationClaim.Owner(newBucket)
@@ -341,6 +344,7 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         xcodebuildExecutionHash: String,
         xcodebuildSdk: String,
         sdkDerivedDataDirName: String,
+        localPackagesFingerprint: String
     ): XcodeDumpBucket? {
         val bucketRoot = sharedDumpBucketRoot(xcodebuildExecutionHash)
         val ownerDumpDir = sharedDumpDir(bucketRoot, xcodebuildSdk)
@@ -353,13 +357,15 @@ internal abstract class SwiftImportFingerprintedCoordinationService : BuildServi
         if (!ownerDumpDir.resolve("ld_args_dump").isDirectory) return null
         if (!ownerDerivedDataDir.resolve(sdkDerivedDataDirName).exists()) return null
         if (!ownerMarkerFile.exists()) return null
+        if(ownerMarkerFile.readText().trim() != localPackagesFingerprint) return null
 
         return completedBucket { completion ->
             XcodeDumpBucket(
                 ownerDumpDir = ownerDumpDir,
                 ownerDerivedDataDir = ownerDerivedDataDir,
                 completion = completion,
-                ownerMarkerFile = ownerMarkerFile
+                ownerMarkerFile = ownerMarkerFile,
+                localPackagesFingerprint = localPackagesFingerprint
             )
         }
     }
@@ -411,6 +417,7 @@ internal class XcodeDumpBucket(
     val ownerDumpDir: File,
     val ownerDerivedDataDir: File,
     val ownerMarkerFile: File,
+    val localPackagesFingerprint: String,
     completion: CountDownLatch = CountDownLatch(1),
 ) : CoordinationBucket(completion)
 

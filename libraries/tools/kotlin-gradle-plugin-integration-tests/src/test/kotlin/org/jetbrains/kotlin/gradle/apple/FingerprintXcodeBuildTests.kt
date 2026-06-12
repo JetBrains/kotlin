@@ -62,13 +62,13 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             packageDependency.writePackageDependencySource("2")
 
             build(fingerprintXcodebuildIphoneSimulatorTask) {
-                assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
+                assertTasksUpToDate(fingerprintXcodebuildIphoneSimulatorTask)
             }
 
-            assertNotEquals(
+            assertEquals(
                 originalFingerprint,
                 readIphonesimulatorFingerprint(),
-                "Changing local Swift package source content should invalidate the prepare fingerprint task"
+                "Changing local Swift package source content should not invalidate the prepare fingerprint task"
             )
         }
     }

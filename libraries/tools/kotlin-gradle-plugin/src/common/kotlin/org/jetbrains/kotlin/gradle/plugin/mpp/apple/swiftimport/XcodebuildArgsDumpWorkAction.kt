@@ -42,6 +42,7 @@ internal interface XcodebuildArgsDumpWorkParameters : WorkParameters {
     val additionalXcodeArgs: ListProperty<String>
     val fingerprintCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
     val xcodebuildExecutionFingerprint: Property<String>
+    val localPackageSourcesFingerprint: Property<String>
     val markCompletion: Property<Boolean>
     val localDumpMarker: RegularFileProperty
     val sharedDumpMarker: RegularFileProperty
@@ -65,8 +66,8 @@ internal abstract class XcodebuildArgsDumpWorkAction @Inject constructor(
                     xcodebuildExecutionHash = parameters.xcodebuildExecutionFingerprint.get(),
                     xcodebuildSdk = parameters.xcodebuildSdk.get(),
                 )
-                markDumpFile(markerPath, parameters.xcodebuildExecutionFingerprint.get())
-                markDumpFile(parameters.sharedDumpMarker.get().asFile.toPath(), parameters.xcodebuildExecutionFingerprint.get())
+                markDumpFile(markerPath, parameters.localPackageSourcesFingerprint.get())
+                markDumpFile(parameters.sharedDumpMarker.get().asFile.toPath(), parameters.localPackageSourcesFingerprint.get())
             }
         } catch (failure: Throwable) {
             if (parameters.markCompletion.get()) {

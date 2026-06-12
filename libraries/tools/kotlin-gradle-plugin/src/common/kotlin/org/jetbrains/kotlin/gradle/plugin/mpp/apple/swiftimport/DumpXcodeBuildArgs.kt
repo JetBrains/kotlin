@@ -19,13 +19,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import java.io.File
-import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
-import kotlin.io.path.deleteExisting
-import kotlin.io.path.exists
-import kotlin.io.path.writeText
 
 /**
  * Dumps the clang and linker invocations that Xcode would use for the synthetic SwiftPM import project.
@@ -94,6 +88,13 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val filesToTrackFromLocalPackages: RegularFileProperty
 
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    protected val localPackageSources: Provider<List<File>>
+        get() = filesToTrackFromLocalPackages.map {
+            it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
+        }
+
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -124,6 +125,17 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
     fun dumpXcodeBuildArgs() {
         if (!hasSwiftPMDependencies.get()) return
 
+        val xcodebuildFingerprintFile = xcodebuildFingerprint.orNull?.asFile
+        if (xcodebuildFingerprintFile == null) {
+            submitXcodebuildArgsDumpWorkAction(
+                dumpDir = syntheticDumpDir.get().asFile,
+                derivedDataDir = syntheticImportDd.get().asFile,
+                syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
+                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
+            )
+            return
+        }
+
         val coordinationService = fingerprintCoordinationService.get()
 
         val fetchBucket = syntheticPackageFingerprint.orNull?.asFile
@@ -138,22 +150,14 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             coordinationService.awaitSwiftResolved(fetchBucket)
         }
 
-        val xcodebuildFingerprintFile = xcodebuildFingerprint.orNull?.asFile
-        if (xcodebuildFingerprintFile == null) {
-            submitXcodebuildArgsDumpWorkAction(
-                dumpDir = syntheticDumpDir.get().asFile,
-                derivedDataDir = syntheticImportDd.get().asFile,
-                syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
-                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
-            )
-            return
-        }
 
         val xcodebuildExecutionFingerprint = xcodebuildFingerprintFile.readText().trim()
+        val localPackageSourcesFingerprint = fingerprintLocalPackageSources(localPackageSources.get())
 
         val claim = coordinationService.claimOrJoinXcodeDump(
             xcodebuildExecutionHash = xcodebuildExecutionFingerprint,
             xcodebuildSdk = xcodebuildSdk.get(),
+            localPackageSourcesFingerprint = localPackageSourcesFingerprint
         )
 
         when (claim) {
@@ -168,13 +172,14 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                     syntheticImportProjectRoot = fetchBucket.ownerSyntheticImportProjectRoot,
                     swiftPMDependenciesCheckout = fetchBucket.ownerSwiftPMDependenciesCheckout,
                     xcodebuildExecutionHash = xcodebuildExecutionFingerprint,
-                    sharedDumpMarkerFile = claim.bucket.ownerMarkerFile
+                    sharedDumpMarkerFile = claim.bucket.ownerMarkerFile,
+                    localPackageSourcesFingerprint = claim.bucket.localPackagesFingerprint
                 )
             }
 
             is CoordinationClaim.Existing -> {
                 coordinationService.awaitXcodeDump(claim.bucket)
-                markDumpFile(localDumpMarker.get().asFile.toPath(), xcodebuildExecutionFingerprint)
+                markDumpFile(localDumpMarker.get().asFile.toPath(), localPackageSourcesFingerprint)
             }
         }
     }
@@ -185,7 +190,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         syntheticImportProjectRoot: File,
         swiftPMDependenciesCheckout: File,
         xcodebuildExecutionHash: String,
-        sharedDumpMarkerFile: File? = null
+        sharedDumpMarkerFile: File? = null,
+        localPackageSourcesFingerprint: String? = null,
     ) {
         submitXcodebuildArgsDumpWorkAction(
             dumpDir = dumpDir,
@@ -194,7 +200,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
             swiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
             xcodebuildExecutionHash = xcodebuildExecutionHash,
             markCompletion = true,
-            sharedDumpMarkerFile = sharedDumpMarkerFile
+            sharedDumpMarkerFile = sharedDumpMarkerFile,
+            localPackageSourcesFingerprint = localPackageSourcesFingerprint
         )
     }
 
@@ -205,7 +212,8 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         swiftPMDependenciesCheckout: File,
         xcodebuildExecutionHash: String? = null,
         markCompletion: Boolean = false,
-        sharedDumpMarkerFile: File? = null
+        sharedDumpMarkerFile: File? = null,
+        localPackageSourcesFingerprint: String? = null,
     ) {
         workerExecutor.noIsolation().submit(XcodebuildArgsDumpWorkAction::class.java) { params ->
             params.xcodebuildPlatform.set(xcodebuildPlatform)
@@ -223,6 +231,7 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
                 params.fingerprintCoordinationService.set(fingerprintCoordinationService)
                 params.xcodebuildExecutionFingerprint.set(xcodebuildExecutionHash!!)
                 params.sharedDumpMarker.set(sharedDumpMarkerFile!!)
+                params.localPackageSourcesFingerprint.set(localPackageSourcesFingerprint!!)
             }
         }
     }

@@ -12,7 +12,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
@@ -259,6 +258,35 @@ private fun ByteArray.toHexString(): String =
 private val dumpTaskFingerprintJson = Json {
     encodeDefaults = true
     ignoreUnknownKeys = true
+}
+
+
+internal fun fingerprintLocalPackageSources(
+    files: List<File>,
+): String {
+    val digest = MessageDigest.getInstance(SWIFT_IMPORT_HASH_ALGORITHM)
+    files
+        // The tracking file can contain both individual files and source directories. Directories are expanded here so
+        // source edits, additions, and removals change the dump sharing key.
+        .flatMap { trackedFile ->
+            when {
+                trackedFile.isFile -> listOf(trackedFile to trackedFile.name)
+                trackedFile.isDirectory -> trackedFile.walkTopDown().filter { it.isFile }
+                    .map { file -> file to file.relativeTo(trackedFile).invariantSeparatorsPath }.toList()
+                else -> emptyList()
+            }
+        }
+        // Stable ordering keeps the hash independent of filesystem traversal order.
+        .sortedBy { (_, relativePath) -> relativePath }.forEach { (file, relativePath) ->
+            // Include both relative path and content. The zero byte separators avoid accidental concatenation
+            // collisions between neighboring entries.
+            digest.update(relativePath.toByteArray())
+            digest.update(0.toByte())
+            digest.update(file.readBytes())
+            digest.update(0.toByte())
+        }
+
+    return digest.digest().toHexString()
 }
 
 @Serializable
