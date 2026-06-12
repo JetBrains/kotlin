@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.CO
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.COMPILER_MESSAGE_RENDERER
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
-import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
-import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation
-import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
@@ -31,17 +28,19 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
-import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
-import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.jar.JarFile
 import kotlin.io.path.Path
 
 class AvailableSinceTest : BaseCompilationTest() {
@@ -342,70 +341,80 @@ class AvailableSinceTest : BaseCompilationTest() {
         val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
         assumeTrue(toolchains.hasOptionVersionChecking())
 
-        val unversionedOptions = mutableListOf<String>()
-        for (holder in versionedOptionHolders) {
-            val options = holder.declaredOptions()
-            assertTrue(options.isNotEmpty()) { "Expected ${holder.simpleName} to declare at least one option" }
-            for (option in options) {
-                if (!option.hasAvailableSinceVersion()) {
-                    unversionedOptions += "${holder.simpleName}.${option.id}"
-                }
-            }
-        }
-        assertTrue(unversionedOptions.isEmpty()) {
-            "The following options belong to holders that participate in option version checking but do not declare an " +
-                    "`availableSinceVersion`. Declare it and add a corresponding `trySet(...)` line in the relevant test above:\n" +
-                    unversionedOptions.joinToString("\n")
+        val holders = discoverOptionHolders()
+        assertTrue(holders.isNotEmpty()) {
+            "Expected to discover at least one option holder in the `org.jetbrains.kotlin.buildtools.api` package"
         }
 
-        // ABI and WASM option holders do not yet adopt `availableSinceVersion`. The assertion below is intentionally inverted:
-        // it currently passes because their options are unversioned, and it will start to fail
-        // once a ticket is completed and the holder adopts `availableSinceVersion`. That failure is the signal to move
-        // the holder into `versionedOptionHolders` above and add the corresponding `trySet(...)` coverage for its options.
-        for (holder in intentionallyUnversionedOptionHolders) {
+        val problems = holders.mapNotNull { holder ->
             val options = holder.declaredOptions()
-            assertTrue(options.isNotEmpty()) { "Expected ${holder.simpleName} to declare at least one option" }
-            for (option in options) {
-                assertFalse(option.hasAvailableSinceVersion()) {
-                    "${holder.simpleName}.${option.id} now declares an `availableSinceVersion`. The corresponding ticket is done: " +
-                            "move ${holder.simpleName} from `intentionallyUnversionedOptionHolders` to `versionedOptionHolders` " +
-                            "and add `trySet(...)` coverage for its options."
+            val unversionedOptions = options.filterNot { it.hasAvailableSinceVersion() }
+            when {
+                unversionedOptions.isEmpty() -> if (holder.name in knownUnversionedOptionHolders) {
+                    "${holder.name} is versioned now: remove it from `knownUnversionedOptionHolders` " +
+                            "and add `trySet(...)` coverage for its options in a dedicated test above"
+                } else null
+                unversionedOptions.size < options.size -> {
+                    "${holder.name} is only partially versioned, options without an `availableSinceVersion`: ${unversionedOptions.map { it.id }}. " +
+                            "Declare it for all options and add `trySet(...)` coverage in a dedicated test above"
                 }
+                holder.name !in knownUnversionedOptionHolders -> {
+                    "${holder.name} declares options without an `availableSinceVersion`: ${unversionedOptions.map { it.id }}. " +
+                            "Declare it and add `trySet(...)` coverage in a dedicated test above"
+                }
+                else -> null
             }
+        }
+
+        assertTrue(problems.isEmpty()) {
+            "The Build Tools API option version checking is inconsistent:\n" + problems.joinToString("\n")
         }
     }
 
-    private val versionedOptionHolders: List<Class<*>> = listOf(
-        BaseCompilationOperation::class.java,
-        JvmCompilationOperation::class.java,
-        BuildOperation::class.java,
-        BaseIncrementalCompilationConfiguration::class.java,
-        JvmSnapshotBasedIncrementalCompilationConfiguration::class.java,
-        JvmClasspathSnapshottingOperation::class.java,
-        DiscoverScriptExtensionsOperation::class.java,
-        JsKlibCompilationOperation::class.java,
-        JsHistoryBasedIncrementalCompilationConfiguration::class.java,
-        ExecutionPolicy.WithDaemon::class.java,
+    private fun discoverOptionHolders(): List<Class<*>> {
+        val apiLoader = BaseOption::class.java.classLoader
+        val location = Paths.get(BaseOption::class.java.protectionDomain.codeSource.location.toURI())
+        val classFilePaths = if (Files.isDirectory(location)) {
+            location.toFile().walkTopDown().map { location.relativize(it.toPath()).joinToString("/") }.toList()
+        } else {
+            JarFile(location.toFile()).use { jar -> jar.entries().asSequence().map { it.name }.toList() }
+        }
+        // Derived from a real class in the target package instead of a hardcoded path, so a typo or
+        // a future package rename cannot silently make discovery return nothing
+        val packagePrefix = BuildOperation::class.java.name.substringBeforeLast('.').replace('.', '/') + "/"
+        return classFilePaths
+            .filter { it.startsWith(packagePrefix) && it.endsWith(".class") }
+            .mapNotNull { runCatching { apiLoader.loadClass(it.removeSuffix(".class").replace('/', '.')) }.getOrNull() }
+            .filter { it.declaredOptionFields().isNotEmpty() }
+    }
+
+    /**
+     * Option holders that intentionally do not adopt `availableSinceVersion`: either the
+     * adoption is postponed (tracked by a ticket), or the holder is deprecated to error for removal. Once a holder adopts
+     * `availableSinceVersion`, [testAllVersionedOptionsHaveAvailableSinceVersion] asks to remove it from this set.
+     */
+    private val knownUnversionedOptionHolders: Set<String> = setOf(
+        // deprecated with `DeprecationLevel.ERROR`, awaiting removal
+        "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions",
+        // `availableSinceVersion` adoption is postponed
+        "org.jetbrains.kotlin.buildtools.api.abi.AbiFilters",
+        "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation",
+        "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation",
+        "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
     )
 
-    private val intentionallyUnversionedOptionHolders: List<Class<*>> = listOf(
-        AbiFilters::class.java,
-        DumpJvmAbiToStringOperation::class.java,
-        DumpKlibAbiToStringOperation::class.java,
-        WasmKlibCompilationOperation::class.java,
-        WasmHistoryBasedIncrementalCompilationConfiguration::class.java,
-    )
+    private fun Class<*>.declaredOptionFields(): List<Field> =
+        declaredFields.filter { Modifier.isStatic(it.modifiers) && BaseOption::class.java.isAssignableFrom(it.type) }
 
     private fun Class<*>.declaredOptions(): List<BaseOption<*>> =
-        declaredFields
-            .filter { BaseOption::class.java.isAssignableFrom(it.type) }
-            .map { field ->
-                field.isAccessible = true
-                field.get(null) as BaseOption<*>
-            }
+        declaredOptionFields().map { field ->
+            field.isAccessible = true
+            field.get(null) as BaseOption<*>
+        }
 
     private fun BaseOption<*>.hasAvailableSinceVersion(): Boolean =
-        this::class.java.methods.any { it.name == "getAvailableSinceVersion" }
+        this::class.java.methods.find { it.name == "getAvailableSinceVersion" }?.invoke(this) != null
 
     private fun KotlinToolchains.hasOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
