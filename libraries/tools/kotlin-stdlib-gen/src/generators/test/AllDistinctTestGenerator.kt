@@ -188,7 +188,7 @@ object AllDistinctTestGenerator {
 
     @Test
     fun allDistinctDifferentNaNBits$typeName() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse($ctor($nanVal, $negNaN).allDistinct())
             assertFalse($ctor($nanVal, $negNaN, $mantissaNaN).allDistinct())
@@ -200,7 +200,7 @@ object AllDistinctTestGenerator {
 
     @Test
     fun allDistinctByDifferentNaNBits$typeName() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse($ctor($nanVal, $negNaN).allDistinctBy { it })
             assertFalse($ctor($nanVal, $negNaN, $mantissaNaN).allDistinctBy { it })

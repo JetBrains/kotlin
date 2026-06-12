@@ -70,7 +70,7 @@ class AllDistinctDoubleArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsDouble() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinct())
             assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinct())
@@ -82,7 +82,7 @@ class AllDistinctDoubleArrayTest {
 
     @Test
     fun allDistinctByDifferentNaNBitsDouble() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allDistinctBy { it })
             assertFalse(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allDistinctBy { it })
