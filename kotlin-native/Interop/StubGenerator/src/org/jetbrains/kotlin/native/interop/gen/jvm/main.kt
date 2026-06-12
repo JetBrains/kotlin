@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.KlibLoaderResult
+import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
-import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
-import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.native.interop.gen.*
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import org.jetbrains.kotlin.util.toCInteropKlibMetadataVersion
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import java.io.File
 import java.nio.file.*
 import java.util.*
@@ -307,10 +310,8 @@ private fun processCLib(
     val outKtPkg = fqParts.joinToString(".")
     checkPackageName(outKtPkg)
 
-    val resolver = getLibraryResolver(cinteropArguments, tool.target)
-
-    val allLibraryDependencies = when (flavor) {
-        KotlinPlatform.NATIVE -> resolveDependencies(resolver, cinteropArguments)
+    val loadedLibraries = when (flavor) {
+        KotlinPlatform.NATIVE -> loadLibraries(cinteropArguments, tool.target)
         else -> listOf()
     }
 
@@ -318,7 +319,7 @@ private fun processCLib(
 
     val tempFiles = TempFiles(cinteropArguments.tempDir)
 
-    val imports = parseImports(allLibraryDependencies)
+    val imports = parseImports(loadedLibraries)
 
     val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
@@ -476,11 +477,7 @@ private fun processCLib(
             argsToCompiler(staticLibraries, libraryPaths) + bitcodePaths
         }
         is StubIrDriver.Result.Metadata -> {
-            val stdlibDependency = resolver.resolveWithDependencies(
-                    emptyList(),
-                    noDefaultLibs = true,
-                    noEndorsedLibs = true
-            ).getFullList()
+            val stdlib = loadedLibraries.first { it.isNativeStdlib }
 
             val nopack = cinteropArguments.nopack
             val outputPath = cinteropArguments.output.let {
@@ -499,7 +496,7 @@ private fun processCLib(
                     moduleName = moduleName,
                     outputPath = outputPath,
                     manifest = def.manifestAddendProperties,
-                    dependencies = stdlibDependency + imports.requiredLibraries.toList(),
+                    dependencies = listOf(stdlib) + imports.requiredLibraries.toList(),
                     nopack = nopack,
                     shortName = cinteropArguments.shortModuleName,
                     staticLibraries = resolveLibraries(staticLibraries, libraryPaths),
@@ -583,29 +580,38 @@ private fun compileSources(
     outputFileName
 }
 
-private fun getLibraryResolver(
-        cinteropArguments: CInteropArguments, target: KonanTarget
-): KotlinLibraryResolverImpl<KotlinLibrary> {
-    return defaultResolver(
-        directLibs = cinteropArguments.library,
-        target,
-        Distribution(cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath, konanDataDir = cinteropArguments.konanDataDir)
-    ).libraryResolver(resolveManifestDependenciesLenient = true)
+private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTarget): List<KotlinLibrary> {
+    val distribution = Distribution(
+            cinteropArguments.konanHome ?: KotlinNativePaths.homePath.absolutePath,
+            konanDataDir = cinteropArguments.konanDataDir
+    )
+    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
+
+    val loadingResult = KlibLoader {
+        libraryPaths(cinteropArguments.library)
+        libraryProviders(
+                KlibNativeDistributionLibraryProvider(File(distribution.konanHome)) {
+                    withStdlib()
+                    runUnless(noDefaultLibs) { withPlatformLibs(target) }
+                }
+        )
+        platformChecker(KlibPlatformChecker.Native(target.name))
+        maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+        manifestTransformer(KlibNativeManifestTransformer(target))
+    }.load()
+
+    validateLoadingResults(loadingResult)
+
+    return loadingResult.librariesStdlibFirst
 }
 
-private fun resolveDependencies(
-        resolver: KotlinLibraryResolverImpl<KotlinLibrary>, cinteropArguments: CInteropArguments
-): List<KotlinLibrary> {
-    val noDefaultLibs = cinteropArguments.nodefaultlibs || cinteropArguments.nodefaultlibsDeprecated
-    val noEndorsedLibs = cinteropArguments.noendorsedlibs
-    val resolvedLibraries = resolver.resolveWithDependencies(
-        unresolvedLibraries = cinteropArguments.library.toUnresolvedLibraries,
-        noStdLib = false,
-        noDefaultLibs = noDefaultLibs,
-        noEndorsedLibs = noEndorsedLibs
-    ).getFullList()
-    validateNoLibrariesWerePassedViaCliByUniqueName(cinteropArguments.library, resolvedLibraries, resolver.logger)
-    return resolvedLibraries
+private fun validateLoadingResults(loadingResult: KlibLoaderResult) {
+    val problems = buildList {
+        loadingResult.reportLoadingProblemsIfAny { _, message -> add(message) }
+    }
+    check(problems.isEmpty()) {
+        "Failed to load libraries:\n${problems.joinToString("\n")}"
+    }
 }
 
 internal fun prepareTool(
