@@ -2,13 +2,13 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace foo {
-        const fifth: any/* foo.Fifth<boolean> */;
+        const fifth: (foo.Third<boolean> & foo.IA & foo.IG<boolean>)/* foo.Fifth<boolean> */;
         function getI3(): foo.I3;
         function getA(): foo.I3;
         function getB(): foo.I3;
         function getC(): foo.I3;
-        function acceptForthLike<T extends unknown/* foo.Forth<string> */>(forth: T): void;
-        function acceptMoreGenericForthLike<T extends unknown/* foo.IB */ & unknown/* foo.IC */ & unknown/* foo.Second */>(forth: T): void;
+        function acceptForthLike<T extends (foo.Third<string> & foo.IA)/* foo.Forth<string> */>(forth: T): void;
+        function acceptMoreGenericForthLike<T extends foo.IA/* foo.IB */ & foo.IA/* foo.IC */ & foo.First/* foo.Second */>(forth: T): void;
         interface I<T, out S, in U> {
             z(u: U): void;
             x?: T;
@@ -191,7 +191,7 @@ declare namespace JS_TESTS {
                 readonly "foo.IG": unique symbol;
             };
         }
-        class Third<T> /* extends foo.Second */ {
+        class Third<T> extends /* foo.Second */ foo.First.$metadata$.constructor {
             constructor();
         }
         namespace Third {
@@ -200,8 +200,9 @@ declare namespace JS_TESTS {
                 const constructor: abstract new <T>() => Third<T>;
             }
         }
-        class Sixth /* extends foo.Fifth<number> */ /* implements foo.IC */ {
+        class Sixth extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
             constructor();
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -218,7 +219,7 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => First;
             }
         }
-        class MyRootException /* extends kotlin.RuntimeException */ {
+        class MyRootException extends /* kotlin.RuntimeException */ Error {
             constructor();
         }
         namespace MyRootException {
