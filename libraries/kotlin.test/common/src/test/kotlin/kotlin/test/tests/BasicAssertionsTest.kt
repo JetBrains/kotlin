@@ -20,9 +20,10 @@ class BasicAssertionsTest {
         assertEquals(1, 1) { fail() }
 
         val msg = "I did not expect that!"
-        testFailureMessagesAreTheSame({ assertEquals(1, 2, message = msg) }) {
-            assertEquals(1, 2) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertEquals(1, 2, message = msg) },
+            actual = { assertEquals(1, 2) { msg } }
+        )
     }
 
     @Test
@@ -37,9 +38,10 @@ class BasicAssertionsTest {
         assertSame(instance, instance) { fail() }
 
         val msg = "This is unacceptable!"
-        testFailureMessagesAreTheSame({  assertSame(instance, 42, message = msg) }) {
-            assertSame(instance, 42) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertSame(instance, 42, message = msg) },
+            actual = { assertSame(instance, 42) { msg } }
+        )
     }
 
     @Test
@@ -228,9 +230,10 @@ class BasicAssertionsTest {
         assertEquals(0.0, 0.0, 100000.0) { fail() }
 
         val msg = "This will not be tolerated"
-        testFailureMessagesAreTheSame({ assertEquals(0.0, 1.0, 0.0, msg) }) {
-            assertEquals(0.0, 1.0, 0.0) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertEquals(0.0, 1.0, 0.0, msg) },
+            actual = { assertEquals(0.0, 1.0, 0.0) { msg } }
+        )
     }
 
     @Test
@@ -238,9 +241,10 @@ class BasicAssertionsTest {
         assertNotEquals(0.0, 100000.0, 0.0) { fail() }
 
         val msg = "This should not be tolerated"
-        testFailureMessagesAreTheSame({ assertNotEquals(0.0, 1.0, 1000.0, msg) }) {
-            assertNotEquals(0.0, 1.0, 1000.0) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertNotEquals(0.0, 1.0, 1000.0, msg) },
+            actual = { assertNotEquals(0.0, 1.0, 1000.0) { msg } }
+        )
     }
 
 
@@ -249,9 +253,10 @@ class BasicAssertionsTest {
         assertEquals(0.0f, 0.0f, 100000.0f) { fail() }
 
         val msg = "This will not be tolerated"
-        testFailureMessagesAreTheSame({ assertEquals(0.0f, 1.0f, 0.0f, msg) }) {
-            assertEquals(0.0f, 1.0f, 0.0f) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertEquals(0.0f, 1.0f, 0.0f, msg) },
+            actual = { assertEquals(0.0f, 1.0f, 0.0f) { msg } }
+        )
     }
 
     @Test
@@ -259,9 +264,10 @@ class BasicAssertionsTest {
         assertNotEquals(0.0f, 100000.0f, 0.0f) { fail() }
 
         val msg = "This should not be tolerated"
-        testFailureMessagesAreTheSame({ assertNotEquals(0.0f, 1.0f, 1000.0f, msg) }) {
-            assertNotEquals(0.0f, 1.0f, 1000.0f) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertNotEquals(0.0f, 1.0f, 1000.0f, msg) },
+            actual = { assertNotEquals(0.0f, 1.0f, 1000.0f) { msg } }
+        )
     }
 
     @Test
@@ -281,9 +287,10 @@ class BasicAssertionsTest {
         assertTrue(true) { fail() }
 
         val msg = "I was hoping to find the truth here"
-        testFailureMessagesAreTheSame({ assertTrue(false, message = msg) }) {
-            assertTrue(false) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertTrue(false, message = msg) },
+            actual = { assertTrue(false) { msg } }
+        )
     }
 
     @Test
@@ -303,9 +310,10 @@ class BasicAssertionsTest {
         assertFalse(false) { fail() }
 
         val msg = "Who flipped the flag?"
-        testFailureMessagesAreTheSame({ assertFalse(true, message = msg) }) {
-            assertFalse(true) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertFalse(true, message = msg) },
+            actual = { assertFalse(true) { msg } }
+        )
     }
 
     @Test
@@ -347,9 +355,10 @@ class BasicAssertionsTest {
         assertNotEquals(1, 2) { fail() }
 
         val msg = "Something unexpected happened"
-        testFailureMessagesAreTheSame({ assertNotEquals(1, 1, msg) }) {
-            assertNotEquals(1, 1) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertNotEquals(1, 1, msg) },
+            actual = { assertNotEquals(1, 1) { msg } }
+        )
     }
 
     @Test
@@ -360,9 +369,10 @@ class BasicAssertionsTest {
         assertNotSame(instance1, instance2) { fail() }
 
         val msg = "Something unexpected happened"
-        testFailureMessagesAreTheSame({ assertNotSame(instance1, instance1, msg) }) {
-            assertNotSame(instance1, instance1) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertNotSame(instance1, instance1, msg) },
+            actual = { assertNotSame(instance1, instance1) { msg } }
+        )
     }
 
     @Test
@@ -472,9 +482,10 @@ class BasicAssertionsTest {
         assertEquals(s, result)
 
         val msg = "Everything IS supposed to be a string"
-        testFailureMessagesAreTheSame({ assertIs<String>(42, msg) }) {
-            assertIs<String>(42) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertIs<String>(42, msg) },
+            actual = { assertIs<String>(42) { msg } }
+        )
     }
 
     @Test
@@ -482,9 +493,10 @@ class BasicAssertionsTest {
         assertIsNot<String>(42) { fail() }
 
         val msg = "Not everything is supposed to be a string"
-        testFailureMessagesAreTheSame({ assertIsNot<String>("42", msg) }) {
-            assertIsNot<String>("42") { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertIsNot<String>("42", msg) },
+            actual = { assertIsNot<String>("42") { msg } }
+        )
     }
 }
 
@@ -494,9 +506,9 @@ internal fun testFailureMessage(expected: String, block: () -> Unit) {
     assertEquals(expected, exception.message, "Wrong assertion message")
 }
 
-internal fun testFailureMessagesAreTheSame(paragonFailure: () -> Unit, failureUnderTest: () -> Unit) {
-    val expectedException = checkFailedAssertion(paragonFailure)
-    val exception = checkFailedAssertion(failureUnderTest)
+internal fun testFailureMessagesAreTheSame(expected: () -> Unit, actual: () -> Unit) {
+    val expectedException = checkFailedAssertion(expected)
+    val exception = checkFailedAssertion(actual)
     assertEquals(expectedException.message, exception.message, "Wrong assertion message")
 }
 

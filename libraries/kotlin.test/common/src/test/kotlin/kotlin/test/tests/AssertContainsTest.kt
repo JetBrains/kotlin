@@ -31,9 +31,10 @@ class AssertContainsTest {
         assertContains(list, 2) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(list, 4, msg) }) {
-            assertContains(list, 4) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(list, 4, msg) },
+            actual = { assertContains(list, 4) { msg } }
+        )
     }
 
     @Test
@@ -56,9 +57,10 @@ class AssertContainsTest {
         assertContains(sequence, 2) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(sequence, 4, msg) }) {
-            assertContains(sequence, 4) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(sequence, 4, msg) },
+            actual = { assertContains(sequence, 4) { msg } }
+        )
     }
 
     @Test
@@ -82,9 +84,10 @@ class AssertContainsTest {
         assertContains(array, "test") { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(array, "parameterized", msg) }) {
-            assertContains(array, "parameterized") { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(array, "parameterized", msg) },
+            actual = { assertContains(array, "parameterized") { msg } }
+        )
     }
 
     @Test
@@ -104,9 +107,10 @@ class AssertContainsTest {
         assertContains(array, 'z') { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(array, 'a', msg) }) {
-            assertContains(array, 'a') { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(array, 'a', msg) },
+            actual = { assertContains(array, 'a') { msg } }
+        )
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -128,9 +132,10 @@ class AssertContainsTest {
         assertContains(array, ULong.MAX_VALUE) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(array, 5u, msg) }) {
-            assertContains(array, 5u) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(array, 5u, msg) },
+            actual = { assertContains(array, 5u) { msg } }
+        )
     }
 
     @Test
@@ -150,9 +155,10 @@ class AssertContainsTest {
         assertContains(range, 0) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(range, 15, msg) }) {
-            assertContains(range, 15) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(range, 15, msg) },
+            actual = { assertContains(range, 15) { msg } }
+        )
     }
 
     @Test
@@ -172,9 +178,10 @@ class AssertContainsTest {
         assertContains(range, 'f') { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(range, 'n', msg) }) {
-            assertContains(range, 'n') { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(range, 'n', msg) },
+            actual = { assertContains(range, 'n') { msg } }
+        )
     }
 
     @Test
@@ -195,9 +202,10 @@ class AssertContainsTest {
         assertContains(range, 0.52) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(range, 2.0, msg) }) {
-            assertContains(range, 2.0) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(range, 2.0, msg) },
+            actual = { assertContains(range, 2.0) { msg } }
+        )
     }
 
     @Test
@@ -218,9 +226,10 @@ class AssertContainsTest {
         assertContains(range, 0.99) { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(range, 2.0, msg) }) {
-            assertContains(range, 2.0) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(range, 2.0, msg) },
+            actual = { assertContains(range, 2.0) { msg } }
+        )
     }
 
     @Test
@@ -248,9 +257,10 @@ class AssertContainsTest {
         assertContains(map, "apple") { fail() }
 
         val msg = "A value is missing"
-        testFailureMessagesAreTheSame({ assertContains(map, "guava", msg) }) {
-            assertContains(map, "guava") { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(map, "guava", msg) },
+            actual = { assertContains(map, "guava") { msg } }
+        )
     }
 
     @Test
@@ -289,28 +299,33 @@ class AssertContainsTest {
         val msg = "A value is missing"
 
         assertContains(string, 'e') { fail() }
-        testFailureMessagesAreTheSame({ assertContains(string, 'x', message = msg) }) {
-            assertContains(string, 'x') { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(string, 'x', message = msg) },
+            actual = { assertContains(string, 'x') { msg } }
+        )
 
         assertContains(string, 'N', ignoreCase = true) { fail() }
-        testFailureMessagesAreTheSame({ assertContains(string, 'X', ignoreCase = true, msg) }) {
-            assertContains(string, 'X', ignoreCase = true) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(string, 'X', ignoreCase = true, msg) },
+            actual = { assertContains(string, 'X', ignoreCase = true) { msg } }
+        )
 
         assertContains(string, "app") { fail() }
-        testFailureMessagesAreTheSame({ assertContains(string, "guava", message = msg) }) {
-            assertContains(string, "guava") { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(string, "guava", message = msg) },
+            actual = { assertContains(string, "guava") { msg } }
+        )
 
         assertContains(string, "ApP", ignoreCase = true) { fail() }
-        testFailureMessagesAreTheSame({ assertContains(string, "Guava", ignoreCase = true, msg) }) {
-            assertContains(string, "Guava", ignoreCase = true) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(string, "Guava", ignoreCase = true, msg) },
+            actual = { assertContains(string, "Guava", ignoreCase = true) { msg } }
+        )
 
         assertContains(string, Regex("[a-zA-Z]")) { fail() }
-        testFailureMessagesAreTheSame({ assertContains(string, Regex("[0-9]"), msg) }) {
-            assertContains(string, Regex("[0-9]")) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContains(string, Regex("[0-9]"), msg) },
+            actual = { assertContains(string, Regex("[0-9]")) { msg } }
+        )
     }
 }
