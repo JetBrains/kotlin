@@ -14,6 +14,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -266,7 +267,7 @@ data class BuildOptions(
 
         wasmOptions?.compilationMode?.takeIf {
             it != WasmCompilationMode.MONOLITH
-        }?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.name.lowercase().replace("_", "-")}") }
+        }?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
         if (androidVersion != null) {
             arguments.add("-Dandroid_tools_version=${androidVersion}")

@@ -56,6 +56,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     ),
     JS_COMPILER_MODE(CONCAT, AllowedListAnonymizer(listOf("ir", "legacy", "both", "UNKNOWN"))),
 
+    WASM_COMPILER_MODE(CONCAT, AllowedListAnonymizer(listOf("monolith", "multimodule-open-world", "multimodule-closed-world"))),
+
     // Component versions
     LIBRARY_SPRING_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
     LIBRARY_VAADIN_VERSION(OVERRIDE_VERSION_IF_NOT_SET, ComponentVersionAnonymizer()),
@@ -93,6 +95,6 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
 
     companion object {
-        const val VERSION = 10
+        const val VERSION = 11
     }
 }

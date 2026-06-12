@@ -16,5 +16,7 @@ internal enum class WasmCompilationMode {
         fun byArgument(argument: String): WasmCompilationMode? =
             WasmCompilationMode.values()
                 .firstOrNull { it.name.replace("_", "-").equals(argument, ignoreCase = true) }
+
+        fun WasmCompilationMode.toArgument(): String = name.lowercase().replace("_", "-")
     }
 }
