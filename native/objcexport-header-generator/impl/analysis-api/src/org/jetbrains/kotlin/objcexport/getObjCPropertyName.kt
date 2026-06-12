@@ -6,16 +6,21 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportPropertyName
 
 
 fun ObjCExportContext.getObjCPropertyName(symbol: KaVariableSymbol): ObjCExportPropertyName {
     val resolveObjCNameAnnotation = symbol.resolveObjCNameAnnotation()
     val stringName = exportSession.overrideObjCNameOrSymbolName(symbol)
-    val propertyName = stringName.mangleIfReservedObjCName()
 
     return ObjCExportPropertyName(
-        objCName = resolveObjCNameAnnotation?.objCName ?: propertyName,
-        swiftName = resolveObjCNameAnnotation?.swiftName ?: resolveObjCNameAnnotation?.objCName ?: propertyName
+        objCName = resolveObjCNameAnnotation?.objCName ?: stringName.mangleIfReservedObjCName(),
+        // None of the macros we currently track need to be mangled for Swift and we do not want to break any backwards
+        // compatibility.
+        swiftName = resolveObjCNameAnnotation?.swiftName ?: resolveObjCNameAnnotation?.objCName ?: if (objCMacroDefinitions.contains(
+                stringName
+            )
+        ) stringName else stringName.mangleIfReservedObjCName()
     )
 }

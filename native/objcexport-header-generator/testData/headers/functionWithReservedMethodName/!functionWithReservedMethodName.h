@@ -24,6 +24,26 @@ __attribute__((objc_subclassing_restricted))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
+ * Documented [DEBUG] method.
+ */
+- (void)DEBUG_ __attribute__((swift_name("DEBUG()")));
+
+/**
+ * Documented [NO] method.
+ */
+- (void)NO_ __attribute__((swift_name("NO()")));
+
+/**
+ * Documented [NULL] method.
+ */
+- (void)NULL_ __attribute__((swift_name("NULL()")));
+
+/**
+ * Documented [YES] method.
+ */
+- (void)YES_ __attribute__((swift_name("YES()")));
+
+/**
  * Documented [autorelease] method.
  */
 - (void)autorelease_ __attribute__((swift_name("autorelease()")));

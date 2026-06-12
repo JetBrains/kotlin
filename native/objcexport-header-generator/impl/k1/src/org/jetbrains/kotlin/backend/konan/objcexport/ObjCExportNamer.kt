@@ -393,7 +393,7 @@ class ObjCExportNamerImpl(
             "retain", "release", "autorelease",
             "class", "superclass",
             "hash"
-        )
+        ) + objCMacroDefinitions
 
         override fun reserved(name: String) = name in reserved
 
@@ -410,7 +410,9 @@ class ObjCExportNamerImpl(
     }
 
     private inner class PropertyNameMapping(val forSwift: Boolean) : Mapping<PropertyDescriptor, String>() {
-        override fun reserved(name: String) = name in Reserved.propertyNames
+        // None of the macros we currently track need to be mangled for Swift and we do not want to break any backwards
+        // compatibility.
+        override fun reserved(name: String) = if (forSwift && objCMacroDefinitions.contains(name)) false else name in Reserved.propertyNames
 
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
             if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
@@ -445,7 +447,7 @@ class ObjCExportNamerImpl(
             "useStoredAccessor"
         )
 
-        override fun reserved(name: String) = (name in reserved) || (name in cKeywords)
+        override fun reserved(name: String) = (name in reserved) || (name in cKeywords) || (name in objCMacroDefinitions)
     }
 
     private val objectInstanceSelectors = object : ClassSelectorNameMapping<ClassDescriptor>() {
@@ -592,7 +594,7 @@ class ObjCExportNamerImpl(
                     )
                     append(name.replaceFirstChar(Char::uppercaseChar))
                 } else {
-                    append(name)
+                    append(name.mangleIfStdMacro())
                 }
 
                 append(':')
@@ -793,6 +795,7 @@ class ObjCExportNamerImpl(
 
     private object Reserved {
         val propertyNames = cKeywords +
+            objCMacroDefinitions +
             setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
     }
 

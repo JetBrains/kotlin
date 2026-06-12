@@ -1,11 +1,14 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.backend.konan.cKeywords
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 
 /**
  * K1: See implementations of [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.Mapping.reserved]
  */
-private val reservedPropertyNames = cKeywords + setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
+private val reservedPropertyNames = cKeywords +
+    setOf("description") + // https://youtrack.jetbrains.com/issue/KT-38641
+    objCMacroDefinitions
 
 /**
  * Following class and object names should be handled in a special way to avoid clashing with NSObject class methods.
@@ -19,7 +22,7 @@ private val reservedClassOrObjectNames = setOf(
     "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
     "description", "debugDescription", "version", "hash",
     "useStoredAccessor"
-) + cKeywords
+) + cKeywords + objCMacroDefinitions
 
 internal val String.isReservedPropertyName: Boolean
     get() = this in reservedPropertyNames
