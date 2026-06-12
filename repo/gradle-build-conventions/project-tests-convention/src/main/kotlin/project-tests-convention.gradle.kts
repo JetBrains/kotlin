@@ -15,10 +15,12 @@ fun Test.addCommonInputs() {
 
 fun Test.configureCacheDisabling() {
     val rootDir = project.rootDir
-    val testCacheDisabled = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false").get().toBoolean()
+    val testCacheDisabled = providers.gradleProperty("kotlin.build.cache.tests.disabled").orElse("false").map { it.toBoolean() }
+    val testCacheDisabledLocally = kotlinBuildProperties.booleanProperty("kotlin.build.cache.tests.disabled.locally")
     // `kotlin.build.cache.tests.disabled` property is used for master builds to always run the tests
     // We don't atually disable the tests, just upToDateWhen, so we still push to the BuildCache
-    outputs.upToDateWhen { !testCacheDisabled }
+    // Additionally, we allow disabling upToDateWhen locally for easier test re-running
+    outputs.upToDateWhen { !testCacheDisabled.get() && !testCacheDisabledLocally.get() }
     outputs.doNotCacheIf("Caching tests is disabled because `workingDir` is set to `rootDir`") { workingDir == rootDir }
 }
 
