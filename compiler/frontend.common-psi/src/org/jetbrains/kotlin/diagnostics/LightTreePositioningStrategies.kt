@@ -810,6 +810,12 @@ object LightTreePositioningStrategies {
                 node.tokenType == KtNodeTypes.PROPERTY_DELEGATE -> {
                     return markElement(tree.findExpressionDeep(node) ?: node, startOffset, endOffset, tree, node)
                 }
+                node.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE && node.textLength == 0 -> {
+                    val ggParent = tree.getParent(node)?.let { tree.getParent(it) }?.let { tree.getParent(it) }
+                    if (ggParent?.tokenType == KtNodeTypes.ENUM_ENTRY) {
+                        return mark(ggParent, ggParent.startOffset, ggParent.endOffset, tree)
+                    }
+                }
                 node.tokenType == KtNodeTypes.ANNOTATION_ENTRY || node.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY -> {
                     val constructorCallee = tree.findDescendantByType(node, KtNodeTypes.CONSTRUCTOR_CALLEE)
 

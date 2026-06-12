@@ -1240,9 +1240,13 @@ object PositioningStrategies {
                 is KtConstructorDelegationCall -> element.calleeExpression ?: element
                 is KtSuperTypeCallEntry -> element.calleeExpression.also {
                     if (it.textRange.isEmpty) {
-                        val grandParent = element.parent.parent
+                        val grandParent = element.parent?.parent
                         if (grandParent is KtEnumEntry) return mark(grandParent)
                     }
+                }
+                is KtConstructorCalleeExpression if element.textRange.isEmpty -> {
+                    val ggParent = element.parent?.parent?.parent
+                    if (ggParent is KtEnumEntry) return mark(ggParent) else element
                 }
                 is KtOperationExpression -> element.operationReference
                 is KtWhenConditionInRange -> element.operationReference
