@@ -83,7 +83,6 @@ public actual annotation class JsSymbol(actual val name: String)
  *
  * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
  */
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 @Retention(AnnotationRetention.BINARY)
 @Target(FILE)
 @SinceKotlin("1.9")
