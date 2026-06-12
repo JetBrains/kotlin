@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmStackSwitchingRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmLocalVariableDebugRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
@@ -123,6 +124,22 @@ open class AbstractFirWasmJsCodegenBoxTest(
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
         builder.configureCodegenIrHandlerSteps()
+    }
+}
+
+open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
+    testGroupOutputDirPrefix: String = "codegen/firBox/coroutinesStackSwitching"
+) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
+
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmStackSwitchingRunner
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
+        }
     }
 }
 

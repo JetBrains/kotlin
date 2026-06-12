@@ -26,6 +26,7 @@ internal sealed class WasmVM(
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
+        useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
     ): String
 
@@ -35,6 +36,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -42,6 +44,7 @@ internal sealed class WasmVM(
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh") else emptyArray(),
+                *if (useStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -53,6 +56,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -70,6 +74,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
@@ -86,6 +91,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -102,6 +108,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -121,6 +128,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(

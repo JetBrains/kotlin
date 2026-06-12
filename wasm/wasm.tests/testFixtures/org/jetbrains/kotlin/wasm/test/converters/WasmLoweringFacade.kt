@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.*
@@ -55,6 +55,7 @@ internal fun CompilerConfiguration.configureWith(directives: RegisteredDirective
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmUseNewExceptionProposal =
         (USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in directives) && (USE_NEW_EXCEPTION_HANDLING_PROPOSAL in directives || wasmTarget == WasmTarget.WASI)
+    wasmUseStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in directives
     wasmForceDebugFriendlyCompilation = FORCE_DEBUG_FRIENDLY_COMPILATION in directives
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmGenerateWat = debugMode >= DebugMode.DEBUG || wasmGenerateWat
