@@ -106,17 +106,17 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitConstTypeInfo(node: ConstTypeInfo): ConstTypeInfo = context(nodeBuilder, NoControlFlowBuilder) { ConstTypeInfo(node.type) }
 
-    override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null) } as Load
+    override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null, null) } as Load
 
-    override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null) } as Store
+    override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null, null) } as Store
 
-    override fun visitLoadField(node: LoadField): LoadField = context(nodeBuilder, NoControlFlowBuilder) { LoadField(node.field)(null) } as LoadField
+    override fun visitLoadField(node: LoadField): LoadField = context(nodeBuilder, NoControlFlowBuilder) { LoadField(node.field)(null, null) } as LoadField
 
-    override fun visitStoreField(node: StoreField): StoreField = context(nodeBuilder, NoControlFlowBuilder) { StoreField(node.field)(null, null) } as StoreField
+    override fun visitStoreField(node: StoreField): StoreField = context(nodeBuilder, NoControlFlowBuilder) { StoreField(node.field)(null, null, null) } as StoreField
 
-    override fun visitLoadGlobal(node: LoadGlobal): LoadGlobal = context(nodeBuilder, NoControlFlowBuilder) { LoadGlobal(node.field) }
+    override fun visitLoadGlobal(node: LoadGlobal): LoadGlobal = context(nodeBuilder, NoControlFlowBuilder) { LoadGlobal(node.field)(null) } as LoadGlobal
 
-    override fun visitStoreGlobal(node: StoreGlobal): StoreGlobal = context(nodeBuilder, NoControlFlowBuilder) { StoreGlobal(node.field)(null) } as StoreGlobal
+    override fun visitStoreGlobal(node: StoreGlobal): StoreGlobal = context(nodeBuilder, NoControlFlowBuilder) { StoreGlobal(node.field)(null, null) } as StoreGlobal
 
     override fun visitInvokeStatic(node: InvokeStatic): InvokeStatic = context(nodeBuilder, NoControlFlowBuilder) { InvokeStatic(node.function)(null, *Array(node.callArgs.size) { null }) } as InvokeStatic
 

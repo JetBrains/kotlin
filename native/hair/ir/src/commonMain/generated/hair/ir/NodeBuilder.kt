@@ -330,40 +330,61 @@ context(nodeBuilder: NodeBuilder)
 fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun Load.Form.invoke(location: Node?): Node = nodeBuilder.onNodeBuilt(Load(this@invoke, location))
+operator fun Load.Form.invoke(control: Controlling?, location: Node?): Controlling = nodeBuilder.onNodeBuilt(Load(this@invoke, control, location)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun Load.Form.invoke(location: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location) }
 
 context(nodeBuilder: NodeBuilder)
 fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun Store.Form.invoke(location: Node?): Node = nodeBuilder.onNodeBuilt(Store(this@invoke, location))
+operator fun Store.Form.invoke(control: Controlling?, location: Node?): Controlling = nodeBuilder.onNodeBuilt(Store(this@invoke, control, location)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun Store.Form.invoke(location: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location) }
 
 context(nodeBuilder: NodeBuilder)
 fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session.loadFieldMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun LoadField.Form.invoke(obj: Node?): Node = nodeBuilder.onNodeBuilt(LoadField(this@invoke, obj))
+operator fun LoadField.Form.invoke(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(LoadField(this@invoke, control, obj)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun LoadField.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
 fun StoreField(field: Field): StoreField.Form = StoreField.Form(nodeBuilder.session.storeFieldMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun StoreField.Form.invoke(obj: Node?, value: Node?): Node = nodeBuilder.onNodeBuilt(StoreField(this@invoke, obj, value))
+operator fun StoreField.Form.invoke(control: Controlling?, obj: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreField(this@invoke, control, obj, value)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun StoreField.Form.invoke(obj: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj, value) }
 
 context(nodeBuilder: NodeBuilder)
 private fun LoadGlobalForm(field: Global): LoadGlobal.Form = LoadGlobal.Form(nodeBuilder.session.loadGlobalMetaForm, field).ensureFormUniq()
 
-context(nodeBuilder: NodeBuilder)
-operator fun LoadGlobal.Form.invoke(): LoadGlobal = nodeBuilder.onNodeBuilt(LoadGlobal(this@invoke)) as LoadGlobal
+context(nodeBuilder: NodeBuilder, _: NoControlFlowBuilder)
+fun LoadGlobal(field: Global): LoadGlobal.Form = LoadGlobalForm(field)
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun LoadGlobal(field: Global): Controlling = LoadGlobalForm(field)()
 
 context(nodeBuilder: NodeBuilder)
-fun LoadGlobal(field: Global): LoadGlobal = LoadGlobalForm(field)()
+operator fun LoadGlobal.Form.invoke(control: Controlling?): Controlling = nodeBuilder.onNodeBuilt(LoadGlobal(this@invoke, control)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun LoadGlobal.Form.invoke(): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl) }
 
 context(nodeBuilder: NodeBuilder)
 fun StoreGlobal(field: Global): StoreGlobal.Form = StoreGlobal.Form(nodeBuilder.session.storeGlobalMetaForm, field).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun StoreGlobal.Form.invoke(value: Node?): Node = nodeBuilder.onNodeBuilt(StoreGlobal(this@invoke, value))
+operator fun StoreGlobal.Form.invoke(control: Controlling?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(StoreGlobal(this@invoke, control, value)) as Controlling
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+operator fun StoreGlobal.Form.invoke(value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun InvokeStatic(function: HairFunction): InvokeStatic.Form = InvokeStatic.Form(nodeBuilder.session.invokeStaticMetaForm, function).ensureFormUniq()
