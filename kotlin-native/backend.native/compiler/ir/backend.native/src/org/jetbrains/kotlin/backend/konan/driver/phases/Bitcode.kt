@@ -103,7 +103,7 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline
 )
 
-internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
+internal val StackProtectorPhaseInCompiler = createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
         name = "StackProtectorPhase",
         postactions = getDefaultLlvmModuleActions(),
         op = { context: OptimizationState, module: LLVMModuleRef ->
@@ -119,6 +119,11 @@ internal val StackProtectorPhase = createSimpleNamedCompilerPhase<OptimizationSt
                         .forEach { addLlvmFunctionEnumAttribute(it, sspAttribute) }
             }
         }
+)
+
+internal val StackProtectorPhaseInLLVM = optimizationPipelinePass(
+        name = "StackProtectorPhase",
+        pipeline = ::StackProtectorPipeline
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
@@ -163,7 +168,11 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
-        it.runAndMeasurePhase(StackProtectorPhase, module)
+        if (context.config.runLLVMPassesInCompiler) {
+            it.runAndMeasurePhase(StackProtectorPhaseInCompiler, module)
+        } else {
+            it.runAndMeasurePhase(StackProtectorPhaseInLLVM, module)
+        }
         it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
         it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
