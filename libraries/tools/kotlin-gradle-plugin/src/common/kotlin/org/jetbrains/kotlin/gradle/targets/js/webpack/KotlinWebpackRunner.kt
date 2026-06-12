@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStream
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
+import java.io.File
 import java.nio.file.Path
 
 internal data class KotlinWebpackRunner(
@@ -119,7 +120,7 @@ internal data class KotlinWebpackRunner(
 
         val args = buildArgs()
 
-        val modules = NpmProjectModules(npmToolingEnvDir)
+        val modules = NpmProjectModules(npmToolingEnvDir.toFile())
         execSpec.workingDir(npmProjectDir)
         execSpec.executable(nodeExecutable)
         if (resolveModulesFromKotlinToolingDir) {
@@ -134,7 +135,7 @@ internal data class KotlinWebpackRunner(
         val args = args.toMutableList()
 
         args.add("--config")
-        args.add(configFile.absolutePath)
+        args.add(configFile.toAbsolutePath().toString())
         if (config.showProgress) {
             args.add("--progress")
         }
