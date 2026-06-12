@@ -11,6 +11,7 @@ internal class KlibToolArguments(
     val commandName: String,
     val libraryPath: String,
     val printSignatures: Boolean,
+    val onlyTopLevelSignatures: Boolean,
     val signatureVersion: KotlinIrSignatureVersion?,
     val testMode: Boolean,
     val absolutePathPrefixes: List<String>,
