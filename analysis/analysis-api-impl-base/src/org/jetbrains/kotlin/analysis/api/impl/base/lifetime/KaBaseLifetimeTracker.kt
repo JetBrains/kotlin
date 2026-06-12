@@ -27,8 +27,7 @@ internal class KaBaseLifetimeTracker : KaLifetimeTracker {
         check(last == session.token) {
             "The last token on the stack should be the same as the one from the outgoing session."
         }
-        @Suppress("DEPRECATION") // TODO(KT-86641): back to removingAt() once the dist bundles k.c.i >= 0.5.0
-        lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
+        lifetimeOwnersStack.set(stack.removingAt(stack.lastIndex))
     }
 
     companion object {

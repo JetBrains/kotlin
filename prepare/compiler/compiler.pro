@@ -364,6 +364,9 @@
 -keepclassmembers class kotlinx.collections.immutable.PersistentSet {
     public *;
 }
+-keepclassmembers class kotlinx.collections.immutable.PersistentList {
+    public *;
+}
 -keepclassmembers class com.intellij.lang.jvm.JvmParameter {
     com.intellij.lang.jvm.types.JvmType getType();
 }
