@@ -867,12 +867,14 @@ tasks.withType<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstall
 plugins.withType<YarnPlugin> {
     extensions.configure<YarnRootEnvSpec> {
         version = libs.versions.yarn
+        downloadBaseUrl.set(null as String?)
     }
 }
 
 plugins.withType<WasmYarnPlugin> {
     extensions.configure<WasmYarnRootEnvSpec> {
         version = libs.versions.yarn
+        downloadBaseUrl.set(null as String?)
     }
 }
 
