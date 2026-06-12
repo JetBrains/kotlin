@@ -83,9 +83,12 @@ internal open class SirProtocolFromKtSymbol(
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
-        ktSymbol.combinedDeclaredMemberScope.extractDeclarations()
-            .filter { it !is SirOperatorAuxiliaryDeclaration } // FIXME: rectify where auxiliary declarations should go.
-            .toMutableList()
+        mutableListOf<SirDeclaration>().apply {
+            addAll(ktSymbol.combinedDeclaredMemberScope.extractDeclarations().filter {
+                it !is SirOperatorAuxiliaryDeclaration // FIXME: rectify where auxiliary declarations should go.
+            })
+            addAll(sealedTypeFunctions)
+        }
     }
 
     internal open val existentialExtension: SirExtension by lazy {
@@ -111,6 +114,14 @@ internal open class SirProtocolFromKtSymbol(
                 }
             }
         }
+    }
+
+    internal val sealedType: SirScopeDefiningDeclaration? by lazyWithSessions {
+        createSirSealedType(this)
+    }
+
+    internal val sealedTypeFunctions by lazyWithSessions {
+        createSirSealedTypeFunctions(this).onEach { it.parent = this }
     }
 
     override val bridges: List<SirBridge> = emptyList()
@@ -161,7 +172,7 @@ internal class SirMarkerProtocolFromKtSymbol(
 internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
-    val targetProtocol: SirProtocol,
+    val targetProtocol: SirProtocolFromKtSymbol,
 ) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
     constructor(protocol: SirProtocolFromKtSymbol) : this(protocol.ktSymbol, protocol.sirSession, protocol)
 
@@ -195,17 +206,17 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     }
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
-        ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations()
-            .mapNotNull {
+        mutableListOf<SirDeclaration>().apply {
+            ktSymbol.combinedDeclaredMemberScope.extractDeclarations().forEach {
                 when (it) {
-                    is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
-                    is SirVariable -> SirRelocatedVariable(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
-                    is SirSubscript -> SirRelocatedSubscript(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
-                    else -> null
+                    is SirFunction -> add(SirRelocatedFunction(it))
+                    is SirVariable -> add(SirRelocatedVariable(it))
+                    is SirSubscript -> add(SirRelocatedSubscript(it))
+                    else -> {}
                 }
             }
-            .toMutableList()
+            targetProtocol.sealedTypeFunctions.forEach { add(SirRelocatedFunction(it)) }
+        }.onEach { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }
     }
 }
 
@@ -267,9 +278,10 @@ private class SirRelocatedVariable(
     override val type: SirType get() = source.type
     override val isOverride: Boolean get() = false
     override val isInstance: Boolean get() = true
+    override val isConstant: Boolean get() = source.isConstant
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
-    override val getter: SirGetter get() = source.getter
+    override val getter: SirGetter? get() = source.getter
     override val setter: SirSetter? get() = source.setter
     override val bridges: List<SirBridge> get() = source.bridges
 }

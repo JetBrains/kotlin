@@ -92,7 +92,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         when (this) {
             is SirClass -> printDeclaration()
             is SirEnum -> printDeclaration()
-            is SirEnumCase -> "case $name"
+            is SirEnumCase -> printDeclaration()
             is SirExtension -> printDeclaration()
             is SirStruct -> printDeclaration()
             is SirProtocol -> printDeclaration()
@@ -127,6 +127,16 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printBody()
     }
 
+    private fun SirEnumCase.printDeclaration() {
+        print("case ${name.swiftIdentifier}")
+        if (associatedValueTypes.isNotEmpty()) {
+            print(associatedValueTypes.joinToString(prefix = "(", separator = ", ", postfix = ")") {
+                it.swiftRender(SirTypeVariance.INVARIANT)
+            })
+        }
+        println()
+    }
+
     private fun SirStruct.printDeclaration() {
         printVisibility()
         print("struct ")
@@ -158,11 +168,6 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printer.withContext(Context(this)) {
             println(" {")
             withIndent {
-                if (this is SirEnum) {
-                    for (case in cases) {
-                        println("case ${case.name}")
-                    }
-                }
                 printChildren()
             }
             println("}")
@@ -175,6 +180,8 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         ?.let { println(it) }
 
     private fun SirDeclarationContainer.printChildren() = with(this.declarations.toList()) {
+        filterIsInstance<SirEnumCase>()
+            .forEach { it.print() }
         filterIsInstanceAnd<SirEnum> { it.origin !is SirOrigin.Namespace }
             .sortedWithIfNeeded(Comparators.stableNamedComparator)
             .forEach { it.print() }
@@ -218,11 +225,22 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             printOverride()
         }
         print(
-            "var ",
+            if (isConstant) "let " else "var ",
             name.swiftIdentifier,
             ": ",
             type.swiftRender(SirTypeVariance.INVARIANT),
         )
+        if (isConstant) {
+            check(getter == null && setter == null) { "constant variable can't have a getter and/or setter" }
+            println()
+            return
+        }
+        val getter = getter
+        if (getter == null) {
+            check(setter == null) { "variable with setter must also have a getter" }
+            println()
+            return
+        }
         println(" {")
         withIndent {
             getter.print()
@@ -330,6 +348,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             is SirProtocol -> superClass to protocols
             is SirExtension -> null to protocols
             is SirEnum -> null to protocols
+            is SirStruct -> null to protocols
             else -> null to emptyList()
         }
 

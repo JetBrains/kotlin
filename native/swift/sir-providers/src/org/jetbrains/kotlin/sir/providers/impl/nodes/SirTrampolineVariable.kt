@@ -19,13 +19,15 @@ public class SirTrampolineVariable(
     override val documentation: String? get() = source.documentation
     override val name: String get() = source.name
     override val type: SirType get() = source.type
+    override val isConstant: Boolean get() = false
     override val isOverride: Boolean get() = false
     override val isInstance: Boolean get() = false
     override val modality: SirModality get() = SirModality.UNSPECIFIED
     override val attributes: List<SirAttribute> get() = source.attributes
     override val getter: SirGetter by lazy {
-        buildGetterCopy(source.getter) {
-            origin = SirOrigin.Trampoline(source.getter)
+        val sourceGetter = checkNotNull(source.getter) { "trampoline variable requires a getter" }
+        buildGetterCopy(sourceGetter) {
+            origin = SirOrigin.Trampoline(sourceGetter)
             body = SirFunctionBody(
                 listOf(
                     source.swiftFqName

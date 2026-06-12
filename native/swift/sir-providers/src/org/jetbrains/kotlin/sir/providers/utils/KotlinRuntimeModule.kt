@@ -49,7 +49,7 @@ public object KotlinRuntimeModule : SirModule() {
                 getter = buildGetter {
                     origin = KotlinRuntimeElement()
                 }
-            }.also { it.getter.parent = it }
+            }.also { it.getter?.parent = it }
         }.initializeParentForSelfAndChildren(KotlinRuntimeModule)
     }
 }
@@ -61,6 +61,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
     override val declarations: MutableList<SirDeclaration> by lazy {
         mutableListOf(
             kotlinError,
+            sealedType,
             kotlinBridgeable,
             kotlinExistential,
         )
@@ -71,6 +72,12 @@ public object KotlinRuntimeSupportModule : SirModule() {
         name = "KotlinError"
         visibility = SirVisibility.PUBLIC
     }
+
+    public val sealedType: SirProtocol = buildProtocol {
+        origin = KotlinRuntimeElement()
+        name = "SealedType"
+        visibility = SirVisibility.PUBLIC
+    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 
     public val kotlinBridgeableInit: SirInit = buildKotlinBaseDesignatedInit()
 

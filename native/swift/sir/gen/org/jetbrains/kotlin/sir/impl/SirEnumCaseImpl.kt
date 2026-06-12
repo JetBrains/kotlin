@@ -19,6 +19,7 @@ internal class SirEnumCaseImpl(
     override val attributes: MutableList<SirAttribute>,
     override val bridges: MutableList<SirBridge>,
     override val name: String,
+    override val associatedValueTypes: MutableList<SirType>,
 ) : SirEnumCase() {
     override lateinit var parent: SirDeclarationParent
 }

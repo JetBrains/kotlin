@@ -3,6 +3,40 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public enum SealedBarable_SealedType: KotlinRuntimeSupport.SealedType {
+    case someBarable(main._SealedFoeble_SomeBarable_SealedType)
+    public var value: main._SealedFoeble_SealedBarable {
+        get {
+            switch self {
+            case let .someBarable(type): type.value
+            }
+        }
+    }
+}
+public enum SealedBazzable_SealedType: KotlinRuntimeSupport.SealedType {
+    case someBazzable(main.SomeBazzable_SealedType)
+    public var value: main.SealedBazzable {
+        get {
+            switch self {
+            case let .someBazzable(type): type.value
+            }
+        }
+    }
+}
+public enum SealedFoeble_SealedType: KotlinRuntimeSupport.SealedType {
+    case sealedBazzable(main.SealedBazzable_SealedType)
+    case sealedBarable(main.SealedBarable_SealedType)
+    case someFoeble(main._SealedFoeble_SomeFoeble_SealedType)
+    public var value: main.SealedFoeble {
+        get {
+            switch self {
+            case let .sealedBazzable(type): type.value
+            case let .sealedBarable(type): type.value
+            case let .someFoeble(type): type.value
+            }
+        }
+    }
+}
 public protocol Barable: KotlinRuntime.KotlinBase, main.Foeble {
     var baz: any main.Foeble {
         get
@@ -24,8 +58,12 @@ public protocol Foeble: KotlinRuntime.KotlinBase {
     ) -> any main.Foeble
 }
 public protocol SealedBazzable: KotlinRuntime.KotlinBase, main.SealedFoeble {
+    func sealedType() -> main.SealedBazzable_SealedType
+    @_disfavoredOverload
+    func sealedType() -> main.SealedFoeble_SealedType
 }
 public protocol SealedFoeble: KotlinRuntime.KotlinBase {
+    func sealedType() -> main.SealedFoeble_SealedType
 }
 public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
 }
@@ -52,6 +90,9 @@ package protocol _SealedBazzable: main._SealedFoeble {
 package protocol _SealedFoeble {
 }
 public protocol _SealedFoeble_SealedBarable: KotlinRuntime.KotlinBase, main.SealedFoeble {
+    func sealedType() -> main.SealedBarable_SealedType
+    @_disfavoredOverload
+    func sealedType() -> main.SealedFoeble_SealedType
 }
 @objc(_SiblingProtocol)
 package protocol _SiblingProtocol {
@@ -142,6 +183,9 @@ public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, 
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    public func sealedType() -> main.SealedBazzable_SealedType {
+        .someBazzable(.init(self))
+    }
 }
 open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase {
     public init() {
@@ -210,6 +254,9 @@ public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._Se
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
+    public func sealedType() -> main.SealedBarable_SealedType {
+        .someBarable(.init(self))
+    }
 }
 public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.SealedFoeble, main._SealedFoeble {
     public static var shared: main._SealedFoeble_SomeFoeble {
@@ -225,6 +272,9 @@ public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.Seal
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+    public func sealedType() -> main.SealedFoeble_SealedType {
+        .someFoeble(.init(self))
     }
 }
 public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase {
@@ -277,6 +327,30 @@ open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_Neste
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public struct SomeBazzable_SealedType: KotlinRuntimeSupport.SealedType {
+    public let value: main.SomeBazzable
+    init(
+        _ value: main.SomeBazzable
+    ) {
+        self.value = value
+    }
+}
+public struct _SealedFoeble_SomeBarable_SealedType: KotlinRuntimeSupport.SealedType {
+    public let value: main._SealedFoeble_SomeBarable
+    init(
+        _ value: main._SealedFoeble_SomeBarable
+    ) {
+        self.value = value
+    }
+}
+public struct _SealedFoeble_SomeFoeble_SealedType: KotlinRuntimeSupport.SealedType {
+    public let value: main._SealedFoeble_SomeFoeble
+    init(
+        _ value: main._SealedFoeble_SomeFoeble
+    ) {
+        self.value = value
     }
 }
 public var list: [any main.Foeble] {
@@ -391,15 +465,28 @@ extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : Kotl
 extension ExportedKotlinPackages.repeating_conformances.Foeble {
 }
 extension main.SealedBazzable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func sealedType() -> main.SealedBazzable_SealedType {
+        fatalError("must implement sealedType in subclass")
+    }
+    @_disfavoredOverload
+    public func sealedType() -> main.SealedFoeble_SealedType {
+        .sealedBazzable(sealedType())
+    }
 }
 extension main.SealedBazzable {
 }
 extension main.SealedFoeble where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func sealedType() -> main.SealedFoeble_SealedType {
+        fatalError("must implement sealedType in subclass")
+    }
 }
 extension main.SealedFoeble {
     typealias SealedBarable = main._SealedFoeble_SealedBarable
+    typealias SealedBarable_SealedType = main.SealedBarable_SealedType
     typealias SomeBarable = main._SealedFoeble_SomeBarable
     typealias SomeFoeble = main._SealedFoeble_SomeFoeble
+    typealias _SealedFoeble_SomeBarable_SealedType = main._SealedFoeble_SomeBarable_SealedType
+    typealias _SealedFoeble_SomeFoeble_SealedType = main._SealedFoeble_SomeFoeble_SealedType
 }
 extension main.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -450,6 +537,13 @@ extension KotlinRuntimeSupport._KotlinExistential: main._SealedFoeble_SealedBara
 extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Wrapped : main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
 extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+    public func sealedType() -> main.SealedBarable_SealedType {
+        fatalError("must implement sealedType in subclass")
+    }
+    @_disfavoredOverload
+    public func sealedType() -> main.SealedFoeble_SealedType {
+        .sealedBarable(sealedType())
+    }
 }
 extension main._SealedFoeble_SealedBarable {
 }

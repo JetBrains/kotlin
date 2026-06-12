@@ -1,0 +1,54 @@
+#include <Foundation/Foundation.h>
+#include <stdint.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+void * org_kotlin_foo_ClassC_init_allocate();
+
+_Bool org_kotlin_foo_ClassC_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_ClassD_init_allocate();
+
+_Bool org_kotlin_foo_ClassD_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_ClassE_init_allocate();
+
+_Bool org_kotlin_foo_ClassE_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_DeprecatedErrorSubClass_init_allocate();
+
+_Bool org_kotlin_foo_DeprecatedErrorSubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_DeprecatedWarningSubClass_init_allocate();
+
+_Bool org_kotlin_foo_DeprecatedWarningSubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_MyClassA_init_allocate();
+
+_Bool org_kotlin_foo_MyClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_MyClassB_init_allocate();
+
+_Bool org_kotlin_foo_MyClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_NonDeprecatedSubClassA_init_allocate();
+
+_Bool org_kotlin_foo_NonDeprecatedSubClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_NonDeprecatedSubClassB_init_allocate();
+
+_Bool org_kotlin_foo_NonDeprecatedSubClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_NonSealedNonOptInClassA_init_allocate();
+
+_Bool org_kotlin_foo_NonSealedNonOptInClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_NonSealedNonOptInClassB_init_allocate();
+
+_Bool org_kotlin_foo_NonSealedNonOptInClassB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * org_kotlin_foo_NonSealedOptInClass_init_allocate();
+
+_Bool org_kotlin_foo_NonSealedOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+NS_ASSUME_NONNULL_END
