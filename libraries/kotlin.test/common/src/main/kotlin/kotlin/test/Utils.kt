@@ -31,11 +31,21 @@ internal fun checkDoublesAreEqual(
     message: String?,
     shouldFail: Boolean = false
 ) {
+    checkDoublesAreEqual(expected, actual, absoluteTolerance, { message }, shouldFail)
+}
+
+internal fun checkDoublesAreEqual(
+    expected: Double,
+    actual: Double,
+    absoluteTolerance: Double,
+    lazyMessage: () -> String?,
+    shouldFail: Boolean = false
+) {
     checkAbsoluteTolerance(absoluteTolerance)
     val equal = expected.toBits() == actual.toBits() || abs(expected - actual) <= absoluteTolerance
 
     asserter.assertTrue(
-        { messagePrefix(message) + "Expected <$expected> with absolute tolerance <$absoluteTolerance>, actual <$actual>." },
+        { messagePrefix(lazyMessage()) + "Expected <$expected> with absolute tolerance <$absoluteTolerance>, actual <$actual>." },
         equal != shouldFail
     )
 }
@@ -47,11 +57,21 @@ internal fun checkFloatsAreEqual(
     message: String?,
     shouldFail: Boolean = false
 ) {
+    checkFloatsAreEqual(expected, actual, absoluteTolerance, { message }, shouldFail)
+}
+
+internal fun checkFloatsAreEqual(
+    expected: Float,
+    actual: Float,
+    absoluteTolerance: Float,
+    lazyMessage: () -> String?,
+    shouldFail: Boolean = false
+) {
     checkAbsoluteTolerance(absoluteTolerance.toDouble())
     val equal = expected.toBits() == actual.toBits() || abs(expected - actual) <= absoluteTolerance
 
     asserter.assertTrue(
-        { messagePrefix(message) + "Expected <$expected> with absolute tolerance <$absoluteTolerance>, actual <$actual>." },
+        { messagePrefix(lazyMessage()) + "Expected <$expected> with absolute tolerance <$absoluteTolerance>, actual <$actual>." },
         equal != shouldFail
     )
 }
