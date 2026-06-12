@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86940
 enum class Foo(a: String) {
-    Bar<!NONE_APPLICABLE!><!>(),
+    <!NONE_APPLICABLE!>Bar<!>(),
     <!NONE_APPLICABLE!>Baz<!>,
     ;
 
