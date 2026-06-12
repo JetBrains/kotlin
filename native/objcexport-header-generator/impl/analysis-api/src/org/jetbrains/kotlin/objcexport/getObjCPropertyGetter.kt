@@ -16,9 +16,17 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
  * @end
  * ```
  */
-internal fun ObjCExportContext.getObjCPropertyGetter(symbol: KaPropertySymbol, objCName: String): String? {
+internal fun ObjCExportContext.getObjCPropertyGetter(
+    symbol: KaPropertySymbol,
+    objCName: String,
+    explicitMethodFamilyName: Boolean = false,
+): String? {
 
-    if (!symbol.hasReservedName) return null
+    // `init`-like properties will always need prefixing.
+    val needsPrefixing =
+        !explicitMethodFamilyName && objCSpecialNames.contains(objCName) || objCName == "init" || objCName.startsWith("initWith")
+
+    if (!symbol.hasReservedName && !needsPrefixing) return null
 
     val symbolGetter = symbol.getter
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)

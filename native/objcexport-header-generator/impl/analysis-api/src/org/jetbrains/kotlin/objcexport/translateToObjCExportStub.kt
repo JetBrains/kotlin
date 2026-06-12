@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getFunctionMethodBridge
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbol): List<ObjCExportStub> {
@@ -15,6 +16,18 @@ internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbo
         is KaPropertySymbol -> {
             if (analysisSession.isObjCProperty(symbol)) {
                 result.addIfNotNull(translateToObjCProperty(symbol))
+                if (symbol.getter != null) {
+                    val trimmedName = getSelector(
+                        symbol.getter!!,
+                        getFunctionMethodBridge(
+                            symbol.getter!!
+                        )
+                    ).dropWhile { it == '_' }
+
+                    if (this.exportSession.configuration.explicitMethodFamilyName && objCSpecialNames.any { trimmedName.startsWithWords(it) }) {
+                        result.addIfNotNull(translateToObjCMethod(symbol.getter!!, beingGeneratedForProperty = true))
+                    }
+                }
             } else {
                 symbol.getter?.let { getter ->
                     result.addIfNotNull(translateToObjCMethod(getter))

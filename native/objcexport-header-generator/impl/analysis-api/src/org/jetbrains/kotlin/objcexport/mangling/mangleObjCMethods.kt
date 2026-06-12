@@ -97,7 +97,11 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
 }
 
 
-internal fun buildMangledSwiftNameMethodAttribute(attribute: ObjCMemberDetails, containingStub: ObjCExportStub): String {
+internal fun buildMangledSwiftNameMethodAttribute(
+    attribute: ObjCMemberDetails,
+    containingStub: ObjCExportStub,
+    generatedForProperty: Boolean = false,
+): String {
     val parameters = attribute.parameters
     val parametersWithoutError = if (attribute.hasErrorParameter) parameters.dropLast(1) else parameters
     val mangledParameters = parametersWithoutError.mapIndexed { index, parameter ->
@@ -105,7 +109,7 @@ internal fun buildMangledSwiftNameMethodAttribute(attribute: ObjCMemberDetails, 
         else parameter
     }
 
-    val name = if (containingStub.isExtensionFacade && parametersWithoutError.isEmpty()) {
+    val name = if (generatedForProperty || (containingStub.isExtensionFacade && parametersWithoutError.isEmpty())) {
         attribute.name + attribute.postfix
     } else attribute.name
 

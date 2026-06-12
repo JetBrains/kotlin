@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSelectors
 import org.jetbrains.kotlin.objcexport.Predefined.anyMethodSwiftNames
 import org.jetbrains.kotlin.objcexport.Predefined.objCReservedNameMethodSelectors
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.*
+import org.jetbrains.kotlin.objcexport.extras.generatedForProperty
 import org.jetbrains.kotlin.objcexport.extras.objCExportStubExtras
 import org.jetbrains.kotlin.objcexport.extras.throwsAnnotationClassIds
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -24,10 +25,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal val KaSymbol.isConstructor: Boolean
     get() = this is KaConstructorSymbol
 
-fun ObjCExportContext.translateToObjCMethod(symbol: KaFunctionSymbol): ObjCMethod? {
+fun ObjCExportContext.translateToObjCMethod(symbol: KaFunctionSymbol, beingGeneratedForProperty: Boolean = false): ObjCMethod? {
     if (!analysisSession.isVisibleInObjC(symbol)) return null
     if (symbol.isFakeOverride) return null
-    return buildObjCMethod(symbol)
+    return buildObjCMethod(symbol, beingGeneratedForProperty = beingGeneratedForProperty)
 }
 
 fun ObjCExportContext.getBaseFunctionMethodBridge(symbol: KaFunctionSymbol): MethodBridge =
@@ -48,6 +49,7 @@ fun ObjCExportContext.getBaseFunctionMethodBridge(symbol: KaFunctionSymbol): Met
 internal fun ObjCExportContext.buildObjCMethod(
     symbol: KaFunctionSymbol,
     unavailable: Boolean = false,
+    beingGeneratedForProperty: Boolean = false,
 ): ObjCMethod {
 
     val bridge = getBaseFunctionMethodBridge(symbol)
@@ -84,6 +86,12 @@ internal fun ObjCExportContext.buildObjCMethod(
         } else {
             attributes.addIfNotNull(analysisSession.getObjCDeprecationStatus(symbol))
         }
+
+        if (this.exportSession.configuration.explicitMethodFamilyName && !symbol.isConstructor) {
+            val trimmed = selector.dropWhile { it == '_' }
+            if (objCSpecialNames.any { trimmed.startsWithWords(it) }) attributes += "objc_method_family(none)"
+        }
+
         return attributes
     }
 
@@ -96,8 +104,9 @@ internal fun ObjCExportContext.buildObjCMethod(
         parameters = parameters,
         attributes = buildAttributes(),
         extras = objCExportStubExtras {
-            throwsAnnotationClassIds = throws
-        }
+            throwsAnnotationClassIds = throws;
+            generatedForProperty = beingGeneratedForProperty
+        },
     )
 }
 
@@ -290,10 +299,19 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getMangledName]
  */
 fun ObjCExportContext.getMangledName(symbol: KaFunctionSymbol, forSwift: Boolean): String {
+    val explicitMethodFamilyName = this.exportSession.configuration.explicitMethodFamilyName
+
     return if (symbol.isConstructor) {
         if (analysisSession.isArrayConstructor(symbol) && !forSwift) "array" else "init"
     } else {
-        getObjCFunctionName(symbol).name(forSwift).handleSpecialNames("do")
+        val name = getObjCFunctionName(symbol).name(forSwift)
+        val needsPrefixing =
+            !explicitMethodFamilyName && objCSpecialNames.contains(name) || name == "init" || name.startsWith("initWith")
+        if (needsPrefixing) {
+            name.handleSpecialNames(prefix = "do")
+        } else {
+            name
+        }
     }
 }
 
