@@ -160,6 +160,7 @@ internal class Linker(
 }
 
 internal fun runLinkerCommands(context: NativeBackendPhaseContext, commands: List<Command>, cachingInvolved: Boolean) = try {
+    System.gc() // Release memory before spawning linker
     commands.forEach {
         it.logWith(context::log)
         it.execute()
