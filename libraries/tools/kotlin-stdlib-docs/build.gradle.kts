@@ -61,33 +61,16 @@ val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
     it.dependsOn(prepare)
 }
 
-getTasksByName("dokkaGeneratePublicationHtml", false).forEach {
-    it.doLast {
-        val dokkaOutputDirectory = dokka.dokkaPublications.html.get().outputDirectory.get().asFile
-        configurations["dokka"].allDependencies.withType(ProjectDependency::class.java)
-            .forEach {
-                val project = project.project(it.path)
-                val jsonFile = project.layout.buildDirectory.file("dokka-module/html/module-descriptor.json").get().asFile
-                val packageList = project.layout.buildDirectory.file("dokka-module/html/module/package-list").get().asFile
-                val fileAsJsonObject = Json.decodeFromString<JsonObject>(jsonFile.readText())
-                val modulePath = (fileAsJsonObject.get("modulePath") as JsonPrimitive).content
-
-                project.copy {
-                    from(packageList)
-                    into(dokkaOutputDirectory.resolve(modulePath))
-                }
-            }
-    }
-}
-buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    }
-}
 dependencies {
     dokka(project(":kotlin-stdlib"))
     dokka(project(":kotlin-test"))
     dokka(project(":kotlin-reflect"))
+}
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    }
 }
 
  dokka {
@@ -117,3 +100,28 @@ dependencies {
          }
      }
  }
+
+/// Capture all project state at configuration time to stay configuration-cache compatible
+val dokkaOutputDirectory = dokka.dokkaPublications.html.get().outputDirectory.get().asFile
+val moduleArtifacts = configurations["dokka"].allDependencies.withType(ProjectDependency::class.java)
+    .map { dependency ->
+        val dependencyProject = project(dependency.path)
+        dependencyProject.layout.buildDirectory.file("dokka-module/html/module-descriptor.json").get().asFile to
+                dependencyProject.layout.buildDirectory.file("dokka-module/html/module/package-list").get().asFile
+    }
+
+getTasksByName("dokkaGeneratePublicationHtml", false).forEach { task ->
+    // Copy into locals so the doLast closure captures these values, not the enclosing
+    // build-script object (which the configuration cache cannot serialize).
+    val outputDirectory = dokkaOutputDirectory
+    val artifacts = moduleArtifacts
+    task.doLast {
+        artifacts.forEach { (jsonFile, packageList) ->
+            val fileAsJsonObject = Json.decodeFromString<JsonObject>(jsonFile.readText())
+            val modulePath = (fileAsJsonObject.get("modulePath") as JsonPrimitive).content
+            val targetDir = outputDirectory.resolve(modulePath)
+            targetDir.mkdirs()
+            packageList.copyTo(targetDir.resolve(packageList.name), overwrite = true)
+        }
+    }
+}
