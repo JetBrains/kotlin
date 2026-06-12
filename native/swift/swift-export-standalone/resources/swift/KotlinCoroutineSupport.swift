@@ -47,24 +47,20 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
 package func withKotlinContinuation<T>(
     _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
 ) async throws -> T {
-    try await {
-        try Task.checkCancellation()
-        var cancellation: KotlinTask! = nil
+    try await withUnsafeCurrentTask { currentTask in
+        let cancellation = KotlinTask(currentTask!)
         return try await withTaskCancellationHandler {
-            try await withUnsafeThrowingContinuation { nativeContinuation in
-                withUnsafeCurrentTask { currentTask in
-                    let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
-                    let exception: (KotlinRuntime.KotlinBase?) -> Void = { error in
-                        nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
-                    }
-                    cancellation = KotlinTask(currentTask!)
-                    fn(continuation, exception, cancellation)
+            return try await withUnsafeThrowingContinuation { nativeContinuation in
+                let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
+                let exception: (KotlinRuntime.KotlinBase?) -> Void = { error in
+                    nativeContinuation.resume(throwing: error.map { KotlinError(wrapped: $0) } ?? CancellationError())
                 }
+                fn(continuation, exception, cancellation)
             }
         } onCancel: {
-            cancellation?.cancelExternally()
+            cancellation.cancelExternally()
         }
-    }()
+    }
 }
 
 public protocol KotlinFlow: KotlinRuntime.KotlinBase { }
