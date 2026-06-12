@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.condition.OS
 import javax.inject.Inject
+import kotlin.io.path.writeText
 import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
@@ -142,7 +143,16 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
 
                 project.projectDir.resolve("src/jsTest/kotlin/DummyTest.kt").apply {
                     parentFile.mkdirs()
-                    writeText(DUMMY_TEST_SOURCE)
+                    writeText(
+                        """
+                            class DummyTest {
+                              @kotlin.test.Test
+                              fun dummy() {
+                                println("dummy test")
+                              }
+                            }
+                        """.trimIndent()
+                    )
                 }
             }
 
@@ -168,6 +178,27 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
 
             build(":jsBrowserTest", "--tests", "*included") {
+                assertOutputContains("RAN included")
+                assertOutputDoesNotContain("RAN excluded")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `verify test filtering with include pattern selects only matching test class`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject(
+                testSource = FILTER_TEST_SOURCE,
+                testFileName = "FilterTest.kt",
+            ) {
+                chromium()
+            }
+
+            build(":jsBrowserTest", "--tests", "IncludedTest") {
                 assertOutputContains("RAN included")
                 assertOutputDoesNotContain("RAN excluded")
             }
@@ -288,6 +319,53 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `verify passing browser test produces JUnit XML report`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                val expectedTestReport = projectPath.resolve("expected-test-report.xml").apply {
+                    writeText(
+                        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_3)) {
+                            EXPECTED_TEST_REPORT
+                        } else {
+                            EXPECTED_TEST_REPORT_GRADLE_9_3
+                        }
+                    )
+                }
+                assertTestResults(expectedTestReport, "jsBrowserTest")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `verify bundle task is up-to-date on second run`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                assertTasksExecuted(":prepareWebpackBundleForKotlinJsTests")
+            }
+
+            build(":jsBrowserTest") {
+                assertTasksUpToDate(":prepareWebpackBundleForKotlinJsTests")
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify each browser runner executes the tests`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -311,27 +389,51 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
 }
 
 
-private val DUMMY_TEST_SOURCE = """
-    class DummyTest {
-      @kotlin.test.Test
-      fun dummy() {
-        println("dummy test")
-      }
-    }
+private val EXPECTED_TEST_REPORT = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <results>
+      <testsuite name="chromium.DummyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+        <properties />
+        <testcase name="dummy[js, browser]" classname="chromium.DummyTest" time="..." />
+        <system-out>dummy test</system-out>
+        <system-err />
+      </testsuite>
+    </results>
+""".trimIndent()
+
+private val EXPECTED_TEST_REPORT_GRADLE_9_3 = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <results>
+      <testsuite name="jsBrowserTest.chromium.DummyTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+        <properties />
+        <testcase name="dummy[js, browser]" classname="jsBrowserTest.chromium.DummyTest" time="..." />
+        <system-out>dummy test</system-out>
+        <system-err />
+      </testsuite>
+    </results>
 """.trimIndent()
 
 private val FILTER_TEST_SOURCE = """
-    class FilterTest {
+    class IncludedTest {
       @kotlin.test.Test
       fun included() { println("RAN included") }
+    }
 
+    class ExcludedTest {
       @kotlin.test.Test
       fun excluded() { println("RAN excluded") }
     }
 """.trimIndent()
 
 private fun TestProject.jsProject(
-    testSource: String = DUMMY_TEST_SOURCE,
+    testSource: String = """
+        class DummyTest {
+          @kotlin.test.Test
+          fun dummy() {
+            println("dummy test")
+          }
+        }
+    """.trimIndent(),
     testFileName: String = "DummyTest.kt",
     testConfigure: KotlinJsBrowserTestDsl.() -> Unit,
 ) {

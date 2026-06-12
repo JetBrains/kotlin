@@ -11,7 +11,6 @@ import org.gradle.api.file.Directory
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinChromiumTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinFirefoxTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWebkitTestRunner
@@ -27,6 +26,11 @@ class KotlinJsBrowserTestDslTest {
     fun `allBrowserRunners contains declared runners with correct types and defaults`() {
         val test = configureBrowserTest {
             chromium()
+            chromium("custom-chromium") {
+                it.timeout.set(Duration.ofSeconds(30))
+                it.headless.set(false)
+                it.launchArgs.set(listOf("--lang=fi-FI"))
+            }
             firefox()
             webkit()
             webkit("extra-webkit")
@@ -41,6 +45,13 @@ class KotlinJsBrowserTestDslTest {
                     true,
                     emptyList(),
                     bundle
+                ),
+                "custom-chromium" to RunnerDump(
+                    KotlinChromiumTestRunner::class,
+                    Duration.ofSeconds(30),
+                    false,
+                    listOf("--lang=fi-FI"),
+                    bundle,
                 ),
                 "firefox" to RunnerDump(
                     KotlinFirefoxTestRunner::class,
@@ -143,28 +154,6 @@ class KotlinJsBrowserTestDslTest {
 }
 
 
-private data class RunnerDump(
-    val type: KClass<*>,
-    val timeout: Duration,
-    val headless: Boolean,
-    val launchArgs: List<String>,
-    val testsLocation: Directory,
-)
-
-private fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
-    allBrowserRunners.get().mapValues { (_, runner) ->
-        RunnerDump(
-            type = runner::class,
-            timeout = runner.timeout.get(),
-            headless = runner.headless.get(),
-            launchArgs = runner.launchArgs.get(),
-            testsLocation = runner.testsLocation.get().bundleLocation.get(),
-        )
-    }
-
-private val KotlinJsBrowserTestDsl.defaultBundleDirectory: Directory
-    get() = defaultBundleTask.flatMap { it.outputBundleDir }.get()
-
 private fun configureBrowserTest(configure: KotlinJsBrowserTestDsl.() -> Unit): KotlinJsBrowserTestDsl {
     lateinit var testDsl: KotlinJsBrowserTestDsl
     val project = buildProjectWithMPP {
@@ -180,3 +169,25 @@ private fun configureBrowserTest(configure: KotlinJsBrowserTestDsl.() -> Unit): 
     project.evaluate()
     return testDsl
 }
+
+internal data class RunnerDump(
+    val type: KClass<*>,
+    val timeout: Duration,
+    val headless: Boolean,
+    val launchArgs: List<String>,
+    val testsLocation: Directory,
+)
+
+internal fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
+    allBrowserRunners.get().mapValues { (_, runner) ->
+        RunnerDump(
+            type = runner::class,
+            timeout = runner.timeout.get(),
+            headless = runner.headless.get(),
+            launchArgs = runner.launchArgs.get(),
+            testsLocation = runner.testsLocation.get().bundleLocation.get(),
+        )
+    }
+
+internal val KotlinJsBrowserTestDsl.defaultBundleDirectory: Directory
+    get() = defaultBundleTask.flatMap { it.outputBundleDir }.get()
