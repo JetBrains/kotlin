@@ -1467,6 +1467,12 @@ class ControlFlowGraphBuilder private constructor(
         return LambdaExitLayer(node, lambdaExitNodes)
     }
 
+    fun exitAnnotationCall(): LambdaExitLayer<FakeExpressionTerminalNode> {
+        val node = currentGraph.exitNode as FakeExpressionTerminalNode
+        val lambdaExitNodes = unifyDataFlowFromPostponedLambdas(node, callCompleted = true)
+        return LambdaExitLayer(node, lambdaExitNodes)
+    }
+
     @CfgInternals
     fun updateCollectionLiteralNodes(
         collectionLiteral: FirCollectionLiteral,
@@ -1548,22 +1554,15 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Fake expressions -----------------------------------
 
-    fun enterFakeExpression(): FakeExpressionEnterNode {
+    fun enterFakeExpression(): FakeExpressionTerminalNode {
         // Things like annotations and `contract { ... }` use normal call resolution, but aren't real expressions
         // and are never evaluated. We'll push all nodes created in the process into a stub graph, then throw it away.
         return enterGraph(null, "<compile-time expression graph>", ControlFlowGraph.Kind.FakeCall) {
-            createFakeExpressionEnterNode() to createFakeExpressionEnterNode()
+            createFakeExpressionTerminalNode() to createFakeExpressionTerminalNode()
         }
     }
 
-    fun exitFakeExpression(alsoExitCall: Boolean = false) {
-        if (alsoExitCall) {
-            // In case of annotation call in collection literals resolve of annotations,
-            // we did enter/exitCallArguments, but there was no enter/exitFunctionCall.
-            // This is a violation: we missed `unifyDataFlowFromPostponedLambdas`.
-            // TODO (KT-86555): clean up. One of the possible solutions is explicit call to `exitFunctionCall` from transformer.
-            postponedLambdaExits.pop()
-        }
+    fun exitFakeExpression() {
         lastNodes.pop()
         graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.FakeCall) }
     }

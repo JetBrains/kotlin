@@ -118,7 +118,7 @@ fun CFGNode<*>.render(): String =
                 is CodeFragmentEnterNode -> "Enter code fragment"
                 is CodeFragmentExitNode -> "Exit code fragment"
 
-                is FakeExpressionEnterNode -> "Enter fake expression"
+                is FakeExpressionTerminalNode -> "Enter or exit fake expression"
 
                 is EnterValueParameterNode -> "Enter default value of ${fir.name}"
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"
