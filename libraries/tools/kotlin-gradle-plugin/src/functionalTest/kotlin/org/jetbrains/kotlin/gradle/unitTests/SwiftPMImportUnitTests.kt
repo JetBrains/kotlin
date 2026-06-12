@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticIm
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ValidateLocalSwiftPMDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
+import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNotSame
@@ -164,9 +167,24 @@ class SwiftPMImportUnitTests {
         )
 
         project.evaluate()
+        // No diagnostics at configuration time — validation runs when the task executes
+        project.assertNoDiagnostics()
 
-        // Verify diagnostic is emitted
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound)
+        val validateTask = project.tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+        assertNotNull(validateTask, "${ValidateLocalSwiftPMDependencies.TASK_NAME} should be registered")
+        assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+
+        val computeTask = project.tasks.withType(ComputeLocalPackageDependencyInputFiles::class.java).single()
+        val nonExistentDir = project.projectDir.resolve("nonExistentDirectory").normalizedAbsoluteFile()
+        assertTrue(
+            nonExistentDir in computeTask.localPackages.get().map { it.normalizedAbsoluteFile() }.toSet(),
+            "Non-existent local package dir should still be wired into computeLocalPackageDependencyInputFiles"
+        )
+
+        val exception = assertFailsWith<Exception> {
+            validateTask.validate()
+        }
+        assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound.id)
     }
 
     @Test
@@ -187,8 +205,16 @@ class SwiftPMImportUnitTests {
         )
         project.evaluate()
 
-        // Verify diagnostic is emitted
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest)
+        project.assertNoDiagnostics()
+
+        val validateTask = project.tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+        assertNotNull(validateTask)
+        assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+
+        val exception = assertFailsWith<Exception> {
+            validateTask.validate()
+        }
+        assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest.id)
     }
 
     @Test
@@ -207,7 +233,16 @@ class SwiftPMImportUnitTests {
         )
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest)
+        project.assertNoDiagnostics()
+
+        val validateTask = project.tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+        assertNotNull(validateTask)
+        assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+
+        val exception = assertFailsWith<Exception> {
+            validateTask.validate()
+        }
+        assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest.id)
     }
 
     @Test
@@ -365,7 +400,16 @@ class SwiftPMImportUnitTests {
 
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound)
+        project.assertNoDiagnostics()
+
+        val validateTask = project.tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+        assertNotNull(validateTask)
+        assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+
+        val exception = assertFailsWith<Exception> {
+            validateTask.validate()
+        }
+        assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound.id)
     }
 
     @Test
@@ -392,7 +436,16 @@ class SwiftPMImportUnitTests {
         )
         project.evaluate()
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName)
+        project.assertNoDiagnostics()
+
+        val validateTask = project.tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+        assertNotNull(validateTask)
+        assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+
+        val exception = assertFailsWith<Exception> {
+            validateTask.validate()
+        }
+        assertContains(exception.message.orEmpty(), KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName.id)
     }
 
     @Test
@@ -804,6 +857,11 @@ private fun ProjectInternal.assertLocalPackageTasksConfigured(expectedPackageDir
         actual = manifestFiles,
         message = "${FetchSyntheticImportProjectPackages::class.java.simpleName}.${FetchSyntheticImportProjectPackages::localPackageManifests.name} should match configured package manifests"
     )
+
+    val validateTask = tasks.findByName(ValidateLocalSwiftPMDependencies.TASK_NAME)
+    assertNotNull(validateTask, "${ValidateLocalSwiftPMDependencies.TASK_NAME} task should be registered")
+    assertIs<ValidateLocalSwiftPMDependencies>(validateTask)
+    computeTask.assertDependsOn(validateTask)
 }
 
 private fun swiftPMImportProject(

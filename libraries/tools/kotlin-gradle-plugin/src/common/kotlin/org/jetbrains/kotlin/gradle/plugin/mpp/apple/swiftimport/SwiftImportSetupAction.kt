@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.prepareKotlinIdeaImportTask
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -26,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.applePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.sdk
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.setupKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.SyntheticProductType
@@ -114,6 +113,19 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         )
     }
 
+    val validateLocalSwiftPMDependencies = project.locateOrRegisterTask<ValidateLocalSwiftPMDependencies>(
+        ValidateLocalSwiftPMDependencies.TASK_NAME,
+    ) {
+        it.onlyIf("SwiftPM import is only supported on macOS hosts") { isMacOSHost }
+        it.setupKotlinToolingDiagnosticsParameters(project)
+        it.projectDir.set(project.projectDir)
+        it.localDependencies.addAll(transitiveLocalSwiftPMDependenciesProvider)
+    }
+
+    computeLocalPackageDependencyInputFiles.configure {
+        it.dependsOn(validateLocalSwiftPMDependencies)
+    }
+
     val syntheticImportProjectGenerationTaskForCinteropsAndLdDump = project.locateOrRegisterTask<GenerateSyntheticLinkageImportProject>(
         GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName,
     ) {
@@ -142,6 +154,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         it.dependsOn(hasDirectOrTransitiveSwiftPMDependencies)
         it.dependsOn(syncPersistedPackageResolvedToSyntheticSwiftPMPackage)
         it.dependsOn(syntheticImportProjectGenerationTaskForCinteropsAndLdDump)
+        it.dependsOn(validateLocalSwiftPMDependencies)
         it.localPackageManifests.from(
             transitiveLocalSwiftPMDependenciesProvider.map { localPackageDependencyProvider ->
                 localPackageDependencyProvider.map { localPackageDependency ->
@@ -347,15 +360,16 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
             when (swiftPMDependency) {
                 is SwiftPMDependency.Local -> {
-                    if (checkLocalSwiftDependencyIsValid(swiftPMDependency)) {
-                        computeLocalPackageDependencyInputFiles.configure {
-                            it.localPackages.add(swiftPMDependency.absolutePath)
-                        }
-                        fetchSyntheticImportProjectPackages.configure {
-                            it.localPackageManifests.from(
-                                swiftPMDependency.absolutePath.resolve("Package.swift")
-                            )
-                        }
+                    validateLocalSwiftPMDependencies.configure {
+                        it.localDependencies.add(swiftPMDependency)
+                    }
+                    computeLocalPackageDependencyInputFiles.configure {
+                        it.localPackages.add(swiftPMDependency.absolutePath)
+                    }
+                    fetchSyntheticImportProjectPackages.configure {
+                        it.localPackageManifests.from(
+                            swiftPMDependency.absolutePath.resolve("Package.swift")
+                        )
                     }
                 }
                 is SwiftPMDependency.Remote -> Unit
@@ -597,38 +611,6 @@ private fun KonanTarget.swiftPMPlatform(): SwiftPMDependency.Platform = when (th
     KonanTarget.LINUX_X64,
     KonanTarget.MINGW_X64,
         -> error("unsupported targets")
-}
-
-private fun Project.checkLocalSwiftDependencyIsValid(swiftPMDependency: SwiftPMDependency.Local): Boolean {
-    val resolvedPath = swiftPMDependency.absolutePath
-    val originalPath = project.projectDir.toPath().relativize(resolvedPath.toPath()).toString()
-
-    // Validate at configuration time for direct dependencies using diagnostics
-    if (!resolvedPath.exists()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageDirectoryNotFound(
-                resolvedPath.absolutePath,
-                originalPath
-            )
-        )
-        return false
-    }
-
-    if (!resolvedPath.resolve("Package.swift").exists()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageMissingManifest(resolvedPath)
-        )
-        return false
-    }
-
-    if (swiftPMDependency.packageName.isBlank()) {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.SwiftPMLocalPackageInvalidName(originalPath)
-        )
-        return false
-    }
-
-    return true
 }
 
 internal fun Project.identifierSynchronizationOrNull(): PackageResolvedSynchronization.Identifier? {
