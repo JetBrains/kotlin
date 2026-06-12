@@ -12,7 +12,11 @@ object Memory : ModelDSL() {
         param("value")
     }
 
-    val directMemoryOp by abstractClass {
+    val pinnedMemoryOp by abstractClass(ControlFlow.blockBody) {
+        interfaces(memoryOp)
+    }
+
+    val directMemoryOp by abstractClass(pinnedMemoryOp) {
         interfaces(memoryOp)
         formParam("type", HairType::class)
         param("location")
@@ -33,11 +37,11 @@ object Memory : ModelDSL() {
         param("obj")
     }
 
-    val loadField by node {
+    val loadField by node(pinnedMemoryOp) {
         interfaces(instanceFieldOp, anyLoad)
     }
 
-    val storeField by node {
+    val storeField by node(pinnedMemoryOp) {
         interfaces(instanceFieldOp, anyStore)
     }
 
@@ -46,11 +50,11 @@ object Memory : ModelDSL() {
         formParam("field", Global::class)
     }
 
-    val loadGlobal by node {
+    val loadGlobal by node(pinnedMemoryOp) {
         interfaces(globalOp, anyLoad)
     }
 
-    val storeGlobal by node {
+    val storeGlobal by node(pinnedMemoryOp) {
         interfaces(globalOp, anyStore)
     }
 
