@@ -70,7 +70,7 @@ class AllDistinctFloatArrayTest {
 
     @Test
     fun allDistinctDifferentNaNBitsFloat() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinct())
             assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinct())
@@ -82,7 +82,7 @@ class AllDistinctFloatArrayTest {
 
     @Test
     fun allDistinctByDifferentNaNBitsFloat() {
-        // JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
+        // Workaround for KT-86954 (remove in KT-86956): JS hashCode doesn't canonicalize NaN, so a HashSet keeps distinct NaN bit patterns apart.
         testExceptOn(TestPlatform.Js) {
             assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allDistinctBy { it })
             assertFalse(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allDistinctBy { it })
