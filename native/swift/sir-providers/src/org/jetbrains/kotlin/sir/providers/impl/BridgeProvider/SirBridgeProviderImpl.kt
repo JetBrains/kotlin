@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.kotlin.sir.util.renderAsSwiftSourceLine
 import org.jetbrains.kotlin.sir.util.swiftIdentifier
 import org.jetbrains.kotlin.sir.util.swiftName
+import org.jetbrains.kotlin.sir.util.swiftStringLiteral
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal const val exportAnnotationFqName = "kotlin.native.internal.ExportedBridge"
@@ -318,6 +319,11 @@ private class BridgeFunctionDescriptor(
 
         val cLevelParams = listOfNotNull(selfParameter) + parameters
 
+        // Reverse adapters flip direction so bridges are required to be bidirectional.
+        val allBridgesBidirectional = cLevelParams.all { it.bridge is BidirectionalBridge } &&
+                returnType is BidirectionalBridge
+        if (!allBridgesBidirectional) return emptyList()
+
         return listOf(
             SirReverseFunctionBridge(
                 name = cBridgeName,
@@ -425,10 +431,11 @@ private class BridgeFunctionDescriptor(
                 val bridge = param.bridge
                 require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
                 val paramName = param.name.kotlinIdentifier
+                val shadowedName = "__${param.name}".kotlinIdentifier
                 val converted = bridge.inKotlinSources.kotlinToSwift(typeNamer, paramName)
                 if (converted != paramName) {
-                    add("    val __$paramName = $converted")
-                    "__$paramName"
+                    add("    val $shadowedName = $converted")
+                    shadowedName
                 } else {
                     paramName
                 }

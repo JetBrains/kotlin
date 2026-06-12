@@ -3,9 +3,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t startIndex, int32_t endIndex);
+
 int8_t kotlin_collections_ByteIterator_nextByte__reverse_swift(void * self);
 
 uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
+
+void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift(void * self, void * _Nullable value, int32_t startIndex, int32_t endIndex);
+
+void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift(void * self, void * _Nullable value);
+
+void * kotlin_text_Appendable_append__TypesOfArguments__Swift_Unicode_UTF16_CodeUnit____reverse_swift(void * self, uint16_t value);
 
 int8_t kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 

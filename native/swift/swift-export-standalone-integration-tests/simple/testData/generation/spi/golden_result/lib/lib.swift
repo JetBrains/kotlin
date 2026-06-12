@@ -5,13 +5,13 @@ import KotlinRuntimeSupport
 @_spi(InternalLibApi)
 public typealias InternalLibAlias = Swift.String
 @_spi(InterfaceOptInOne)
-public protocol InterfaceOne: KotlinRuntime.KotlinBase {
+public protocol InterfaceOne: KotlinRuntime.KotlinBase, lib._InterfaceOne {
 }
 @_spi(InterfaceOptInTwo)
-public protocol InterfaceTwo: KotlinRuntime.KotlinBase {
+public protocol InterfaceTwo: KotlinRuntime.KotlinBase, lib._InterfaceTwo {
 }
 @_spi(InternalLibApi)
-public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
+public protocol InternalLibInterface: KotlinRuntime.KotlinBase, lib._InternalLibInterface {
     @_spi(InternalLibApi)
     var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -23,13 +23,13 @@ public protocol InternalLibInterface: KotlinRuntime.KotlinBase {
     func bar() -> Swift.Void
 }
 @objc(_InterfaceOne)
-package protocol _InterfaceOne {
+public protocol _InterfaceOne {
 }
 @objc(_InterfaceTwo)
-package protocol _InterfaceTwo {
+public protocol _InterfaceTwo {
 }
 @objc(_InternalLibInterface)
-package protocol _InternalLibInterface {
+public protocol _InternalLibInterface {
 }
 @_spi(ExperimentalLibApi)
 public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
@@ -235,4 +235,16 @@ extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceOne where Wrappe
 }
 @_spi(InterfaceOptInTwo)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceTwo where Wrapped : lib._InterfaceTwo {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InternalLibInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceOne {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceTwo {
+}
+@_cdecl("InternalLibInterface_bar__reverse_swift")
+package func InternalLibInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any lib.InternalLibInterface
+    let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
 }

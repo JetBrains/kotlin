@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+uint16_t kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(void * self, int32_t index);
+
+void * kotlin_CharSequence_subSequence__TypesOfArguments__Swift_Int32_Swift_Int32____reverse_swift(void * self, int32_t startIndex, int32_t endIndex);
+
 int8_t kotlin_Number_toByte__reverse_swift(void * self);
 
 uint16_t kotlin_Number_toChar__reverse_swift(void * self);
@@ -22,6 +26,12 @@ NSString * kotlin_Throwable_toString__reverse_swift(void * self);
 uint16_t kotlin_collections_CharIterator_nextChar__reverse_swift(void * self);
 
 int32_t kotlin_collections_IntIterator_nextInt__reverse_swift(void * self);
+
+void * kotlin_collections_Iterable_iterator__reverse_swift(void * self);
+
+_Bool kotlin_collections_Iterator_hasNext__reverse_swift(void * self);
+
+void * _Nullable kotlin_collections_Iterator_next__reverse_swift(void * self);
 
 _Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable other);
 
