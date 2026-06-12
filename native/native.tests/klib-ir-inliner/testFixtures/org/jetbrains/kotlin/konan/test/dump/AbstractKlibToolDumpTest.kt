@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.konan.test.FirCliNativeFacade
 import org.jetbrains.kotlin.konan.test.KlibSerializerNativeCliFacade
 import org.jetbrains.kotlin.konan.test.NativePreSerializationLoweringCliFacade
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
+import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
+import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -58,6 +60,9 @@ abstract class AbstractKlibToolDumpTest : AbstractNativeCoreTest() {
                 "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}",
             )
         }
+
+        useMetaTestConfigurators(::CInteropTestSkipper)
+        useFailureSuppressors(::NativeTestsSuppressor)
 
         facadeStep(::ObjCInteropFacade)
 
