@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -27,7 +29,11 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
+import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.model.GroupingTestIsolator.Companion.sourceContains
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
@@ -58,6 +64,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
     companion object {
+        val HELPERS_PACKAGE_FQNAME = FqName("helpers")
         private val lock = Any()
 
         fun computePackage(testInfo: KotlinTestInfo): String {
@@ -76,9 +83,49 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
                 }
             return "$classPart.$methodName"
         }
+
+        /**
+         * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped
+         * (two-stage) test infrastructure.
+         *
+         * The same name is used in two places that must stay in sync:
+         *   - `WasmCompilerSecondStageFacade.Grouping.transform()` generates the launcher class
+         *     `class ProxyLauncher_<hash> { @Test fun runTest() = <fqn>.box() }` for every test in
+         *     the batch;
+         *   - `AbstractWasmFolderBoxRunnerGroupingStage.computeExpectedSuiteNames()` consumes it as
+         *     the expected `##teamcity[testSuiteFinished name='ProxyLauncher_<hash>'` marker on the
+         *     success path (and as a failure-attribution key on the failure path).
+         *
+         * The hash is derived from the per-test additional package (see [computePackage]) so that
+         * the result is short enough for filesystem paths yet uniquely identifies the test.
+         */
+        fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
+            "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
+
+        /**
+         * Returns `true` when the given [moduleStructure] indicates that per-test package
+         * patching by [BatchingPackageInserter] must be skipped — i.e. the test must keep its
+         * original package structure.
+         *
+         * Patching is skipped when:
+         *   - `WITH_REFLECT` is among the global directives (reflection-based tests rely on
+         *     original `qualifiedName`s and class metadata), or
+         *   - any source file contains one of the [GroupingTestIsolator.ISOLATION_SOURCE_REGEXES]
+         *     patterns (e.g. `// WASM_FAILS_IN: `, `::class.qualifiedName`,
+         *     `import kotlin.reflect.`).
+         *
+         * Used both by [BatchingPackageInserter.processModule] (Stage 1) and by
+         * `WasmCompilerSecondStageFacade.Grouping.transform()` (Stage 2) so that the FQN of
+         * `box()` in the generated launcher matches what the per-test KLIB actually contains.
+         */
+        fun needsSkipPatchPackages(moduleStructure: TestModuleStructure): Boolean {
+            val withReflectInGlobalDirectives = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in moduleStructure.allDirectives
+            val anyIsolationSourceRegexMatch = GroupingTestIsolator.ISOLATION_SOURCE_REGEXES.any { moduleStructure.sourceContains(it) }
+            return withReflectInGlobalDirectives || anyIsolationSourceRegexMatch
+        }
     }
 
-    private val packageMapping: MutableMap<FqName, FqName> = mutableMapOf()
+    private val packageMapping: MutableMap<FqName, FqName?> = mutableMapOf()
 
     override fun process(file: TestFile, content: String): String {
         shouldNotBeCalled()
@@ -86,22 +133,32 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
 
     @TestInfrastructureInternals
     override fun processModule(module: TestModule, filesContent: MutableMap<TestFile, String>) {
-        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true))
-            return // Without grouping, packages are not altered, since no clashes can happen.
-
+        val isNative = testServices.targetPlatformProvider.getTargetPlatform(module).isNative()
+        if (testServices.shouldIsolateTestInGroupingConfiguration(fileGenerationPhase = true)) {
+            return
+        }
         // At this point we can't get `project` from `compilerConfigurationProvider`, as it will cause infinite recursion.
         val psiFactory = createPsiFactory()
         val additionalBasePackage = FqName(computePackage(testServices.testInfo))
         val ktFiles = filesContent.filter { it.key.isKtFile }
             .mapValues { [file, content] -> psiFactory.createFile(file.name, content) }
         ktFiles.values.map { it.packageFqName }.associateWithTo(packageMapping) { packageFqName ->
-            additionalBasePackage.child(packageFqName)
+            additionalBasePackage.child(packageFqName).takeUnless {
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+                        || packageFqName == StandardNames.KOTLIN_INTERNAL_FQ_NAME
+                        // On Native the `helpers` package directive IS patched (`transformHelpersPackage = isNative`
+                        // below), so we must allow the mapping to actually produce a new FQN for it. On non-Native
+                        // (Wasm/JS) the `helpers` package stays unpatched because `transformHelpersPackage = false`
+                        // skips it on the import side as well — keeping the original FQN here is consistent in that case.
+                        || (!isNative && packageFqName == HELPERS_PACKAGE_FQNAME)
+            }
         }
         val patcher = PackageNamePatcher(
+            testServices.targetPlatformProvider.getTargetPlatform(module),
             psiFactory,
             packageMapping,
             additionalBasePackage,
-            transformHelpersPackage = true
+            transformHelpersPackage = isNative
         )
         ktFiles.values.forEach { it.accept(patcher, emptySet()) }
         for ([testFile, ktFile] in ktFiles) {
@@ -152,13 +209,13 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
     }
 
     class PackageNamePatcher(
+        val targetPlatform: TargetPlatform,
         val psiFactory: KtPsiFactory, // psiFactory
-        val oldToNewPackageNameMapping: Map<FqName, FqName>,
+        val oldToNewPackageNameMapping: Map<FqName, FqName?>,
         val basePackageName: FqName,
         val transformHelpersPackage: Boolean
     ) : KtVisitor<Unit, Set<Name>>() {
         companion object {
-            private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
             private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
             private val CNAMES_PACKAGE_NAME = Name.identifier("cnames")
             private val OBJCNAMES_PACKAGE_NAME = Name.identifier("objcnames")
@@ -176,24 +233,26 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             val oldPackageDirective = file.packageDirective
             val oldPackageName = oldPackageDirective?.fqName ?: FqName.ROOT
 
-            val newPackageName = oldToNewPackageNameMapping.getValue(file.packageFqNameForKLib)
-            val newPackageDirective = psiFactory.createPackageDirective(newPackageName)
+            oldToNewPackageNameMapping.getValue(file.packageFqNameForKLib)?.let { newPackageName ->
+                val newPackageDirective = psiFactory.createPackageDirective(newPackageName)
 
-            if (oldPackageDirective != null) {
-                // Replace old package directive by the new one.
-                oldPackageDirective.replace(newPackageDirective).ensureSurroundedByNewLines()
-            } else {
-                // Insert the package directive immediately after file-level annotations.
-                file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByNewLines()
+                if (oldPackageDirective != null) {
+                    // Replace old package directive by the new one.
+                    oldPackageDirective.replace(newPackageDirective).ensureSurroundedByNewLines()
+                } else {
+                    // Insert the package directive immediately after file-level annotations.
+                    file.addAfter(newPackageDirective, file.fileAnnotationList).ensureSurroundedByNewLines()
+                }
             }
 
             if (!file.name.endsWith(".def")) { // don't process .def file contents after the package directive
-                // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
-                val annotationText =
-                    "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
-                val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
-                file.addAnnotations(fileAnnotationList)
-
+                if (targetPlatform.isNative()) {
+                    // Add @ReflectionPackageName annotation to make the compiler use the original package name in the reflective information.
+                    val annotationText =
+                        "kotlin.native.internal.ReflectionPackageName(${oldPackageName.asString().quoteAsKotlinStringLiteral()})"
+                    val fileAnnotationList = psiFactory.createFileAnnotationListWithAnnotation(annotationText)
+                    file.addAnnotations(fileAnnotationList)
+                }
                 visitKtElement(file, file.collectAccessibleDeclarationNames())
             }
         }
@@ -205,8 +264,9 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             val importedFqName = importDirective.importedFqName
             if (importedFqName == null
                 || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+                || importedFqName.startsWith(StandardNames.KOTLIN_INTERNAL_FQ_NAME)
                 || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
-                || (!transformHelpersPackage && importedFqName.startsWith(HELPERS_PACKAGE_NAME))
+                || (!transformHelpersPackage && importedFqName.startsWith(HELPERS_PACKAGE_FQNAME))
                 || importedFqName.startsWith(CNAMES_PACKAGE_NAME)
                 || importedFqName.startsWith(OBJCNAMES_PACKAGE_NAME)
                 || importedFqName.startsWith(PLATFORM_PACKAGE_NAME)
@@ -537,7 +597,9 @@ private fun FqName.removeSuffix(suffix: FqName): FqName {
     val suffixPathSegments = suffix.pathSegments()
 
     val suffixStart = pathSegments.size - suffixPathSegments.size
-    check(suffixPathSegments == pathSegments.subList(suffixStart, pathSegments.size))
+    checkTestInfrastructure(suffixPathSegments == pathSegments.subList(suffixStart, pathSegments.size)) {
+        "Suffix $suffix is not a suffix of $this"
+    }
 
     return FqName(pathSegments.take(suffixStart).joinToString("."))
 }
