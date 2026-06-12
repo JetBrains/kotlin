@@ -5,6 +5,8 @@
 
 package generators
 
+import generators.test.AllDistinctSampleGenerator
+import generators.test.AllDistinctTestGenerator
 import generators.test.AllEqualSampleGenerator
 import generators.test.AllEqualTestGenerator
 import generators.test.IsSortedSampleGenerator
@@ -18,4 +20,6 @@ fun main() {
     IsSortedTestGenerator.generate()
     AllEqualSampleGenerator.generate()
     AllEqualTestGenerator.generate()
+    AllDistinctSampleGenerator.generate()
+    AllDistinctTestGenerator.generate()
 }
