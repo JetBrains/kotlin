@@ -52,7 +52,7 @@ public annotation class ExperimentalJsFileName
 @Target(FILE)
 @OptionalExpectation
 @ExperimentalJsFileName
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.9")
 public expect annotation class JsFileName(val name: String)
 
