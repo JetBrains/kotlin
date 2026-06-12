@@ -5376,6 +5376,7 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode 
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode$Companion {
 	public final fun byArgument (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;
+	public final fun toArgument (Lorg/jetbrains/kotlin/gradle/targets/wasm/WasmCompilationMode;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
