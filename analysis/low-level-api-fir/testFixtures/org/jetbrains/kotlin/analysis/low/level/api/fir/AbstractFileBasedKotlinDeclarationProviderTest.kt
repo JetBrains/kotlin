@@ -39,13 +39,13 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysis
         for (directive in moduleStructure.allDirectives[Directives.CLASS]) {
             val classId = ClassId.fromString(directive)
             assert(provider.getAllClassesByClassId(classId).isNotEmpty()) { "Class $classId not found" }
-            assertNotNull(provider.getClassLikeDeclarationByClassId(classId)) { "Class-like declaration $classId not found" }
+            assertNotNull(provider.getClassLikeDeclarationByClassId(classId), "Class-like declaration $classId not found")
         }
 
         for (directive in moduleStructure.allDirectives[Directives.TYPE_ALIAS]) {
             val classId = ClassId.fromString(directive)
             assert(provider.getAllTypeAliasesByClassId(classId).isNotEmpty()) { "Type alias $classId not found" }
-            assertNotNull(provider.getClassLikeDeclarationByClassId(classId)) { "Class-like declaration $classId not found" }
+            assertNotNull(provider.getClassLikeDeclarationByClassId(classId), "Class-like declaration $classId not found")
         }
 
         for (directive in moduleStructure.allDirectives[Directives.FUNCTION]) {
