@@ -346,7 +346,7 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
 }
 
 
-class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)), ValueNode {
     val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
@@ -383,7 +383,7 @@ class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 }
 
 
-class Not internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
+class Not internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)), ValueNode {
     val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {

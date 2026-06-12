@@ -57,10 +57,10 @@ fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
 }
 
 context(nodeBuilder: NodeBuilder)
-fun Phi(type: HairType, block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
+fun Phi(block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
     is BlockEntry -> {
         val joinedValues = block.preds.map { exit -> inputs.single { it.first == exit }.second }.toTypedArray()
-        Phi(type)(block, *joinedValues)
+        Phi(block, *joinedValues)
     }
     else -> inputs.single().second
 }
@@ -152,7 +152,7 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBui
         // TODO how do we handle nested try blocks?
         val unwinds = throwers.map { it.unwind ?: Unwind(it) }.toTypedArray()
         val handlerBlock = BlockEntry(*unwinds) as BlockEntry // FIXME cast?
-        val exception = Catch(Phi(EXCEPTION)(handlerBlock, *unwinds))
+        val exception = Catch(Phi(handlerBlock, *unwinds))
 
         for ([type, catchBody] in catches) {
             // FIXME what do we know about the catchers order? Are all the type checks always possible?

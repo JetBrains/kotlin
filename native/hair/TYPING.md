@@ -35,15 +35,16 @@ distinct concepts:
   a uniform `Node.opType` property at this stage. Where the name is currently
   generic (`type` on arithmetic ops), rename to `opType` and narrow to
   `ArithmeticType` so the property is type-honest.
-- **`valueType: HairType`** — computed on demand. Describes the set of values
-  the node can produce. For now this is a single `HairType` and will, in most
-  cases, simply equal whatever op type the node carries (lifted to `HairType`).
-  It is *not* part of the form and does *not* participate in GVN. Designed to
-  grow into a full abstract-interpretation lattice (range, nullness, known
-  class, etc.) later. Implemented as a centralised extension property over a
-  `ValueNode` marker interface — adding a new value-producing node means adding
-  a `when` branch in one place. That's the "framework for valueType
-  computation."
+- **`valueType: HairType?`** — stored field on `Node` (populated by
+  `Session.computeValueTypes()`). Describes the set of values the node can
+  produce. For now a single `HairType`; designed to grow into a full
+  abstract-interpretation lattice later. Lives on every node (null for
+  control-flow nodes and the deferred set). The first concrete consumer is
+  LLVM lowering: `HairToBitcode` calls `computeValueTypes()` before emitting
+  LLVM phi instructions and uses `phi.requireValueType()` for the LLVM type.
+  Adding a new value-producing node means: (a) mark it `ValueNode` in the
+  generator DSL, (b) add one branch in `structuralValueType()` in
+  `ValueType.kt`.
 
 The first concrete consumer of `valueType` is the HaIR → LLVM lowering: LLVM
 requires explicit types on `phi` instructions, so we must be able to ask any
@@ -143,21 +144,29 @@ Notes:
   their control-flow markers. Verify the generator can emit a class with two
   unrelated marker interfaces.
 
-## `valueType`
+## `valueType` (implemented)
 
-- Hand-written extension on `ValueNode`. Simplest v1 implementation:
-
-  ```kotlin
-  val ValueNode.valueType: HairType get() = opType
-  ```
-
-  with a per-class override mechanism (a `when` over the sealed hierarchy, or
-  an open property the generator emits, or a dedicated visitor). Pick what
-  feels least likely to drift.
-- For the LLVM-lowering case, `Phi.valueType == Phi.opType` is enough.
-- Out of scope for v1 but worth keeping the shape friendly to: a Phi whose
-  inputs are all the same constant could later report a `valueType` narrower
-  than its declared `opType`.
+- Stored field `var valueType: HairType?` on `Node` interface / `NodeBase`.
+  Starts `null`; populated by `Session.computeValueTypes()`.
+- `fun Node.requireValueType(): HairType` asserts non-null for call sites that
+  need a guaranteed type (e.g. LLVM phi emission).
+- `fun SessionBase.computeValueTypes()` in `ir/.../nodes/ValueType.kt`:
+  - Phase 1: seeds every non-Phi `ValueNode` from `structuralValueType()` — a
+    sealed `when` dispatch mapping each node kind to a `HairType`.
+  - Phase 2: resolves `Phi` nodes by a simple loop-until-convergence fixpoint.
+    Each Phi takes the type of its first non-`NoValue` input that has a known
+    type. Exception phis (inputs are `Unwind`, not `ValueNode`) → `EXCEPTION`.
+- `Phi.type` form param has been removed; Phi types are now exclusively
+  computed by the pass. The `variableType: (Any) -> HairType` callback from
+  `buildSSA()` has been removed accordingly.
+- For the LLVM-lowering case, `HairToBitcode.generateFunctionBody` calls
+  `computeValueTypes()` before emitting LLVM phi instructions, then uses
+  `phi.requireValueType()` for the LLVM type.
+- Future: the field can be promoted to a lattice element (interval, nullness,
+  known class) by changing the `structuralValueType()` branches and adding
+  a meet/join in the Phi fixpoint. The `var valueType: HairType?` API on `Node`
+  will need to change to accommodate a richer lattice type, but call sites
+  that only use `requireValueType()` remain unaffected.
 
 ## Generator extension
 

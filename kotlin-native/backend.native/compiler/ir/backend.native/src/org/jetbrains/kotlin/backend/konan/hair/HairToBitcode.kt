@@ -9,6 +9,9 @@ import hair.compilation.FunctionCompilation
 import hair.graph.*
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.transform.computeValueTypes
+import hair.transform.requireValueType
+import hair.sym.ArithmeticType
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
@@ -32,13 +35,22 @@ import org.jetbrains.kotlin.ir.types.isNothing
 context(gcm: GCMResult)
 val gcm get() = gcm
 
-val HairType.isIntegral get() = when (this) {
-    HairType.INT,
-    HairType.LONG -> true
-    HairType.FLOAT,
-    HairType.DOUBLE -> false
-    else -> true // FIXME error("Should not reach here $this")
-}
+val HairType.isIntegral
+    get() = when (this) {
+        HairType.INT,
+        HairType.LONG -> true
+        HairType.FLOAT,
+        HairType.DOUBLE -> false
+        else -> true // FIXME error("Should not reach here $this")
+    }
+
+val ArithmeticType.isIntegral
+    get() = when (this) {
+        ArithmeticType.INT,
+        ArithmeticType.LONG -> true
+        ArithmeticType.FLOAT,
+        ArithmeticType.DOUBLE -> false
+    }
 
 internal class HairToBitcode(
         val generationState: NativeGenerationState,
@@ -57,6 +69,7 @@ internal class HairToBitcode(
         HairType.FLOAT -> llvm.floatType
         HairType.DOUBLE -> llvm.doubleType
         HairType.REFERENCE -> llvm.pointerType
+        HairType.NATIVE_POINTER -> llvm.pointerType
         HairType.EXCEPTION -> llvm.pointerType
     }
 
@@ -114,7 +127,7 @@ internal class HairToBitcode(
             // LLVM requires phis first; GCM may interleave other nodes, so defer wiring.
             for (phi in node.uses.filterIsInstance<Phi>()) {
                 deferredPhies += phi
-                nodeValues[phi] = fgc.phi(phi.type.asLLVMType(), "phi_${phi.id}")
+                nodeValues[phi] = fgc.phi(phi.requireValueType().asLLVMType(), "phi_${phi.id}")
             }
             return null
         }
@@ -184,18 +197,18 @@ internal class HairToBitcode(
         // Arithmetic
 
         override fun visitAdd(node: Add): LLVMValueRef = emit {
-            if (node.type.isIntegral) add(node.lhs.value(), node.rhs.value())
+            if (node.opType.isIntegral) add(node.lhs.value(), node.rhs.value())
             else fadd(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitSub(node: Sub): LLVMValueRef = emit {
-            if (node.type.isIntegral) sub(node.lhs.value(), node.rhs.value())
+            if (node.opType.isIntegral) sub(node.lhs.value(), node.rhs.value())
             else fsub(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitMul(node: Mul): LLVMValueRef = emit {
             // TODO use FGC helpers once mul/fmul are promoted
-            if (node.type.isIntegral) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.opType.isIntegral) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFMul(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
@@ -371,6 +384,7 @@ internal class HairToBitcode(
         with(session) {
             withGCM {
                 hairComp.dumpHair("before_codegen")
+                computeValueTypes { hairComp.function.parameterTypes[it.index] }
                 val blocks = topSort(cfg()).associateWith {
                     functionGenerationContext.basicBlock("block_${it.id}", null)
                 }

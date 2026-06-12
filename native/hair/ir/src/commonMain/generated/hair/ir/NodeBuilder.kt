@@ -111,10 +111,7 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun AssignVar.Form.invoke(assignedValue: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, assignedValue) }
 
 context(nodeBuilder: NodeBuilder)
-fun Phi(type: HairType): Phi.Form = Phi.Form(nodeBuilder.session.phiMetaForm, type).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun Phi.Form.invoke(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.onNodeBuilt(Phi(this@invoke, block, *joinedValues))
+fun Phi(block: BlockEntry?, vararg joinedValues: Node?): Node = nodeBuilder.onNodeBuilt(Phi(nodeBuilder.session.phiForm, block, *joinedValues))
 
 context(nodeBuilder: NodeBuilder)
 fun PhiPlaceholder(origin: Any): PhiPlaceholder.Form = PhiPlaceholder.Form(nodeBuilder.session.phiPlaceholderMetaForm, origin).ensureFormUniq()

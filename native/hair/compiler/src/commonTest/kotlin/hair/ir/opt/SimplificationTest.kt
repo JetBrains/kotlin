@@ -27,7 +27,7 @@ class SimplificationTest : IrTest {
             )
             Return(ReadVar(v))
         }
-        buildSSA { INT }
+        buildSSA()
         optimize()
         printGraphviz()
         val ret = allNodes<Return>().single()

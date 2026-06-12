@@ -5,7 +5,7 @@ import hair.sym.HairFunction
 import hair.sym.HairType
 import hair.sym.HairType.*
 
-data class Fun(override val name: String) : HairFunction {
+data class Fun(override val name: String, override val parameterTypes: List<HairType> = emptyList()) : HairFunction {
     override val resultHairType: HairType = INT
 }
 

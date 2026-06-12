@@ -29,7 +29,7 @@ internal fun IrType.asHairType(): HairType = when (val binaryType = computePrimi
     PrimitiveBinaryType.LONG -> HairType.LONG
     PrimitiveBinaryType.FLOAT -> HairType.FLOAT
     PrimitiveBinaryType.DOUBLE -> HairType.DOUBLE
-    PrimitiveBinaryType.POINTER -> TODO("$binaryType not implemented yet")
+    PrimitiveBinaryType.POINTER -> HairType.NATIVE_POINTER
     PrimitiveBinaryType.VECTOR128 -> TODO("$binaryType not implemented yet")
 
     null -> HairType.REFERENCE
@@ -43,9 +43,14 @@ internal data class HairFunctionImpl(val irFunction: IrSimpleFunction) : HairFun
 
     override val resultHairType: HairType
         get() = irFunction.returnType.asHairType()
+
+    override val parameterTypes: List<HairType>
+        get() = irFunction.parameters.map { it.type.asHairType() }
 }
 
 internal data class HairFieldImpl(val irField: IrField) : Field {
+    init { type }
+
     override val owner get() = TODO()
     override fun toString() = irField.name.toString()
     override val type: HairType
@@ -53,6 +58,8 @@ internal data class HairFieldImpl(val irField: IrField) : Field {
 }
 
 internal data class HairGlobalImpl(val irField: IrField) : Global {
+    init { type }
+
     override fun toString() = irField.name.toString()
     override val type: HairType
         get() = irField.type.asHairType()

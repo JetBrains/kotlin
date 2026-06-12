@@ -61,8 +61,8 @@ object Arithmetics : ModelDSL() {
     val shr by node(binaryOp) { interfaces(arithBinaryOp) }
     val ushr by node(binaryOp) { interfaces(arithBinaryOp) }
 
-    // Neg/Not: deferred; not yet ValueNode (see TYPING.md).
     val Neg by node {
+        interfaces(Values.valueNode)
         param("operand")
     }
 
@@ -76,6 +76,7 @@ object Arithmetics : ModelDSL() {
     }
 
     val not by node {
+        interfaces(Values.valueNode)
         param("operand")
     }
 

@@ -36,7 +36,6 @@ fun Compilation.inline(call: InvokeStatic) {
             if (returns.any { it.second != null }) {
                 call.replaceValueUsesAndKill(
                     Phi(
-                        call.function.resultHairType,
                         resultBlock,
                         *returns.map { it.first to it.second!! }.toTypedArray()
                     )

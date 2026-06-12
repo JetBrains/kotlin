@@ -3,6 +3,7 @@ package hair.ir.nodes
 import hair.ir.*
 import hair.ir.IrTest
 import hair.ir.nodes.Node
+import hair.transform.computeValueTypes
 import hair.sym.ArithmeticType
 import hair.sym.CmpOp
 import hair.sym.Field
@@ -20,11 +21,15 @@ private data class TestGlobal(override val type: HairType) : Global
 
 class ValueTypeTest : IrTest {
 
-    private inline fun <reified T : ValueNode> Session.expect(expected: HairType, crossinline body: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> Any) {
+    private inline fun <reified T : ValueNode> Session.expect(expected: HairType, crossinline body: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> Any) {
         var captured: ValueNode? = null
         buildInitialIR {
             val v = body()
             captured = (v as? ValueNode) ?: error("Builder did not return a ValueNode: $v")
+            // Compute types while the node is still live; eliminateDeadFoam() runs
+            // after this lambda returns and would kill the floating test node.
+            // The type is stored in the field and survives deregistration.
+            this@expect.computeValueTypes()
             ReturnVoid()
         }
         assertEquals(expected, captured!!.valueType, "valueType mismatch for ${T::class.simpleName}")
@@ -111,7 +116,22 @@ class ValueTypeTest : IrTest {
     }
 
     @Test
+    fun param() = withTestSession {
+        val session = this
+        var captured: Param? = null
+        buildInitialIR {
+            val p = Param(0)
+            captured = p
+            // Provide a paramType resolver; Param(0) → LONG for this test.
+            session.computeValueTypes { LONG }
+            ReturnVoid()
+        }
+        assertEquals(LONG, captured!!.valueType)
+    }
+
+    @Test
     fun phi() = withTestSession {
+        val session = this
         var captured: Phi? = null
         buildInitialIR {
             branch(
@@ -122,8 +142,10 @@ class ValueTypeTest : IrTest {
             val mergeBlock = contextOf<ControlFlowBuilder>().lastControl as BlockEntry
             // Use distinct inputs so the Phi isn't folded away by normalization.
             val inputs: Array<Node?> = arrayOf(ConstL(1L), ConstL(2L))
-            captured = Phi(LONG)(mergeBlock, *inputs) as? Phi
+            captured = Phi(mergeBlock, *inputs) as? Phi
                 ?: error("Expected Phi from builder")
+            // Compute types before eliminateDeadFoam() kills the floating Phi.
+            session.computeValueTypes()
             ReturnVoid()
         }
         assertEquals(LONG, captured!!.valueType)

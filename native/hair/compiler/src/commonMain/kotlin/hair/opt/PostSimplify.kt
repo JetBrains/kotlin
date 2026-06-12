@@ -38,7 +38,7 @@ fun Session.simplify(): Boolean {
                         val reachablePreds = node.preds.withIndex().filter { it.index !in unreachablePredIndexes }.map { it.value }.toTypedArray()
                         val replacement = BlockEntry(*reachablePreds)
                         for (phi in node.phies.toList()) {
-                            phi.replaceValueUsesAndKill(Phi(phi.type, replacement, *phi.inputs0.toTypedArray()))
+                            phi.replaceValueUsesAndKill(Phi(replacement, *phi.inputs0.toTypedArray()))
                         }
 
                         return replacement

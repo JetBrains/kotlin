@@ -1,6 +1,7 @@
 package hair.ir.nodes
 
 import hair.ir.NodeVisitor
+import hair.sym.HairType
 import kotlin.collections.plus
 import kotlin.collections.remove
 
@@ -16,6 +17,13 @@ interface Node {
     val uses: Sequence<Node>
 
     val registered: Boolean
+
+    /**
+     * The value type produced by this node, or `null` if not yet computed.
+     * Populated by [hair.transform.computeValueTypes] for value-producing nodes.
+     * Non-value (control-flow) nodes remain `null`.
+     */
+    var valueType: HairType?
 
     fun ensureUnique(): Node = form.ensureUnique(this)
 
@@ -34,6 +42,8 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 
     internal var args_: Array<Node?> = args.toTypedArray()
     final override val args: ArgsList get() = ArgsList(this)
+
+    final override var valueType: HairType? = null
 
     // TODO: inline ArrayList
 //    internal val uses_: Array<Node?> = arrayOfNulls(4) // TODO choose size based on statistics

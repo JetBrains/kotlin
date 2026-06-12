@@ -11,6 +11,9 @@ enum class ArithmeticType {
     }
 }
 
+fun HairType.asArithmeticType(): ArithmeticType =
+    asArithmeticTypeOrNull() ?: error("$this is not an arithmetic type")
+
 fun HairType.asArithmeticTypeOrNull(): ArithmeticType? = when (this) {
     HairType.INT -> ArithmeticType.INT
     HairType.LONG -> ArithmeticType.LONG
