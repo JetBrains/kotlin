@@ -15,7 +15,7 @@ private val reservedPropertyNames = cKeywords + setOf("description") // https://
  */
 private val reservedClassOrObjectNames = setOf(
     "retain", "release", "autorelease",
-    "initialize", "load", "class", "superclass",
+    "initialize", "load", "alloc", "new", "class", "superclass",
     "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
     "description", "debugDescription", "version", "hash",
     "useStoredAccessor"
