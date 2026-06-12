@@ -274,24 +274,24 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
-        expression.reflectionTarget?.let { visitReferencedFunction(expression, it) }
         visitReferencedFunction(expression, expression.symbol)
+        expression.reflectionTarget?.let { visitReferencedFunction(expression, it) }
         visitCallableReference(expression)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference) {
+        visitReferencedProperty(expression, expression.symbol)
         expression.field?.let { visitReferencedField(expression, it) }
         expression.getter?.let { visitReferencedSimpleFunction(expression, it) }
         expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
-        visitReferencedProperty(expression, expression.symbol)
         visitCallableReference(expression)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
+        visitReferencedLocalDelegatedProperty(expression, expression.symbol)
         visitReferencedVariable(expression, expression.delegate)
         visitReferencedSimpleFunction(expression, expression.getter)
         expression.setter?.let { visitReferencedSimpleFunction(expression, it) }
-        visitReferencedLocalDelegatedProperty(expression, expression.symbol)
         visitCallableReference(expression)
     }
 
@@ -300,11 +300,13 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
+        expression.reflectionTargetSymbol?.let { visitReferencedFunction(expression, it) }
         visitReferencedSimpleFunction(expression, expression.overriddenFunctionSymbol)
         visitRichCallableReference(expression)
     }
 
     override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
+        expression.reflectionTargetSymbol?.let { visitReferencedDeclarationWithAccessors(expression, it) }
         visitRichCallableReference(expression)
     }
 
@@ -371,10 +373,14 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitGetField(expression: IrGetField) {
+        visitReferencedField(expression, expression.symbol)
+        expression.superQualifierSymbol?.let { visitReferencedClass(expression, it) }
         visitFieldAccess(expression)
     }
 
     override fun visitSetField(expression: IrSetField) {
+        visitReferencedField(expression, expression.symbol)
+        expression.superQualifierSymbol?.let { visitReferencedClass(expression, it) }
         visitFieldAccess(expression)
     }
 
@@ -442,10 +448,12 @@ abstract class IrTreeSymbolsVisitor : IrTypeVisitorVoid(), SymbolVisitor {
     }
 
     override fun visitGetValue(expression: IrGetValue) {
+        visitReferencedValue(expression, expression.symbol)
         visitValueAccess(expression)
     }
 
     override fun visitSetValue(expression: IrSetValue) {
+        visitReferencedValue(expression, expression.symbol)
         visitValueAccess(expression)
     }
 
