@@ -90,4 +90,50 @@ class StabilityPropagationTransformTests : AbstractIrTransformTest() {
             }
         """
     )
+
+    /**
+     * This test ensures that `Child.$stable` is used to compute the `$changed` mask passed to `A`
+     * and not `Parent.$stable`. This test serves as a regression test against
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun testCastStabilityPropagation(): Unit = stabilityPropagation(
+        """
+            class Parent
+
+            class Child : Parent()
+
+            @Composable fun A(c: Child) {}
+        """,
+        """
+            @Composable
+            fun Test(p: Parent) {
+                A(p as Child)
+            }
+        """
+    )
+
+    /**
+     * This test ensures that `Child.$stable` is used to compute the `$changed` mask passed to `A`
+     * and not `Parent.$stable`. This test serves as a regression test against
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun testSmartCastStabilityPropagation(): Unit = stabilityPropagation(
+        """
+            class Parent
+
+            class Child : Parent()
+
+            @Composable fun A(c: Child) {}
+        """,
+        """
+            @Composable
+            fun Test(p: Parent) {
+                if (p is Child) {
+                    A(p)
+                }
+            }
+        """
+    )
 }

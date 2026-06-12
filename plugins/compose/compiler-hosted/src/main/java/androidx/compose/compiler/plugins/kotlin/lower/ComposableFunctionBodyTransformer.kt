@@ -2864,6 +2864,9 @@ class ComposableFunctionBodyTransformer(
                     IrTypeOperator.CAST,
                     IrTypeOperator.IMPLICIT_CAST -> {
                         populateArgumentMeta(arg.argument, meta)
+                        // `arg.type` is the target type of the cast, and we want `meta.stability`
+                        // to store the stability of that type.
+                        meta.stability = stabilityInferencer.stabilityOf(arg, fileContainingDependent = meta.fileContainingArg)
                     }
                     else -> {
                         // Do nothing
