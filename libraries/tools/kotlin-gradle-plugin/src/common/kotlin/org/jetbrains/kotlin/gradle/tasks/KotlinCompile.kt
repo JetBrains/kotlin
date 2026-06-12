@@ -434,7 +434,9 @@ abstract class KotlinCompile @Inject constructor(
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray(),
-            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+            toolingDiagnosticsCollector = toolingDiagnosticsCollector,
+            toolingDiagnosticsContext = toolingDiagnosticsContext,
         )
         compilerRunner.runJvmCompilerAsync(
             args,

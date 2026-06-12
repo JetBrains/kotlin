@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticsContext
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -115,6 +117,9 @@ internal val WasmBinaryTransformRegisteringSetupAction = KotlinCompilationSideEf
                 project.plugins.apply(BinaryenPlugin::class.java)
                 parameters.binaryenExec.set(project.extensions.findByType(BinaryenEnvSpec::class.java)!!.executable)
                 parameters.mode.set(binary.mode)
+
+                parameters.toolingDiagnosticsContext.set(ToolingDiagnosticsContext.fromProject(project))
+                parameters.toolingDiagnosticsCollector.set(project.kotlinToolingDiagnosticsCollectorProvider)
             }
         }
     }
