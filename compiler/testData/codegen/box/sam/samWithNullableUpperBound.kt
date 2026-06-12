@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3,2.4
 fun interface Consumer<T: Int?> {
     fun accept(u: T)
 }
