@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.snapshots.isLibrarySetAddedSentinel
+import org.jetbrains.kotlin.incremental.snapshots.isLibrarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.util.Either
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -29,21 +31,28 @@ internal fun getClasspathChanges(
     caches: IncrementalCacheCommon,
     scopes: Collection<String>
 ): ChangesEither {
-    val classpathSet = HashSet<File>()
-    for (file in classpath) {
-        when {
-            file.isFile -> classpathSet.add(file)
-            file.isDirectory -> file.walk().filterTo(classpathSet) { it.isFile }
-        }
-    }
+    val classpathSet = expandClasspathFiles(classpath)
 
+    // additionally, declared libraries adds/removals are covered by tracking compiler arguments
+    // either on the client side or by enabling our tracking of the configuration inputs.
+    // Sentinels emitted by LibrarySetSnapshotMap encode classpath set membership changes (adds in `modified`,
+    // removes in `removed`) that don't correspond to real paths; they're explicitly admitted here so library
+    // add/remove triggers a full rebuild as intended.
+    val addedClasspath = changedFiles.modified.filterTo(HashSet()) { it.isLibrarySetAddedSentinel() }
     val modifiedClasspath = changedFiles.modified.filterTo(HashSet()) { it in classpathSet }
-    val removedClasspath = changedFiles.removed.filterTo(HashSet()) { it in classpathSet }
+    val removedClasspath = changedFiles.removed.filterTo(HashSet()) { it in classpathSet || it.isLibrarySetRemovedSentinel() }
 
     // todo: removed classes could be processed normally
     if (removedClasspath.isNotEmpty()) {
         reporter.info { "Some files are removed from classpath: $removedClasspath" }
         return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
+    }
+
+    if (addedClasspath.isNotEmpty()) {
+        // We've never compiled against these libraries, so any incremental delta from their own histories
+        // would be partial — fall back to a full rebuild. See LibrarySetSnapshotMap for the sentinel mechanism.
+        reporter.info { "New entries are added to classpath: $addedClasspath" }
+        return ChangesEither.Unknown(BuildAttribute.DEP_CHANGE_ADDED_ENTRY)
     }
 
     if (modifiedClasspath.isEmpty()) return ChangesEither.Known()
@@ -123,6 +132,25 @@ internal fun getClasspathChanges(
             analyzeHistoryFiles()
         }
     }
+}
+
+/**
+ * Expands a classpath into the set of file leaves that the IC machinery considers individually.
+ */
+internal fun expandClasspathFiles(classpath: List<File>): HashSet<File> {
+    val result = HashSet<File>()
+    val klibManifestPath = "default/manifest"
+    for (file in classpath) {
+        when {
+            file.isFile -> result.add(file)
+            // if it's not a file, then it's a non-packed KLIB directory. The manifest contains KLIB fingerprints, so we can rely on snapshotting this file.
+            file.isDirectory && file.resolve(klibManifestPath).exists() -> result.add(file.resolve(klibManifestPath))
+            // if it's not a non-packed directory, it might be a class directory in the past.
+            // Though history files-based IC is used only for KLIB-based backends now, so let's fail here.
+            else -> error("Unexpected state: $file is neither a KLIB file nor a KLIB directory")
+        }
+    }
+    return result
 }
 
 internal fun getRemovedClassesChanges(

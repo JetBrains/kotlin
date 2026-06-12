@@ -1,0 +1,13 @@
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
+
+kotlin {
+    js {
+        nodejs()
+    }
+
+    sourceSets {
+        jsMain {
+            kotlin.srcDir("src/main/kotlin")
+        }
+    }
+}
