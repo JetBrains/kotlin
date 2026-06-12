@@ -133,9 +133,9 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val [exportAnnotations, irrelevantAnnotations] = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) ||
-                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
-                        (it.isAnnotation(JsAnnotations.jsExportIgnoreFqn))
+                it.isAnnotationWithEqualFqName(JsAnnotations.jsExportFqn) ||
+                        (it.isAnnotationWithEqualFqName(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotationWithEqualFqName(JsAnnotations.jsExportIgnoreFqn))
 
             }
 
@@ -221,10 +221,6 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, name.identifier)
                 }
         }
-    }
-
-    private fun IrConstructorCall.isAnnotation(name: FqName): Boolean {
-        return symbol.owner.parentAsClass.fqNameWhenAvailable == name
     }
 
     private fun IrFunction.hasDefaultArgs(): Boolean =

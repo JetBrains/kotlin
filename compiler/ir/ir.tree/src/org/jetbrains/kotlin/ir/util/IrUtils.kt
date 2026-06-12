@@ -360,50 +360,18 @@ fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
         it.classSymbol == symbol
     }
 
-fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
-
-fun IrAnnotation.getAnnotationStringValue(name: String): String =
-    getAnnotationValueOrNull<String>(name)!!
-
-inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
-    getAnnotationValueOrNullImpl(name) as T?
-
-@PublishedApi
-internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
-    val argument = when (val argumentMapping = argumentMapping) {
-        null -> {
-            @OptIn(DeprecatedCompilerApi::class)
-            val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-            parameter?.let { arguments[it.indexInParameters] }
-        }
-        else -> argumentMapping[Name.identifier(name)]
-    }
-    return (argument as IrConst?)?.value
-}
-
-inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? =
-    getAnnotationArgumentValueImpl(fqName, argumentName) as T?
-
-@PublishedApi
-internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
+inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    return annotation.getAnnotationValueOrNull(argumentName)
+    return annotation.getConstArgument(argumentName)
 }
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(StandardClassIds.Annotations.ParameterNames.retentionValue)
+        getAnnotation(StandardNames.FqNames.retention)?.argumentMapping[StandardClassIds.Annotations.ParameterNames.retentionValue]
                 as? IrGetEnumValue ?: return null
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.parameters.find { it.name == name }?.indexInParameters ?: return null
-    return arguments[index]
-}
-
 
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 

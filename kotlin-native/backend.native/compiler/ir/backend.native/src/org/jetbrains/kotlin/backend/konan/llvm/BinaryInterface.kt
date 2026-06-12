@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getConstArgument
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -74,7 +75,8 @@ object KonanBinaryInterface {
         }
 
         this.findManglingAnnotation()?.let {
-            val name = it.getAnnotationStringValue() ?: this.name.asString()
+            val name = it.getConstArgument<String>(it.classSymbol.owner.primaryConstructor!!.parameters.first().name.asString())
+                    ?: this.name.asString()
             return name // no wrapping currently required
         }
 

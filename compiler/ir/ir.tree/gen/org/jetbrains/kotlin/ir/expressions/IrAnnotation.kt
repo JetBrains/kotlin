@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.model.AnnotationMarker
 abstract class IrAnnotation : IrConstructorCall(), AnnotationMarker {
     abstract val classSymbol: IrClassSymbol
 
-    abstract var argumentMapping: Map<Name, IrExpression>?
+    abstract val argumentMapping: Map<Name, IrExpression?>
 
     @DeprecatedCompilerApi(deprecatedSince = org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20)
     abstract override var symbol: IrConstructorSymbol

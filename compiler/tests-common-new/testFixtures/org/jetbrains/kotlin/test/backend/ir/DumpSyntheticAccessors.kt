@@ -285,7 +285,7 @@ private class SyntheticAccessorsDumper(
             val dump = element.dumpKotlinLike(
                 KotlinLikeDumpOptions(
                     customDumpStrategy = object : CustomKotlinLikeDumpStrategy {
-                        override fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer) = false
+                        override fun shouldPrintAnnotation(annotation: IrAnnotation, container: IrAnnotationContainer) = false
                     },
                     printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
                     bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,

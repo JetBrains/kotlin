@@ -37,10 +37,12 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
             }
         }
 
-        a is IrConstructorCall && b is IrConstructorCall -> {
-            equalBy(a, b) { it.arguments.size } &&
+        a is IrAnnotation && b is IrAnnotation -> {
+            equalBy(a, b) { it.argumentMapping.size } &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
-                    a.arguments.zip(b.arguments).all { [argA, argB] ->
+                    a.argumentMapping.all { [nameA, argA] ->
+                        if (!b.argumentMapping.contains(nameA)) return@all false
+                        val argB = b.argumentMapping[nameA]
                         areIrExpressionConstValuesEqual(
                             argA,
                             argB,

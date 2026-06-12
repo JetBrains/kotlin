@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.applyIf
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.AbstractIrFileEntry
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -67,7 +69,7 @@ class RenderIrElementVisitor(
 
     fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
 
-    fun renderAsAnnotation(irAnnotation: IrConstructorCall): String =
+    fun renderAsAnnotation(irAnnotation: IrAnnotation): String =
         StringBuilder().also { it.renderAsAnnotation(irAnnotation, this, options) }.toString()
 
     private fun IrType.render(): String =
@@ -474,6 +476,12 @@ class RenderIrElementVisitor(
         superQualifierSymbol?.let { "superQualifier='${it.renderReference()}' " } ?: ""
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
+        "CONSTRUCTOR_CALL" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+
+    @OptIn(DeprecatedCompilerApi::class)
+    override fun visitAnnotation(expression: IrAnnotation, data: Nothing?): String =
         "CONSTRUCTOR_CALL" +
                 "${expression.renderOffsets(options)} " +
                 "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
@@ -979,18 +987,19 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
         }
     }
 
-internal fun List<IrConstructorCall>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrConstructorCall> =
+@OptIn(DeprecatedCompilerApi::class)
+internal fun List<IrAnnotation>.filterOutSourceRetentions(options: DumpIrTreeOptions): List<IrAnnotation> =
     applyIf(!options.printAnnotationsWithSourceRetention) {
-        filterNot { it: IrConstructorCall ->
+        filterNot { it: IrAnnotation ->
             it.symbol.isBound &&
-                    (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrConstructorCall ->
+                    (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrAnnotation ->
                         it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
-                                (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
+                                (it.argumentMapping[Name.identifier(Retention::value.name)] as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
                     } == true
         }
     }
 
-private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
+private fun renderTypeAnnotations(annotations: List<IrAnnotation>, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
     annotations.filterOutSourceRetentions(options).let {
         if (it.isEmpty())
             ""
@@ -1004,8 +1013,9 @@ private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer
             }
     }
 
+@OptIn(DeprecatedCompilerApi::class)
 private fun StringBuilder.renderAsAnnotation(
-    irAnnotation: IrConstructorCall,
+    irAnnotation: IrConstructorCall, // TODO change to IrAnnotation when KT-74200 is Fixed
     renderer: RenderIrElementVisitor?,
     options: DumpIrTreeOptions,
 ) {
@@ -1039,7 +1049,7 @@ private fun StringBuilder.renderAsAnnotation(
 private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) {
     when (irElement) {
         null -> append("<null>")
-        is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
+        is IrAnnotation, is IrConstructorCall -> renderAsAnnotation(irElement, renderer, options)
         is IrConst -> {
             renderIrConstAsAnnotationArgument(irElement)
         }

@@ -37,7 +37,6 @@ import java.lang.invoke.MethodType
 
 val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
-val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
 
 internal val IrElement.fqName: String
     get() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
@@ -67,12 +66,6 @@ fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
 fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrAnnotation {
     return this.annotations.firstOrNull { it.isAnnotationWithEqualFqName(annotation) }
         ?: ((this as IrFunction).parent as IrClass).annotations.first { it.isAnnotationWithEqualFqName(annotation) }
-}
-
-internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
-    if (this is IrClass && this.fqName.startsWith("java")) return this.fqName
-    if (!this.hasAnnotation(evaluateIntrinsicAnnotation)) return null
-    return (this.getAnnotation(evaluateIntrinsicAnnotation).arguments[0] as IrConst).value.toString()
 }
 
 internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =

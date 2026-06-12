@@ -76,7 +76,7 @@ import java.lang.annotation.RetentionPolicy
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName and @JvmExposeBoxed?
-    val value = (getAnnotation(DescriptorUtils.JVM_NAME)?.arguments[0] as? IrConst)?.value as? String
+    val value = getAnnotation(DescriptorUtils.JVM_NAME)?.getConstArgument<String>(JvmName::name.name)
         ?: getJvmNameFromJvmExposeBoxedAnnotation()
         ?: return null
     return when (origin) {
@@ -88,8 +88,9 @@ fun IrDeclaration.getJvmNameFromAnnotation(): String? {
 }
 
 fun IrDeclaration.getJvmNameFromJvmExposeBoxedAnnotation(): String? {
-    val value = getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.arguments[0] as? IrConst ?: return null
-    return if (value.value == "") null else value.value as? String
+    @OptIn(ExperimentalStdlibApi::class)
+    val value = getAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)?.getConstArgument<String>(JvmExposeBoxed::jvmName.name) ?: return null
+    return value.ifEmpty { null }
 }
 
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
@@ -568,7 +569,7 @@ fun IrClass.getJvmAnnotationRetention(): RetentionPolicy {
         return annotationRetentionMap[retention]!!
     }
     getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
-        val value = retentionAnnotation.arguments[0]
+        val value = retentionAnnotation.argumentMapping[Name.identifier(java.lang.annotation.Retention::value.name)]
         if (value is IrDeclarationReference) {
             val symbol = value.symbol
             if (symbol is IrEnumEntrySymbol) {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
@@ -31,7 +32,7 @@ object IrActualizationErrors : KtDiagnosticsContainer() {
     val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>(
+    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
@@ -118,7 +119,7 @@ internal object IrActualizationDiagnosticRenderers {
         it.reason
     }
     val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =
-        Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall> ->
+        Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrAnnotation> ->
             val expectAnnotation = ANNOTATION.render(incompatibilityType.expectAnnotation)
             val reason = when (incompatibilityType) {
                 is ExpectActualAnnotationsIncompatibilityType.MissingOnActual -> "is missing on actual declaration"
@@ -130,7 +131,7 @@ internal object IrActualizationDiagnosticRenderers {
             "Annotation `$expectAnnotation` $reason"
         }
 
-    private val ANNOTATION = Renderer<IrConstructorCall> {
+    private val ANNOTATION = Renderer<IrAnnotation> {
         "@" + RenderIrElementVisitor().renderAsAnnotation(it)
     }
 

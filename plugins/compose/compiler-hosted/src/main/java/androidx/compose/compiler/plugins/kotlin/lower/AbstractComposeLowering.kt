@@ -1835,7 +1835,7 @@ fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
     annotations.any { it.isAnnotationWithEqualFqName(fqName) }
 
 // workaround for KT-45361
-val IrConstructorCall.annotationClass
+val IrAnnotation.annotationClass
     get() = type.classOrNull
 
 fun IrDeclaration.hasFirDeclaration(): Boolean = ((this as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir != null

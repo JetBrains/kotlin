@@ -180,7 +180,7 @@ fun Stability.forEach(callback: (Stability) -> Unit) {
 fun IrAnnotationContainer.hasStableMarker(): Boolean =
     annotations.any { it.isStableMarker() }
 
-private fun IrConstructorCall.isStableMarker(): Boolean {
+private fun IrAnnotation.isStableMarker(): Boolean {
     val owner = annotationClass?.owner ?: return false
     return owner.hasAnnotation(ComposeFqNames.StableMarker) || owner.classId in KnownStableConstructs.stableMarkers
 }
@@ -193,8 +193,7 @@ private fun IrClass.hasStableMarkedDescendant(): Boolean {
 }
 
 private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
-    (annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.arguments[0] as? IrConst)
-        ?.value as? Int
+    annotations.findAnnotation(ComposeFqNames.StabilityInferred)?.getConstArgument("parameters")
 
 @VisibleForTesting
 data class SymbolForAnalysis(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -127,7 +128,7 @@ enum class VisibilityPrintingStrategy {
  */
 interface CustomKotlinLikeDumpStrategy {
 
-    fun shouldPrintAnnotation(annotation: IrConstructorCall, container: IrAnnotationContainer): Boolean = true
+    fun shouldPrintAnnotation(annotation: IrAnnotation, container: IrAnnotationContainer): Boolean = true
 
     /**
      * Customize how a class name is rendered in expressions. The default returns the simple name.
@@ -483,7 +484,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(this, Variance.INVARIANT) { label }
     }
 
-    private fun filterAnnotations(annotations: List<IrConstructorCall>, container: IrAnnotationContainer): List<IrConstructorCall> =
+    private fun filterAnnotations(annotations: List<IrAnnotation>, container: IrAnnotationContainer): List<IrAnnotation> =
         annotations.filter { options.customDumpStrategy.shouldPrintAnnotation(it, container) }
 
     private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
@@ -501,7 +502,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
+    private fun IrAnnotation.printAnAnnotationWithNoIndent(prefix: String = "") {
         p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
         visitConstructorCall(this, null)
     }
@@ -1142,6 +1143,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) = wrap(expression, data) {
+        expression.printMemberAccessExpressionWithNoIndent(
+            expression.symbol.safeParentClassName,
+            expression.symbol.safeParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = expression.symbol.safeParentClassOrNull?.isAnnotationClass == true,
+            data = data,
+        )
+    }
+
+    @OptIn(DeprecatedCompilerApi::class)
+    override fun visitAnnotation(expression: IrAnnotation, data: IrDeclaration?) = wrap(expression, data) {
         expression.printMemberAccessExpressionWithNoIndent(
             expression.symbol.safeParentClassName,
             expression.symbol.safeParameters,

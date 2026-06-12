@@ -34,11 +34,8 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     // Ignore annotations
-    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val constructor = expression.symbol.owner
-        if (constructor.constructedClass.isAnnotationClass)
-            return expression
-        return super.visitConstructorCall(expression)
+    override fun visitAnnotation(expression: IrAnnotation): IrExpression {
+        return expression
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

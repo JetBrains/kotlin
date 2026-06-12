@@ -392,8 +392,10 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(annotation) {
             default("classSymbol", "symbol.owner.parentAsClass.symbol", withGetter = true)
+            default("argumentMapping", "IrAnnotationArgsView(arguments, symbol)")
 
             implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "parentAsClass"))
+            implementation.additionalImports.add(ArbitraryImportable("org.jetbrains.kotlin.ir.util", "IrAnnotationArgsView"))
 
             implementation.generationCallback = {
                 println()

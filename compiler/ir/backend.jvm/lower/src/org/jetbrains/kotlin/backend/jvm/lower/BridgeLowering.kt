@@ -595,8 +595,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         irIfThen(context.irBuiltIns.unitType, irNot(irIs(irGet(parameter), type)), irReturn(defaultValue))
 
 
-    val ignoredMethodAnnotationsFilter: Function1<IrConstructorCall, Boolean>
-    val userIgnoredAnnotationsFilter: Function1<IrConstructorCall, Boolean>
+    val ignoredMethodAnnotationsFilter: Function1<IrAnnotation, Boolean>
+    val userIgnoredAnnotationsFilter: Function1<IrAnnotation, Boolean>
 
     init {
         val userIgnoredAnnotations =
@@ -604,7 +604,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         userIgnoredAnnotationsFilter = when {
             userIgnoredAnnotations.isEmpty() -> { _ -> true }
             userIgnoredAnnotations.contains("*") -> { _ -> false }
-            else -> { it -> !userIgnoredAnnotations.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+            else -> { it -> !userIgnoredAnnotations.contains(it.classSymbol.owner.kotlinFqName.toString()) }
         }
 
         val kotlinIgnoredMethodAnnotations = setOf(
@@ -619,7 +619,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val ignoredMethodAnnotationNames = userIgnoredAnnotations + kotlinIgnoredMethodAnnotations.map { it.toString() }
         ignoredMethodAnnotationsFilter = when {
             userIgnoredAnnotations.contains("*") -> { _ -> false }
-            else -> { it -> !ignoredMethodAnnotationNames.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+            else -> { it -> !ignoredMethodAnnotationNames.contains(it.classSymbol.owner.kotlinFqName.toString()) }
         }
     }
 
@@ -637,11 +637,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         EXACT_ANNOTATION_FQ_NAME,
     )
 
-    fun IrConstructorCall.isKotlinSpecialTypeAnnotation() =
-        symbol.owner.parent.kotlinFqName in kotlinSpecialTypeAnnotations
+    fun IrAnnotation.isKotlinSpecialTypeAnnotation() =
+        classId.asSingleFqName() in kotlinSpecialTypeAnnotations
 
-    fun IrConstructorCall.isThrowsAnnotation() =
-        symbol.owner.parent.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
+    fun IrAnnotation.isThrowsAnnotation() =
+        classId.asSingleFqName() == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
 
     // Copies annotations from the bridge target to the bridge function
     // Similarly to JVM, the following annotations are copied:

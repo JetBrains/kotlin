@@ -337,7 +337,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
             getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-                if (arguments.size >= 1) (arguments[0] as? IrConst)?.value as? Boolean ?: true else null
+                if (argumentMapping.isNotEmpty()) getConstArgument<Boolean>(JvmSuppressWildcards::suppress.name) ?: true else null
             }
     }
 

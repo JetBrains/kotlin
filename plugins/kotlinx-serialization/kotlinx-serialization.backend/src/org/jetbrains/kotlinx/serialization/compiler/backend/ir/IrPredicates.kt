@@ -133,14 +133,14 @@ fun IrClass.hasSerializableOrMetaAnnotation() = checkSerializableOrMetaAnnotatio
 
 private fun IrClass.hasSerializableAnnotationWithArgs(): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
-    return annot?.arguments[0] != null
+    return annot?.argumentMapping[Name.identifier("with")] != null
 }
 
 private fun IrClass.checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs: Boolean): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
     if (annot != null) { // @Serializable have higher priority
         if (!mustDoNotHaveArgs) return true
-        if (annot.arguments[0] != null) return false
+        if (annot.argumentMapping[Name.identifier("with")] != null) return false
         return true
     }
     return annotations
@@ -256,8 +256,8 @@ internal fun getSerializableClassDescriptorByCompanion(companion: IrClass): IrCl
 internal fun IrExpression.isInitializePropertyFromParameter(): Boolean =
     this is IrGetValueImpl && this.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
 
-internal val IrConstructorCall.constructedClass
-    get() = this.symbol.owner.constructedClass
+internal val IrAnnotation.constructedClass
+    get() = this.classSymbol.owner
 
 internal val List<IrAnnotation>.hasAnySerialAnnotation: Boolean
     get() = serialNameValue != null || any { it.constructedClass.isSerialInfoAnnotation }
@@ -275,7 +275,7 @@ val IrClass.primaryConstructorOrFail get() = primaryConstructor ?: error("$this 
  */
 fun IrProperty.getEncodeDefaultAnnotationValue(): Boolean? {
     val call = annotations.findAnnotation(SerializationAnnotations.encodeDefaultFqName) ?: return null
-    val arg = call.arguments[0] ?: return true // ALWAYS by default
+    val arg = call.argumentMapping[Name.identifier("mode")] ?: return true // ALWAYS by default
     val argValue = (arg as? IrGetEnumValue
         ?: error("Argument of enum constructor expected to implement IrGetEnumValue, got $arg")).symbol.owner.name.toString()
     return when (argValue) {

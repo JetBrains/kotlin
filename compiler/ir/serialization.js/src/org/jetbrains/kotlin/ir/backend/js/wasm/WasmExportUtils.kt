@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.isJsExportIgnor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isExpect
@@ -41,7 +41,7 @@ fun IrAnnotationContainer.isWasmExportDeclaration(): Boolean {
 
 fun IrDeclarationWithName.getWasmExportName(): String {
     val annotation = getAnnotation(WasmStandardClassIds.Annotations.WasmExport.asSingleFqName())!!
-    val nameFromAnnotation = (annotation.arguments[0] as? IrConst)?.value as? String
+    val nameFromAnnotation = annotation.getConstArgument<String>("name")
     return nameFromAnnotation ?: name.identifier
 }
 

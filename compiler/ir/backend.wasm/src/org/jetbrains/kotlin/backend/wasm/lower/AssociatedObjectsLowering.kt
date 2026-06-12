@@ -60,7 +60,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
             val associatedObjects = mutableListOf<Pair<IrClass, IrClass>>()
             for (klassAnnotation in declaration.annotations) {
                 val annotationClass = klassAnnotation.classSymbol.owner
-                if (klassAnnotation.arguments.size != 1) continue
+                if (klassAnnotation.argumentMapping.size != 1) continue
                 if (declaration.isEffectivelyExternal()) continue
                 val associatedObject = klassAnnotation.associatedObject() ?: continue
                 associatedObjects += Pair(annotationClass, associatedObject)

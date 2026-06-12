@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IrAnnotationArgsView
 import org.jetbrains.kotlin.ir.util.IrElementConstructorIndicator
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +33,6 @@ class IrAnnotationImpl internal constructor(
     override var origin: IrStatementOrigin?,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
-    override var argumentMapping: Map<Name, IrExpression>?,
     @property:DeprecatedCompilerApi(deprecatedSince = org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20)
     override var symbol: IrConstructorSymbol,
 ) : IrAnnotation() {
@@ -42,6 +42,8 @@ class IrAnnotationImpl internal constructor(
 
     override val classSymbol: IrClassSymbol
         get() = symbol.owner.parentAsClass.symbol
+
+    override val argumentMapping: Map<Name, IrExpression?> = IrAnnotationArgsView(arguments, symbol)
 
     companion object
 }
