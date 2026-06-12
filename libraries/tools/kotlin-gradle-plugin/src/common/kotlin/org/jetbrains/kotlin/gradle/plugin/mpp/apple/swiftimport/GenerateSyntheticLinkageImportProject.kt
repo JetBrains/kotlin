@@ -408,12 +408,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             packageRoot.resolve(moduleMap).also {
                 it.parentFile.mkdirs()
             }.writeText(
-                """
-                module $SYNTHETIC_IMPORT_TARGET_MAGIC_NAME {
-                    header "${identifier}.h"
-                    export *
-                }   
-                """.trimIndent()
+                ""
             )
         }
     }
