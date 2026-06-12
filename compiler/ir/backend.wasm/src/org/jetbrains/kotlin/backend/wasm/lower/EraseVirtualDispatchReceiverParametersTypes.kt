@@ -67,7 +67,8 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         if (irFunction !is IrSimpleFunction) return
         if (!irFunction.isOverridableOrOverrides) return
 
-        val dispatchReceiver = irFunction.dispatchReceiverParameter!!
+        // Companion block functions are static and have no receiver
+        val dispatchReceiver = irFunction.dispatchReceiverParameter ?: return
         val originalReceiverType = dispatchReceiver.type
 
         // Interfaces in Wasm are erased to Any, so they already have appropriate type
