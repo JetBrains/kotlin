@@ -206,19 +206,22 @@ std_support::span<char> snprintf_with_addr(std_support::span<char> buffer, size_
 
 #if __has_include("dlfcn.h")
     Dl_info info{};
-    dladdr(addr, &info);
-
-    if (info.dli_fname) {
-        const char* tmp = strrchr(info.dli_fname, '/');
-        if (tmp == nullptr) {
-            image = info.dli_fname;
-        } else {
-            image = tmp + 1;
+    if (dladdr(addr, &info) != 0) {
+        if (info.dli_fname) {
+            const char* tmp = strrchr(info.dli_fname, '/');
+            if (tmp == nullptr) {
+                image = info.dli_fname;
+            } else {
+                image = tmp + 1;
+            }
         }
+        AddressToSymbolWithDlInfo(addr, info, symbol, sizeof(symbol), symbol_offset);
+    } else {
+        AddressToSymbol(addr, symbol, sizeof(symbol), symbol_offset);
     }
-#endif
-
+#else
     AddressToSymbol(addr, symbol, sizeof(symbol), symbol_offset);
+#endif
 
     buffer = FormatToSpan(buffer, "%-4zd%-35s %-18p %s + %td ", frame, image, addr, symbol, symbol_offset);
     if (is_inline) {
