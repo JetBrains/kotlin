@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -42,12 +41,12 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
         val annotations = expression.annotations
         if (annotations.isEmpty()) return
 
-        val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
+        val annotationSet = hashSetOf<ConeKotlinType>()
         val inRealBlock = expression is FirBlock && expression.source?.kind == KtRealSourceElementKind
 
         for (annotation in annotations) {
             val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation)
-            val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
+            val coneType = annotation.annotationTypeRef.coneType
 
             val allowedAnnotationTargets = annotation.getAllowedAnnotationTargets(context.session)
             // We don't want to report WRONG_ANNOTATION_TARGET on a block according to KT-52175
@@ -57,9 +56,10 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker(MppCheckerKind
                 reporter.reportOn(annotation.source, FirErrors.ANNOTATION_WITH_USE_SITE_TARGET_ON_EXPRESSION)
             }
 
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, annotation.source)
-
-            existingTargetsForAnnotation.add(useSiteTarget)
+            if (coneType in annotationSet) {
+                checkRepeatedAnnotation(annotation, annotation.source)
+            }
+            annotationSet.add(coneType)
         }
     }
 }
