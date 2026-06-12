@@ -10,13 +10,17 @@ import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 
-fun Path.ensureParentDirsCreated() {
+internal fun Path.ensureParentDirsCreated() {
     val parent = parent
     if (!parent.exists()) {
         parent.createDirectories()
     }
 }
 
+@Deprecated(
+    "Unused KGP utility. Scheduled for removal.",
+    level = DeprecationLevel.WARNING,
+)
 fun File.ensureParentDirsCreated() {
     toPath().ensureParentDirsCreated()
 }
