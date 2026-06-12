@@ -25,6 +25,7 @@ import kotlin.String
 import kotlin.collections.List
 
 
+@DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FingerprintSyntheticPackage : DefaultTask() {
     @get:Internal
     abstract val transitiveDependencies: Property<TransitiveSwiftPMDependencies>
@@ -273,7 +274,7 @@ private data class SwiftPMImportMetadataFingerprintInput(
 
 
 internal fun fingerprintPackageResolvedSynchronization(
-    packageResolvedSynchronization: PackageResolvedSynchronization,
+    packageResolvedSynchronization: SerializablePackageResolvedSynchronization,
 ): String = sha256(
     dumpTaskFingerprintJson.encodeToString(
         packageResolvedSynchronization

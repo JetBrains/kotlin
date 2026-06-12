@@ -515,15 +515,26 @@ sealed class SwiftPMDependency : Serializable {
 
 
 /** Controls persisted `Package.resolved` synchronization for SwiftPM import. */
-@kotlinx.serialization.Serializable
 sealed class PackageResolvedSynchronization {
     /** Shares one persisted lock file bucket between all projects with the same identifier. */
-    @kotlinx.serialization.Serializable
     data class Identifier(val identifier: String) : PackageResolvedSynchronization()
 
     /** Disables persisted lock-file synchronization. */
-    @kotlinx.serialization.Serializable
     object None : PackageResolvedSynchronization()
+}
+
+internal fun PackageResolvedSynchronization.toSerializable(): SerializablePackageResolvedSynchronization = when (this) {
+    is PackageResolvedSynchronization.Identifier -> SerializablePackageResolvedSynchronization.Identifier(identifier)
+    PackageResolvedSynchronization.None -> SerializablePackageResolvedSynchronization.None
+}
+
+@kotlinx.serialization.Serializable
+internal sealed class SerializablePackageResolvedSynchronization {
+    @kotlinx.serialization.Serializable
+    data class Identifier(val identifier: String) : SerializablePackageResolvedSynchronization()
+
+    @kotlinx.serialization.Serializable
+    object None : SerializablePackageResolvedSynchronization()
 }
 
 // This is the structure that we serialize into
