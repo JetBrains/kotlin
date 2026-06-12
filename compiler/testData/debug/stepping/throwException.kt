@@ -1,4 +1,4 @@
-// !!! On native, the exception inside try does not seem to be cought and exits the application.
+// !!! KT-86794: NATIVE: stepping over at throw exception doesn't stop at enclosing catch clause and runs to program completion
 // FILE: test.kt
 fun box() {
     val a = 1
