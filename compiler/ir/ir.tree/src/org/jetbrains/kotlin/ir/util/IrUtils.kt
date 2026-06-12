@@ -1327,7 +1327,10 @@ fun IrType.removeProjections(): IrType {
     if (this !is IrSimpleType) return this
     val arguments = arguments.mapIndexed { index, argument ->
         val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]
-        fun erasedUpperBound() = typeParameter.erasedUpperBound.defaultType
+        fun erasedUpperBound(): IrSimpleType {
+            val wasNullable = argument.typeOrNull?.isNullable() == true
+            return typeParameter.erasedUpperBound.defaultType.withNullability(wasNullable)
+        }
 
         // Star projections are not allowed in supertype clause
         if (argument !is IrTypeProjection) return@mapIndexed erasedUpperBound()

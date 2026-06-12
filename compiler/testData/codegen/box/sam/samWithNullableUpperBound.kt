@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: NATIVE
 fun interface Consumer<T: Int?> {
     fun accept(u: T)
 }
