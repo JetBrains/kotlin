@@ -440,6 +440,54 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun linuxArm64(configure: Action<KotlinNativeTarget>) = linuxArm64 { configure.execute(this) }
 
+    fun tizenArm32(
+        name: String = "tizenArm32",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget
+
+    fun tizenArm32() = tizenArm32("tizenArm32") { }
+
+    fun tizenArm32(name: String) = tizenArm32(name) { }
+
+    fun tizenArm32(
+        name: String,
+        configure: Action<KotlinNativeTarget>
+    ) = tizenArm32(name) { configure.execute(this) }
+
+    fun tizenArm32(configure: Action<KotlinNativeTarget>) = tizenArm32 { configure.execute(this) }
+
+    fun tizenArm64(
+        name: String = "tizenArm64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget
+
+    fun tizenArm64() = tizenArm64("tizenArm64") { }
+
+    fun tizenArm64(name: String) = tizenArm64(name) { }
+
+    fun tizenArm64(
+        name: String,
+        configure: Action<KotlinNativeTarget>
+    ) = tizenArm64(name) { configure.execute(this) }
+
+    fun tizenArm64(configure: Action<KotlinNativeTarget>) = tizenArm64 { configure.execute(this) }
+
+    fun tizenX64(
+        name: String = "tizenX64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget
+
+    fun tizenX64() = tizenX64("tizenX64") { }
+
+    fun tizenX64(name: String) = tizenX64(name) { }
+
+    fun tizenX64(
+        name: String,
+        configure: Action<KotlinNativeTarget>
+    ) = tizenX64(name) { configure.execute(this) }
+
+    fun tizenX64(configure: Action<KotlinNativeTarget>) = tizenX64 { configure.execute(this) }
+
     @Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.WARNING)
     fun linuxArm32Hfp(
         name: String = "linuxArm32Hfp",
@@ -729,6 +777,39 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
         configureOrCreate(
             name,
             presets.getByName("linuxArm64") as KotlinNativeTargetPreset,
+            project,
+            configure
+        )
+
+    override fun tizenArm32(
+        name: String,
+        configure: KotlinNativeTarget.() -> Unit
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("tizenArm32") as KotlinNativeTargetPreset,
+            project,
+            configure
+        )
+
+    override fun tizenArm64(
+        name: String,
+        configure: KotlinNativeTarget.() -> Unit
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("tizenArm64") as KotlinNativeTargetPreset,
+            project,
+            configure
+        )
+
+    override fun tizenX64(
+        name: String,
+        configure: KotlinNativeTarget.() -> Unit
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("tizenX64") as KotlinNativeTargetPreset,
             project,
             configure
         )

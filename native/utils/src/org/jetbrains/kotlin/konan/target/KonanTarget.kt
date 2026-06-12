@@ -33,6 +33,9 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object MACOS_X64 : KonanTarget("macos_x64", Family.OSX, Architecture.X64)
     object MACOS_ARM64 : KonanTarget("macos_arm64", Family.OSX, Architecture.ARM64)
     object LINUX_ARM64 : KonanTarget("linux_arm64", Family.LINUX, Architecture.ARM64)
+    object TIZEN_ARM32 : KonanTarget("tizen_arm32", Family.LINUX, Architecture.ARM32)
+    object TIZEN_ARM64 : KonanTarget("tizen_arm64", Family.LINUX, Architecture.ARM64)
+    object TIZEN_X64 : KonanTarget("tizen_x64", Family.LINUX, Architecture.X64)
 
     object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
 
@@ -50,7 +53,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
                 LINUX_X64,
                 MINGW_X64,
                 MACOS_X64, MACOS_ARM64,
-                LINUX_ARM64, LINUX_ARM32_HFP
+                LINUX_ARM64, TIZEN_ARM32, TIZEN_ARM64, TIZEN_X64, LINUX_ARM32_HFP
             ).associateBy { it.name }
         }
 
