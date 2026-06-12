@@ -398,7 +398,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                             xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
                         )
                         it.xcodeDumpsDir.set(provideXcodeDumpsDir())
-
+                        it.localPackageSourcesDumpMarker.set(
+                            xcodebuildDumpTask.flatMap { it.localDumpMarker }
+                        )
                     }
 
                 }

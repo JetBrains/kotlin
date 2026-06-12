@@ -52,6 +52,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:Internal
     abstract val xcodeDumpsDir: DirectoryProperty
 
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val localPackageSourcesDumpMarker: RegularFileProperty
+
     private val layout = project.layout
 
     @get:OutputDirectory
