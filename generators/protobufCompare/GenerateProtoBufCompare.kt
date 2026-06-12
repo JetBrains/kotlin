@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.DebugBuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.java.DebugJavaClassProtoBuf
-import org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.protobuf.Descriptors
 import org.jetbrains.kotlin.utils.Printer
@@ -58,12 +57,11 @@ class GenerateProtoBufCompare {
 
     private val extensions = object {
         val jvm = DebugJvmProtoBuf.getDescriptor().extensions
-        val js = DebugJsProtoBuf.getDescriptor().extensions
         val java = DebugJavaClassProtoBuf.getDescriptor().extensions
         val builtIns = DebugBuiltInsProtoBuf.getDescriptor().extensions
         val klib = DebugKlibMetadataProtoBuf.getDescriptor().extensions
 
-        private val extensionsMap = (jvm + js + java + builtIns + klib).groupBy { it.containingType }
+        private val extensionsMap = (jvm + java + builtIns + klib).groupBy { it.containingType }
 
         operator fun get(desc: Descriptors.Descriptor): List<Descriptors.FieldDescriptor>? = extensionsMap[desc]
 
@@ -72,7 +70,6 @@ class GenerateProtoBufCompare {
             if (fieldDescriptor.isExtension) {
                 extensionPrefix = when {
                     fieldDescriptor in jvm -> "jvmExt_"
-                    fieldDescriptor in js -> "jsExt_"
                     fieldDescriptor in java -> "javaExt_"
                     fieldDescriptor in builtIns -> "builtInsExt_"
                     fieldDescriptor in klib -> "klibExt_"
@@ -104,7 +101,6 @@ class GenerateProtoBufCompare {
         p.println("import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.deserialization.NameResolver")
         p.println("import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf")
-        p.println("import org.jetbrains.kotlin.metadata.js.JsProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.serialization.Interner")
         p.println("import org.jetbrains.kotlin.name.ClassId")

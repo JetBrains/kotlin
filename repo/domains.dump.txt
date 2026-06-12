@@ -74,7 +74,6 @@ Js:
  - js/js.frontend
  - js/js.frontend.common
  - js/js.parser
- - js/js.serializer
  - js/js.sourcemap
  - js/js.tests
  - js/js.translator/ReadMe.md

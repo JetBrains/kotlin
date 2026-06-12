@@ -1,5 +1,4 @@
-import java.io.File
-import java.util.Properties
+import java.util.*
 
 pluginManagement {
     includeBuild("repo/kotlin-build-helpers")
@@ -187,7 +186,6 @@ include(
     ":compiler:jklib.tests",
     ":js:js.ast",
     ":js:js.sourcemap",
-    ":js:js.serializer",
     ":js:js.parser",
     ":js:js.config",
     ":js:js.frontend.common",

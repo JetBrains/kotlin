@@ -34,10 +34,7 @@ object KotlinStubVersions {
      * */
     const val BUILTIN_STUB_VERSION = BINARY_STUB_VERSION + 5
 
-    /**
-     * JS stub version should be increased if changes are made to the JS stub building subsystem (org.jetbrains.kotlin.idea.decompiler.js).
-     * Increasing this version will lead to reindexing of .kjsm binary files (see KotlinJavaScriptMetaFileType).
-     * */
+    @Deprecated("Kotlin/JS metadata decompiler has been removed", level = DeprecationLevel.WARNING)
     const val JS_STUB_VERSION = BINARY_STUB_VERSION + 4
 
     /**
