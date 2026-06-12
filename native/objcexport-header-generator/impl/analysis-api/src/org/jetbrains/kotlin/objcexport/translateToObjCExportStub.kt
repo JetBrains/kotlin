@@ -25,7 +25,7 @@ internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbo
                     ).dropWhile { it == '_' }
 
                     if (this.exportSession.configuration.explicitMethodFamilyName && objCSpecialNames.any { trimmedName.startsWithWords(it) }) {
-                        result.addIfNotNull(translateToObjCMethod(symbol.getter!!))
+                        result.addIfNotNull(translateToObjCMethod(symbol.getter!!, beingGeneratedForProperty = true))
                     }
                 }
             } else {

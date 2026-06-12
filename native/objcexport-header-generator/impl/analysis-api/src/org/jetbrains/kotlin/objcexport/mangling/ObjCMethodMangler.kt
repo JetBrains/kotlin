@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInstanceType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
+import org.jetbrains.kotlin.objcexport.extras.generatedForProperty
 
 /**
  * ObjC method consists of 3 parts, each part needs to be mangled
@@ -33,7 +34,7 @@ internal class ObjCMethodMangler {
             val cloned = member.copy(
                 mangledSelectors = buildMangledSelectors(mangledAttribute),
                 mangledParameters = buildMangledParameters(mangledAttribute),
-                swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub),
+                swiftNameAttribute = buildMangledSwiftNameMethodAttribute(mangledAttribute, containingStub, member.generatedForProperty),
                 containingStubName = containingStub.name
             )
             mangledMethods[key] = mangledAttribute
