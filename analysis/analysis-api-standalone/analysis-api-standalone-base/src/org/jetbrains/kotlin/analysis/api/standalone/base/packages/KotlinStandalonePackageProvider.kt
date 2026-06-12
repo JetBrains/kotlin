@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.packages
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -13,15 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.platform.packages.*
-import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtFile
-import java.nio.file.Path
-import kotlin.io.path.extension
 
 class KotlinStandalonePackageProvider(
     project: Project,
@@ -52,58 +44,10 @@ class KotlinStandalonePackageProvider(
 
 class KotlinStandalonePackageProviderFactory(
     private val project: Project,
-    private val indexedFiles: Collection<KtFile>,
-    libraryRoots: List<VirtualFile>
+    private val packageNamesProvider: KotlinStandalonePackageNamesProvider,
 ) : KotlinCachingPackageProviderFactory(project) {
-    /** A mapping between the library root and its containing KLib file. */
-    private val klibFiles: Map<VirtualFile, Path> = buildMap {
-        for (libraryRoot in libraryRoots) {
-            if (libraryRoot.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL) {
-                // Root entry in the Klib archive
-                val libraryFile = runCatching { VfsUtilCore.getVirtualFileForJar(libraryRoot)?.toNioPath() }.getOrNull() ?: continue
-                if (libraryFile.extension.lowercase() == KLIB_FILE_EXTENSION) {
-                    put(libraryRoot, libraryFile)
-                }
-            } else if (libraryRoot.isDirectory) {
-                // Unpacked Kotlin library (a tree of directories with individual '.knm' files)
-                val libraryFile = runCatching { libraryRoot.toNioPath() }.getOrNull() ?: continue
-                put(libraryRoot, libraryFile)
-            }
-        }
-    }
-
-    /** On-demand package storage for [klibFiles]. */
-    private val klibPackages = Caffeine
-        .newBuilder()
-        .maximumSize(1000)
-        .build<Path, List<FqName>> { libraryFile ->
-            buildList {
-                val kotlinLibraries = KlibLoader { libraryPaths(libraryFile) }.load().librariesStdlibFirst
-                for (kotlinLibrary in kotlinLibraries) {
-                    val moduleHeader = parseModuleHeader(kotlinLibrary.metadata.moduleHeaderData)
-                    for (packageNameString in moduleHeader.packageFragmentNameList) {
-                        add(FqName(packageNameString))
-                    }
-                }
-            }
-        }
-
     override fun createNewPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider {
-        val matchingPackageNames = buildSet {
-            for (sourceKtFile in indexedFiles) {
-                val sourceVirtualFile = sourceKtFile.virtualFile ?: continue
-                if (searchScope.contains(sourceVirtualFile)) {
-                    add(sourceKtFile.packageFqName)
-                }
-            }
-
-            for ([libraryRoot, libraryFile] in klibFiles) {
-                if (searchScope.contains(libraryRoot)) {
-                    addAll(klibPackages[libraryFile] ?: emptyList())
-                }
-            }
-        }
-
+        val matchingPackageNames = packageNamesProvider.getPackageNamesInScope(searchScope) ?: emptySet()
         return KotlinStandalonePackageProvider(project, searchScope, matchingPackageNames)
     }
 }
