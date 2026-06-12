@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxElementType
+import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.name.Name
@@ -320,5 +321,72 @@ class JavaParsingModifiersAndSpecialClassesTest : JavaParsingTestBase() {
         assert(javaClass.isAnnotationType) { "Ann should be annotation type" }
         assert(javaClass.isAbstract) { "Annotation type with methods should be abstract" }
         assert(!javaClass.isFinal) { "Annotation type should not be final" }
+    }
+
+    @Test
+    fun testSealedImplicitPermitsScansWholeCompilationUnit() {
+        // JLS 8.1.6 / 9.1.4: with no `permits` clause, the permitted subtypes are *every* class in
+        // the same compilation unit whose direct superclass is the sealed type — top-level siblings
+        // and member types at any nesting depth, not only directly-nested members.
+        val source = """
+            sealed interface Shape {
+                final class Inner implements Shape {}
+            }
+
+            final class Circle implements Shape {}
+
+            final class Square implements Shape {}
+
+            class Holder {
+                static final class Triangle implements Shape {}
+                static class Mid {
+                    static final class Deep implements Shape {}
+                }
+            }
+        """.trimIndent()
+        val parsed = parseSource(source)
+        val tree = parsed.tree
+        val shapeNode = tree.getChildrenByType(parsed.root, JavaSyntaxElementType.CLASS).first { node ->
+            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } == "Shape"
+        }
+        val shape = JavaClassOverAst(shapeNode, tree, parsed.context)
+        assert(shape.isSealed) { "Shape should be sealed" }
+
+        val permitted = shape.permittedTypes.map { it.classifierQualifiedName }.toSet()
+        assert(permitted == setOf("Shape.Inner", "Circle", "Square", "Holder.Triangle", "Holder.Mid.Deep")) {
+            "Implicit permits must scan the whole compilation unit (siblings + deeply-nested), got $permitted"
+        }
+    }
+
+    @Test
+    fun testSealedImplicitPermitsMatchesByResolutionNotText() {
+        // The implicit-`permits` match must be resolution-based (like PSI's `isInheritor`), not a raw
+        // text match. `Box.Impl implements Shape` textually names "Shape", but in `Impl`'s scope that
+        // `Shape` resolves to the shadowing nested `Box.Shape`, NOT the top-level sealed `Shape`.
+        // A purely textual match would wrongly count `Box.Impl` (false positive); resolution excludes
+        // it while still including the genuine top-level `Circle`.
+        val source = """
+            sealed interface Shape {}
+
+            final class Circle implements Shape {}
+
+            class Box {
+                interface Shape {}
+                static final class Impl implements Shape {}
+            }
+        """.trimIndent()
+        val parsed = parseSource(source)
+        val tree = parsed.tree
+        val shapeNode = tree.getChildrenByType(parsed.root, JavaSyntaxElementType.CLASS).first { node ->
+            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } == "Shape"
+        }
+        val shape = JavaClassOverAst(shapeNode, tree, parsed.context)
+        assert(shape.isSealed) { "Top-level Shape should be sealed" }
+
+        val permitted = shape.permittedTypes.map { it.classifierQualifiedName }.toSet()
+        assert(permitted == setOf("Circle")) {
+            "Resolution-based match must include only the real subtype `Circle` and exclude `Box.Impl` " +
+                    "(whose `Shape` resolves to the nested `Box.Shape`), got $permitted"
+        }
     }
 }

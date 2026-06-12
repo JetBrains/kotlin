@@ -224,38 +224,109 @@ class JavaClassOverAst(
                     .map { JavaClassifierTypeOverAst(it, tree, memberResolutionContext) }
                     .asSequence()
             }
-            // No explicit permits clause — sealed class: derive permitted types from direct
-            // subtypes in the same file (JLS 13.4.27).
+            // No explicit permits clause — sealed class: infer permitted types from the subtypes
+            // declared anywhere in the same compilation unit (JLS 8.1.6 / 9.1.4). See
+            // deriveImplicitPermittedTypes for the rationale.
             if (!isSealed) return emptySequence()
             return deriveImplicitPermittedTypes()
         }
 
+    /**
+     * Implicit-`permits` fallback: when a sealed type has no `permits` clause, Java infers its
+     * permitted direct subtypes as *each top-level or nested class declared in the same compilation
+     * unit (the whole `.java` file) whose direct superclass is this type* (JLS 8.1.6 / 9.1.4). We
+     * therefore scan **every** CLASS node in the file — top-level siblings and member types at any
+     * nesting depth — not just this type's own directly-nested members. This mirrors the PSI
+     * reference (`JavaClassImpl.lazilyComputePermittedTypesInSameFile`), which walks the entire
+     * `containingFile` with `SyntaxTraverser.psiTraverser`.
+     *
+     * The match is **resolution-based**, exactly like PSI's `isInheritor(this, checkDeep = false)`:
+     * a candidate is permitted iff one of its *directly declared* `extends`/`implements` supertypes
+     * **resolves** to this sealed type (compared by [fqName]). Resolving — rather than matching the
+     * raw reference text — is what makes this honour imports, packages and scoping, so it has
+     * neither of the false-positive/false-negative gaps of a textual match:
+     * - a candidate extending a *different* type that merely shares this type's simple name (e.g.
+     *   imported from another package) resolves to that other classifier and is excluded;
+     * - a candidate naming this type through a differently-spelled qualified path (fully-qualified
+     *   or via a single-type import) resolves to this type and is included.
+     *
+     * Resolution here re-enters type construction (`classifier -> findLocalClass -> findInnerClass`)
+     * and can recurse while `permittedTypes` is itself being computed during this type's resolution.
+     * To stay recursion-safe we mirror PSI's second design choice and defer it: only the candidate
+     * **enumeration** (walking the file for CLASS nodes) is eager; both the node→[JavaClass]
+     * resolution and the per-candidate supertype resolution happen **lazily** inside the returned
+     * `Sequence`, so they run only when the caller iterates it — by which point this type's own
+     * resolution is no longer on the stack (FIR consumes `permittedTypes` from a deferred
+     * `setSealedClassInheritors { ... }` provider). PSI defers the same `isInheritor` filter behind
+     * its `Sequence` "because that resolution can cause contract violations".
+     *
+     * Only *direct* declared supertypes are compared (no transitive walk), matching JLS's "direct
+     * superclass" wording and PSI's `checkDeep = false`.
+     */
     private fun deriveImplicitPermittedTypes(): Sequence<JavaClassifierType> {
-        val myName = name.asString()
-        val myFqName = fqName.asString()
-        return tree.getChildren(node)
-            .filter { tree.getType(it) == JavaSyntaxElementType.CLASS }
-            .filter { innerNode ->
-                // Check if the inner class directly extends/implements this sealed type
-                val extendsRefs = tree.findChildByType(innerNode, JavaSyntaxElementType.EXTENDS_LIST)?.let { el ->
-                    tree.getChildrenByType(el, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-                        .map { tree.getText(it).toString().substringBefore('<').trim() }
-                } ?: emptyList()
-                val implementsRefs = tree.findChildByType(innerNode, JavaSyntaxElementType.IMPLEMENTS_LIST)?.let { il ->
-                    tree.getChildrenByType(il, JavaSyntaxElementType.JAVA_CODE_REFERENCE)
-                        .map { tree.getText(it).toString().substringBefore('<').trim() }
-                } ?: emptyList()
-                (extendsRefs + implementsRefs).any { ref -> ref == myName || ref == myFqName }
+        val myFqName = fqName
+        // Eagerly enumerate every CLASS node in the compilation unit (top-level siblings and member
+        // types at any depth). Enumeration is purely structural (by node type) and recursion-safe.
+        val candidateNodes = mutableListOf<JavaLightNode>()
+        collectClassNodes(tree.getRoot(), candidateNodes)
+        // Lazily resolve each candidate and keep those whose direct superclass resolves to this type.
+        // Resolution is deferred behind the Sequence so it never runs while this type's own
+        // permittedTypes is being computed during resolution.
+        return candidateNodes.asSequence().mapNotNull { classNode ->
+            val candidate = resolveSameFileClassNode(classNode) ?: return@mapNotNull null
+            // A type is never its own subtype; skip it without forcing its supertype resolution.
+            if (candidate.fqName == myFqName) return@mapNotNull null
+            val isDirectSubtype = candidate.supertypes.any { supertype ->
+                (supertype.classifier as? JavaClass)?.fqName == myFqName
             }
-            .mapNotNull { innerNode ->
-                val innerName = tree.findChildByType(innerNode, JavaSyntaxTokenType.IDENTIFIER)?.let {
-                    tree.getText(it).toString()
-                } ?: return@mapNotNull null
-                val innerClass = findInnerClass(Name.identifier(innerName)) ?: return@mapNotNull null
-                ResolvedJavaClassifierType(innerClass)
-            }
-            .asSequence()
+            if (isDirectSubtype) ResolvedJavaClassifierType(candidate) else null
+        }
     }
+
+    /**
+     * Recursively collects every CLASS node under [container] (top-level siblings and member types
+     * at any depth) into [out]. Enumeration is purely structural — no references are resolved here.
+     */
+    private fun collectClassNodes(container: JavaLightNode, out: MutableList<JavaLightNode>) {
+        for (child in tree.getChildren(container)) {
+            if (tree.getType(child) != JavaSyntaxElementType.CLASS) continue
+            out.add(child)
+            collectClassNodes(child, out)
+        }
+    }
+
+    /**
+     * Resolves an arbitrary same-file CLASS node to its [JavaClass] without triggering supertype
+     * resolution: the top-level enclosing class is materialised through the file's same-file
+     * top-level provider (which builds it against the file-level context) and each nested level is
+     * reached with the declared-only [JavaClass.findInnerClass]. Returns `null` if any segment of
+     * the enclosing chain cannot be resolved (e.g. a malformed/anonymous node without a name).
+     */
+    private fun resolveSameFileClassNode(classNode: JavaLightNode): JavaClass? {
+        // Build the enclosing CLASS chain (top-level first). Climb while the parent is itself a
+        // CLASS, stopping at the compilation-unit root so the synthetic root is never included.
+        val rootNode = tree.getRoot()
+        val chain = ArrayList<JavaLightNode>()
+        var current = classNode
+        while (true) {
+            chain.add(current)
+            val parent = tree.getParent(current) ?: break
+            if (parent == rootNode || tree.getType(parent) != JavaSyntaxElementType.CLASS) break
+            current = parent
+        }
+        chain.reverse()
+        val topName = classNodeSimpleName(chain.first()) ?: return null
+        var resolved: JavaClass =
+            resolutionContext.scopeContext.sameFileTopLevelClassProvider(Name.identifier(topName)) ?: return null
+        for (i in 1 until chain.size) {
+            val nestedName = classNodeSimpleName(chain[i]) ?: return null
+            resolved = resolved.findInnerClass(Name.identifier(nestedName)) ?: return null
+        }
+        return resolved
+    }
+
+    private fun classNodeSimpleName(classNode: JavaLightNode): String? =
+        tree.findChildByType(classNode, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() }
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 

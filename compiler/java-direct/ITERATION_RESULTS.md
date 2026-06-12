@@ -36,6 +36,42 @@ This log is read into the agent's context every session, so **entries must stay 
 
 <!-- Add new entries below, newest first. -->
 
+### 2026-06-12 — Implicit `permits` match is now resolution-based + lazy (PSI `isInheritor` parity)
+- **Change**: `JavaClassOverAst.deriveImplicitPermittedTypes` no longer matches subtypes by raw
+  `extends`/`implements` text. A candidate is permitted iff one of its *direct* declared supertypes
+  **resolves** (`JavaClassifierType.classifier`) to this sealed type (compared by `fqName`), mirroring
+  PSI's `isInheritor(this, checkDeep = false)`. This removes the textual false-positive (a sibling
+  whose `Shape` resolves to a shadowing nested type) and false-negative (FQ/imported reference) gaps.
+- **Key subtlety / recursion-safety**: resolution is **lazy** — only CLASS-node enumeration
+  (`collectClassNodes` from the file root) is eager; node→`JavaClass` resolution and supertype
+  resolution run inside the returned `Sequence`, so they fire only when FIR iterates the deferred
+  `setSealedClassInheritors { ... }` provider, never while this type's own `permittedTypes` is on the
+  stack — exactly why PSI also defers its `isInheritor` filter behind a `Sequence`.
+- **Files**: `model/JavaClassOverAst.kt` (−`collectImplicitPermittedSubtypes`/`directSupertypeRefNamesOf`,
+  +lazy resolution match + `collectClassNodes`), `test/JavaParsingModifiersAndSpecialClassesTest.kt`
+  (+`testSealedImplicitPermitsMatchesByResolutionNotText`).
+- **Tests**: java-direct `JavaUsingAstBoxTestGenerated` + `JavaUsingAstPhasedTestGenerated` green
+  (0 failures, test task executed) + `JavaParsingModifiersAndSpecialClassesTest` 12/12.
+- **Result**: green; model-only change, no shared FIR or test data touched.
+
+### 2026-06-12 — Implicit `permits` now scans the whole compilation unit (JLS 8.1.6 / 9.1.4)
+- **Change**: `JavaClassOverAst.deriveImplicitPermittedTypes` (sealed type, no `permits` clause) now
+  recurses from the file root over **every** CLASS node — top-level siblings and member types at any
+  depth — instead of only the sealed type's directly-nested members, matching PSI's
+  `lazilyComputePermittedTypesInSameFile` (`SyntaxTraverser.psiTraverser(containingFile)`). Matching
+  stays purely syntactic (raw `extends`/`implements` text vs simple/FQ name); a matched node is
+  turned into a `JavaClass` via the file's `sameFileTopLevelClassProvider` + declared-only
+  `findInnerClass` chain, so no supertype resolution is triggered (recursion-safe).
+- **Key subtlety**: the synthetic compilation-unit root is itself typed `CLASS`, so the enclosing-chain
+  walk must stop at the root (climb only while the parent is a CLASS *and* not the root) — otherwise
+  `chain.first()` is the identifier-less root and resolution returns null for every match.
+- **Files**: `model/JavaClassOverAst.kt` (+whole-file scan/`collectImplicitPermittedSubtypes`,
+  `resolveSameFileClassNode`, `directSupertypeRefNamesOf`), `test/JavaParsingModifiersAndSpecialClassesTest.kt`
+  (+`testSealedImplicitPermitsScansWholeCompilationUnit`).
+- **Tests**: java-direct `JavaUsingAstBoxTestGenerated` + `JavaUsingAstPhasedTestGenerated` green
+  (0 failures, test task executed) + `JavaParsingModifiersAndSpecialClassesTest` 11/11.
+- **Result**: green; model-only change, no shared FIR or test data touched.
+
 ### 2026-06-11 — Fix fragile `substringBefore('.')` in the same-file supertype walk (reviewer concern)
 - **Change**: `findInnerClassInSameFileSupertypes` (relocated walk) no longer takes only the first
   dot-segment of a supertype reference. New `resolveSameFileSupertypeRefToClass` navigates the full
