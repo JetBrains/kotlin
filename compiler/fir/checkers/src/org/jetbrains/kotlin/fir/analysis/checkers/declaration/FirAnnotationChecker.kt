@@ -370,10 +370,13 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkDeclaredRepeatedAnnotations(annotationContainer: FirAnnotationContainer) {
         val annotationSources = annotationContainer.annotations.keysToMap { it.source }
-        checkRepeatedAnnotation(
-            annotationContainer, annotationContainer.annotations,
-            annotationSources, defaultSource = null,
-        )
+        val annotations = if (annotationContainer is FirProperty && annotationContainer.isVal) {
+            // We filter out these incorrect use-site targets, as INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE will be reported for them
+            annotationContainer.annotations.filterNot { it.useSiteTarget == SETTER_PARAMETER || it.useSiteTarget == PROPERTY_SETTER }
+        } else {
+            annotationContainer.annotations
+        }
+        checkRepeatedAnnotation(annotations, annotationSources, defaultSource = null)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -382,7 +385,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         val useSiteSource = typeRef.source
 
         typeRef.coneType.forEachExpandedType(context.session) { type ->
-            checkRepeatedAnnotation(null, type.typeAnnotations, annotationSources, useSiteSource)
+            checkRepeatedAnnotation(type.typeAnnotations, annotationSources, useSiteSource)
         }
     }
 

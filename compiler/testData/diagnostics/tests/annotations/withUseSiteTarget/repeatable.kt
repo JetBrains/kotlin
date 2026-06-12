@@ -59,10 +59,10 @@ public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPro
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
         @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
 
-    @field:fieldOrPropAnn <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE!>@delegate:fieldOrPropAnn<!>
+    @field:fieldOrPropAnn <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, REPEATED_ANNOTATION!>@delegate:fieldOrPropAnn<!>
     val v: Int = 42
 
-    <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD!>@field:fieldOrPropAnn<!> @delegate:fieldOrPropAnn
+    <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD!>@field:fieldOrPropAnn<!> <!REPEATED_ANNOTATION!>@delegate:fieldOrPropAnn<!>
     val u: Int by lazy { 42 }
         <!ACCESSOR_FOR_DELEGATED_PROPERTY!>get() = <!UNRESOLVED_REFERENCE!>field<!><!>
 }
