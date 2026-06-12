@@ -42,7 +42,7 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
-    fun `local Swift package source content change invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
+    fun `local Swift package source content change does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
             packageDependency.writePackageDependencySource("1")
@@ -75,7 +75,7 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
 
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
-    fun `adding local Swift package source file invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
+    fun `adding local Swift package source file does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
 
@@ -95,20 +95,20 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             )
 
             build(fingerprintXcodebuildIphoneSimulatorTask) {
-                assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
+                assertTasksUpToDate(fingerprintXcodebuildIphoneSimulatorTask)
             }
 
-            assertNotEquals(
+            assertEquals(
                 originalFingerprint,
                 readIphonesimulatorFingerprint(),
-                "Adding a local Swift package source file should invalidate the prepare fingerprint task"
+                "Adding a local Swift package source file should not invalidate the prepare fingerprint task"
             )
         }
     }
 
     @GradleTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
-    fun `deleting local Swift package source file invalidates prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
+    fun `deleting local Swift package source file does not invalidate prepare xcodebuild dump fingerprint task`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = createPackageDependency()
             val extraSource = packageDependency.resolve("Sources/PackageDependency/Extra.swift").apply {
@@ -131,13 +131,13 @@ class FingerprintXcodeBuildTests : KGPBaseTest() {
             extraSource.deleteExisting()
 
             build(fingerprintXcodebuildIphoneSimulatorTask) {
-                assertTasksExecuted(fingerprintXcodebuildIphoneSimulatorTask)
+                assertTasksUpToDate(fingerprintXcodebuildIphoneSimulatorTask)
             }
 
-            assertNotEquals(
+            assertEquals(
                 originalFingerprint,
                 readIphonesimulatorFingerprint(),
-                "Deleting a local Swift package source file should invalidate the prepare fingerprint task"
+                "Deleting a local Swift package source file should not invalidate the prepare fingerprint task"
             )
         }
     }
