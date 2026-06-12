@@ -33,12 +33,12 @@ val knownGroups = buildList {
     }
 }
 
-gradle.beforeProject {
-    // Can't use dependencyResolutionManagement, because kotlin-bootstrap adds their repos in `beforeProject`, so
-    // each project needs their own set of repos to work.
+dependencyResolutionManagement {
     repositories {
         mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
     }
+}
+gradle.beforeProject {
     extra["knownGroups"] = knownGroups
 }
 

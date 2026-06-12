@@ -3,12 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-repositories {
-    maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
     srcDir("../benchmarksReports/src/commonMain/kotlin")
