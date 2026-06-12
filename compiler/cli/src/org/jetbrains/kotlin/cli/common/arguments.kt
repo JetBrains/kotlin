@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.DEPRECATED_CLI_ARG
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENTS_ARG_NAME
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_DEPENDENCIES_ARG_NAME
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_REFINES_ARG_NAME
+import org.jetbrains.kotlin.cli.common.FragmentArgs.FRAGMENT_SOURCES_ARG_NAME
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -288,12 +294,14 @@ private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: Commo
     }
 }
 
-private val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
-private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
-private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
-private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
-private val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
-private val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
+private object FragmentArgs {
+    val FRAGMENTS_ARG_NAME = CommonCompilerArguments::fragments.cliArgument
+    val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines.cliArgument
+    val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
+    val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
+    val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
+    val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
+}
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
