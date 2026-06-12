@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JS_IR
-// TARGET_BACKEND: JS_IR_ES6
 // ES_MODULES
 // FILE: bar.kt
 @file:JsModule("./interfacesWithCompanion.mjs")

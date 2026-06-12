@@ -185,6 +185,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::WasmStringSwitchOptimizerLowering,
     ::AssociatedObjectsLowering,
 
+    ::ExternalCompanionObjectsLowering,
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
     ::ComplexExternalDeclarationsUsageLowering,
 

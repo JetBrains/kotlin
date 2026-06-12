@@ -40,9 +40,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
-abstract class FirWebCommonExternalChecker(
-    private val allowCompanionInInterface: Boolean
-) : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+abstract class FirWebCommonExternalChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     abstract fun isNativeOrEffectivelyExternal(symbol: FirBasedSymbol<*>, session: FirSession): Boolean
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -97,14 +95,13 @@ abstract class FirWebCommonExternalChecker(
 
         if (
             declaration is FirClass &&
-            !declaration.classKind.isInterface && (!allowCompanionInInterface || !declaration.status.isCompanion) &&
+            !declaration.classKind.isInterface && !declaration.status.isCompanion &&
             container is FirClassSymbol<*> && container.classKind.isInterface
         ) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE)
         }
 
         if (
-            allowCompanionInInterface &&
             declaration is FirClass &&
             declaration.status.isCompanion &&
             container is FirClassSymbol<*> &&
