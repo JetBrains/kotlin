@@ -194,26 +194,17 @@ class JavaClassOverAst(
         get() = tree.findChildByType(node, JavaSyntaxTokenType.INTERFACE_KEYWORD) != null
 
     /**
-     * A Java `@interface` (annotation declaration) is represented by the KMP parser as a CLASS
-     * node whose direct children contain an `AT` token followed immediately by `INTERFACE_KEYWORD`.
+     * A Java `@interface` (annotation declaration) is parsed by the KMP parser as a CLASS node
+     * whose direct children contain an `AT` token (immediately before `INTERFACE_KEYWORD`).
      *
-     * A plain interface (`interface Foo`) contains `INTERFACE_KEYWORD` but no `AT` token at the
-     * class-header level (any `@Annotation` on the class lives inside the `MODIFIER_LIST` child,
-     * not as a direct CLASS child). So a loose `AT present && INTERFACE_KEYWORD present` check
-     * is normally sufficient, but we tighten it further to guarantee adjacency — this protects
-     * against future parser changes that might surface an annotation token at the CLASS level
-     * for a non-annotation interface, and makes the invariant explicit.
+     * Checking for a direct-child `AT` is sufficient:
+     * - `findChildByType` only scans *direct* children, and the sole `AT` that appears as a direct
+     *   child of a CLASS node is the one of `@interface`.
+     * - A class-/interface-level `@Annotation` lives nested under the `MODIFIER_LIST` child
+     *   (`MODIFIER_LIST → ANNOTATION → AT`), so its `AT` is never a direct CLASS child.
      */
     override val isAnnotationType: Boolean
-        get() {
-            val children = tree.getChildren(node)
-            for (i in 0 until children.size - 1) {
-                if (tree.getType(children[i]) == JavaSyntaxTokenType.AT &&
-                    tree.getType(children[i + 1]) == JavaSyntaxTokenType.INTERFACE_KEYWORD
-                ) return true
-            }
-            return false
-        }
+        get() = tree.findChildByType(node, JavaSyntaxTokenType.AT) != null
 
     override val isEnum: Boolean
         get() = tree.findChildByType(node, JavaSyntaxTokenType.ENUM_KEYWORD) != null
