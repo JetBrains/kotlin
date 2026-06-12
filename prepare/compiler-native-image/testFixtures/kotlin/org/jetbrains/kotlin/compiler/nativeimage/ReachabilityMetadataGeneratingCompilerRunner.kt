@@ -18,7 +18,9 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
 
     private val kotlinHome: File = ForTestCompileRuntime.distKotlincForTests()
 
-    private val reachabilityMetadataPath: String = ForTestCompileRuntime.kotlinNativeImageResourcesPathForTests()
+    private val resourcesDir: File = ForTestCompileRuntime.kotlinNativeImageResourcesPathForTests()
+
+    private val reachabilityMetadataPath: String = resourcesDir
         .resolve("META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable")
         .absolutePath
 
@@ -41,7 +43,7 @@ class ReachabilityMetadataGeneratingCompilerRunner(private val javaHome: String)
             // Simulate the native image runtime environment
             add("-Dorg.graalvm.nativeimage.imagecode=runtime")
             addAll(jvmArgs)
-            add("-cp"); add(embeddableClasspath.joinToString(File.pathSeparator) { it.absolutePath })
+            add("-cp"); add((embeddableClasspath + resourcesDir).joinToString(File.pathSeparator) { it.absolutePath })
             add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
             if (classpath.isNotEmpty()) {
                 add("-cp")

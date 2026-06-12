@@ -19,80 +19,38 @@ data class BundledPluginInfo(
     val jarPrefixes: List<String>,
 )
 
+/**
+ * Bundled plugins, loaded lazily on request. Only expected to be used in the compiler native image,
+ * when [isGraalNativeImageRuntime] is `true`. Bundled plugins are listed in [BUNDLED_PLUGIN_DESCRIPTORS_FILE],
+ * which is generated in the build process of the native image.
+ */
 object BundledCompilerPlugins {
-    val pluginInfos = listOf(
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlinx.serialization",
-            pluginRegistrarFqName = "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginOptions",
-            jarPrefixes = listOf(
-                "kotlin-serialization-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.allopen",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.allopen.AllOpenComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor",
-            jarPrefixes = listOf(
-                "allopen-compiler-plugin",
-                "kotlin-allopen-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.noarg",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.noarg.NoArgComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor",
-            jarPrefixes = listOf(
-                "noarg-compiler-plugin",
-                "kotlin-noarg-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.samWithReceiver",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor",
-            jarPrefixes = listOf(
-                "sam-with-receiver-compiler-plugin",
-                "kotlin-sam-with-receiver-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.assignment",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor",
-            jarPrefixes = listOf(
-                "assignment-compiler-plugin",
-                "kotlin-assignment-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.lombok",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.lombok.LombokComponentRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.lombok.LombokCommandLineProcessor",
-            jarPrefixes = listOf(
-                "lombok-compiler-plugin",
-                "kotlin-lombok-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "org.jetbrains.kotlin.powerassert",
-            pluginRegistrarFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCompilerPluginRegistrar",
-            commandLineProcessorFqName = "org.jetbrains.kotlin.powerassert.PowerAssertCommandLineProcessor",
-            jarPrefixes = listOf(
-                "power-assert-compiler-plugin",
-                "kotlin-power-assert-compiler-plugin",
-            ),
-        ),
-        BundledPluginInfo(
-            pluginId = "androidx.compose.compiler.plugins.kotlin",
-            pluginRegistrarFqName = "androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar",
-            commandLineProcessorFqName = "androidx.compose.compiler.plugins.kotlin.ComposeCommandLineProcessor",
-            jarPrefixes = listOf(
-                "compose-compiler-plugin",
-                "kotlin-compose-compiler-plugin",
-            ),
-        ),
-    )
+    private const val BUNDLED_PLUGIN_DESCRIPTORS_FILE = "META-INF/org/jetbrains/kotlin/bundled-compiler-plugins.txt"
+    val pluginInfos: List<BundledPluginInfo> by lazy { loadFromResource() }
+
+    private fun loadFromResource(): List<BundledPluginInfo> {
+        val stream = BundledCompilerPlugins::class.java.classLoader.getResourceAsStream(BUNDLED_PLUGIN_DESCRIPTORS_FILE)
+            ?: return emptyList()
+        return stream.bufferedReader().useLines { lines ->
+            lines.mapNotNull { parseLine(it) }.toList()
+        }
+    }
+
+    private fun parseLine(rawLine: String): BundledPluginInfo? {
+        val line = rawLine.trim()
+        if (line.isEmpty() || line.startsWith("#")) return null
+
+        val fields = line.split(";").map { it.trim() }
+        require(fields.size == 4) {
+            "Malformed bundled plugin entry in $BUNDLED_PLUGIN_DESCRIPTORS_FILE (expected 4 ';'-separated fields): $rawLine"
+        }
+        return BundledPluginInfo(
+            pluginId = fields[0],
+            pluginRegistrarFqName = fields[1],
+            commandLineProcessorFqName = fields[2].ifEmpty { null },
+            jarPrefixes = fields[3].split(",").map { it.trim() }.filter { it.isNotEmpty() },
+        )
+    }
 
     /**
      * Resolves a single classpath entry to a bundled plugin by matching an [entry] file

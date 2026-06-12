@@ -528,6 +528,12 @@
       "type": "org.jetbrains.kotlin.com.intellij.util.QueryExecutor"
     },
     {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.extensions.CompilerConfigurationExtension"
     },
     {
@@ -544,6 +550,12 @@
     },
     {
       "type": "org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension[]"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension[]"
     },
     {
       "type": "org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
@@ -1339,6 +1351,12 @@
       "type": "org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension[]"
     },
     {
+      "type": "org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
+    },
+    {
+      "type": "org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension"
     },
     {
@@ -1505,6 +1523,9 @@
     },
     {
       "glob": "META-INF/compiler.version"
+    },
+    {
+      "glob": "META-INF/org/jetbrains/kotlin/bundled-compiler-plugins.txt"
     },
     {
       "glob": "META-INF/services/java.nio.file.spi.FileSystemProvider"

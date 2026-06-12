@@ -114,7 +114,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val scriptingPluginClasspath = mutableListOf<String>()
         val scriptingPluginOptions = mutableListOf<String>()
 
-        if (!arguments.disableDefaultScriptingPlugin) {
+        if (!arguments.disableDefaultScriptingPlugin && !isGraalNativeImageRuntime) {
             scriptingPluginOptions += provideCustomScriptingPluginOptions(arguments)
             val explicitScriptingPlugin =
                 extractPluginClasspathAndOptions(pluginConfigurations).any { (val _ = rawArgument, val classpath, val _ = options) ->
