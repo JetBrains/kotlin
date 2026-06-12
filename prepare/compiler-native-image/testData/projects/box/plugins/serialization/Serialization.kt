@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: kotlin-serialization-compiler-plugin-2.4.20.jar disableIntrinsic=false
+// COMPILER_PLUGIN: kotlin-serialization-compiler-plugin.jar disableIntrinsic=false
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

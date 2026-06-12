@@ -96,6 +96,8 @@ projectTests {
                 "reachability metadata collector agent on the smoke test."
         include("**/ReachabilityMetadataSmokeTest.class")
         useReachabilityMetadataResources()
+        @OptIn(KotlinCompilerDistUsage::class)
+        withDist()
     }
 
     nativeImageTestTask("nativeImageBoxTest") {
@@ -216,16 +218,16 @@ fun Test.useNativeImageDist() {
     )
 }
 
+@OptIn(KotlinCompilerDistUsage::class)
 fun Test.usePluginsRuntime() {
+    withDist()
     addClasspathProperty(
         pluginsRuntime,
         "kotlin.native-image.plugins-runtime.classpath",
     )
 }
 
-@OptIn(KotlinCompilerDistUsage::class)
 fun Test.useReachabilityMetadataResources() {
-    withDist()
     addClasspathProperty(
         nativeImageClasspath,
         "kotlin.compiler-embeddable.classpath",

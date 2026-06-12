@@ -15,6 +15,8 @@ import java.io.File
 abstract class AbstractNativeImagePluginTest : AbstractNativeImageCodegenTest() {
     protected val pluginsRuntimeClasspath: List<File> by lazy { ForTestCompileRuntime.kotlinNativeImagePluginsRuntimeForTests() }
 
+    private val kotlinHome: File by lazy { ForTestCompileRuntime.distKotlincForTests() }
+
     override fun buildCompilerArgs(
         boxFile: File,
         outDir: File,
@@ -24,7 +26,7 @@ abstract class AbstractNativeImagePluginTest : AbstractNativeImageCodegenTest() 
         addAll(super.buildCompilerArgs(boxFile, outDir, directives, withFullJdk))
         if (directives.expectedPluginOrder().isNotEmpty()) add("-verbose")
         for ([_, jarName, options] in directives.pluginSpecs()) {
-            val jar = File(workingDir, jarName).absolutePath
+            val jar = kotlinHome.resolve("lib").resolve(jarName).absolutePath
             add(
                 when {
                     options.isEmpty() -> "-Xcompiler-plugin=$jar"

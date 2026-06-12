@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: kotlin-assignment-compiler-plugin-2.4.20.jar annotation=ValueContainer
+// COMPILER_PLUGIN: assignment-compiler-plugin.jar annotation=ValueContainer
 
 annotation class ValueContainer
 

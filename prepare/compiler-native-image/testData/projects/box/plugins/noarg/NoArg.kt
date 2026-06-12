@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: kotlin-noarg-compiler-plugin-2.4.20.jar annotation=NoArg
+// COMPILER_PLUGIN: noarg-compiler-plugin.jar annotation=NoArg
 // FULL_JDK
 
 annotation class NoArg

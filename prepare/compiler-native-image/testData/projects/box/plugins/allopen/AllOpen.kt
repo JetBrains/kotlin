@@ -1,4 +1,4 @@
-// COMPILER_PLUGIN: kotlin-allopen-compiler-plugin-2.4.20.jar annotation=AllOpen
+// COMPILER_PLUGIN: allopen-compiler-plugin.jar annotation=AllOpen
 
 annotation class AllOpen
 

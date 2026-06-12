@@ -15,6 +15,8 @@ import java.io.File
 abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenTest() {
     protected val pluginsRuntimeClasspath: List<File> by lazy { ForTestCompileRuntime.kotlinNativeImagePluginsRuntimeForTests() }
 
+    private val kotlinHome: File by lazy { ForTestCompileRuntime.distKotlincForTests() }
+
     override fun buildCompilerArgs(
         boxFile: File,
         outDir: File,
@@ -22,11 +24,12 @@ abstract class AbstractNativeImageLegacyPluginTest : AbstractNativeImageCodegenT
         withFullJdk: Boolean,
     ): List<String> = buildList {
         addAll(super.buildCompilerArgs(boxFile, outDir, directives, withFullJdk))
-        directives.pluginSpecs().forEach { spec ->
-            add("-Xplugin=${File(workingDir, spec.jarName).absolutePath}")
-            for (option in spec.options) {
+        for ([pluginId, jarName, options] in directives.pluginSpecs()) {
+            val jar = kotlinHome.resolve("lib").resolve(jarName).absolutePath
+            add("-Xplugin=$jar")
+            for (option in options) {
                 add("-P")
-                add("plugin:${spec.pluginId}:$option")
+                add("plugin:${pluginId}:$option")
             }
         }
         for (constraint in directives.pluginOrderConstraints()) {
