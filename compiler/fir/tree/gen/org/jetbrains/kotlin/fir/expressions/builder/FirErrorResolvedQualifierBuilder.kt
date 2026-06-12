@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 @FirBuilderDsl
@@ -36,13 +36,12 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
-    override var symbol: FirClassLikeSymbol<*>? = null
+    override var qualifierSymbol: FirClassLikeSymbol<*>? = null
+    override var accessedObjectSymbol: FirRegularClassSymbol? = null
     override var explicitParent: FirResolvedQualifier? = null
     override var isNullableLhsForCallableReference: Boolean = false
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType? = null
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override var canBeValue: Boolean = false
-    override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
@@ -56,13 +55,12 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             annotations.toMutableOrEmpty(),
             packageFqName,
             relativeClassFqName,
-            symbol,
+            qualifierSymbol,
+            accessedObjectSymbol,
             explicitParent,
             isNullableLhsForCallableReference,
             resolvedLhsTypeForCallableReferenceOrNull,
             resolvedToCompanionObject,
-            canBeValue,
-            isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
             resolvedSymbolOrigin,
             typeArguments.toMutableOrEmpty(),
@@ -70,13 +68,6 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
         )
     }
 
-
-    @Deprecated("Modification of 'classId' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
-    override var classId: ClassId?
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

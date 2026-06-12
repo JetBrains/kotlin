@@ -29,7 +29,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
         if (explicitReceiver is FirResolvedQualifier) {
             val qualifierWithTypeArguments = explicitReceiver.lastQualifierPartWithTypeArguments() ?: return
 
-            if (explicitReceiver.symbol == null
+            if (explicitReceiver.qualifierSymbol == null
                 // if it is enabled, we could not create a package qualifier receiver with type arguments in the first place
                 && LanguageFeature.ForbidAnnotationsTypeArgumentsAndParenthesesForPackageQualifier.isDisabled()
             ) {
@@ -39,7 +39,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessExpressio
             val symbol = expression.toResolvedCallableSymbol() ?: return
 
             if (
-                explicitReceiver.symbol != null &&
+                explicitReceiver.qualifierSymbol != null &&
                 // normal constructors are reported in FirGenericQualifierOnConstructorCallChecker
                 (symbol.isStatic || symbol.isSyntheticSamConstructor()) &&
                 expression !is FirCallableReferenceAccess

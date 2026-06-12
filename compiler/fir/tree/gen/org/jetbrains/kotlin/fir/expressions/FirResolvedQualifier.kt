@@ -14,14 +14,20 @@ import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /**
+ * A class or package qualifier.
+ *
+ * If [qualifierSymbol] is `null`, this is a package qualifier, otherwise this is a class qualifier.
+ *
+ * If [accessedObjectSymbol] is not-null, the [coneTypeOrNull] is the type of the object. Otherwise, it's `Unit`.
+ *
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.resolvedQualifier]
  */
 abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSensitiveAlternative {
@@ -44,17 +50,41 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
     abstract override val annotations: List<FirAnnotation>
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
-    abstract val classId: ClassId?
-    abstract val symbol: FirClassLikeSymbol<*>?
+    /**
+     * If not null, refers to the class or **unexpanded** typealias with the name denoted by the qualifier.
+     */
+    abstract val qualifierSymbol: FirClassLikeSymbol<*>?
+    /**
+     * ### Before resolution
+     *
+     * If the [qualifierSymbol] resolves to a named object (or a typealias of that object),
+     * it's the symbol of that named object.
+     *
+     * If the [qualifierSymbol] resolves to a class with companion object (or a typealias of that class),
+     * it's the symbol of the companion object.
+     *
+     * Otherwise `null`.
+     *
+     * A not-null value indicates that the qualifier _can_ be used as an expression.
+     *
+     * ### After resolution
+     *
+     * Same as above but **if and only if** the qualifier is used as an expression.
+     */
+    abstract val accessedObjectSymbol: FirRegularClassSymbol?
     abstract val explicitParent: FirResolvedQualifier?
     abstract val isNullableLhsForCallableReference: Boolean
     abstract val resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?
-    abstract val resolvedToCompanionObject: Boolean
     /**
-     * If true, the qualifier is resolved to an object or companion object and can be used as an expression.
+     * ### Before resolution
+     *
+     * True, if [qualifierSymbol] refers to a class (or typealias of) with a companion object.
+     *
+     * ### After resolution
+     *
+     * Same as above **and** the qualifier is used as an expression.
      */
-    abstract val canBeValue: Boolean
-    abstract val isFullyQualified: Boolean
+    abstract val resolvedToCompanionObject: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val typeArguments: List<FirTypeProjection>
@@ -72,13 +102,13 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceAccessedObjectSymbol(newAccessedObjectSymbol: FirRegularClassSymbol?)
+
     abstract fun replaceIsNullableLhsForCallableReference(newIsNullableLhsForCallableReference: Boolean)
 
     abstract fun replaceResolvedLhsTypeForCallableReferenceOrNull(newResolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?)
 
     abstract fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
-
-    abstract fun replaceCanBeValue(newCanBeValue: Boolean)
 
     abstract fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 

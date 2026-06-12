@@ -295,7 +295,7 @@ internal class KaFirTypeProvider(
                             explicitReceiver.resolvedType.asKaType()
                         }
                         is FirResolvedQualifier -> {
-                            explicitReceiver.symbol?.toLookupTag()?.constructType(
+                            explicitReceiver.qualifierSymbol?.toLookupTag()?.constructType(
                                 explicitReceiver.typeArguments.map { it.toConeTypeProjection() }.toTypedArray(),
                                 isMarkedNullable = explicitReceiver.isNullableLhsForCallableReference
                             )?.asKaType()

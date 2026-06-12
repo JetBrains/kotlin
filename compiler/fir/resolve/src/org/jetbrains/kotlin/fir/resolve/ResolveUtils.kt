@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -391,26 +390,21 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
                     .toFirResolvedTypeRef(source = it.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
             }
         }
-        this.symbol = symbol
+        this.qualifierSymbol = symbol
         nonFatalDiagnostics?.let(this.nonFatalDiagnostics::addAll)
         this.annotations.addAll(annotations)
         this.explicitParent = explicitParent
-        this.resolvedToCompanionObject = symbol?.fullyExpandedClass()?.resolvedCompanionObjectSymbol != null
         this.resolvedSymbolOrigin = resolvedSymbolOrigin
-    }.build().apply {
-        if (symbol?.isLocal == true) {
-            resultType = typeForQualifierByDeclaration(symbol.fir, session, element = this@apply, file)
-                ?.also { replaceCanBeValue(true) }
-                ?: session.builtinTypes.unitType.coneType
-        } else {
-            setTypeOfQualifier(this@buildResolvedQualifierForClass)
-        }
-    }
+        handleObjectAccess()
+    }.build()
 }
 
+context(holder: SessionHolder)
 fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
-    if (condition) {
+    if (condition && resolvedToCompanionObject) {
         replaceResolvedToCompanionObject(false)
+        replaceAccessedObjectSymbol(null)
+        resultType = holder.session.builtinTypes.unitType.coneType
     }
 }
 
@@ -422,57 +416,52 @@ internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
     val resolvedQualifier = buildResolvedQualifier {
         packageFqName = classId.packageFqName
         relativeClassFqName = classId.relativeClassName
-        resolvedToCompanionObject =
-            !definitelyNotCompanion && fullyExpandedClass(bodyResolveComponents.session)?.resolvedCompanionObjectSymbol != null
-        symbol = this@toImplicitResolvedQualifierReceiver
+        qualifierSymbol = this@toImplicitResolvedQualifierReceiver
         this.source = source
+        with(bodyResolveComponents) {
+            handleObjectAccess()
+        }
     }.apply {
-        setTypeOfQualifier(bodyResolveComponents)
+        context(bodyResolveComponents) {
+            unsetResolvedToCompanionIf(definitelyNotCompanion)
+        }
     }
     return resolvedQualifier
 }
 
-fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
-    val classSymbol = symbol
+context(components: BodyResolveComponents)
+fun FirAbstractResolvedQualifierBuilder.handleObjectAccess() {
+    resolvedToCompanionObject = false
+    val classSymbol = qualifierSymbol
     if (classSymbol != null) {
         classSymbol.lazyResolveToPhase(FirResolvePhase.TYPES)
-        val declaration = classSymbol.fir
-        if (declaration !is FirTypeAlias || typeArguments.isEmpty()) {
-            val typeByDeclaration = typeForQualifierByDeclaration(declaration, components.session, element = this, components.file)
-            if (typeByDeclaration != null) {
-                this.resultType = typeByDeclaration
-                replaceCanBeValue(true)
+        // This crazy condition is required to keep backward compatibility to before KT-84281
+        if (classSymbol !is FirTypeAliasSymbol || typeArguments.isEmpty() || LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled()) {
+            val objectSymbol = classSymbol
+                .fullyExpandedClass(components.session)
+                ?.let { regularClass ->
+                    if (regularClass.classKind == ClassKind.OBJECT) {
+                        regularClass
+                    } else {
+                        regularClass.companionObjectSymbol?.also {
+                            components.session.lookupTracker?.recordCompanionLookup(it.classId, source, components.file.source)
+                            resolvedToCompanionObject = true
+                        }
+                    }
+                }
+            if (objectSymbol != null) {
+                coneTypeOrNull = objectSymbol.constructType()
+                accessedObjectSymbol = objectSymbol
                 return
             }
         }
     }
-    this.resultType = components.session.builtinTypes.unitType.coneType
+    coneTypeOrNull = components.session.builtinTypes.unitType.coneType
 }
 
 internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeLookupTagBasedType {
     val typeParameterSymbol = parameterReferenceBuilder.symbol
     return typeParameterSymbol.constructType()
-}
-
-internal fun typeForQualifierByDeclaration(
-    declaration: FirDeclaration, session: FirSession, element: FirElement, file: FirFile
-): ConeKotlinType? {
-    if (declaration is FirTypeAlias) {
-        val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
-        return typeForQualifierByDeclaration(expandedDeclaration, session, element, file)
-    }
-    if (declaration is FirRegularClass) {
-        if (declaration.classKind == ClassKind.OBJECT) {
-            return declaration.symbol.constructType()
-        } else {
-            val companionObjectSymbol = declaration.companionObjectSymbol
-            if (companionObjectSymbol != null) {
-                session.lookupTracker?.recordCompanionLookup(companionObjectSymbol.classId, element.source, file.source)
-                return companionObjectSymbol.constructType()
-            }
-        }
-    }
-    return null
 }
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): ConeKotlinType {

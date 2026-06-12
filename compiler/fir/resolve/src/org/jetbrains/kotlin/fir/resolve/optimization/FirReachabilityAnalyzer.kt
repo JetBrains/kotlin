@@ -195,7 +195,7 @@ class FirReachabilityAnalyzer(private val session: FirSession) : FirVisitorVoid(
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
         visitElement(resolvedQualifier)
-        mark(resolvedQualifier.symbol)
+        mark(resolvedQualifier.qualifierSymbol)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {

@@ -71,7 +71,7 @@ class VariableStorage private constructor(
         val isImplicit = unwrapped is FirThisReceiverExpression ||
                 unwrapped.toResolvedCallableSymbol(session)?.isContextParameter() == true
         val symbol = when (unwrapped) {
-            is FirResolvedQualifier -> unwrapped.symbol?.fullyExpandedClass(session)
+            is FirResolvedQualifier -> unwrapped.qualifierSymbol?.fullyExpandedClass(session)
             is FirCallableReferenceAccess -> null
             is FirResolvable -> unwrapped.calleeReference.symbol
             else -> null

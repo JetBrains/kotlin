@@ -75,7 +75,7 @@ KtDotQualifiedExpression(206,213): 'C.foo()'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = C
         isSafeNavigation = false
-        type = test.C.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -98,7 +98,7 @@ KtCallExpression(208,213): 'foo()'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = C
         isSafeNavigation = false
-        type = test.C.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -118,7 +118,7 @@ KtNameReferenceExpression(208,211): 'foo'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = C
         isSafeNavigation = false
-        type = test.C.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
@@ -140,7 +140,7 @@ KtDotQualifiedExpression(218,223): 'C.bar'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = C
         isSafeNavigation = false
-        type = test.C.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -163,7 +163,7 @@ KtNameReferenceExpression(220,223): 'bar'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = C
         isSafeNavigation = false
-        type = test.C.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read

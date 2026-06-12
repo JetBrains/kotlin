@@ -355,7 +355,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 ref.resolvedSymbolOrigin
             }
             is FirResolvedQualifier -> {
-                val symbol = symbol ?: return
+                val symbol = qualifierSymbol ?: return
                 // Skip non-class-contained declarations
                 if (symbol.getContainingClassSymbol() == null) return
 
@@ -1697,8 +1697,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // see e.g. uselessCastLeadsToRecursiveProblem.kt
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
-                lhs.replaceResolvedToCompanionObject(newResolvedToCompanionObject = false)
-                val symbol = lhs.symbol
+                lhs.unsetResolvedToCompanionIf(condition = true)
+                val symbol = lhs.qualifierSymbol
                 val typeArguments: Array<ConeTypeProjection> =
                     if (lhs.typeArguments.isNotEmpty()) {
                         // If type arguments exist, use them to construct the type of the expression.
@@ -1718,6 +1718,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     )
                     type
                 } else {
+                    @OptIn(ResolvedQualifierTypeAccess::class)
                     lhs.resolvedType
                 }
             }

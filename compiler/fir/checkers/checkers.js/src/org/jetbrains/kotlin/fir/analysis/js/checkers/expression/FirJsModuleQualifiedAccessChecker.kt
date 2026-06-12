@@ -39,7 +39,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
         return when (val receiver = expression.dispatchReceiver?.unwrapSmartcastExpression()) {
             null -> listOfNotNull(calleeSymbol?.to(expression.calleeReference.source))
             is FirResolvedQualifier -> {
-                val classSymbol = receiver.symbol
+                val classSymbol = receiver.qualifierSymbol
                 if (expression is FirCallableReferenceAccess) {
                     listOfNotNull(classSymbol?.to(receiver.source), calleeSymbol?.to(expression.calleeReference.source))
                 } else {

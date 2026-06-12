@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -116,7 +117,8 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                     ) {
                         null
                     } else {
-                        this.resolvedType.toRegularClassSymbol()
+                        // Keep old buggy logic
+                        this.qualifierSymbol?.fullyExpandedClass()?.let { it.resolvedCompanionObjectSymbol ?: it }
                     }
                 }
             else -> (this.toReference(context.session) as? FirThisReference)?.boundSymbol

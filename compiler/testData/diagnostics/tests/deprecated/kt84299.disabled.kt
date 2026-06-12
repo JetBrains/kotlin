@@ -20,15 +20,15 @@ class X {
     }
 }
 
-val delegated by <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>X<!>
+val delegated by <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING, OPT_IN_USAGE!>X<!>
 
 fun <T> foo(x: (X, T) -> Int) = 1
 fun foo(x: (String) -> Int) = ""
 
 fun testCallableReferences() {
-    val delegated by <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>X<!>
-    <!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>X<!> += ""
-    val x: String = foo(<!DEPRECATION_ERROR, OPT_IN_USAGE_ERROR!>X<!>::baz)
+    val delegated by <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING, OPT_IN_USAGE!>X<!>
+    <!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING, OPT_IN_USAGE!>X<!> += ""
+    val x: String = foo(<!DEPRECATION_ERROR_MIGRATION_PERIOD_WARNING, OPT_IN_USAGE!>X<!>::baz)
 }
 
 // Correct behavior before KT-84299

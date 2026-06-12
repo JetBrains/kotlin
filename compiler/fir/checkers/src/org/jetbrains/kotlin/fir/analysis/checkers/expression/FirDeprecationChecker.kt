@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolvedToCompanionObjectWasRecentlyFixed
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -291,7 +292,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker(MppCheckerKind.Common) 
 object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        val symbol = expression.symbol ?: return
+        val symbol = expression.qualifierSymbol ?: return
         if (isExcludedSourceKind(expression.source?.kind)) return
         FirDeprecationChecker.reportApiStatusIfNeeded(
             expression.source, symbol,
@@ -301,15 +302,22 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
                 }
             }
         )
-        if (expression.resolvedToCompanionObject) {
+
+        val companionSymbol = expression.accessedObjectSymbol.takeIf { expression.resolvedToCompanionObject }
+        if (companionSymbol != null) {
             // Accessing the companion is like following a chain:
             // TA1 -> TA2 -> ... -> MyClass ~> Companion.
             // The first part - `TA1 -> TA2 -> ... -> MyClass` -
             // is handled automatically when getting deprecationInfo
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
-            val companionSymbol = symbol.fullyExpandedClass()?.resolvedCompanionObjectSymbol ?: return
-            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
+            FirDeprecationChecker.reportApiStatusIfNeeded(
+                expression.source,
+                companionSymbol,
+                migrationLF = LanguageFeature.ReportDeprecatedCompanionInDelegation.takeIf {
+                    ConeResolvedToCompanionObjectWasRecentlyFixed in expression.nonFatalDiagnostics
+                }
+            )
         }
     }
 }

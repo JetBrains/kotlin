@@ -146,7 +146,13 @@ class FirCallResolver(
         val resolvedReceiver = resultFunctionCall.explicitReceiver?.unwrapSmartcastExpression()
         if (resolvedReceiver is FirResolvedQualifier) {
             if (candidate != null) {
-                resolvedReceiver.unsetResolvedToCompanionIf(!candidate.isFromCompanionObjectTypeScope)
+                if (!candidate.isFromCompanionObjectTypeScope) {
+                    if (candidate.isSuccessful) {
+                        resolvedReceiver.unsetResolvedToCompanionIf(true)
+                    } else {
+                        resolvedReceiver.appendNonFatalDiagnostics(ConeResolvedToCompanionObjectWasRecentlyFixed)
+                    }
+                }
             }
             // In case of implicit invoke on explicit companion `Foo.Companion()`, we haven't processed `Foo` yet and need to do it here.
             resolvedReceiver.explicitParent?.unsetResolvedToCompanionIf(true)
@@ -604,9 +610,14 @@ class FirCallResolver(
 
         val [reducedCandidates, applicability] = reduceCandidates(result)
 
-        (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
-            reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }
-        )
+        if (reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }) {
+            // When the callable reference is unambiguous, this diagnostic is redundant and doesn't do anything.
+            // When it's ambiguous between a companion member and a member, we use it to repeat the logic before KT-84299,
+            // and then use the information to downgrade deprecation/opt-in errors to warnings.
+            // The correct place to unset it is in completion.
+            (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
+                ?.appendNonFatalDiagnostics(ConeResolvedToCompanionObjectWasRecentlyFixed)
+        }
 
         when {
             reducedCandidates.isEmpty() || reducedCandidates.any { !it.isSuccessful } -> {

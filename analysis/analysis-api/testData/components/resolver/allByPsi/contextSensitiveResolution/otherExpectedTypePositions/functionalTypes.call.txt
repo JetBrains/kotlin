@@ -52,7 +52,7 @@ KtNameReferenceExpression(218,225): 'Option1'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /MyEnum
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -92,7 +92,7 @@ KtNameReferenceExpression(288,295): 'Option1'
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = /MyEnum
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -115,7 +115,7 @@ KtDotQualifiedExpression(327,341): 'MyEnum.Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyEnum
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -138,7 +138,7 @@ KtNameReferenceExpression(334,341): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = MyEnum
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = false
       kind = Read
@@ -255,7 +255,7 @@ KtNameReferenceExpression(418,425): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read
@@ -497,7 +497,7 @@ KtNameReferenceExpression(613,620): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read
@@ -625,7 +625,7 @@ KtNameReferenceExpression(735,742): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read
@@ -666,7 +666,7 @@ KtNameReferenceExpression(780,787): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read
@@ -801,7 +801,7 @@ KtNameReferenceExpression(908,915): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read
@@ -1018,7 +1018,7 @@ KtNameReferenceExpression(998,1005): 'Option1'
       dispatchReceiver = KaExplicitReceiverValue:
         expression = Option1
         isSafeNavigation = false
-        type = MyEnum.Companion
+        type = kotlin.Unit
       extensionReceiver = null
       isContextSensitive = true
       kind = Read

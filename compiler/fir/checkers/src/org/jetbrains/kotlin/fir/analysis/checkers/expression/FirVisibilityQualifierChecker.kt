@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirResolvedQualifier) {
-        checkClassLikeSymbol(expression.symbol ?: return, expression, expression.isStandalone())
+        checkClassLikeSymbol(expression.qualifierSymbol ?: return, expression, expression.isStandalone())
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -64,7 +64,7 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         // Validate standalone references to companion objects are visible. Qualified use is validated
         // by call resolution cone diagnostics in coneDiagnosticToFirDiagnostic.
         if (isStandalone) {
-            val invisibleCompanion = expression.symbol?.fullyExpandedClass()?.toInvisibleCompanion()
+            val invisibleCompanion = expression.qualifierSymbol?.fullyExpandedClass()?.toInvisibleCompanion()
             if (invisibleCompanion != null) {
                 if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
                     @OptIn(DirectDeclarationsAccess::class, SymbolInternals::class)

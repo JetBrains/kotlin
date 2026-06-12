@@ -233,3 +233,6 @@ tailrec fun FirResolvedQualifier.firstQualifierPart(): FirResolvedQualifier {
     val parent = explicitParent ?: return this
     return parent.firstQualifierPart()
 }
+
+val FirResolvedQualifier.classId: ClassId?
+    get() = relativeClassFqName?.let { ClassId(packageFqName, it, isLocal = false) }
