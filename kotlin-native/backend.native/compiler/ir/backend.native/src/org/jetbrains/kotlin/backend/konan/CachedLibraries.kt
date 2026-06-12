@@ -113,6 +113,8 @@ class CachedLibraries(
         {
             private val existingFileDirs = if (complete) fileDirs else fileDirs.filter { it.exists }
 
+            val fileIds: List<String> get() = existingFileDirs.map { it.name }
+
             private val perFileBitcodeDependencies by lazy {
                 existingFileDirs.associate {
                     val data = it.child(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME).child(BITCODE_DEPENDENCIES_FILE_NAME).readStrings()
