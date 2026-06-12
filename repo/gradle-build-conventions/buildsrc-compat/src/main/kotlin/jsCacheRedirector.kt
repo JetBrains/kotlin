@@ -16,16 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 const val DEFAULT_YARN_REGISTRY = "https://registry.yarnpkg.com"
 const val NPM_REGISTRY_CACHE = "https://cache-redirector.jetbrains.com/registry.npmjs.org"
-const val NODE_DIST_CACHE = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
-const val YARN_DIST_CACHE = "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
 
 fun Project.configureJsCacheRedirector() {
-    plugins.withType<NodePlugin> {
-        extensions.configure<NodeExtension> {
-            distBaseUrl.set(NODE_DIST_CACHE)
-        }
-    }
-
     project.allprojects {
         afterEvaluate {
             pluginManager.withPlugin("com.github.node-gradle.node") {
@@ -68,15 +60,9 @@ fun Project.configureJsCacheRedirector() {
         }
     }
 
-    plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
-        extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
-            downloadBaseUrl.set(NODE_DIST_CACHE)
-        }
-    }
 
     afterEvaluate {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
-            rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().downloadBaseUrl.set(YARN_DIST_CACHE)
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec>().yarnLockMismatchReport.set(YarnLockMismatchReport.WARNING)
         }
     }

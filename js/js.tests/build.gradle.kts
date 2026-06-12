@@ -26,7 +26,7 @@ node {
     download.set(true)
     version.set(nodejsLtsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    distBaseUrl = null
+    distBaseUrl.set(null as String?)
 }
 
 val testJsRuntime by configurations.creating {

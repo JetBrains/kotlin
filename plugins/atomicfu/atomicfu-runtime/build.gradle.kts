@@ -6,7 +6,6 @@ description = "Runtime library for the Atomicfu compiler plugin"
 plugins {
     kotlin("multiplatform")
     `maven-publish`
-    id("nodejs-cache-redirector-configuration")
     id("nodejs-configuration")
 }
 

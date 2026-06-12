@@ -71,7 +71,6 @@ plugins {
     }
     `jvm-toolchains`
     alias(libs.plugins.gradle.node) apply false
-    id("nodejs-cache-redirector-configuration")
     id("gradle-plugins-documentation") apply false
     id("com.autonomousapps.dependency-analysis") version "3.6.1"
     id("project-tests-convention") apply false

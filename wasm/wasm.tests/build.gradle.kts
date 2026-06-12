@@ -20,7 +20,7 @@ node {
     download.set(true)
     version.set(nodejsVersion)
     nodeProjectDir.set(layout.buildDirectory.dir("node"))
-    distBaseUrl = null
+    distBaseUrl.set(null as String?)
 }
 
 
