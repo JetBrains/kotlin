@@ -101,14 +101,22 @@ fun main(args: Array<String>) {
 
         // Dump KLIB IR signatures tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpIrSignaturesTest> {
+            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB metadata signatures tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpMetadataSignaturesTest> {
+            testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
+                annotations = listOf(
+                    provider<UseDummyTestCaseGroupProvider>(),
+                )
+            ) {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
