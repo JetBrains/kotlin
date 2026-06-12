@@ -269,6 +269,125 @@ public fun cuUpload(data: LongArray): CPointer<LongVar> {
     return devPtr
 }
 
+// =========================================================================
+// Device → host array download shortcuts
+// =========================================================================
+// Mirror of `cuUpload`: allocates a host primitive array of [count] elements, pins it,
+// copies the device buffer into it via [cuMemcpyDtoH], and returns the host array. Not a
+// `CuMemScope` extension — these don't allocate anything on the device, so there's nothing
+// for the scope to track. The source [deviceSrc] is the caller's to free as usual.
+
+public fun cuDownload(deviceSrc: CPointer<FloatVar>, count: Int): FloatArray {
+    val data = FloatArray(count)
+    data.usePinned { cuMemcpyDtoH(it.addressOf(0), deviceSrc, count) }
+    return data
+}
+
+public fun cuDownload(deviceSrc: CPointer<IntVar>, count: Int): IntArray {
+    val data = IntArray(count)
+    data.usePinned { cuMemcpyDtoH(it.addressOf(0), deviceSrc, count) }
+    return data
+}
+
+public fun cuDownload(deviceSrc: CPointer<DoubleVar>, count: Int): DoubleArray {
+    val data = DoubleArray(count)
+    data.usePinned { cuMemcpyDtoH(it.addressOf(0), deviceSrc, count) }
+    return data
+}
+
+public fun cuDownload(deviceSrc: CPointer<LongVar>, count: Int): LongArray {
+    val data = LongArray(count)
+    data.usePinned { cuMemcpyDtoH(it.addressOf(0), deviceSrc, count) }
+    return data
+}
+
+// =========================================================================
+// Scoped device-memory management
+// =========================================================================
+// `cuMemScoped { … }` is the device-memory analogue of `kotlinx.cinterop.memScoped`. Every
+// `cuMemAlloc` / `cuUpload` call inside the lambda is registered with the scope's
+// allocation list, and the scope frees them all (in reverse order) when the lambda exits
+// — whether by normal return or by exception. Explicit `cuMemFree` inside the scope is
+// safe: it both frees and unregisters, so the cleanup pass won't double-free.
+//
+// The allocator surfaces are exposed as extensions on `CuMemScope` so they shadow the
+// top-level `cuMemAlloc` / `cuUpload` / `cuMemFree` inside the block — call sites stay
+// identical, only the enclosing `memScoped { … }` changes to `cuMemScoped { … }`.
+
+public class CuMemScope @PublishedApi internal constructor() {
+    @PublishedApi
+    internal val allocations: MutableList<CPointer<*>> = mutableListOf()
+}
+
+public inline fun <reified T : CVariable> CuMemScope.cuMemAlloc(count: Int): CPointer<T> {
+    val ptr = kotlin.native.cuda.cuMemAlloc<T>(count)
+    allocations.add(ptr)
+    return ptr
+}
+
+public fun CuMemScope.cuUpload(data: FloatArray): CPointer<FloatVar> {
+    val ptr = kotlin.native.cuda.cuUpload(data)
+    allocations.add(ptr)
+    return ptr
+}
+
+public fun CuMemScope.cuUpload(data: IntArray): CPointer<IntVar> {
+    val ptr = kotlin.native.cuda.cuUpload(data)
+    allocations.add(ptr)
+    return ptr
+}
+
+public fun CuMemScope.cuUpload(data: DoubleArray): CPointer<DoubleVar> {
+    val ptr = kotlin.native.cuda.cuUpload(data)
+    allocations.add(ptr)
+    return ptr
+}
+
+public fun CuMemScope.cuUpload(data: LongArray): CPointer<LongVar> {
+    val ptr = kotlin.native.cuda.cuUpload(data)
+    allocations.add(ptr)
+    return ptr
+}
+
+/**
+ * Frees [dptr] eagerly and removes it from the scope's pending-free list so the scope's
+ * cleanup pass on exit doesn't double-free it. Use sparingly — the normal pattern is to
+ * let the scope clean up automatically.
+ */
+public fun CuMemScope.cuMemFree(dptr: CPointer<*>) {
+    allocations.remove(dptr)
+    kotlin.native.cuda.cuMemFree(dptr)
+}
+
+@PublishedApi
+internal fun CuMemScope.clearAll() {
+    val errors = mutableListOf<Int>()
+    for (i in allocations.indices.reversed()) {
+        // Use the raw external (Int-returning) rather than the throwing typed overload so a
+        // failed free doesn't strand later allocations un-freed. Collected codes are
+        // re-surfaced as a single exception at the end.
+        val rc = cuMemFree(allocations[i].toLong().toULong())
+        if (rc != 0) errors.add(rc)
+    }
+    allocations.clear()
+    if (errors.isNotEmpty()) {
+        throw IllegalStateException("cuMemFree failed during cuMemScoped cleanup: codes=$errors")
+    }
+}
+
+/**
+ * Establishes a scope in which `cuMemAlloc` / `cuUpload` register their results for
+ * automatic `cuMemFree` on exit. Mirrors `kotlinx.cinterop.memScoped` for device memory.
+ */
+public inline fun <R> cuMemScoped(block: CuMemScope.() -> R): R {
+    val scope = CuMemScope()
+    try {
+        return scope.block()
+    } finally {
+        scope.clearAll()
+    }
+}
+
 /**
  * Accessor for the embedded PTX text. The Gradle plugin (Task #7) generates a `.c` file
  * containing `static const char kKotlinCudaPtx[] = "<ptx text>"` plus a thin
