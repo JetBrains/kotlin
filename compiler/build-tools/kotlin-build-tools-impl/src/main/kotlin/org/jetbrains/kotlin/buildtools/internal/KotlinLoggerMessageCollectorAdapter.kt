@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.api.KotlinCompilationProcessFailedException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
@@ -35,7 +36,7 @@ internal class KotlinLoggerMessageCollectorAdapter(
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(
                 renderedMessage,
-                RuntimeException(message)
+                KotlinCompilationProcessFailedException(message)
             ) // TODO: get the original exception properly and avoid duplication of stacktrace in message
             CompilerMessageSeverity.ERROR -> kotlinLogger.error(renderedMessage)
             CompilerMessageSeverity.STRONG_WARNING, CompilerMessageSeverity.WARNING, CompilerMessageSeverity.FIXED_WARNING -> kotlinLogger.warn(
