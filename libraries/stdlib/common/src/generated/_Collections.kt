@@ -2119,7 +2119,7 @@ public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index:
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 @kotlin.internal.HidesMembers
 public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
@@ -2127,7 +2127,7 @@ public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -3006,7 +3006,7 @@ public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Performs the given [action] on each element and returns the collection itself afterwards.
+ * Performs the given [action] on each element in iteration order and returns the collection itself afterwards.
  */
 @SinceKotlin("1.1")
 public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
@@ -3014,7 +3014,7 @@ public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element,
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element,
  * and returns the collection itself afterwards.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
@@ -4054,4 +4054,3 @@ public fun Iterable<Double>.sum(): Double {
     }
     return sum
 }
-

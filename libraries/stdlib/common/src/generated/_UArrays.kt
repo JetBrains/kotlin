@@ -6713,7 +6713,7 @@ public inline fun <R> UShortArray.foldRightIndexed(initial: R, operation: (index
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6723,7 +6723,7 @@ public inline fun UIntArray.forEach(action: (UInt) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6733,7 +6733,7 @@ public inline fun ULongArray.forEach(action: (ULong) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6743,7 +6743,7 @@ public inline fun UByteArray.forEach(action: (UByte) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element.
+ * Performs the given [action] on each element in iteration order.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6753,7 +6753,7 @@ public inline fun UShortArray.forEach(action: (UShort) -> Unit): Unit {
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -6766,7 +6766,7 @@ public inline fun UIntArray.forEachIndexed(action: (index: Int, UInt) -> Unit): 
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -6779,7 +6779,7 @@ public inline fun ULongArray.forEachIndexed(action: (index: Int, ULong) -> Unit)
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -6792,7 +6792,7 @@ public inline fun UByteArray.forEachIndexed(action: (index: Int, UByte) -> Unit)
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
  */
@@ -9625,7 +9625,7 @@ public inline fun UShortArray.none(predicate: (UShort) -> Boolean): Boolean {
 }
 
 /**
- * Performs the given [action] on each element and returns the array itself afterwards.
+ * Performs the given [action] on each element in iteration order and returns the array itself afterwards.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9635,7 +9635,7 @@ public inline fun UIntArray.onEach(action: (UInt) -> Unit): UIntArray {
 }
 
 /**
- * Performs the given [action] on each element and returns the array itself afterwards.
+ * Performs the given [action] on each element in iteration order and returns the array itself afterwards.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9645,7 +9645,7 @@ public inline fun ULongArray.onEach(action: (ULong) -> Unit): ULongArray {
 }
 
 /**
- * Performs the given [action] on each element and returns the array itself afterwards.
+ * Performs the given [action] on each element in iteration order and returns the array itself afterwards.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9655,7 +9655,7 @@ public inline fun UByteArray.onEach(action: (UByte) -> Unit): UByteArray {
 }
 
 /**
- * Performs the given [action] on each element and returns the array itself afterwards.
+ * Performs the given [action] on each element in iteration order and returns the array itself afterwards.
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -9665,7 +9665,7 @@ public inline fun UShortArray.onEach(action: (UShort) -> Unit): UShortArray {
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element,
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element,
  * and returns the array itself afterwards.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
@@ -9678,7 +9678,7 @@ public inline fun UIntArray.onEachIndexed(action: (index: Int, UInt) -> Unit): U
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element,
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element,
  * and returns the array itself afterwards.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
@@ -9691,7 +9691,7 @@ public inline fun ULongArray.onEachIndexed(action: (index: Int, ULong) -> Unit):
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element,
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element,
  * and returns the array itself afterwards.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
@@ -9704,7 +9704,7 @@ public inline fun UByteArray.onEachIndexed(action: (index: Int, UByte) -> Unit):
 }
 
 /**
- * Performs the given [action] on each element, providing sequential index with the element,
+ * Performs the given [action] on each element in iteration order, providing sequential index with the element,
  * and returns the array itself afterwards.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the action on the element.
@@ -12007,4 +12007,3 @@ public inline fun UByteArray.sum(): UInt {
 public inline fun UShortArray.sum(): UInt {
     return sumOf { it.toUInt() }
 }
-
