@@ -1,6 +1,4 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JS_IR, WASM_JS
-// Static property is undefined on JS backend
 // FILE: Outer.kt
 class Outer {
     companion {
