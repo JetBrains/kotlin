@@ -313,8 +313,8 @@ object PluginCliParser {
     }
 
     /**
-     * Instantiates the bundled plugin's registrar reflectively and
-     * applies the user-provided options if there are any
+     * Loads the bundled plugin's registrar from the current classloader and
+     * provides the user-provided options if there are any
      */
     private fun loadBundledPlugin(
         info: BundledPluginInfo,
