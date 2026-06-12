@@ -341,11 +341,36 @@ class AvailableSinceTest : BaseCompilationTest() {
         val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
         assumeTrue(toolchains.hasOptionVersionChecking())
 
+        // 1. Discovery sanity check: reflection must find at least one option holder
         val holders = discoverOptionHolders()
         assertTrue(holders.isNotEmpty()) {
             "Expected to discover at least one option holder in the `org.jetbrains.kotlin.buildtools.api` package"
         }
 
+        // 2. Cross-check reflection-based discovery against the statically declared sets of expected holders
+        val discoveredOptionsHolders = holders.map { it.name }.toSet()
+        val expectedOptionsHolders = knownVersionedOptionHolders + knownUnversionedOptionHolders
+
+        val overlap = knownVersionedOptionHolders intersect knownUnversionedOptionHolders
+        assertTrue(overlap.isEmpty()) {
+            "Option holder(s) listed both as versioned and unversioned: $overlap.\n" +
+                    "Each holder must appear in exactly one of `knownVersionedOptionHolders` / `knownUnversionedOptionHolders`."
+        }
+
+        val notDiscovered = expectedOptionsHolders - discoveredOptionsHolders
+        assertTrue(notDiscovered.isEmpty()) {
+            "Reflection-based discovery did not find expected option holder(s): $notDiscovered.\n" +
+                    "Either the holder was removed/renamed, or the discovery criteria in `discoverOptionHolders()` broke."
+        }
+
+        val unregistered = discoveredOptionsHolders - expectedOptionsHolders
+        assertTrue(unregistered.isEmpty()) {
+            "New option holder(s) discovered but not registered: $unregistered.\n" +
+                    "Add each to `knownVersionedOptionHolders` (and `trySet(...)` coverage in a dedicated test above), " +
+                    "or to `knownUnversionedOptionHolders` if `availableSinceVersion` adoption is postponed."
+        }
+
+        // 3. Verify each holder's options actually carry `availableSinceVersion`
         val problems = holders.mapNotNull { holder ->
             val options = holder.declaredOptions()
             val unversionedOptions = options.filterNot { it.hasAvailableSinceVersion() }
@@ -387,6 +412,25 @@ class AvailableSinceTest : BaseCompilationTest() {
             .mapNotNull { runCatching { apiLoader.loadClass(it.removeSuffix(".class").replace('/', '.')) }.getOrNull() }
             .filter { it.declaredOptionFields().isNotEmpty() }
     }
+
+    /**
+     * Option holders that adopt `availableSinceVersion` and are covered by a dedicated `trySet(...)` test above.
+     * Cross-checked against reflection-based discovery in [testAllVersionedOptionsHaveAvailableSinceVersion] so that a
+     * new holder cannot slip in without being registered and covered, and so that the discovery criteria are guarded
+     * against silently finding fewer holders than expected.
+     */
+    private val knownVersionedOptionHolders: Set<String> = setOf(
+        "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.BuildOperation",
+        "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration",
+        $$"org.jetbrains.kotlin.buildtools.api.ExecutionPolicy$WithDaemon",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration",
+        "org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
+    )
 
     /**
      * Option holders that intentionally do not adopt `availableSinceVersion`: either the
