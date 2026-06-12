@@ -58,6 +58,18 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                     )
                     else -> processException(wrappedException, IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE)
                 }
+                // In the grouped (two-stage) pipeline the second-stage backend compilation runs as a grouping
+                // facade, so a compilation failure there is a backend error.
+                is WrappedException.FromGroupingFacade -> processException(
+                    wrappedException,
+                    IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE
+                )
+                // In the grouped (two-stage) pipeline the box is executed by a grouping-stage handler,
+                // so a failure there is an execution (runtime) error.
+                is WrappedException.FromGroupingHandler -> processException(
+                    wrappedException,
+                    IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
+                )
                 is WrappedException.FromAfterAnalysisChecker -> {
                     listOf(wrappedException)
                 }
