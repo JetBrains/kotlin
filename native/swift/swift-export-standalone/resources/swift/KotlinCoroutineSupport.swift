@@ -1,6 +1,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinCoroutineSupportBridge
+import os
 
 /// A Bridge type for Job-like class in Kotlin
 ///
@@ -10,10 +11,9 @@ import KotlinRuntimeSupport
 /// The value of this type should never outlive the task it wraps.
 @objc(KotlinTask)
 package final class KotlinTask: KotlinRuntime.KotlinBase {
-    public convenience init(_ currentTask: UnsafeCurrentTask) {
+    fileprivate convenience init(_ taskBox: CurrentTaskBox) {
         self.init { shouldCancel in
-            defer { if shouldCancel { currentTask.cancel() } }
-            return currentTask.isCancelled
+            taskBox.poll(cancel: shouldCancel)
         }
     }
 
@@ -44,11 +44,49 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 }
 
+/// Holds the borrowed `UnsafeCurrentTask` for exactly the lifetime of one bridged suspend call.
+///
+/// Root cause of KT-86509: `KotlinTask.init` captured `UnsafeCurrentTask` directly into the
+/// cancellation callback. That callback is bridged to an ObjC block and retained by the Kotlin
+/// `SwiftJob` for its whole GC lifetime, then released on the GC finalizer thread — long after the
+/// `withUnsafeCurrentTask` scope has ended. Releasing the captured (now-invalid) task there
+/// over-releases it, producing the `_Block_release` → `_swift_release_dealloc` SIGSEGV observed in
+/// `testCancelledFinallyThrows`.
+///
+/// This box decouples the lifetimes: the callback captures the box (an ordinary Swift object, safe to
+/// release on any thread), while `withKotlinContinuation` clears the task out of the box in a `defer`
+/// before the `withUnsafeCurrentTask` scope exits — so the task reference is dropped while still valid
+/// and the later GC finalization of the box touches nothing task-related. The lock serializes a
+/// concurrent inward-cancellation `poll` against the `clear`.
+private final class CurrentTaskBox: @unchecked Sendable {
+    private let state: OSAllocatedUnfairLock<UnsafeCurrentTask?>
+
+    init(_ task: UnsafeCurrentTask) {
+        state = OSAllocatedUnfairLock(uncheckedState: task)
+    }
+
+    /// Reports whether the wrapped task is cancelled, cancelling it first when `shouldCancel` is true.
+    /// Becomes an inert no-op once `clear()` has run (the operation has already completed).
+    func poll(cancel shouldCancel: Bool) -> Bool {
+        state.withLockUnchecked { task in
+            guard let task else { return false }
+            if shouldCancel { task.cancel() }
+            return task.isCancelled
+        }
+    }
+
+    func clear() {
+        state.withLockUnchecked { $0 = nil }
+    }
+}
+
 package func withKotlinContinuation<T>(
     _ fn: (@escaping (T) -> Void, @escaping (KotlinRuntime.KotlinBase?) -> Void, KotlinTask) -> Void
 ) async throws -> T {
     try await withUnsafeCurrentTask { currentTask in
-        let cancellation = KotlinTask(currentTask!)
+        let taskBox = CurrentTaskBox(currentTask!)
+        defer { taskBox.clear() }
+        let cancellation = KotlinTask(taskBox)
         return try await withTaskCancellationHandler {
             return try await withUnsafeThrowingContinuation { nativeContinuation in
                 let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }

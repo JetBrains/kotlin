@@ -11,7 +11,3 @@ org.jetbrains.kotlin.gradle.mpp.smoke.ExpectActualIncrementalCompilationK2IT.tes
 org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithMonotonousExpansionAvoidingInfiniteLoop[Gradle 7.6.3: Inline cycle with monotonous expansion - avoiding infinite loop],KTI-3321,STABLE
 org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithoutMonotonousExpansion[Gradle 7.6.3: Inline cycle without monotonous expansion],KTI-3321,STABLE
 org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsJvmIT.testBaselineForCommonSourceSetIC[Gradle 7.6.3: Baseline - compilation failure without hotfix],KTI-3321,STABLE
-org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportCoroutinesExecutionTestGenerated.testCoroutines,KT-86780,FLAKY
-org.jetbrains.kotlin.swiftexport.standalone.test.EmbeddableSwiftExportCoroutinesExecutionTestGenerated.testCoroutines,KT-86780,FLAKY
-org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportCoroutinesExecutionTestGenerated.testClosures,KT-86780,FLAKY
-org.jetbrains.kotlin.swiftexport.standalone.test.EmbeddableSwiftExportCoroutinesExecutionTestGenerated.testClosures,KT-86780,FLAKY
