@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -23,7 +25,6 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirGeneratedClassDeclaredMemberScope private constructor(
@@ -156,7 +157,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         scopeForGeneratedClass: Boolean
     ): CallableStorage? {
         val generationContext = MemberGenerationContext(classSymbol, regularDeclaredScope)
-        val extensionsByCallableName = groupExtensionsByName(classSymbol) { getCallableNamesForClass(it, generationContext) }
+        val extensionsByCallableName = groupExtensionsByName(classSymbol, skipIfNameAlreadyExists = false) {
+            getCallableNamesForClass(it, generationContext)
+        }
         if (extensionsByCallableName.isEmpty() && !scopeForGeneratedClass) return null
         return callableStorageByClass.getValue(classSymbol, StorageContext(generationContext, extensionsByCallableName))
     }
@@ -166,7 +169,9 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         regularNestedClassifierScope: FirNestedClassifierScope?
     ): ClassifierStorage? {
         val generationContext = NestedClassGenerationContext(classSymbol, regularNestedClassifierScope)
-        val extensionsByClassifierName = groupExtensionsByName(classSymbol) { getNestedClassifiersNames(it, generationContext) }
+        val extensionsByClassifierName = groupExtensionsByName(classSymbol, skipIfNameAlreadyExists = true) {
+            getNestedClassifiersNames(it, generationContext)
+        }
         if (extensionsByClassifierName.isEmpty()) return null
         return classifierStorageByClass.getValue(classSymbol, StorageContext(generationContext, extensionsByClassifierName))
     }
@@ -273,22 +278,40 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
         }
     }
 
+    /**
+     * Groups extensions by their names based on the provided name extractor function and taking into account the [skipIfNameAlreadyExists] flag.
+     *
+     * @param classSymbol The class symbol for which extensions are being grouped.
+     * @param skipIfNameAlreadyExists A boolean indicating whether to skip adding extensions if the name already exists in the resulting map.
+     *     It's `true` for classifiers but `false` for callables because duplication of classifiers is always `REDECLARATION` error,
+     *     but duplication of callables is legal in some cases, for instance, in the case of overloaded functions.
+     *     The skipping of classifiers prevents compiler exceptions and allows reusing of a generated declaration.
+     *     For instance, consider a situation when multiple plugins or even multiple generators within a single plugin
+     *     need a companion object, and they try to generate it. But the only single companion object is legal.
+     *     The filtering allows generating this object by one generator and skipping its generation by others.
+     * @param nameExtractor A function that extracts a set of names from the given `classSymbol`.
+     * @return A map where keys are the extracted names and values are lists of `FirDeclarationGenerationExtension` instances associated with those names.
+     */
     private inline fun groupExtensionsByName(
         classSymbol: FirClassSymbol<*>,
+        skipIfNameAlreadyExists: Boolean,
         nameExtractor: FirDeclarationGenerationExtension.(FirClassSymbol<*>) -> Set<Name>,
     ): Map<Name, List<FirDeclarationGenerationExtension>> {
-        val extensions = getExtensionsForClass(classSymbol)
-        return extensions.flatGroupBy { it.nameExtractor(classSymbol) }
-    }
-
-    private fun getExtensionsForClass(classSymbol: FirClassSymbol<*>): List<FirDeclarationGenerationExtension> {
         require(session === classSymbol.moduleData.session) {
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
-        return if (classSymbol.origin.generated && !classSymbol.isLocal) {
-            listOf(classSymbol.fir.ownerGenerator!!)
-        } else {
-            session.extensionService.declarationGenerators
+
+        return buildMap<Name, MutableList<FirDeclarationGenerationExtension>> {
+            session.extensionService.declarationGenerators.forEach { extension ->
+                nameExtractor(extension, classSymbol).forEach { name ->
+                    val existingExtensions = this[name]
+                    if (existingExtensions == null) {
+                        this[name] = mutableListOf(extension)
+                    } else if (!skipIfNameAlreadyExists) {
+                        existingExtensions.add(extension)
+                    }
+                }
+            }
         }
     }
 }
