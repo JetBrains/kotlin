@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.graalvm.isGraalNativeImageRuntime
 import java.io.File
 
 /**
@@ -95,6 +96,17 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         val pluginConfigurations = arguments.pluginConfigurations.asList()
         val pluginOrderConstraints = arguments.pluginOrderConstraints.asList()
 
+        if (isGraalNativeImageRuntime) {
+            PluginCliParser.loadBundledCompilerPlugins(
+                pluginConfigurations = pluginConfigurations,
+                pluginOptions = pluginOptions,
+                pluginClasspaths = pluginClasspaths,
+                pluginOrderConstraints = pluginOrderConstraints,
+                configuration = configuration,
+            )
+            return
+        }
+
         if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
         }
@@ -139,6 +151,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             input.rootDisposable
         )
     }
+
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(
         configuration: CompilerConfiguration,
