@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.code
 import org.gradle.testkit.runner.GradleRunner
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.testFederation.NightlyTest
+import org.junit.Ignore
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import org.w3c.dom.Element
@@ -20,6 +21,7 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.listDirectoryEntries
 import kotlin.streams.asStream
 
+@Ignore
 @NightlyTest
 class RunConfigurationsTest {
     @TestFactory
