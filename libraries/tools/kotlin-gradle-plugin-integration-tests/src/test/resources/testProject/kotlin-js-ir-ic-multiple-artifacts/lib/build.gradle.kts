@@ -10,7 +10,7 @@ kotlin {
             archiveExtension.set("klib")
         }
 
-        val otherDist by configurations.creating {
+        val otherDist = configurations.create("otherDist") {
             isCanBeConsumed = true
             isCanBeResolved = false
         }
@@ -28,7 +28,7 @@ kotlin {
                 runtimeOnly(project(mapOf("path" to path, "configuration" to "otherDist")))
             }
         }
-        val jsOther by getting {
+        val jsOther = getByName("jsOther") {
             dependencies {
                 implementation(project(path = project.path))
             }

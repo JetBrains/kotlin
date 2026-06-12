@@ -275,6 +275,7 @@ data class BuildOptions(
             arguments.add("-Pandroid.builtInKotlin=false")
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
+        arguments.add("-Porg.gradle.internal.fail-on-parent-property-lookup=true")
 
         if (buildReport.isNotEmpty()) {
             arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")

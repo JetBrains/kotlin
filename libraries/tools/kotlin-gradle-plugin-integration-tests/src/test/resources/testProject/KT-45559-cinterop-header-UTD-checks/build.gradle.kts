@@ -14,7 +14,7 @@ kotlin {
         }
         compilations.getByName("main") {
             cinterops {
-                val cinterop by creating {
+                val cinterop = create("cinterop") {
                     includeDirs("includeDirs")
                 }
             }

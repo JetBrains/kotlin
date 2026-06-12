@@ -13,32 +13,29 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(project(":my-lib-foo"))
-            }
+        val commonMain = getByName("commonMain")
+        commonMain.dependencies {
+            api(project(":my-lib-foo"))
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
+        val commonTest = getByName("commonTest")
+        commonTest.dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
         }
 
-        val jvmAndJsMain by creating {
-            dependsOn(commonMain)
-        }
+        val jvmAndJsMain = create("jvmAndJsMain")
+        jvmAndJsMain.dependsOn(commonMain)
 
-        val jvmAndJsTest by creating {
+        val jvmAndJsTest = create("jvmAndJsTest")
             dependsOn(commonTest)
         }
 
-        val linuxAndJsMain by creating {
+        val linuxAndJsMain = create("linuxAndJsMain") {
             dependsOn(commonMain)
         }
 
-        val linuxAndJsTest by creating {
+        val linuxAndJsTest = create("linuxAndJsTest") {
             dependsOn(commonTest)
         }
 

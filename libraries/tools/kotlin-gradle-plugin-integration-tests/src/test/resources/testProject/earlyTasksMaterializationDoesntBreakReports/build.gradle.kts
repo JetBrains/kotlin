@@ -16,10 +16,9 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val myCommonMain by creating
+        val myCommonMain = create("myCommonMain")
 
-        val commonMain by getting {
-            dependsOn(myCommonMain)
-        }
+        val commonMain = getByName("commonMain")
+        commonMain.dependsOn(myCommonMain)
     }
 }

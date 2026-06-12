@@ -7,18 +7,16 @@ plugins {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation("com.example.thirdparty:third-party-lib:1.0")
-                implementation(kotlin("stdlib-common"))
-            }
+        val commonMain = getByName("commonMain")
+        commonMain.dependencies {
+            implementation("com.example.thirdparty:third-party-lib:1.0")
+            implementation(kotlin("stdlib-common"))
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
+        val commonTest = getByName("commonTest")
+        commonTest.dependencies {
+            implementation(kotlin("test-common"))
+            implementation(kotlin("test-annotations-common"))
         }
     }
 

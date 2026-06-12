@@ -11,6 +11,6 @@ kotlin {
     jvm()
 
     sourceSets {
-        val orphan by creating { }
+        val orphan = create("orphan") { }
     }
 }

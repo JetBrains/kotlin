@@ -16,7 +16,7 @@ kotlin {
     androidTarget()
     
     sourceSets {
-        val androidMain by getting {
+        val androidMain = getByName("androidMain") {
             dependencies {
                 implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
                 implementation("androidx.hilt:hilt-navigation-compose:1.3.0")

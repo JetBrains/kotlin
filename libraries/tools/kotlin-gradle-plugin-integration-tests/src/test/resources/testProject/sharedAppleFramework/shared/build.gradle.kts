@@ -23,13 +23,13 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting
+        val commonMain = getByName("commonMain")
 
-        val iosX64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosArm64Main by getting
+        val iosX64Main = getByName("iosX64Main")
+        val iosSimulatorArm64Main = getByName("iosSimulatorArm64Main")
+        val iosArm64Main = getByName("iosArm64Main")
 
-        val iosMain by creating {
+        val iosMain = create("iosMain") {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)

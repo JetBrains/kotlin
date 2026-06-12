@@ -177,8 +177,8 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             gradlePluginPortal()
         }
 
-        val kotlin_version: String by settings
-        val test_fixes_version: String by settings
+        val kotlin_version: String = providers.gradleProperty("kotlin_version").get()
+        val test_fixes_version: String = providers.gradleProperty("test_fixes_version").get()
         plugins {
             id("org.jetbrains.kotlin.jvm") version kotlin_version
             id("org.jetbrains.kotlin.kapt") version kotlin_version

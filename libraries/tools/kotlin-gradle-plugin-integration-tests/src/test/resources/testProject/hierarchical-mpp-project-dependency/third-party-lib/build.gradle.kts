@@ -11,8 +11,8 @@ kotlin {
     js()
 
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting {
+        val commonMain = getByName("commonMain")
+        val commonTest = getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))

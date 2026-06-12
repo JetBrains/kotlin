@@ -17,13 +17,13 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 implementation(kotlin("stdlib-common"))
             }
         }
 
-        val linuxAndJsMain by creating {
+        val linuxAndJsMain = create("linuxAndJsMain") {
             dependsOn(commonMain)
         }
 

@@ -28,7 +28,7 @@ kotlin {
         header(file("src/nativeInterop/cinterop/sampleInterop.h"))
     }
 
-    val platformTest by sourceSets.getting
+    val platformTest = sourceSets.getByName("platformTest")
     val nativeTest = sourceSets.create("nativeTest")
     platformTest.dependsOn(nativeTest)
 }

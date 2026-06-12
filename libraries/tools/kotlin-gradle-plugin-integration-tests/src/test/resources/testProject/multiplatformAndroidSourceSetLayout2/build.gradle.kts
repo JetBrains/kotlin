@@ -44,12 +44,12 @@ kotlin {
         compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
     }
 
-    val commonMain by sourceSets.getting
-    val commonTest by sourceSets.getting
-    val androidMain by sourceSets.getting
+    val commonMain = sourceSets.getByName("commonMain")
+    val commonTest = sourceSets.getByName("commonTest")
+    val androidMain = sourceSets.getByName("androidMain")
 
-    val androidUnitTest by sourceSets.getting
-    val androidInstrumentedTest by sourceSets.getting
+    val androidUnitTest = sourceSets.getByName("androidUnitTest")
+    val androidInstrumentedTest = sourceSets.getByName("androidInstrumentedTest")
 
     commonTest.dependencies {
         implementation(kotlin("test-junit"))

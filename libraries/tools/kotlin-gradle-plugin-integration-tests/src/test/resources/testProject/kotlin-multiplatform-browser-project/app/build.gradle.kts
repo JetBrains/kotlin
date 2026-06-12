@@ -14,13 +14,13 @@ kotlin {
     }
 
     sourceSets {
-        val jsMain by getting {
+        val jsMain = getByName("jsMain") {
             dependencies {
                 implementation(project(":lib"))
                 implementation(npm(projectDir.resolve("src/jsMain/css")))
             }
         }
-        val jsTest by getting {
+        val jsTest = getByName("jsTest") {
             dependencies {
                 implementation(kotlin("test"))
             }

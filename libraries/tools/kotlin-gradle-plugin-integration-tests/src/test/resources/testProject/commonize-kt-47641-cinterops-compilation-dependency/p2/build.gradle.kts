@@ -11,7 +11,7 @@ kotlin {
     macosX64()
     mingwX64("windowsX64")
 
-    val commonMain by sourceSets.getting
+    val commonMain = sourceSets.getByName("commonMain")
 
     commonMain.dependencies {
         implementation(project(":p1"))

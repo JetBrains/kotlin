@@ -22,8 +22,8 @@ kotlin {
     iosSimulatorArm64("iosArm64")
 
     sourceSets {
-        val anotherTest by creating
-        val hostAnotherTest by getting {
+        val anotherTest = create("anotherTest")
+        val hostAnotherTest = getByName("hostAnotherTest") {
             dependsOn(anotherTest)
         }
     }

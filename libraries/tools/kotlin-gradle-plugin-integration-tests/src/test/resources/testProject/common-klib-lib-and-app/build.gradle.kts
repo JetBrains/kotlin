@@ -20,51 +20,46 @@ kotlin {
 	mingwX64()
 
 	sourceSets {
-		val commonMain by getting
+		val commonMain = getByName("commonMain")
 
-		val windowsAndLinuxMain by creating {
+		val windowsAndLinuxMain = create("windowsAndLinuxMain") {
 			dependsOn(commonMain)
 		}
 
-		val linuxMain by creating {
+		val linuxMain = create("linuxMain") {
 			dependsOn(commonMain)
 		}
 
-		val mingwX64Main by getting {
-			dependsOn(windowsAndLinuxMain)
-		}
-		val linuxX64Main by getting {
-			dependsOn(linuxMain)
-			dependsOn(windowsAndLinuxMain)
-		}
-		val linuxArm64Main by getting {
-			dependsOn(linuxMain)
-		}
+		val mingwX64Main = getByName("mingwX64Main")
+        mingwX64Main.dependsOn(windowsAndLinuxMain)
 
-		val jvmAndJsMain by creating {
-			dependsOn(commonMain)
-		}
+		val linuxX64Main = getByName("linuxX64Main")
+        linuxX64Main.dependsOn(linuxMain)
+        linuxX64Main.dependsOn(windowsAndLinuxMain)
 
-		val jvmMain by getting {
-			dependsOn(jvmAndJsMain)
-		}
+		val linuxArm64Main = getByName("linuxArm64Main")
+        linuxArm64Main.dependsOn(linuxMain)
 
-		val jsMain by getting {
-			dependsOn(jvmAndJsMain)
-		}
+		val jvmAndJsMain = create("jvmAndJsMain")
+        jvmAndJsMain.dependsOn(commonMain)
 
-		val iosMain by creating {
-			dependsOn(commonMain)
-		}
-		val iosX64Main by getting {
-			dependsOn(iosMain)
-		}
-		val iosArm64Main by getting {
-			dependsOn(iosMain)
-		}
-		val iosSimulatorArm64Main by getting {
-			dependsOn(iosMain)
-		}
+		val jvmMain = getByName("jvmMain")
+        jvmMain.dependsOn(jvmAndJsMain)
+
+		val jsMain = getByName("jsMain")
+        jsMain.dependsOn(jvmAndJsMain)
+
+		val iosMain = create("iosMain")
+        iosMain.dependsOn(commonMain)
+
+		val iosX64Main = getByName("iosX64Main")
+        iosX64Main.dependsOn(iosMain)
+
+		val iosArm64Main = getByName("iosArm64Main")
+        iosArm64Main.dependsOn(iosMain)
+
+		val iosSimulatorArm64Main = getByName("iosSimulatorArm64Main")
+        iosSimulatorArm64Main.dependsOn(iosMain)
 
 		all {
 			languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
