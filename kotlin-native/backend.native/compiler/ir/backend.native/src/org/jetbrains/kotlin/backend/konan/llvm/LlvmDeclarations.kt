@@ -93,29 +93,39 @@ internal data class ClassBodyAndAlignmentInfo(
 
 private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
+    val dataLayout = llvm.targetDataLayout
+    // Check if LLVM-computed alignment differs from pre-computed alignment for any field
     val packed = context.config.packFields ||
-        fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
+        fields.any { dataLayout.alignmentOf(it.type.computePrimitiveBinaryTypeOrNull()) != it.alignment }
     val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
     val indices = mutableMapOf<IrFieldSymbol, Int>()
 
     val fieldTypes = buildList {
         var currentOffset = 0L
-        fun addAndCount(type: LLVMTypeRef) {
+        fun addAndCount(type: LLVMTypeRef, primitiveBinaryType: PrimitiveBinaryType?) {
             add(type)
-            currentOffset += LLVMStoreSizeOfType(runtime.targetData, type)
+            // Use pre-computed store size for known primitive types
+            currentOffset += dataLayout.storeSizeOf(primitiveBinaryType)
         }
-        addAndCount(runtime.objHeaderType)
+        fun addAndCountForArray(type: LLVMTypeRef, elementCount: Int) {
+            add(type)
+            // Array of int8 has size = elementCount * 1
+            currentOffset += elementCount
+        }
+        // ObjHeader is a single pointer
+        addAndCount(runtime.objHeaderType, null)
         for (field in fields) {
             if (packed) {
                 val offset = (currentOffset % field.alignment).toInt()
                 if (offset != 0) {
                     val toInsert = field.alignment - offset
-                    addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
+                    addAndCountForArray(LLVMArrayType(llvm.int8Type, toInsert)!!, toInsert)
                 }
                 require(currentOffset % field.alignment == 0L)
             }
             indices[field.irFieldSymbol] = this.size
-            addAndCount(field.type.toLLVMType(llvm))
+            val primitiveBinaryType = field.type.computePrimitiveBinaryTypeOrNull()
+            addAndCount(field.type.toLLVMType(llvm), primitiveBinaryType)
         }
     }
     LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, if (packed) 1 else 0)
@@ -239,8 +249,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
 
         val packedFields = mutableListOf<IndexedField>()
+        val dataLayout = llvm.targetDataLayout
         for (field in fields) {
-            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+            val size = dataLayout.storeSizeOf(field.type.computePrimitiveBinaryTypeOrNull()).toLong()
             check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
             check(min(size, 8L) % field.alignment == 0L)
             val offset = nextOffset(size)
