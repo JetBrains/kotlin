@@ -1244,6 +1244,10 @@ object PositioningStrategies {
                         if (grandParent is KtEnumEntry) return mark(grandParent)
                     }
                 }
+                is KtConstructorCalleeExpression if element.textRange.isEmpty -> {
+                    val ggParent = element.parent.parent.parent
+                    if (ggParent is KtEnumEntry) return mark(ggParent) else element
+                }
                 is KtOperationExpression -> element.operationReference
                 is KtWhenConditionInRange -> element.operationReference
                 is KtAnnotationEntry -> element.calleeExpression ?: element
