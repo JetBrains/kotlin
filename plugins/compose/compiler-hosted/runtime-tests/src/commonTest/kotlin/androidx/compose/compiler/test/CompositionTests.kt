@@ -535,6 +535,26 @@ class CompositionTests {
         advance()
         assertEquals(true, result.value)
     }
+
+    /**
+     * This is a regression test against a bug that made it possible for the `$changed` mask passed
+     * to [ConsumeChildState] to incorrectly say that the `state` parameter is of an unstable type,
+     * causing the function to skip too often. For more details, see
+     * https://issuetracker.google.com/issues/522127447.
+     */
+    @Test
+    fun castTargetTypeStabilityNeglectedTest() = compositionTest {
+        val state = mutableStateOf<ParentState>(ChildState(0))
+        val result = mutableStateOf(false)
+
+        compose {
+            CastTargetTypeStabilityNeglectedTestEntrypoint(state.value, result)
+        }
+
+        state.value = ChildState(1)
+        advance()
+        assertEquals(true, result.value)
+    }
 }
 
 @Composable
@@ -707,6 +727,21 @@ internal sealed class LoadingState<T> {
 internal fun <T> LoadingContent(state: LoadingState<T>, result: MutableState<Boolean>) {
     LaunchedEffect(state) {
         if (state is LoadingState.Content<*>) {
+            result.value = true
+        }
+    }
+}
+
+internal open class ParentState
+
+internal class ChildState(val value: Int) : ParentState()
+
+// This function and [ChildState] need to be in the same file so that the stability of [ChildState]
+// is `Stability.Stable` from the perspective of this function.
+@Composable
+internal fun ConsumeChildState(state: ChildState, result: MutableState<Boolean>) {
+    LaunchedEffect(state) {
+        if (state.value > 0) {
             result.value = true
         }
     }
