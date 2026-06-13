@@ -7,8 +7,4 @@ package org.jetbrains.kotlinx.jspo.compiler.resolve
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object JsPlainObjectsPluginKey : GeneratedDeclarationKey() {
-    override fun toString(): String {
-        return "KotlinxJsPlainObjectsPlugin"
-    }
-}
+data object JsPlainObjectsPluginKey : GeneratedDeclarationKey()

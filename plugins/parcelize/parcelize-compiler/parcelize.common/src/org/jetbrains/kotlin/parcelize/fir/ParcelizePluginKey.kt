@@ -7,8 +7,4 @@ package org.jetbrains.kotlin.parcelize.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 
-object ParcelizePluginKey : GeneratedDeclarationKey() {
-    override fun toString(): String {
-        return "FirParcelize"
-    }
-}
+data object ParcelizePluginKey : GeneratedDeclarationKey()

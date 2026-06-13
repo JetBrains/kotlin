@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.k2.generators.kotlin
+package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -25,12 +26,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.findAnnotationOnPropertyOrField
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -105,24 +108,33 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
         }
         if (functionWithoutParametersAlreadyExists) return null
 
-        val propertyInfos = computePropertiesToInclude(toStringConfig, declaredScope)
-
-        return createMemberFunction(
-            owner = classSymbol,
-            key = ToStringGeneratorKey(
-                className = classSymbol.classId.shortClassName.asString(),
-                propertyInfos = propertyInfos,
-                callSuper = toStringConfig.callSuper == CallSuperMode.Call,
-            ),
-            name = TO_STRING_NAME,
-            returnType = StandardTypes.String,
-        ) {
-            modality = Modality.OPEN
-            status {
-                isOverride = true
-            }
-            withGeneratedDefaultBody()
-        }.symbol
+        return if (classSymbol.hasJavaOrigin) {
+            classSymbol.createJavaMethod(
+                name = TO_STRING_NAME,
+                valueParameters = emptyList(),
+                returnTypeRef = StandardTypes.String.toFirResolvedTypeRef(),
+                visibility = Visibilities.Public,
+                modality = Modality.OPEN,
+                isOverride = true,
+            ).symbol
+        } else {
+            createMemberFunction(
+                owner = classSymbol,
+                key = ToStringGeneratorKey(
+                    className = classSymbol.classId.shortClassName.asString(),
+                    propertyInfos = computePropertiesToInclude(toStringConfig, declaredScope),
+                    callSuper = toStringConfig.callSuper == CallSuperMode.Call,
+                ),
+                name = TO_STRING_NAME,
+                returnType = StandardTypes.String,
+            ) {
+                modality = Modality.OPEN
+                status {
+                    isOverride = true
+                }
+                withGeneratedDefaultBody()
+            }.symbol
+        }
     }
 
     private fun computePropertiesToInclude(

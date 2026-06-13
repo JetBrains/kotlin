@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.lombok.k2
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.lombok.k2.checkers.FirLombokCheckersExtension
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.LoggerGenerator
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGenerator
 
 class FirLombokKotlinRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        +::LoggerGenerator
-        +::ToStringGenerator
         +::FirLombokCheckersExtension
 
         registerDiagnosticContainers(LombokFirDiagnostics)

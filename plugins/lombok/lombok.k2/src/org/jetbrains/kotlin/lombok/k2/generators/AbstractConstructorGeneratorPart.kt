@@ -107,13 +107,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             "Kotlin supports only `@NoArgsConstructor` annotations, that's why `fields` expected to be empty."
         }
 
-        // Checks clashing with explicit constructors, vararg doesn't cause a conflict
-        fun FirFunctionSymbol<*>.checkParametersClashing(): Boolean {
-            return valueParameterSymbols.let { parameters ->
-                parameters.none { it.isVararg } && parameters.size == valuesParameterCount
-            }
-        }
-
         val substitutor: JavaTypeSubstitutor
         val constructorSymbol: FirFunctionSymbol<*>
         var returnTarget: FirFunctionTarget? = null

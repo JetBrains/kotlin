@@ -1,0 +1,4 @@
+ToStringOnJavaClass:
+  [Enhancement]: public open override fun toString(): R|kotlin/String| from Java enhancement scope for /ToStringOnJavaClass [id: 0]
+    [Library]: public open fun toString(): R|kotlin/String| from Use site scope of kotlin/Any [id: 1]
+

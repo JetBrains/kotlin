@@ -145,9 +145,17 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     }
 
     private fun generateTopLevelProperties(callableId: CallableId): List<FirPropertySymbol> {
-        return extensionsByTopLevelCallableId.getValue()[callableId].orEmpty()
-            .flatMap { it.generateProperties(callableId, context = null) }
-            .onEach { it.fir.validate() }
+        return buildList {
+            extensionsByTopLevelCallableId.getValue()[callableId]?.forEach { extension ->
+                extension.generateProperties(callableId, context = null).forEach { property ->
+                    property.fir.validate()
+                    require(property is FirPropertySymbol) {
+                        "The member is always expected to be a property if it's top-level"
+                    }
+                    add(property)
+                }
+            }
+        }
     }
 
     // ------------------------------------------ provider methods ------------------------------------------

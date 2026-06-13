@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.k2.generators.kotlin
+package org.jetbrains.kotlin.lombok.k2.generators
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -24,15 +27,18 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -41,24 +47,27 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.createConstructorIfGeneratedCompanion
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.initializeCompanionObjectIfNeeded
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.needsConstructorIfGeneratedCompanion
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.tryBuildingJvmStaticAnnotationCall
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
 
 /**
- * Checks if the declaration origin is a logger annotation.
- *
- * @param logAnnotation Optional annotation to compare with the logger annotation.
- * If not provided, the function returns true if declaration is marked by any log annotation (`@Log`, `@Slf4j`, etc.).
+ * Checks whether the current [FirDeclarationOrigin] instance is of type [Plugin]
+ * and verifies if `logAnnotation` of its key matches the provided [logAnnotation].
  */
-fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation? = null): Boolean {
+fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
     return this is FirDeclarationOrigin.Plugin && (key as? LoggerGeneratorKey)?.let {
-        logAnnotation == null || it.logAnnotation == logAnnotation
+        it.logAnnotation == logAnnotation
     } == true
 }
 
@@ -100,8 +109,9 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 return@initializeCompanionObjectIfNeeded LoggerGeneratorKey(firstLog.annotation)
             }
         }
-    private val logPropertiesCache: FirCache<FirClassSymbol<*>, FirPropertySymbol?, MemberGenerationContext> =
-        session.firCachesFactory.createCache(::initializeLogPropertyIfNeeded)
+
+    private val logFieldAndPropertyCache: FirCache<FirClassSymbol<*>, FirVariableSymbol<*>?, MemberGenerationContext> =
+        session.firCachesFactory.createCache(::initializeLogFieldOrPropertyIfNeeded)
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         if (companionObjectsCache.getValue(classSymbol, context) != null) {
@@ -123,7 +133,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             if (classSymbol.needsConstructorIfGeneratedCompanion<LoggerGeneratorKey>()) {
                 add(SpecialNames.INIT)
             }
-            addIfNotNull(logPropertiesCache.getValue(classSymbol, context)?.name)
+            addIfNotNull(logFieldAndPropertyCache.getValue(classSymbol, context)?.name)
         }
     }
 
@@ -131,14 +141,17 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         return listOfNotNull(createConstructorIfGeneratedCompanion<LoggerGeneratorKey>(context.owner))
     }
 
-    override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
+    override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirVariableSymbol<*>> {
         val classSymbol = context?.owner ?: return emptyList()
-        return logPropertiesCache.getValue(classSymbol, context)
+        return logFieldAndPropertyCache.getValue(classSymbol, context)
             ?.let { listOf(it) }
             ?: emptyList()
     }
 
-    private fun initializeLogPropertyIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirPropertySymbol? {
+    private fun initializeLogFieldOrPropertyIfNeeded(
+        classSymbol: FirClassSymbol<*>,
+        context: MemberGenerationContext
+    ): FirVariableSymbol<*>? {
         // Ignore local classes and anonymous objects to prevent potential exceptions
         if (classSymbol.isLocal) {
             return null
@@ -152,69 +165,99 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             val logOnCompanion = session.lombokService.getLogs(classSymbol).firstOrNull()
             if (logOnCompanion != null) {
                 targetClassSymbol = classSymbol
-                logOnCompanion.takeIf { config.logFieldIsStatic } ?: return null
+                logOnCompanion.takeIf { config.logFieldIsStatic }
             } else {
                 val outerClass = classSymbol.classId.outerClassId?.toSymbol(session) as? FirRegularClassSymbol ?: return null
                 targetClassSymbol = outerClass
-                session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic } ?: return null
+                session.lombokService.getLogs(outerClass).firstOrNull().takeIf { config.logFieldIsStatic }
             }
         } else {
             targetClassSymbol = classSymbol
-            session.lombokService.getLogs(classSymbol).firstOrNull().takeIf { classSymbol.classKind.isObject || !config.logFieldIsStatic }
-                ?: return null
-        }
+            // Always generate static/non-static fields for Java classes
+            runIf(classSymbol.hasJavaOrigin || classSymbol.classKind.isObject || !config.logFieldIsStatic) {
+                session.lombokService.getLogs(classSymbol).firstOrNull()
+            }
+        } ?: return null
 
-        val logPropertyName = Name.identifier(config.logFieldName)
+        val logFieldOrPropertyName = Name.identifier(config.logFieldName)
 
         // Ignore generation if a property with the same name already exists (but warn about it in a checker)
-        var propertyAlreadyExists = false
-        context.declaredScope?.processPropertiesByName(logPropertyName) {
-            propertyAlreadyExists = propertyAlreadyExists || it.isRelevantForConflictsCheck
+        var fieldOrPropertyAlreadyExists = false
+        context.declaredScope?.processPropertiesByName(logFieldOrPropertyName) {
+            fieldOrPropertyAlreadyExists = fieldOrPropertyAlreadyExists || it.isRelevantForConflictsCheck
         }
-        if (propertyAlreadyExists) return null
+        if (fieldOrPropertyAlreadyExists) return null
 
-        return tryGeneratingLogProperty(log, classSymbol, targetClassSymbol)
+        return tryGeneratingLogFieldOrProperty(log, classSymbol, targetClassSymbol)
     }
 
-    /**
-     * Immediately break (don't generate a property) if the necessary classes/methods can't be found to prevent compiler crashing
-     * Report resolving errors instead.
-     */
-    private fun tryGeneratingLogProperty(
+    private fun tryGeneratingLogFieldOrProperty(
         log: ConeLombokAnnotations.AbstractLog,
         logContainingClass: FirClassSymbol<*>,
         logTargetClass: FirClassSymbol<*>
-    ): FirPropertySymbol? {
-        if (log.visibility == null) return null
+    ): FirVariableSymbol<*>? {
+        val fieldVisibility = log.visibility ?: return null
 
         val loggerClassType = log.loggerClassId.constructClassLikeType()
-
-        val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
-            null
-        } else {
-            tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
-        }
-        val initializer = tryGeneratingInitializer(log, topicExpression, loggerClassType) ?: return null
-
         val config = session.lombokService.config
+        val fieldOrPropertyName = Name.identifier(config.logFieldName)
+        val fieldIsStatic = config.logFieldIsStatic
 
-        return createMemberProperty(
-            owner = logContainingClass,
-            key = LoggerGeneratorKey(log.annotation),
-            name = Name.identifier(config.logFieldName),
-            returnType = loggerClassType,
-        ) {
-            visibility = log.visibility
-        }.also { logProperty ->
-            if (config.logFieldIsStatic) {
-                logProperty.replaceAnnotations(
-                    listOf(logProperty.symbol.tryBuildingJvmStaticAnnotationCall(session) ?: return null)
-                )
-            }
+        return if (logContainingClass.hasJavaOrigin) {
+            buildJavaField {
+                isFromSource = true
+                lazyHasConstantInitializer = lazy { false }
+                containingClassSymbol = logContainingClass
 
-            // Finalize the property initializer
-            logProperty.replaceInitializer(initializer)
-        }.symbol
+                moduleData = logContainingClass.moduleData
+                status = FirResolvedDeclarationStatusImpl(
+                    fieldVisibility, Modality.FINAL, fieldVisibility.toEffectiveVisibility(logContainingClass)
+                ).apply {
+                    isStatic = fieldIsStatic
+                }
+                isLocal = false
+                returnTypeRef = loggerClassType.toFirResolvedTypeRef()
+                name = fieldOrPropertyName
+                isVar = false
+                symbol = FirFieldSymbol(CallableId(logContainingClass.classId, fieldOrPropertyName))
+                if (!fieldIsStatic) {
+                    dispatchReceiverType = logContainingClass.defaultType()
+                }
+            }.apply {
+                if (fieldIsStatic) {
+                    containingClassForStaticMemberAttr = logContainingClass.toLookupTag()
+                }
+            }.symbol
+        } else {
+            /**
+             * Immediately break (don't generate a property) if the necessary classes/methods can't be found to prevent the compiler crashing.
+             * Report resolving errors instead.
+             */
+            createMemberProperty(
+                owner = logContainingClass,
+                key = LoggerGeneratorKey(log.annotation),
+                name = fieldOrPropertyName,
+                returnType = loggerClassType,
+            ) {
+                visibility = fieldVisibility
+            }.apply {
+                val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
+                    null
+                } else {
+                    tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
+                }
+                val initializer = tryGeneratingInitializer(log, topicExpression, loggerClassType) ?: return null
+
+                if (fieldIsStatic) {
+                    replaceAnnotations(
+                        listOf(symbol.tryBuildingJvmStaticAnnotationCall(session) ?: return null)
+                    )
+                }
+
+                // Finalize the property initializer
+                replaceInitializer(initializer)
+            }.symbol
+        }
     }
 
     private fun tryGeneratingInitializer(
