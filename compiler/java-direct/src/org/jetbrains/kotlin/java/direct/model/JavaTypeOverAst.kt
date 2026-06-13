@@ -564,12 +564,29 @@ fun createJavaTypeWithAnnotations(
     tree: JavaLightTree,
     resolutionContext: JavaResolutionContext,
 ): JavaType {
-    val memberAnnotations = modifierList?.let { ml ->
+    val memberAnnotations = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
+    return createJavaType(typeNode, tree, resolutionContext, memberAnnotations = memberAnnotations)
+}
+
+/**
+ * Maps the ANNOTATION children of a MODIFIER_LIST node to [JavaAnnotationOverAst], or returns an
+ * empty list when [modifierList] is `null`.
+ *
+ * Shared by every element whose `annotations` come straight from its modifier list — classes,
+ * members (fields/methods/constructors/record components) and value parameters — which differ only
+ * in *which* [resolutionContext] and modifier-list node they pass in. Mirrors how the value-parameter
+ * parsing is shared via the free [parseValueParameters] helper rather than a base-class property,
+ * since the resolution context comes from three different sources.
+ */
+internal fun parseAnnotationsFromModifierList(
+    modifierList: JavaLightNode?,
+    tree: JavaLightTree,
+    resolutionContext: JavaResolutionContext,
+): List<JavaAnnotation> =
+    modifierList?.let { ml ->
         tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
             .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
     } ?: emptyList()
-    return createJavaType(typeNode, tree, resolutionContext, memberAnnotations = memberAnnotations)
-}
 
 /**
  * Collects annotations attached syntactically to [node], in source order:
@@ -638,9 +655,7 @@ class JavaTypeParameterOverAst(
     }
 
     override val name: Name
-        get() = Name.identifier(
-            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
-        )
+        get() = Name.identifier(identifierText() ?: "<error>")
 
     override val upperBounds: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val extendsList = tree.findChildByType(node, JavaSyntaxElementType.EXTENDS_BOUND_LIST) ?: return@lazy emptyList()

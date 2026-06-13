@@ -35,14 +35,14 @@ class JavaClassOverAst(
     }
 
     override val name: Name by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        Name.identifier(tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>")
+        Name.identifier(identifierText() ?: "<error>")
     }
 
     override val fqName: FqName by lazy(LazyThreadSafetyMode.PUBLICATION) {
         outerClass?.fqName?.child(name) ?: resolutionContext.packageFqName.child(name)
     }
 
-    private val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val modifierList: JavaLightNode? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
     }
 
@@ -110,8 +110,7 @@ class JavaClassOverAst(
 
     override val innerClassNames: Collection<Name>
         get() = tree.getChildren(node).filter { tree.getType(it) == JavaSyntaxElementType.CLASS }.map {
-            Name.identifier(tree.findChildByType(it, JavaSyntaxTokenType.IDENTIFIER)?.let { id -> tree.getText(id).toString() }
-                                ?: "<error>")
+            Name.identifier(classNodeSimpleName(it) ?: "<error>")
         }
 
     // Positive-only cache: same name → same JavaClass instance. Required so that the
@@ -369,10 +368,7 @@ class JavaClassOverAst(
     override fun hasDefaultConstructor(): Boolean = !isInterface && constructors.isEmpty()
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.let { ml ->
-            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        } ?: emptyList()
+        get() = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = isDeprecatedInJavaDoc(tree, node)

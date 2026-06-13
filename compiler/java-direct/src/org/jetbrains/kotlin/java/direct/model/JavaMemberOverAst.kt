@@ -36,12 +36,7 @@ abstract class JavaMemberOverAst(
         get() = containingClass.memberResolutionContext
 
     override val name: Name
-        get() = Name.identifier(
-            tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>"
-        )
-
-    protected val modifierList: JavaLightNode?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
+        get() = Name.identifier(identifierText() ?: "<error>")
 
     protected fun hasModifier(modifier: SyntaxElementType): Boolean {
         return modifierList?.let { tree.hasChildOfType(it, modifier) } ?: false
@@ -69,10 +64,7 @@ abstract class JavaMemberOverAst(
         }
 
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.let { ml ->
-            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        } ?: emptyList()
+        get() = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = isDeprecatedInJavaDoc(tree, node)
@@ -146,10 +138,7 @@ class JavaFieldOverAst(
         }
 
     override val annotations: Collection<JavaAnnotation>
-        get() = effectiveModifierList?.let { ml ->
-            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        } ?: emptyList()
+        get() = parseAnnotationsFromModifierList(effectiveModifierList, tree, resolutionContext)
 
     override val type: JavaType
         get() = computeType()
@@ -412,7 +401,7 @@ class JavaValueParameterOverAst(
     private val resolutionContext: JavaResolutionContext,
 ) : JavaElementOverAst(node, tree), JavaValueParameter {
     override val name: Name?
-        get() = tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { Name.identifier(tree.getText(it).toString()) }
+        get() = identifierText()?.let { Name.identifier(it) }
 
     override val type: JavaType
         get() {
@@ -428,14 +417,8 @@ class JavaValueParameterOverAst(
             typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
         }
 
-    private val modifierList: JavaLightNode?
-        get() = tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST)
-
     override val annotations: Collection<JavaAnnotation>
-        get() = modifierList?.let { ml ->
-            tree.getChildrenByType(ml, JavaSyntaxElementType.ANNOTATION)
-                .map { JavaAnnotationOverAst(it, tree, resolutionContext) }
-        } ?: emptyList()
+        get() = parseAnnotationsFromModifierList(modifierList, tree, resolutionContext)
 
     override val isDeprecatedInJavaDoc: Boolean
         get() = isDeprecatedInJavaDoc(tree, node)
