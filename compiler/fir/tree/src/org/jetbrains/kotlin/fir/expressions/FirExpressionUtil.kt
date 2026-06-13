@@ -215,7 +215,7 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
 inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {
     val functionSymbol = calleeReference.toResolvedNamedFunctionSymbol() ?: return
 
-    for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
+    for ([typeParameterSymbol, typeArgument] in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
         if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
             val type = typeArgument.typeRef.coneTypeOrNull ?: continue
             block(type, typeArgument)

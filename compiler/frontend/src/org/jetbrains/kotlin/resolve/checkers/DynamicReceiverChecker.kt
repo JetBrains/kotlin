@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.types.isDynamic
 
+@K1Deprecation
 object DynamicReceiverChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is CallableDescriptor || declaration !is KtCallableDeclaration || descriptor.hasDynamicExtensionAnnotation()) return

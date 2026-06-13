@@ -186,7 +186,7 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
         fun IrFunction.addInitializersCall() {
             val body = body ?: return
             val statements = (body as IrBlockBody).statements
-            context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            context.createIrBuilder(symbol, this.startOffset, this.startOffset).run {
                 // The order of calling initializers: first global, then thread-local.
                 // It is ok for a thread local top level property to reference a global, but not vice versa.
                 threadLocalInitFunction?.let { statements.add(0, irCall(it.symbol)) }

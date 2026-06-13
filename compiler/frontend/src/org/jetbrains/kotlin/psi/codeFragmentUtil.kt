@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.psi.codeFragmentUtil
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
+@K1Deprecation
 val SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE: Key<Boolean> = Key.create<Boolean>("SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE")
 
+@K1Deprecation
 fun KtElement.suppressDiagnosticsInDebugMode(): Boolean {
     return if (this is KtFile) {
         this.suppressDiagnosticsInDebugMode
@@ -32,6 +35,7 @@ fun KtElement.suppressDiagnosticsInDebugMode(): Boolean {
     }
 }
 
+@K1Deprecation
 var KtFile.suppressDiagnosticsInDebugMode: Boolean
     get() = when (this) {
         is KtCodeFragment -> true
@@ -41,4 +45,5 @@ var KtFile.suppressDiagnosticsInDebugMode: Boolean
         putUserData(SUPPRESS_DIAGNOSTICS_IN_DEBUG_MODE, skip)
     }
 
+@K1Deprecation
 val DEBUG_TYPE_REFERENCE_STRING: String = "DebugTypeKotlinRulezzzz"

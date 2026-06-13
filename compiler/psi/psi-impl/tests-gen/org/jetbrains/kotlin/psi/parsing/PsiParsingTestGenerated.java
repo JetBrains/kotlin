@@ -3248,6 +3248,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("CodeSpanWithLineBreaks.kt")
+    public void testCodeSpanWithLineBreaks() {
+      run("CodeSpanWithLineBreaks.kt");
+    }
+
+    @Test
     @TestMetadata("DocCommentAtBeginningOfFile1.kt")
     public void testDocCommentAtBeginningOfFile1() {
       run("DocCommentAtBeginningOfFile1.kt");
@@ -3341,6 +3347,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("IncompleteIndentedList.kt")
     public void testIncompleteIndentedList() {
       run("IncompleteIndentedList.kt");
+    }
+
+    @Test
+    @TestMetadata("kt86184.kt")
+    public void testKt86184() {
+      run("kt86184.kt");
     }
 
     @Test

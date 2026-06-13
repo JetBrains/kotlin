@@ -33,7 +33,7 @@ internal object CheckArguments : ResolutionStage() {
         val isInvokeFromExtensionFunctionType = candidate.isInvokeFromExtensionFunctionType
 
         val contextArgumentsOfInvoke = candidate.expectedContextParameterCountForInvoke ?: 0
-        for ((index, argument) in candidate.arguments.withIndex()) {
+        for ([index, argument] in candidate.arguments.withIndex()) {
             if (index < contextArgumentsOfInvoke) continue
 
             val expression = argument.expression
@@ -83,13 +83,14 @@ internal object CheckArguments : ResolutionStage() {
         argument.coneTypeOrNull.ensureResolvedTypeDeclaration(context.session)
         val expectedType = prepareExpectedType(callInfo, argument, parameter)
         ArgumentCheckingProcessor.resolveArgumentExpression(
-            this,
+            csBuilder,
             atom,
+            containingCallCandidate = this,
             expectedType,
             sink,
             context,
             isReceiver,
-            isDispatch = false
+            isDispatch = false,
         )
     }
 }
@@ -152,6 +153,10 @@ private fun FirExpression.shouldUseSamConversion(
     candidateExpectedType: ConeKotlinType,
 ): Boolean {
     val unwrapped = unwrapArgument()
+
+    if (unwrapped is FirCollectionLiteral) {
+        return false
+    }
 
     // Always apply SAM conversion on lambdas and callable references
     if (unwrapped is FirAnonymousFunctionExpression || unwrapped is FirCallableReferenceAccess) {

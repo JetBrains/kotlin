@@ -563,7 +563,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             }
             buildScriptInjection {
                 with(project.extensions.getByType(LibraryExtension::class.java)) {
-                    compileSdk = 23
+                    compileSdk = 36
                     namespace = "kotlin"
                 }
             }

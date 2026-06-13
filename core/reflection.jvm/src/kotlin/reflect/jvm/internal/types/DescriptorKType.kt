@@ -132,7 +132,7 @@ internal class DescriptorKType(
                     },
                 )
             }
-            return getMutableCollectionKClass(classDescriptor.fqNameSafe, classifier as KClass<*>)
+            return getMutableCollectionKClass(classifier as KClass<*>)
         }
 
     override val isSuspendFunctionType: Boolean

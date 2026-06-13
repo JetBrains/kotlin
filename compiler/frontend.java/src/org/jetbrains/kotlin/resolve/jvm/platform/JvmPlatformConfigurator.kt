@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport
 import org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport
 
+@K1Deprecation
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JvmNameAnnotationChecker(),

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
+@K1Deprecation
 interface IdentifierInfo {
 
     val kind: DataFlowValue.Kind get() = OTHER

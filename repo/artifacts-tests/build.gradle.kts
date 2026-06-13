@@ -1,5 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     kotlin("jvm")
@@ -27,7 +28,7 @@ projectTests {
         workingDir = rootDir
 
         @OptIn(TemporaryTestFederationApi::class)
-        isSmokeTest = true
+        smokeTestConfig = SmokeTestConfig.RunAllTests
 
         val buildNumber by extra(findProperty("build.number")?.toString() ?: defaultSnapshotVersion)
         val kotlinVersion by extra(

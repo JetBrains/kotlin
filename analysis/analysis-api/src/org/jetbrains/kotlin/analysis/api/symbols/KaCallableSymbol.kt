@@ -29,7 +29,7 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
      * Note: For a `vararg foo: T` parameter, the resulting type is the vararg element `T` type (unlike
      * [KtDeclaration.returnType][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] from
      * [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType],
-     * which returns the full `Array<out T>` type).
+     * which is the full `Array<out T>` type).
      *
      * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
      * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are
@@ -122,7 +122,7 @@ public val KaCallableSymbol.receiverType: KaType?
     get() = receiverParameter?.returnType
 
 /**
- * @return a list of [KaContextParameterSymbol]s directly declared in the symbol.
+ * A list of [KaContextParameterSymbol]s directly declared in the symbol.
  */
 @KaExperimentalApi
 public val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>

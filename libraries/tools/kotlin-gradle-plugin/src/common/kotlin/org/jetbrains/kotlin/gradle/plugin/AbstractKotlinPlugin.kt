@@ -35,6 +35,7 @@ internal const val BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME = "kotlinBuildTo
 internal const val KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME = "kotlinKlibCommonizerClasspath"
 internal const val KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME = "kotlinNativeBundleConfiguration"
 internal const val KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME = "kotlinBouncyCastleConfiguration"
+internal const val ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME = "kotlinAbiValidationCompatClasspath"
 
 internal abstract class AbstractKotlinPlugin(
     val tasksProvider: KotlinTasksProvider,

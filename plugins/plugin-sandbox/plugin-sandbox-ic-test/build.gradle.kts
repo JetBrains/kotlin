@@ -4,7 +4,7 @@ plugins {
     id("nodejs-configuration")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -13,6 +13,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())
@@ -31,30 +32,18 @@ dependencies {
 }
 
 sourceSets {
-    "main" { none() }
-    "test" { generatedTestDir() }
-    "testFixtures" { projectDefault() }
+    main { none() }
+    test { generatedTestDir() }
+    testFixtures { projectDefault() }
 }
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
         useJsIrBoxTests(buildDir = layout.buildDirectory)
-        with(wasmNodeJsKotlinBuild) {
+        wasmNodeJsKotlinBuild {
             setupNodeJs(nodejsVersion)
         }
-        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-            property.set("kotlin.wasm.test.root.out.dir")
-            buildDirectory.set(layout.buildDirectory)
-        }
-        testInputsCheck {
-            with(extraPermissions) {
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation\", \"write\";")
-                add("permission java.util.PropertyPermission \"kotlin.incremental.compilation.js\", \"write\";")
-                // The plugin-sandbox compiler plugin generates synthetic source files (like AllOpenGenerated.kt),
-                // and later on the compiler asserts that the synthetic file must not exist
-                add("""permission java.io.FilePermission "${projectDir.absolutePath}/-", "read";""")
-            }
-        }
+        addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")

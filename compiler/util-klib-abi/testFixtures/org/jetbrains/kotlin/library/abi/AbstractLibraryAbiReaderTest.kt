@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.converters.Fir2IrCliWebFacade
 import org.jetbrains.kotlin.js.test.converters.FirCliWebFacade
-import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliWebFacade
+import org.jetbrains.kotlin.js.test.converters.FirKlibSerializerCliJsFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.library.abi.parser.KlibDumpParser
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibAbiDumpHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.DUMP_KLIB_ABI
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives.KlibAbiDumpMode
@@ -71,11 +72,13 @@ abstract class AbstractLibraryAbiReaderTest(
 
         facadeStep(frontendFacade)
         firHandlersStep {
-            useHandlers(::NoFirCompilationErrorsHandler)
+            commonFirHandlersForCodegenTest()
         }
 
         facadeStep(converter)
-        irHandlersStep()
+        irHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
 
         facadeStep(preserializerFacade)
         loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
@@ -98,7 +101,7 @@ abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsP
         get() = ::JsIrPreSerializationLoweringFacade
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirKlibSerializerCliWebFacade
+        get() = ::FirKlibSerializerCliJsFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         useConfigurators(

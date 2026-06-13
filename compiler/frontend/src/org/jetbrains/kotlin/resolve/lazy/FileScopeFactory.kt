@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -25,18 +26,22 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
+import org.jetbrains.kotlin.resolve.BindingContext.COMPILER_CONFIGURATION
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
+@K1Deprecation
 data class FileScopes(val lexicalScope: LexicalScope, val importingScope: ImportingScope, val importForceResolver: ImportForceResolver)
 
+@K1Deprecation
 class FileScopeFactory(
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
     private val bindingTrace: BindingTrace,
@@ -55,7 +60,7 @@ class FileScopeFactory(
 
         override val aliasName: String? get() = importPath.alias?.asString()
 
-        override val importedFqName: FqName? get() = importPath.fqName
+        override val importedFqName: FqName get() = importPath.fqName
     }
 
     fun createScopesForFile(file: KtFile, existingImports: ImportingScope? = null, createDefaultImportingScopes: Boolean = true): FileScopes {
@@ -183,7 +188,9 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
-            val extraImports = ExtraImportsProviderExtension.getInstance(file.project).getExtraImports(file)
+            val extraImports = ExtraImportsProviderExtension.getInstance(file.project).getExtraImports(
+                file, bindingTrace.get(COMPILER_CONFIGURATION, packageFragment.module)
+            )
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
                 return defaultImportResolvers
@@ -193,8 +200,7 @@ class FileScopeFactory(
         }
 
         fun createImportingScope(): LazyImportScope {
-            val (defaultExplicitImportResolver, defaultAllUnderImportResolver, defaultLowPriorityImportResolver) =
-                    createDefaultImportResolversForFile()
+            (val defaultExplicitImportResolver = explicit, val defaultAllUnderImportResolver = allUnder, val defaultLowPriorityImportResolver = lowPriority) = createDefaultImportResolversForFile()
 
             val dummyContainerDescriptor = DummyContainerDescriptor(file, packageFragment)
 
@@ -262,7 +268,7 @@ class FileScopeFactory(
         val excludedNames = aliasImportNames.mapNotNull { if (it.parent() == packageName) it.shortName() else null }
 
         return object : ImportingScope {
-            override val parent: ImportingScope? = parentScope
+            override val parent: ImportingScope = parentScope
 
             override fun getContributedPackage(name: Name): Nothing? = null
 
@@ -326,7 +332,7 @@ class FileScopeFactory(
         override fun getOriginal() = this
         override val annotations: Annotations get() = Annotations.EMPTY
 
-        override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+        override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
             throw UnsupportedOperationException()
         }
 

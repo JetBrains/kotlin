@@ -1,4 +1,6 @@
 KtNameReferenceExpression(173,178): 'check'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       dependency4/MyInterface.check(<dispatch receiver>: dependency4.MyInterface, list: {dependency2.ListAlias<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>=} kotlin.collections.List<{dependency3.SetAlias<{dependency1.StringAlias=} kotlin.String>=} kotlin.collections.Set<{dependency1.StringAlias=} kotlin.String>>): kotlin.Unit

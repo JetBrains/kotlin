@@ -29,13 +29,24 @@ KtProperty(82,107): 'val FOO: MyClass = TODO()'
   null
 
 KtTypeReference(91,98): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(91,98): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(91,98): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(101,107): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -44,6 +55,8 @@ KtCallExpression(101,107): 'TODO()'
     ]
 
 KtNameReferenceExpression(101,105): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -77,13 +90,24 @@ KtConstructorCalleeExpression(167,174): 'MyClass'
     ]
 
 KtTypeReference(167,174): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(167,174): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(167,174): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(174,176): '()'
   null
@@ -101,13 +125,24 @@ KtParameter(221,227): 'x: Int'
   null
 
 KtTypeReference(224,227): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(224,227): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(224,227): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(229,231): '{}'
   null
@@ -122,13 +157,24 @@ KtParameter(251,261): 'x: MyClass'
   null
 
 KtTypeReference(254,261): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(254,261): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(254,261): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(263,265): '{}'
   null
@@ -149,22 +195,44 @@ KtParameter(278,282): 'x: X'
   null
 
 KtTypeReference(281,282): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(281,282): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(281,282): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(285,286): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(285,286): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(285,286): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(289,295): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -173,6 +241,8 @@ KtCallExpression(289,295): 'TODO()'
     ]
 
 KtNameReferenceExpression(289,293): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -185,13 +255,24 @@ KtNamedFunction(297,640): 'fun MyClass.foo() {'
   null
 
 KtTypeReference(301,308): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(301,308): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(301,308): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameterList(312,314): '()'
   null
@@ -206,6 +287,8 @@ KtCallExpression(321,341): 'expectInt(MAX_VALUE)'
     ]
 
 KtNameReferenceExpression(321,330): 'expectInt'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /expectInt(x: kotlin.Int): kotlin.Unit
@@ -218,6 +301,8 @@ KtValueArgument(331,340): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(331,340): 'MAX_VALUE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val MAX_VALUE: kotlin.Int
@@ -230,6 +315,8 @@ KtCallExpression(347,365): 'expectMyClass(FOO)'
     ]
 
 KtNameReferenceExpression(347,360): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -242,6 +329,8 @@ KtValueArgument(361,364): 'FOO'
   null
 
 KtNameReferenceExpression(361,364): 'FOO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val FOO: MyClass
@@ -254,6 +343,8 @@ KtCallExpression(370,392): 'expectMyClass(id(FOO))'
     ]
 
 KtNameReferenceExpression(370,383): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -272,6 +363,8 @@ KtCallExpression(384,391): 'id(FOO)'
     ]
 
 KtNameReferenceExpression(384,386): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -284,6 +377,8 @@ KtValueArgument(387,390): 'FOO'
   null
 
 KtNameReferenceExpression(387,390): 'FOO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val FOO: MyClass
@@ -297,6 +392,8 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -310,6 +407,8 @@ KtValueArgument(412,429): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(412,429): 'FOR_TYPE_MISMATCH'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val FOR_TYPE_MISMATCH: kotlin.String
@@ -323,6 +422,8 @@ KtCallExpression(435,471): 'expectMyClass(id(FOR_TYPE_MISMATCH))'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(435,448): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -342,6 +443,8 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
     ]
 
 KtNameReferenceExpression(449,451): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -354,6 +457,8 @@ KtValueArgument(452,469): 'FOR_TYPE_MISMATCH'
   null
 
 KtNameReferenceExpression(452,469): 'FOR_TYPE_MISMATCH'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val FOR_TYPE_MISMATCH: kotlin.String
@@ -366,6 +471,8 @@ KtCallExpression(477,495): 'expectMyClass(Bar)'
     ]
 
 KtNameReferenceExpression(477,490): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -378,6 +485,8 @@ KtValueArgument(491,494): 'Bar'
   null
 
 KtNameReferenceExpression(491,494): 'Bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.Bar
@@ -390,6 +499,8 @@ KtCallExpression(500,522): 'expectMyClass(id(Bar))'
     ]
 
 KtNameReferenceExpression(500,513): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -408,6 +519,8 @@ KtCallExpression(514,521): 'id(Bar)'
     ]
 
 KtNameReferenceExpression(514,516): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -420,6 +533,8 @@ KtValueArgument(517,520): 'Bar'
   null
 
 KtNameReferenceExpression(517,520): 'Bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.Bar
@@ -433,6 +548,8 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -446,6 +563,8 @@ KtValueArgument(542,557): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(542,557): 'ForTypeMismatch'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.ForTypeMismatch
@@ -459,6 +578,8 @@ KtCallExpression(563,597): 'expectMyClass(id(ForTypeMismatch))'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
 
 KtNameReferenceExpression(563,576): 'expectMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /expectMyClass(x: MyClass): kotlin.Unit
@@ -478,6 +599,8 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
     ]
 
 KtNameReferenceExpression(577,579): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -490,6 +613,8 @@ KtValueArgument(580,595): 'ForTypeMismatch'
   null
 
 KtNameReferenceExpression(580,595): 'ForTypeMismatch'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.ForTypeMismatch
@@ -502,6 +627,8 @@ KtDotQualifiedExpression(603,638): 'JavaClass.expectJavaClass(INSTANCE)'
     ]
 
 KtNameReferenceExpression(603,612): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -514,6 +641,8 @@ KtCallExpression(613,638): 'expectJavaClass(INSTANCE)'
     ]
 
 KtNameReferenceExpression(613,628): 'expectJavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.expectJavaClass(j: JavaClass!): kotlin.Unit
@@ -526,6 +655,8 @@ KtValueArgument(629,637): 'INSTANCE'
   null
 
 KtNameReferenceExpression(629,637): 'INSTANCE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       var INSTANCE: JavaClass!

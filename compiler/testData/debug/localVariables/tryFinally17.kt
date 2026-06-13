@@ -24,3 +24,8 @@ fun box(): String {
 // test.kt:9 box:
 // test.kt:10 box: x="x":kotlin.String
 // test.kt:12 box: x="x":kotlin.String
+
+// EXPECTATIONS WASM
+// test.kt:9 $box: $x:(ref null $kotlin.String)=null (16, 16, 16, 16)
+// test.kt:10 $box: $x:(ref $kotlin.String)=(ref $kotlin.String) (14, 31, 14, 8)
+// test.kt:12 $box: $x:(ref $kotlin.String)=(ref $kotlin.String) (15, 15, 15, 8)

@@ -1,0 +1,144 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(26,37): 'package use'
+  null
+
+KtNameReferenceExpression(34,37): 'use'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      use
+    ]
+
+KtImportList(39,85): 'import decl.C'
+  null
+
+KtImportDirective(39,52): 'import decl.C'
+  null
+
+KtDotQualifiedExpression(46,52): 'decl.C'
+  null
+
+KtNameReferenceExpression(46,50): 'decl'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl
+    ]
+
+KtNameReferenceExpression(51,52): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/C
+    ]
+
+KtImportDirective(53,68): 'import decl.foo'
+  null
+
+KtDotQualifiedExpression(60,68): 'decl.foo'
+  null
+
+KtNameReferenceExpression(60,64): 'decl'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl
+    ]
+
+KtNameReferenceExpression(65,68): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/foo(<extension receiver>: decl.C): kotlin.Unit
+    ]
+
+KtImportDirective(69,85): 'import decl.prop'
+  null
+
+KtDotQualifiedExpression(76,85): 'decl.prop'
+  null
+
+KtNameReferenceExpression(76,80): 'decl'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl
+    ]
+
+KtNameReferenceExpression(81,85): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
+
+KtNamedFunction(87,125): 'fun usage() {'
+  null
+
+KtParameterList(96,98): '()'
+  null
+
+KtBlockExpression(99,125): '{'
+  null
+
+KtDotQualifiedExpression(105,112): 'C.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/foo(<extension receiver>: decl.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(105,106): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/C
+    ]
+
+KtCallExpression(107,112): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/foo(<extension receiver>: decl.C): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(107,110): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/foo(<extension receiver>: decl.C): kotlin.Unit
+    ]
+
+KtValueArgumentList(110,112): '()'
+  null
+
+KtDotQualifiedExpression(117,123): 'C.prop'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]
+
+KtNameReferenceExpression(117,118): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      decl/C
+    ]
+
+KtNameReferenceExpression(119,123): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val prop: kotlin.Int
+    ]

@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
+@K1Deprecation
 class ReturnNoValueInstruction(
     element: KtElement,
     blockScope: BlockScope,

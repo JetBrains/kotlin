@@ -5,30 +5,35 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import java.io.File
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-public class CommonizerDependencyTest {
+class CommonizerDependencyTest {
 
     @Test
-    public fun `sample identityString`() {
+    fun `sample identityString`(@TempDir tempDir: Path) {
+        val dependencyFile = tempDir.resolve("hello.txt")
         assertEquals(
-            "(a, b, c)::${File("/").canonicalPath}hello.txt",
-            TargetedCommonizerDependency(parseCommonizerTarget("(a, b, c)"), File("/hello.txt")).identityString
+            "(a, b, c)::${dependencyFile.toFile().canonicalPath}",
+            TargetedCommonizerDependency(parseCommonizerTarget("(a, b, c)"), dependencyFile.toFile().absoluteFile).identityString
         )
     }
 
     @Test
-    public fun `test serialize deserialize`() {
+    fun `test serialize deserialize`(@TempDir tempDir: Path) {
+        val dependencyFile = tempDir.resolve("hello.txt")
+
         assertEquals(
-            parseCommonizerDependency(NonTargetedCommonizerDependency(File("hello.txt")).identityString),
-            NonTargetedCommonizerDependency(File("hello.txt").canonicalFile)
+            parseCommonizerDependency(NonTargetedCommonizerDependency(dependencyFile.toFile()).identityString),
+            NonTargetedCommonizerDependency(dependencyFile.toFile().canonicalFile)
         )
 
         assertEquals(
-            parseCommonizerDependency(TargetedCommonizerDependency(parseCommonizerTarget("((a,b), c)"), File("hello.txt")).identityString),
-            TargetedCommonizerDependency(parseCommonizerTarget("((a,b), c)"), File("hello.txt").canonicalFile)
+            parseCommonizerDependency(
+                TargetedCommonizerDependency(parseCommonizerTarget("((a,b), c)"), dependencyFile.toFile()).identityString
+            ), TargetedCommonizerDependency(parseCommonizerTarget("((a,b), c)"), dependencyFile.toFile().canonicalFile)
         )
     }
 }

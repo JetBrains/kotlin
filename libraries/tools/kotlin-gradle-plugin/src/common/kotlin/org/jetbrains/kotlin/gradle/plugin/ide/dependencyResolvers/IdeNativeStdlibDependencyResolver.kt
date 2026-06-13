@@ -44,7 +44,6 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
                 this.sourcesClasspath += konanDistribution.sourcesDir.listFiles().orEmpty()
                     /* Ignore org.jetbrains.kotlinx. in this case */
                     .filter { file -> file.name.startsWith("kotlin") }
-                    .ifEmpty { return emptySet() }
             }
         )
     }

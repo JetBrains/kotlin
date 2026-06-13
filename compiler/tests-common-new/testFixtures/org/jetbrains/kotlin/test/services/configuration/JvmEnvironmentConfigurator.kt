@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
@@ -142,6 +142,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         fun getJdkHome(jdkKindTestJdkKind: TestJdkKind): File? = when (jdkKindTestJdkKind) {
             TestJdkKind.MOCK_JDK -> null
             TestJdkKind.MODIFIED_MOCK_JDK -> null
+            TestJdkKind.FULL_JDK_8 -> KtTestUtil.getJdk8Home()
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
@@ -164,6 +165,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         fun getJdkClasspathRoot(jdkKind: TestJdkKind): File? = when (jdkKind) {
             TestJdkKind.MOCK_JDK -> KtTestUtil.findMockJdkRtJar()
             TestJdkKind.MODIFIED_MOCK_JDK -> KtTestUtil.findMockJdkRtModified()
+            TestJdkKind.FULL_JDK_8 -> null
             TestJdkKind.FULL_JDK_11 -> null
             TestJdkKind.FULL_JDK_17 -> null
             TestJdkKind.FULL_JDK_21 -> null
@@ -221,6 +223,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 configuration.put(JVMConfigurationKeys.NO_JDK, true)
             }
 
+            TestJdkKind.FULL_JDK_8 -> {}
             TestJdkKind.FULL_JDK_11 -> {}
             TestJdkKind.FULL_JDK_17 -> {}
             TestJdkKind.FULL_JDK_21 -> {}
@@ -319,7 +322,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             )
         )
         configuration.outputDirectory = outputDir
-        configuration.put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, ClassBuilderFactories.TEST)
+        configuration.put(JvmBackendPipelinePhase.customClassBuilderFactory, ClassBuilderFactories.TEST)
 
         configuration.addSourcesForDependsOnClosure(module, testServices)
     }

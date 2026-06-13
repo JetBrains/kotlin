@@ -63,7 +63,7 @@ internal fun resolveFakeOverrideFunction(symbol: IrSymbol): IdSignature? {
 
 private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
     return HashMap<IdSignature, IrSymbol>(deserializedSymbols.size).apply {
-        for ((signature, symbol) in deserializedSymbols) {
+        for ([signature, symbol] in deserializedSymbols) {
             put(signature, symbol)
 
             fun <T> addSymbol(decl: T): Boolean where T : IrDeclarationWithVisibility, T : IrSymbolOwner {

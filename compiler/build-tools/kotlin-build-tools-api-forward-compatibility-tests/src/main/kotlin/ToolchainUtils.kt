@@ -20,7 +20,6 @@ private fun initializeBtaClassloader(): URLClassLoader {
         classpath.split(File.pathSeparator)
             .map { File(it).toURI().toURL() }
 
-    println("Loading classes from classpath: $urls")
     return URLClassLoader(urls.toTypedArray(), SharedApiClassesClassLoader())
 }
 

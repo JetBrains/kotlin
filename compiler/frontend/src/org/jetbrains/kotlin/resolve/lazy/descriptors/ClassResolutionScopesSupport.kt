@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.ErrorLexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class ClassResolutionScopesSupport(
     private val classDescriptor: ClassDescriptor,
     storageManager: StorageManager,
@@ -137,6 +139,7 @@ class ClassResolutionScopesSupport(
     }
 }
 
+@K1Deprecation
 fun scopeForInitializerResolution(
     classDescriptor: LazyClassDescriptor,
     parentDescriptor: DeclarationDescriptor,
@@ -153,7 +156,7 @@ fun scopeForInitializerResolution(
         if (primaryConstructorParameters.isNotEmpty()) {
             val parameterDescriptors = classDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters
             assert(parameterDescriptors.size == primaryConstructorParameters.size)
-            for ((parameter, descriptor) in primaryConstructorParameters.zip(parameterDescriptors)) {
+            for ([parameter, descriptor] in primaryConstructorParameters.zip(parameterDescriptors)) {
                 if (!parameter.hasValOrVar()) {
                     addVariableDescriptor(descriptor)
                 }

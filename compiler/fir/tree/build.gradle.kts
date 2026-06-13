@@ -1,9 +1,12 @@
 plugins {
     kotlin("jvm")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {
+    implementation(project(":compiler:container"))
+
     api(project(":compiler:frontend.common"))
     api(project(":core:compiler.common"))
     api(project(":compiler:fir:cones"))

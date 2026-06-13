@@ -1,0 +1,130 @@
+KtFile: 'unaryOnLiterals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,51): 'fun simpleValid() {'
+  null
+
+KtParameterList(15,17): '()'
+  null
+
+KtBlockExpression(18,51): '{'
+  null
+
+KtPrefixExpression(24,26): '+1'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(24,25): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(25,26): '1'
+  null
+
+KtPrefixExpression(31,33): '-2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(31,32): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(32,33): '2'
+  null
+
+KtPrefixExpression(38,41): '+3L'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(38,39): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtConstantExpression(39,41): '3L'
+  null
+
+KtPrefixExpression(46,49): '-4L'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(46,47): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtConstantExpression(47,49): '4L'
+  null
+
+KtNamedFunction(53,87): 'fun invlid() {'
+  null
+
+KtParameterList(63,65): '()'
+  null
+
+KtBlockExpression(66,87): '{'
+  null
+
+KtPrefixExpression(72,76): '+"5"'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
+
+KtOperationReferenceExpression(72,73): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
+
+KtStringTemplateExpression(73,76): '"5"'
+  null
+
+KtLiteralStringTemplateEntry(74,75): '5'
+  null
+
+KtPrefixExpression(81,85): '-"6"'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
+
+KtOperationReferenceExpression(81,82): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
+
+KtStringTemplateExpression(82,85): '"6"'
+  null
+
+KtLiteralStringTemplateEntry(83,84): '6'
+  null

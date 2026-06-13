@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.javac.resolve
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.source.tree.Tree
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class IdentifierResolver(private val javac: JavacWrapper) {
 
     fun resolve(tree: Tree, compilationUnit: CompilationUnitTree, containingClass: JavaClass): JavaField? {

@@ -417,11 +417,13 @@ fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
 internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
     bodyResolveComponents: BodyResolveComponents,
     source: KtSourceElement?,
+    definitelyNotCompanion: Boolean = true,
 ): FirResolvedQualifier {
     val resolvedQualifier = buildResolvedQualifier {
         packageFqName = classId.packageFqName
         relativeClassFqName = classId.relativeClassName
-        resolvedToCompanionObject = false
+        resolvedToCompanionObject =
+            !definitelyNotCompanion && fullyExpandedClass(bodyResolveComponents.session)?.resolvedCompanionObjectSymbol != null
         symbol = this@toImplicitResolvedQualifierReceiver
         this.source = source
     }.apply {

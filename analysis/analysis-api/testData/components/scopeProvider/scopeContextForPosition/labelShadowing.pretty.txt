@@ -1,0 +1,118 @@
+element: length
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 1
+    type = kotlin.String
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
+    label = foo
+
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 4
+    type = kotlin.String
+    ownerSymbol = KaAnonymousFunctionSymbol:
+      <anonymous function>(): kotlin.Unit
+    label = null
+
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 8
+      fun compareTo(other: kotlin.String): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun get(index: kotlin.Int): kotlin.Char
+      fun plus(other: kotlin.Any?): kotlin.String
+      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
+      fun toString(): kotlin.String
+      val length: kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 1
+      companion object
+    callables: 8
+      fun compareTo(other: kotlin.String): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun get(index: kotlin.Int): kotlin.Char
+      fun plus(other: kotlin.Any?): kotlin.String
+      fun subSequence(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence
+      fun toString(): kotlin.String
+      val length: kotlin.Int
+      fun hashCode(): kotlin.Int
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 9
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 0
+    callables: 2
+      fun test()
+      fun block(value: kotlin.String, block: kotlin.String.() -> kotlin.Unit)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 10
+
+  DefaultSimpleImportingScope, index = 11
+
+  ExplicitStarImportingScope, index = 12
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 13

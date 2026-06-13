@@ -148,7 +148,7 @@ private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: Clas
 
     val processedClassloaders = mutableSetOf<ClassLoader>()
 
-    return dependenciesWithConfigurations.fold(lastClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
+    return dependenciesWithConfigurations.fold(lastClassLoader) { parentClassLoader, [compilationConfiguration, scriptDependency] ->
         when (scriptDependency) {
             is JvmDependency -> {
                 scriptDependency.classpath.mapNotNull {

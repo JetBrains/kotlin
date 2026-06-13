@@ -51,7 +51,10 @@ interface KotlinPaths {
         get() = klib(Jar.JsStdLib)
 
     val wasmJsStdLibKlibPath: File
-        get() = klib(Jar.WasmStdLib)
+        get() = klib(Jar.WasmJsStdLib)
+
+    val wasmWasiStdLibKlibPath: File
+        get() = klib(Jar.WasmWasiStdLib)
 
     //    @Deprecated("Obsolete API", ReplaceWith("sourcesJar(KotlinPaths.Jars.JsStdLib)!!"))
     val jsStdLibSrcJarPath: File
@@ -92,7 +95,8 @@ interface KotlinPaths {
         ScriptRuntime(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_NAME),
         KotlinTest(PathUtil.KOTLIN_TEST_NAME),
         JsStdLib(PathUtil.JS_LIB_NAME),
-        WasmStdLib(PathUtil.WASM_JS_LIB_NAME),
+        WasmJsStdLib(PathUtil.WASM_JS_LIB_NAME),
+        WasmWasiStdLib(PathUtil.WASM_WASI_LIB_NAME),
         JsKotlinTest(PathUtil.KOTLIN_TEST_JS_NAME),
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),

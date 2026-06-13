@@ -99,7 +99,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         value = "-Xallow-any-scripts-in-source-roots",
         description = "Allow compiling scripts along with regular Kotlin sources.",
     )
-    @Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
     var allowAnyScriptsInSourceRoots: Boolean = false
         set(value) {
             checkFrozen()
@@ -163,13 +162,24 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xallow-returns-result-of",
+        description = "Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.",
+    )
+    @Enables(LanguageFeature.AllowReturnsResultOfContract)
+    var allowReturnsResultOf: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xannotation-default-target",
         valueDescription = "first-only|first-only-warn|param-property",
         description = """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""",
+default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
     )
     @Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only")
     @Enables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only-warn")
@@ -353,6 +363,18 @@ For WASM and JS, the performance report includes execution time and lines per se
         }
 
     @Argument(
+        value = "-Xdisable-ir-checkers",
+        valueDescription = "<checker1>,<checker2>",
+        description = """A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+Only has effect if '-Xverify-ir' is not 'none'.""",
+    )
+    var disableIrCheckers: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdisable-phases",
         description = "Disable backend phases.",
     )
@@ -416,6 +438,32 @@ Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20
         }
 
     @Argument(
+        value = "-Xeager-lambda-analysis",
+        description = "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.",
+    )
+    @Enables(LanguageFeature.EagerLambdaAnalysis)
+    @Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions)
+    @Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound)
+    @Enables(LanguageFeature.CallCompletionRefinementsFor25)
+    var eagerLambdaAnalysis: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xenable-additional-ir-checkers",
+        valueDescription = "<checker1>,<checker2>",
+        description = """A list of IR checkers to enable, specified by a simple name of the checker class.
+It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.""",
+    )
+    var enableAdditionalIrCheckers: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xenable-incremental-compilation",
         description = "Enable incremental compilation.",
     )
@@ -475,8 +523,7 @@ Use the 'warning' level to issue warnings instead of errors.""",
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
-The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""",
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
         delimiter = Argument.Delimiters.none,
     )
     var fragmentDependencies: Array<String> = emptyArray()
@@ -490,11 +537,25 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
-The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""",
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
         delimiter = Argument.Delimiters.none,
     )
     var fragmentFriendDependencies: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xfragment-incremental-classpath",
+        valueDescription = "<fragment name>:<path>",
+        description = """Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
+This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
+  dependencies from the platform specific incremental service.
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var fragmentIncrementalClasspath: Array<String> = emptyArray()
         set(value) {
             checkFrozen()
             field = value
@@ -595,6 +656,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xintrinsic-const-evaluation",
+        description = "Enables `IntrinsicConstEvaluation` language feature.`",
+    )
+    @Enables(LanguageFeature.IntrinsicConstEvaluation)
+    var intrinsicConstEvaluation: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xlist-phases",
         description = "List backend phases.",
     )
@@ -669,8 +741,11 @@ with bodies.""",
     @Enables(LanguageFeature.NameBasedDestructuring, "only-syntax")
     @Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch")
     @Enables(LanguageFeature.NameBasedDestructuring, "complete")
+    @Disables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "only-syntax")
     @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch")
     @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete")
+    @Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "only-syntax")
+    @Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "name-mismatch")
     @Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete")
     var nameBasedDestructuring: String? = null
         set(value) {
@@ -1031,26 +1106,6 @@ Warning: This feature is not yet production-ready.""",
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
-        value = "-Xverify-ir-nested-offsets",
-        description = "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.",
-    )
-    var verifyIrNestedOffsets: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xverify-ir-visibility",
-        description = "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.",
-    )
-    var verifyIrVisibility: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
         }
 
     @Argument(

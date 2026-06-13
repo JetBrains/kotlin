@@ -11,28 +11,31 @@ repositories {
 
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
-    srcDir("../reports/src/main/kotlin/report")
+    srcDir("../benchmarksReports/src/commonMain/kotlin")
 }
 
 dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
+    val kotlinxBenchmarkVersion = "0.4.17"
 
     compileOnly(gradleApi())
 
-    implementation(kotlin("build-gradle-plugin", kotlinBuildProperties.buildGradlePluginVersion.get()))
+    implementation(kotlinBuildHelpers())
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation(kotlin("stdlib", kotlinVersion))
+
+    implementation("org.jetbrains.kotlinx.benchmark:org.jetbrains.kotlinx.benchmark.gradle.plugin:${kotlinxBenchmarkVersion}")
 }
 
 gradlePlugin {
     plugins {
-        create("benchmarkPlugin") {
-            id = "benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
-        }
         create("swiftBenchmarking") {
             id = "swift-benchmarking"
             implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
+        }
+        create("kotlinxBenchmarking") {
+            id = "kotlinx-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinxBenchmarkingPlugin"
         }
     }
 }

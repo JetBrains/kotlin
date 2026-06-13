@@ -15,6 +15,11 @@ dependencies {
     compileOnly(project(":core:deserialization.common.jvm")) // needed for CompilationException
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
 
     compileOnly(intellijCore())
 }
@@ -23,6 +28,8 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()

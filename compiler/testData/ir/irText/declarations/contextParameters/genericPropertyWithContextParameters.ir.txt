@@ -1,0 +1,41 @@
+FILE fqName:<root> fileName:/genericPropertyWithContextParameters.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C<Z of <root>.C>
+    TYPE_PARAMETER name:Z index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public returnType:<root>.C<Z of <root>.C> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:ctx visibility:public modality:FINAL [var]
+      FUN name:<get-ctx> visibility:public modality:FINAL returnType:X of <root>.C.<get-ctx>
+        TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+        TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C<Z of <root>.C>
+        VALUE_PARAMETER kind:Context name:x index:1 type:X of <root>.C.<get-ctx>
+        VALUE_PARAMETER kind:Context name:y index:2 type:Y of <root>.C.<get-ctx>
+        correspondingProperty: PROPERTY name:ctx visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-ctx> <X, Y> (x: X of <root>.C.<get-ctx>, y: Y of <root>.C.<get-ctx>): X of <root>.C.<get-ctx> declared in <root>.C'
+            GET_VAR 'x: X of <root>.C.<get-ctx> declared in <root>.C.<get-ctx>' type=X of <root>.C.<get-ctx> origin=null
+      FUN name:<set-ctx> visibility:public modality:FINAL returnType:kotlin.Unit
+        TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
+        TYPE_PARAMETER name:Y index:1 variance: superTypes:[kotlin.Any?] reified:false
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C<Z of <root>.C>
+        VALUE_PARAMETER kind:Context name:x index:1 type:X of <root>.C.<set-ctx>
+        VALUE_PARAMETER kind:Context name:y index:2 type:Y of <root>.C.<set-ctx>
+        VALUE_PARAMETER kind:Regular name:value index:3 type:X of <root>.C.<set-ctx>
+        correspondingProperty: PROPERTY name:ctx visibility:public modality:FINAL [var]
+        BLOCK_BODY

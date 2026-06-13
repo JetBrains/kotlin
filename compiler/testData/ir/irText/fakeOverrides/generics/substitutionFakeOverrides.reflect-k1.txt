@@ -1,4 +1,6 @@
 KClass: class A : Jaba, I2
+  constructors:
+    public final fun `<init>`(): A
   members:
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
     public open fun A.foo(kotlin.Int): kotlin.Unit
@@ -7,6 +9,8 @@ KClass: class A : Jaba, I2
     public open fun A.toString(): kotlin.String
   declaredMembers:
 KClass: class B : Jaba, I2
+  constructors:
+    public final fun `<init>`(): B
   members:
     public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
     public open fun B.foo(kotlin.Int!): kotlin.Unit
@@ -15,6 +19,8 @@ KClass: class B : Jaba, I2
     public open fun B.toString(): kotlin.String
   declaredMembers:
 KClass: class C : Jaba, KotlinInterface
+  constructors:
+    public final fun `<init>`(): C
   members:
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
     public open fun C.foo(kotlin.String!): kotlin.Unit
@@ -22,6 +28,8 @@ KClass: class C : Jaba, KotlinInterface
     public open fun C.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class D : Jaba, KotlinInterface
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     public open fun D.foo(kotlin.String!): kotlin.Unit
@@ -29,6 +37,8 @@ KClass: abstract class D : Jaba, KotlinInterface
     public open fun D.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class E : Jaba, KotlinInterface
+  constructors:
+    public final fun `<init>`(): E
   members:
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
     public abstract fun E.foo(kotlin.String): kotlin.Unit
@@ -37,6 +47,8 @@ KClass: abstract class E : Jaba, KotlinInterface
     public open fun E.toString(): kotlin.String
   declaredMembers:
 KClass: class F : Jaba, KotlinInterface2
+  constructors:
+    public final fun `<init>`(): F
   members:
     public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
     public open fun F.foo(kotlin.String): kotlin.Unit
@@ -45,6 +57,8 @@ KClass: class F : Jaba, KotlinInterface2
     public open fun F.toString(): kotlin.String
   declaredMembers:
 KClass: class G : Jaba, KotlinInterface2
+  constructors:
+    public final fun `<init>`(): G
   members:
     public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
     public open fun G.foo(kotlin.String): kotlin.Unit
@@ -62,6 +76,8 @@ KClass: abstract interface I2 : Any
   declaredMembers:
     public open fun I2.foo(kotlin.Int): kotlin.Unit
 KClass: class Jaba : Any
+  constructors:
+    public final <T> fun `<init>`(): Jaba<T> where T : kotlin.Any!
   members:
     public open operator fun Jaba<T>.equals(kotlin.Any?): kotlin.Boolean
     public open fun Jaba<T>.foo(T!): kotlin.Unit

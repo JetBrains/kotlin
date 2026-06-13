@@ -16,12 +16,15 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationExtension
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
+import org.jetbrains.kotlin.gradle.plugin.ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_JVM_DUMP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationPaths.LEGACY_KLIB_DUMP_EXTENSION
-import org.jetbrains.kotlin.gradle.plugin.BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.tasks.abi.AbiToolsTask
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiCheckTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiDumpTaskImpl
 import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 /**
  * Configures the extension for Kotlin/JVM or Kotlin Android Gradle plugins.
@@ -30,6 +33,32 @@ import org.jetbrains.kotlin.gradle.tasks.abi.KotlinAbiUpdateTask
 internal fun AbiValidationExtensionImpl.configure(project: Project) {
     referenceDumpDir.convention(project.layout.projectDirectory.dir(AbiValidationPaths.LEGACY_DEFAULT_REFERENCE_DUMP_DIR))
     keepLocallyUnsupportedTargets.convention(true)
+}
+
+// Kotlin version where ABI validation was migrated to build tools API (BTA).
+private val KOTLIN_2_4_0_BETA2 = KotlinToolingVersion("2.4.0-Beta2")
+
+/**
+ * Configure [AbiToolsTask.buildToolsClasspath] to use either [BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME]
+ * or [ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME] classpath depending on a [compilerVersion].
+ *
+ * For [compilerVersion] prior [KOTLIN_2_4_0_BETA2] there is no ABI validation toolchain,
+ * so the latest 2.4.x toolchain will be used instead (it corresponds to [ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME]).
+ * For all other versions, the toolchain corresponding to [compilerVersion] will be used ([BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME]).
+ */
+private fun AbiToolsTask.configureClasspath(compilerVersion: Provider<String>, configurations: ConfigurationContainer) {
+    val actualBuildToolsClasspath = configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+    val compatBuildToolsClasspath = configurations.named(ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME)
+    val configurationSelector =
+        compilerVersion.zip(compatBuildToolsClasspath) { providedCompilerVersion, providedCompatBuildToolsClasspath ->
+            val version = KotlinToolingVersion(providedCompilerVersion)
+            if (version < KOTLIN_2_4_0_BETA2) {
+                providedCompatBuildToolsClasspath
+            } else {
+                null
+            }
+        }.orElse(actualBuildToolsClasspath)
+    buildToolsClasspath.setFrom(configurationSelector)
 }
 
 /**
@@ -41,7 +70,8 @@ internal fun AbiValidationExtension.registerTasks(
     tasks: TaskContainer,
     layout: ProjectLayout,
     buildSessionService: Provider<BuildSessionService>,
-    configurations: ConfigurationContainer
+    configurations: ConfigurationContainer,
+    compilerVersion: Provider<String>,
 ) {
     val klibFileName = "$projectName$LEGACY_KLIB_DUMP_EXTENSION"
 
@@ -50,12 +80,10 @@ internal fun AbiValidationExtension.registerTasks(
     val dumpDir =
         layout.buildDirectory.dir(AbiValidationPaths.ACTUAL_DUMP_DIR)
 
-    val buildToolsClasspath = configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
-
     val dumpTaskProvider =
         tasks.register(KotlinAbiDumpTaskImpl.NAME, KotlinAbiDumpTaskImpl::class.java) {
             it.buildSessionService.convention(buildSessionService)
-            it.buildToolsClasspath.from(buildToolsClasspath)
+            it.configureClasspath(compilerVersion, configurations)
 
             it.dumpDir.convention(dumpDir)
             it.referenceKlibDump.convention(referenceDir.map { dir -> dir.file(klibFileName) })
@@ -75,7 +103,7 @@ internal fun AbiValidationExtension.registerTasks(
 
     val checkTaskProvider = tasks.register(KotlinAbiCheckTaskImpl.NAME, KotlinAbiCheckTaskImpl::class.java) {
         it.buildSessionService.convention(buildSessionService)
-        it.buildToolsClasspath.from(buildToolsClasspath)
+        it.configureClasspath(compilerVersion, configurations)
 
         it.actualDir.convention(dumpTaskProvider.map { t -> t.dumpDir.get() })
         it.referenceDir.convention(referenceDir)

@@ -37,13 +37,13 @@ interface TestConfiguration<Step : TestStep<*, *>> {
     val steps: List<Step>
 }
 
-interface NonGroupingPhaseTestConfiguration : TestConfiguration<TestStep.NonGroupingStep<*, *>> {
+interface NonGroupingStageTestConfiguration : TestConfiguration<TestStep.NonGroupingStep<*, *>> {
     var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
     val groupingTestIsolators: List<GroupingTestIsolator>
 }
 
-interface GroupingPhaseTestConfiguration : TestConfiguration<TestStep.GroupingPhaseStep<*, *>> {
-    val mergerWorkers: List<GroupingPhaseInputsMerger.Worker>
+interface GroupingStageTestConfiguration : TestConfiguration<TestStep.GroupingStageStep<*, *>> {
+    val mergerWorkers: List<GroupingStageInputsMerger.Worker>
 }
 
 // ---------------------------- Utils ----------------------------

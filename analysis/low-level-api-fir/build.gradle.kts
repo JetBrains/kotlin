@@ -24,9 +24,18 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     implementation(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-jvm"))
-    api(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:backend"))
     implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:psi:psi-impl"))
+    implementation(project(":js:js.config"))
+    implementation(project(":js:js.frontend.common"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":native:frontend.native"))
     implementation(project(":native:native.config"))
+    implementation(project(":wasm:wasm.config"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesApi(project(":analysis:analysis-api-fir"))
@@ -34,9 +43,9 @@ dependencies {
 
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":js:js.frontend"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
@@ -72,6 +81,8 @@ dependencies {
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
+
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 }
 
 sourceSets {
@@ -82,6 +93,8 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 kotlin {
     compilerOptions {
@@ -96,6 +109,7 @@ kotlin {
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
             JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
@@ -137,6 +151,13 @@ projectTests {
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
+
+    testCodebaseTask(dumpDirs = emptyList()) {
+        // Forward the source-code-update flag (used by the `analysis-api-mark-internal-apis` skill) from a Gradle property to the test
+        // JVM. Combine with `-Pkotlin.test.instrumentation.disable.inputs.check=true` so the test can write to source files.
+        val updateSourceCode = "kotlin.analysis.codebaseTest.internalApi.updateSourceCode"
+        systemProperty(updateSourceCode, project.providers.gradleProperty(updateSourceCode).orElse("false").get())
+    }
 }
 
 allprojects {

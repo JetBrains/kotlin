@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
+@K1Deprecation
 interface JavaPropertyInitializerEvaluator {
     fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>?
 

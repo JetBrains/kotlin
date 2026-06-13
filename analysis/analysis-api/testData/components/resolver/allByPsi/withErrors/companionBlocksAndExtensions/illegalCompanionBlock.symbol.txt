@@ -1,0 +1,135 @@
+KtFile: 'illegalCompanionBlock.kt'
+  null
+
+KtPackageDirective(43,55): 'package test'
+  null
+
+KtNameReferenceExpression(51,55): 'test'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(55,55): ''
+  null
+
+KtObjectDeclaration(57,112): 'object O {'
+  null
+
+KtClassBody(66,112): '{'
+  null
+
+KtCompanionBlock(72,110): 'companion {'
+  null
+
+KtDeclarationModifierList(72,81): 'companion'
+  null
+
+KtClassBody(82,110): '{'
+  null
+
+KtNamedFunction(92,104): 'fun foo() {}'
+  null
+
+KtParameterList(99,101): '()'
+  null
+
+KtBlockExpression(102,104): '{}'
+  null
+
+KtClass(114,204): 'enum class E {'
+  null
+
+KtDeclarationModifierList(114,118): 'enum'
+  null
+
+KtClassBody(127,204): '{'
+  null
+
+KtEnumEntry(133,202): 'Entry {'
+  null
+
+KtClassBody(139,201): '{'
+  null
+
+KtCompanionBlock(149,195): 'companion {'
+  null
+
+KtDeclarationModifierList(149,158): 'companion'
+  null
+
+KtClassBody(159,195): '{'
+  null
+
+KtNamedFunction(173,185): 'fun bar() {}'
+  null
+
+KtParameterList(180,182): '()'
+  null
+
+KtBlockExpression(183,185): '{}'
+  null
+
+KtNamedFunction(206,245): 'fun usage() {'
+  null
+
+KtParameterList(215,217): '()'
+  null
+
+KtBlockExpression(218,245): '{'
+  null
+
+KtDotQualifiedExpression(224,231): 'O.foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O.foo(): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(224,225): 'O'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O
+    ]
+
+KtCallExpression(226,231): 'foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O.foo(): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(226,229): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O.foo(): kotlin.Unit
+    ]
+
+KtValueArgumentList(229,231): '()'
+  null
+
+KtDotQualifiedExpression(236,243): 'E.Entry'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/E.Entry
+    ]
+
+KtNameReferenceExpression(236,237): 'E'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/E
+    ]
+
+KtNameReferenceExpression(238,243): 'Entry'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/E.Entry
+    ]

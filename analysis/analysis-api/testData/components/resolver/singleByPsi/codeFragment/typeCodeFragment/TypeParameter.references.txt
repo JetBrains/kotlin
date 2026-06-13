@@ -1,9 +1,0 @@
-KtNameReferenceExpression(130,131): 'T'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: null
-    symbols:
-      Nothing (Unresolved reference)
-    resolveToSymbols:
-      (in <local>: test) T

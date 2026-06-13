@@ -31,7 +31,7 @@ public abstract class Foo {
  *   public final fun test3(): kotlin/collections/List<Foo>
  *
  *   // signature: test4()Ljava/util/List;
- *   public final fun test4(): kotlin/collections/List<kotlin/Any>
+ *   public final fun test4(): kotlin/collections/List<Foo>
  *
  *   // module name: main
  * }
@@ -55,7 +55,7 @@ public final class Kt18682Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.util.List<java.lang.Object> test4() {
+    public static final java.util.List<Foo> test4() {
         return null;
     }
 }

@@ -67,7 +67,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
     }
 
     private fun createFile(entry: ZipEntryDescription, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
-        val (parentName, shortName) = entry.relativePath.splitPath()
+        val [parentName, shortName] = entry.relativePath.splitPath()
 
         val parentFile = getOrCreateDirectory(parentName, directories)
         if ("." == shortName) {
@@ -84,7 +84,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
 
     private fun getOrCreateDirectory(entryName: CharSequence, directories: MutableMap<String, FastJarVirtualFile>): FastJarVirtualFile {
         return directories.getOrPut(entryName.toString()) {
-            val (parentPath, shortName) = entryName.splitPath()
+            val [parentPath, shortName] = entryName.splitPath()
             val parentFile = getOrCreateDirectory(parentPath, directories)
 
             FastJarVirtualFile(this, shortName, -1, parentFile, entryDescription = null)

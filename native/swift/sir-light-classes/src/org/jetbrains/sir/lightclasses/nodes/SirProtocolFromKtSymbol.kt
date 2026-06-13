@@ -61,7 +61,8 @@ internal open class SirProtocolFromKtSymbol(
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
         val isUnavailable = this.isUnavailable
-        translatedProtocols.filter { isUnavailable || !it.isUnavailable }
+        val inherited = translatedProtocols.filter { isUnavailable || !it.isUnavailable }
+        if (isUnavailable) inherited else inherited + existentialMarker
     }
 
     internal val translatedProtocols: List<SirProtocol> by lazyWithSessions {
@@ -101,6 +102,16 @@ internal open class SirProtocolFromKtSymbol(
             .also { it.parent = this.parent }
     }
 
+    /**
+     * Per-interface extension conforming [KotlinRuntimeSupportModule.kotlinExistentialPenBox] to this
+     * protocol's [existentialMarker]. This is what lets `_KotlinExistential<Wrapped>` inherit
+     * @objc marker conformances through its non-generic PenBox ancestor, sidestepping Swift's
+     * rule against generic classes conforming to @objc protocols via extensions.
+     */
+    internal val penBoxMarkerConformance: SirExtension by lazy {
+        SirPenBoxMarkerConformanceFromKtSymbol(this)
+    }
+
     internal val samConverter: SirDeclaration? by lazyWithSessions {
         ktSymbol.samConstructor?.let {
             SirRelocatedFunction(SirFunctionFromKtSymbol(it, sirSession)).also {
@@ -130,7 +141,7 @@ internal class SirMarkerProtocolFromKtSymbol(
 
     override lateinit var parent: SirDeclarationParent
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
-    override val visibility: SirVisibility = SirVisibility.PACKAGE
+    override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null
     override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"
@@ -348,6 +359,53 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> = mutableListOf()
 }
 
+/**
+ * Extension declaring that [KotlinRuntimeSupportModule.kotlinExistentialPenBox] conforms to
+ * [targetProtocol.existentialMarker]. Emitted once per exported Kotlin interface in the module that
+ * declares it, so the @objc marker metadata is registered alongside the marker protocol itself.
+ *
+ * Because PenBox is non-generic, it can legally conform to an @objc protocol in an extension —
+ * which a generic class like `_KotlinExistential<Wrapped>` cannot do directly. `_KotlinExistential`
+ * then inherits the conformance through its PenBox superclass.
+ */
+internal class SirPenBoxMarkerConformanceFromKtSymbol(
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+    private val targetProtocol: SirProtocolFromKtSymbol,
+) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
+    constructor(protocol: SirProtocolFromKtSymbol) : this(
+        protocol.ktSymbol,
+        protocol.sirSession,
+        protocol,
+    )
+
+    override val origin: SirOrigin = KotlinSource(ktSymbol)
+
+    override val visibility: SirVisibility = SirVisibility.PACKAGE
+
+    override val documentation: String? = null
+
+    override var parent: SirDeclarationParent
+        get() = withSessions { ktSymbol.containingModule.sirModule() }
+        set(_) = Unit
+
+    override val extendedType: SirType
+        get() = SirNominalType(KotlinRuntimeSupportModule.kotlinExistentialPenBox)
+
+    override val protocols: List<SirProtocol>
+        get() = if (targetProtocol.isUnavailable) emptyList() else listOf(targetProtocol.existentialMarker)
+
+    override val constraints: List<SirTypeConstraint> = emptyList()
+
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            replaceOrAddPropagatedUnavailability { SirNominalType(targetProtocol).unavailableTypes }
+        }
+    }
+
+    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+}
+
 internal class SirStubProtocol(
     ktSymbol: KaNamedClassSymbol,
     sirSession: SirSession
@@ -403,6 +461,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             .extractDeclarations()
             .filterIsInstance<SirScopeDefiningDeclaration>()
             .filter { it.visibility == SirVisibility.PUBLIC }
+            .filter { it.origin !is KotlinMarkerProtocol }
             .map { declaration ->
                 buildTypealias {
                     origin = SirOrigin.Trampoline(declaration)

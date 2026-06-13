@@ -1,0 +1,119 @@
+<caret_1>:
+  KDocName(490,517): 'Container.Vector.ZeroObject'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val ZeroObject: kotlin.Int
+      ]
+
+<caret_2>:
+  KDocName(523,560): 'Container.Vector.Companion.ZeroObject'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val ZeroObject: kotlin.Int
+      ]
+
+<caret_3>:
+  KDocName(566,592): 'Container.Vector.ZeroBlock'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val ZeroBlock: kotlin.Int
+      ]
+
+<caret_4>:
+  KDocName(598,634): 'Container.Vector.Companion.ZeroBlock'
+    null
+
+<caret_5>:
+  KDocName(640,677): 'Container.Vector.UnitXObjectExtension'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val UnitXObjectExtension: kotlin.Int
+      ]
+
+<caret_6>:
+  KDocName(683,714): 'Container.Vector.UnitXExtension'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val UnitXExtension: kotlin.Int
+      ]
+
+<caret_7>:
+  KDocName(720,767): 'Container.Vector.Companion.UnitXObjectExtension'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val UnitXObjectExtension: kotlin.Int
+      ]
+
+<caret_8>:
+  KDocName(773,814): 'Container.Vector.Companion.UnitXExtension'
+    null
+
+<caret_9>:
+  KDocName(850,870): 'Container.ZeroObject'
+    null
+
+<caret_10>:
+  KDocName(876,906): 'Container.Companion.ZeroObject'
+    null
+
+<caret_11>:
+  KDocName(912,931): 'Container.ZeroBlock'
+    null
+
+<caret_12>:
+  KDocName(937,966): 'Container.Companion.ZeroBlock'
+    null
+
+<caret_13>:
+  KDocName(972,1002): 'Container.UnitXObjectExtension'
+    null
+
+<caret_14>:
+  KDocName(1008,1032): 'Container.UnitXExtension'
+    null
+
+<caret_15>:
+  KDocName(1038,1078): 'Container.Companion.UnitXObjectExtension'
+    null
+
+<caret_16>:
+  KDocName(1084,1118): 'Container.Companion.UnitXExtension'
+    null
+
+<caret_17>:
+  KDocName(1127,1148): 'VectorImpl.ZeroObject'
+    null
+
+<caret_18>:
+  KDocName(1154,1185): 'VectorImpl.Companion.ZeroObject'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val ZeroObject: kotlin.Int
+      ]
+
+<caret_19>:
+  KDocName(1191,1211): 'VectorImpl.ZeroBlock'
+    null
+
+<caret_20>:
+  KDocName(1217,1247): 'VectorImpl.Companion.ZeroBlock'
+    null
+
+<caret_21>:
+  KDocName(1253,1284): 'VectorImpl.UnitXObjectExtension'
+    null
+
+<caret_22>:
+  KDocName(1290,1315): 'VectorImpl.UnitXExtension'
+    null
+
+<caret_23>:
+  KDocName(1321,1362): 'VectorImpl.Companion.UnitXObjectExtension'
+    KaSymbolResolutionSuccess:
+      symbols = [
+        val UnitXObjectExtension: kotlin.Int
+      ]
+
+<caret_24>:
+  KDocName(1368,1403): 'VectorImpl.Companion.UnitXExtension'
+    null

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.statistics
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.openapi.project.Project
 import io.opentelemetry.api.OpenTelemetry
 import org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLSymb
  * This class is the only IntelliJ project service registered for low-level API statistics collection. The single entry point simplifies
  * handling of whether statistics are enabled (see [KaStatisticsService.areStatisticsEnabled]).
  */
+@KaImplementationDetail
 class LLStatisticsService(internal val project: Project) : Disposable {
     internal val scheduler: LLStatisticsScheduler = LLStatisticsScheduler(this)
 
@@ -65,6 +67,7 @@ class LLStatisticsService(internal val project: Project) : Disposable {
         }
     }
 
+    @KaImplementationDetail
     companion object {
         /**
          * Returns an instance of [LLStatisticsService] *if* statistics are [enabled][KaStatisticsService.areStatisticsEnabled] and an

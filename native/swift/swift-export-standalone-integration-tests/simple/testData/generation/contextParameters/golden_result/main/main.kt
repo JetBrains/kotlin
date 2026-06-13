@@ -222,8 +222,8 @@ public fun __root___complexContextProperty_set__TypesOfArgumentsEC2__Swift_Strin
     return run { _result; true }
 }
 
-@ExportedBridge("__root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__")
-public fun __root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__")
+public fun __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, Int, kotlin.native.internal.NativePtr)->Boolean>(block);
         { ctx0: ContextA, ctx1: ContextB, arg0: Int, arg1: kotlin.String ->
@@ -241,8 +241,8 @@ public fun __root___contextBlockB(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__")
-public fun __root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("__root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__")
+public fun __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
         { ctx0: Context, arg0: kotlin.String ->

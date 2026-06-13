@@ -6,7 +6,11 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:cli"))
-    api(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":core:compiler.common.js"))
     api(project(":compiler:fir:fir-serialization"))
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.js"))
@@ -14,7 +18,9 @@ dependencies {
     api(project(":compiler:backend.js"))
     api(project(":compiler:backend.wasm"))
     api(project(":js:js.sourcemap"))
-    api(project(":wasm:wasm.frontend"))
+    implementation(project(":js:js.frontend"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":wasm:wasm.frontend"))
     api(project(":wasm:wasm.config"))
 
     wasmCustomFormatters(project(":wasm:wasm.debug.browsers"))

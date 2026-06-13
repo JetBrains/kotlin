@@ -102,7 +102,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         fun FirPropertyAccessor.isDefault(): Boolean {
             val source = source
             check(source != null) { "expect-actual matching is only possible for code with sources" }
-            return source.kind == KtFakeSourceElementKind.DefaultAccessor
+            return source.kind is KtFakeSourceElementKind.DefaultAccessor
         }
 
         if (!accessor.isDefault()) {
@@ -174,7 +174,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
             return
         }
 
-        val (classScopesIncompatibilities, normalIncompatibilities) =
+        val [classScopesIncompatibilities, normalIncompatibilities] =
             checkingIncompatibilities.partitionIsInstance<_, ExpectActualIncompatibility.ClassScopes<FirBasedSymbol<*>>>()
 
         for (incompatibility in normalIncompatibilities) {
@@ -387,11 +387,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
         val source = declaration.source
         check(source != null) { "expect-actual matching is only possible for code with sources" }
         return source.kind != KtFakeSourceElementKind.ImplicitConstructor &&
-                source.kind != KtFakeSourceElementKind.EnumGeneratedDeclaration &&
+                source.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration &&
                 declaration.origin != FirDeclarationOrigin.Synthetic.DataClassMember &&
                 !declaration.isAnnotationConstructor(platformSession) &&
-                !declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) &&
-                !isUnderlyingPropertyOfInlineClass(declaration, actualContainingClass, platformSession) &&
+                !(declaration.isPrimaryConstructorOfInlineOrValueClass(platformSession) && actualContainingClass.isBasicValueClass) &&
+                !isUnderlyingPropertyOfValueClass(declaration, actualContainingClass, platformSession) &&
                 declaration !is FirEnumEntrySymbol
     }
 
@@ -399,20 +399,21 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
     private fun FirElement.hasActualModifier(): Boolean {
         return when (source?.kind) {
             null -> false
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> false
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> false
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
             KtFakeSourceElementKind.ImplicitConstructor -> false
             else -> hasModifier(KtTokens.ACTUAL_KEYWORD)
         }
     }
 
-    private fun isUnderlyingPropertyOfInlineClass(
+    private fun isUnderlyingPropertyOfValueClass(
         symbol: FirBasedSymbol<*>,
         actualContainingClass: FirRegularClassSymbol,
         platformSession: FirSession
     ): Boolean = (actualContainingClass.isInlineOrValue) &&
             symbol is FirPropertySymbol &&
-            actualContainingClass.primaryConstructorIfAny(platformSession)?.valueParameterSymbols?.singleOrNull() == symbol.correspondingValueParameterFromPrimaryConstructor
+            actualContainingClass.primaryConstructorIfAny(platformSession)?.valueParameterSymbols.orEmpty()
+                .contains(symbol.correspondingValueParameterFromPrimaryConstructor)
 }
 
 private fun ExpectActualIncompatibility<*>.toDiagnostic() = when (this) {

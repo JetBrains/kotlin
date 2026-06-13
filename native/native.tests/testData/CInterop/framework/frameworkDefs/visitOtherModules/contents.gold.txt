@@ -8,10 +8,10 @@ library {
 
       public final var baz: kotlin/Int
         @kotlinx/cinterop/internal/CGlobalAccess(name = "baz")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_baz_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_baz_getter_0")
         public final /* non-default */ external get
         @kotlinx/cinterop/internal/CGlobalAccess(name = "baz")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_baz_setter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_baz_setter_0")
         public final /* non-default */ external set(value: kotlin/Int)
     }
   }

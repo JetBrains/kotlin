@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 
 abstract class ResolutionStage {
     context(sink: CheckerSink, context: ResolutionContext)
@@ -128,8 +129,9 @@ object CheckExtensionReceiver : ResolutionStage() {
     ) {
         val (atom, type) = receiver
         ArgumentCheckingProcessor.resolvePlainArgumentType(
-            candidate,
+            candidate.csBuilder,
             atom,
+            candidate,
             argumentType = type,
             expectedType = expectedType,
             sink = sink,
@@ -162,6 +164,7 @@ private fun prepareImplicitArgument(
         session = session
     ).let { prepareCapturedType(it, session) }
         .let {
+            @Suppress("SuspiciousWhenOverConeKotlinType")
             when (it) {
                 is ConeIntegerConstantOperatorType -> it.possibleTypes.first()
                 else -> it
@@ -290,7 +293,7 @@ object CheckContextArguments : ResolutionStage() {
         var errorReported = false
 
         val contextArgumentsByParameterSymbol = buildMap {
-            for ((key, value) in argumentMapping) {
+            for ([key, value] in argumentMapping) {
                 if (value.valueParameterKind != FirValueParameterKind.Regular) {
                     put(value.symbol, key)
                 }
@@ -620,7 +623,13 @@ private object CheckDslScopeViolation {
                     }
                 }
             }
-            else -> return
+            is ConeTypeParameterType -> originalType.lookupTag.typeParameterSymbol.resolvedBounds.forEach {
+                collectDslMarkerAnnotations(it.coneType)
+            }
+            is ConeLookupTagBasedType -> unreachableBranch(originalType)
+            is ConeIntegerConstantOperatorType, is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForTypeVariableInSubtyping, is ConeTypeVariableType,
+                -> return
         }
     }
 
@@ -839,7 +848,7 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
         if (candidate.postponedAtoms.isEmpty()) return
         for (atom in candidate.postponedAtoms) {
             if (atom is ConeResolvedCallableReferenceAtom) {
-                val (applicability, success) =
+                val [applicability, success] =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(
                         candidate, atom, hasSyntheticOuterCall = candidate.callInfo.name == ACCEPT_SPECIFIC_TYPE.callableName
                     )

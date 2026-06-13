@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+@K1Deprecation
 class SuspensionPointInsideMutexLockChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor

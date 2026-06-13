@@ -2,6 +2,10 @@
  * public abstract interface SomeInterface : suspend kotlin/Function3<kotlin/collections/List<kotlin/String>, kotlin/Boolean, kotlin/coroutines/Continuation<kotlin/collections/List<kotlin/Int>>, kotlin/Any?> {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

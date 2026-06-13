@@ -1,0 +1,8 @@
+KtNameReferenceExpression(73,77): 'call'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.call(<dispatch receiver>: Foo): kotlin.Unit
+    ]
+  additional: [privateFunction.kt]

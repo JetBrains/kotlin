@@ -44,7 +44,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
                 if (arguments.isEmpty()) {
                     reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS)
                 } else {
-                    for ((classSymbol, source) in expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
+                    for ([classSymbol, source] in expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                         ?.extractClassesAndSourcesFromArgument(context.session).orEmpty()) {
                         checkOptInArgumentIsMarker(classSymbol, classId, source)
                     }
@@ -53,7 +53,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
         } else if (isSubclassOptIn) {
             val declaration = context.containingDeclarations.lastOrNull() as? FirClassSymbol
             if (declaration != null) {
-                val (isSubclassOptInApplicable, message) = getSubclassOptInApplicabilityAndMessage(declaration)
+                val [isSubclassOptInApplicable, message] = getSubclassOptInApplicabilityAndMessage(declaration)
                 if (!isSubclassOptInApplicable && message != null) {
                     reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, message)
                     return
@@ -62,7 +62,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.C
 
             val classSymbols = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassesAndSourcesFromArgument(context.session).orEmpty()
 
-            classSymbols.forEach { (classSymbol, source) ->
+            classSymbols.forEach { [classSymbol, source] ->
                 checkOptInArgumentIsMarker(classSymbol, classId, source)
             }
         }

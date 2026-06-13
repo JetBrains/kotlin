@@ -43,7 +43,9 @@ gradle.beforeProject {
 }
 
 include(":benchmarksAnalyzer")
+include(":benchmarksKotlinxAdapter")
 include(":benchmarksLauncher")
+include(":benchmarksReports")
 knownGroups.forEach {
     include(":$it")
 }

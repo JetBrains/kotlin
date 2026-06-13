@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 
 @DefaultImplementation(ImplicitsExtensionsResolutionFilter.Default::class)
+@K1Deprecation
 interface ImplicitsExtensionsResolutionFilter {
     fun getScopesWithInfo(
         scopes: Sequence<HierarchicalScope>
@@ -23,6 +25,7 @@ interface ImplicitsExtensionsResolutionFilter {
     }
 }
 
+@K1Deprecation
 class ScopeWithImplicitsExtensionsResolutionInfo(
     val scope: HierarchicalScope,
     val resolveExtensionsForImplicitReceiver: Boolean,

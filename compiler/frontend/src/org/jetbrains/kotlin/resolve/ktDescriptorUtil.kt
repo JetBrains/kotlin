@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.contains
 
+@K1Deprecation
 fun FunctionDescriptor.isFunctionForExpectTypeFromCastFeature(): Boolean {
     val typeParameter = typeParameters.singleOrNull() ?: return false
 
@@ -32,6 +34,7 @@ internal fun CallableMemberDescriptor.isEffectivelyFinal(ignoreEnumClassFinality
                         parent is ClassDescriptor && parent.modality == Modality.FINAL
             }
 
+@K1Deprecation
 fun ParameterDescriptor.indexOrMinusOne(): Int =
     when (this) {
         is ReceiverParameterDescriptor -> -1

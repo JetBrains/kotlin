@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     /**
      * A simple exported function with just a description.
      */
@@ -208,6 +207,14 @@ declare namespace JS_TESTS {
          * A property to be overridden with a custom JS name in the implementing class.
          */
         readonly jsOverridableProp: string;
+        /**
+         * A base property whose getter and setter have custom JS names.
+         */
+        overridableSetter(value: string): void;
+        /**
+         * A base property whose getter and setter have custom JS names.
+         */
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: {
             readonly WithOverridableProperty: unique symbol;
         };
@@ -249,6 +256,14 @@ declare namespace JS_TESTS {
          * Both accessors are exposed as plain JS functions.
          */
         getDefaultAccessor(): string;
+        /**
+         * An overridden property whose getter and setter have custom JS names.
+         */
+        overridableSetter(value: string): void;
+        /**
+         * An overridden property whose getter and setter have custom JS names.
+         */
+        overridableGetter(): string;
         readonly __doNotUseOrImplementIt: WithOverridableProperty["__doNotUseOrImplementIt"];
     }
     namespace JsNamePropertyExamples {
@@ -290,3 +305,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

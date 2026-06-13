@@ -23,10 +23,10 @@ scopes:
       KaContextParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -82,10 +82,10 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -103,15 +103,14 @@ scopes:
             type: kotlin/Boolean
           visibility: PRIVATE
         callableId: /foo
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -138,7 +137,6 @@ scopes:
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -166,7 +164,7 @@ scopes:
         isActual: false
         isCompanion: false
         isConst: false
-        isDelegatedProperty: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

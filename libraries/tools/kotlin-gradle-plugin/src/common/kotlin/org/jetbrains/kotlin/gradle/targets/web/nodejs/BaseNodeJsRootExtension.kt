@@ -14,12 +14,15 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
+import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -88,7 +91,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
         level = DeprecationLevel.ERROR,
     )
-    var version = "24.10.0"
+    var version = "24.16.0"
 
     @Deprecated(
         "You can find this extension after applying NodeJsPlugin. Scheduled for removal in Kotlin 2.3.",
@@ -106,7 +109,7 @@ abstract class BaseNodeJsRootExtension internal constructor(
     val rootProjectDir
         get() = project.rootDir
 
-    val packageManagerExtension: Property<NpmApiExt> = project.objects.property()
+    val packageManagerExtension: Property<NpmApiExtension<*, *>> = project.objects.property()
 
     val taskRequirements: TasksRequirements
         get() = resolver.tasksRequirements
@@ -157,3 +160,9 @@ abstract class BaseNodeJsRootExtension internal constructor(
         return nodeJs().env.get()
     }
 }
+
+internal val KotlinJsIrCompilation.nodeJsRoot: BaseNodeJsRootExtension
+    get() = webTargetVariant(
+        { NodeJsRootPlugin.apply(project.rootProject) },
+        { WasmNodeJsRootPlugin.apply(project.rootProject) }
+    )

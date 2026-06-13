@@ -1,5 +1,5 @@
 [versions]
-kotlin-release = "2.4.0-Beta2"
+kotlin-release = "2.4.0"
 dexMemberList = "4.1.1"
 dokka = "2.2.0"
 gradle-custom-user-data = "2.4.0"
@@ -15,9 +15,10 @@ javaDiffUtils = "4.12"
 kotlinx-serialization = "1.7.3"
 # Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. IntelliJ IDEA uses 1.6 since 2022.3
 # Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
+# Should be synchronized with 'analysis-api-kotlinx-coroutines'
 kotlinx-coroutines = "1.8.0"
 shadow = "9.3.2"
-spdx = "0.10.0-dev-15"
+spdx = "0.11.0"
 proguard = "7.4.2"
 ktor = "3.1.3"
 kotlinx-bcv = "0.17.0"
@@ -47,15 +48,16 @@ kotlin-for-gradle-plugins-compilation = "2.2.21"
 intellij-asm = "9.6.1"
 diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
+auto-value-annotations = "1.11.0" # Used in opentelemetry-api
 fastutil = "8.5.14-jb1"
 rwmutex-idea = "0.0.7"
 # Wasm specific
-wasmedge = "0.16.0"
-wasmtime = "38.0.3"
-jscSequoia = "299490"
-jscLinux = "299491"
-jscWindows = "299491"
-jsShell = "145.0.2"
+wasmedge = "0.16.3"
+wasmtime = "44.0.1"
+jscTahoe = "312950"
+jscLinux = "312950"
+jscWindows = "312950"
+jsShell = "150.0.2"
 vavr = "0.10.4"
 downloadTask = "5.6.0"
 oshi = "6.6.5"
@@ -69,7 +71,7 @@ commons-compress = "1.27.1"
 commons-io = "2.18.0"
 commons-lang = "3.18.0"
 commons-text = "1.10.0"
-dataframe-dev = "1.0.0-dev-10248"
+dataframe-dev = "1.0.0-dev-10604"
 org-jetbrains-syntax-api = "0.3.340"
 org-jetbrains-annotations = "26.0.2"
 schema-kenerator = "2.1.2"
@@ -77,14 +79,26 @@ kotlinpoet = "2.2.0"
 antlr = "4.13.2"
 org-tukaani-xz = "1.10"
 slf4j = "2.0.17"
+log4j-over-slf4j = "1.7.36" # Use this version instead of the latest one to prevent dependency pollution. Feel free to update if necessary.
+commons-logging = "1.3.5" # Use this version instead of the latest one to prevent dependency pollution (1.3.5 is already included by some library). Feel free to update if necessary.
+flogger = "0.9"
+jboss-logging = "3.4.3.Final"
+log4j2 = "2.26.0"
 maven-xml-impl = "4.0.0-beta-5"
 yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
 bouncycastle = "1.84"
+kotlin-before-bta-v2 = "2.2.21"
+bytebuddy = "1.18.9"
+playwright = "1.60.0"
+
+analysis-api-kotlin = "2.3.21"
+analysis-api-kotlinx-coroutines = "1.8.0-intellij-13" # Should be synchronized with 'kotlinx-coroutines'
 
 [libraries]
 kotlin-compiler-arguments-release = { module = "org.jetbrains.kotlin:kotlin-compiler-arguments-description", version.ref = "kotlin-release" }
 kotlin-compiler-release = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-release" }
+kotlin-compiler-before-bta-v2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-before-bta-v2" }
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
 dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 # Usages are in gradle-plugins-documentation.gradle.kts
@@ -169,8 +183,10 @@ xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
 ant = { module = "org.apache.ant:ant", version.ref = "ant" }
 intellij-asm = { module = "org.jetbrains.intellij.deps:asm-all", version.ref = "intellij-asm" }
 diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "diff-utils" }
-okhttp = { module  = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry-api" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version.ref = "bytebuddy" }
+auto-value-annotations = { module = "com.google.auto.value:auto-value-annotations", version.ref = "auto-value-annotations" }
 
 javaDiffUtils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "javaDiffUtils" }
 kotlinx-bcv = { module = "org.jetbrains.kotlinx:binary-compatibility-validator", version.ref = "kotlinx-bcv" }
@@ -181,23 +197,41 @@ oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 org-jetbrains-syntax-api = { module = "org.jetbrains:syntax-api", version.ref = "org-jetbrains-syntax-api" }
 org-jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "org-jetbrains-annotations" }
 
-schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref="schema-kenerator" }
-schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref="schema-kenerator" }
-schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref="schema-kenerator" }
+schema-kenerator-core = { module = "io.github.smiley4:schema-kenerator-core", version.ref = "schema-kenerator" }
+schema-kenerator-serialization = { module = "io.github.smiley4:schema-kenerator-serialization", version.ref = "schema-kenerator" }
+schema-kenerator-jsonschema = { module = "io.github.smiley4:schema-kenerator-jsonschema", version.ref = "schema-kenerator" }
 
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 antlr = { module = "org.antlr:antlr4", version.ref = "antlr" }
 antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 
-org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz"}
+org-tukaani-xz = { module = "org.tukaani:xz", version.ref = "org-tukaani-xz" }
 
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-ext = { module = "org.slf4j:slf4j-ext", version.ref = "slf4j" }
+log4j-over-slf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "log4j-over-slf4j" }
+commons-logging = { module = "commons-logging:commons-logging", version.ref = "commons-logging" }
+flogger = { module = "com.google.flogger:flogger", version.ref = "flogger" }
+flogger-system-backend = { module = "com.google.flogger:flogger-system-backend", version.ref = "flogger" }
+jboss-logging = { module = "org.jboss.logging:jboss-logging", version.ref = "jboss-logging" }
+log4j2-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j2" }
+log4j2-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j2" }
 maven-xml-impl = { module = "org.apache.maven:maven-xml-impl", version.ref = "maven-xml-impl" }
 
 bouncycastle-bcpg-jdk18on = { module = "org.bouncycastle:bcpg-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
 bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+
+gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
+
+playwrigt = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
+
+analysis-api-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "analysis-api-kotlin" }
+analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "analysis-api-kotlin" }
+analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
+analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "com.intellij.platform:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
+analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "com.intellij.platform:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
 [plugins]
 gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node-plugin" }

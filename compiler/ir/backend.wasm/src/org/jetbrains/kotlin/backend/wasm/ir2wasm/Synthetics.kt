@@ -12,6 +12,12 @@ private const val syntheticFqName = "__SYNTHETIC__"
 private fun String.toSyntheticSignature() =
     IdSignature.CommonSignature(syntheticFqName, this, null, 0, null)
 
+internal fun getFunctionTypeSignature(wasmFunctionType: org.jetbrains.kotlin.wasm.ir.WasmFunctionType): IdSignature {
+    val params = wasmFunctionType.parameterTypes.joinToString("_")
+    val results = wasmFunctionType.resultTypes.joinToString("_")
+    return "wasm_func_type_\$${params}_\$${results}".toSyntheticSignature()
+}
+
 object Synthetics {
     // FUNCTIONS
     object Functions {
@@ -89,6 +95,8 @@ object Synthetics {
         val jsExceptionTagFuncType = FunctionHeapTypeSymbol(jsExceptionTagFuncTypeSignature)
         val parameterlessNoReturnFunctionType = FunctionHeapTypeSymbol(parameterlessNoReturnFunctionTypeSignature)
         val associatedObjectGetterType = FunctionHeapTypeSymbol(associatedObjectGetterTypeSignature)
+
+        val wasmContFunctionType = ContFunctionHeapTypeSymbol(1)
     }
 
 }

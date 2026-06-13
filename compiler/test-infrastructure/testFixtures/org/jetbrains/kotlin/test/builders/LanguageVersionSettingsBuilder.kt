@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.DefaultsDsl
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.util.parseLanguageFeature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -71,31 +72,29 @@ class LanguageVersionSettingsBuilder {
         val allowDangerousLanguageVersionTesting =
             directives.contains(LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING)
         if (languageVersionDirective != null) {
-            if (!allowDangerousLanguageVersionTesting) {
-                error(
-                    """
-                        The LANGUAGE_VERSION directive is prone to limiting test to a specific language version,
-                        which will become obsolete at some point and the test won't check things like feature
-                        intersection with newer releases.
+            checkTestInfrastructure(allowDangerousLanguageVersionTesting) {
+                """
+                    The LANGUAGE_VERSION directive is prone to limiting test to a specific language version,
+                    which will become obsolete at some point and the test won't check things like feature
+                    intersection with newer releases.
 
-                        For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
-                        where FeatureName is an entry of the enum `LanguageFeature`
+                    For language feature testing, use `// LANGUAGE: [+-]FeatureName` directive instead,
+                    where FeatureName is an entry of the enum `LanguageFeature`
 
-                        If you are really sure you need to pin language versions, use the LANGUAGE_VERSION
-                        directive in combination with the ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING directive.
-                    """.trimIndent()
-                )
+                    If you are really sure you need to pin language versions, use the LANGUAGE_VERSION
+                    directive in combination with the ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING directive.
+                """.trimIndent()
             }
             languageVersion = languageVersionDirective
-            if (ALLOW_MULTIPLE_API_VERSIONS_SETTING !in directives &&
-                languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
-                error(
-                    """
-                        Language version must be larger than or equal to the API version.
-                        Language version: '$languageVersion'.
-                        API version: '$apiVersion'.
-                    """.trimIndent()
-                )
+            checkTestInfrastructure(
+                ALLOW_MULTIPLE_API_VERSIONS_SETTING in directives ||
+                        languageVersion >= LanguageVersion.fromVersionString(this.apiVersion.versionString)!!
+            ) {
+                """
+                    Language version must be larger than or equal to the API version.
+                    Language version: '$languageVersion'.
+                    API version: '$apiVersion'.
+                """.trimIndent()
             }
         }
         when {
@@ -130,12 +129,21 @@ class LanguageVersionSettingsBuilder {
         analysisFlags.forEach { withFlag(it.first, it.second) }
 
         environmentConfigurators.forEach {
-            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { (flag, value) ->
+            it.provideAdditionalAnalysisFlags(directives, languageVersion).entries.forEach { [flag, value] ->
                 withFlag(flag, value)
             }
         }
 
         directives[LanguageSettingsDirectives.LANGUAGE].forEach { parseLanguageFeature(it) }
+
+        directives[LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED].forEach {
+            specificFeatures[it] = if (directives.contains(LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED)) {
+                LanguageFeature.State.DISABLED
+            } else {
+                LanguageFeature.State.ENABLED
+            }
+        }
+
         if (LanguageSettingsDirectives.PROGRESSIVE_MODE in directives) {
             for (feature in LanguageFeature.entries.filter { it.actuallyEnabledInProgressiveMode }) {
                 if (feature.sinceVersion!! <= languageVersion) continue
@@ -147,7 +155,7 @@ class LanguageVersionSettingsBuilder {
     }
 
     private fun parseLanguageFeature(featureString: String) {
-        val (feature, mode) = featureString.parseLanguageFeature()
+        val [feature, mode] = featureString.parseLanguageFeature()
         specificFeatures[feature] = mode
     }
 

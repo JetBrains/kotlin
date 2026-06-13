@@ -21,6 +21,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.kotlin.dsl.add
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -62,7 +64,15 @@ import org.jetbrains.kotlin.gradle.tasks.publishing.addSigningValidationHelpers
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import javax.inject.Inject
 import kotlin.reflect.KClass
+
+
+internal abstract class BuildMetricsPlugin @Inject constructor(val buildOperationListenerManager: BuildOperationListenerManager) : Plugin<Project> {
+    override fun apply(project: Project) {
+        BuildMetricsService.registerIfAbsent(project, buildOperationListenerManager)
+    }
+}
 
 /**
  * Base Kotlin plugin that is responsible for creating basic build services, configurations,
@@ -76,8 +86,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
+
         project.runGradleCompatibilityCheck()
         project.runAgpCompatibilityCheckIfAgpIsApplied()
+
+        //BuildMetricsPlugin access variants so it should be applied after it initialization
+        project.pluginManager.apply(BuildMetricsPlugin::class.java)
+
         BuildFinishedListenerService.registerIfAbsent(project)
         BuildSessionService.registerIfAbsent(project)
 
@@ -102,7 +117,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
-        BuildMetricsService.registerIfAbsent(project)
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
     }
@@ -113,18 +127,12 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .maybeCreateResolvable(COMPILER_CLASSPATH_CONFIGURATION_NAME)
             .defaultDependencies {
                 @Suppress("DEPRECATION")
-                if (project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()) {
-                    it.add(
-                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
-                    )
-                    it.add(
-                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$pluginVersion")
-                    )
-                } else {
-                    it.add(
-                        project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:${project.getKotlinPluginVersion()}")
-                    )
-                }
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                )
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$pluginVersion")
+                )
             }
         project
             .configurations
@@ -146,6 +154,25 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                         }
                 }
             }
+
+        project
+            .configurations
+            .maybeCreateResolvable(ABI_VALIDATION_COMPAT_CLASSPATH_CONFIGURATION_NAME) {
+                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_COMPAT:$pluginVersion")
+                // ABI validation BTA toolchain was added only in 2.4.0-Beta2.
+                // Before that, abi-tools corresponding to project's KGP version was used.
+                // To support using abiValidation with compilerVersion < 2.4.0-Beta2,
+                // this configuration should be used instead of the BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME.
+                // It will effectively ignore configure compilerVersion
+                // and will fix toolchain's version to the latest 2.4 toolchain (it applies to abiValidation toolchain only).
+                project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL") {
+                    version { versionConstraint ->
+                        versionConstraint.strictly("[2.4.0-Beta2, 2.5.0)")
+                    }
+                }
+            }
+
+
         project
             .tasks
             .withType(AbstractKotlinCompileTool::class.java)
@@ -217,7 +244,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     protected fun setupAttributeMatchingStrategy(
-        project: Project
+        project: Project,
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(

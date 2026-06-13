@@ -1,0 +1,153 @@
+class Bar {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val baz: Int
+    context($context-String: String)
+    get(): Int {
+      return 1
+    }
+
+  var baz2: Int
+    context($context-String: String, b: Boolean)
+    get(): Int {
+      return 1
+    }
+    context($context-String: String, b: Boolean)
+    set(value: Int) {
+    }
+
+}
+
+fun String.test() {
+  KProperty0<Int>(
+    /* bound = */ [<this>],
+    /* getter = */    local fun(c0: String): Int {
+      return <get-foo>(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  val asFunctionType: Function0<Int> = KProperty0<Int>(
+    /* bound = */ [<this>],
+    /* getter = */    local fun(c0: String): Int {
+      return <get-foo>(/* $context-String = c0 */)
+    }
+  )
+
+  KProperty1<Bar, Int>(
+    /* bound = */ [<this>],
+    /* getter = */    local fun(c0: String, p0: Bar): Int {
+      return p0.<get-baz>(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  KProperty0<Int>(
+    /* bound = */ [<this>,Bar()],
+    /* getter = */    local fun(c0: String, receiver: Bar): Int {
+      return receiver.<get-baz>(/* $context-String = c0 */)
+    }
+  )
+ /*~> Unit */
+  KProperty1<Int, Int>(
+    /* bound = */ [<this>],
+    /* getter = */    local fun(c0: String, p0: Int): Int {
+      return <get-qux>(/* $context-String = c0, <this> = p0 */)
+    }
+  )
+ /*~> Unit */
+  KProperty0<Int>(
+    /* bound = */ [<this>,1],
+    /* getter = */    local fun(c0: String, receiver: Int): Int {
+      return <get-qux>(/* $context-String = c0, <this> = receiver */)
+    }
+  )
+ /*~> Unit */
+}
+
+context(s: String, bb: Boolean)
+fun test2() {
+  KMutableProperty0<Int>(
+    /* bound = */ [s,bb],
+    /* getter = */    local fun(c0: String, c1: Boolean): Int {
+      return <get-foo2>(/* $context-String = c0, b = c1 */)
+    }
+    /* setter = */    local fun(c0: String, c1: Boolean, value: Int) {
+      <set-foo2>(/* $context-String = c0, b = c1, */ value = value)
+    }
+  )
+ /*~> Unit */
+  KMutableProperty1<Bar, Int>(
+    /* bound = */ [s,bb],
+    /* getter = */    local fun(c0: String, c1: Boolean, p0: Bar): Int {
+      return p0.<get-baz2>(/* $context-String = c0, b = c1 */)
+    }
+    /* setter = */    local fun(c0: String, c1: Boolean, p0: Bar, value: Int) {
+      p0.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
+    }
+  )
+ /*~> Unit */
+  KMutableProperty0<Int>(
+    /* bound = */ [s,bb,Bar()],
+    /* getter = */    local fun(c0: String, c1: Boolean, receiver: Bar): Int {
+      return receiver.<get-baz2>(/* $context-String = c0, b = c1 */)
+    }
+    /* setter = */    local fun(c0: String, c1: Boolean, receiver: Bar, value: Int) {
+      receiver.<set-baz2>(/* $context-String = c0, b = c1, */ value = value)
+    }
+  )
+ /*~> Unit */
+  KMutableProperty1<Int, Int>(
+    /* bound = */ [s,bb],
+    /* getter = */    local fun(c0: String, c1: Boolean, p0: Int): Int {
+      return <get-qux2>(/* $context-String = c0, b = c1, <this> = p0 */)
+    }
+    /* setter = */    local fun(c0: String, c1: Boolean, p0: Int, value: Int) {
+      <set-qux2>(/* $context-String = c0, b = c1, <this> = p0, */ value = value)
+    }
+  )
+ /*~> Unit */
+  KMutableProperty0<Int>(
+    /* bound = */ [s,bb,1],
+    /* getter = */    local fun(c0: String, c1: Boolean, receiver: Int): Int {
+      return <get-qux2>(/* $context-String = c0, b = c1, <this> = receiver */)
+    }
+    /* setter = */    local fun(c0: String, c1: Boolean, receiver: Int, value: Int) {
+      <set-qux2>(/* $context-String = c0, b = c1, <this> = receiver, */ value = value)
+    }
+  )
+ /*~> Unit */
+}
+
+val foo: Int
+  context($context-String: String)
+  get(): Int {
+    return 1
+  }
+
+var foo2: Int
+  context($context-String: String, b: Boolean)
+  get(): Int {
+    return 1
+  }
+  context($context-String: String, b: Boolean)
+  set(value: Int) {
+  }
+
+val Int.qux: Int
+  context($context-String: String)
+  get(): Int {
+    return 1
+  }
+
+var Int.qux2: Int
+  context($context-String: String, b: Boolean)
+  get(): Int {
+    return 1
+  }
+  context($context-String: String, b: Boolean)
+  set(value: Int) {
+  }
+

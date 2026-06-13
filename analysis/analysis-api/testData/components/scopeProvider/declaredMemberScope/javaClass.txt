@@ -1,10 +1,10 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /JavaClass.field
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -27,13 +27,12 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.hello
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -71,7 +70,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
@@ -80,7 +79,6 @@ KaNamedClassSymbol:
   classId: JavaClass.InnerClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -103,14 +101,13 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: JavaClass.InnerClass
 
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
@@ -134,5 +131,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaClass

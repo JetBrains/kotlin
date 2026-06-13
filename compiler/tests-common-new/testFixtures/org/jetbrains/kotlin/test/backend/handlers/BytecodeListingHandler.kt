@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -31,6 +30,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         if (CHECK_BYTECODE_LISTING !in module.directives) return
 
         val classes = info.classFileFactory.getClassFiles()

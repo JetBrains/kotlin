@@ -11,6 +11,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     copyK2WasmCompilerArguments(from, to)
 
     to.allowExportingSuspendFunctions = from.allowExportingSuspendFunctions
+    to.allowExportingSuspendLambdas = from.allowExportingSuspendLambdas
     to.allowImplementableInterfacesExporting = from.allowImplementableInterfacesExporting
     to.compileLongAsBigInt = from.compileLongAsBigInt
     to.extensionFunctionsInExternals = from.extensionFunctionsInExternals

@@ -19,10 +19,12 @@ import org.jetbrains.kotlin.constant.StringValue
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
+import org.jetbrains.kotlin.psi.psiUtil.isCompanion
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -61,18 +63,39 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         if (member is PsiMethod && member.isConstructor) {
             val classOrObject = container.safeAs<KtClassOrObject>()?.takeIf { it.name == memberName }
-            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) } ?: classOrObject?.primaryConstructor
-            ?: classOrObject
+            return classOrObject?.allConstructors?.firstOrNull { doParametersMatch(member, it) }
+                ?: classOrObject?.primaryConstructor
+                ?: classOrObject
         }
 
-        val (regularDeclarations, companionDeclarations) = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
+        val regularDeclarations = container.declarations
+
+        @OptIn(KtExperimentalApi::class)
+        val staticDeclarations: List<KtDeclaration> = if (container is KtClass && member.hasModifierProperty(PsiModifier.STATIC)) {
             // Compiled code cannot have more than one companion object, so we can pick the first one
-            container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
+            val companionDeclarations = container.companionObjects.firstOrNull()?.declarations.orEmpty()
+
+            // Companion-object members and members of `companion { ... }` blocks (KEEP-0449) both
+            // materialize as static members of the enclosing class.
+            val companionBlocks = container.companionBlocks
+            when {
+                companionBlocks.isEmpty() -> companionDeclarations
+                companionDeclarations.isEmpty() && companionBlocks.size == 1 -> companionBlocks[0].declarations
+                else -> buildList {
+                    addAll(companionDeclarations)
+                    companionBlocks.forEach { addAll(it.declarations) }
+                }
+            }
         } else {
-            container.declarations to emptyList()
+            emptyList()
         }
 
-        val declarations = regularDeclarations + companionDeclarations
+        val declarations = if (staticDeclarations.isEmpty()) {
+            regularDeclarations
+        } else {
+            regularDeclarations + staticDeclarations
+        }
+
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
@@ -111,11 +134,14 @@ class KotlinDeclarationInCompiledFileSearcher {
 
                 val declarations = when {
                     container is KtFile || container is KtObjectDeclaration -> declarations
-                    member.hasModifier(JvmModifier.STATIC) ->
+                    member.hasModifier(JvmModifier.STATIC) -> buildList {
                         // Enum entries and companion objects are materialized in the containing class as fields
-                        regularDeclarations.filter { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() } +
-                                // Fields for properties from companion objects are materialized in the containing class
-                                companionDeclarations.filterIsInstance<KtProperty>()
+                        regularDeclarations.filterTo(this) { it is KtEnumEntry || it is KtObjectDeclaration && it.isCompanion() }
+
+                        // Properties from companion objects and `companion { ... }` blocks become
+                        // static fields of the enclosing class
+                        staticDeclarations.filterIsInstanceTo<KtProperty, _>(this)
+                    }
 
                     else -> declarations
                 }
@@ -155,25 +181,49 @@ class KotlinDeclarationInCompiledFileSearcher {
         val declarationName = getJvmName(declaration)
         return when (declaration) {
             is KtNamedFunction -> {
-                declarationName in names && functionMatcher(declaration)
+                matchesAny(declarationName, names, declaration) && functionMatcher(declaration)
             }
             is KtProperty -> {
                 val getterName = getJvmName(declaration.getter)
                 val setterName = getJvmName(declaration.setter)
                 if (setter != null) {
                     val accessorName = (if (setter) setterName else getterName) ?: declarationName
-                    accessorName in names && propertyMatcher(declaration, setter)
+                    matchesAny(accessorName, names, declaration) && propertyMatcher(declaration, setter)
                 } else {
                     val containingClass = member.containingClass
-                    getterName in names && propertyMatcher(declaration, false) ||
-                            setterName in names && propertyMatcher(declaration, true) ||
-                            getterName == null && setterName == null && declarationName in names &&
+                    matchesAny(getterName, names, declaration) && propertyMatcher(declaration, false) ||
+                            matchesAny(setterName, names, declaration) && propertyMatcher(declaration, true) ||
+                            getterName == null && setterName == null && matchesAny(declarationName, names, declaration) &&
                             (containingClass?.isRecord == true || containingClass?.isAnnotationType == true) &&
                             propertyMatcher(declaration, false)
                 }
             }
             else -> false
         }
+    }
+
+    /**
+     * Like `name in names`, but additionally accepts mangled forms (`<name>$<suffix>`) when
+     * [declaration] is the kind whose JVM name is mangled by visibility — `internal` members and
+     * `private` top-level members in multifile facades. This intentionally excludes synthetic
+     * methods that share the `<base>$<suffix>` shape but encode something else (e.g.
+     * `<enclosingFun>$<localFun>` synthetics for local functions), which must not be matched
+     * against an unrelated source declaration with the same prefix.
+     */
+    @OptIn(IntellijInternalApi::class)
+    private fun matchesAny(name: String?, names: SmartList<String>, declaration: KtDeclaration): Boolean {
+        if (name == null) return false
+        if (name in names) return true
+        if (!declaration.hasVisibilityMangledJvmName()) return false
+        return names.any { LightClassUtil.isMangled(it, name) }
+    }
+
+    private fun KtDeclaration.hasVisibilityMangledJvmName(): Boolean {
+        val modifierList = modifierList ?: return false
+        return modifierList.hasModifier(KtTokens.INTERNAL_KEYWORD) ||
+                // `private` top-level members in a multifile facade are mangled with the
+                // per-file part class name; nested `private` declarations are not mangled.
+                modifierList.hasModifier(KtTokens.PRIVATE_KEYWORD) && parent is KtFile
     }
 
     private fun getJvmName(declaration: KtDeclaration?): String? {
@@ -200,7 +250,13 @@ class KotlinDeclarationInCompiledFileSearcher {
             contextParameterList.contextParameters.forEach { to.add(it.typeReference!!) }
         }
 
-        receiverTypeReference?.let { to.add(it) }
+        // KEEP-0449 companion extensions hide their receiver from the JVM signature, mirroring
+        // `SymbolLightParameterForReceiver.create`. Companion-block members never have a receiver,
+        // so the guard is a no-op for that bucket.
+        @OptIn(KtExperimentalApi::class)
+        if (!isCompanion) {
+            receiverTypeReference?.let { to.add(it) }
+        }
     }
 
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
@@ -219,7 +275,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
         if (ktTypes.size != psiTypes.size) return false
         val isInsideAnnotation = member.containingClass?.isAnnotationType == true
-        ktTypes.zip(psiTypes).forEach { (ktType, psiType) ->
+        ktTypes.zip(psiTypes).forEach { [ktType, psiType] ->
             if (!areTypesTheSame(ktType, psiType, false, isInsideAnnotation)) return false
         }
         return true
@@ -230,7 +286,10 @@ class KotlinDeclarationInCompiledFileSearcher {
             contextParameterList.contextParameters.forEach { to.add(it.name!!) }
         }
 
-        receiverTypeReference?.let { to.add($$"$this$" + this@extractContextParameterNames.name) }
+        @OptIn(KtExperimentalApi::class)
+        if (!isCompanion) {
+            receiverTypeReference?.let { to.add($$"$this$" + this@extractContextParameterNames.name) }
+        }
     }
 
     private fun doPropertyMatchByName(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
@@ -245,7 +304,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         member.parameterList.parameters.forEach { psiNames.add(it.name) }
 
         if (names.size != psiNames.size) return false
-        names.zip(psiNames).forEach { (ktName, psiName) ->
+        names.zip(psiNames).forEach { [ktName, psiName] ->
             if (ktName != psiName) return false
         }
         return true
@@ -330,7 +389,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         if (parametersCount != initial.size) return false
 
         val memberValues = memberParameterList.parameters.map(fromPsiMapper)
-        initial.zip(memberValues).forEach { (fromKt, fromPsi) ->
+        initial.zip(memberValues).forEach { [fromKt, fromPsi] ->
             if (!matcher(fromKt, fromPsi)) return false
         }
         return true

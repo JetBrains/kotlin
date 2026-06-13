@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 class DiagnosedRange constructor(val start: Int) {
     var end: Int = 0
     private val diagnostics = SmartList<TextDiagnostic>()

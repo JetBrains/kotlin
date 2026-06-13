@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,37 +27,53 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 /**
  * Adds `@JsImplicitExport` annotation to declarations which are not exported but are used inside other exported declarations as a type.
  */
-@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class, PrepareCollectionsToExportLowering::class)
+@PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class)
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
     private val jsExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsExportAnnotationSymbol.constructors.single() }
     private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) { context.symbols.jsImplicitExportAnnotationSymbol.constructors.single() }
 
+    private var pendingTransitivelyExportedClasses: MutableSet<IrClass> = hashSetOf()
+
+    override fun lower(irModule: IrModuleFragment) {
+        super.lower(irModule)
+        while (pendingTransitivelyExportedClasses.isNotEmpty()) {
+            for (klass in pendingTransitivelyExportedClasses) {
+                klass.markWithJsImplicitExportOrUpgrade()
+            }
+            val currentlyBeingProcessed = pendingTransitivelyExportedClasses
+            pendingTransitivelyExportedClasses = hashSetOf()
+            for (declaration in currentlyBeingProcessed) {
+                declaration.collectImplicitlyExportedDeclarations()
+            }
+            pendingTransitivelyExportedClasses.removeAll(currentlyBeingProcessed)
+        }
+    }
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!declaration.isExported(context)) return null
 
-        val implicitlyExportedDeclarations = when (declaration) {
+        when (declaration) {
             is IrFunction -> declaration.collectImplicitlyExportedDeclarations()
             is IrClass -> declaration.collectImplicitlyExportedDeclarations()
             is IrProperty -> declaration.collectImplicitlyExportedDeclarations()
-            else -> emptySet()
         }
-
-        implicitlyExportedDeclarations.forEach { it.markWithJsImplicitExportOrUpgrade() }
 
         return null
     }
 
-    private fun IrClass.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
-        return typeParameters.asSequence()
+    private fun IrClass.collectImplicitlyExportedDeclarations() {
+        typeParameters.asSequence()
             .flatMap { it.superTypes }
             .distinct()
-            .flatMap { it.collectImplicitlyExportedDeclarations() }
-            .toSet()
+            .forEach { it.collectImplicitlyExportedDeclarations() }
+
+        superTypes
+            .forEach { it.collectImplicitlyExportedDeclarations() }
     }
 
 
-    private fun IrFunction.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
+    private fun IrFunction.collectImplicitlyExportedDeclarations() {
         val types = buildSet {
             add(returnType)
             if (this@collectImplicitlyExportedDeclarations !is IrConstructor || exportedVisibility != ExportedVisibility.PRIVATE) {
@@ -67,59 +83,51 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             typeParameters.flatMapTo(this) { it.superTypes }
         }
 
-        return types.flatMap { it.collectImplicitlyExportedDeclarations(includeArguments = true) }.toSet()
+        types.forEach { it.collectImplicitlyExportedDeclarations(includeArguments = true) }
     }
 
-    private fun IrProperty.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
-        val getterImplicitlyExportedDeclarations = getter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val setterImplicitlyExportedDeclarations = setter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true) ?: emptySet()
-
-        return getterImplicitlyExportedDeclarations + setterImplicitlyExportedDeclarations + fieldImplicitlyExportedDeclarations
+    private fun IrProperty.collectImplicitlyExportedDeclarations() {
+        getter?.collectImplicitlyExportedDeclarations()
+        setter?.collectImplicitlyExportedDeclarations()
+        backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true)
     }
 
-    private fun IrType.collectImplicitlyExportedDeclarations(includeArguments: Boolean = false): Set<IrDeclaration> {
+    private fun IrType.collectImplicitlyExportedDeclarations(includeArguments: Boolean = false) {
         if (this is IrDynamicType || this !is IrSimpleType)
-            return emptySet()
+            return
 
         val nonNullType = makeNotNull() as IrSimpleType
         val classifier = nonNullType.classifier
 
-        return when {
+        when {
             nonNullType.isPrimitiveType() ||
                     nonNullType.isPrimitiveArray() ||
                     nonNullType.isAny() ||
                     nonNullType.isNothing() ||
                     nonNullType.isUnit()
-                -> emptySet()
+                -> return
 
             classifier is IrTypeParameterSymbol -> classifier.owner.superTypes
-                .flatMap { it.collectImplicitlyExportedDeclarations() }
-                .toSet()
+                .forEach { it.collectImplicitlyExportedDeclarations() }
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val result = mutableSetOf<IrDeclaration>()
 
                 val isSpeciallyExportedType = nonNullType.isSpeciallyExportedType()
 
                 if (!isSpeciallyExportedType && klass.shouldBeMarkedWithImplicitExportOrUpgraded()) {
-                    result.add(klass)
+                    pendingTransitivelyExportedClasses.add(klass)
                 }
 
                 if (includeArguments && (isSpeciallyExportedType || klass.isExternal || klass.couldBeConvertedToExplicitExport() == true || klass.isExported(context))) {
-                    arguments.flatMapTo(result) {
+                    arguments.forEach {
                         when (it) {
-                            is IrStarProjection -> emptySet()
+                            is IrStarProjection -> {}
                             is IrTypeProjection -> it.type.collectImplicitlyExportedDeclarations()
                         }
                     }
                 }
-
-                result
             }
-
-            else -> emptySet()
         }
     }
 

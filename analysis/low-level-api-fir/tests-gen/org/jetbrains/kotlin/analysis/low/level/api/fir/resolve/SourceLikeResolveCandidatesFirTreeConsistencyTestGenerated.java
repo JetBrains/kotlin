@@ -1666,6 +1666,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     public void testDefaultAnnotationArgumentKotlin() {
       run("defaultAnnotationArgumentKotlin.kt");
     }
+
+    @Test
+    @TestMetadata("enumArrayAsAnnotationArgument.kt")
+    public void testEnumArrayAsAnnotationArgument() {
+      run("enumArrayAsAnnotationArgument.kt");
+    }
   }
 
   @Nested
@@ -2165,6 +2171,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
       }
 
       @Test
+      @TestMetadata("ClashWithJdk.kt")
+      public void testClashWithJdk() {
+        run("ClashWithJdk.kt");
+      }
+
+      @Test
       @TestMetadata("FromContextFile.kt")
       public void testFromContextFile() {
         run("FromContextFile.kt");
@@ -2237,6 +2249,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("array.kt")
     public void testArray() {
       run("array.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAnnotationEnabled.kt")
+    public void testArrayAnnotationEnabled() {
+      run("arrayAnnotationEnabled.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayAnnotationParameterDeep.kt")
+    public void testArrayAnnotationParameterDeep() {
+      run("arrayAnnotationParameterDeep.kt");
     }
 
     @Test
@@ -2394,6 +2418,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParametersWithContext.kt")
+    public void testCallableReferenceOnFunctionWithContextParametersWithContext() {
+      run("callableReferenceOnFunctionWithContextParametersWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParametersWithContext_rhs.kt")
+    public void testCallableReferenceOnFunctionWithContextParametersWithContext_rhs() {
+      run("callableReferenceOnFunctionWithContextParametersWithContext_rhs.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferenceOnFunctionWithContextParameters_rhs.kt")
     public void testCallableReferenceOnFunctionWithContextParameters_rhs() {
       run("callableReferenceOnFunctionWithContextParameters_rhs.kt");
@@ -2403,6 +2439,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("callableReferenceOnPropertyWithContextParameters.kt")
     public void testCallableReferenceOnPropertyWithContextParameters() {
       run("callableReferenceOnPropertyWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParametersWithContext.kt")
+    public void testCallableReferenceOnPropertyWithContextParametersWithContext() {
+      run("callableReferenceOnPropertyWithContextParametersWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParametersWithContext_rhs.kt")
+    public void testCallableReferenceOnPropertyWithContextParametersWithContext_rhs() {
+      run("callableReferenceOnPropertyWithContextParametersWithContext_rhs.kt");
     }
 
     @Test
@@ -4038,6 +4086,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
       @TestMetadata("childQualifiedFunctionFromSuperClassCompanion.kt")
       public void testChildQualifiedFunctionFromSuperClassCompanion() {
         run("childQualifiedFunctionFromSuperClassCompanion.kt");
+      }
+
+      @Test
+      @TestMetadata("companionBlockAndObject.kt")
+      public void testCompanionBlockAndObject() {
+        run("companionBlockAndObject.kt");
+      }
+
+      @Test
+      @TestMetadata("companionBlockAndObjectGenericClass.kt")
+      public void testCompanionBlockAndObjectGenericClass() {
+        run("companionBlockAndObjectGenericClass.kt");
       }
 
       @Test
@@ -7009,6 +7069,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("invalidImplicitInvoke.kt")
     public void testInvalidImplicitInvoke() {
       run("invalidImplicitInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidLabelOnReturn.kt")
+    public void testInvalidLabelOnReturn() {
+      run("invalidLabelOnReturn.kt");
     }
 
     @Test

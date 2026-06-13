@@ -16,6 +16,39 @@ import kotlin.test.assertTrue
 
 @AndroidGradlePluginTests
 class AbiValidationAndroidIT : KGPBaseTest() {
+    @GradleAndroidTest
+    fun testForDisabledAbiValidation(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        androidProject(gradleVersion, agpVersion, jdkVersion) {
+            // skip lint as it shows the deprecation warning
+            build("check", "-x", "lintDebug") {
+                assertTasksAreNotInTaskGraph(":checkKotlinAbi")
+            }
+        }
+    }
+
+    @GradleAndroidTest
+    fun testForEnabledAbiValidation(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        androidProject(gradleVersion, agpVersion, jdkVersion) {
+            abiValidation()
+
+            // create the reference dumps to check
+            build("updateKotlinAbi")
+
+            // skip lint as it shows the deprecation warning
+            build("check", "-x", "lintDebug") {
+                assertTasksExecuted(":checkKotlinAbi")
+            }
+        }
+    }
+
     @DisplayName("KT-78525 (Android)")
     @GradleAndroidTest
     fun testAndroidCompatibilityWithBcv(

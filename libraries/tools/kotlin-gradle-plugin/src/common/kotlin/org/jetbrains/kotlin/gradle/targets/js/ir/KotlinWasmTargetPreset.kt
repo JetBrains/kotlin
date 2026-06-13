@@ -24,7 +24,7 @@ internal class KotlinWasmTargetPreset(
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        val irTarget = project.objects.KotlinJsIrTarget(project, KotlinPlatformType.wasm, true)
+        val irTarget = project.objects.KotlinJsIrTarget(project, KotlinPlatformType.wasm)
         irTarget.outputModuleName.convention(
             buildNpmProjectName(
                 project,

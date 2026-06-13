@@ -1,0 +1,21 @@
+KT element: KtPrefixExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|Anno|[Types](v = Int(33) [evaluated = Int(33)]) Long(1).R|kotlin/Long.unaryPlus|().R|kotlin/Long.unaryMinus|().R|kotlin/Long.unaryMinus|().R|kotlin/Long.unaryPlus|().R|kotlin/Long.unaryMinus|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryOnComplexLongLiteral.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        @R|Anno|[Types](v = Int(33) [evaluated = Int(33)]) Long(1).R|kotlin/Long.unaryPlus|().R|kotlin/Long.unaryMinus|().R|kotlin/Long.unaryMinus|().R|kotlin/Long.unaryPlus|().R|kotlin/Long.unaryMinus|()
+    }
+    @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.v] v: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val v: R|kotlin/Int| = R|<local>/v|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }

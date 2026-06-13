@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 
+@K1Deprecation
 sealed class KlibModuleOrigin {
 
     companion object {
@@ -16,12 +18,16 @@ sealed class KlibModuleOrigin {
     }
 }
 
+@K1Deprecation
 sealed class CompiledKlibModuleOrigin : KlibModuleOrigin()
 
+@K1Deprecation
 class DeserializedKlibModuleOrigin(val library: KotlinLibrary) : CompiledKlibModuleOrigin()
 
+@K1Deprecation
 object CurrentKlibModuleOrigin : CompiledKlibModuleOrigin()
 
+@K1Deprecation
 object SyntheticModulesOrigin : KlibModuleOrigin()
 
 internal fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
@@ -29,7 +35,9 @@ internal fun KlibModuleOrigin.isCInteropLibrary(): Boolean = when (this) {
     CurrentKlibModuleOrigin, SyntheticModulesOrigin -> false
 }
 
+@K1Deprecation
 val ModuleDescriptor.klibModuleOrigin get() = this.getCapability(KlibModuleOrigin.CAPABILITY)!!
 
+@K1Deprecation
 val ModuleDescriptor.kotlinLibrary
     get() = (this.klibModuleOrigin as DeserializedKlibModuleOrigin).library

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
+@K1Deprecation
 class StrictfpApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.annotations.findAnnotation(STRICTFP_ANNOTATION_FQ_NAME) ?: return

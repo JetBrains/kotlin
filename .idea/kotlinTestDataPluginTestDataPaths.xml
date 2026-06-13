@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="TestDataPluginSettings">
+    <option name="ignoredLanguagesForInjection">
+      <array>
+        <option value="Kotlin" />
+      </array>
+    </option>
     <option name="relatedFilesSearchPaths">
       <map>
         <entry key="$PROJECT_DIR$/compiler/testData/codegen/box">
@@ -89,7 +94,6 @@
         <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
-        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin" />
       </array>
     </option>
     <option name="testDataFiles">
@@ -100,7 +104,7 @@
         <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
         <option value="$PROJECT_DIR$/analysis/stubs/testData" />
         <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
-        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/legacy-fir-tests/testData" />
         <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
         <option value="$PROJECT_DIR$/compiler/psi/psi-impl/testData" />
         <option value="$PROJECT_DIR$/compiler/testData" />
@@ -132,41 +136,9 @@
     </option>
     <option name="testTags">
       <map>
-        <entry key="ClassicJsIrText.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JS" />
-            </array>
-          </value>
-        </entry>
-        <entry key="ClassicJvmIrText.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="ClassicNativeIrText.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="Native" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Diagnostic.*TestGenerated">
-          <value>
-            <array>
-              <option value="K1" />
-            </array>
-          </value>
-        </entry>
         <entry key="Fir.*BlackBoxInlineCodegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JVM" />
             </array>
           </value>
@@ -174,29 +146,20 @@
         <entry key="Fir.*BoxCodegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*CompileKotlinAgainstInline.*">
-          <value>
-            <array>
-              <option value="FIR" />
             </array>
           </value>
         </entry>
         <entry key="Fir.*Diagnostic.*TestGenerated">
           <value>
             <array>
-              <option value="FIR" />
+              <option value="Diag" />
             </array>
           </value>
         </entry>
         <entry key="Fir.*JsIrText.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
             </array>
           </value>
@@ -204,7 +167,6 @@
         <entry key="Fir.*JvmIrText.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JVM" />
             </array>
           </value>
@@ -212,7 +174,6 @@
         <entry key="Fir.*NativeIrText.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="Native" />
             </array>
           </value>
@@ -220,31 +181,27 @@
         <entry key="Fir.*WasmIrText.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="WASM" />
             </array>
           </value>
         </entry>
-        <entry key="FirJs.*BoxCodegen.*">
+        <entry key="Js.*BoxCodegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
             </array>
           </value>
         </entry>
-        <entry key="FirJs.*Codegen.*">
+        <entry key="Js.*Codegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
             </array>
           </value>
         </entry>
-        <entry key="FirJs.*WithInl.*">
+        <entry key="Js.*WithInl.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
               <option value="Klib" />
             </array>
@@ -253,7 +210,6 @@
         <entry key="FirNative.*Codegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="Native" />
             </array>
           </value>
@@ -261,7 +217,6 @@
         <entry key="FirNative.*WithInlined.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="Native" />
               <option value="Klib" />
             </array>
@@ -270,46 +225,13 @@
         <entry key="FirWasm.*.Codegen.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="WASM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Ir.*BlackBoxInlineCodegen.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Ir.*CompileKotlinAgainstInline.*">
-          <value>
-            <array>
-              <option value="K1" />
-            </array>
-          </value>
-        </entry>
-        <entry key="IrBlackBoxCodegen.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JVM" />
-            </array>
-          </value>
-        </entry>
-        <entry key="IrJs.*Codegen.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JS" />
             </array>
           </value>
         </entry>
         <entry key="Js.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
               <option value="HMPP" />
             </array>
@@ -318,7 +240,6 @@
         <entry key="JsIrDeserialization.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JS" />
               <option value="Klib" />
             </array>
@@ -327,7 +248,6 @@
         <entry key="Jvm.*BlackBoxCodegenWithSeparateKmpCompilationTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JVM" />
               <option value="HMPP" />
             </array>
@@ -340,26 +260,10 @@
             </array>
           </value>
         </entry>
-        <entry key="K1Wasm.*Codegen.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="WASM" />
-            </array>
-          </value>
-        </entry>
         <entry key="LL.*Generated">
           <value>
             <array>
               <option value="AA" />
-            </array>
-          </value>
-        </entry>
-        <entry key="LightAnalysisModeTestGenerated">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JVM" />
             </array>
           </value>
         </entry>
@@ -374,7 +278,6 @@
         <entry key="NativeIrDeserialization.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="Native" />
               <option value="Klib" />
             </array>
@@ -383,7 +286,6 @@
         <entry key="NativeUnboundIrSerialization.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="Native" />
               <option value="Klib" />
             </array>
@@ -392,7 +294,6 @@
         <entry key="Phased.*Jvm.*">
           <value>
             <array>
-              <option value="FIR" />
               <option value="JVM" />
             </array>
           </value>
@@ -400,7 +301,7 @@
         <entry key="Repl.*BlackBoxCodegenTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
+              <option value="Repl" />
               <option value="JVM" />
             </array>
           </value>
@@ -408,14 +309,14 @@
         <entry key="Repl.*DiagnosticsTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
+              <option value="Repl" />
             </array>
           </value>
         </entry>
         <entry key="Script.*BlackBoxCodegenTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
+              <option value="Script" />
               <option value="JVM" />
             </array>
           </value>
@@ -423,7 +324,7 @@
         <entry key="Script.*DiagnosticsTestGenerated">
           <value>
             <array>
-              <option value="FIR" />
+              <option value="Script" />
             </array>
           </value>
         </entry>

@@ -69,7 +69,7 @@ open class ParcelizeResolveExtension(private val parcelizeAnnotations: List<FqNa
                 override val componentKind = componentKind
             }
 
-            val valueParameters = parameters.mapIndexed { index, (name, type) -> functionDescriptor.makeValueParameter(name, type, index) }
+            val valueParameters = parameters.mapIndexed { index, [name, type] -> functionDescriptor.makeValueParameter(name, type, index) }
 
             functionDescriptor.initialize(
                 null, classDescriptor.thisAsReceiverParameter, emptyList(), emptyList(), valueParameters,
@@ -208,7 +208,7 @@ fun getTypeParcelers(annotations: Annotations): List<TypeParcelerMapping> {
     val serializers = mutableListOf<TypeParcelerMapping>()
 
     for (annotation in annotations.filter { it.fqName in ParcelizeNames.TYPE_PARCELER_FQ_NAMES }) {
-        val (mappedType, parcelerType) = annotation.type.arguments.takeIf { it.size == 2 } ?: continue
+        val [mappedType, parcelerType] = annotation.type.arguments.takeIf { it.size == 2 } ?: continue
         serializers += TypeParcelerMapping(mappedType.type, parcelerType.type)
     }
 

@@ -93,7 +93,12 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val sourceRoots = setupTest(testDir, srcDir, cacheDir, outDir)
         val args = createCompilerArgumentsImpl(outDir, testDir)
 
-        val (initialExitCode, _, errors, initialCachesDump) = initialMake(cacheDir, outDir, sourceRoots, args)
+        (val initialExitCode = exitCode, val errors = compileErrors, val initialCachesDump = mappingsDump) = initialMake(
+            cacheDir,
+            outDir,
+            sourceRoots,
+            args
+        )
         var lastExitCode = initialExitCode
         var lastCachesDump = initialCachesDump
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
@@ -121,17 +126,20 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val expectedSBWithoutErrors = StringBuilder()
         val actualSBWithoutErrors = StringBuilder()
         var step = 1
-        for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
+        for ([modificationStep, buildLogStep] in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (incrementalExitCode, compiledSources, compileErrors, incrementalCachesDump) = incrementalMake(
-                cacheDir,
-                outDir,
-                sourceRoots,
-                createCompilerArgumentsImpl(
+            (
+                val incrementalExitCode = exitCode, val compiledSources, val compileErrors, val incrementalCachesDump = mappingsDump
+            ) =
+                incrementalMake(
+                    cacheDir,
                     outDir,
-                    testDir
+                    sourceRoots,
+                    createCompilerArgumentsImpl(
+                        outDir,
+                        testDir
+                    )
                 )
-            )
 
             lastExitCode = incrementalExitCode
             lastCachesDump = incrementalCachesDump

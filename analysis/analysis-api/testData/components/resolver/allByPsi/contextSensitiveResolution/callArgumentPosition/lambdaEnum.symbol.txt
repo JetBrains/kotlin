@@ -35,6 +35,8 @@ KtProperty(158,185): 'val EnumValue3 = EnumValue1'
   null
 
 KtNameReferenceExpression(175,185): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -44,13 +46,24 @@ KtProperty(194,215): 'val prop: String = ""'
   null
 
 KtTypeReference(204,210): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(204,210): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(204,210): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(213,215): '""'
   null
@@ -65,10 +78,16 @@ KtParameter(240,268): 'lEnum: (arg: MyEnum) -> Unit'
   null
 
 KtTypeReference(247,268): '(arg: MyEnum) -> Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1
+    ]
 
 KtFunctionType(247,268): '(arg: MyEnum) -> Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1
+    ]
 
 KtParameterList(247,260): '(arg: MyEnum)'
   null
@@ -77,22 +96,44 @@ KtParameter(248,259): 'arg: MyEnum'
   null
 
 KtTypeReference(253,259): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(253,259): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(253,259): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtTypeReference(264,268): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtUserType(264,268): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtNameReferenceExpression(264,268): 'Unit'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(270,317): '{'
   null
@@ -104,6 +145,8 @@ KtCallExpression(276,293): 'lEnum(EnumValue1)'
     ]
 
 KtNameReferenceExpression(276,281): 'lEnum'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
@@ -116,6 +159,8 @@ KtValueArgument(282,292): 'EnumValue1'
   null
 
 KtNameReferenceExpression(282,292): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -128,6 +173,8 @@ KtCallExpression(298,315): 'lEnum(EnumValue2)'
     ]
 
 KtNameReferenceExpression(298,303): 'lEnum'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       lEnum: (@R|kotlin.ParameterName|(name = String(arg))  MyEnum) -> kotlin.Unit
@@ -140,6 +187,8 @@ KtValueArgument(304,314): 'EnumValue2'
   null
 
 KtNameReferenceExpression(304,314): 'EnumValue2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue2
@@ -161,22 +210,39 @@ KtParameter(340,350): 'l: () -> T'
   null
 
 KtTypeReference(343,350): '() -> T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function0
+    ]
 
 KtFunctionType(343,350): '() -> T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function0
+    ]
 
 KtParameterList(343,345): '()'
   null
 
 KtTypeReference(349,350): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(349,350): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(349,350): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(352,354): '{}'
   null
@@ -197,6 +263,8 @@ KtCallExpression(387,423): 'receiveLambda<MyEnum> { EnumValue1 }'
     ]
 
 KtNameReferenceExpression(387,400): 'receiveLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
@@ -209,13 +277,24 @@ KtTypeProjection(401,407): 'MyEnum'
   null
 
 KtTypeReference(401,407): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(401,407): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(401,407): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(409,423): '{ EnumValue1 }'
   null
@@ -230,6 +309,8 @@ KtBlockExpression(411,421): 'EnumValue1'
   null
 
 KtNameReferenceExpression(411,421): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -242,6 +323,8 @@ KtCallExpression(428,464): 'receiveLambda<MyEnum> { EnumValue3 }'
     ]
 
 KtNameReferenceExpression(428,441): 'receiveLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
@@ -254,13 +337,24 @@ KtTypeProjection(442,448): 'MyEnum'
   null
 
 KtTypeReference(442,448): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(442,448): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(442,448): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(450,464): '{ EnumValue3 }'
   null
@@ -275,6 +369,8 @@ KtBlockExpression(452,462): 'EnumValue3'
   null
 
 KtNameReferenceExpression(452,462): 'EnumValue3'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val EnumValue3: MyEnum
@@ -288,6 +384,8 @@ KtCallExpression(469,499): 'receiveLambda<MyEnum> { prop }'
     diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyEnum' was expected.>
 
 KtNameReferenceExpression(469,482): 'receiveLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = [
       /receiveLambda(l: () -> T): kotlin.Unit
@@ -301,13 +399,24 @@ KtTypeProjection(483,489): 'MyEnum'
   null
 
 KtTypeReference(483,489): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(483,489): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(483,489): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtLambdaArgument(491,499): '{ prop }'
   null
@@ -322,6 +431,8 @@ KtBlockExpression(493,497): 'prop'
   null
 
 KtNameReferenceExpression(493,497): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String

@@ -1,1 +1,2 @@
-
+KDocName(230,243): 'SomeClass.ext'
+  NO_CANDIDATES

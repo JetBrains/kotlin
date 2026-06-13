@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
+@K1Deprecation
 sealed class DiagnosticFactoryForDeprecation<E : PsiElement, D : Diagnostic, F : DiagnosticFactoryWithPsiElement<E, D>>(
     val deprecatingFeature: LanguageFeature,
     val warningFactory: F,
@@ -19,6 +21,7 @@ sealed class DiagnosticFactoryForDeprecation<E : PsiElement, D : Diagnostic, F :
     }
 }
 
+@K1Deprecation
 class DiagnosticFactoryForDeprecation0<E : PsiElement>(
     featureForError: LanguageFeature,
     warningFactory: DiagnosticFactory0<E>,
@@ -46,6 +49,7 @@ class DiagnosticFactoryForDeprecation0<E : PsiElement>(
     fun onError(element: E): SimpleDiagnostic<E> = errorFactory.on(element)
 }
 
+@K1Deprecation
 class DiagnosticFactoryForDeprecation1<E : PsiElement, A : Any>(
     featureForError: LanguageFeature,
     warningFactory: DiagnosticFactory1<E, A>,
@@ -71,6 +75,7 @@ class DiagnosticFactoryForDeprecation1<E : PsiElement, A : Any>(
     }
 }
 
+@K1Deprecation
 class DiagnosticFactoryForDeprecation2<E : PsiElement, A : Any, B : Any>(
     featureForError: LanguageFeature,
     warningFactory: DiagnosticFactory2<E, A, B>,
@@ -96,6 +101,7 @@ class DiagnosticFactoryForDeprecation2<E : PsiElement, A : Any, B : Any>(
     }
 }
 
+@K1Deprecation
 class DiagnosticFactoryForDeprecation3<E : PsiElement, A : Any, B : Any, C : Any>(
     featureForError: LanguageFeature,
     warningFactory: DiagnosticFactory3<E, A, B, C>,
@@ -121,6 +127,7 @@ class DiagnosticFactoryForDeprecation3<E : PsiElement, A : Any, B : Any, C : Any
     }
 }
 
+@K1Deprecation
 class DiagnosticFactoryForDeprecation4<E : PsiElement, A : Any, B : Any, C : Any, D : Any>(
     featureForError: LanguageFeature,
     warningFactory: DiagnosticFactory4<E, A, B, C, D>,

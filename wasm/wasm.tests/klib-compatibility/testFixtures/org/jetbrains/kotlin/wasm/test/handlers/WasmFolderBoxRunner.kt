@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 
 class WasmFolderBoxRunner(
@@ -19,8 +19,8 @@ class WasmFolderBoxRunner(
     }
 
     private fun runWasmFolder() {
-        val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.Folder
-        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", emptyList(), mutableSetOf())
+        val artifacts = modulesToArtifact.values.single() as WasmFolderBinaryArtifact
+        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", mutableSetOf())
         if (throwables.isNotEmpty())
             throw throwables.first()
     }

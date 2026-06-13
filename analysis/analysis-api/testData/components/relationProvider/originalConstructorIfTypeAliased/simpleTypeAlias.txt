@@ -2,7 +2,6 @@ Resolved constructor:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyTypeAlias
     contextReceivers: []
     hasStableParameterNames: true
@@ -26,14 +25,13 @@ Resolved constructor:
     getContainingFileSymbol: KaFileSymbol(simpleTypeAlias.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyTypeAlias
 
 Original constructor if type aliased:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyClass
     contextReceivers: []
     hasStableParameterNames: true
@@ -57,5 +55,5 @@ Original constructor if type aliased:
     getContainingFileSymbol: KaFileSymbol(simpleTypeAlias.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass

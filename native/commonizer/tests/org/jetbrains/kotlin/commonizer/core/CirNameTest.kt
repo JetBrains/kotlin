@@ -47,7 +47,7 @@ class CirNameTest {
             "foo" to "foo",
             "bar" to "bar",
             "<stdlib>" to "stdlib"
-        ).forEach { (rawName, strippedName) ->
+        ).forEach { [rawName, strippedName] ->
             assertEquals(strippedName, CirName.create(rawName).toStrippedString())
         }
     }

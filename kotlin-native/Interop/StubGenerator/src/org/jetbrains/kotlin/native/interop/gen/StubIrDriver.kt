@@ -152,7 +152,7 @@ class StubIrDriver(
     }
 
     fun run(): Result {
-        val (entryPoint, moduleName, outCFile, outKtFile) = options
+        (val entryPoint, val moduleName, val outCFile, val outKtFile = outKtFileCreator) = options
 
         val builderResult = StubIrBuilder(context).build()
         val bridgeBuilderResult = StubIrBridgeBuilder(context, builderResult).build()

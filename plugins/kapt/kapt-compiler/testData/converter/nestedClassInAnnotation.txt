@@ -26,6 +26,7 @@ package test;
 
 @Anno(value = {A.class, A.B.class, A.B.C.class})
 /**
+ * @test/Anno(value = [])
  * public final class test/Klass : kotlin/Any {
  *
  *   // signature: <init>()V

@@ -966,11 +966,21 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     compilerArgument {
         name = "Xwhen-expressions"
         compilerName = "whenExpressionsGeneration"
-        description = """Select the code generation scheme for type-checking 'when' expressions:
+        description = ReleaseDependent(
+            current = """Select the code generation scheme for type-checking 'when' expressions:
 -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-The default value is 'inline'.""".asReleaseDependent()
+The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.""",
+            valueInVersions = mapOf(
+                KotlinReleaseVersion.v2_2_20..KotlinReleaseVersion.v2_4_0 to
+                        """Select the code generation scheme for type-checking 'when' expressions:
+-Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
+                                following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
+-Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
+The default value is 'inline'.""",
+            )
+        )
         valueType = StringType.defaultNull
         valueDescription = "{indy|inline}".asReleaseDependent()
         argumentType = WhenExpressionsModeType()
@@ -990,6 +1000,20 @@ The default value is 'inline'.""".asReleaseDependent()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,
+        )
+    }
+
+    @OptIn(ExperimentalArgumentApi::class)
+    compilerArgument {
+        name = "Xcommon-fragments-metadata-destination"
+        description = """
+            Specifies the destination for common fragments metadata.
+            This metadata is used solely for incremental compilation and should not be used directly.
+        """.trimIndent().asReleaseDependent()
+        valueType = PathType.defaultNull
+        argumentType = StringType.defaultNull
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 }

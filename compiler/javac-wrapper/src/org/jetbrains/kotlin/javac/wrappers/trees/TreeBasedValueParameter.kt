@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaType
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class TreeBasedValueParameter(
         tree: JCTree.JCVariableDecl,
         compilationUnit: CompilationUnitTree,

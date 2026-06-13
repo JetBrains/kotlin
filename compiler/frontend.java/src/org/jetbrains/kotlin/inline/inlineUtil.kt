@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.inline
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -29,10 +30,12 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 
+@K1Deprecation
 sealed interface InlineFunctionOrAccessor {
     val jvmMethodSignature: JvmMemberSignature.Method
 }
 
+@K1Deprecation
 data class InlineFunction(
     override val jvmMethodSignature: JvmMemberSignature.Method,
 
@@ -40,6 +43,7 @@ data class InlineFunction(
     val kotlinFunctionName: String
 ) : InlineFunctionOrAccessor
 
+@K1Deprecation
 data class InlinePropertyAccessor(
     override val jvmMethodSignature: JvmMemberSignature.Method,
 
@@ -47,19 +51,20 @@ data class InlinePropertyAccessor(
     val propertyName: String
 ) : InlineFunctionOrAccessor
 
+@K1Deprecation
 fun inlineFunctionsAndAccessors(header: KotlinClassHeader, excludePrivateMembers: Boolean = false): List<InlineFunctionOrAccessor> {
     val data = header.data ?: return emptyList()
     val strings = header.strings ?: return emptyList()
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+            val [nameResolver, classProto] = JvmProtoBufUtil.readClassDataFrom(data, strings)
             inlineFunctions(classProto.functionList, nameResolver, classProto.typeTable, excludePrivateMembers) +
                     inlinePropertyAccessors(classProto.propertyList, nameResolver, excludePrivateMembers)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+            val [nameResolver, packageProto] = JvmProtoBufUtil.readPackageDataFrom(data, strings)
             inlineFunctions(packageProto.functionList, nameResolver, packageProto.typeTable, excludePrivateMembers) +
                     inlinePropertyAccessors(packageProto.propertyList, nameResolver, excludePrivateMembers)
         }

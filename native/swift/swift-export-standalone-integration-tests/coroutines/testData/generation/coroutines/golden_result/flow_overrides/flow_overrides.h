@@ -3,6 +3,22 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * namespace_Bar_foo__reverse_swift(void * self);
+
+void * namespace_Foo_foo__reverse_swift(void * self);
+
+void * namespace_MutableSharedFoo_foo__reverse_swift(void * self);
+
+void * namespace_MutableStateFoo_foo__reverse_swift(void * self);
+
+void * namespace_Nar_foo__reverse_swift(void * self);
+
+void * namespace_SharedFoo_foo__reverse_swift(void * self);
+
+void * namespace_StateFoo_foo__reverse_swift(void * self);
+
+void * namespace_Zar_foo__reverse_swift(void * self);
+
 void * namespace_Bar_foo(void * self);
 
 void * namespace_Bar_init_allocate();

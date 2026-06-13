@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
+@K1Deprecation
 object JvmOverridesBackwardCompatibilityHelper : OverridesBackwardCompatibilityHelper {
     override fun overrideCanBeOmitted(overridingDescriptor: CallableMemberDescriptor): Boolean {
         val visitedDescriptors = hashSetOf<CallableMemberDescriptor>()

@@ -1,0 +1,8 @@
+KtNameReferenceExpression(100,103): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.String
+    ]
+  additional: [outerClassProperty.kt]

@@ -2018,6 +2018,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     }
 
     @Test
+    @TestMetadata("jvmInlineTypealias.kt")
+    public void testJvmInlineTypealias() {
+      run("jvmInlineTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("jvmRecordTypealias.kt")
     public void testJvmRecordTypealias() {
       run("jvmRecordTypealias.kt");
@@ -2681,6 +2687,12 @@ public class FirOutOfContentRootWithDependenciesLazyDeclarationResolveTestGenera
     @Test
     public void testAllFilesPresentInTypeAliases() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("typeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() {
+      run("typeAliasAsSupertypeConstructor.kt");
     }
 
     @Test

@@ -1,0 +1,13 @@
+org/jetbrains/kotlin/analysis/api/standalone/base/projectStructure/KotlinStaticProjectStructureProvider
+org/jetbrains/kotlin/analysis/utils/printer/PrettyPrinter
+org/jetbrains/kotlin/builtins/functions/FunctionTypeKind
+org/jetbrains/kotlin/config/CompilerConfiguration
+org/jetbrains/kotlin/config/CompilerConfigurationKey
+org/jetbrains/kotlin/contracts/description/EventOccurrencesRange
+org/jetbrains/kotlin/descriptors/Visibility
+org/jetbrains/kotlin/descriptors/annotations/KotlinTarget
+org/jetbrains/kotlin/diagnostics/WhenMissingCase
+org/jetbrains/kotlin/load/kotlin/TypeMappingMode
+org/jetbrains/kotlin/resolve/deprecation/DeprecationInfo
+org/jetbrains/kotlin/util/ImplementationStatus
+org/jetbrains/org/objectweb/asm/Type

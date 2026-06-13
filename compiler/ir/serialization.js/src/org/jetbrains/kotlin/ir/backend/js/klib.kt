@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.backend.common.IrModuleDependencies
-import org.jetbrains.kotlin.backend.common.IrModuleInfo
-import org.jetbrains.kotlin.backend.common.LoadedKlibs
-import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
-import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
@@ -18,21 +14,15 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibSingleFile
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
-import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
-import org.jetbrains.kotlin.ir.backend.js.wasm.collectAllExportNames
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -45,8 +35,6 @@ import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
@@ -115,7 +103,6 @@ fun loadIr(
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
-    val messageLogger = configuration.messageCollector
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -134,7 +121,6 @@ fun loadIr(
                 friendModules = friendModules,
                 configuration = configuration,
                 symbolTable = symbolTable,
-                messageCollector = messageLogger,
             ) { modulesStructure.getModuleDescriptor(it) }
         }
     }
@@ -147,7 +133,6 @@ fun loadIrForSingleModule(
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
-    val messageLogger = configuration.messageCollector
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -156,25 +141,17 @@ fun loadIrForSingleModule(
 
     val mainModuleLib = modulesStructure.klibs.included
         ?: error("No module with ${mainModule.libPath} found")
-    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
     val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
-
-    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
-    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
     )
 
     val irLinker = JsIrLinker(
-        messageCollector = messageLogger,
-        builtIns = irBuiltIns,
+        configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(
-            partialLinkageConfig = configuration.partialLinkageConfig,
-            builtIns = irBuiltIns,
-            diagnosticReporter = irDiagnosticReporter,
-        ),
+        partialLinkageConfig = configuration.partialLinkageConfig,
+        irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )
 
@@ -202,8 +179,12 @@ fun loadIrForSingleModule(
     check(stdlibFragment != null)
 
     irLinker.init(null)
+
+    @OptIn(InternalSymbolFinderAPI::class)
+    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
+
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     val isStdlibCompilation = mainFragment == stdlibFragment
 
@@ -213,17 +194,6 @@ fun loadIrForSingleModule(
         included = mainFragment,
         fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
     )
-
-    //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
-    if (isStdlibCompilation) {
-        repeat(25) {
-            irBuiltIns.functionN(it)
-            irBuiltIns.suspendFunctionN(it)
-            irBuiltIns.kFunctionN(it)
-            irBuiltIns.kSuspendFunctionN(it)
-        }
-    }
-
 
     return IrModuleInfo(
         module = mainFragment,
@@ -241,25 +211,18 @@ private fun getIrModuleInfoForKlib(
     friendModules: Map<String, List<String>>,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    messageCollector: MessageCollector,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
-    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
-    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
         configuration.diagnosticsCollector,
         configuration.languageVersionSettings,
     )
 
     val irLinker = JsIrLinker(
-        messageCollector = messageCollector,
-        builtIns = irBuiltIns,
+        configuration = configuration,
         symbolTable = symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(
-            partialLinkageConfig = configuration.partialLinkageConfig,
-            builtIns = irBuiltIns,
-            diagnosticReporter = irDiagnosticReporter,
-        ),
+        partialLinkageConfig = configuration.partialLinkageConfig,
+        irDiagnosticReporter = irDiagnosticReporter,
         friendModules = friendModules
     )
 
@@ -272,8 +235,12 @@ private fun getIrModuleInfoForKlib(
     )
 
     irLinker.init(null)
+
+    @OptIn(InternalSymbolFinderAPI::class)
+    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
+
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
         module = moduleDependencies.included!!,
@@ -331,31 +298,6 @@ fun serializeModuleIntoKlib(
                 ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
             },
             metadataSerializer = metadataSerializer,
-            platformKlibCheckers = listOfNotNull(
-                { irDiagnosticReporter: IrDiagnosticReporter ->
-                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/JS") }
-                    JsKlibCheckers.makeChecker(
-                        irDiagnosticReporter,
-                        configuration,
-                        doCheckCalls = true,
-                        doModuleLevelChecks = true,
-                        cleanFilesIrData,
-                        moduleJsExportNames,
-                    )
-                }.takeIf {
-                    builtInsPlatform == BuiltInsPlatform.JS
-                            && !configuration.useFir // In K2, these checkers are being run within WebFir2IrPipelinePhase
-                },
-                { irDiagnosticReporter: IrDiagnosticReporter ->
-                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/Wasm") }
-                    WasmKlibCheckers.makeChecker(
-                        irDiagnosticReporter,
-                        configuration,
-                        cleanFilesIrData,
-                        moduleFragment.collectAllExportNames(),
-                    )
-                }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
-            ),
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
                 { ioFile, compiledFile ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata, empty, empty)

@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -12,12 +15,15 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
     testFixturesImplementation(project(":compiler:ir.tree"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:backend.jvm.entrypoint"))
     testFixturesImplementation(project(":compiler:backend.jvm.lower"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -133,7 +139,11 @@ projectTests {
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0, // e.g. org.jetbrains.kotlin.test.runners.codegen.FirLightTreeBlackBoxModernJdkCodegenTestGenerated.TestsWithJava21
         )
-    )
+    ) {
+        smokeTestConfig = SmokeTestConfig.Enabled(
+            autoSmokeTestPercentage = 3
+        )
+    }
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForTestCommonNewKt", generateTestsInBuildDirectory = true)
 }

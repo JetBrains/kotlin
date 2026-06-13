@@ -95,7 +95,7 @@ interface StubsBuildingContext {
 
     val declarationMapper: DeclarationMapper
 
-    fun generateNextUniqueId(prefix: String): String
+    fun generateBridgeSymbol(category: String, stubName: String): String
 
     val generatedObjCCategoriesMembers: MutableMap<ObjCClass, GeneratedObjCCategoriesMembers>
 
@@ -146,7 +146,7 @@ open class StubsBuildingContextImpl(
     val imports: Imports = stubIrContext.imports
     protected val nativeIndex: NativeIndex = stubIrContext.nativeIndex
 
-    private var theCounter = 0
+    private val knownSymbols = mutableMapOf<String, Int>()
 
     private val uniqFunctions = mutableSetOf<String>()
 
@@ -159,8 +159,13 @@ open class StubsBuildingContextImpl(
         }
     }
 
-    override fun generateNextUniqueId(prefix: String) =
-            prefix + pkgName.replace('.', '_') + theCounter++
+    override fun generateBridgeSymbol(category: String, stubName: String): String {
+        val pkgNamePart = pkgName.replace('.', '_')
+        val key = "${category}_${pkgNamePart}_${stubName}"
+        val occurrence = knownSymbols[key] ?: 0
+        knownSymbols[key] = occurrence + 1
+        return "${key}_$occurrence"
+    }
 
     override fun mirror(type: Type): TypeMirror = mirror(declarationMapper, type)
 

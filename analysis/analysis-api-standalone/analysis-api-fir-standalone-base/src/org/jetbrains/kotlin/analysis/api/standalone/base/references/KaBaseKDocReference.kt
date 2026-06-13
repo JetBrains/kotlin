@@ -1,0 +1,51 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.standalone.base.references
+
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.idea.references.KDocReference
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtImportAlias
+import org.jetbrains.kotlin.references.KotlinPsiReferenceProviderContributor
+
+@OptIn(KtImplementationDetail::class)
+internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), KaBaseReference {
+    @OptIn(KtExperimentalApi::class, KaExperimentalApi::class)
+    override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
+        return element.tryResolveSymbols()?.symbols.orEmpty()
+    }
+
+    override fun getResolvedToPsi(
+        analysisSession: KaSession,
+        referenceTargetSymbols: Collection<KaSymbol>,
+    ): Collection<PsiElement> = with(analysisSession) {
+        referenceTargetSymbols.flatMap { symbol ->
+            when (symbol) {
+                is KaSyntheticJavaPropertySymbol -> listOfNotNull(symbol.javaGetterSymbol.psi, symbol.javaSetterSymbol?.psi)
+                is KaSymbol -> getPsiDeclarations(symbol)
+            }
+        }
+    }
+
+    override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
+        return super<KaBaseReference>.isReferenceToImportAlias(alias)
+    }
+
+    class Provider : KotlinPsiReferenceProviderContributor<KDocName> {
+        override val elementClass: Class<KDocName>
+            get() = KDocName::class.java
+
+        override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KDocName>
+            get() = { listOf(KaBaseKDocReference(it)) }
+    }
+}

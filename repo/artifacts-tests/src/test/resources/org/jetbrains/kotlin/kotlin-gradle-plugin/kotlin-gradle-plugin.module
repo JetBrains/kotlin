@@ -10,7 +10,7 @@
     },
     "createdBy": {
         "gradle": {
-            "version": "9.4.1"
+            "version": "9.5.1"
         }
     },
     "variants": [
@@ -316,6 +316,39 @@
                 "org.gradle.plugin.api-version": "8.0"
             },
             "dependencies": [
+                {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
@@ -845,6 +878,39 @@
             },
             "dependencies": [
                 {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
                     "version": {
@@ -1372,6 +1438,39 @@
                 "org.gradle.plugin.api-version": "8.13"
             },
             "dependencies": [
+                {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
@@ -1901,6 +2000,39 @@
             },
             "dependencies": [
                 {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
                     "version": {
@@ -2428,6 +2560,39 @@
                 "org.gradle.plugin.api-version": "8.2"
             },
             "dependencies": [
+                {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
@@ -2957,6 +3122,39 @@
             },
             "dependencies": [
                 {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
                     "version": {
@@ -3484,6 +3682,39 @@
                 "org.gradle.plugin.api-version": "8.6"
             },
             "dependencies": [
+                {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
@@ -4013,6 +4244,39 @@
             },
             "dependencies": [
                 {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
+                {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",
                     "version": {
@@ -4396,6 +4660,39 @@
                 "org.gradle.libraryelements": "jar"
             },
             "dependencies": [
+                {
+                    "group": "com.microsoft.playwright",
+                    "module": "playwright",
+                    "version": {
+                        "requires": "1.60.0"
+                    },
+                    "excludes": [
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-reflect"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-script-runtime"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-common"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk7"
+                        },
+                        {
+                            "group": "org.jetbrains.kotlin",
+                            "module": "kotlin-stdlib-jdk8"
+                        }
+                    ]
+                },
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "fus-statistics-gradle-plugin",

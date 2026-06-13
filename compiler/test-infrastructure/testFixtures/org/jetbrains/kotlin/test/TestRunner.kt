@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectivesImpl
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -72,7 +71,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
             val thereWereCriticalExceptionsOnPreviousSteps = failuresInterceptor.allFailedExceptions.any { it.failureDisablesNextSteps }
             when (val result = runStep.run(step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
-                    require(step is TestStep.FacadeStep<*, *>)
+                    checkTestInfrastructure(step is TestStep.FacadeStep<*, *>) { "Step must be FacadeStep" }
                     onArtifactResult(result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
@@ -145,11 +144,15 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         }
 
         fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
-            return testConfiguration.failureSuppressors
-                .fold(failedExceptions) { assertions, suppressor ->
+            // Failures coming from the test infrastructure itself must never be suppressed (e.g. by IGNORE_BACKEND),
+            // otherwise an infra problem would be masked as a green test, hiding the real (unknown) test status.
+            val [infrastructureFailures, suppressableFailures] = failedExceptions.partition { it.isTestInfrastructureFailure }
+            val notSuppressedFailures = testConfiguration.failureSuppressors
+                .fold(suppressableFailures) { assertions, suppressor ->
                     if (assertions.isEmpty()) return@fold assertions
                     suppressor.suppressIfNeeded(assertions)
                 }
+            return (infrastructureFailures + notSuppressedFailures)
                 .sorted()
                 .map { it.cause }
         }
@@ -162,8 +165,8 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
 }
 
 class NonGroupingTestRunner(
-    testConfiguration: NonGroupingPhaseTestConfiguration
-) : TestRunner<TestStep.NonGroupingStep<*, *>, NonGroupingPhaseTestConfiguration>(testConfiguration) {
+    testConfiguration: NonGroupingStageTestConfiguration
+) : TestRunner<TestStep.NonGroupingStep<*, *>, NonGroupingStageTestConfiguration>(testConfiguration) {
     companion object {
         fun AnalysisHandler<*>.shouldRun(thereWasAnException: Boolean): Boolean {
             return !(doNotRunIfThereWerePreviousFailures && thereWasAnException)
@@ -172,7 +175,7 @@ class NonGroupingTestRunner(
 
     private val allRanHandlers = mutableSetOf<AnalysisHandler<*>>()
 
-    fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (NonGroupingPhaseTestConfiguration) -> Unit = {}) {
+    fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (NonGroupingStageTestConfiguration) -> Unit = {}) {
         try {
             prepareModuleStructure(testDataFileName) ?: return
             runTestPipeline()
@@ -269,7 +272,7 @@ class NonGroupingTestRunner(
             },
             onArtifactResult = { artifactsProvider.registerArtifact(module, it) },
             onHandlersResult = { step ->
-                require(step is TestStep.NonGroupingStep.HandlersStep<*>)
+                checkTestInfrastructure(step is TestStep.NonGroupingStep.HandlersStep<*>) { "Step must be HandlersStep" }
                 allRanHandlers += step.handlers
             }
         )
@@ -298,17 +301,17 @@ class NonGroupingTestRunner(
 }
 
 class GroupingTestRunner(
-    testConfiguration: GroupingPhaseTestConfiguration
-) : TestRunner<TestStep.GroupingPhaseStep<*, *>, GroupingPhaseTestConfiguration>(testConfiguration) {
+    testConfiguration: GroupingStageTestConfiguration
+) : TestRunner<TestStep.GroupingStageStep<*, *>, GroupingStageTestConfiguration>(testConfiguration) {
     init {
         testServices.register(TestModuleStructure::class, EmptyModuleStructure)
     }
 
-    fun run(nonGroupingPhaseOutputs: List<NonGroupingPhaseOutput>) {
-        testServices.register(GroupingPhaseInputsHolder::class, GroupingPhaseInputsHolder(nonGroupingPhaseOutputs))
-        val merger = GroupingPhaseInputsMerger(testServices, testConfiguration.mergerWorkers)
+    fun run(nonGroupingStageOutputs: List<NonGroupingStageOutput>) {
+        testServices.register(GroupingStageInputsHolder::class, GroupingStageInputsHolder(nonGroupingStageOutputs))
+        val merger = GroupingStageInputsMerger(testServices, testConfiguration.mergerWorkers)
         runPipelineOnSingleUnit(
-            produceStartingArtifact = { merger.merge(nonGroupingPhaseOutputs) },
+            produceStartingArtifact = { merger.merge(nonGroupingStageOutputs) },
             shouldRunStep = { _, _ -> true },
             runStep = { step, input, thereWereCriticalExceptionsOnPreviousSteps ->
                 step.hackyProcess(input, thereWereCriticalExceptionsOnPreviousSteps)
@@ -327,16 +330,16 @@ class GroupingTestRunner(
             get() = emptyList()
     }
 
-    private fun TestStep.GroupingPhaseStep<*, *>.hackyProcess(
+    private fun TestStep.GroupingStageStep<*, *>.hackyProcess(
         inputArtifact: ResultingArtifact<*>,
         thereWereExceptionsOnPreviousSteps: Boolean,
     ): TestStep.StepResult<*> {
         @Suppress("UNCHECKED_CAST")
-        return (this as TestStep.GroupingPhaseStep<GroupingPhaseInputArtifact, *>)
-            .process(inputArtifact as ResultingArtifact<GroupingPhaseInputArtifact>, thereWereExceptionsOnPreviousSteps)
+        return (this as TestStep.GroupingStageStep<GroupingStageInputArtifact, *>)
+            .process(inputArtifact as ResultingArtifact<GroupingStageInputArtifact>, thereWereExceptionsOnPreviousSteps)
     }
 
-    private fun <I : ResultingArtifact<I>> TestStep.GroupingPhaseStep<I, *>.process(
+    private fun <I : ResultingArtifact<I>> TestStep.GroupingStageStep<I, *>.process(
         artifact: ResultingArtifact<I>,
         thereWereExceptionsOnPreviousSteps: Boolean,
     ): TestStep.StepResult<*> {

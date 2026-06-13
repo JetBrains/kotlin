@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
-object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifact, JsSerializedKlibPipelineArtifact>(
-    name = "JsKlibSerializationPipelinePhase",
+object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, WebSerializedKlibPipelineArtifact>(
+    name = "WebKlibSerializationPipelinePhase",
 ) {
-    override fun executePhase(input: JsFir2IrPipelineArtifact): JsSerializedKlibPipelineArtifact {
-        val (fir2IrResult, firResult, configuration) = input
+    override fun executePhase(input: WebFir2IrPipelineArtifact): WebSerializedKlibPipelineArtifact {
+        (val fir2IrResult = result, val firResult = frontendOutput, val configuration) = input
         val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
             configuration.diagnosticsCollector,
             configuration.languageVersionSettings
@@ -60,7 +60,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<JsFir2IrPipelineArtifac
             configuration.perfManager?.registerKlibElementStats(stats)
         }
 
-        return JsSerializedKlibPipelineArtifact(
+        return WebSerializedKlibPipelineArtifact(
             outputKlibPath,
             configuration
         )

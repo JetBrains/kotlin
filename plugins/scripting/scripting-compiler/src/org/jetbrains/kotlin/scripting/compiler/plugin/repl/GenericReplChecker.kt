@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -43,6 +44,7 @@ open class GenericReplChecker(
     internal val environment = run {
         compilerConfiguration.apply {
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
+            @OptIn(MessageCollectorAccess::class) // write access
             this.messageCollector = messageCollector
 
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {

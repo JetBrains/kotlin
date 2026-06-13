@@ -60,7 +60,6 @@ public class AsmTypes {
 
     public static final Type K_TYPE = reflect("KType");
     public static final Type K_TYPE_PROJECTION = reflect("KTypeProjection");
-    public static final Type K_TYPE_PROJECTION_COMPANION = reflect("KTypeProjection$Companion");
     public static final Type K_TYPE_PARAMETER = reflect("KTypeParameter");
     public static final Type K_VARIANCE = reflect("KVariance");
 

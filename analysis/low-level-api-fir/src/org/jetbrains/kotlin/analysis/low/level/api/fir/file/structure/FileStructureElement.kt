@@ -31,13 +31,18 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -74,6 +79,49 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
     }
 
     companion object {
+        context(session: FirSession)
+        private fun findIntMember(name: Name): FirNamedFunctionSymbol? {
+            return session.builtinTypes.intType.toRegularClassSymbol(session)?.fir?.declarations?.singleOrNull {
+                it is FirNamedFunction && it.name == name
+            }?.symbol as? FirNamedFunctionSymbol
+        }
+
+        /**
+         * Int literals desugars their unary operators right away, so the mapper has to restore them manually.
+         *
+         * Details: [FirElementsRecorder.visitLiteralExpression], KT-70774.
+         */
+        context(session: FirSession)
+        private fun fakeCallForIntLiteralWithUnaryExpression(
+            expression: KtPrefixExpression,
+            mapping: Map<KtElement, FirElement>,
+        ): FirElement? {
+            val operatorExpression = expression.operationReference
+            val operatorName = when (operatorExpression.getReferencedNameElementType()) {
+                KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
+                KtTokens.MINUS -> OperatorNameConventions.UNARY_MINUS
+                else -> null
+            } ?: return null
+
+            val baseExpression = expression.baseExpression?.unwrapParenthesesLabelsAndAnnotations() as? KtElement ?: return null
+            val firReceiver = getFir(baseExpression, session, mapping) as? FirExpression ?: return null
+            val operatorSymbol = findIntMember(operatorName) ?: return null
+            return buildFunctionCall {
+                source = expression.toKtPsiSourceElement()
+                origin = FirFunctionCallOrigin.Operator
+                calleeReference = buildResolvedNamedReference {
+                    source = operatorExpression.toKtPsiSourceElement()
+                    name = operatorName
+                    resolvedSymbol = operatorSymbol
+                }
+
+                dispatchReceiver = firReceiver
+                explicitReceiver = firReceiver
+
+                coneTypeOrNull = firReceiver.resolvedType
+            }
+        }
+
         private fun checkStringLiteralFolderExpression(
             element: KtElement,
             session: FirSession,
@@ -174,17 +222,37 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
                 // We are still referring to the same element with possible type parameter/name qualification/nullability,
                 // hence it is always correct to return a corresponding element if present
                 if (current is KtElement) mapping[current]?.let { return it }
-                if (current is KtCallExpression) fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
-                    return it
+                when (current) {
+                    is KtCallExpression -> {
+                        fakeCallToBuiltInSuspendOrNull(current, mapping, session)?.let {
+                            return it
+                        }
+                    }
+
+                    is KtPrefixExpression -> {
+                        context(session) {
+                            fakeCallForIntLiteralWithUnaryExpression(
+                                expression = current,
+                                mapping = mapping,
+                            )?.let { return it }
+                        }
+                    }
                 }
+
                 current = current.parent
             }
 
             // Here current is the lowest ancestor that has different corresponding text
             return when (current) {
-                // Constants with unary operation (i.e., +1 or -1) are saved as a leaf element of FIR tree
-                is KtPrefixExpression,
-                    // There is no separate element for annotation construction call
+                // Fake literals where applicable
+                is KtPrefixExpression -> context(session) {
+                    fakeCallForIntLiteralWithUnaryExpression(
+                        expression = current,
+                        mapping = mapping,
+                    )
+                }
+
+                // There is no separate element for annotation construction call
                 is KtAnnotationEntry,
                     // We replace a source for selector with the whole expression
                 is KtSafeQualifiedExpression,
@@ -378,8 +446,8 @@ internal abstract class FirElementContainerRecorder(
 internal val FirDeclaration.isPartOfClassStructureElement: Boolean
     get() = when (source?.kind) {
         KtFakeSourceElementKind.ImplicitConstructor,
-        KtFakeSourceElementKind.DataClassGeneratedMembers,
-        KtFakeSourceElementKind.EnumGeneratedDeclaration,
+        is KtFakeSourceElementKind.DataClassGeneratedMembers,
+        is KtFakeSourceElementKind.EnumGeneratedDeclaration,
         KtFakeSourceElementKind.ClassDelegationField,
         KtFakeSourceElementKind.ReplEvalFunction,
             -> true

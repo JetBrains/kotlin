@@ -65,7 +65,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
             else -> error("Unexpected element: $declaration")
         }
 
-        for ((symbolGetter, name) in symbolSuppliers) {
+        for ([symbolGetter, name] in symbolSuppliers) {
             analyze(mainModule.ktModule) {
                 val symbol = when (declaration) {
                     is KtDeclaration -> declaration.symbol
@@ -92,7 +92,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         val targetSymbol = symbolSupplier(rootSymbol) ?: return
         testServices.assertions.assertEqualsToTestOutputFile(beforeRendered, extension = ".${name}.before.txt")
         val deprecationStatus = buildString {
-            appendLine("Declaration deprecation: " + targetSymbol.deprecationStatus)
+            appendLine("Declaration deprecation: " + targetSymbol.deprecation)
         }
         testServices.assertions.assertEqualsToTestOutputFile(
             renderFirElement(rootSymbolFir.fir),

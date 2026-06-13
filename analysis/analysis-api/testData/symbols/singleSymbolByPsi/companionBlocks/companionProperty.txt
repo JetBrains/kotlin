@@ -3,10 +3,10 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -26,16 +26,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /static1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -52,10 +50,10 @@ KaKotlinPropertySymbol:
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -74,7 +72,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
       getContainingJvmClassName: CompanionPropertyKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     returnType: KaUsualClassType:
       annotations: []
@@ -85,7 +83,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -94,7 +92,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: true
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: true
   isExternal: false
@@ -110,10 +108,10 @@ KaKotlinPropertySymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -132,7 +130,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
     getContainingJvmClassName: CompanionPropertyKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -144,7 +142,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(companionProperty.kt)
   getContainingJvmClassName: CompanionPropertyKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getStatic1
   javaSetterName: null
   isInline: false

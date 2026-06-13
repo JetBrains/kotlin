@@ -81,6 +81,10 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
      * so it will be returned as is ([FirPackageDirective][org.jetbrains.kotlin.fir.FirPackageDirective]),
      * with the [RAW_FIR][FirResolvePhase.RAW_FIR] phase.
      *
+     * Note 2: the result element doesn't have to belong to a [FirFile]. In some exceptional cases,
+     * a new synthetic [FirElement] could be created to mitigate some compiler issues.
+     * For more details, see [KtToFirMapping] and [FirElementsRecorder].
+     *
      * @return associated [FirElement] in final resolved state if it exists.
      *
      * @see getFirForElementInsideAnnotations

@@ -63,10 +63,6 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
  * @property printAnnotationsWithSourceRetention If annotations with SOURCE retention should be printed.
- * @property printAnnotationsInFakeOverrides If annotations in fake override functions/properties should be printed.
- *   Note: The main goal of introducing this flag is an attempt to work around the problem with incorrect offsets
- *   in annotations, which should be finally fixed in KT-74938.
- *   TODO: Drop this flag in KT-74938.
  * @property printDispatchReceiverTypeInFakeOverrides If the dispatch receiver type should be printed.
  *   Otherwise, it will be substituted with some fixed placeholder value.
  * @property printParameterNamesInOverriddenSymbols If names of value parameters should be printed in overridden function symbols.
@@ -93,7 +89,6 @@ data class DumpIrTreeOptions(
     val printFilePath: Boolean = true,
     val printExpectDeclarations: Boolean = true,
     val printAnnotationsWithSourceRetention: Boolean = true,
-    val printAnnotationsInFakeOverrides: Boolean = true,
     val printDispatchReceiverTypeInFakeOverrides: Boolean = true,
     val printParameterNamesInOverriddenSymbols: Boolean = true,
     val printFakeOverrideSymbolsInPropertiesOfAnonymousClasses: Boolean = true,
@@ -259,10 +254,9 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             declaration.typeParameters.dumpElements()
             declaration.parameters.dumpElements()
-            if (options.printAnnotationsInFakeOverrides || !declaration.isFakeOverride) {
-                dumpAnnotations(declaration)
-            }
+            dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpAsDeclaration("correspondingProperty")
+            declaration.companionExtensionClass?.dumpAsReference("companionExtension")
             declaration.overriddenSymbols.dumpFakeOverrideSymbols()
             declaration.body?.accept(this, "")
         }
@@ -287,9 +281,7 @@ class DumpIrTreeVisitor(
     override fun visitProperty(declaration: IrProperty, data: String) {
         if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
-            if (options.printAnnotationsInFakeOverrides || !declaration.isFakeOverride) {
-                dumpAnnotations(declaration)
-            }
+            dumpAnnotations(declaration)
             if (options.printFakeOverrideSymbolsInPropertiesOfAnonymousClasses ||
                 !declaration.parent.let { it is IrClass && it.name == SpecialNames.NO_NAME_PROVIDED }
             ) declaration.overriddenSymbols.dumpFakeOverrideSymbols()
@@ -467,7 +459,7 @@ class DumpIrTreeVisitor(
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.receiver.accept(this, "receiver")
-            for ((i, arg) in expression.arguments.withIndex()) {
+            for ([i, arg] in expression.arguments.withIndex()) {
                 arg.accept(this, i.toString())
             }
         }
@@ -475,7 +467,7 @@ class DumpIrTreeVisitor(
 
     override fun visitConstantArray(expression: IrConstantArray, data: String) {
         expression.dumpLabeledElementWith(data) {
-            for ((i, value) in expression.elements.withIndex()) {
+            for ([i, value] in expression.elements.withIndex()) {
                 value.accept(this, i.toString())
             }
         }
@@ -483,7 +475,7 @@ class DumpIrTreeVisitor(
 
     override fun visitConstantObject(expression: IrConstantObject, data: String) {
         expression.dumpLabeledElementWith(data) {
-            for ((index, argument) in expression.valueArguments.withIndex()) {
+            for ([index, argument] in expression.valueArguments.withIndex()) {
                 argument.accept(this, expression.constructor.owner.parameters[index].name.toString())
             }
         }

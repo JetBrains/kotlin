@@ -1,3 +1,4 @@
+warning: the argument '-Xannotation-default-target=first-only' disables a stable language feature for the current language version 2.4. Future support for this mode is not guaranteed.
 compiler/testData/cli/jvm/annotationDefaultTarget.kt:7:8: warning: 'val x: String' is deprecated. Please don't use this bad callable.
     my.x
        ^

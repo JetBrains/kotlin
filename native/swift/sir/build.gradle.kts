@@ -1,5 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     kotlin("jvm")
@@ -34,5 +35,5 @@ javadocJar()
 
 tasks.test.configure {
     @OptIn(TemporaryTestFederationApi::class)
-    isSmokeTest = true
+    smokeTestConfig = SmokeTestConfig.RunAllTests
 }

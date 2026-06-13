@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
+@K1Deprecation
 interface LocalRedeclarationChecker {
     fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor)
 
@@ -34,6 +36,7 @@ interface LocalRedeclarationChecker {
     }
 }
 
+@K1Deprecation
 abstract class LexicalScopeStorage(
     parent: HierarchicalScope,
     val redeclarationChecker: LocalRedeclarationChecker

@@ -40,6 +40,7 @@ object BinaryOptions : BinaryOptionRegistry() {
     val objcExportErrorOnNameCollisions by booleanOption()
 
     val objcExportEntryPointsPath by stringOption()
+    val objcExportExpandEntryPoints by booleanOption()
 
     val objcExportExplicitMethodFamily by booleanOption()
 
@@ -121,6 +122,17 @@ object BinaryOptions : BinaryOptionRegistry() {
      * Generate a macOS Catalyst binary for the given architecture
      */
     val macabi by booleanOption()
+
+    val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
+
+    val perFileCacheForStdlib by booleanOption()
+
+    /**
+     * When `true`, llvm postprocessing will be done in Kotlin compiler;
+     * when `false`, new custom llvm C++ passes will be used.
+     * This option exists as a workaround, if new passes introduce regressions.
+     */
+    val runLLVMPassesInCompiler by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

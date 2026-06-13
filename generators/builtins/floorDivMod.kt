@@ -40,7 +40,8 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateFloorDiv(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val returnType = getOperatorReturnType(thisKind, otherKind)
         val returnTypeName = returnType.capitalized
-        out.printDoc(BasePrimitivesGenerator.binaryOperatorDoc("floorDiv", thisKind, otherKind), "")
+        val baseDoc = BasePrimitivesGenerator.binaryOperatorDoc("floorDiv", thisKind, otherKind)
+        out.printDoc("$baseDoc\n@sample samples.misc.Builtins.floorDiv", "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         out.println("@kotlin.internal.IntrinsicConstEvaluation")
@@ -66,7 +67,8 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val operationType = getOperatorReturnType(thisKind, otherKind)
         val returnType = otherKind
-        out.printDoc(BasePrimitivesGenerator.binaryOperatorDoc("mod", thisKind, otherKind),"")
+        val baseDoc = BasePrimitivesGenerator.binaryOperatorDoc("mod", thisKind, otherKind)
+        out.printDoc("$baseDoc\n@sample samples.misc.Builtins.mod", "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         out.println("@kotlin.internal.IntrinsicConstEvaluation")
@@ -92,7 +94,8 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateFpMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val operationType = getOperatorReturnType(thisKind, otherKind)
-        out.printDoc(BasePrimitivesGenerator.binaryOperatorDoc("mod", thisKind, otherKind), "")
+        val baseDoc = BasePrimitivesGenerator.binaryOperatorDoc("mod", thisKind, otherKind)
+        out.printDoc("$baseDoc\n@sample samples.misc.Builtins.modFloat", "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         out.println("@kotlin.internal.IntrinsicConstEvaluation")

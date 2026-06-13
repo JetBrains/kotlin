@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -20,12 +21,15 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
+@K1Deprecation
 fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
     (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME)
 
+@K1Deprecation
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean =
     findJvmFieldAnnotation() != null
 
+@K1Deprecation
 fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode): Boolean {
     val directMember = DescriptorUtils.getDirectMember(this)
 
@@ -41,6 +45,7 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 
+@K1Deprecation
 fun CallableMemberDescriptor.hasObsoleteJvmDefaultAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
@@ -48,7 +53,9 @@ private fun Annotated.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
         ?: (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
 
+@K1Deprecation
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean =
     findJvmSyntheticAnnotation() != null
 
+@K1Deprecation
 fun ClassDescriptor.isJvmRecord(): Boolean = annotations.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME)

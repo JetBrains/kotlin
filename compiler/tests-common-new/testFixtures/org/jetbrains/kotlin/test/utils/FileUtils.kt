@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 fun File.withExtension(extension: String): File {
@@ -33,7 +34,7 @@ fun File.removeDirectiveFromFile(directive: Directive) {
     val directiveRegexp = "^// $directiveName(:.*)?$(\n)?".toRegex(RegexOption.MULTILINE)
     val text = readText()
     val directiveRange = directiveRegexp.find(text)?.range
-        ?: error("Directive $directiveName was not found in $this")
+        ?: testInfraError("Directive $directiveName was not found in $this")
     val textWithoutDirective = text.removeRange(directiveRange)
     writeText(textWithoutDirective)
 }

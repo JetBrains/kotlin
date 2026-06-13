@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
 
+@K1Deprecation
 class ClassicTypeSystemContextForCS(
     override val builtIns: KotlinBuiltIns,
     val kotlinTypeRefiner: KotlinTypeRefiner
@@ -120,6 +122,7 @@ private inline fun Any?.errorMessage(): String {
 }
 
 @Suppress("FunctionName")
+@K1Deprecation
 fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
     builtIns: KotlinBuiltIns,

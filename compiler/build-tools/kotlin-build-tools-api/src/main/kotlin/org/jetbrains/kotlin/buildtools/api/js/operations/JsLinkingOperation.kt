@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import java.nio.file.Path
@@ -46,7 +47,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
     public operator fun <V> get(key: Option<V>): V
 
     @OptIn(ExperimentalCompilerArgument::class)
-    public val compilerArguments: JsArguments
+    public val compilerArguments: JsCompilerLinkingArguments
 
     /**
      * A builder for configuring and instantiating the [JsLinkingOperation].
@@ -56,7 +57,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
          * Kotlin compiler configurable options for JS linking.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public val compilerArguments: JsArguments.Builder
+        public override val compilerArguments: JsCompilerLinkingArguments.Builder
 
         /**
          * The input klib file.
@@ -84,7 +85,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
         /**
          * Creates an immutable instance of [JsLinkingOperation] based on the configuration of this builder.
          */
-        public fun build(): JsLinkingOperation
+        public override fun build(): JsLinkingOperation
     }
 
     /**
@@ -95,5 +96,5 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
     /**
      * An option for configuring a [JsLinkingOperation].
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(id: String, public val availableSinceVersion: KotlinReleaseVersion) : BaseOption<V>(id)
 }

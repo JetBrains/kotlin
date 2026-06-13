@@ -5,6 +5,8 @@ implicit values:
     type = C
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
+    label = foo
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 3
@@ -87,4 +89,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 11
-

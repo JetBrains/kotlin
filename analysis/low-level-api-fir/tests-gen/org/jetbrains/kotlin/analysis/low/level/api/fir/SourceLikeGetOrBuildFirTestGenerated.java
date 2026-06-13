@@ -766,6 +766,18 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("assignOnObject.kt")
+    public void testAssignOnObject() {
+      run("assignOnObject.kt");
+    }
+
+    @Test
+    @TestMetadata("assignOnObject_lhs.kt")
+    public void testAssignOnObject_lhs() {
+      run("assignOnObject_lhs.kt");
+    }
+
+    @Test
     @TestMetadata("callArgument.kt")
     public void testCallArgument() {
       run("callArgument.kt");
@@ -1243,6 +1255,144 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("syntheticResultDeclarationInitializer.kts")
     public void testSyntheticResultDeclarationInitializer() {
       run("syntheticResultDeclarationInitializer.kts");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusIntLiteral.kt")
+    public void testUnaryMinusIntLiteral() {
+      run("unaryMinusIntLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusIntLiteral_lhs.kt")
+    public void testUnaryMinusIntLiteral_lhs() {
+      run("unaryMinusIntLiteral_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusIntLiteral_rhs.kt")
+    public void testUnaryMinusIntLiteral_rhs() {
+      run("unaryMinusIntLiteral_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusLongLiteral.kt")
+    public void testUnaryMinusLongLiteral() {
+      run("unaryMinusLongLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusLongLiteral_lhs.kt")
+    public void testUnaryMinusLongLiteral_lhs() {
+      run("unaryMinusLongLiteral_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusLongLiteral_rhs.kt")
+    public void testUnaryMinusLongLiteral_rhs() {
+      run("unaryMinusLongLiteral_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusStringLiteral.kt")
+    public void testUnaryMinusStringLiteral() {
+      run("unaryMinusStringLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusStringLiteral_lhs.kt")
+    public void testUnaryMinusStringLiteral_lhs() {
+      run("unaryMinusStringLiteral_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryMinusStringLiteral_rhs.kt")
+    public void testUnaryMinusStringLiteral_rhs() {
+      run("unaryMinusStringLiteral_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexIntLiteral.kt")
+    public void testUnaryOnComplexIntLiteral() {
+      run("unaryOnComplexIntLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexIntLiteral2.kt")
+    public void testUnaryOnComplexIntLiteral2() {
+      run("unaryOnComplexIntLiteral2.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexIntLiteral3.kt")
+    public void testUnaryOnComplexIntLiteral3() {
+      run("unaryOnComplexIntLiteral3.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexIntLiteral4.kt")
+    public void testUnaryOnComplexIntLiteral4() {
+      run("unaryOnComplexIntLiteral4.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexLongLiteral.kt")
+    public void testUnaryOnComplexLongLiteral() {
+      run("unaryOnComplexLongLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexLongLiteral2.kt")
+    public void testUnaryOnComplexLongLiteral2() {
+      run("unaryOnComplexLongLiteral2.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexLongLiteral3.kt")
+    public void testUnaryOnComplexLongLiteral3() {
+      run("unaryOnComplexLongLiteral3.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnComplexLongLiteral4.kt")
+    public void testUnaryOnComplexLongLiteral4() {
+      run("unaryOnComplexLongLiteral4.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusIntLiteral.kt")
+    public void testUnaryPlusIntLiteral() {
+      run("unaryPlusIntLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusIntLiteral_lhs.kt")
+    public void testUnaryPlusIntLiteral_lhs() {
+      run("unaryPlusIntLiteral_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusIntLiteral_rhs.kt")
+    public void testUnaryPlusIntLiteral_rhs() {
+      run("unaryPlusIntLiteral_rhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusStringLiteral.kt")
+    public void testUnaryPlusStringLiteral() {
+      run("unaryPlusStringLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusStringLiteral_lhs.kt")
+    public void testUnaryPlusStringLiteral_lhs() {
+      run("unaryPlusStringLiteral_lhs.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryPlusStringLiteral_rhs.kt")
+    public void testUnaryPlusStringLiteral_rhs() {
+      run("unaryPlusStringLiteral_rhs.kt");
     }
 
     @Test
@@ -2063,6 +2213,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     @TestMetadata("tryExpressionScript.kts")
     public void testTryExpressionScript() {
       run("tryExpressionScript.kts");
+    }
+
+    @Test
+    @TestMetadata("typeAliasAsConstructor.kt")
+    public void testTypeAliasAsConstructor() {
+      run("typeAliasAsConstructor.kt");
     }
 
     @Test

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
+@K1Deprecation
 class LazyResolveBasedCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
     override fun recordMethod(member: JavaMember, descriptor: SimpleFunctionDescriptor) {

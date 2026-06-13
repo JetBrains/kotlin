@@ -29,18 +29,9 @@ public fun FunctionalInterfaceWithSuspendFunction_emit(self: kotlin.native.inter
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = __self.emit()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        __self.emit()
+    }
 }
 
 @ExportedBridge("__root___Foo_init_allocate")
@@ -131,18 +122,9 @@ public fun __root___alwaysFails(continuation: kotlin.native.internal.NativePtr, 
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = alwaysFails()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        alwaysFails()
+    }
 }
 
 @ExportedBridge("__root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__")
@@ -224,18 +206,9 @@ public fun __root___produce_function_typealias(continuation: kotlin.native.inter
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = produce_function_typealias()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        produce_function_typealias()
+    }
 }
 
 @ExportedBridge("__root___produce_suspend_function")
@@ -255,18 +228,9 @@ public fun __root___produce_suspend_function(continuation: kotlin.native.interna
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = produce_suspend_function()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        produce_suspend_function()
+    }
 }
 
 @ExportedBridge("__root___produce_suspend_function_typealias")
@@ -286,18 +250,9 @@ public fun __root___produce_suspend_function_typealias(continuation: kotlin.nati
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = produce_suspend_function_typealias()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        produce_suspend_function_typealias()
+    }
 }
 
 @ExportedBridge("__root___retunsListOfSuspend")
@@ -317,18 +272,9 @@ public fun __root___retunsListOfSuspend(continuation: kotlin.native.internal.Nat
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = retunsListOfSuspend()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        retunsListOfSuspend()
+    }
 }
 
 @ExportedBridge("__root___returnSuspendGeneric")
@@ -348,18 +294,9 @@ public fun __root___returnSuspendGeneric(continuation: kotlin.native.internal.Na
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = returnSuspendGeneric<kotlin.Any>()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        returnSuspendGeneric<kotlin.Any>()
+    }
 }
 
 @ExportedBridge("__root___returnSuspendUnit")
@@ -385,18 +322,9 @@ public fun __root___returnUnit(continuation: kotlin.native.internal.NativePtr, e
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = returnUnit()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        returnUnit()
+    }
 }
 
 @ExportedBridge("__root___returnsList")
@@ -416,18 +344,9 @@ public fun __root___returnsList(continuation: kotlin.native.internal.NativePtr, 
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = returnsList()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        returnsList()
+    }
 }
 
 @ExportedBridge("__root___returnsListOfSuspendNullables")
@@ -447,18 +366,9 @@ public fun __root___returnsListOfSuspendNullables(continuation: kotlin.native.in
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = returnsListOfSuspendNullables()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        returnsListOfSuspendNullables()
+    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
@@ -480,18 +390,9 @@ public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments_
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Int, Int>).invoke(___1)
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Int, Int>).invoke(___1)
+    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
@@ -521,18 +422,9 @@ public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments_
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Double, Int>).invoke(___1)
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Double, Int>).invoke(___1)
+    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
@@ -554,18 +446,9 @@ public fun main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments_
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Float, Long>).invoke(___1)
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Float, Long>).invoke(___1)
+    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
@@ -602,18 +485,9 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
         }
     }
     val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    CoroutineScope(__cancellation + Dispatchers.Default).kotlinx_coroutines_launch(start = CoroutineStart.UNDISPATCHED) {
-        try {
-            val _result = (__pointerToBlock as kotlin.coroutines.SuspendFunction0<Unit>).invoke()
-            __continuation(_result)
-        } catch (error: CancellationException) {
-            __cancellation.cancel()
-            __exception(null)
-            throw error
-        } catch (error: Throwable) {
-            __exception(error)
-        }
-    }.alsoCancel(__cancellation)
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction0<Unit>).invoke()
+    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")

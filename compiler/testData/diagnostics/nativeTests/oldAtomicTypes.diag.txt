@@ -33,3 +33,5 @@
 /oldAtomicTypes.kt:35:12: warning: Native-specific atomic type 'kotlin.concurrent.AtomicLongArray' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicLongArray' instead.
 
 /oldAtomicTypes.kt:35:12: error: This declaration needs opt-in. Its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+
+/oldAtomicTypes.kt:38:13: warning: Native-specific atomic type 'kotlin.concurrent.AtomicInt' is going to be deprecated soon. Consider using 'kotlin.concurrent.atomics.AtomicInt' instead.

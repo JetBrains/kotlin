@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.i
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,41 +23,15 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal class ClassifierExplorer(
-    private val builtIns: IrBuiltIns,
+    private val anyClass: IrClassSymbol,
     private val stubGenerator: MissingDeclarationStubGenerator,
 ) {
-    private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
-        setOf(
-            builtIns.stringClass, // kotlin.String
-            builtIns.kClassClass // kotlin.reflect.KClass
-        )
-    }
-
-    @OptIn(InternalSymbolFinderAPI::class)
-    private val permittedAnnotationParameterSymbols: Set<IrClassSymbol> by lazy {
-        permittedAnnotationArrayParameterSymbols + setOf(
-            builtIns.booleanClass, builtIns.booleanArray,
-            builtIns.charClass, builtIns.charArray,
-            builtIns.floatClass, builtIns.floatArray,
-            builtIns.doubleClass, builtIns.doubleArray,
-
-            builtIns.byteClass, builtIns.byteArray,
-            builtIns.shortClass, builtIns.shortArray,
-            builtIns.intClass, builtIns.intArray,
-            builtIns.longClass, builtIns.longArray,
-
-            builtIns.ubyteClass, builtIns.ubyteArray,
-            builtIns.ushortClass, builtIns.ushortArray,
-            builtIns.uintClass, builtIns.uintArray,
-            builtIns.ulongClass, builtIns.ulongArray,
-        ).filterNotNull()
-    }
-
-    private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
+    private val stdlibModule by lazy { PLModule.determineModuleFor(anyClass.owner) }
 
     fun exploreType(type: IrType): Unusable? = type.exploreType(visitedSymbols = hashSetOf()).asUnusable()
     fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()).asUnusable()
@@ -183,12 +156,15 @@ internal class ClassifierExplorer(
                 parameterClassSymbol.exploreSymbol(visitedSymbols).asUnusable()?.let { return it }
             }
 
-            parameterClass.isEnumClass || parameterClassSymbol in permittedAnnotationParameterSymbols -> return null // Permitted.
+            parameterClass.isEnumClass || parameterType.isPrimitiveType() || parameterType.isArray() || parameterType.isPrimitiveArray() ||
+                    parameterType.isUnsignedType() || parameterType.isUnsignedArray() ||
+                    parameterType.isString() || parameterType.isKClass() -> return null // Permitted.
 
-            parameterClassSymbol == builtIns.arrayClass -> {
+            parameterType.isArray() -> {
                 // Additional checks for array element type.
                 for (argument in parameterType.arguments) {
-                    val argumentClassSymbol = (argument.typeOrNull?.asSimpleType() ?: continue).classifier as IrClassSymbol
+                    val argumentType = argument.typeOrNull?.asSimpleType() ?: continue
+                    val argumentClassSymbol = argumentType.classifier as IrClassSymbol
                     val argumentClass = argumentClassSymbol.owner
 
                     when {
@@ -197,7 +173,7 @@ internal class ClassifierExplorer(
                             argumentClassSymbol.exploreSymbol(visitedSymbols).asUnusable()?.let { return it }
                         }
 
-                        argumentClass.isEnumClass || argumentClassSymbol in permittedAnnotationArrayParameterSymbols -> continue // Permitted.
+                        argumentClass.isEnumClass || argumentType.isString() || argumentType.isKClass() -> continue // Permitted.
 
                         else -> return AnnotationWithUnacceptableParameter(annotationClass.symbol, argumentClassSymbol)
                     }
@@ -216,12 +192,12 @@ internal class ClassifierExplorer(
             // External interface can inherit from external interfaces and external class, but not regular ones.
             val illegalSuperClassSymbols = if (isExternal)
                 superTypeSymbols.filter { superTypeSymbol ->
-                    superTypeSymbol != builtIns.anyClass && superTypeSymbol.owner.let { superClass ->
+                    !superTypeSymbol.owner.isAny() && superTypeSymbol.owner.let { superClass ->
                         !superClass.isExternal || !(superClass.isInterface || superClass.isClass)
                     }
                 }
             else
-                superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
+                superTypeSymbols.filter { !it.owner.isAny() && !it.owner.isInterface }
 
             if (illegalSuperClassSymbols.isNotEmpty())
                 return InvalidInheritance(symbol, illegalSuperClassSymbols)
@@ -234,17 +210,16 @@ internal class ClassifierExplorer(
             }
 
             // Super class can not be final or of illegal kind.
-            if (superClassSymbol != builtIns.anyClass
-                && superClassSymbol != builtIns.enumClass // Enum class can't be explicitly inherited, only valid enum class can inherit it.
+            val superClass = superClassSymbol.owner
+            if (!superClass.isAny()
+                && superClass.classId != StandardClassIds.Enum // Enum class can't be explicitly inherited, only valid enum class can inherit it.
             ) {
-                val superClass = superClassSymbol.owner
-
                 // Note: Super-interfaces are already filtered out above.
                 val isInvalidInheritance = when (kind) {
                     ClassKind.INTERFACE,
                     ClassKind.ENUM_CLASS,
                     ClassKind.ANNOTATION_CLASS -> true
-                    else -> isValue || when (superClass.kind) {
+                    else -> isBasicValueClass || when (superClass.kind) {
                         ClassKind.ENUM_CLASS -> kind != ClassKind.ENUM_ENTRY
                         ClassKind.CLASS -> superClass.modality == Modality.FINAL
                         else -> true

@@ -180,6 +180,44 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("embedAndSign builds only requested iOS simulator framework")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun shouldBuildOnlyRequestedIosSimulatorFrameworkForEmbedAndSign(
+        gradleVersion: GradleVersion,
+    ) {
+
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+        ) {
+            fun environmentVariables(configuration: String) = EnvironmentalVariables(
+                "CONFIGURATION" to configuration,
+                "SDK_NAME" to "iphonesimulator",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
+                "BUILT_PRODUCTS_DIR" to iosBuildProductsDir().absolutePathString(),
+            )
+
+            build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables("Debug")) {
+                assertTasksExecuted(
+                    ":shared:linkDebugFrameworkIosSimulatorArm64",
+                    ":shared:assembleDebugAppleFrameworkForXcodeIosSimulatorArm64",
+                )
+                assertTasksAreNotInTaskGraph(":shared:linkReleaseFrameworkIosSimulatorArm64")
+            }
+
+            build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables("Release")) {
+                assertTasksExecuted(
+                    ":shared:linkReleaseFrameworkIosSimulatorArm64",
+                    ":shared:assembleReleaseAppleFrameworkForXcodeIosSimulatorArm64",
+                )
+                assertTasksAreNotInTaskGraph(":shared:linkDebugFrameworkIosSimulatorArm64")
+            }
+        }
+    }
+
     @DisplayName("embedAndSign task does not copy dSYM to Xcode frameworks folder")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest

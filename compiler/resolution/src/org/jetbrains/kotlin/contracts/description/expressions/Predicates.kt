@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.description.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class IsInstancePredicate(val arg: VariableReference, val type: KotlinType, val isNegated: Boolean) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitIsInstancePredicate(this, data)
@@ -27,6 +29,7 @@ class IsInstancePredicate(val arg: VariableReference, val type: KotlinType, val 
     fun negated(): IsInstancePredicate = IsInstancePredicate(arg, type, isNegated.not())
 }
 
+@K1Deprecation
 class IsNullPredicate(val arg: VariableReference, val isNegated: Boolean) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitIsNullPredicate(this, data)

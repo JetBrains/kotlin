@@ -5,19 +5,35 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import kotlin.test.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertNotNull
 
 class GradleNodeModuleBuilderTest {
 
-    // Gson (used in fromSrcPackageJson) deserialize json to PackageJson no matter on nullability and default values
-    //  Check that in case where there is no dependencies fields, we don't get nullable fields, that declared as non-nullable
+    /**
+     * Verify Gson (used in [fromSrcPackageJson]) deserializes JSON to [PackageJson] no matter on nullability and default values.
+     *
+     * Check that if there are no dependencies, we don't get nullable fields that are declared as non-nullable.
+     */
     @Test
-    fun validPackageJsonWithoutDependencies() {
-        val packageJson = fromSrcPackageJson(
-            File("libraries/tools/kotlin-gradle-plugin/src/test/resources/org/jetbrains/kotlin/gradle/targets/js/npm/GradleNodeModuleBuilderTest/package.json")
+    fun validPackageJsonWithoutDependencies(
+        @TempDir
+        tempDir: File,
+    ) {
+        val packageJsonFile = tempDir.resolve("package.json")
+
+        packageJsonFile.writeText(
+            """
+            {
+              "name": "npm",
+              "version": "1.0.0"
+            }
+            """.trimIndent()
         )
+
+        val packageJson = fromSrcPackageJson(packageJsonFile)
         assertNotNull(packageJson, "package.json should be deserialized")
 
         with(packageJson) {

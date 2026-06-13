@@ -66,7 +66,12 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
 
     @Override
     public void delete() throws IncorrectOperationException {
-        KtElementUtilsKt.deleteSemicolon(this);
+        KtPsiMutationService.getInstance().deleteElement(this);
+    }
+
+    @Override
+    @KtNonPublicApi
+    public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }
 

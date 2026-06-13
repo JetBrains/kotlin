@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 
+@K1Deprecation
 interface ESExpressionVisitor<out T> {
     fun visitIs(isOperator: ESIs): T
     fun visitEqual(equal: ESEqual): T

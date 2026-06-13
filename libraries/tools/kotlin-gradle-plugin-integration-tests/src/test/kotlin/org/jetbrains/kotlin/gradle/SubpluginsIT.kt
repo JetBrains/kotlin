@@ -26,13 +26,11 @@ class SubpluginsIT : KGPBaseTest() {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
-                assertOutputContains("Project component registration: exampleValue")
             }
 
             build("compileKotlin", "build") {
                 assertTasksUpToDate(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
-                assertOutputDoesNotContain("Project component registration: exampleValue")
             }
         }
     }
@@ -48,14 +46,12 @@ class SubpluginsIT : KGPBaseTest() {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
-                assertOutputContains("Project component registration: exampleValue")
             }
 
             build("compileKotlin", "build") {
                 assertTasksUpToDate(":compileKotlin")
                 assertConfigurationCacheReused()
                 assertOutputDoesNotContain("ExampleSubplugin loaded")
-                assertOutputDoesNotContain("Project component registration: exampleValue")
             }
         }
     }
@@ -192,6 +188,7 @@ class SubpluginsIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKotlinVersionDowngradeInSupbrojectKt39809(
         gradleVersion: GradleVersion,
         agpVersion: String,

@@ -166,10 +166,15 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         return defaultQualifiers?.get(applicabilityType)
     }
 
-    protected abstract fun getDefaultNullability(
+    protected open fun getDefaultNullability(
         referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
         defaultTypeQualifiers: JavaDefaultQualifiers?
-    ): NullabilityQualifierWithMigrationStatus?
+    ): NullabilityQualifierWithMigrationStatus? {
+        val defaultNullability = defaultTypeQualifiers?.nullabilityQualifier
+        return defaultNullability?.takeIf { defaultTypeQualifiers.preferQualifierOverBound }
+            ?: referencedParameterBoundsNullability?.takeIf { it.qualifier == NullabilityQualifier.NOT_NULL }
+            ?: defaultNullability
+    }
 
     private fun mostSpecific(
         a: NullabilityQualifierWithMigrationStatus?,
@@ -286,8 +291,10 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         TypeAndDefaultQualifiers(this@toIndexed, extractAndMergeDefaultQualifiers(containerDefaultTypeQualifiers), null).flattenTree {
             // Enhancement of raw type arguments may enter a loop in FE1.0.
             if (skipRawTypeArguments && it.type?.isRawType() == true) return@flattenTree null
-
-            it.type?.typeConstructor()?.getParameters()?.zip(it.type.getArguments()) { parameter, arg ->
+            val typeConstructor = it.type?.typeConstructor() ?: return@flattenTree null
+            List(typeConstructor.parametersCount()) { index ->
+                val parameter = typeConstructor.getParameter(index)
+                val arg = it.type.getArgument(index)
                 val type = arg.getType()
                 if (type == null) {
                     TypeAndDefaultQualifiers(null, it.defaultQualifiers, parameter)

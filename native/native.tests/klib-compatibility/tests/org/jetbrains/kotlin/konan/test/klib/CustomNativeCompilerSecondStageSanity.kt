@@ -42,9 +42,9 @@ class CustomNativeCompilerSecondStageSanity : AbstractCustomNativeCompilerSecond
     }
 
     @Test
-    fun checkNotMutedWithIgnoreBackendErrors1stStage() {
+    fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
         val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         assertTrue(exception.message?.contains("Test failed with: FAIL. Expected <OK>, actual <FAIL>") == true, exception.message)
     }

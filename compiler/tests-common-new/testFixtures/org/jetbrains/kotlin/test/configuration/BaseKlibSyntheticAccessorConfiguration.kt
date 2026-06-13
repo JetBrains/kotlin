@@ -73,11 +73,11 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
     }
     facadeStep(frontendToIrConverter)
     irHandlersStep {
-        useHandlers(::NoIrCompilationErrorsHandler)
+        commonIrHandlersForCodegenTest()
     }
     facadeStep(irInliningFacade)
     loweredIrHandlersStep {
-        useHandlers(::NoIrCompilationErrorsHandler)
+        commonIrHandlersForCodegenTest()
     }
 
     enableMetaInfoHandler()

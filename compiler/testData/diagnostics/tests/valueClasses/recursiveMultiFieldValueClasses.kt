@@ -1,3 +1,4 @@
+// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
@@ -46,31 +47,31 @@ value class F4(val x: Int, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>F4?<!>)
 
 
 @JvmInline
-value class A5<T : A5<T>>(val x: T)
+value class A5<T : A5<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 @JvmInline
-value class B5<T : B5<T>>(val x: T, val y: T)
-
-
-@JvmInline
-value class A6<T : B6<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T, val y: T)
-
-@JvmInline
-value class B6<T : A6<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T)
+value class B5<T : B5<T>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 
 @JvmInline
-value class A7<T : B7<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T, val y: T)
+value class A6<T : B6<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 @JvmInline
-value class B7<T : A7<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T, val y: T)
+value class B6<T : A6<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 
 @JvmInline
-value class A8<T : B8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T?, val y: T?)
+value class A7<T : B7<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
 
 @JvmInline
-value class B8<T : A8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: T?, val y: T?)
+value class B7<T : A7<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>)
+
+
+@JvmInline
+value class A8<T : B8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T?<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T?<!>)
+
+@JvmInline
+value class B8<T : A8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T?<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T?<!>)
 
 interface I1
 interface I2
@@ -85,9 +86,9 @@ value class A<T, G : C?>(
     val t6: Int,
     val t7: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>B<!>,
     val t8: String,
-    val t9: T,
+    val t9: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T<!>,
     val t10: Char,
-    val t11: T?,
+    val t11: <!VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS_WARNING!>T?<!>,
 ) where T : I1, T : B?, T : I2
 
 @JvmInline

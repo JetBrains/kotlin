@@ -11,7 +11,7 @@ public final class Baz /* Baz*/ {
   @kotlin.jvm.JvmOverloads()
   public  Baz(int, @org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(int, IntWrapper)
 
-  private  Baz(int, int);//  .ctor(int, int)
+  private  Baz(int, int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, int, kotlin.jvm.internal.BoxingConstructorMarker)
 }
 
 @kotlin.jvm.JvmInline()

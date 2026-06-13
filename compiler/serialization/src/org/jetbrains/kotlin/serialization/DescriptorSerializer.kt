@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.serialization
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
+@K1Deprecation
 class DescriptorSerializer private constructor(
     private val containingDeclaration: DeclarationDescriptor?,
     private val typeParameters: Interner<TypeParameterDescriptor>,

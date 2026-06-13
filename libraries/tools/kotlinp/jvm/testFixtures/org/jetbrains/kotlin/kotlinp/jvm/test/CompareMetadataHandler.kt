@@ -33,6 +33,7 @@ class CompareMetadataHandler(
     private val dumper2 = MultiModuleInfoDumper()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val kotlinp = JvmKotlinp(Settings(isVerbose = verbose, sortDeclarations = true))
 
         val dump = dumper.builderForModule(module)
@@ -48,7 +49,7 @@ class CompareMetadataHandler(
                     val metadata = ClassReader(outputFile.asByteArray().inputStream()).readKotlinClassHeader()!!
                     val classFile = KotlinClassMetadata.readStrict(metadata)
                     val classFile2 = KotlinClassMetadata.readStrict(classFile.write())
-                    for ((sb, classFileToRender) in listOf(dump to classFile, dump2 to classFile2)) {
+                    for ([sb, classFileToRender] in listOf(dump to classFile, dump2 to classFile2)) {
                         sb.appendFileName(path)
                         sb.append(kotlinp.printClassFile(classFileToRender))
                     }
@@ -56,7 +57,7 @@ class CompareMetadataHandler(
                 path.endsWith(".kotlin_module") -> {
                     val moduleFile = KotlinModuleMetadata.read(outputFile.asByteArray())
                     val moduleFile2 = KotlinModuleMetadata.read(moduleFile.write())
-                    for ((sb, moduleFileToRender) in listOf(dump to moduleFile, dump2 to moduleFile2)) {
+                    for ([sb, moduleFileToRender] in listOf(dump to moduleFile, dump2 to moduleFile2)) {
                         sb.appendFileName(path)
                         sb.append(kotlinp.printModuleFile(moduleFileToRender))
                     }

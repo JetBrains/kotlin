@@ -22,26 +22,8 @@ class FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FullPipelineMo
 
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
-class FE1FullPipelineModularizedTest : AbstractModularizedJUnit5Test<FE1FullPipelineModularizedTestPure>(
-    FE1FullPipelineModularizedTestPure(modularizedTestConfigFromSystemProperties())
-) {
-    @Test
-    fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
-}
-
-@Isolated
-@Execution(ExecutionMode.SAME_THREAD)
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<FirResolveModularizedTotalKotlinTestPure>(
     FirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
-) {
-    @Test
-    fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
-}
-
-@Isolated
-@Execution(ExecutionMode.SAME_THREAD)
-class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedJUnit5Test<NonFirResolveModularizedTotalKotlinTestPure>(
-    NonFirResolveModularizedTotalKotlinTestPure(modularizedTestConfigFromSystemProperties())
 ) {
     @Test
     fun testTotalKotlin() = test.testTotalKotlinIfConfigured()
@@ -53,4 +35,3 @@ private fun AbstractModularizedTest.testTotalKotlinIfConfigured() {
     }
     testTotalKotlin()
 }
-

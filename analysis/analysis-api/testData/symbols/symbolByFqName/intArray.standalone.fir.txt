@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: kotlin/IntArray
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -34,6 +33,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: kotlin.IntArray

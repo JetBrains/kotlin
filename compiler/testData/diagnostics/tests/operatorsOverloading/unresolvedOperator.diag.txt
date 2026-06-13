@@ -1,23 +1,23 @@
-/unresolvedOperator.kt:7:6: error: Unresolved reference 'inc' for operator '++'.
+/unresolvedOperator.kt:7:6: error: Unresolved reference 'inc' for operator '++' on receiver of type 'String'.
 
-/unresolvedOperator.kt:8:6: error: Unresolved reference 'dec' for operator '--'.
+/unresolvedOperator.kt:8:6: error: Unresolved reference 'dec' for operator '--' on receiver of type 'String'.
 
-/unresolvedOperator.kt:9:5: error: Unresolved reference 'unaryPlus' for operator '+'.
+/unresolvedOperator.kt:9:5: error: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.
 
-/unresolvedOperator.kt:10:5: error: Unresolved reference 'unaryMinus' for operator '-'.
+/unresolvedOperator.kt:10:5: error: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.
 
-/unresolvedOperator.kt:11:5: error: Unresolved reference 'not' for operator '!'.
+/unresolvedOperator.kt:11:5: error: Unresolved reference 'not' for operator '!' on receiver of type 'String'.
 
-/unresolvedOperator.kt:12:7: error: Unresolved reference 'times' for operator '*'.
+/unresolvedOperator.kt:12:7: error: Unresolved reference 'times' for operator '*' on receiver of type 'String'.
 
-/unresolvedOperator.kt:13:10: error: Unresolved reference 'plus' for operator '+'.
+/unresolvedOperator.kt:13:10: error: Unresolved reference 'plus' for operator '+' on receiver of type 'Boolean'.
 
-/unresolvedOperator.kt:14:7: error: Unresolved reference 'minus' for operator '-'.
+/unresolvedOperator.kt:14:7: error: Unresolved reference 'minus' for operator '-' on receiver of type 'String'.
 
-/unresolvedOperator.kt:15:7: error: Unresolved reference 'div' for operator '/'.
+/unresolvedOperator.kt:15:7: error: Unresolved reference 'div' for operator '/' on receiver of type 'String'.
 
-/unresolvedOperator.kt:16:7: error: Unresolved reference 'rem' for operator '%'.
+/unresolvedOperator.kt:16:7: error: Unresolved reference 'rem' for operator '%' on receiver of type 'String'.
 
-/unresolvedOperator.kt:17:7: error: Unresolved reference 'rangeTo' for operator '..'.
+/unresolvedOperator.kt:17:7: error: Unresolved reference 'rangeTo' for operator '..' on receiver of type 'String'.
 
-/unresolvedOperator.kt:18:7: error: Unresolved reference 'rangeUntil' for operator '..<'.
+/unresolvedOperator.kt:18:7: error: Unresolved reference 'rangeUntil' for operator '..<' on receiver of type 'String'.

@@ -1,0 +1,98 @@
+FILE: noArgsConstructorStatic.kt
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStatic : R|kotlin/Any| {
+        public constructor(boolean: R|kotlin/Boolean|, char: R|kotlin/Char|, int: R|kotlin/Int|, str: R|kotlin/String|): R|ConstructorExampleStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val boolean: R|kotlin/Boolean| = R|<local>/boolean|
+            public get(): R|kotlin/Boolean|
+
+        public final val char: R|kotlin/Char| = R|<local>/char|
+            public get(): R|kotlin/Char|
+
+        public final val int: R|kotlin/Int| = R|<local>/int|
+            public get(): R|kotlin/Int|
+
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
+
+        public constructor(): R|ConstructorExampleStatic| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStatic| {
+                ^make R|/ConstructorExampleStatic|()
+            }
+
+            private constructor(): R|ConstructorExampleStatic.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithCompanion : R|kotlin/Any| {
+        public constructor(any: R|kotlin/Any|): R|ConstructorExampleStaticWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val any: R|kotlin/Any| = R|<local>/any|
+            public get(): R|kotlin/Any|
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ConstructorExampleStaticWithCompanion.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun R|kotlin/Int|.make(): R|kotlin/Int| {
+                ^make Int(42)
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithCompanion| {
+                ^make R|/ConstructorExampleStaticWithCompanion|()
+            }
+
+        }
+
+        public constructor(): R|ConstructorExampleStaticWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithGenerics<T> : R|kotlin/Any| {
+        public constructor<T>(param: R|T|): R|ConstructorExampleStaticWithGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val param: R|T| = R|<local>/param|
+            public get(): R|T|
+
+        public constructor<T>(): R|ConstructorExampleStaticWithGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithGenerics<T>| {
+                ^make R|/ConstructorExampleStaticWithGenerics|()
+            }
+
+            private constructor(): R|ConstructorExampleStaticWithGenerics.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval zeroObject: R|ConstructorExampleStatic| = Q|ConstructorExampleStatic|.R|/ConstructorExampleStatic.make|()
+        R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExampleStatic.boolean|)
+        R|/assertEquals|<R|kotlin/Char|>(R|kotlin/Char|(Int(0)), R|<local>/zeroObject|.R|/ConstructorExampleStatic.char|)
+        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/zeroObject|.R|/ConstructorExampleStatic.int|)
+        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExampleStatic.str|)
+        lval zeroObject2: R|ConstructorExampleStaticWithCompanion| = Q|ConstructorExampleStaticWithCompanion|.R|/ConstructorExampleStaticWithCompanion.make|()
+        R|/assertEquals|<R|kotlin/Any?|>(Null(null), R|<local>/zeroObject2|.R|/ConstructorExampleStaticWithCompanion.any|)
+        lval zeroObjectWithGenerics: R|ConstructorExampleStaticWithGenerics<T>| = Q|ConstructorExampleStaticWithGenerics|.R|/ConstructorExampleStaticWithGenerics.make|()
+        R|/assertEquals|<R|T?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|/ConstructorExampleStaticWithGenerics.param|)
+        ^box String(OK)
+    }

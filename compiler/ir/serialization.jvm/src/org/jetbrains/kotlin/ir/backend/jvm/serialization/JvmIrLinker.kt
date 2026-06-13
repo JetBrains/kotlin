@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -28,23 +31,25 @@ import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmIrLinker(
     currentModule: ModuleDescriptor?,
-    messageCollector: MessageCollector,
-    typeSystem: IrTypeSystemContext,
+    configuration: CompilerConfiguration,
+    private val typeSystem: IrTypeSystemContext,
     symbolTable: SymbolTable,
     private val stubGenerator: DeclarationStubGenerator,
     private val manglerDesc: JvmDescriptorMangler,
-) : KotlinIrLinker(currentModule, messageCollector, typeSystem.irBuiltIns, symbolTable, emptyList()) {
+) : KotlinIrLinker(currentModule, configuration, symbolTable, emptyList()) {
+
+    override val irMangler: KotlinMangler.IrMangler = JvmIrMangler
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JvmIrMangler,
-        typeSystem = typeSystem,
+        mangler = irMangler,
         friendModules = emptyMap(), // TODO(KT-62534) can be removed when ModuleDescriptorImpl.shouldSeeInternalsOf is fixed
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
@@ -66,10 +71,10 @@ class JvmIrLinker(
 
     private inner class JvmModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val klib: KotlinLibrary,
+        klib: KotlinLibrary,
         libraryAbiVersion: KotlinAbiVersion,
         strategyResolver: (String) -> DeserializationStrategy,
-    ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion)
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
 
     private fun DeclarationDescriptor.isJavaDescriptor(): Boolean {
         if (this is PackageFragmentDescriptor) {
@@ -83,6 +88,8 @@ class JvmIrLinker(
         if (this is PropertyAccessorDescriptor) return correspondingProperty.isCleanDescriptor()
         return this is DeserializedDescriptor
     }
+
+    override fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = typeSystem
 
     override fun platformSpecificSymbol(symbol: IrSymbol): Boolean {
         return symbol.descriptor.isJavaDescriptor()
@@ -134,6 +141,8 @@ class JvmIrLinker(
 
         // TODO: implement proper check whether `idSig` belongs to this module
         override fun contains(idSig: IdSignature): Boolean = true
+
+        override fun getDefinedPackageNames(): Set<FqName>? = null
 
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor, manglerDesc,

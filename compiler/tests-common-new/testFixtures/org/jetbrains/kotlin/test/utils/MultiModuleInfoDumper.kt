@@ -23,7 +23,7 @@ class MultiModuleInfoDumper(private val moduleHeaderTemplate: String? = "Module:
             return it.toString()
         }
         return buildString {
-            for ((moduleName, builder) in builderByModule) {
+            for ([moduleName, builder] in builderByModule) {
                 moduleHeaderTemplate?.let { appendLine(String.format(it, moduleName)) }
                 append(builder)
             }

@@ -1,11 +1,15 @@
+@file:OptIn(TemporaryTestFederationApi::class)
+
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.testFederation.GenerateTestFederationRuntimeCodeTask
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     kotlin("jvm")
+    id("test-inputs-check")
 }
 
 val generateSources = tasks.register<GenerateTestFederationRuntimeCodeTask>("generateTestFederationSources")
@@ -27,13 +31,23 @@ kotlin.target.compilations.all {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+
+    /* Used by the TestFederationFunctionalTest and 'PseudoTest' for testing the test federations behavior */
+    providers.environmentVariable("_PSEUDO_TEST_").orNull?.let { value ->
+        smokeTestConfig = when (value) {
+            "RunAllTests" -> SmokeTestConfig.RunAllTests
+            "Disabled" -> SmokeTestConfig.Disabled
+            else -> error("Unknown _PSEUDO_TEST_ configuration")
+        }
+    }
+
     testLogging {
         events("passed", "skipped", "failed")
     }
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib"))
+    compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.junit.jupiter.api)
     compileOnly(libs.junit4)
 
@@ -42,30 +56,4 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
-}
-
-
-/* Create build test */
-val functionalTestCompilation = kotlin.target.compilations.create("functionalTest") {
-    associateWith(kotlin.target.compilations.getByName("main"))
-}
-
-val functionalTest = tasks.register<Test>("functionalTest") {
-    useJUnitPlatform()
-    workingDir = project.rootDir
-    javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)
-    classpath = project.files(functionalTestCompilation.output.classesDirs, functionalTestCompilation.runtimeDependencyFiles)
-    testClassesDirs = functionalTestCompilation.output.classesDirs
-    testLogging {
-        showStandardStreams = true
-    }
-
-    @OptIn(TemporaryTestFederationApi::class)
-    isSmokeTest = true
-
-}
-
-dependencies {
-    functionalTestCompilation.implementationConfigurationName(kotlin("stdlib"))
-    functionalTestCompilation.implementationConfigurationName(kotlin("test-junit5"))
 }

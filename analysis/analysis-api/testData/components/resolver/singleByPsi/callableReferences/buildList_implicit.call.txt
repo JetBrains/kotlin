@@ -1,16 +1,15 @@
 KtCallableReferenceExpression(102,107): '::add'
   KaCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
+    call = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -49,4 +48,3 @@ KtCallableReferenceExpression(102,107): '::add'
         contextParameters = []
         callableId = kotlin/collections/MutableList.add
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}

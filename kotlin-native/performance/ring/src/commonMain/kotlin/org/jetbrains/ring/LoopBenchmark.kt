@@ -16,11 +16,16 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
-open class LoopBenchmark {
-    lateinit var arrayList: List<Value>
-    lateinit var array: Array<Value>
+private const val BENCHMARK_SIZE = 10000
+
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Loop : SkipWhenBaseOnly() {
+    var arrayList: List<Value>
+    var array: Array<Value>
 
     init {
         val list = ArrayList<Value>(BENCHMARK_SIZE)
@@ -30,51 +35,67 @@ open class LoopBenchmark {
         array = list.toTypedArray()
     }
 
-    //Benchmark 
-    fun arrayLoop() {
+    @Benchmark
+    fun arrayLoop(bh: Blackhole) {
+        var result = 0
         for (x in array) {
-            Blackhole.consume(x)
+            result += x.value
         }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun arrayIndexLoop() {
+    @Benchmark
+    fun arrayIndexLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var result = 0
         for (i in array.indices) {
-            Blackhole.consume(array[i])
+            result += array[i].value
         }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun rangeLoop() {
-        for (i in 0..BENCHMARK_SIZE) {
-            Blackhole.consume(i)
+    @Benchmark
+    fun rangeLoop(bh: Blackhole) {
+        var result = 0
+        for (i in 0..<array.size) {
+            result += array[i].value
         }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun arrayListLoop() {
+    @Benchmark
+    fun arrayListLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var result = 0
         for (x in arrayList) {
-            Blackhole.consume(x)
+            result += x.value
         }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun arrayWhileLoop() {
+    @Benchmark
+    fun arrayWhileLoop(bh: Blackhole) {
+        var result = 0
         var i = 0
         val s = array.size
         while (i < s) {
-            Blackhole.consume(array[i])
+            result += array[i].value
             i++
         }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun arrayForeachLoop() {
-        array.forEach { Blackhole.consume(it) }
+    @Benchmark
+    fun arrayForeachLoop(bh: Blackhole) {
+        var result = 0
+        array.forEach { result += it.value }
+        bh.consume(result)
     }
 
-    //Benchmark 
-    fun arrayListForeachLoop() {
-        arrayList.forEach { Blackhole.consume(it) }
+    @Benchmark
+    fun arrayListForeachLoop(bh: Blackhole) {
+        var result = 0
+        arrayList.forEach { result += it.value }
+        bh.consume(result)
     }
 }

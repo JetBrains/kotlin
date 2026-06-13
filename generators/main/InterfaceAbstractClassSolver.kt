@@ -76,7 +76,7 @@ private fun processRequirementsFromConfig(
 }
 
 private fun solve2sat(elements: Collection<Node>, elementsToVar: ElementMapping): MutableList<Boolean> {
-    val (g, gt) = buildGraphs(elements, elementsToVar)
+    val [g, gt] = buildGraphs(elements, elementsToVar)
 
     val used = g.indices.mapTo(mutableListOf()) { false }
     val order = mutableListOf<Int>()

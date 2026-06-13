@@ -41,7 +41,6 @@ class KotlinCompileArgumentsTest {
         val project = buildProjectWithJvm()
 
         project.repositories {
-            mavenLocal()
             mavenCentralCacheRedirector()
         }
 

@@ -32,13 +32,24 @@ KtParameter(118,127): 'a: MyEnum'
   null
 
 KtTypeReference(121,127): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(121,127): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(121,127): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(129,131): '{}'
   null
@@ -59,22 +70,44 @@ KtParameter(144,148): 'x: X'
   null
 
 KtTypeReference(147,148): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(147,148): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(147,148): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(151,152): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(151,152): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(151,152): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtCallExpression(155,161): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -83,6 +116,8 @@ KtCallExpression(155,161): 'TODO()'
     ]
 
 KtNameReferenceExpression(155,159): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -110,12 +145,16 @@ KtDotQualifiedExpression(189,197): 'MyEnum.X'
     ]
 
 KtNameReferenceExpression(189,195): 'MyEnum'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
     ]
 
 KtNameReferenceExpression(196,197): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -128,6 +167,8 @@ KtCallExpression(203,213): 'foo(id(X))'
     ]
 
 KtNameReferenceExpression(203,206): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(a: MyEnum): kotlin.Unit
@@ -146,6 +187,8 @@ KtCallExpression(207,212): 'id(X)'
     ]
 
 KtNameReferenceExpression(207,209): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -158,6 +201,8 @@ KtValueArgument(210,211): 'X'
   null
 
 KtNameReferenceExpression(210,211): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -170,6 +215,8 @@ KtCallExpression(218,228): 'foo(id(L))'
     ]
 
 KtNameReferenceExpression(218,221): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(a: MyEnum): kotlin.Unit
@@ -188,6 +235,8 @@ KtCallExpression(222,227): 'id(L)'
     ]
 
 KtNameReferenceExpression(222,224): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -200,6 +249,8 @@ KtValueArgument(225,226): 'L'
   null
 
 KtNameReferenceExpression(225,226): 'L'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val L: MyEnum
@@ -212,6 +263,8 @@ KtCallExpression(233,252): 'foo(id(UNRESOLVED))'
     ]
 
 KtNameReferenceExpression(233,236): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(a: MyEnum): kotlin.Unit
@@ -230,6 +283,8 @@ KtCallExpression(237,251): 'id(UNRESOLVED)'
     ]
 
 KtNameReferenceExpression(237,239): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -242,6 +297,8 @@ KtValueArgument(240,250): 'UNRESOLVED'
   null
 
 KtNameReferenceExpression(240,250): 'UNRESOLVED'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'UNRESOLVED'.>

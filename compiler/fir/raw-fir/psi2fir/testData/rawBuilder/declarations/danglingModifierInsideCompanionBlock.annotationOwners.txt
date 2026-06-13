@@ -1,0 +1,15 @@
+@Anno()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol C
+
+@Anno3()
+owner -> FirNamedFunctionSymbol /C.<no name provided>
+context -> FirNamedFunctionSymbol /C.<no name provided>
+
+@Anno2()
+owner -> FirNamedFunctionSymbol /C.<no name provided>
+context -> FirNamedFunctionSymbol /C.<no name provided>
+
+@Anno4()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol C

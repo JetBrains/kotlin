@@ -6,18 +6,23 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -30,36 +35,47 @@ import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
     private val currentModule: ModuleDescriptor,
-    messageCollector: MessageCollector,
-    builtIns: IrBuiltIns,
+    configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
     friendModules: Map<String, Collection<String>>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
     private val stubGenerator: DeclarationStubGenerator,
     private val cInteropModuleDeserializerFactory: CInteropModuleDeserializerFactory,
     exportedDependencies: List<ModuleDescriptor>,
-    override val partialLinkageSupport: PartialLinkageSupportForLinker,
+    partialLinkageConfig: PartialLinkageConfig,
+    irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
-) : KotlinIrLinker(currentModule, messageCollector, builtIns, symbolTable, exportedDependencies) {
-
+) : KotlinIrLinker(currentModule, configuration, symbolTable, exportedDependencies) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
         val klib = (moduleDescriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library ?: return false
         return klib.isNativeStdlib
     }
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
-        KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
+        KonanForwardDeclarationModuleDeserializer(it, this)
     }
+
+    override val irMangler: KotlinMangler.IrMangler = KonanManglerIr
+
+    override val partialLinkageSupport: PartialLinkageSupportForLinker = createPartialLinkageSupportForLinker(
+        partialLinkageConfig = partialLinkageConfig,
+        irFactory = symbolTable.irFactory,
+        anyClass = anyClass,
+        nothingClass = nothingClass,
+        diagnosticReporter = irDiagnosticReporter,
+    )
+
+    private val globalDeclarationTable = KonanGlobalDeclarationTable(null)
 
     override val fakeOverrideBuilder = IrLinkerFakeOverrideProvider(
         linker = this,
         symbolTable = symbolTable,
-        mangler = KonanManglerIr,
-        typeSystem = IrTypeSystemContextImpl(builtIns),
+        mangler = irMangler,
         friendModules = friendModules,
         partialLinkageSupport = partialLinkageSupport,
         platformSpecificClassFilter = K1LazyFakeOverrideClassFilter,
+        fakeOverrideDeclarationTable = KonanDeclarationTable(globalDeclarationTable),
         externalOverridabilityConditions = externalOverridabilityConditions,
         isMultipleInheritedImplementationsAllowed = {
             // Properties of ObjC protocols are serialized as final, along with their getters and setters.
@@ -89,6 +105,7 @@ class KonanIrLinker(
             cInteropModuleDeserializerFactory.createIrModuleDeserializer(
                 moduleDescriptor,
                 klib,
+                this,
             )
         }
         else -> {
@@ -105,9 +122,9 @@ class KonanIrLinker(
         }
     }
 
-    override fun postProcess(inOrAfterLinkageStep: Boolean) {
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
-        super.postProcess(inOrAfterLinkageStep)
+        super.postProcess(irBuiltIns, inOrAfterLinkageStep)
     }
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()

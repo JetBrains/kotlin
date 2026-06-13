@@ -1,2 +1,7 @@
 KtNameReferenceExpression(69,78): 'Cloneable'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Cloneable
+    ]

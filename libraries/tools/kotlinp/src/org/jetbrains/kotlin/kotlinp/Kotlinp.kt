@@ -11,7 +11,7 @@ import kotlin.metadata.*
 abstract class Kotlinp(protected val settings: Settings) {
     fun renderAnnotation(annotation: KmAnnotation, printer: Printer): Unit = with(printer) {
         append(annotation.className)
-        appendCollectionIfNotEmpty(annotation.arguments.entries, prefix = "(", postfix = ")") { (name, argument) ->
+        appendCollectionIfNotEmpty(annotation.arguments.entries, prefix = "(", postfix = ")") { [name, argument] ->
             append(name, " = ")
             renderAnnotationArgument(argument, printer)
         }
@@ -53,7 +53,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             is KmAnnotationArgument.EnumValue -> append(argument.enumClassName, '.', argument.enumEntryName)
             is KmAnnotationArgument.AnnotationValue -> argument.annotation.let { annotation ->
                 append(annotation.className)
-                appendCollection(annotation.arguments.entries, prefix = "(", postfix = ")") { (name, argument) ->
+                appendCollection(annotation.arguments.entries, prefix = "(", postfix = ")") { [name, argument] ->
                     append(name, " = ")
                     renderAnnotationArgument(argument, printer)
                 }
@@ -77,7 +77,7 @@ abstract class Kotlinp(protected val settings: Settings) {
 
     fun Printer.appendPluginCustomData(compilerPluginMetadata: MutableMap<String, ByteArray>) {
         if (!settings.isVerbose) return
-        compilerPluginMetadata.entries.forEach { (pluginId, metadata) ->
+        compilerPluginMetadata.entries.forEach { [pluginId, metadata] ->
             appendCommentedLine("has custom metadata for plugin $pluginId of size ${metadata.size} bytes")
         }
     }
@@ -198,6 +198,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     fun renderFunctionModifiers(function: KmFunction, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[function.visibility])
         append(MODALITY_MAP[function.modality])
@@ -210,6 +211,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isExternal to "external",
             function.isSuspend to "suspend",
             function.isExpect to "expect",
+            function.isStatic to "static",
             function.hasNonStableParameterNames to "/* non-stable parameter names */"
         )
     }
@@ -353,6 +355,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
     fun renderPropertyModifiers(property: KmProperty, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[property.visibility])
         append(MODALITY_MAP[property.modality])
@@ -362,7 +365,8 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isLateinit to "lateinit",
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
-            property.isExpect to "expect"
+            property.isExpect to "expect",
+            property.isStatic to "static"
         )
     }
 
@@ -433,7 +437,7 @@ abstract class Kotlinp(protected val settings: Settings) {
                 if (argument == KmTypeProjection.STAR) {
                     append("*")
                 } else {
-                    val (variance, argumentType) = argument
+                    (val variance, val argumentType = type) = argument
                     if (variance == null || argumentType == null)
                         throw IllegalArgumentException("Variance and type must be set for non-star type projection")
 

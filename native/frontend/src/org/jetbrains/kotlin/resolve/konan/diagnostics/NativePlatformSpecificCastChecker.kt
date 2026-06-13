@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.konan.getForwardDeclarationKindOrNull
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 object NativePlatformSpecificCastChecker : PlatformSpecificCastChecker {
     override fun isCastPossible(fromType: KotlinType, toType: KotlinType): Boolean {
         return isCastToAForwardDeclaration(toType)

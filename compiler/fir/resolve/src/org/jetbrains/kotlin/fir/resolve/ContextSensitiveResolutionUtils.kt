@@ -32,7 +32,8 @@ fun BodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
     for (representativeClass in expectedType.getParentChainForContextSensitiveResolutionOfExpressions(session)) {
         val additionalQualifier = representativeClass.toImplicitResolvedQualifierReceiver(
             this,
-            originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution)
+            originalExpression.source?.fakeElement(KtFakeSourceElementKind.QualifierForContextSensitiveResolution),
+            definitelyNotCompanion = false,
         )
 
         val newAccess = buildPropertyAccessExpression {
@@ -115,9 +116,14 @@ fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIf
 
     if (symbol is FirCallableSymbol<*> && symbol.hadImplicitTypeInSource()) return false
 
+    val diagnostic = when (obtainOrigin()) {
+        FirResolvedSymbolOrigin.ExplicitImport, FirResolvedSymbolOrigin.StarImport -> ContextSensitiveResolutionMightBeUsedInsteadOfImport
+        else -> ContextSensitiveResolutionMightBeUsed
+    }
+
     when (this) {
-        is FirPropertyAccessExpression -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
-        is FirResolvedQualifier -> appendNonFatalDiagnostics(ContextSensitiveResolutionMightBeUsed)
+        is FirPropertyAccessExpression -> appendNonFatalDiagnostics(diagnostic)
+        is FirResolvedQualifier -> appendNonFatalDiagnostics(diagnostic)
     }
 
     return true
@@ -131,5 +137,11 @@ private fun FirCallableSymbol<*>.hadImplicitTypeInSource(): Boolean {
 private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {
     is FirPropertyAccessExpression -> toResolvedCallableSymbol()
     is FirResolvedQualifier -> symbol
+    else -> null
+}
+
+private fun FirExpression.obtainOrigin(): FirResolvedSymbolOrigin? = when (this) {
+    is FirPropertyAccessExpression -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbolOrigin
+    is FirResolvedQualifier -> resolvedSymbolOrigin
     else -> null
 }

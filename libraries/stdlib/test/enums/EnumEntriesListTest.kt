@@ -47,7 +47,7 @@ class EnumEntriesListTest {
         val goldenCopy = NonEmptyEnum.values().toList()
         assertEquals(goldenCopy, list)
         assertFalse { list is MutableList<*> }
-        for ((idx, e) in goldenCopy.withIndex()) {
+        for ([idx, e] in goldenCopy.withIndex()) {
             assertEquals(e, list[e.ordinal])
             assertEquals(idx, list.indexOf(e))
             assertEquals(e, list[idx])

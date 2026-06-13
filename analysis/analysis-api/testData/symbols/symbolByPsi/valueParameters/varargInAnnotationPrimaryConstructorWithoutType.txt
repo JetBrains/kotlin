@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: Foo
   contextReceivers: []
   hasStableParameterNames: true
@@ -24,7 +23,6 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -32,6 +30,7 @@ KaConstructorSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -51,14 +50,14 @@ KaConstructorSymbol:
       getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorWithoutType.kt)
       getContainingJvmClassName: Foo
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorWithoutType.kt)
   getContainingJvmClassName: Foo
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: Foo
 
 KaNamedClassSymbol:
@@ -66,7 +65,6 @@ KaNamedClassSymbol:
   classId: Foo
   classKind: ANNOTATION_CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -89,6 +87,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(varargInAnnotationPrimaryConstructorWithoutType.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  applicableAnnotationTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER]
+  deprecation: null
   importableFqName: Foo

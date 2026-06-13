@@ -1,5 +1,4 @@
 KtOperationReferenceExpression(195,196): '='
-  KaSymbolResolutionSuccess:
-    symbols = [
-      var variable: test.WithOperator
-    ]
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  null

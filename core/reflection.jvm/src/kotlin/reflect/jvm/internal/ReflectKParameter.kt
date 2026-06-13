@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -58,7 +59,7 @@ private fun ReflectKParameter.loadAnnotationsOnAnnotationParameter(): List<Annot
     if (this !is KotlinKParameter) return emptyList()
 
     // In Kotlin, parameters of annotation constructors have no annotations in JVM bytecode, so we load them from metadata.
-    return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.classLoader) }
+    return kmParameter.annotations.map { it.toAnnotation(callable.container.jClass.safeClassLoader) }
 }
 
 internal class DefaultSetterValueParameter(private val property: ReflectKProperty<*>) : ReflectKParameter() {
@@ -90,8 +91,7 @@ internal class JavaParameter(val callable: Member, val index: Int)
 internal val ReflectKParameter.javaParameter: JavaParameter?
     get() = when (val callable = callable.caller.member) {
         is Method -> {
-            require(Modifier.isStatic(callable.modifiers)) { "Only static methods are supported for now: $callable" }
-            JavaParameter(callable, index)
+            JavaParameter(callable, index + (if (Modifier.isStatic(callable.modifiers)) 0 else -1))
         }
         is Constructor<*> -> {
             val shift = when {

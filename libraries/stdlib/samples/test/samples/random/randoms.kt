@@ -56,7 +56,7 @@ class Randoms {
     fun nextBoolean() {
         val presents = listOf("Candy", "Balloon", "Ball")
         // a random partition, the result may be different every time
-        val (alicePresents, bobPresents) = presents.partition { Random.nextBoolean() }
+        val [alicePresents, bobPresents] = presents.partition { Random.nextBoolean() }
 
         println("Alice receives $alicePresents")
         println("Bob receives $bobPresents")

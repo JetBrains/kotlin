@@ -48,7 +48,7 @@ abstract class AbstractFirBuiltinSymbolProvider(
         getTopLevelClassifierNamesInPackage(builtInsPackageFragments, packageFqName)
 
     private val allPackageFragments by lazy {
-        builtInsPackageFragments.mapValues { (fqName, foo) ->
+        builtInsPackageFragments.mapValues { [fqName, foo] ->
             BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider, isFallback)
         }
     }
@@ -157,7 +157,10 @@ abstract class AbstractFirBuiltinSymbolProvider(
         private val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
             moduleData.session.firCachesFactory.createCache { name ->
                 packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
-                    memberDeserializer.loadFunction(it).symbol
+                    memberDeserializer.loadFunction(
+                        proto = it,
+                        deserializationOrigin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns
+                    ).symbol
                 }
             }
 

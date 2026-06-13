@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 abstract class DeserializedPackageFragment(
     fqName: FqName,
     protected val storageManager: StorageManager,

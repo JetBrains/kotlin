@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 /**
  * An entry point for a FIR Low Level API resolution. Represents a project view from a use-site [KaModule].
  */
+@KaImplementationDetail
 class LLResolutionFacade internal constructor(
     val moduleProvider: LLModuleProvider,
     val resolutionStrategyProvider: LLModuleResolutionStrategyProvider,
@@ -245,7 +247,7 @@ class LLResolutionFacade internal constructor(
     }
 }
 
+@KaImplementationDetail
 fun LLResolutionFacade.getModule(element: PsiElement): KaModule {
     return KotlinProjectStructureProvider.getModule(project, element, useSiteModule)
 }
-

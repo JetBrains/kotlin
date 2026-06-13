@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider
@@ -35,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Caches generated [KaResolveExtensionFile]s, creates [KotlinDeclarationProvider], [KotlinPackageProvider], [FirSymbolNamesProvider] needed
  * for the [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider].
  */
+@KaImplementationDetail
 abstract class LLFirResolveExtensionTool : FirSessionComponent {
     internal abstract val extensions: List<KaResolveExtension>
 
@@ -48,6 +50,7 @@ abstract class LLFirResolveExtensionTool : FirSessionComponent {
 /**
  * The session's [LLFirResolveExtensionTool], or `null` if the session's module defines no resolve extensions.
  */
+@KaImplementationDetail
 val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
 
 internal class LLFirNonEmptyResolveExtensionTool(
@@ -113,6 +116,7 @@ private class LLFirResolveExtensionToolSymbolNamesProvider(
     }
 }
 
+@KaImplementationDetail
 class LLFirResolveExtensionToolPackageFilter(
     private val extensions: List<KaResolveExtension>
 ) {
@@ -153,6 +157,7 @@ class LLFirResolveExtensionToolPackageFilter(
     }
 }
 
+@KaImplementationDetail
 class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private val extensionProvider: LLFirResolveExtensionsFileProvider,
     private val ktModule: KaModule,
@@ -367,6 +372,7 @@ private fun KaResolveExtensionFile.mayHaveTopLevelCallable(name: Name): Boolean 
     return name in getTopLevelCallableNames()
 }
 
+@KaImplementationDetail
 var VirtualFile.navigationTargetsProvider: KaResolveExtensionNavigationTargetsProvider?
         by UserDataProperty(Key.create("KT_RESOLVE_EXTENSION_NAVIGATION_TARGETS_PROVIDER"))
 

@@ -85,6 +85,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTEXT_RECEIVER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:CONTRACT_EFFECT_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DELEGATED_SUPER_TYPE_ENTRY
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DESTRUCTURING_DECLARATION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DOT_QUALIFIED_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:DYNAMIC_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:ENUM_ENTRY

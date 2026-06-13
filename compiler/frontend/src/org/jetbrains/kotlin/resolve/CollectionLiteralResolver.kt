@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
+@K1Deprecation
 class CollectionLiteralResolver(
     val module: ModuleDescriptor,
     val callResolver: CallResolver,

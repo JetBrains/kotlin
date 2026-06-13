@@ -1,0 +1,50 @@
+FILE: nestedDataSchemaDeclaration.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Person : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+        public constructor(name: R|Person.Name|): R|Person| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|Person.Name| = R|<local>/name|
+            public get(): R|Person.Name|
+
+        @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final data class Name : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
+            public constructor(firstName: R|kotlin/String|, lastName: R|kotlin/String|): R|Person.Name| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val firstName: R|kotlin/String| = R|<local>/firstName|
+                public get(): R|kotlin/String|
+
+            public final val lastName: R|kotlin/String| = R|<local>/lastName|
+                public get(): R|kotlin/String|
+
+            public final operator fun component1(): R|kotlin/String|
+
+            public final operator fun component2(): R|kotlin/String|
+
+            public final fun copy(firstName: R|kotlin/String| = this@R|/Person.Name|.R|/Person.Name.firstName|, lastName: R|kotlin/String| = this@R|/Person.Name|.R|/Person.Name.lastName|): R|Person.Name|
+
+        }
+
+        public final operator fun component1(): R|Person.Name|
+
+        public final fun copy(name: R|Person.Name| = this@R|/Person|.R|/Person.name|): R|Person|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|<R|Person|>(vararg(R|/Person.Person|(Q|Person|.R|/Person.Name.Name|(String(Alice), String(Cooper)))))
+        R|<local>/df|.R|/name|.R|/firstName|
+    }
+FILE: /__GENERATED__CALLABLES__.kt
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.name: R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.name: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Person.Name>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_name)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<Person.Name>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|.firstName: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_firstName)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person.Name>|.firstName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_firstName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person.Name>|.lastName: R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person.Name>|.lastName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_Name_lastName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|

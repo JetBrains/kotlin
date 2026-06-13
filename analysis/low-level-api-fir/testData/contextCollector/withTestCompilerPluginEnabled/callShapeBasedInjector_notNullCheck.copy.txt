@@ -23,6 +23,7 @@ Tower Data Context:
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
                 Type: <local>.Scope1
+Expression Stability: PROPERTY_WITH_GETTER
 
 FILE: [ResolvedTo(IMPORTS)] callShapeBasedInjector_notNullCheck.kt
     public final? [ResolvedTo(RAW_FIR)] interface DataFrame<[ResolvedTo(RAW_FIR)] out T> : R|kotlin/Any| {

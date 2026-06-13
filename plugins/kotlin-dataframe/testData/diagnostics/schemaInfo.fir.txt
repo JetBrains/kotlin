@@ -487,26 +487,26 @@ FILE: schemaInfo.kt
     }
 FILE: /__GENERATED__CALLABLES__.kt
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.firstName: R|kotlin/String|
-        public get(): R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_firstName)) public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.firstName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_firstName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.lastName: R|kotlin/String|
-        public get(): R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Person_lastName)) public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.lastName: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_lastName)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.age: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|kotlin/jvm/JvmName|(name = String(Person_age)) public get(): R|kotlin/Int|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.age: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_age)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Person>|.city: R|kotlin/String?|
-        public get(): R|kotlin/String?|
+        @R|kotlin/jvm/JvmName|(name = String(Person_city)) public get(): R|kotlin/String?|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Person>|.city: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+        @R|kotlin/jvm/JvmName|(name = String(Person_city)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Group>|.id: R|kotlin/String|
-        public get(): R|kotlin/String|
+        @R|kotlin/jvm/JvmName|(name = String(Group_id)) public get(): R|kotlin/String|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Group>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        @R|kotlin/jvm/JvmName|(name = String(Group_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<Group>|.participants: R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>|
+        @R|kotlin/jvm/JvmName|(name = String(Group_participants)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<Person>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<Group>|.participants: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<Person>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<Person>>|
+        @R|kotlin/jvm/JvmName|(name = String(Group_participants)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<Person>>|

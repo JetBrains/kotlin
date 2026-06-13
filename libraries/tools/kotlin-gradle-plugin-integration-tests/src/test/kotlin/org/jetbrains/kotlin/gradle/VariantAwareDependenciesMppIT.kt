@@ -260,7 +260,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
             )
             buildGradle.replaceText("\"com.example:sample-lib:1.0\"", "project(':sample-lib')")
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { [target, suffix] ->
                 build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
                     assertOutputContains("Variant ${target}ApiElements")
                 }

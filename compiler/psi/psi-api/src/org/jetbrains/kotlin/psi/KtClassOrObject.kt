@@ -3,19 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtNonPublicApi::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -37,30 +34,19 @@ abstract class KtClassOrObject :
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
 
-    fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
-        getSuperTypeList()?.let {
-            val single = it.entries.singleOrNull()
-            if (single != null && single.typeReference?.typeElement == null) {
-                return single.replace(superTypeListEntry) as KtSuperTypeListEntry
-            }
-            return EditCommaSeparatedListHelper.addItem(it, superTypeListEntries, superTypeListEntry)
-        }
+    @Deprecated(
+        "Use addSuperType(superTypeListEntry) instead",
+        ReplaceWith("this.addSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.addSuperType"),
+    )
+    fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry =
+        KtPsiMutationService.getInstance().addSuperType(this, superTypeListEntry)
 
-        val psiFactory = KtPsiFactory(project)
-        val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).parent
-        val colon = addBefore(psiFactory.createColon(), getBody())
-        return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).entries.first()
-    }
-
+    @Deprecated(
+        "Use removeSuperType(superTypeListEntry) instead",
+        ReplaceWith("this.removeSuperType(superTypeListEntry)", "org.jetbrains.kotlin.idea.base.psi.removeSuperType"),
+    )
     fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
-        val specifierList = getSuperTypeList() ?: return
-        assert(superTypeListEntry.parent === specifierList)
-
-        if (specifierList.entries.size > 1) {
-            EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
-        } else {
-            deleteChildRange(getColon() ?: specifierList, specifierList)
-        }
+        KtPsiMutationService.getInstance().removeSuperType(this, superTypeListEntry)
     }
 
     fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
@@ -69,31 +55,32 @@ abstract class KtClassOrObject :
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.CLASS_BODY)
 
-    @OptIn(KtImplementationDetail::class)
-    inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T {
-        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
-        val body = getOrCreateBody()
-        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
-        return if (anchor?.nextSibling is PsiErrorElement) {
-            body.addBefore(declaration, anchor)
-        } else {
-            body.addAfter(declaration, anchor)
-        } as T
-    }
+    @Deprecated(
+        "Use addMemberDeclaration(declaration) instead",
+        ReplaceWith("this.addMemberDeclaration(declaration)", "org.jetbrains.kotlin.idea.base.psi.addMemberDeclaration"),
+    )
+    inline fun <reified T : KtDeclaration> addDeclaration(declaration: T): T =
+        KtPsiMutationService.getInstance().addMemberDeclaration(this, declaration)
 
-    @OptIn(KtImplementationDetail::class)
-    inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T {
-        val anchorBefore = anchor ?: declarations.lastOrNull() ?: return addDeclaration(declaration)
-        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
-        return getOrCreateBody().addAfter(declaration, anchorBefore) as T
-    }
+    @Deprecated(
+        "Use addMemberDeclarationAfter(declaration, anchor) instead",
+        ReplaceWith(
+            "this.addMemberDeclarationAfter(declaration, anchor)",
+            "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationAfter",
+        ),
+    )
+    inline fun <reified T : KtDeclaration> addDeclarationAfter(declaration: T, anchor: PsiElement?): T =
+        KtPsiMutationService.getInstance().addMemberDeclarationAfter(this, declaration, anchor)
 
-    @OptIn(KtImplementationDetail::class)
-    inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T {
-        val anchorAfter = anchor ?: declarations.firstOrNull() ?: return addDeclaration(declaration)
-        ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration)
-        return getOrCreateBody().addBefore(declaration, anchorAfter) as T
-    }
+    @Deprecated(
+        "Use addMemberDeclarationBefore(declaration, anchor) instead",
+        ReplaceWith(
+            "this.addMemberDeclarationBefore(declaration, anchor)",
+            "org.jetbrains.kotlin.idea.base.psi.addMemberDeclarationBefore",
+        ),
+    )
+    inline fun <reified T : KtDeclaration> addDeclarationBefore(declaration: T, anchor: PsiElement?): T =
+        KtPsiMutationService.getInstance().addMemberDeclarationBefore(this, declaration, anchor)
 
     fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
@@ -158,14 +145,7 @@ abstract class KtClassOrObject :
     )
 
     override fun delete() {
-        CheckUtil.checkWritable(this)
-
-        val file = containingKtFile
-        if (!isTopLevel() || file.declarations.size > 1) {
-            super.delete()
-        } else {
-            file.delete()
-        }
+        KtPsiMutationService.getInstance().deleteClassOrObject(this)
     }
 
     override fun subtreeChanged() {
@@ -184,44 +164,14 @@ abstract class KtClassOrObject :
 
     override fun getContextReceivers(): List<KtContextReceiver> =
         modifierList?.contextParameterList?.contextReceivers().orEmpty()
-
-    /**
-     * Ensures that a semicolon is present after the last enum entry in the class body, if this is an enum class.
-     */
-    @KtImplementationDetail
-    fun ensureSemicolonIsPresentAfterEnumEntriesIfNecessaryForDeclaration(declaration: KtDeclaration) {
-        if (declaration is KtEnumEntry) return
-        if (!(this is KtClass && isEnum())) return
-
-        val body = getOrCreateBody()
-        val lastEnumEntry = body.children.filterIsInstance<KtEnumEntry>().lastOrNull()
-
-        if (lastEnumEntry != null) {
-            @OptIn(KtExperimentalApi::class)
-            lastEnumEntry.addSemicolon()
-        } else {
-            val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.lastChild!!, PsiWhiteSpace::class.java)
-            if (anchor != null && anchor.elementType == KtTokens.SEMICOLON) {
-                // there's already a semicolon
-                return
-            }
-            val psiFactory = KtPsiFactory(project)
-            val semicolon = body.addAfter(psiFactory.createSemicolon(), anchor)
-            if (anchor == body.lBrace) {
-                body.addBefore(psiFactory.createNewLine(), semicolon)
-            }
-        }
-    }
 }
 
 
-fun KtClassOrObject.getOrCreateBody(): KtClassBody {
-    getBody()?.let { return it }
-
-    val newBody = KtPsiFactory(project).createEmptyClassBody()
-    if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
-    return add(newBody) as KtClassBody
-}
+@Deprecated(
+    "Use getOrCreateClassBody() instead",
+    ReplaceWith("this.getOrCreateClassBody()", "org.jetbrains.kotlin.idea.base.psi.getOrCreateClassBody"),
+)
+fun KtClassOrObject.getOrCreateBody(): KtClassBody = KtPsiMutationService.getInstance().getOrCreateClassBody(this)
 
 val KtClassOrObject.allConstructors
     get() = listOfNotNull(primaryConstructor) + secondaryConstructors

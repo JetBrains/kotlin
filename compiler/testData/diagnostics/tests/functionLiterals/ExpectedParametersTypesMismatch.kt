@@ -19,9 +19,9 @@ fun test1() {
     foo1 {
         ""
     }
-    foo1 <!ARGUMENT_TYPE_MISMATCH!>{
-        s: String -> ""
-    }<!>
+    foo1 {
+        <!EXPECTED_PARAMETER_TYPE_MISMATCH!>s: String<!> -> ""
+    }
     foo1 <!ARGUMENT_TYPE_MISMATCH!>{
         x, <!CANNOT_INFER_VALUE_PARAMETER_TYPE!>y<!> -> ""
     }<!>

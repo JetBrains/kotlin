@@ -140,7 +140,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             source: KtSourceElement,
         ): KtDiagnosticFactory2<FirBasedSymbol<*>, FirBasedSymbol<*>> {
             if (LanguageFeature.ProhibitPrivateOperatorCallInInline.isDisabled()) {
-                val isDelegatedPropertyAccessor = source.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+                val isDelegatedPropertyAccessor = source.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
                 val isForLoopButNotIteratorCall = source.kind == KtFakeSourceElementKind.DesugaredForLoop &&
                         accessExpression.toReference(session)?.symbol?.memberDeclarationNameOrNull != OperatorNameConventions.ITERATOR
 
@@ -400,7 +400,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             function.valueParameters.any { it.isInlinable(context.session) } || function.contextParameters.any { it.isInlinable(context.session) }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return
-        if (function.returnTypeRef.needsMultiFieldValueClassFlattening(session)) return
+        if (function.returnTypeRef.needsJvmInlineMultiFieldValueClassFlattening(session)) return
 
         reporter.reportOn(function.source, FirErrors.NOTHING_TO_INLINE)
     }

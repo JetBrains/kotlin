@@ -43,7 +43,7 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
         val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
 
         val mergedDump = abiTools.createKlibDump()
-        klibs.forEach { (target, klibDir) ->
+        klibs.forEach { [target, klibDir] ->
             val dump = abiTools.extractKlibAbi(
                 klibDir.toFile(),
                 AbiValidationUtils.convert(target),
@@ -94,10 +94,7 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
         return deepCopy()
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     companion object {
         /**

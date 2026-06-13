@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -14,12 +15,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
     when {
         this is KtProperty -> bindingContext[BindingContext.VARIABLE, this]?.type
         else -> bindingContext.getType(this)
     }
 
+@K1Deprecation
 fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     bindingContext: BindingContext,
     descriptor: DeclarationDescriptor?,

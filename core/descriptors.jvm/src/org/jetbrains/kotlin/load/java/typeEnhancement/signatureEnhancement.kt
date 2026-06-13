@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.contains
 
+@K1Deprecation
 class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {

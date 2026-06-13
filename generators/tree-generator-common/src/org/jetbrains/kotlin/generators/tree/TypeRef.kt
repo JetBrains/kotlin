@@ -285,11 +285,11 @@ typealias TypeParameterSubstitutionMap = Map<out TypeParameterRef, TypeRef>
 
 fun <Self : ParametrizedTypeRef<Self, NamedTypeParameterRef>> ParametrizedTypeRef<Self, NamedTypeParameterRef>.withArgs(
     vararg args: Pair<String, TypeRef>
-) = copy(args.associate { (k, v) -> NamedTypeParameterRef(k) to v })
+) = copy(args.associate { [k, v] -> NamedTypeParameterRef(k) to v })
 
 fun <Self : ParametrizedTypeRef<Self, PositionTypeParameterRef>> ParametrizedTypeRef<Self, PositionTypeParameterRef>.withArgs(
     vararg args: TypeRef
-) = copy(args.withIndex().associate { (i, t) -> PositionTypeParameterRef(i) to t })
+) = copy(args.withIndex().associate { [i, t] -> PositionTypeParameterRef(i) to t })
 
 
 class TypeVariable(

@@ -1,0 +1,8 @@
+KtNameReferenceExpression(39,42): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(): kotlin.Unit
+    ]
+  additional: [lib.kt]

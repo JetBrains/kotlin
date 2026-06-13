@@ -41,7 +41,7 @@ class PropertyReferenceCollector : RecursiveJsVisitor() {
 
     override fun visitBinaryExpression(x: JsBinaryOperation) {
         var assignmentToProperty = false
-        JsAstUtils.decomposeAssignment(x)?.let { (left, right) ->
+        JsAstUtils.decomposeAssignment(x)?.let { [left, right] ->
             (left as? JsNameRef)?.let { nameRef ->
                 assignmentToProperty = true
                 identWriteMap[nameRef.ident] = 1 + unqualifiedWriteCount(nameRef.ident)

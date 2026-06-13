@@ -47,7 +47,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 
         // Replace empty varargs with empty arrays
         val irFunction = function.owner
-        for ((parameter, argument) in irFunction.parameters zip expression.arguments) {
+        for ([parameter, argument] in irFunction.parameters zip expression.arguments) {
             if (argument != null) continue
 
             if (parameter.varargElementType != null && !parameter.hasDefaultValue()) {

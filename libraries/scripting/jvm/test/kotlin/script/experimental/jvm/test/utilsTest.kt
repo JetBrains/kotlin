@@ -51,7 +51,7 @@ class UtilsTest : TestCase() {
                 assertEquals(paths.toSet(), res.mapTo(HashSet()) { it.first })
             }
 
-            res.forEach { (path, bytes) ->
+            res.forEach { [path, bytes] ->
                 val data = File(path).readText()
                 assertEquals("Mismatching data for $path", data, bytes)
             }

@@ -33,6 +33,13 @@ annotation class AffectedByJs
 annotation class AffectedByNative
 
 /**
+* Will mark tests as 'affected by' the given domain [Domain.CoreLibs].
+* Such tests will run, additionally, for all commits affecting the CoreLibs domain.
+*/
+@Tag("affectedBy:CoreLibs")
+annotation class AffectedByCoreLibs
+
+/**
 * Will mark tests as 'affected by' the given domain [Domain.AnalysisApi].
 * Such tests will run, additionally, for all commits affecting the AnalysisApi domain.
 */
@@ -61,6 +68,27 @@ annotation class AffectedByCompilerPlugins
 annotation class AffectedByGradle
 
 /**
+* Will mark tests as 'affected by' the given domain [Domain.Maven].
+* Such tests will run, additionally, for all commits affecting the Maven domain.
+*/
+@Tag("affectedBy:Maven")
+annotation class AffectedByMaven
+
+/**
+* Will mark tests as 'affected by' the given domain [Domain.IntelliJ].
+* Such tests will run, additionally, for all commits affecting the IntelliJ domain.
+*/
+@Tag("affectedBy:IntelliJ")
+annotation class AffectedByIntelliJ
+
+/**
+* Will mark tests as 'affected by' the given domain [Domain.BuildInfrastructure].
+* Such tests will run, additionally, for all commits affecting the BuildInfrastructure domain.
+*/
+@Tag("affectedBy:BuildInfrastructure")
+annotation class AffectedByBuildInfrastructure
+
+/**
 * Will mark tests as 'affected by' the given domain [Domain.Unknown].
 * Such tests will run, additionally, for all commits affecting the Unknown domain.
 */
@@ -72,9 +100,13 @@ fun affectedByAnnotationOf(domain: Domain) = when (domain) {
     Domain.Wasm -> AffectedByWasm::class
     Domain.Js -> AffectedByJs::class
     Domain.Native -> AffectedByNative::class
+    Domain.CoreLibs -> AffectedByCoreLibs::class
     Domain.AnalysisApi -> AffectedByAnalysisApi::class
     Domain.SwiftExport -> AffectedBySwiftExport::class
     Domain.CompilerPlugins -> AffectedByCompilerPlugins::class
     Domain.Gradle -> AffectedByGradle::class
+    Domain.Maven -> AffectedByMaven::class
+    Domain.IntelliJ -> AffectedByIntelliJ::class
+    Domain.BuildInfrastructure -> AffectedByBuildInfrastructure::class
     Domain.Unknown -> AffectedByUnknown::class
 }

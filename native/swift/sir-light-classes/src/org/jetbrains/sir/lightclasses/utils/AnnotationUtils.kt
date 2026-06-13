@@ -22,6 +22,7 @@ internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.transla
     get() = withSessions {
         ktSymbol.allRequiredOptIns.mapNotNull {
             if (it.asFqNameString() == "kotlinx.cinterop.BetaInteropApi") return@mapNotNull null
+            if (it.asFqNameString() == "kotlinx.cinterop.ExperimentalForeignApi") return@mapNotNull null
             SirAttribute.SPI(it.asSingleFqName().pathSegments().joinToString("$"))
         }
     }

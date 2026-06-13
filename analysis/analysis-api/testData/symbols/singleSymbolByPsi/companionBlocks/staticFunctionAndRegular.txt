@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /Foo.function
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,6 +34,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: Foo
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: Foo.function

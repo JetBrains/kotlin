@@ -1,7 +1,0 @@
-KtNameReferenceExpression(36,37): 'a'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      a: A

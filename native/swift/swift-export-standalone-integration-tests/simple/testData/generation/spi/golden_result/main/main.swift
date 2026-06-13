@@ -22,7 +22,6 @@ public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibIn
     }
     @_spi(InternalLibApi)
     public init() {
-        if Self.self != main.MyImplementation.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MyImplementation ") }
         let __kt = __root___MyImplementation_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___MyImplementation_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -42,7 +41,6 @@ public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibIn
 public final class MyOptInClass: KotlinRuntime.KotlinBase {
     @_spi(MyOptInApi)
     public init() {
-        if Self.self != main.MyOptInClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MyOptInClass ") }
         let __kt = __root___MyOptInClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___MyOptInClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -58,7 +56,6 @@ public final class MyOptInClass: KotlinRuntime.KotlinBase {
 public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne {
     @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
     public override init() {
-        if Self.self != main.MySubClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MySubClass ") }
         let __kt = __root___MySubClass_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___MySubClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -74,7 +71,6 @@ public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOn
 public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo {
     @_spi(InterfaceOptInTwo)
     public init() {
-        if Self.self != main.MySubInterface.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.MySubInterface ") }
         let __kt = __root___MySubInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___MySubInterface_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -98,7 +94,7 @@ public var functionalTypePropertyA: (main.MyOptInClass) -> Swift.Void {
     @_spi(MyOptInApi)
     set {
         return { __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__({
-            let originalBlock = newValue
+            let originalBlock: (main.MyOptInClass) -> Swift.Void = newValue
             return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.MyOptInClass.__createClassWrapper(externalRCRef: arg0)); return true }() }
         }()); return () }()
     }
@@ -115,7 +111,7 @@ public var functionalTypePropertyB: (any lib.InternalLibInterface) -> Swift.Void
     @_spi(InternalLibApi)
     set {
         return { __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__({
-            let originalBlock = newValue
+            let originalBlock: (any lib.InternalLibInterface) -> Swift.Void = newValue
             return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any lib.InternalLibInterface); return true }() }
         }()); return () }()
     }
@@ -125,7 +121,7 @@ public func callbackFunction(
     action: @escaping () -> main.MyOptInClass
 ) -> Swift.Void {
     return { __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__({
-        let originalBlock = action
+        let originalBlock: () -> main.MyOptInClass = action
         return { return originalBlock().__externalRCRef() }
     }()); return () }()
 }

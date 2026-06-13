@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.ModuleDeserializerProvid
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanPartialModuleDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.isTrivialGetter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -70,9 +72,28 @@ internal class Context(
         val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
                 ?: error("No module deserializer for ${function.render()}")
         return inlineFunctionDeserializers.getOrPut(deserializer) {
-            InlineFunctionDeserializer(deserializer, config.cachedLibraries, irLinker,
-                    isLibraryBeingCached = config.libraryToCache?.klib == deserializer.klib)
+            InlineFunctionDeserializer(irBuiltIns, deserializer, config.cachedLibraries, irLinker)
         }
+    }
+
+    private val trivialGettersDeserializers = mutableMapOf<KonanPartialModuleDeserializer, TrivialGettersDeserializer>()
+
+    /**
+     * Cache-aware version of [isTrivialGetter] specialized for `val` properties.
+     *
+     * For getters declared in the current module we just delegate to [isTrivialGetter].
+     * For getters declared in a cached dependency, the IR body may be empty, so we instead consult
+     * the cache built when that dependency was first compiled (see `CacheInfoBuilder` and `TrivialGetterSerializer`).
+     */
+    fun isTrivialGetter(function: IrSimpleFunction): Boolean {
+        val deserializer = moduleDeserializerProvider.getDeserializerOrNull(function)
+                ?: return function.isTrivialGetter // Function from current module.
+
+        val signature = function.symbol.signature ?: return false
+        val trivialGettersDeserializer = trivialGettersDeserializers.getOrPut(deserializer) {
+            TrivialGettersDeserializer(config.cachedLibraries, deserializer)
+        }
+        return signature in trivialGettersDeserializer.trivialGetterSignatures
     }
 
     fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
@@ -106,7 +127,6 @@ internal class Context(
 
     override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
             config.partialLinkageConfig,
-            irBuiltIns,
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     configuration.diagnosticsCollector,
                     config.languageVersionSettings,

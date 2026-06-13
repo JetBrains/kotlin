@@ -6,7 +6,26 @@
         serviceInterface="org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDirectInheritorsProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneFirDirectInheritorsProvider"
     />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.ReadWriteAccessCheckerBaseImpl"
+    />
+
     <applicationService serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseForLoopInReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseInvokeFunctionReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBasePropertyDelegationMethodsReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseDestructuringDeclarationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseArrayAccessReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseConstructorDelegationReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseCollectionLiteralReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseKDocReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseSimpleNameReference$Provider"/>
+    <psiReferenceProvider implementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.KaBaseDefaultAnnotationArgumentReference$Provider"/>
   </extensions>
 </idea-plugin>

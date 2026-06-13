@@ -55,7 +55,11 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                         .flatMap { (it.compilerOptions as KotlinJsCompilerOptions).moduleName }
                 )
             }
-            task.runViaBuildToolsApi.value(false).disallowChanges()
+            when (compilation.platformType) {
+                KotlinPlatformType.js -> task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinJsCompilerViaBuildToolsApi)
+                KotlinPlatformType.wasm -> task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinWasmCompilerViaBuildToolsApi)
+                else -> task.runViaBuildToolsApi.value(false).disallowChanges()
+            }
         }
     }
 

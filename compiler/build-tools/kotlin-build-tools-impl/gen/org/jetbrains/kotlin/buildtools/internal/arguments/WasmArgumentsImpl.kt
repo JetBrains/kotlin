@@ -14,7 +14,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
@@ -38,43 +40,36 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_TARGET
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_NEW_EXCEPTION_PROPOSAL
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.WasmTarget
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class WasmArgumentsImpl(
   private val adapter: WasmArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, restrictedArgViolations),
-    WasmArguments,
-    WasmArguments.Builder,
+) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+    WasmCompilerArguments,
+    WasmCompilerArguments.Builder,
+    WasmCompilerKlibArguments,
+    WasmCompilerKlibArguments.Builder,
+    WasmCompilerLinkingArguments,
+    WasmCompilerLinkingArguments.Builder,
     DeepCopyable<WasmArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(KotlinWasmCompilerArguments())
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: WasmArguments.WasmArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
-  }
-
-  @UseFromImplModuleRestricted
-  override operator fun <V> `set`(key: WasmArguments.WasmArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
-      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
-    }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -86,12 +81,58 @@ internal class WasmArgumentsImpl(
 
   public operator fun contains(key: WasmArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: WasmCompilerArguments.WasmCompilerArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
 
-  override fun build(): WasmArguments = deepCopy()
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: WasmCompilerArguments.WasmCompilerArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  override fun deepCopy(): WasmArgumentsImpl = WasmArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+
+  override fun build(): WasmArgumentsImpl = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: KotlinWasmCompilerArguments = KotlinWasmCompilerArguments()): KotlinWasmCompilerArguments {
+  public fun toCompilerArguments(): KotlinWasmCompilerArguments {
+    val arguments = KotlinWasmCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
@@ -116,13 +157,15 @@ internal class WasmArgumentsImpl(
     if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
     if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
     if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
+    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
     if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
     arguments.internalArguments = parseCommandLineArguments<KotlinWasmCompilerArguments>(internalArguments.toList()).internalArguments
+    populateExplicitArguments(arguments)
     return arguments
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
+  protected fun applyCompilerArguments(arguments: KotlinWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile } catch (_: NoSuchMethodError) {  }
@@ -141,8 +184,9 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap } catch (_: NoSuchMethodError) {  }
-    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_TARGET] = arguments.wasmTarget?.let { WasmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::wasmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwasm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_USE_STACK_SWITCHING_PROPOSAL] = arguments.wasmUseStackSwitchingProposal } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
@@ -169,6 +213,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES in this) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)}
     if (X_WASM_TARGET in this) { arguments.wasmTarget = get(X_WASM_TARGET)?.stringValue}
     if (X_WASM_USE_NEW_EXCEPTION_PROPOSAL in this) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)}
+    if (X_WASM_USE_STACK_SWITCHING_PROPOSAL in this) { arguments.wasmUseStackSwitchingProposal = get(X_WASM_USE_STACK_SWITCHING_PROPOSAL)}
     if (X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS in this) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)}
     return arguments
   }
@@ -176,12 +221,12 @@ internal class WasmArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: KotlinWasmCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, KotlinWasmCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     applyCompilerArguments(compilerArgs)
   }
 
   override fun toArgumentStrings(): List<String> {
-    val arguments = toCompilerArguments().compilerToArgumentStrings()
+    val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)
     return arguments
   }
 
@@ -192,7 +237,7 @@ internal class WasmArgumentsImpl(
    * only sets arguments that have been explicitly assigned, and [compilerToArgumentStrings][org.jetbrains.kotlin.compilerRunner.toArgumentStrings]
    * skips properties whose value matches the default.
    */
-  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()
+  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public class WasmArgument<V>(
     public val id: String,
@@ -251,6 +296,9 @@ internal class WasmArgumentsImpl(
 
     public val X_WASM_USE_NEW_EXCEPTION_PROPOSAL: WasmArgument<Boolean?> =
         WasmArgument("X_WASM_USE_NEW_EXCEPTION_PROPOSAL")
+
+    public val X_WASM_USE_STACK_SWITCHING_PROPOSAL: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_USE_STACK_SWITCHING_PROPOSAL")
 
     public val X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS: WasmArgument<Boolean> =
         WasmArgument("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")

@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.types.SimpleType
 
+@K1Deprecation
 object NullFlexibleTypeDeserializer : FlexibleTypeDeserializer {
 
     override fun create(

@@ -56,7 +56,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
 
         fun transform() {
             val frames = FastMethodAnalyzer("fake", methodNode, HazardsTrackingInterpreter()).analyze()
-            for ((i, insn) in insns.withIndex()) {
+            for ([i, insn] in insns.withIndex()) {
                 val frame = frames[i] ?: continue
                 when (insn.opcode) {
                     Opcodes.POP ->
@@ -75,7 +75,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             }
 
             val transformations = hashMapOf<AbstractInsnNode, Transformation>()
-            for ((i, insn) in insns.withIndex()) {
+            for ([i, insn] in insns.withIndex()) {
                 val frame = frames[i] ?: continue
                 if (insn.opcode == Opcodes.POP) {
                     val input = frame.top() ?: continue
@@ -89,7 +89,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     }
                 }
             }
-            for ((insn, transformation) in transformations.entries) {
+            for ([insn, transformation] in transformations.entries) {
                 transformation(insn)
             }
         }

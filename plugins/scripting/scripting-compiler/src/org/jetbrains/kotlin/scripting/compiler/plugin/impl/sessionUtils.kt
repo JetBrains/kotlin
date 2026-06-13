@@ -100,7 +100,7 @@ internal fun configureLibrarySessionIfNeeded(
     // needed for class finders for now anyway
     compilerConfiguration.addJvmClasspathRoots(classpath)
     state.compilerContext.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
-    val (libModuleData, _) = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
+    val [libModuleData, _] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
     if (libModuleData != null) {
         val projectEnvironment = state.sessionFactoryContext.projectEnvironment
         val searchScope = state.moduleDataProvider.getModuleDataPaths(libModuleData)?.let { paths ->

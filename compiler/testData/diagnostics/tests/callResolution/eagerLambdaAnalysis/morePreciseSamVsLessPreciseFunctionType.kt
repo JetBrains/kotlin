@@ -1,5 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
+
+// This file doesn't contain LANGUAGE directive because it's expected
+// to work independently of language-version-settings configuration, so there should be no LATEST_LV_DIFFERENCE.
 import java.util.function.Consumer
 
 interface StringCollector : MutableList<String>

@@ -1,2 +1,5 @@
-KtBlockExpression(19,92): '{'
-  null
+KDocName(57,60): 'foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.String
+    ]

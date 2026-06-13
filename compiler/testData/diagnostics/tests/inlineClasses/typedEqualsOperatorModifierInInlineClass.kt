@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // LANGUAGE: +CustomEqualsInValueClasses
-// SKIP_TXT
 
 
 @JvmInline

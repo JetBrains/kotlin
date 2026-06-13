@@ -1,0 +1,90 @@
+KClass: class A1 : B, C, D
+  constructors:
+    public final fun `<init>`(): A1
+  members:
+    public open operator fun A1.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A1.hashCode(): kotlin.Int
+    public final infix fun A1.infixFun(kotlin.Any): kotlin.String
+    public final operator fun A1.plus(kotlin.Any): kotlin.String
+    public open fun A1.toString(): kotlin.String
+  declaredMembers:
+KClass: class A2 : B, D, C
+  constructors:
+    public final fun `<init>`(): A2
+  members:
+    public open operator fun A2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A2.hashCode(): kotlin.Int
+    public final infix fun A2.infixFun(kotlin.Any): kotlin.String
+    public final operator fun A2.plus(kotlin.Any): kotlin.String
+    public open fun A2.toString(): kotlin.String
+  declaredMembers:
+KClass: class A3 : B, C
+  constructors:
+    public final fun `<init>`(): A3
+  members:
+    public open operator fun A3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A3.hashCode(): kotlin.Int
+    public final infix fun A3.infixFun(kotlin.Any): kotlin.String
+    public final operator fun A3.plus(kotlin.Any): kotlin.String
+    public open fun A3.toString(): kotlin.String
+  declaredMembers:
+KClass: class A4 : B, D
+  constructors:
+    public final fun `<init>`(): A4
+  members:
+    public open operator fun A4.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A4.hashCode(): kotlin.Int
+    public final infix fun A4.infixFun(kotlin.Any): kotlin.String
+    public final fun A4.plus(kotlin.Any): kotlin.String
+    public open fun A4.toString(): kotlin.String
+  declaredMembers:
+KClass: class B : Any
+  constructors:
+    public final fun `<init>`(): B
+  members:
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.hashCode(): kotlin.Int
+    public final infix fun B.infixFun(kotlin.Any): kotlin.String
+    public final fun B.plus(kotlin.Any): kotlin.String
+    public open fun B.toString(): kotlin.String
+  declaredMembers:
+    public final infix fun B.infixFun(kotlin.Any): kotlin.String
+    public final fun B.plus(kotlin.Any): kotlin.String
+KClass: abstract interface C : Any
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.hashCode(): kotlin.Int
+    public abstract infix fun C.infixFun(kotlin.Any): kotlin.CharSequence
+    public abstract operator fun C.plus(kotlin.Any): kotlin.CharSequence
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+    public abstract infix fun C.infixFun(kotlin.Any): kotlin.CharSequence
+    public abstract operator fun C.plus(kotlin.Any): kotlin.CharSequence
+KClass: abstract interface D : Any
+  members:
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open fun D.hashCode(): kotlin.Int
+    public abstract infix fun D.infixFun(kotlin.Any): kotlin.Any
+    public abstract fun D.plus(kotlin.Any): kotlin.Any
+    public open fun D.toString(): kotlin.String
+  declaredMembers:
+    public abstract infix fun D.infixFun(kotlin.Any): kotlin.Any
+    public abstract fun D.plus(kotlin.Any): kotlin.Any
+KClass: abstract interface Jaba : C, Any
+  members:
+    public open operator fun Jaba.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Jaba.hashCode(): kotlin.Int
+    public abstract fun Jaba.infixFun(kotlin.Any): kotlin.CharSequence
+    public abstract operator fun Jaba.plus(kotlin.Any): kotlin.CharSequence
+    public open fun Jaba.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Jaba.infixFun(kotlin.Any): kotlin.CharSequence
+    public abstract operator fun Jaba.plus(kotlin.Any): kotlin.CharSequence
+KClass: abstract interface Kjk : Jaba, Any
+  members:
+    public open operator fun Kjk.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Kjk.hashCode(): kotlin.Int
+    public abstract fun Kjk.infixFun(kotlin.Any): kotlin.CharSequence
+    public abstract operator fun Kjk.plus(kotlin.Any): kotlin.CharSequence
+    public open fun Kjk.toString(): kotlin.String
+  declaredMembers:

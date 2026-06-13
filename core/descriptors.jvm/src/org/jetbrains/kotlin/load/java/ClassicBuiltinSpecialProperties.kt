@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 
+@K1Deprecation
 object ClassicBuiltinSpecialProperties {
     fun CallableMemberDescriptor.getBuiltinSpecialPropertyGetterName(): String? {
         assert(KotlinBuiltIns.isBuiltIn(this)) { "This method is defined only for builtin members, but $this found" }

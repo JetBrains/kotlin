@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "org.bug.library"
         compileSdk = 36
         minSdk = 28

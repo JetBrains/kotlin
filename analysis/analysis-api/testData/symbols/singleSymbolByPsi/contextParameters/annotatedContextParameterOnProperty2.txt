@@ -6,10 +6,10 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -30,5 +30,5 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(annotatedContextParameterOnProperty2.kt)
   getContainingJvmClassName: AnnotatedContextParameterOnProperty2Kt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

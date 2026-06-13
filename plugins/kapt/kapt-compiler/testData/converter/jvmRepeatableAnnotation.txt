@@ -3,6 +3,10 @@
 @C(c = "c2")
 @D(d = "d2")
 /**
+ * @C(c = "c1")
+ * @D(d = "d1")
+ * @C(c = "c2")
+ * @D(d = "d2")
  * public final class A : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -26,6 +30,7 @@ public final class A {
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Repeatable(value = C.Container.class)
 /**
+ * @kotlin/annotation/Repeatable
  * public final annotation class C : kotlin/Annotation {
  *
  *   // signature: <init>(Ljava/lang/String;)V
@@ -61,6 +66,7 @@ public abstract @interface C {
 @java.lang.annotation.Repeatable(value = DContainer.class)
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 /**
+ * @java/lang/annotation/Repeatable(value = DContainer::class)
  * public final annotation class D : kotlin/Annotation {
  *
  *   // signature: <init>(Ljava/lang/String;)V

@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -39,14 +38,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.doo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -77,7 +75,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -85,6 +82,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -105,7 +103,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -117,14 +115,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /JavaClass.getStringValue
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -161,14 +158,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: JavaClass
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.equals
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -200,7 +196,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -208,6 +203,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -228,7 +224,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.Any
       getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -240,14 +236,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: true
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.hashCode
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -285,14 +280,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Any.toString
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -330,14 +324,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.Any
   canBeOperator: false
   getContainingModule: KaBuiltinsModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: null
 
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
@@ -361,5 +354,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: JavaClass

@@ -1,0 +1,90 @@
+KtFile: CodeSpanWithLineBreaks.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ``')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_CODE_SPAN_TEXT)(' foo')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_CODE_SPAN_TEXT)(' bar')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_CODE_SPAN_TEXT)(' baz')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_CODE_SPAN_TEXT)(' ')
+        PsiElement(KDOC_TEXT)('``')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' `')
+        PsiElement(KDOC_CODE_SPAN_TEXT)('foo bar')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_CODE_SPAN_TEXT)(' baz')
+        PsiElement(KDOC_TEXT)('`')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' `foo bar')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' baz`')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo2')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')

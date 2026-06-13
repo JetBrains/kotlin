@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.analysis.checkers.forEachClassId
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.toReference
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-// TODO (KT-60899): implement this checker for JS, similarly to K1's JsReflectionAPICallChecker.
 abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
     protected abstract fun isWholeReflectionApiAvailable(): Boolean
@@ -48,11 +47,12 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         val resolvedReference = expression.toReference(context.session)?.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol as? FirCallableSymbol ?: return
 
-        val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.fullyExpandedClassId(context.session)
-        if (containingClassId == null || containingClassId.packageFqName != StandardNames.KOTLIN_REFLECT_FQ_NAME) return
-
-        if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId)) {
-            report(resolvedReference.source ?: expression.source)
+        (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.resolvedType?.forEachClassId { containingClassId ->
+            if (containingClassId.packageFqName == StandardNames.KOTLIN_REFLECT_FQ_NAME &&
+                !isAllowedReflectionApi(referencedSymbol.name, containingClassId)
+            ) {
+                report(resolvedReference.source ?: expression.source)
+            }
         }
     }
 

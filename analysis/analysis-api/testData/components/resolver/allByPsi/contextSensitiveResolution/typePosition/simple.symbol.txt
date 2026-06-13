@@ -29,28 +29,53 @@ KtParameter(121,134): 'val x: String'
   null
 
 KtTypeReference(128,134): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(128,134): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(128,134): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(137,145): 'MySealed'
   null
 
 KtSuperTypeEntry(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeReference(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtUserType(137,145): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(137,145): 'MySealed'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtClass(150,186): 'class Right(val y: String): MySealed'
   null
@@ -65,40 +90,76 @@ KtParameter(162,175): 'val y: String'
   null
 
 KtTypeReference(169,175): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(169,175): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(169,175): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtSuperTypeList(178,186): 'MySealed'
   null
 
 KtSuperTypeEntry(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtTypeReference(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtUserType(178,186): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(178,186): 'MySealed'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNamedFunction(190,267): 'fun MySealed.getOrElse() = when (this) {'
   null
 
 KtTypeReference(194,202): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtUserType(194,202): 'MySealed'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtNameReferenceExpression(194,202): 'MySealed'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed
+    ]
 
 KtParameterList(212,214): '()'
   null
@@ -112,10 +173,10 @@ KtThisExpression(223,227): 'this'
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -134,15 +195,17 @@ KtThisExpression(223,227): 'this'
     ]
 
 KtNameReferenceExpression(223,227): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -167,15 +230,28 @@ KtWhenConditionIsPattern(235,242): 'is Left'
   null
 
 KtTypeReference(238,242): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtUserType(238,242): 'Left'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtNameReferenceExpression(238,242): 'Left'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Left
+    ]
 
 KtNameReferenceExpression(246,247): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val x: kotlin.String
@@ -188,15 +264,28 @@ KtWhenConditionIsPattern(252,260): 'is Right'
   null
 
 KtTypeReference(255,260): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtUserType(255,260): 'Right'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(255,260): 'Right'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MySealed.Right
+    ]
 
 KtNameReferenceExpression(264,265): 'y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val y: kotlin.String

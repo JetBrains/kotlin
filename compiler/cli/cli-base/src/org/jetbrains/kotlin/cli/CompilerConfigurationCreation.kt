@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -30,6 +31,7 @@ fun CompilerConfiguration.Companion.create(
         registerExtensionStorage()
         initializeDiagnosticFactoriesStorageForCli()
         this.diagnosticsCollector = diagnosticsCollector ?: DiagnosticsCollectorImpl()
+        @OptIn(MessageCollectorAccess::class) // write access
         messageCollector?.let { this.messageCollector = it }
     }
 }

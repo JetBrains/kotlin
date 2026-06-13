@@ -126,7 +126,7 @@ class BigNumbersTest {
     }
 
     @Test fun bigDecimalDivRounding() {
-        val (d1, d2, d3, d4, d5) = (1..5).map { BigDecimal(it.toString()) }
+        val [d1, d2, d3, d4, d5] = (1..5).map { BigDecimal(it.toString()) }
         val d7 = BigDecimal("7")
 
         assertEquals(d1, d2 / d3)

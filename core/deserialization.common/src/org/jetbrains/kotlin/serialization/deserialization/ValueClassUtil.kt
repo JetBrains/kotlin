@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -14,12 +15,31 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
-    tryLoadMultiFieldValueClass: Boolean,
+    tryLoadJvmInlineMultiFieldValueClass: Boolean,
+    tryLoadFullValueClass: Boolean,
     nameResolver: NameResolver,
     typeTable: TypeTable,
     typeDeserializer: (ProtoBuf.Type) -> T,
     typeOfPublicProperty: (Name) -> T?,
 ): ValueClassRepresentation<T>? {
+    val hasJvmInline = annotationList.any {
+        val annotationId = nameResolver.getClassId(it.id)
+        annotationId.relativeClassName.asString() == "JvmInline" && annotationId.packageFqName.asString() == "kotlin.jvm"
+    }
+    if (!hasJvmInline && tryLoadFullValueClass && Flags.IS_VALUE_CLASS.get(flags) && !hasInlineClassUnderlyingPropertyName()) {
+        val modality = Flags.MODALITY.get(flags)
+        val isAbstractOrSealed = modality == ProtoBuf.Modality.ABSTRACT || modality == ProtoBuf.Modality.SEALED
+        val fields = if (isAbstractOrSealed) {
+            null
+        } else {
+            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
+            primaryConstructor.valueParameterList.map {
+                nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
+            }
+        }
+        return FullValueClassRepresentation(fields)
+    }
+
     if (hasInlineClassUnderlyingPropertyName()) {
         val propertyName = nameResolver.getName(inlineClassUnderlyingPropertyName)
         val propertyType = inlineClassUnderlyingType(typeTable)?.let(typeDeserializer)
@@ -30,9 +50,9 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
 
     // Value classes without inline_class_underlying_property_name are treated as multi-field value classes, but only on JVM and if the
     // metadata version is large enough (1.5.1+), because we must be able to load inline classes compiled with earlier versions correctly.
-    if (tryLoadMultiFieldValueClass && Flags.IS_VALUE_CLASS.get(flags)) {
+    if (tryLoadJvmInlineMultiFieldValueClass && Flags.IS_VALUE_CLASS.get(flags)) {
         val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-        return MultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
+        return JvmInlineMultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
             nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
         })
     }

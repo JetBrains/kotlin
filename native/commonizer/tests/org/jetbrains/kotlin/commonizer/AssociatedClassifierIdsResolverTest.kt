@@ -350,10 +350,10 @@ private fun createCommonClassifierIdResolver(
     dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
 ): AssociatedClassifierIdsResolver {
     return AssociatedClassifierIdsResolver(
-        TargetDependent(root.withIndex().associate { (index, root) -> LeafCommonizerTarget(index.toString()) to root })
+        TargetDependent(root.withIndex().associate { [index, root] -> LeafCommonizerTarget(index.toString()) to root })
             .mapValue(::CirClassifierIndex),
         targetDependencies = root.withIndex()
-            .associate { (index, _) -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
+            .associate { [index, _] -> LeafCommonizerTarget(index.toString()) to CirProvidedClassifiers.EMPTY }.toTargetDependent(),
         commonDependencies = dependencies,
         cache = AssociatedClassifierIdsResolverCache.None
     )

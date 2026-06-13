@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -164,9 +165,12 @@ abstract class AbstractComposeLowering(
 
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
+    @OptIn(ValueClassBackendAgnosticApi::class)
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation ?: return null
+        val representation = klass.inlineClassRepresentation(
+            treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()
+        ) ?: return null
         if (!isInlineClassType()) return null
 
         // TODO: Apply type substitutions
@@ -213,42 +217,31 @@ abstract class AbstractComposeLowering(
         return hasAnnotation(ComposeFqNames.Composable)
     }
 
+    fun IrFunction.isInvoke(): Boolean =
+        name == OperatorNameConventions.INVOKE &&
+                parentClassOrNull?.defaultType?.let {
+                    it.isFunction() || it.isSyntheticComposableFunction()
+                } ?: false
+
     fun IrCall.isInvoke(): Boolean {
         if (origin == IrStatementOrigin.INVOKE)
             return true
-        val function = symbol.owner
-        return function.name == OperatorNameConventions.INVOKE &&
-                function.parentClassOrNull?.defaultType?.let {
-                    it.isFunction() || it.isSyntheticComposableFunction()
-                } ?: false
+        return symbol.owner.isInvoke()
     }
 
     fun IrCall.isComposableCall(): Boolean {
         return symbol.owner.hasComposableAnnotation() || isComposableLambdaInvoke()
     }
 
-    fun IrCall.isSyntheticComposableCall(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_SYNTHETIC_COMPOSABLE_CALL, this] == true
-    }
-
     fun IrCall.isComposableLambdaInvoke(): Boolean {
         if (!isInvoke()) return false
-        // [ComposerParamTransformer] replaces composable function types of the form
-        // `@Composable Function1<T1, T2>` with ordinary functions with extra parameters, e.g.,
-        // `Function3<T1, Composer, Int, T2>`. After this lowering runs we have to check the
-        // `attributeOwnerId` to recover the original type.
-        val receiver = dispatchReceiver?.let { it.attributeOwnerId as? IrExpression ?: it }
-        return receiver?.type?.let {
+        return dispatchReceiver?.type?.let {
             it.hasComposableAnnotation() || it.isSyntheticComposableFunction()
         } ?: false
     }
 
     fun IrCall.isComposableSingletonGetter(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true
-    }
-
-    fun IrClass.isComposableSingletonClass(): Boolean {
-        return context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS, this] == true
+        return this.isComposableSingleton
     }
 
     fun Stability.irStableExpression(
@@ -477,12 +470,11 @@ abstract class AbstractComposeLowering(
     protected fun irReturn(
         target: IrReturnTargetSymbol,
         value: IrExpression,
-        type: IrType = value.type,
     ): IrExpression {
         return IrReturnImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type,
+            context.irBuiltIns.nothingType,
             target,
             value
         )
@@ -495,7 +487,7 @@ abstract class AbstractComposeLowering(
         return IrReturnImpl(
             value.initializer?.startOffset ?: UNDEFINED_OFFSET,
             value.initializer?.endOffset ?: UNDEFINED_OFFSET,
-            value.type,
+            context.irBuiltIns.nothingType,
             target,
             irGet(value)
         )
@@ -1043,7 +1035,7 @@ abstract class AbstractComposeLowering(
 
             is IrFunctionExpression,
             is IrTypeOperatorCall ->
-                context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
+                this.isStaticFunctionExpression
 
             is IrGetField ->
                 // K2 sometimes produces `IrGetField` for reads from constant properties
@@ -1052,7 +1044,7 @@ abstract class AbstractComposeLowering(
             is IrBlock -> {
                 // Check the slice in case the block was generated as expression
                 // (e.g. inlined intrinsic remember call)
-                context.irTrace[ComposeWritableSlices.IS_STATIC_EXPRESSION, this] ?: false
+                this.isStaticExpression
             }
             else -> false
         }
@@ -1188,7 +1180,7 @@ abstract class AbstractComposeLowering(
                     // thus it is static.
                     return true
                 }
-                if (context.irTrace[ComposeWritableSlices.IS_COMPOSABLE_SINGLETON, this] == true) {
+                if (this.isComposableSingleton) {
                     return true
                 }
 
@@ -1220,7 +1212,7 @@ abstract class AbstractComposeLowering(
      */
     private fun IrMemberAccessExpression<*>.areAllArgumentsStatic(fileContainingDependent: IrFile?): Boolean {
         // getArguments includes the receivers!
-        return getArgumentsWithIr().all { (_, argExpression) ->
+        return getArgumentsWithIr().all { [_, argExpression] ->
             when (argExpression) {
                 // In a vacuum, we can't assume varargs are static because they're backed by
                 // arrays. Arrays aren't stable types due to their implicit mutability and
@@ -1290,10 +1282,7 @@ abstract class AbstractComposeLowering(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrSimpleFunction.sourceKey(): Int {
-        val info = context.irTrace[
-            ComposeWritableSlices.DURABLE_FUNCTION_KEY,
-            this
-        ]
+        val info = this.durableFunctionKey
         if (info != null) {
             info.used = true
             return info.key
@@ -1604,7 +1593,7 @@ abstract class AbstractComposeLowering(
                         } else {
                             null
                         }
-                    )
+                    ).also { newParam -> newParam.copyAttributes(it) }
                 }
             }
         }
@@ -1652,11 +1641,15 @@ abstract class AbstractComposeLowering(
     }
 
     protected var IrDeclaration.composeMetadata: ComposeMetadata?
-        get() = context.metadataDeclarationRegistrar.getCustomMetadataExtension(this, COMPOSE_PLUGIN_ID)
-            ?.let { ComposeMetadata(it) }
+        get() {
+            val attributeOwner = attributeOwnerId as? IrDeclaration ?: return null
+            return context.metadataDeclarationRegistrar.getCustomMetadataExtension(attributeOwner, COMPOSE_PLUGIN_ID)
+                ?.let { ComposeMetadata(it) }
+        }
         set(value) {
-            if (value != null && this.hasFirDeclaration()) {
-                context.metadataDeclarationRegistrar.addCustomMetadataExtension(this, COMPOSE_PLUGIN_ID, value.data)
+            val attributeOwner = attributeOwnerId as? IrDeclaration ?: return
+            if (value != null && attributeOwner.hasFirDeclaration()) {
+                context.metadataDeclarationRegistrar.addCustomMetadataExtension(attributeOwner, COMPOSE_PLUGIN_ID, value.data)
             }
         }
 
@@ -1739,10 +1732,35 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    protected fun IrSimpleFunction.copyWithoutBody(): IrSimpleFunction {
+        return context.irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            isInline = isInline,
+            isExpect = isExpect,
+            returnType = returnType,
+            modality = modality,
+            symbol = IrSimpleFunctionSymbolImpl(),
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isOperator = isOperator,
+            isInfix = isInfix,
+            isExternal = isExternal,
+            containerSource = containerSource,
+            isFakeOverride = isFakeOverride,
+        ).patchDeclarationParents(parent).also { fn ->
+            fn.copyAnnotationsFrom(this)
+            fn.copyParametersFrom(this)
+            fn.copyAttributes(this)
+        }
+    }
+
     protected fun IrSimpleFunction.makeStub(): IrSimpleFunction {
         val source = this
-        val copy = source.deepCopyWithSymbols(parent)
-        copy.attributeOwnerId = copy
+        val copy = source.copyWithoutBody()
         copy.isDefaultParamStub = true
         val newAnnotations = listOfNotNull(
             jvmSynthetic(),
@@ -1751,7 +1769,7 @@ abstract class AbstractComposeLowering(
         )
         // Remove existing annotations that are overridden by the new ones
         copy.annotations = copy.annotations.filterNot { annotation ->
-            newAnnotations.any { it.annotationClass?.owner?.classId == annotation.annotationClass?.owner?.classId }
+            newAnnotations.any { it.classId == annotation.classId }
         }
         copy.annotations += newAnnotations
         copy.body = null
@@ -1807,17 +1825,14 @@ abstract class AbstractComposeLowering(
         this is IrSimpleFunction &&
                 (isVirtualFunctionWithDefaultParam == true ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
+
+    fun IrType.isInlineClassType(): Boolean = isInlineClassType(isJvm = context.platform.isJvm())
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.hasAnnotationSafe(fqName: FqName): Boolean =
-    annotations.any {
-        // compiler helper getAnnotation fails during remapping in [ComposableTypeRemapper], so we
-        // use this impl
-        fqName == it.annotationClass?.descriptor?.fqNameSafe
-    }
+    annotations.any { it.isAnnotationWithEqualFqName(fqName) }
 
 // workaround for KT-45361
 val IrConstructorCall.annotationClass
@@ -1846,7 +1861,7 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
 ): T {
     val typeParamsAwareSymbolRemapper = object : DeepCopySymbolRemapper() {
         init {
-            for ((orig, new) in source.typeParameters.zip(target.typeParameters)) {
+            for ([orig, new] in source.typeParameters.zip(target.typeParameters)) {
                 typeParameters[orig.symbol] = new.symbol
             }
         }
@@ -1885,3 +1900,26 @@ val IrFunction.namedParameters
 
 val IrValueParameter.isReceiver
     get() = kind == IrParameterKind.ExtensionReceiver || kind == IrParameterKind.DispatchReceiver
+
+fun IrClass.invokeFunctionNForComposable(context: IrPluginContext, invokeFn: IrSimpleFunction): IrSimpleFunction {
+    val realParams = typeParameters.size - /* return type */ 1
+    val newArgsSize = realParams + /* composer */ 1 + changedParamCount(realParams, 0)
+    val newFnClass = context.irBuiltIns.functionN(newArgsSize)
+
+    return newFnClass
+        .functions
+        .first { it.name == invokeFn.name }
+}
+
+fun IrFunction.isExternalFunction(): Boolean =
+    origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
+    // Workaround for KT-69856
+    return if (this is IrSimpleType && classifier.owner is IrScript) {
+        false
+    } else {
+        erasedUpperBound.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm)
+    }
+}

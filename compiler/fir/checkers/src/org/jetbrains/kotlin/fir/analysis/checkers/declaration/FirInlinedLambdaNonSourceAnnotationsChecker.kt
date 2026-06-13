@@ -31,7 +31,7 @@ object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker
         for (call in context.callsOrAssignments) {
             if (call is FirFunctionCall && call.calleeReference.isError()) {
                 val mapping = call.resolvedArgumentMapping ?: continue
-                for ((argument, parameter) in mapping) {
+                for ([argument, parameter] in mapping) {
                     if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction === declaration) {
                         return
                     }

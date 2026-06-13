@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.gradle.js
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.test.assertContains
 
 @JsGradlePluginTests
@@ -84,6 +87,69 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 val env = createdExecSpecLog.substringAfter("Environment: {").substringBefore("},")
                 assertContains(env, "CUSTOM_ENV=custom-env-value")
                 assertContains(env, "CUSTOM_ENV_LAZY=lazy-custom-env-value")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `smoke js browser test`(
+        gradleVersion: GradleVersion
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            with(test) {
+                                chromium()
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                        }
+                    }
+
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        import kotlin.test.*
+                        
+                        class JsBrowserSmokeTest {
+                            @Test
+                            fun assertOk() {
+                                assertTrue(42 == 42)
+                            }
+                            
+                            @Test
+                            fun assertFails() {
+                                assertTrue(42 == 0)
+                            }
+                        }
+                        """.trimIndent())
+                }
+            }
+
+            buildAndFail("jsBrowserTest") {
+                assumeFalse(
+                    output.contains("error while loading shared libraries: libglib-2.0"),
+                    "No libglib-2.0 on the test runner machine"
+                )
+                assertTasksExecuted(":prepareWebpackBundleForKotlinJsTests")
+                assertTasksFailed(":jsBrowserTest")
+                assertOutputContains("""Execute JS tests with chromium runner at URL: file.*kotlinJsTest/dist/test.html""".toRegex())
+                assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser] FAILED")
+                assertOutputContains("2 tests completed, 1 failed")
+                // TODO: KT-86778 Add verification of test report
             }
         }
     }

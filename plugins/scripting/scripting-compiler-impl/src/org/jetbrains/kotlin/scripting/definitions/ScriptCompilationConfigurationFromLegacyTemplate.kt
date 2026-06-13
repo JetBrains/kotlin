@@ -150,7 +150,7 @@ private fun refineWithResolver(
         it[ScriptingHostConfiguration.getEnvironment]?.invoke()
     }.orEmpty()
 
-    val (resolvedDeps, diagnostics) = runCatching {
+    val [resolvedDeps, diagnostics] = runCatching {
         val result = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
         result.dependencies to result.reports.map { report ->
             ScriptDiagnostic(

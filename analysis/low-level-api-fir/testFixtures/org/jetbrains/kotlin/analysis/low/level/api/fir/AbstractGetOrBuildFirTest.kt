@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.util.findParentOfType
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractGetOrBuildFirTest.Directives.SKIP_CONTAINMENT_CHECK
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -97,7 +100,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
             val results = mutableListOf<String>()
 
-            for ((index, element) in elementsToAnalyze.withIndex()) {
+            for ([index, element] in elementsToAnalyze.withIndex()) {
                 val ktFile = element.containingKtFile
                 val firFile by lazy { resolutionFacade.getOrBuildFirFile(ktFile) }
 
@@ -121,7 +124,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
         val actual = if (results.size > 1) {
             results
                 .withIndex()
-                .joinToString(separator = "\n\n=====\n\n") { (index, result) -> "Analysis attempt #$index\n$result" }
+                .joinToString(separator = "\n\n=====\n\n") { [index, result] -> "Analysis attempt #$index\n$result" }
         } else {
             results.single()
         }
@@ -131,17 +134,32 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
     // PSI-to-FIR mapper creates some synthetic FIR expression outside the FIR tree.
     private fun shouldPerformContainmentCheck(firElement: FirElement): Boolean {
-        return !firElement.isSyntheticStringPlus() && !firElement.isSyntheticBuiltInSuspendCall()
+        return !firElement.isSyntheticStringPlus() && !firElement.isSyntheticBuiltInSuspendCall() && !firElement.isSyntheticUnaryOperator()
     }
 
-    // Check `KtToFirMapping.checkStringLiteralFolderExpression`.
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder.visitLiteralExpression] and
+     * [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.fakeCallForIntLiteralWithUnaryExpression]
+     */
+    private fun FirElement.isSyntheticUnaryOperator(): Boolean {
+        return this is FirLiteralExpression && this.psi?.findParentOfType<KtPrefixExpression>(strict = true) != null ||
+                this is FirFunctionCall &&
+                calleeReference.name.let { it == OperatorNameConventions.UNARY_PLUS || it == OperatorNameConventions.UNARY_MINUS } &&
+                explicitReceiver?.isSyntheticUnaryOperator() == true
+    }
+
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.checkStringLiteralFolderExpression]
+     */
     private fun FirElement.isSyntheticStringPlus(): Boolean {
         return this is FirResolvedNamedReference
                 && this.name == OperatorNameConventions.PLUS
                 && this.psi is KtOperationReferenceExpression
     }
 
-    // Check `KtToFirMapping.fakeCallToBuiltInSuspendOrNull`.
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.fakeCallToBuiltInSuspendOrNull]
+     */
     private fun FirElement.isSyntheticBuiltInSuspendCall(): Boolean {
         return this is FirFunctionCall
                 && calleeReference.name == StandardClassIds.Callables.suspend.callableName
@@ -193,7 +211,7 @@ internal fun renderActualFir(
         appendLine(ktElement.text)
     }
     appendLine("FIR element: ${fir?.let { it::class.simpleName }}")
-    appendLine("FIR source kind: ${fir?.source?.kind?.let { it::class.simpleName }}")
+    appendLine("FIR source kind: ${fir?.source?.kind}")
     if (renderingOptions.renderContainerSource)
         appendLine("FIR container source: ${fir.renderContainerSource()}")
     if (renderingOptions.renderKtFileName)

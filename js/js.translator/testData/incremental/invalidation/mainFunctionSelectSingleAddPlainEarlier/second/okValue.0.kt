@@ -1,0 +1,3 @@
+package value
+
+var ok = ""

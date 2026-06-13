@@ -1,2 +1,5 @@
-KtNamedFunction(61,103): '/**'
-  null
+KDocName(69,83): 'Foo.Nested.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Nested.foo(<dispatch receiver>: Foo.Nested): kotlin.Unit
+    ]

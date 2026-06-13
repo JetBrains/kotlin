@@ -324,7 +324,7 @@ fun getScriptCollectedData(
 
 private fun Iterable<KtAnnotationEntry>.construct(
     classLoader: ClassLoader?, acceptedAnnotations: List<KClass<out Annotation>>, project: Project, document: Document?, filePath: String,
-): List<ScriptSourceAnnotation<*>> = construct(classLoader, acceptedAnnotations, project).map { (annotation, psiAnn) ->
+): List<ScriptSourceAnnotation<*>> = construct(classLoader, acceptedAnnotations, project).map { [annotation, psiAnn] ->
     ScriptSourceAnnotation(
         annotation = annotation,
         location = document?.let { document ->

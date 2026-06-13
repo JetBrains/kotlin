@@ -1,7 +1,6 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
 
-// RENDER_PACKAGE: test, test2
 
 // FILE: test/package-info.java
 @javax.annotation.ParametersAreNonnullByDefault()

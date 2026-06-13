@@ -113,10 +113,12 @@ internal object XcodebuildDefFileUtils {
                     ldArgs.add(arg)
                     librarySearchPaths.add((File(arg).parentFile.path))
                 }
+
+                if (arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB)) {
+                    kotlinDylibProduct.add(arg)
+                }
                 if (".framework/" in arg) {
-                    if (arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB)) {
-                        kotlinDylibProduct.add(arg)
-                    } else {
+                    if (!arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB)) {
                         ldArgs.add(arg)
                     }
                     linkTimeFrameworkSearchPaths.add(

@@ -305,6 +305,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("errorTypeInKClassInAnnotation.kt")
+  public void testErrorTypeInKClassInAnnotation() {
+    run("errorTypeInKClassInAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("explicitAnnotationParameter.kt")
   public void testExplicitAnnotationParameter() {
     run("explicitAnnotationParameter.kt");
@@ -410,6 +416,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   @TestMetadata("interfaceImplementation.kt")
   public void testInterfaceImplementation() {
     run("interfaceImplementation.kt");
+  }
+
+  @Test
+  @TestMetadata("introducesAt.kt")
+  public void testIntroducesAt() {
+    run("introducesAt.kt");
   }
 
   @Test

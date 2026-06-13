@@ -2301,6 +2301,18 @@ internal object KotlinToolingDiagnostics {
                 .documentationLink(URI("https://kotl.in/t6m3vu"))
         }
     }
+
+    internal object XCFrameworkWithSwiftPMDependencies : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Experimental,
+    ) {
+        operator fun invoke() = build() {
+            title { "XCFramework has SwiftPM dependencies" }
+                .description { "A SwiftPM package has been generated alongside the XCFramework to describe its SwiftPM dependencies" }
+                .solution { "Please publish the XCFramework with the generated SwiftPM package" }
+                .documentationLink(URI("https://kotl.in/xcframework-with-swiftpm-dependencies"))
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

@@ -21,15 +21,19 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
 import java.util.*
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 interface ValueResolver {
     fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor?
 }
 
+@K1Deprecation
 interface ValueResolveContext {
     fun resolve(registration: Type): ValueDescriptor?
 }
 
+@K1Deprecation
 class ComponentResolveContext(
     val container: StorageComponentContainer,
     val requestingDescriptor: ValueDescriptor,
@@ -41,8 +45,10 @@ class ComponentResolveContext(
     override fun toString(): String = "for $requestingDescriptor in $container"
 }
 
+@K1Deprecation
 class ConstructorBinding(val constructor: Constructor<*>, val argumentDescriptors: List<ValueDescriptor>)
 
+@K1Deprecation
 class MethodBinding(val method: Method, private val argumentDescriptors: List<ValueDescriptor>) {
     fun invoke(instance: Any) {
         val arguments = computeArguments(argumentDescriptors).toTypedArray()
@@ -50,14 +56,17 @@ class MethodBinding(val method: Method, private val argumentDescriptors: List<Va
     }
 }
 
+@K1Deprecation
 fun computeArguments(argumentDescriptors: List<ValueDescriptor>): List<Any> = argumentDescriptors.map { it.getValue() }
 
+@K1Deprecation
 fun Class<*>.bindToConstructor(containerId: String, context: ValueResolveContext): ConstructorBinding {
     val constructorInfo = getInfo().constructorInfo ?: error("No constructor for $this: ${getInfo()} in $containerId")
     val candidate = constructorInfo.constructor
     return ConstructorBinding(candidate, candidate.bindArguments(containerId, constructorInfo.parameters, context))
 }
 
+@K1Deprecation
 fun Method.bindToMethod(containerId: String, context: ValueResolveContext): MethodBinding {
     return MethodBinding(this, bindArguments(containerId, genericParameterTypes.toList(), context))
 }
@@ -86,4 +95,5 @@ private fun Member.bindArguments(
     return bound
 }
 
+@K1Deprecation
 class UnresolvedDependenciesException(message: String) : Exception(message)

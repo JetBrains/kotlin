@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -405,24 +407,24 @@ open class SerializerIrGenerator(
 
         val serialPropertiesIndexes = serializableProperties
             .mapIndexed { i, property -> property to i }
-            .associate { (p, i) -> p.ir to i }
+            .associate { [p, i] -> p.ir to i }
 
         val transients = serializableIrClass.declarations.asSequence()
             .filterIsInstance<IrProperty>()
             .filter { !serialPropertiesIndexes.contains(it) }
-            .filter { it.backingField != null }
+            .filter { it.isNonStaticWithField }
 
         // var bitMask0 = 0, bitMask1 = 0...
         val bitMasks = (0 until blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }
         // var local0 = null, local1 = null ...
-        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop }.associate { (i, serializableProp) ->
+        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop }.associate { [i, serializableProp] ->
             val ir = serializableProp.ir
-            val (expr, type) = defaultValueAndType(ir, serializableProp.type)
+            val [expr, type] = defaultValueAndType(ir, serializableProp.type)
             ir to irTemporary(expr, "local$i", type, isMutable = true)
         }
         // var transient0 = null, transient1 = null ...
-        val transientsPropertiesMap = transients.mapIndexed { i, prop -> i to prop }.associate { (i, irProperty) ->
-            val (expr, type) = defaultValueAndType(irProperty)
+        val transientsPropertiesMap = transients.mapIndexed { i, prop -> i to prop }.associate { [i, irProperty] ->
+            val [expr, type] = defaultValueAndType(irProperty)
             irProperty to irTemporary(expr, "transient$i", type, isMutable = true)
         }
 
@@ -477,7 +479,7 @@ open class SerializerIrGenerator(
         val decodeSequentiallyCall = irInvoke(inputClass.functionByName(CallingConventions.decodeSequentially), localInput.get())
 
         val sequentialPart = irBlock {
-            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithoutPatchingParents() }
+            decoderCalls.forEach { [_, expr] -> +expr.deepCopyWithoutPatchingParents() }
         }
 
         val byIndexPart: IrExpression = irWhile().also { loop ->
@@ -489,7 +491,7 @@ open class SerializerIrGenerator(
                     // if index == -1 (READ_DONE) break loop
                     +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSet(flagVar.symbol, irBoolean(false)))
 
-                    decoderCalls.forEach { (i, e) -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
+                    decoderCalls.forEach { [i, e] -> +IrBranchImpl(irEquals(indexVar.get(), irInt(i)), e) }
 
                     // throw exception on unknown field
                     val excClassRef = compilerContext.finderForBuiltins().findConstructors(
@@ -685,6 +687,7 @@ open class SerializerIrGenerator(
 
 
     companion object {
+        @OptIn(ValueClassBackendAgnosticApi::class)
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
@@ -692,11 +695,9 @@ open class SerializerIrGenerator(
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
-                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
-                    irClass,
-                    context
-                )
-                serializableDesc.isSingleFieldValueClass -> SerializerForInlineClassGenerator(irClass, context)
+                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
+                serializableDesc.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()) ->
+                    SerializerForInlineClassGenerator(irClass, context)
                 else -> SerializerIrGenerator(irClass, context, metadataPlugin)
             }
             generator.generate()

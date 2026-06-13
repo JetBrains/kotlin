@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
  * Behaves like [kotlin.Any]?. Preserves [ClassifierPartialLinkageStatus.Unusable].
  */
 internal class PartiallyLinkedMarkerType(
-    builtIns: IrBuiltIns,
+    anyClass: IrClassSymbol,
     val unusableClassifier: ClassifierPartialLinkageStatus.Unusable,
 ) : IrSimpleType() {
     override val annotations: List<IrAnnotation> get() = emptyList()
-    override val classifier: IrClassSymbol = builtIns.anyClass
+    override val classifier: IrClassSymbol = anyClass
     override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.MARKED_NULLABLE
     override val arguments: List<IrTypeArgument> get() = emptyList()
 

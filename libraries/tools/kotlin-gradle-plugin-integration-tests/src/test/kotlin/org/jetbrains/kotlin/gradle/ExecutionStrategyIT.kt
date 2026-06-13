@@ -208,7 +208,6 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
-                runViaBuildToolsApi = false,
             )
         ) {
             subProject("app").kotlinSourcesDir().resolve("classes.kt").modify {
@@ -366,7 +365,7 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 fun makeThreadsSnapshot(): Set<String> = Thread
                     .getAllStackTraces()
                     .keys.groupBy { it.javaClass.name + ":" + it.name }
-                    .map { (name, threads) -> "$name (total ${threads.size})" }.toSet()
+                    .map { [name, threads] -> "$name (total ${threads.size})" }.toSet()
 
                 project.tasks.named("compileKotlin").configure {
                     it.doFirst {

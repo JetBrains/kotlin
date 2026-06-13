@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -30,8 +31,6 @@ class KotlinNativeCompileArgumentsTest {
     @Test
     fun `test - simple project - old buildCompilerArgs and new CompilerArgumentsProducer - return same arguments`() {
         val project = buildProjectWithMPP()
-        project.repositories.mavenLocal()
-
         val kotlin = project.multiplatformExtension
 
         kotlin.linuxArm64()
@@ -214,7 +213,7 @@ class KotlinNativeCompileArgumentsTest {
     @Test
     fun `native compilation dependency files should contain native platform dependencies and stdlib`() {
         val project = buildProjectWithMPP()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         val kotlin = project.multiplatformExtension
 
@@ -237,7 +236,7 @@ class KotlinNativeCompileArgumentsTest {
         val project = buildProjectWithMPP()
 
         project.mockXcodeVersion()
-        project.repositories.mavenLocal()
+        project.repositories.kotlinBuildDeps()
         project.repositories.mavenCentralCacheRedirector()
         val kotlin = project.multiplatformExtension
 

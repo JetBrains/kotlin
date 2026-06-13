@@ -1,10 +1,10 @@
 KaBackingFieldSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -29,5 +29,5 @@ KaBackingFieldSymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldTopLevel.kt)
   getContainingJvmClassName: one.ExplicitBackingFieldTopLevelKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

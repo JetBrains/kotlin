@@ -33,9 +33,9 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JavaEnum modality:FINAL 
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<@[FlexibleNullability] <root>.JavaEnum?>
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Enum
-  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:valueOf visibility:public modality:FINAL returnType:<root>.JavaEnum
+  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:valueOf visibility:public modality:FINAL returnType:<root>.JavaEnum [companion]
     VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
-  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.JavaEnum>
+  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.JavaEnum> [companion]
   PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
     annotations:
       IntrinsicConstEvaluation
@@ -55,5 +55,5 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JavaEnum modality:FINAL 
       overridden:
         public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
   PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.JavaEnum>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.JavaEnum> [companion]
       correspondingProperty: PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]

@@ -21,7 +21,6 @@ fun initializeBtaClassloader(customParent: ClassLoader? = null): URLClassLoader 
         classpath.split(File.pathSeparator)
             .map { File(it).toURI().toURL() }
 
-    println("Loading classes from classpath: $urls")
     return URLClassLoader(urls.toTypedArray(), customParent ?: SharedApiClassesClassLoader())
 }
 
@@ -32,3 +31,9 @@ val currentKotlinStdlibLocation
 
 val currentKotlinJsStdlibKlibLocation
     get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.jsStdlibClasspath"))
+
+val currentKotlinWasmStdlibKlibLocation
+    get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.wasmStdlibClasspath"))
+
+val currentKotlinMetadataStdlibKlibLocation
+    get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.metadataStdlibClasspath"))

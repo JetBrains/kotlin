@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 private class CapturedArguments(val capturedArguments: List<TypeProjection>, private val originalType: KotlinType) {
     fun isSuitableForType(type: KotlinType): Boolean {
-        val areArgumentsMatched = type.arguments.withIndex().all { (i, typeArgumentsType) ->
+        val areArgumentsMatched = type.arguments.withIndex().all { [i, typeArgumentsType] ->
             originalType.arguments.size > i && typeArgumentsType == originalType.arguments[i]
         }
 
@@ -153,7 +153,7 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
     val arguments = type.arguments
     if (arguments.all { it.projectionKind == Variance.INVARIANT }) return null
 
-    val capturedArguments = arguments.zip(type.constructor.parameters).map { (projection, parameter) ->
+    val capturedArguments = arguments.zip(type.constructor.parameters).map { [projection, parameter] ->
         if (projection.projectionKind == Variance.INVARIANT) return@map projection
 
         val lowerType =

@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.testFederation
 
-import org.eclipse.jgit.ignore.FastIgnoreRule
-import org.eclipse.jgit.ignore.IgnoreNode
+import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.jetbrains.kotlin.tooling.core.withClosure
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.FileInfo
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.*
+import kotlin.io.path.absolute
+import kotlin.io.path.invariantSeparatorsPathString
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
 import kotlin.test.Test
 
 class DomainsDumpTest {
@@ -23,10 +25,7 @@ class DomainsDumpTest {
 
     @Test
     fun `test - domains dump is up to date`() {
-        val ignoreTracker = GitIgnoreTracker()
-        val tree = ignoreTracker.withDirectory(repositoryRoot) {
-            repositoryRoot.toNode(ignoreTracker)
-        }
+        val tree = repositoryRoot.toNode() ?: error("Missing root tree")
 
         val conflatedTree = tree.conflate()
         val actualText = buildString {
@@ -36,10 +35,10 @@ class DomainsDumpTest {
             appendLine()
 
             conflatedTree.withClosure { it.children }.filter { it.children.isEmpty() }
-                .groupBy { it.domain }.entries.sortedBy { it.key }.forEach { (subsystem, nodes) ->
-                    appendLine("${subsystem.name}:")
-                    nodes.toList().sortedBy { it.path.value.pathString }.forEach { node ->
-                        appendLine(" - ${node.path}")
+                .groupBy { it.domains }.entries.sortedBy { it.key.sumOf { it.ordinal } }.forEach { (domains, nodes) ->
+                    appendLine("${domains.joinToString(", ") { it.name }}:")
+                    nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
+                        appendLine(" - ${node.path.value.invariantSeparatorsPathString}")
                     }
                     appendLine()
                 }
@@ -63,67 +62,33 @@ class DomainsDumpTest {
 
     private data class Node(
         val path: RepositoryPath,
-        val domain: Domain,
+        val domains: List<Domain>,
         val children: List<Node>,
     )
 
-    private fun Path.toNode(ignoreTracker: GitIgnoreTracker): Node {
+    private fun Path.toNode(): Node? {
         val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this))
-        val domain = repositoryPath.domain
+        val domains = repositoryPath.domains
         val children = if (isDirectory()) {
             listDirectoryEntries()
-                .filter { child -> !ignoreTracker.isIgnored(repositoryRoot.relativize(child).toString(), child.isDirectory()) }
-                .sorted()
-                .map { child ->
-                    if (child.isDirectory()) {
-                        ignoreTracker.withDirectory(child) {
-                            child.toNode(ignoreTracker)
-                        }
-                    } else {
-                        child.toNode(ignoreTracker)
-                    }
-                }
+                .filter { child -> !child.isGitIgnored() }.sorted()
+                .mapNotNull { child -> child.toNode() }
+                .ifEmpty { return null }
         } else emptyList()
-        return Node(repositoryPath, domain, children)
+        return Node(repositoryPath, domains, children)
     }
 
     private fun Node.conflate(): Node {
         val conflatedChildren = children.map { it.conflate() }
-        val newChildren = if (conflatedChildren.any { child -> child.domain != domain || child.children.isNotEmpty() }) conflatedChildren
+
+        /* If a directory only contains directories, then it can be conflated */
+        if (children.all { it.children.isEmpty() } && children.all { it.path.resolve().isDirectory() }) {
+            return copy(children = emptyList())
+        }
+
+        val newChildren = if (conflatedChildren.any { child -> child.domains != domains || child.children.isNotEmpty() }) conflatedChildren
         else emptyList()
 
         return copy(children = newChildren)
-    }
-
-    private class GitIgnoreTracker {
-        private val ignoreNodeStack = mutableListOf(
-            IgnoreNode(listOf(FastIgnoreRule("/.git")))
-        )
-
-        fun isIgnored(path: String, isDirectory: Boolean): Boolean {
-            return ignoreNodeStack.asReversed().firstNotNullOfOrNull { ignoreNode ->
-                ignoreNode.checkIgnored(path, isDirectory)
-            } ?: false
-        }
-
-        inline fun <T> withDirectory(directory: Path, action: () -> T): T {
-            val ignoreFile = directory.resolve(".gitignore")
-
-            return if (ignoreFile.exists()) {
-                val ignoreNode = IgnoreNode()
-                ignoreFile.inputStream().use { stream ->
-                    ignoreNode.parse(ignoreFile.toString(), stream)
-                }
-
-                ignoreNodeStack.add(ignoreNode)
-                try {
-                    action()
-                } finally {
-                    ignoreNodeStack.removeLast()
-                }
-            } else {
-                action()
-            }
-        }
     }
 }

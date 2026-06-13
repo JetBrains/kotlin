@@ -166,6 +166,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
     private val classLoadersToDispose: MutableList<GeneratedClassLoader> = mutableListOf()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val fileInfos = info.fileInfos.ifEmpty { return }
         currentReplClassloader = generatedReplSnippetTestClassLoader(testServices, module, info.classFileFactory, currentReplClassloader)
         for (fileInfo in fileInfos) {
@@ -226,11 +227,11 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         val eval = snippetClass.methods.find { it.name == evalFunName }!!
 
         val snippet = snippetClass.getField("INSTANCE").get(null)
-        val (out, err) = captureOutErrRet {
+        val [out, err] = captureOutErrRet {
             eval.invoke(snippet)
         }
 
-        for ((fieldName, expectedValue) in expected) {
+        for ([fieldName, expectedValue] in expected) {
             if (expectedValue == "<missing>") {
                 try {
                     snippetClass.getDeclaredField(fieldName)
@@ -316,7 +317,7 @@ private class ReplRunViaApiChecker(
                 }
                 val snippetClass = evaluationResult.scriptClass!!.java
                 val snippet = evaluationResult.scriptInstance
-                for ((fieldName, expectedValue) in expected) {
+                for ([fieldName, expectedValue] in expected) {
                     if (expectedValue == "<missing>") {
                         try {
                             snippetClass.getDeclaredField(fieldName)

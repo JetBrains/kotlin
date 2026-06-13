@@ -382,7 +382,7 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 doCompile
             }
 
-        for ((flag, expectedSize) in listOf(true to 1, false to 2))
+        for ([flag, expectedSize] in listOf(true to 1, false to 2))
             run {
                 code = "xxx"
                 cursor = 3

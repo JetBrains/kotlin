@@ -247,7 +247,7 @@ KtNameReferenceExpression(119,128): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(129,130): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:
@@ -385,7 +385,7 @@ KtNameReferenceExpression(147,156): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(157,159): '+='
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundAssignOperation:
         kind = PLUS_ASSIGN
@@ -543,7 +543,7 @@ KtNameReferenceExpression(176,185): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(185,187): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -625,7 +625,7 @@ KtPrefixExpression(192,213): '--javaClass.something'
         typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(192,194): '--'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = DEC
@@ -752,10 +752,10 @@ KtPostfixExpression(219,230): 'something++'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -792,10 +792,10 @@ KtNameReferenceExpression(219,228): 'something'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -825,7 +825,7 @@ KtNameReferenceExpression(219,228): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(228,230): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -853,10 +853,10 @@ KtOperationReferenceExpression(228,230): '++'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -914,10 +914,10 @@ KtPostfixExpression(235,248): '(something)++'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -957,10 +957,10 @@ KtNameReferenceExpression(236,245): 'something'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -990,7 +990,7 @@ KtNameReferenceExpression(236,245): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(246,248): '++'
-  KaSuccessCallInfo:
+  KaCompoundVariableAccessCallResolutionAttempt:
     call = KaCompoundVariableAccessCall:
       compoundOperation = KaCompoundUnaryOperation:
         kind = INC
@@ -1018,10 +1018,10 @@ KtOperationReferenceExpression(246,248): '++'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1058,10 +1058,10 @@ KtBinaryExpression(253,268): '(something) = 1'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1102,10 +1102,10 @@ KtNameReferenceExpression(254,263): 'something'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1136,17 +1136,17 @@ KtNameReferenceExpression(254,263): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(265,266): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1263,7 +1263,7 @@ KtNameReferenceExpression(284,293): 'something'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(295,296): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaExplicitReceiverValue:

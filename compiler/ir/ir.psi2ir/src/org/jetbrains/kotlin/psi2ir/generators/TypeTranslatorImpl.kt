@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 
+@K1Deprecation
 class TypeTranslatorImpl(
     symbolTable: ReferenceSymbolTable,
     languageVersionSettings: LanguageVersionSettings,

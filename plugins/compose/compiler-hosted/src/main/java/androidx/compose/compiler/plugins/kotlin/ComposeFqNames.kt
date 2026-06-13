@@ -17,12 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -146,6 +144,5 @@ fun IrType.hasComposableAnnotation(): Boolean =
 fun IrAnnotationContainer.hasComposableAnnotation(): Boolean =
     hasAnnotation(ComposeFqNames.Composable)
 
-@UnsafeDuringIrConstructionAPI
-fun IrConstructorCall.isComposableAnnotation() =
-    symbol.owner.constructedClass.hasEqualFqName(ComposeFqNames.Composable)
+fun IrAnnotation.isComposableAnnotation() =
+    classId == ComposeClassIds.Composable

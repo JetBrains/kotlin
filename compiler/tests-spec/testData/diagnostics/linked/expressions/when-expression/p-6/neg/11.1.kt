@@ -1,5 +1,4 @@
 // DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
-// SKIP_TXT
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int, value_2: List<Int>): String {

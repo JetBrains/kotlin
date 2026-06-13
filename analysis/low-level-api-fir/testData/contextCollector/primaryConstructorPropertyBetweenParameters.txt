@@ -19,6 +19,7 @@ Tower Data Context:
                 FirValueParameterSymbol firstParameter: R|kotlin/String|
                 FirValueParameterSymbol lastParameter: R|kotlin/Long|
                 FirValueParameterSymbol property: R|kotlin/Int| = R|<local>/firstParameter|.R|kotlin/String.length|
+Expression Stability: ALIEN_PUBLIC_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyBetweenParameters.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {

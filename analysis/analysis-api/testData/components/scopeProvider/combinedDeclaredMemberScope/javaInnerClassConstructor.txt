@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: PackageVisibility
   containingClassId: JavaClass.InnerClass
   contextReceivers: []
   hasStableParameterNames: false
@@ -24,7 +23,6 @@ KaConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -32,6 +30,7 @@ KaConstructorSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -51,7 +50,7 @@ KaConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass.InnerClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PACKAGE_PRIVATE
@@ -62,5 +61,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass.InnerClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

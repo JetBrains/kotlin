@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 interface KlibMetadataModuleDescriptorFactory {
 
     val descriptorFactory: KlibModuleDescriptorFactory

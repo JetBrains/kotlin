@@ -55,7 +55,7 @@ fun IrBuilderWithScope.createPropertyByParamReplacer(
     val transientPropertiesSet =
         irClass.declarations.asSequence()
             .filterIsInstance<IrProperty>()
-            .filter { it.backingField != null }
+            .filter { it.isNonStaticWithField }
             .filter { !serialPropertiesMap.containsKey(it) }
             .toSet()
 

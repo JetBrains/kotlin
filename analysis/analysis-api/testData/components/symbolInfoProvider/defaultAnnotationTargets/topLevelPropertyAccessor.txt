@@ -1,0 +1,4 @@
+Symbol:
+  KaPropertyGetterSymbol
+Default annotation targets:
+  PROPERTY_GETTER

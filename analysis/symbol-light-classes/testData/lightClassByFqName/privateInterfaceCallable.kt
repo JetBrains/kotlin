@@ -31,3 +31,6 @@ interface MyInterface {
         get() = ""
         set(value) {}
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: MyInterface.class[publicMangledMethod;publicMangledVariable]
+// LIGHT_ELEMENTS_NO_DECLARATION: MyInterface.class[getMangledVariable-JELJCFg;getPublicMangledVariable-JELJCFg;mangledMethod-JELJCFg;publicMangledMethod-JELJCFg;setMangledVariable-d-auiwc;setPublicMangledVariable-d-auiwc]

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.API_NOT_AVAILABLE
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.checkSinceKotlinVersionAccessibility
 
 // TODO: consider combining with DeprecatedCallChecker somehow
+@K1Deprecation
 object ApiVersionCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         check(resolvedCall.resultingDescriptor, context, reportOn)

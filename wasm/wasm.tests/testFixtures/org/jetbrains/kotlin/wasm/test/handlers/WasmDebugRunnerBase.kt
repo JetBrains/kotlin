@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
-import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
@@ -21,8 +20,13 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
 
-abstract class WasmDebugRunnerBase(testServices: TestServices) :
-    D8BasedDebugRunner<BinaryArtifacts.Wasm>(testServices, ArtifactKinds.Wasm, includeColumnInformation = true),
+abstract class WasmDebugRunnerBase(testServices: TestServices, includeLocalVariableInformation: Boolean) :
+    D8BasedDebugRunner<BinaryArtifacts.Wasm>(
+        testServices,
+        ArtifactKinds.Wasm,
+        includeColumnInformation = true,
+        includeLocalVariableInformation = includeLocalVariableInformation
+    ),
     WasmArtifactsCollector {
     protected val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()
 

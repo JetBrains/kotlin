@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility.In
 import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualMemberDiff
 import java.text.MessageFormat
 
+@K1Deprecation
 class PlatformIncompatibilityDiagnosticRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
 ) : DiagnosticParameterRenderer<Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> {
@@ -45,6 +47,7 @@ class PlatformIncompatibilityDiagnosticRenderer(
     }
 }
 
+@K1Deprecation
 class IncompatibleExpectedActualClassScopesRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode
 ) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>> {
@@ -66,6 +69,7 @@ class IncompatibleExpectedActualClassScopesRenderer(
     }
 }
 
+@K1Deprecation
 class ExpectActualScopeDiffsRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode,
 ) : DiagnosticParameterRenderer<Set<K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>> {
@@ -90,6 +94,7 @@ class ExpectActualScopeDiffsRenderer(
     }
 }
 
+@K1Deprecation
 object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
     override fun render(
         obj: K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>,
@@ -101,6 +106,7 @@ object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<K1ExpectActua
     )
 }
 
+@K1Deprecation
 class ListRenderer<T>(
     private val elementRenderer: DiagnosticParameterRenderer<T>,
     private val elemProcessor: (String) -> String = { it },
@@ -109,6 +115,7 @@ class ListRenderer<T>(
         obj.joinToString { elemProcessor(elementRenderer.render(it, renderingContext)) }
 }
 
+@K1Deprecation
 open class MultiplatformDiagnosticRenderingMode {
     open fun newLine(sb: StringBuilder) {
         sb.appendLine()
@@ -134,7 +141,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
     context: RenderingContext,
     mode: MultiplatformDiagnosticRenderingMode
 ) {
-    for ((incompatibility, descriptors) in map) {
+    for ([incompatibility, descriptors] in map) {
         append(indent)
         append("The following declaration")
         if (descriptors.size == 1) append(" is") else append("s are")
@@ -163,7 +170,7 @@ private fun StringBuilder.renderIncompatibleClassScopes(
 ) {
     mode.renderList(this, unfulfilled.indices.map { index ->
         {
-            val (descriptor, mapping) = unfulfilled[index]
+            val [descriptor, mapping] = unfulfilled[index]
             mode.renderDescriptor(this, descriptor, context, indent)
             if (mapping.isNotEmpty()) {
                 mode.newLine(this)

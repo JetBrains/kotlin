@@ -13,11 +13,14 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionTypeConversionExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildSpreadArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
@@ -77,10 +80,6 @@ class FirCallCompletionResultsWriterTransformer(
     private val samResolver: FirSamResolver,
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal,
-    // TODO: this is a temporary solution.
-    //  The way we deal with collection literals inside annotations (annotation constructors) and in usual calls should be unified.
-    //  For now, however, they are intentionally separated. Related issue: KT-81110.
-    private var insideAnnotationContext: Boolean = false,
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
     SessionAndScopeSessionHolder{
 
@@ -100,7 +99,10 @@ class FirCallCompletionResultsWriterTransformer(
         return finallySubstituteOrNull(type) ?: type
     }
 
+    @ArrayLiteralResolution
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
+
+    @ArrayLiteralResolution
     private var enableArrayOfCallTransformation = false
 
     enum class Mode {
@@ -135,25 +137,15 @@ class FirCallCompletionResultsWriterTransformer(
         TopLevelSyntheticCallInPclaCompletion,
     }
 
-    private inline fun <T> withCollectionLiteralInAnnotationResolution(block: () -> T): T {
-        val savedInsideAnnotationContext = insideAnnotationContext
-        insideAnnotationContext = true
+    @ArrayLiteralResolution
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+        enableArrayOfCallTransformation = true
         return try {
             block()
         } finally {
-            insideAnnotationContext = savedInsideAnnotationContext
+            enableArrayOfCallTransformation = false
         }
     }
-
-    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T =
-        withCollectionLiteralInAnnotationResolution {
-            enableArrayOfCallTransformation = true
-            return try {
-                block()
-            } finally {
-                enableArrayOfCallTransformation = false
-            }
-        }
 
     private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
@@ -291,7 +283,7 @@ class FirCallCompletionResultsWriterTransformer(
         @OptIn(Candidate.UpdatingCandidateInvariants::class)
         updateSubstitutor(
             substitutorByMap(
-                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
+                updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { [typeParameter, typeVariable] ->
                     typeParameter to typeVariable.defaultType
                 },
                 session,
@@ -397,6 +389,7 @@ class FirCallCompletionResultsWriterTransformer(
         return transformQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
+    @ArrayLiteralResolution
     private fun transformArrayLiteralInAnnotation(arrayLiteral: FirCollectionLiteral, data: ExpectedArgumentType?): FirStatement {
         if (arrayLiteral.hasResolvedType) return arrayLiteral
         val expectedArrayType = data?.getExpectedType(arrayLiteral)
@@ -407,8 +400,7 @@ class FirCallCompletionResultsWriterTransformer(
                 typeApproximator.approximateToSuperType(
                     it,
                     TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
-                )
-                    ?: it
+                ) ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.coneType
         arrayLiteral.resultType =
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.fullyExpandedType()?.isPrimitiveArray == true)
@@ -419,14 +411,20 @@ class FirCallCompletionResultsWriterTransformer(
         collectionLiteral: FirCollectionLiteral,
         data: ExpectedArgumentType?
     ): FirStatement {
-        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals) || insideAnnotationContext) {
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
             return transformArrayLiteralInAnnotation(collectionLiteral, data)
         }
 
         data?.argumentReplacements?.get(collectionLiteral)?.let { replacement ->
             handleArgumentReplacementInCfg(collectionLiteral, replacement)
-            return if (mode == Mode.TopLevelSyntheticCallInPclaCompletion) replacement
-            else replacement.transform(this, data)
+            return if (mode == Mode.TopLevelSyntheticCallInPclaCompletion) {
+                replacement.apply {
+                    // we need to replace already fixed type variables here
+                    // otherwise, we may try to incorporate constraints with fixed variables later
+                    replaceConeTypeOrNull(finallySubstituteOrSelf(resultType))
+                }
+            } else replacement.transform(this, data)
         }
 
         return collectionLiteral
@@ -465,7 +463,7 @@ class FirCallCompletionResultsWriterTransformer(
             val symbol = subCandidate.symbol
             val functionIsInline =
                 (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
-            for ((argument, parameter) in newArgumentList.mapping) {
+            for ([argument, parameter] in newArgumentList.mapping) {
                 session.lookupTracker?.recordTypeResolveAsLookup(parameter.returnTypeRef, argument.source, context.file.source)
                 val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
                 lambda.transformInlineStatus(parameter, functionIsInline, session)
@@ -482,8 +480,11 @@ class FirCallCompletionResultsWriterTransformer(
         result.replaceConeTypeOrNull(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
 
-        if (enableArrayOfCallTransformation) {
-            return arrayOfCallTransformer.transformFunctionCall(result, session)
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
+            if (enableArrayOfCallTransformation) {
+                return arrayOfCallTransformer.transformFunctionCall(result, session)
+            }
         }
 
         result.addNonFatalDiagnostics(subCandidate)
@@ -501,12 +502,12 @@ class FirCallCompletionResultsWriterTransformer(
 
         val newContextArguments = contextArguments.toMutableList()
         val contextParameterToIndex: Map<FirValueParameterSymbol, Int> = buildMap {
-            (subCandidate.symbol as? FirCallableSymbol)?.contextParameterSymbols?.withIndex()?.forEach { (index, parameter) ->
+            (subCandidate.symbol as? FirCallableSymbol)?.contextParameterSymbols?.withIndex()?.forEach { [index, parameter] ->
                 put(parameter, index)
             }
         }
 
-        explicitArgumentMappingEntries.forEach { (expression, parameter) ->
+        explicitArgumentMappingEntries.forEach { [expression, parameter] ->
             if (parameter.valueParameterKind == FirValueParameterKind.ContextParameter) {
                 newContextArguments[contextParameterToIndex.getValue(parameter.symbol)] = expression
             }
@@ -514,17 +515,12 @@ class FirCallCompletionResultsWriterTransformer(
         replaceContextArguments(newContextArguments)
     }
 
-    private fun FirNamedReferenceWithCandidate.computeAllArguments(
-        originalArgumentList: FirArgumentList,
-        predefinedMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null,
-    ): List<FirExpression> {
+    private fun FirNamedReferenceWithCandidate.computeAllArguments(originalArgumentList: FirArgumentList): List<FirExpression> {
         return when {
             this.isError -> originalArgumentList.arguments
-            predefinedMapping != null -> predefinedMapping.keys.toList()
             else -> candidate.argumentMapping.keys.unwrapAtoms()
         }
     }
-
 
     /**
      * For Java constructors (both real and SAM ones) call with explicit type arguments, replace relevant values with non-flexible
@@ -558,7 +554,7 @@ class FirCallCompletionResultsWriterTransformer(
         val baseSubstitutor = finalSubstitutor
         val overridingMap = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
 
-        for ((index, freshVariable) in freshVariables.withIndex()) {
+        for ([index, freshVariable] in freshVariables.withIndex()) {
             val baseTypeArgument = baseSubstitutor.substituteOrNull(freshVariable.defaultType) ?: continue
             if (baseTypeArgument !is ConeFlexibleType) continue
 
@@ -582,12 +578,6 @@ class FirCallCompletionResultsWriterTransformer(
         if (this !is FirConstructorSymbol) return false
 
         return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.Enhancement
-    }
-
-    private fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
-        if (this !is FirSyntheticFunctionSymbol) return false
-
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
     }
 
     private fun FirCall.transformArgumentList(
@@ -677,6 +667,38 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
+    @ArrayLiteralResolution
+    private fun transformAnnotationCallPreCollectionLiterals(
+        annotationCall: FirAnnotationCall,
+        calleeReference: FirNamedReferenceWithCandidate,
+        subCandidate: Candidate
+    ): FirAnnotationCall {
+        val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
+        val argumentMappingWithArrayOfCalls = withFirArrayOfCallTransformer {
+            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+            var index = 0
+            subCandidate.argumentMapping.mapKeysTo(LinkedHashMap(subCandidate.argumentMapping.size)) {
+                annotationCall.argumentList.arguments[index++]
+            }
+        }
+        val allArgs = when {
+            calleeReference.isError -> annotationCall.argumentList.arguments
+            else -> argumentMappingWithArrayOfCalls.keys.toList()
+        }
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
+            allArgs,
+            argumentMapping = argumentMappingWithArrayOfCalls
+        )
+        val newArgumentList = when {
+            !calleeReference.isError -> buildResolvedArgumentList(annotationCall.argumentList, mapping = regularMapping)
+            else -> buildArgumentListForErrorCall(annotationCall.argumentList, mapping = allArgsMapping)
+        }
+        annotationCall.replaceArgumentList(newArgumentList)
+
+        annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        return annotationCall
+    }
+
     override fun transformAnnotationCall(
         annotationCall: FirAnnotationCall,
         data: ExpectedArgumentType?,
@@ -684,34 +706,21 @@ class FirCallCompletionResultsWriterTransformer(
         val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate ?: return annotationCall
         annotationCall.replaceCalleeReference(calleeReference.toResolvedReference())
         val subCandidate = calleeReference.candidate
-        val expectedArgumentsTypeMapping = subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError)
-        val argumentMappingWithArrayOfCalls = withFirArrayOfCallTransformer {
-            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
-            var index = 0
-            subCandidate.argumentMapping.let {
-                LinkedHashMap<FirExpression, FirValueParameter>(it.size).let { newMapping ->
-                    subCandidate.argumentMapping.mapKeysTo(newMapping) { (_, _) ->
-                        annotationCall.argumentList.arguments[index++]
-                    }
-                }
-            }
-        }
-        val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList, argumentMappingWithArrayOfCalls)
-        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(
-            allArgs,
-            precomputedArgumentMapping = argumentMappingWithArrayOfCalls
-        )
-        if (calleeReference.isError) {
-            annotationCall.replaceArgumentList(buildArgumentListForErrorCall(annotationCall.argumentList, allArgsMapping))
-        } else {
-            regularMapping.let {
-                annotationCall.replaceArgumentList(buildResolvedArgumentList(annotationCall.argumentList, it))
-            }
+
+        if (useArrayLiteralResolution()) {
+            @OptIn(ArrayLiteralResolution::class)
+            return transformAnnotationCallPreCollectionLiterals(annotationCall, calleeReference, subCandidate)
         }
 
-        withCollectionLiteralInAnnotationResolution {
-            annotationCall.transformArgumentList(expectedArgumentsTypeMapping = null)
+        val allArgs = calleeReference.computeAllArguments(annotationCall.argumentList)
+        val (regularMapping, allArgsMapping) = subCandidate.handleVarargsAndReturnResultingArgumentsMapping(allArgs)
+        val newArgumentList = when {
+            !calleeReference.isError -> buildResolvedArgumentList(annotationCall.argumentList, mapping = regularMapping)
+            else -> buildArgumentListForErrorCall(annotationCall.argumentList, mapping = allArgsMapping)
         }
+        annotationCall.replaceArgumentList(newArgumentList)
+
+        annotationCall.transformArgumentList(subCandidate.createArgumentsMapping(forErrorReference = calleeReference.isError))
         return annotationCall
     }
 
@@ -734,9 +743,8 @@ class FirCallCompletionResultsWriterTransformer(
      */
     private fun Candidate.handleVarargsAndReturnResultingArgumentsMapping(
         argumentList: List<FirExpression>,
-        precomputedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null,
+        argumentMapping: LinkedHashMap<FirExpression, FirValueParameter> = this.argumentMapping.unwrapAtoms(),
     ): ResultingArgumentsMapping {
-        val argumentMapping = precomputedArgumentMapping ?: this.argumentMapping.unwrapAtoms()
         val varargParameter = argumentMapping.values.firstOrNull { it.isVararg }
         return if (varargParameter != null) {
             // Create a FirVarargArgumentExpression for the vararg arguments
@@ -825,9 +833,11 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
-        subCandidate.ifLhsResolvedToType { lhs ->
-            (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
-                ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+        subCandidate.ifLhsResolvedToType { lhs, kind ->
+            if (lhs.shouldBeConsideredType(kind)) {
+                (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
+                    ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+            }
         }
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)
@@ -845,7 +855,7 @@ class FirCallCompletionResultsWriterTransformer(
                 name = calleeReference.name
                 resolvedSymbol = calleeReference.candidateSymbol
                 inferredTypeArguments.addAll(computeTypeArgumentTypes(calleeReference.candidate))
-                mappedArguments = subCandidate.callableReferenceAdaptation?.mappedArguments?.mapValues { (_, argument) ->
+                mappedArguments = subCandidate.callableReferenceAdaptation?.mappedArguments?.mapValues { [_, argument] ->
                     argument.map { it.expression }
                 } ?: emptyMap()
             }
@@ -919,7 +929,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         var functionConversions: MutableMap<FirExpression, Candidate.FunctionConversionDescription>? = null
-        val arguments = argumentMapping.flatMap { (atom, valueParameter) ->
+        val arguments = argumentMapping.flatMap { [atom, valueParameter] ->
             val argument = atom.expression
             val expectedType = when {
                 isIntegerOperator -> ConeIntegerConstantOperatorTypeImpl(
@@ -1146,7 +1156,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: runUnless(containingCallIsError) { (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction) }
 
         val newData = expectedReturnType?.toExpectedType(data?.argumentReplacements)
-        for ((expression, _) in returnExpressions) {
+        for ((expression, _ = isExplicit) in returnExpressions) {
             expression.transformSingle(this, newData)
         }
 
@@ -1473,7 +1483,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     // TODO: report warning with a checker and return true here only in case of errors, KT-59676
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
-        candidate.system.errors.any { it is InferredEmptyIntersection }
+        candidate.errors.any { it is InferredEmptyIntersection }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {
@@ -1558,10 +1568,40 @@ fun ConeKotlinType.toExpectedType(
 internal fun Candidate.doesResolutionResultOverrideOtherToPreserveCompatibility(): Boolean =
     ResolutionResultOverridesOtherToPreserveCompatibility in diagnostics
 
+/**
+ * If the [LanguageFeature.CompanionBlocksAndExtensions] is enabled, we allow `JustSimpleQuailifer::staticMember` instead of
+ * `QualifierWithTypeArguments<...>::staticMember`. HOWEVER, in case the static receiver has explicit type arguments,
+ * we still have to pretend it is a type (because we need to report errors on incorrect types).
+ */
+context(_: SessionHolder)
+private fun CallableReferenceLhsAsType.shouldBeConsideredType(kind: CallableReferenceWithTypeLhsKind): Boolean {
+    return !isProperStaticReceiver
+            || kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+            || LanguageFeature.CompanionBlocksAndExtensions.isDisabled()
+}
+
+context(_: SessionHolder)
+private fun CallableReferenceLhsAsType.shouldReportInvalidStaticReceiver(kind: CallableReferenceWithTypeLhsKind): Boolean {
+    if (kind == CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER) return false
+    return hasExplicitTypeArguments && LanguageFeature.CompanionBlocksAndExtensions.isEnabled() || hasNullableMark
+}
+
+context(_: SessionHolder)
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
     val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
-    candidate.ifLhsResolvedToType { lhs ->
-        lhs.diagnostic?.let { newNonFatalDiagnostics.add(it) }
+    candidate.ifLhsResolvedToType { lhs, kind ->
+        if (lhs.diagnostic == null) {
+            if (lhs.shouldReportInvalidStaticReceiver(kind)) {
+                newNonFatalDiagnostics.add(
+                    ConeInvalidStaticReceiverInCallableReference(
+                        forObject = kind == CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER,
+                        dueToNullableMark = !lhs.hasExplicitTypeArguments,
+                    )
+                )
+            }
+        } else if (lhs.shouldBeConsideredType(kind)) {
+            newNonFatalDiagnostics.add(lhs.diagnostic)
+        }
     }
 
     if (candidate.doesResolutionResultOverrideOtherToPreserveCompatibility()) {
@@ -1595,16 +1635,31 @@ fun FirResolvedQualifier.appendNonFatalDiagnostics(vararg newDiagnostics: ConeDi
     }
 }
 
-internal inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsType) -> Unit) {
+private enum class CallableReferenceWithTypeLhsKind {
+    FOR_STATIC, FOR_CLASS_MEMBER, FOR_OBJECT_MEMBER
+}
+
+private inline fun Candidate.ifLhsResolvedToType(block: (CallableReferenceLhsAsType, CallableReferenceWithTypeLhsKind) -> Unit) {
     val callableReferenceInfo = callInfo as? CallableReferenceInfo ?: return
-    callableReferenceInfo.lhsAsType?.let {
-        block(it)
+    val lhsAsType = callableReferenceInfo.lhsAsType ?: return
+
+    val kind = when {
+        callableReferenceInfo.explicitReceiver is FirExpressionStub -> CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+        // fallback to FOR_CLASS_MEMBER when unresolved
+        symbol is FirErrorFunctionSymbol -> CallableReferenceWithTypeLhsKind.FOR_CLASS_MEMBER
+        (symbol as? FirCallableSymbol<*>)?.isStatic == true -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        // inner class constructor may be called on the object / companion object child
+        (symbol as? FirCallableSymbol<*>)?.isInner == true -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
+        symbol is FirConstructorSymbol -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        symbol.isSyntheticSamConstructor() -> CallableReferenceWithTypeLhsKind.FOR_STATIC
+        else -> CallableReferenceWithTypeLhsKind.FOR_OBJECT_MEMBER
     }
+    block(lhsAsType, kind)
 }
 
 private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): LinkedHashMap<K, V> {
     val result = LinkedHashMap<K, V>()
-    for ((key, value) in this) {
+    for ([key, value] in this) {
         if (value != null) {
             result[key] = value
         }

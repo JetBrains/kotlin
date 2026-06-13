@@ -51,8 +51,8 @@ object GenerateInRangeExpressionTestData {
         val testFunctionsWriter = PrintWriter(testFunctions)
 
         println("fun box(): String {")
-        rangeValNames.zip(rangeExpressions).forEachIndexed { i, (rangeValName, rangeExpression) ->
-            elementValNames.zip(elementExpressions).forEachIndexed { j, (elementValName, elementExpression) ->
+        rangeValNames.zip(rangeExpressions).forEachIndexed { i, [rangeValName, rangeExpression] ->
+            elementValNames.zip(elementExpressions).forEachIndexed { j, [elementValName, elementExpression] ->
                 val functionName = "testR${i}xE${j}"
 
                 println("    $functionName()")
@@ -68,7 +68,7 @@ object GenerateInRangeExpressionTestData {
 
     private fun PrintWriter.generateGlobalValDefinitions(expressions: List<String>, prefix: String): List<String> {
         val valNames = expressions.indices.map { "$prefix$it" }
-        valNames.zip(expressions).forEach { (name, expression) -> println("val $name = $expression") }
+        valNames.zip(expressions).forEach { [name, expression] -> println("val $name = $expression") }
         println()
         return valNames
     }
@@ -101,7 +101,7 @@ object GenerateInRangeExpressionTestData {
         bounds: Pair<String, String>,
         elementExpressions: List<String>
     ) {
-        val (aExpression, bExpression) = bounds
+        val [aExpression, bExpression] = bounds
         for (function in functions) {
             generateMatrixTestCase(
                 "$namePrefix${function.subdir.replaceFirstChar(Char::uppercase)}.kt",

@@ -11,43 +11,15 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_BUILD_TOOLS_API_CLASSPATH_CO
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
+/**
+ * The configuration-phase scenarios (default compiler version, choosing it via the `kotlin.compilerVersion`
+ * extension) live in the functional test `CompilerVersionSelectionTest`. What remains here needs real dependency
+ * resolution: verifying that a manually added `kotlin-compiler-embeddable` does not override the chosen version.
+ */
 @DisplayName("Tests for compiler version choosing via the Build Tools API")
 @JvmGradlePluginTests
 class CompilerVersionChooseIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true)
-
-    @GradleTest
-    @DisplayName("Verify default compiler dependencies")
-    fun defaultClasspath(gradleVersion: GradleVersion) {
-        prepareProject(gradleVersion) {
-            build(printClasspathTaskName) {
-                assertCompilerVersion(buildOptions.kotlinVersion)
-            }
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Compiler version may be specified via the kotlin extension")
-    fun compilerVersionMayBeChanged(gradleVersion: GradleVersion) {
-        prepareProject(gradleVersion) {
-            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            build(printClasspathTaskName) {
-                assertCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            }
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Compiler version may be specified via the kotlin extension multiple times")
-    fun compilerVersionMayBeChangedMultipleTimes(gradleVersion: GradleVersion) {
-        prepareProject(gradleVersion) {
-            chooseCompilerVersion(buildOptions.kotlinVersion)
-            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            build(printClasspathTaskName) {
-                assertCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            }
-        }
-    }
 
     @GradleTest
     @DisplayName("Manual adding dependencies to the classpath configuration does not change kotlin version")

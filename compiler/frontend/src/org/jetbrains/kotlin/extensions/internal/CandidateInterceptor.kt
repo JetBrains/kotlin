@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.extensions.internal
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
 @OptIn(InternalNonStableExtensionPoints::class)
+@K1Deprecation
 class CandidateInterceptor(project: Project) {
     private val extensions = getInstances(project)
 

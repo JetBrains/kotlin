@@ -1,0 +1,14 @@
+STEP 0:
+    modifications:
+        U : lib1.file1.kt -> lib1.file1.kt
+    added cache: lib1.file1.kt
+
+STEP 1:
+    modifications:
+        U : lib1.file1.1.kt -> lib1.file1.kt
+    modified cache: lib1.file1.kt
+
+STEP 2:
+    modifications:
+        U : lib1.file1.kt -> lib1.file1.kt
+    modified cache: lib1.file1.kt

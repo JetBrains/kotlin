@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.getCompileTimeConstant
 
+@K1Deprecation
 object ApiVersionIsAtLeastArgumentsChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (!isApiVersionIsAtLeast(resolvedCall.resultingDescriptor)) return
@@ -36,7 +38,7 @@ object ApiVersionIsAtLeastArgumentsChecker : CallChecker {
         val bindingContext = context.trace.bindingContext
         val shouldInlineConstVals = context.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-        for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
+        for ([_, resolvedValueArgument] in resolvedCall.valueArguments) {
             for (valueArgument in resolvedValueArgument.arguments) {
                 val ktExpression =  KtPsiUtil.deparenthesize(valueArgument.getArgumentExpression() ?: continue) ?: continue
 

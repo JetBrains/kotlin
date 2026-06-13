@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
+import org.jetbrains.kotlin.resolution.KtResolvable;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  * //        ^_____^
  * }</pre>
  */
-public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNullableType>> implements KtTypeElement {
+public class KtNullableType extends KtElementImplStub<KotlinPlaceHolderStub<KtNullableType>> implements KtTypeElement, KtResolvable {
     public KtNullableType(@NotNull ASTNode node) {
         super(node);
     }

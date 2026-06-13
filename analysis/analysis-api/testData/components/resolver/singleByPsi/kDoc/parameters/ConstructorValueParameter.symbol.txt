@@ -1,2 +1,5 @@
-KtSecondaryConstructor(14,64): '/**'
-  null
+KDocName(26,28): 'aa'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      aa: kotlin.Int
+    ]

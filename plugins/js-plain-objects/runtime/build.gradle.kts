@@ -7,6 +7,7 @@ plugins {
     kotlin("multiplatform")
     `maven-publish`
     id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
 }
 
 group = "org.jetbrains.kotlin"

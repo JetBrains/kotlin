@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -49,7 +50,7 @@ class IrPreGenerator(
 
         val serializerClass = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
 
-        if (!irClass.shouldHaveSpecificSyntheticMethods {
+        if (!irClass.shouldHaveSpecificSyntheticMethods(isJvm = compilerContext.platform.isJvm()) {
                 serializerClass.findPluginGeneratedMethod(
                     SerialEntityNames.SAVE,
                     compilerContext.afterK2
@@ -111,13 +112,14 @@ class IrPreGenerator(
         method.parameters = method.nonDispatchParameters
     }
 
+    @OptIn(ValueClassBackendAgnosticApi::class)
     private fun preGenerateDeserializationConstructorIfNeeded() {
         if (!irClass.shouldHaveGeneratedMethods()) return
         // do not add synthetic deserialization constructor if .deserialize method is customized
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
         ) return
-        if (irClass.isSingleFieldValueClass) return
+        if (irClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !compilerContext.platform.isJvm())) return
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN

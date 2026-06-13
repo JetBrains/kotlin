@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
+@K1Deprecation
 class DeserializationComponentsForJava(
     storageManager: StorageManager,
     moduleDescriptor: ModuleDescriptor,
@@ -146,6 +148,7 @@ class DeserializationComponentsForJava(
     }
 }
 
+@K1Deprecation
 fun makeLazyJavaPackageFragmentProvider(
     javaClassFinder: JavaClassFinder,
     module: ModuleDescriptor,
@@ -179,6 +182,7 @@ fun makeLazyJavaPackageFragmentProvider(
     return LazyJavaPackageFragmentProvider(javaResolverComponents)
 }
 
+@K1Deprecation
 fun makeDeserializationComponentsForJava(
     module: ModuleDescriptor,
     storageManager: StorageManager,

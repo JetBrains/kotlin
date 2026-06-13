@@ -560,7 +560,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
                 assertNotNull("failed to connect daemon", daemon)
 
-                val (_, port) = findPortAndCreateRegistry(10, 16384, 65535)
+                val [_, port] = findPortAndCreateRegistry(10, 16384, 65535)
                 val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_COMPILE)
                 val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
                 val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })

@@ -12,15 +12,9 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.utils.contentEquals
-
+import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 import java.io.File
 import javax.inject.Inject
 
@@ -79,7 +73,7 @@ private fun copySwiftLockFile(
     }
 }
 
-private fun hasSameContent(dest: File, src: File): Boolean = dest.exists() && src.exists() && contentEquals(src, dest)
+private fun hasSameContent(dest: File, src: File): Boolean = dest.exists() && src.exists() && contentEqualsIgnoringLineEndings(src, dest)
 
 /**
  * One project's contribution to a shared lock bucket.
@@ -139,7 +133,6 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
     }
 
 
-
     companion object {
         private const val SERVICE_NAME = "swiftPmLockTaskAggregationService"
 
@@ -151,6 +144,3 @@ internal abstract class SwiftPMLockTaskAggregationBuildService : BuildService<Bu
             ) {}
     }
 }
-
-
-

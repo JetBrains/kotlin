@@ -216,7 +216,7 @@ class ConstraintIncorporator(
         ) {
             return
         }
-        val (type, needApproximation) = computeConstraintTypeForSecondIncorporationKind(
+        val [type, needApproximation] = computeConstraintTypeForSecondIncorporationKind(
             causeOfIncorporationVariable, causeOfIncorporationConstraint, otherConstraint
         )
 
@@ -268,7 +268,7 @@ class ConstraintIncorporator(
         val isBaseGenericType = otherConstraint.type.argumentsCount() != 0
         val isBaseOrOtherCapturedType = otherConstraint.type.isCapturedType() || causeOfIncorporationConstraint.type.isCapturedType()
 
-        val (alphaReplacement, needsApproximation) = when (causeOfIncorporationConstraint.kind) {
+        val [alphaReplacement, needsApproximation] = when (causeOfIncorporationConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 causeOfIncorporationConstraint.type to false
             }

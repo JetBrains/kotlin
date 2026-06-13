@@ -10,14 +10,13 @@ package kotlin.powerassert
  * This is the default implementation of an [Expression]
  * used for all values not representable by other [Expression] implementations.
  */
-// TODO SimpleExpression?
 @ExperimentalPowerAssert
 public class ValueExpression(
-    startOffset: Int,
-    endOffset: Int,
-    displayOffset: Int,
-    value: Any?,
-) : Expression(startOffset, endOffset, displayOffset, value) {
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val displayOffset: Int,
+    override val value: Any?,
+) : Expression() {
     override fun copy(deltaOffset: Int): ValueExpression {
         return ValueExpression(
             startOffset = startOffset + deltaOffset,

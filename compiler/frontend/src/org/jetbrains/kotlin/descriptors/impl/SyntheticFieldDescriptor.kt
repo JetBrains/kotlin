@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class SyntheticFieldDescriptor private constructor(
     val propertyDescriptor: PropertyDescriptor,
     accessorDescriptor: PropertyAccessorDescriptor,
@@ -49,6 +51,7 @@ class SyntheticFieldDescriptor private constructor(
     }
 }
 
+@K1Deprecation
 val DeclarationDescriptor.referencedProperty: PropertyDescriptor?
     get() = when (this) {
         is SyntheticFieldDescriptor -> this.propertyDescriptor

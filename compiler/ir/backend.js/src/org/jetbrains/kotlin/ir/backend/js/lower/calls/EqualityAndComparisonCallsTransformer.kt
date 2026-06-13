@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -247,8 +248,8 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun optimizeInlineClassEquality(call: IrFunctionAccessExpression, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val (lhsUnboxed, lhsClassType) = lhs.unboxParamWithInlinedClass()
-        val (rhsUnboxed, rhsClassType) = rhs.unboxParamWithInlinedClass()
+        val [lhsUnboxed, lhsClassType] = lhs.unboxParamWithInlinedClass()
+        val [rhsUnboxed, rhsClassType] = rhs.unboxParamWithInlinedClass()
         if (lhsClassType !== null && lhsClassType === rhsClassType && lhsUnboxed.type.isDefaultEqualsMethod()) {
             call.arguments[0] = lhsUnboxed
             call.arguments[1] = rhsUnboxed

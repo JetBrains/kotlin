@@ -1,2 +1,2 @@
-KtNamedFunction(77,125): '/**'
+KDocName(85,106): 'KotlinChild.staticFun'
   null

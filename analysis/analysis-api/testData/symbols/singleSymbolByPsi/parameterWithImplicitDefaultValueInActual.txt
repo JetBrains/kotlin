@@ -1,7 +1,6 @@
 KaValueParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   generatedPrimaryConstructorProperty: null
   hasDeclaredDefaultValue: false
@@ -9,6 +8,7 @@ KaValueParameterSymbol:
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -29,5 +29,5 @@ KaValueParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(main.kt)
   getContainingJvmClassName: test.pkg.MainKt
   getContainingModule: KaSourceModule "Sources of jvm"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

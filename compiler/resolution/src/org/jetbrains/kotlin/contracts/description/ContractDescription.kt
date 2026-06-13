@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.storage.StorageManager
  * backward compatibility. Ideally, this model should only be extended, but not
  * changed.
  */
+@K1Deprecation
 open class ContractDescription(
     val effects: List<EffectDeclaration>,
     val ownerFunction: FunctionDescriptor,
@@ -47,15 +49,18 @@ open class ContractDescription(
     fun getFunctor(usageModule: ModuleDescriptor): Functor? = computeFunctor.invoke()
 }
 
+@K1Deprecation
 interface ContractDescriptionElement {
     fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R
 }
 
+@K1Deprecation
 interface EffectDeclaration : ContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitEffectDeclaration(this, data)
 }
 
+@K1Deprecation
 interface BooleanExpression : ContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanExpression(this, data)

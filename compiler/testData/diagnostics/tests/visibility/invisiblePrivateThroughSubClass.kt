@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 
 abstract class A {
     fun foo(b: B) {

@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.tasks.filterKlibsPassedToCompiler
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -510,7 +511,10 @@ internal constructor(
                 filteredLibraries.toPathsArray()
             } ?: emptyArray()
             args.friendModules = runSafe {
-                friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
+                friendModule.files.takeIf { it.isNotEmpty() }
+                    ?.filterKlibsPassedToCompiler()
+                    ?.map { it.absolutePath }
+                    ?.joinToString(File.pathSeparator)
             }
             args.refinesPaths = runSafe {
                 sharedCompilationData?.refinesPaths?.files?.takeIf { it.isNotEmpty() }?.toPathsArray()
@@ -946,6 +950,27 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
 
+    internal enum class MacroNamesCollectingMode {
+        LEGACY,
+        LIBCLANGEXT,
+        LIBCLANGEXT_PARALLEL;
+
+        val value: String
+            get() = when (this) {
+                LEGACY -> "legacy"
+                LIBCLANGEXT -> "libclangext"
+                LIBCLANGEXT_PARALLEL -> "libclangext_parallel"
+            }
+
+        companion object {
+            val OPTION = "-Xmacro-collection-impl"
+        }
+    }
+
+    @get:Optional
+    @get:Input
+    internal abstract val macroNamesCollectingMode: Property<MacroNamesCollectingMode>
+
     @get:Internal
     val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
@@ -1000,6 +1025,9 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             addArgIfNotNull("-Xkonan-data-dir", kotlinNativeProvider.get().konanDataDir.orNull)
             if (produceUnpackagedKlib.get()) {
                 add("-nopack")
+            }
+            if (macroNamesCollectingMode.isPresent) {
+                addArg(MacroNamesCollectingMode.OPTION, macroNamesCollectingMode.get().value)
             }
 
             addAll(extraOpts)

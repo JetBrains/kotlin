@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub;
+import org.jetbrains.kotlin.resolution.KtResolvable;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
  * //          ^______________________^
  * }</pre>
  */
-public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> implements KtTypeElement {
+public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> implements KtTypeElement, KtResolvable {
 
     public static final KtToken RETURN_TYPE_SEPARATOR = KtTokens.ARROW;
 

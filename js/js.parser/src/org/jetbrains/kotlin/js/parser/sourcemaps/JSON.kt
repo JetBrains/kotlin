@@ -51,7 +51,7 @@ data class JsonObject(val properties: MutableMap<String, JsonNode>) : JsonNode()
     override fun write(writer: Writer) {
         writer.append('{')
         var first = true
-        for ((key, value) in properties) {
+        for ([key, value] in properties) {
             if (!first) {
                 writer.append(',')
             }

@@ -1,0 +1,189 @@
+KtFile: 'classLiterals.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtTypeAlias(0,26): 'typealias MyAlias = String'
+  NO_CANDIDATES
+
+KtTypeReference(20,26): 'String'
+  NO_CANDIDATES
+
+KtUserType(20,26): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(20,26): 'String'
+  NO_CANDIDATES
+
+KtNamedFunction(28,139): 'inline fun <reified T> main() {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(28,34): 'inline'
+  NO_CANDIDATES
+
+KtTypeParameterList(39,50): '<reified T>'
+  NO_CANDIDATES
+
+KtTypeParameter(40,49): 'reified T'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(40,47): 'reified'
+  NO_CANDIDATES
+
+KtParameterList(55,57): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(58,139): '{'
+  NO_CANDIDATES
+
+KtClassLiteralExpression(63,71): 'T::class'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(63,64): 'T'
+  NO_CANDIDATES
+
+KtClassLiteralExpression(75,89): 'MyAlias::class'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(75,82): 'MyAlias'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = <constructor>(): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtClassLiteralExpression(93,106): 'String::class'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(93,99): 'String'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = <constructor>(): kotlin.String
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtClassLiteralExpression(110,137): 'kotlin.Int.Companion::class'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(110,130): 'kotlin.Int.Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int.Companion
+        symbol = <constructor>(): kotlin.Int.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(110,120): 'kotlin.Int'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = <constructor>(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(110,116): 'kotlin'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = <constructor>(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(117,120): 'Int'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = <constructor>(): kotlin.Int
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(121,130): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Int.Companion
+        symbol = <constructor>(): kotlin.Int.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false

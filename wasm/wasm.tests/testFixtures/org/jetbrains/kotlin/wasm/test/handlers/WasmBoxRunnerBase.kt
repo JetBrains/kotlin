@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
@@ -19,7 +21,7 @@ abstract class WasmBoxRunnerBase(
     testServices: TestServices,
     executeWithV8Only: Boolean = false,
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val wasmEngines = if (executeWithV8Only) {
+    internal val wasmEngines = if (executeWithV8Only) {
         // JavaScriptCore may glitch on Linux CI: `libglib-2.0.so.0: file too short`
         // however this engine can be avoided for some testrunners like klib compatibility tests,
         // where it's enough to execute an image only on any one of engine, which is the reliable and simple to setup, like V8.
@@ -35,8 +37,7 @@ abstract class WasmBoxRunnerBase(
     protected fun saveAdditionalFilesAndRun(
         outputDir: File,
         mark: String,
-        failsIn: List<String>,
-        filesToIgnoreInSizeChecks: MutableSet<File>
+        filesToIgnoreInSizeChecks: MutableSet<File>,
     ): List<Throwable> {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val collectedJsArtifacts = collectJsArtifacts(originalFile, mark)
@@ -139,13 +140,14 @@ abstract class WasmBoxRunnerBase(
         }
 
         val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+        val useStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in testServices.moduleStructure.allDirectives
 
         return wasmEngines
             .mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
-                    failsIn = failsIn,
+                    useStackSwitching = useStackSwitchingProposal,
                     entryFile = collectedJsArtifacts.entryPath,
                     jsFilePaths = jsFilePaths,
                     workingDirectory = outputDir,
@@ -154,33 +156,29 @@ abstract class WasmBoxRunnerBase(
     }
 }
 
+class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
+
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
-    failsIn: List<String>,
+    useStackSwitching: Boolean,
     entryFile: String?,
     jsFilePaths: List<String>,
     workingDirectory: File,
 ): Throwable? {
-    val vmName = javaClass.simpleName
-
     try {
         if (debugMode >= DebugMode.DEBUG) {
-            println(" ------ Run in $vmName" + if (shortName in failsIn) " (expected to fail)" else "")
+            println(" ------ Run in $vmName")
         }
-        val str = run(
+        run(
             "./${entryFile}",
             jsFilePaths,
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
+            useStackSwitching = useStackSwitching,
         )
-        if (shortName in failsIn) {
-            return AssertionError("The test expected to fail in ${vmName}. Please update the testdata.")
-        }
     } catch (e: Throwable) {
-        if (shortName !in failsIn) {
-            return e
-        }
+        return WasmVMException(e, vmName)
     }
     return null
 }
@@ -215,7 +213,7 @@ private fun assertExpectedSizesMatchActual(
 ): List<Throwable> {
     val filesByExtension = testDir.listFiles()?.filterNot { it in filesToIgnore }?.groupBy { it.extension }.orEmpty()
 
-    val errors = fileExtensionToItsExpectedSize.mapNotNull { (extension, expectedSize) ->
+    val errors = fileExtensionToItsExpectedSize.mapNotNull { [extension, expectedSize] ->
         val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
 
         val thresholdPercent = 1

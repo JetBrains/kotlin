@@ -39,6 +39,8 @@ object IrInlinerErrors : KtDiagnosticsContainer() {
         LanguageFeature.ForbidExposingLessVisibleTypesInInline,
     )
 
+    val IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING by warning1<PsiElement, String>()
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultSerializationErrorMessages
     }
@@ -48,30 +50,31 @@ internal object KtDefaultSerializationErrorMessages : BaseDiagnosticRendererFact
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
-            "Public-API inline {0} accesses a non Public-API {1}",
+            "Public-API inline {0} accesses a non Public-API {1}.",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND,
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API inline {0} accesses a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}\n",
+            "Public-API inline {0} accesses a non Public-API {1}. This can happen as a result of cascaded inlining of the following functions:\n{2}\n",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION,
-            "Public-API inline {0} references a non Public-API {1}",
+            "Public-API inline {0} references a non Public-API {1}.",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND,
         )
         map.put(
             IrInlinerErrors.IR_PRIVATE_CALLABLE_REFERENCED_BY_NON_PRIVATE_INLINE_FUNCTION_CASCADING,
-            "Public-API inline {0} references a non Public-API {1}. This could happen as a result of cascaded inlining of the following functions:\n{2}\n",
+            "Public-API inline {0} references a non Public-API {1}. This can happen as a result of cascaded inlining of the following functions:\n{2}\n",
             IrDiagnosticRenderers.DECLARATION_KIND,
             IrDiagnosticRenderers.DECLARATION_KIND_AND_NAME,
             Renderer<List<IrInlinedFunctionBlock>>(::renderCascadingInlining)
         )
+        map.put(IrInlinerErrors.IR_SYNTHETIC_ACCESSOR_LOWERING_WARNING, "{0}", KtDiagnosticRenderers.TO_STRING)
     }
 
     private fun renderCascadingInlining(inlinedFunctionBlocks: List<IrInlinedFunctionBlock>) =

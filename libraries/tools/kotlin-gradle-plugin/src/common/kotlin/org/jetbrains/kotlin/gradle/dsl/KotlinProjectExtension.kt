@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -178,19 +177,19 @@ abstract class KotlinProjectExtension @Inject constructor(
     @ExperimentalAbiValidation
     override val abiValidation: AbiValidationExtension
         get() {
-            abiValidationInternal.activate()
+            abiValidationInternal.activate(compilerVersion)
             return abiValidationInternal
         }
 
     @ExperimentalAbiValidation
     override fun abiValidation(action: Action<AbiValidationExtension>) {
-        abiValidationInternal.activate()
+        abiValidationInternal.activate(compilerVersion)
         action.execute(abiValidationInternal)
     }
 
     @ExperimentalAbiValidation
     override fun abiValidation() {
-        abiValidationInternal.activate()
+        abiValidationInternal.activate(compilerVersion)
     }
 }
 

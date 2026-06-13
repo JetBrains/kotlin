@@ -16,19 +16,26 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 
+@K1Deprecation
 open class ConstraintError(val constraintPosition: ConstraintPosition)
 
+@K1Deprecation
 class ParameterConstraintError(constraintPosition: ConstraintPosition) : ConstraintError(constraintPosition)
 
+@K1Deprecation
 class ErrorInConstrainingType(constraintPosition: ConstraintPosition) : ConstraintError(constraintPosition)
 
+@K1Deprecation
 class TypeInferenceError(constraintPosition: ConstraintPosition) : ConstraintError(constraintPosition)
 
+@K1Deprecation
 class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeVariable) : ConstraintError(constraintPosition)
 
+@K1Deprecation
 fun newTypeInferenceOrParameterConstraintError(constraintPosition: ConstraintPosition) =
     if (constraintPosition.isParameter()) ParameterConstraintError(constraintPosition) else TypeInferenceError(constraintPosition)

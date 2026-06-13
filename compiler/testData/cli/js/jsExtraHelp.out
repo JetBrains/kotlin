@@ -24,6 +24,7 @@ where advanced options include:
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xplatform-arguments-in-main-function
                              JS expression that will be executed in runtime and be put as an Array<String> parameter of the main function
+  -Xsuspend-lambda-exporting Enable exporting suspend lambdas to JavaScript/TypeScript.
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
@@ -53,6 +54,8 @@ where advanced options include:
                              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
+  -Xwasm-use-stack-switching-proposal
+                             Compile Kotlin Coroutines with WebAssembly Stack Switching Proposal
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.
@@ -122,12 +125,13 @@ where advanced options include:
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
   -Xannotation-default-target=first-only|first-only-warn|param-property
                              Change the default annotation targets for constructor properties:
                              -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
                              -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
                              -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-                             default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
+                             default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcollection-literals      Enable experimental language support for collection literals.
@@ -155,6 +159,9 @@ where advanced options include:
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
+  -Xdisable-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
+                             Only has effect if '-Xverify-ir' is not 'none'.
   -Xdisable-phases           Disable backend phases.
   -Xdont-sort-source-files   Disable automatic sorting of source files.
   -Xdont-warn-on-error-suppression
@@ -164,6 +171,10 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
                              Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
                              Example: `path/to/dir/*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.
+  -Xeager-lambda-analysis    Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.
+  -Xenable-additional-ir-checkers=<checker1>,<checker2>
+                             A list of IR checkers to enable, specified by a simple name of the checker class.
+                             It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
   -Xenable-incremental-compilation
                              Enable incremental compilation.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
@@ -177,12 +188,15 @@ where advanced options include:
                              Declare common klib dependencies for the specific fragment.
                              This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
   -Xfragment-friend-dependency=<fragment name>:<path>
                              Declare common klib friend dependencies for the specific fragment.
                              This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
                              The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-
+  -Xfragment-incremental-classpath=<fragment name>:<path>
+                             Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.
+                             This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
+                               dependencies from the platform specific incremental service.
+                             The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
   -Xfragment-refines=<fromModuleName>:<onModuleName>
                              Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
@@ -202,6 +216,7 @@ where advanced options include:
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
@@ -255,8 +270,6 @@ where advanced options include:
   -Xverbose-phases           Be verbose while performing the given backend phases.
   -Xverify-ir={none|warning|error}
                              IR verification mode (no verification by default).
-  -Xverify-ir-nested-offsets Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.
-  -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xwarning-level=<WARNING_NAME>:(error|warning|disabled)
                              Set the severity of the given warning.
                              - `error` level raises the severity of a warning to error level (similar to -Werror but more granular)

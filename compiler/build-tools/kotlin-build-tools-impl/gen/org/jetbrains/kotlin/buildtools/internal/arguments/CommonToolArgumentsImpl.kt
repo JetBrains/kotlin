@@ -17,10 +17,13 @@ import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import kotlin.collections.toMutableList
+import kotlin.collections.toMutableSet
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.HELP
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonToolArgumentsImpl.Companion.NOWARN
@@ -38,6 +41,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl(
   private val adapter: CommonToolArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
 ) : ArgumentsCommonToolArguments,
     ArgumentsCommonToolArguments.Builder {
@@ -50,6 +54,21 @@ internal abstract class CommonToolArgumentsImpl(
 
   internal val restrictedArgViolations: List<RestrictedArgViolation>
     get() = _restrictedArgViolations
+
+  protected val _argumentValidationErrors: MutableSet<String> =
+      argumentValidationErrors.toMutableSet()
+
+  internal val argumentValidationErrors: Set<String>
+    get() = _argumentValidationErrors
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
@@ -72,14 +91,7 @@ internal abstract class CommonToolArgumentsImpl(
   )
   override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
 
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
-  }
-
-  public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
+  abstract override fun build(): CommonToolArgumentsImpl
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
@@ -98,7 +110,7 @@ internal abstract class CommonToolArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: CommonToolArguments) {
+  protected fun applyCompilerArguments(arguments: CommonToolArguments) {
     try { this[WERROR] = arguments.allWarningsAsErrors } catch (_: NoSuchMethodError) {  }
     try { this[WEXTRA] = arguments.extraWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X] = arguments.extraHelp } catch (_: NoSuchMethodError) {  }

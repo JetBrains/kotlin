@@ -1,0 +1,5 @@
+expression: (-(+1L))
+constant: -1
+constantValueKind: LongValue
+constantValueSource: PREFIX_EXPRESSION
+constantValueSourceText: -(+1L)

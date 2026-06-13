@@ -1,0 +1,93 @@
+KtFile: 'typeParameterAsDelegatedSuperType.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,34): 'interface MyInterface'
+  null
+
+KtClass(36,110): 'class MyClass<T : MyInterface>(val i: T) {'
+  null
+
+KtTypeParameterList(49,66): '<T : MyInterface>'
+  null
+
+KtTypeParameter(50,65): 'T : MyInterface'
+  null
+
+KtTypeReference(54,65): 'MyInterface'
+  null
+
+KtUserType(54,65): 'MyInterface'
+  null
+
+KtNameReferenceExpression(54,65): 'MyInterface'
+  null
+
+KtPrimaryConstructor(66,76): '(val i: T)'
+  null
+
+KtParameterList(66,76): '(val i: T)'
+  null
+
+KtParameter(67,75): 'val i: T'
+  null
+
+KtTypeReference(74,75): 'T'
+  null
+
+KtUserType(74,75): 'T'
+  null
+
+KtNameReferenceExpression(74,75): 'T'
+  null
+
+KtClassBody(77,110): '{'
+  null
+
+KtClass(82,108): 'inner class Inner : T by i'
+  null
+
+KtDeclarationModifierList(82,87): 'inner'
+  null
+
+KtSuperTypeList(102,108): 'T by i'
+  null
+
+KtDelegatedSuperTypeEntry(102,108): 'T by i'
+  null
+
+KtTypeReference(102,103): 'T'
+  null
+
+KtUserType(102,103): 'T'
+  null
+
+KtNameReferenceExpression(102,103): 'T'
+  null
+
+KtNameReferenceExpression(107,108): 'i'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = bar/MyClass
+        type = bar.MyClass<T>
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = val i: T
+        contextParameters = []
+        callableId = bar/MyClass.i
+      typeArgumentsMapping = {}

@@ -17,6 +17,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirLocalPropertySymbol lvar a: R|kotlin/Any?|
+Expression Stability: STABLE_VALUE
 Smart Casts:
     FirLocalPropertySymbol lvar a: R|kotlin/Any?|
     Stability: STABLE_VALUE

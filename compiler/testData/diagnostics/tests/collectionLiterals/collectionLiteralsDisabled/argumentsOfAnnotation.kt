@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 annotation class Foo(val a: IntArray, val b: Array<String>, val c: FloatArray)
 
 @Foo([1], ["/"], [1f])

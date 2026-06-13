@@ -1,0 +1,3 @@
+expected symbols:
+context(text@kotlin.String)
+expect fun some(): kotlin.Int

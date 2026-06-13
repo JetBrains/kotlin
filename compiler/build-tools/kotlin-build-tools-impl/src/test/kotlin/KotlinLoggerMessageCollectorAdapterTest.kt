@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
+import org.jetbrains.kotlin.buildtools.api.CompilerMessageRendererWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.Severity
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer.SourceLocation
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -172,13 +174,64 @@ class KotlinLoggerMessageCollectorAdapterTest {
         assertEquals("[PREFIX] msg", logger.calls.single().message)
     }
 
+    @Test
+    fun diagnosticIdIsPassedToDiagnosticAwareRenderer() {
+        val renderer = RecordingDiagnosticAwareRenderer()
+        val logger = CapturingLogger()
+        val adapter = KotlinLoggerMessageCollectorAdapter(logger, renderer, warningsAsErrors = false) as MessageCollectorWithDiagnosticId
+
+        adapter.report(CompilerMessageSeverity.WARNING, "msg", null, "REDUNDANT_CLI_ARG")
+
+        assertEquals(listOf(RenderedMessage("msg", "REDUNDANT_CLI_ARG")), renderer.calls)
+        assertEquals("[REDUNDANT_CLI_ARG] msg", logger.calls.single().message)
+    }
+
+    @Test
+    fun diagnosticIdIsDroppedForPlainRenderer() {
+        val prefixRenderer = object : CompilerMessageRenderer {
+            override fun render(severity: Severity, message: String, location: SourceLocation?): String = "[PREFIX] $message"
+        }
+        val logger = CapturingLogger()
+        val adapter = KotlinLoggerMessageCollectorAdapter(logger, prefixRenderer, warningsAsErrors = false) as MessageCollectorWithDiagnosticId
+
+        adapter.report(CompilerMessageSeverity.WARNING, "msg", null, "REDUNDANT_CLI_ARG")
+
+        assertEquals("[PREFIX] msg", logger.calls.single().message)
+    }
+
+    @Test
+    fun plainMessagesKeepNullDiagnosticIdForDiagnosticAwareRenderer() {
+        val renderer = RecordingDiagnosticAwareRenderer()
+        val logger = CapturingLogger()
+        val adapter = KotlinLoggerMessageCollectorAdapter(logger, renderer, warningsAsErrors = false)
+
+        adapter.report(CompilerMessageSeverity.WARNING, "msg", null)
+
+        assertEquals(listOf(RenderedMessage("msg", null)), renderer.calls)
+        assertEquals("msg", logger.calls.single().message)
+    }
+
     private enum class LogMethod { ERROR, ERROR_WITH_THROWABLE, WARN, INFO, DEBUG }
+
+    private data class RenderedMessage(
+        val message: String,
+        val diagnosticId: String?,
+    )
 
     private data class LogCall(
         val method: LogMethod,
         val message: String?,
         val throwable: Throwable? = null,
     )
+
+    private class RecordingDiagnosticAwareRenderer : CompilerMessageRendererWithDiagnosticId {
+        val calls = mutableListOf<RenderedMessage>()
+
+        override fun render(severity: Severity, message: String, location: SourceLocation?, diagnosticId: String?): String {
+            calls += RenderedMessage(message, diagnosticId)
+            return diagnosticId?.let { "[$it] $message" } ?: message
+        }
+    }
 
     private class CapturingLogger : KotlinLogger {
         override val isDebugEnabled = true

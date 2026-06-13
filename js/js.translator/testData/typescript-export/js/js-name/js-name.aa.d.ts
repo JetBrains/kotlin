@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         interface Object {
             readonly constructor?: any;
@@ -62,6 +61,11 @@ declare namespace JS_TESTS {
             };
         }
         namespace TestInterface {
+            namespace DefaultImpls {
+                function testName1($this: foo.TestInterface): string;
+                function setWithSetter1($this: foo.TestInterface, value: string): void;
+                function getWithSetter1($this: foo.TestInterface): string;
+            }
             abstract class NotCompanion extends KtSingleton<NotCompanion.$metadata$.constructor>() {
                 private constructor();
             }
@@ -88,3 +92,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

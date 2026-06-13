@@ -6,7 +6,7 @@ fun assign(v: String): Unit:
 fun assign(v: StringProperty): Unit:
   Argument type mismatch: actual type is 'Int', but 'StringProperty' was expected.
 
-/incorrectUsage.kt:18:16: error: No applicable 'assign' function found for '=' overload
+/incorrectUsage.kt:18:16: error: No applicable 'assign' function found for '=' overload.
 
 /incorrectUsage.kt:24:9: error: None of the following candidates is applicable:
 
@@ -16,4 +16,4 @@ fun assign(v: String): Unit:
 fun assign(v: StringProperty): Unit:
   Argument type mismatch: actual type is 'Int', but 'StringProperty' was expected.
 
-/incorrectUsage.kt:24:15: error: No applicable 'assign' function found for '=' overload
+/incorrectUsage.kt:24:15: error: No applicable 'assign' function found for '=' overload.

@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -12,10 +13,13 @@ dependencies {
 
     implementation(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     implementation(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
+    implementation(libs.guava)
     implementation(libs.intellij.fastutil) { isTransitive = false }
     implementation(intellijJDom())
     implementation(intellijCore())
     implementation(project(":compiler:cli"))
+    implementation(project(":compiler:container"))
+    implementation(project(":compiler:frontend"))
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":compiler:fir:fir-native"))
     implementation(project(":compiler:ir.backend.common"))
@@ -25,9 +29,13 @@ dependencies {
     implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.native"))
+    implementation(project(":compiler:psi:psi-frontend-utils"))
+    implementation(project(":compiler:resolution"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":core:compiler.common.native"))
     implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
     implementation(project(":kotlin-native:llvmInterop"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
@@ -39,6 +47,10 @@ dependencies {
     implementation(project(":native:binary-options"))
     implementation(project(":compiler:cli:cli-native-klib"))
     implementation(project(":native:native.config"))
+    implementation(project(":kotlinx-metadata-klib"))
+    compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
+
+    testImplementation(kotlinTest("junit"))
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
@@ -53,8 +65,10 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 sourcesJar()
 javadocJar()

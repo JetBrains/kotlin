@@ -1,0 +1,96 @@
+element: this@Foo
+implicit values:
+  KaImplicitReceiver:
+    scopeIndexInTower = 2
+    type = Foo
+    ownerSymbol = KaNamedClassSymbol:
+      Foo
+    label = Foo
+
+
+  KaImplicitReceiver:
+    scopeIndexInTower = 6
+    type = Foo
+    ownerSymbol = KaNamedClassSymbol:
+      /Foo
+    label = null
+
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 4
+      fun test()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 1
+      class Foo
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 4
+      fun foo()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  ExplicitSimpleImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 9
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 1
+      class Foo
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 10
+
+  DefaultSimpleImportingScope, index = 11
+
+  ExplicitStarImportingScope, index = 12
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 13

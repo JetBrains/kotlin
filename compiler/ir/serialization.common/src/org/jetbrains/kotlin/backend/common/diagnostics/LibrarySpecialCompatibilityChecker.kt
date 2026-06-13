@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.backend.common.diagnostics
 
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.MavenComparableVersion
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.*
 import java.io.ByteArrayInputStream
 import java.util.jar.Manifest
@@ -62,9 +58,9 @@ abstract class LibrarySpecialCompatibilityChecker {
 
     fun check(
         libraries: Collection<KotlinLibrary>,
-        messageCollector: MessageCollector,
-        klibAbiCompatibilityLevel: KlibAbiCompatibilityLevel,
+        configuration: CompilerConfiguration,
     ) {
+        val klibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel
         val compilerVersion = Version.parseVersion(getRawCompilerVersion()) ?: return
         val isLatestKlibAbiCompatibilityLevel = klibAbiCompatibilityLevel == KlibAbiCompatibilityLevel.LATEST_STABLE
 
@@ -103,7 +99,7 @@ abstract class LibrarySpecialCompatibilityChecker {
                 else -> continue
             }
 
-            messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage)
+            configuration.report(SerializationErrors.KLIB_LOADING_ERROR, errorMessage)
         }
     }
 

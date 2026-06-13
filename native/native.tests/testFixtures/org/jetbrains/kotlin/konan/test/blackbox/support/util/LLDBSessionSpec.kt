@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assumeFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
 import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
@@ -24,14 +26,23 @@ abstract class LLDBSessionSpec {
         this += "-o"
         this += "command script import ${prettyPrinters.absolutePath}"
         this += "-o"
-        this += "command script import ${File("native/native.tests/scripts/konan_lldb_test_helper.py").absolutePath}"
+        val testHelper = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/scripts/konan_lldb_test_helper.py")
+        this += "command script import ${testHelper.absolutePath}"
     }
 
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
 
     protected fun sanityCheckLLDBOutput(output: String) {
-        assertFalse(PYTHON_EXCEPTION_HEADER in output) {
-            "Unhandled python exception in debugger: ${output.substring(output.indexOf(PYTHON_EXCEPTION_HEADER))}"
+        // Workaround for KT-84923. Mute the test if the problem occurs:
+        val kt84923Message = "attached to process, but could not pause execution; attach failed"
+        assumeFalse(output.contains(kt84923Message)) { "Test skipped because of KT-84923" }
+
+        // Ideally, we should just check that stderr is empty.
+        // Tracked in KT-86532.
+        for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
+            assertFalse(prefix in output) {
+                "Unexpected output in debugger: ${output.substring(output.indexOf(prefix))}"
+            }
         }
     }
 
@@ -83,7 +94,7 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
             """.trimIndent()
         }
 
-        for ((expectedStep, recordedStep) in expectedSteps.zip(recordedSteps)) {
+        for ([expectedStep, recordedStep] in expectedSteps.zip(recordedSteps)) {
             assertTrue(expectedStep.command == recordedStep.command) {
                 """
                     Wrong command in response.
@@ -208,7 +219,7 @@ internal class SteppingLLDBSessionSpec(
                 return@mapNotNull null
             }
 
-            val (filePath, lineStr, funRawName) = stepLine.split('\u001f', limit = 3)
+            val [filePath, lineStr, funRawName] = stepLine.split('\u001f', limit = 3)
             if (filePath !in testSourceFilePaths) {
                 return@mapNotNull null
             }

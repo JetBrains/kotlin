@@ -1,0 +1,154 @@
+KtFile: 'assignOnObject.kt'
+  null
+
+KtPackageDirective(0,11): 'package one'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
+
+KtImportList(11,11): ''
+  null
+
+KtObjectDeclaration(13,123): 'object ClientTransaction {'
+  null
+
+KtClassBody(38,123): '{'
+  null
+
+KtNamedFunction(44,78): 'operator fun plusAssign(a: Int) {}'
+  null
+
+KtDeclarationModifierList(44,52): 'operator'
+  null
+
+KtParameterList(67,75): '(a: Int)'
+  null
+
+KtParameter(68,74): 'a: Int'
+  null
+
+KtTypeReference(71,74): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(71,74): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(71,74): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtBlockExpression(76,78): '{}'
+  null
+
+KtNamedFunction(83,121): 'operator fun minusAssign(b: String) {}'
+  null
+
+KtDeclarationModifierList(83,91): 'operator'
+  null
+
+KtParameterList(107,118): '(b: String)'
+  null
+
+KtParameter(108,117): 'b: String'
+  null
+
+KtTypeReference(111,117): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtUserType(111,117): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(111,117): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtBlockExpression(119,121): '{}'
+  null
+
+KtNamedFunction(125,198): 'fun main() {'
+  null
+
+KtParameterList(133,135): '()'
+  null
+
+KtBlockExpression(136,198): '{'
+  null
+
+KtBinaryExpression(142,165): 'ClientTransaction += 10'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(142,159): 'ClientTransaction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction
+    ]
+
+KtOperationReferenceExpression(160,162): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+    ]
+
+KtConstantExpression(163,165): '10'
+  null
+
+KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(170,187): 'ClientTransaction'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction
+    ]
+
+KtOperationReferenceExpression(188,190): '-='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+    ]
+
+KtStringTemplateExpression(191,196): '"foo"'
+  null
+
+KtLiteralStringTemplateEntry(192,195): 'foo'
+  null

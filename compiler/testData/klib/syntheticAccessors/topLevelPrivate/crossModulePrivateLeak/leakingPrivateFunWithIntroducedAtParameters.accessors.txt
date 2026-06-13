@@ -1,0 +1,21 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+/* TARGET declaration */ private fun privateFun(ok1: String, ok2: String): String
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()
+private fun privateFun(ok1: String): String
+    /* TARGET use-site */ privateFun(ok1 = ok1)
+private fun privateFun(): String
+    /* TARGET use-site */ privateFun()
+/* ACCESSOR declaration */ internal fun access$privateFun$tAKt(ok1: String, ok2: String): String
+    /* TARGET use-site */ privateFun(ok1 = ok1, ok2 = ok2)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateFun$tAKt()

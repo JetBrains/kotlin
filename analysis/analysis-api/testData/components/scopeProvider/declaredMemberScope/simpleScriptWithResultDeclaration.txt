@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -33,7 +32,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -41,6 +39,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -66,7 +65,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
       getContainingJvmClassName: null
       getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -74,7 +73,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: foo
 
@@ -82,13 +81,11 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /$$result
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -112,7 +109,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -121,7 +118,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -145,7 +142,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScriptWithResultDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScriptWithResultDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: get$$result
   javaSetterName: null
   isInline: false

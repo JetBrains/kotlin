@@ -19,7 +19,7 @@ internal object IrJavaDirectActualizationDefaultParametersInExpectKmpChecker : I
     @OptIn(IrExpectActualMap.MappingForCheckers::class)
     override fun check(context: IrExpectActualChecker.Context) = with(context) {
         val expectToActual = expectActualMap.expectToActual
-        for ((expectSymbol, actualSymbol) in expectToActual) {
+        for ([expectSymbol, actualSymbol] in expectToActual) {
             if (actualSymbol !is IrFunctionSymbol) continue
             if (expectSymbol !is IrFunctionSymbol) continue
 

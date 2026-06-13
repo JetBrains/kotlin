@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /returnsNotNullContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -19,7 +18,6 @@ KaNamedFunctionSymbol:
                 KaValueParameterSymbol:
                   annotations: []
                   callableId: null
-                  compilerVisibility: Public
                   contextReceivers: []
                   generatedPrimaryConstructorProperty: null
                   hasDeclaredDefaultValue: false
@@ -27,6 +25,7 @@ KaNamedFunctionSymbol:
                   isActual: false
                   isCompanion: false
                   isCrossinline: false
+                  isDelegated: false
                   isExpect: false
                   isExtension: false
                   isExternal: false
@@ -47,7 +46,7 @@ KaNamedFunctionSymbol:
                   getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
                   getContainingJvmClassName: ReturnsNotNullContractKt
                   getContainingModule: KaSourceModule "Sources of main"
-                  deprecationStatus: null
+                  deprecation: null
                   importableFqName: null
           isNegated: true
   ]
@@ -79,7 +78,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -87,6 +85,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -107,7 +106,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
       getContainingJvmClassName: ReturnsNotNullContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -115,6 +114,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnsNotNullContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: returnsNotNullContract

@@ -114,6 +114,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 is WasmStructDeclaration ->
                                     gcTypes += type
                                 is WasmArrayDeclaration -> {}
+                                is WasmContType -> {}
                             }
                         }
                     }
@@ -491,6 +492,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
                 WasmImmediateKind.CATCH_VECTOR -> TODO()
+                WasmImmediateKind.RESUME_ON_VECTOR -> TODO()
             }
         }
 
@@ -543,7 +545,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readBlockType(): WasmImmediate.BlockType {
         val code = b.readVarInt64()
         return when {
-            code >= 0 -> WasmImmediate.BlockType.Function(WasmSymbol(functionTypes[code.toInt()]))
+            code >= 0 -> WasmImmediate.BlockType.Function(FunctionType(code.toInt()))
             code == -0x40L -> WasmImmediate.BlockType.Value(null)
             else -> WasmImmediate.BlockType.Value(readValueTypeImpl(code.toByte()))
         }

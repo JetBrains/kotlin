@@ -387,7 +387,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
 
             build("compile", expectedToFail = true) {
                 assertBuildLogJvmTargetDerivedFromMvnRelease("99", "99")
-                assertBuildLogContains("org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException: Unknown -Xjdk-release value: 99")
+                assertBuildLogContains("Unknown -Xjdk-release value: 99")
             }
         }
     }

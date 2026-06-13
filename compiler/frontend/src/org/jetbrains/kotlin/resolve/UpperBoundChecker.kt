@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
 
 @DefaultImplementation(impl = UpperBoundChecker::class)
+@K1Deprecation
 open class UpperBoundChecker(
     private val typeChecker: KotlinTypeChecker,
 ) {
@@ -156,6 +158,7 @@ open class UpperBoundChecker(
     }
 }
 
+@K1Deprecation
 class UpperBoundViolatedReporter(
     private val trace: BindingTrace,
     private val argumentType: KotlinType,

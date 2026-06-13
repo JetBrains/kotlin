@@ -65,7 +65,22 @@ KtUserType(128,135): 'MyClass'
   null
 
 KtNameReferenceExpression(128,135): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(135,137): '()'
   null
@@ -198,8 +213,8 @@ KtSuperTypeCallEntry(372,384): 'Exception(m)'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -232,8 +247,8 @@ KtConstructorCalleeExpression(372,381): 'Exception'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -263,7 +278,38 @@ KtUserType(372,381): 'Exception'
   null
 
 KtNameReferenceExpression(372,381): 'Exception'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(381,384): '(m)'
   null
@@ -322,8 +368,8 @@ KtSuperTypeCallEntry(406,418): 'Exception(m)'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -356,8 +402,8 @@ KtConstructorCalleeExpression(406,415): 'Exception'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -387,7 +433,38 @@ KtUserType(406,415): 'Exception'
   null
 
 KtNameReferenceExpression(406,415): 'Exception'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(415,418): '(m)'
   null
@@ -446,8 +523,8 @@ KtSuperTypeCallEntry(440,452): 'Exception(m)'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -480,8 +557,8 @@ KtConstructorCalleeExpression(440,449): 'Exception'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = java.lang.Exception
-        symbol = <constructor>(message: kotlin.String!): java.lang.Exception
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
         valueParameters = [
           KaVariableSignature:
             name = message
@@ -511,7 +588,38 @@ KtUserType(440,449): 'Exception'
   null
 
 KtNameReferenceExpression(440,449): 'Exception'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {kotlin.Exception=} java.lang.Exception
+        symbol = <constructor>(message: kotlin.String!): {kotlin.Exception=} java.lang.Exception
+        valueParameters = [
+          KaVariableSignature:
+            name = message
+            receiverType = null
+            returnType = kotlin.String!
+            symbol = message: kotlin.String!
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        m -> (KaVariableSignature:
+          name = message
+          receiverType = null
+          returnType = kotlin.String!
+          symbol = message: kotlin.String!
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(449,452): '(m)'
   null

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -65,10 +62,14 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
-    @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
-    @Suppress("DEPRECATION")
-    override var nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability =
-        org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NON_NULLABLE
+    @Deprecated(
+        "Use `isMarkedNullable` instead.",
+        replaceWith = ReplaceWith("isMarkedNullable"),
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("DEPRECATION_ERROR")
+    override var nullability: KaTypeNullability =
+        KaTypeNullability.NON_NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion {
@@ -97,12 +98,14 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
         backingArguments += KaBaseTypeArgumentWithVariance(type, variance, type.token)
     }
 
+    @KaImplementationDetail
     class ByClassId(classId: ClassId, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
         private val backingClassId: ClassId = classId
 
         val classId: ClassId get() = withValidityAssertion { backingClassId }
     }
 
+    @KaImplementationDetail
     class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
         private val backingSymbol: KaClassLikeSymbol = symbol
 
@@ -110,8 +113,7 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     }
 }
 
-@KaImplementationDetail
-sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
+internal sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
         set(value) {
@@ -145,10 +147,13 @@ sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
 
 @KaImplementationDetail
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
-    @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
-    @Suppress("DEPRECATION")
-    override var nullability: org.jetbrains.kotlin.analysis.api.types.KaTypeNullability =
-        org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.NULLABLE
+    @Deprecated(
+        "Use `isMarkedNullable` instead.",
+        replaceWith = ReplaceWith("isMarkedNullable"),
+        level = DeprecationLevel.ERROR
+    )
+    @Suppress("DEPRECATION_ERROR")
+    override var nullability: KaTypeNullability = KaTypeNullability.NULLABLE
         get() = withValidityAssertion { field }
         set(value) {
             withValidityAssertion {
@@ -167,6 +172,7 @@ sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
             }
         }
 
+    @KaImplementationDetail
     class BySymbol(symbol: KaTypeParameterSymbol, override val token: KaLifetimeToken) : KaBaseTypeParameterTypeBuilder() {
         private val backingSymbol: KaTypeParameterSymbol = symbol
 

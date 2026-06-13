@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// SKIP_TXT
 
 // FILE: annotation.kt
 package kotlinx.serialization

@@ -12,37 +12,16 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 
-class LatestLVIdenticalChecker(testServices: TestServices) : AbstractAlternativeKtFileIdenticalChecker(testServices) {
-    override fun checkTestDataFile(testDataFile: File) {
-        if (!testDataFile.isLatestLVTestData) return
-        val originalFile = testDataFile.originalTestDataFile
-        if (contentsAreEquals(originalFile, testDataFile)) {
-            testServices.assertions.assertAll(
-                buildList {
-                    add { deleteFirFileToCompareAndAssertIfExists(testDataFile) }
+class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalFileChecker(testServices) {
 
-                    listOf(
-                        originalFile.originalTestDataFile,
-                        originalFile.firTestDataFile,
-                        originalFile.llFirTestDataFile,
-                        originalFile.reversedTestDataFile,
-                        originalFile.partialBodyTestDataFile
-                    ).filter { it.exists() }
-                        .mapTo(this) { file ->
-                            { removeDirectiveFromClassicFileAndAssert(file) }
-                        }
-                }
-            )
-        }
-    }
+    override val extension: String
+        get() = ".latestLV.kt"
 
-    private fun contentsAreEquals(classicFile: File, firFile: File): Boolean {
-        val classicFileContent = readContent(classicFile, trimLines = false)
-        val firFileContent = readContent(firFile, trimLines = false)
-        return classicFileContent == firFileContent
-    }
+    override fun File.isRelevantTestData(): Boolean = isLatestLVTestData
 
-    private fun removeDirectiveFromClassicFileAndAssert(testDataFile: File) {
+    override fun File.relevantTestDataFile(): File = latestLVTestDataFile
+
+    override fun updateClassicFileAndAssert(testDataFile: File) {
         val directiveName = LATEST_LV_DIFFERENCE.name
         if (!isTeamCityBuild) {
             val classicFileContent = testDataFile.readLines()
@@ -56,37 +35,18 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractAlternative
             }
         }
         val message = if (isTeamCityBuild) {
-            "Please remove .latestLV.kt file and remove // $directiveName from test source"
+            "Please remove $extension file and remove // $directiveName from test source"
         } else {
-            "Deleted .latestLV.kt file, removed // $directiveName from test source"
+            "Deleted $extension file, removed // $directiveName from test source"
         }
         testServices.assertions.fail {
             """
-                    Dumps with latest and latest stable LV are the same. 
+                    Default and $extension dumps are the same. 
                     $message
                     Please re-run the test now
                 """.trimIndent()
         }
     }
 
-    private fun deleteFirFileToCompareAndAssertIfExists(testDataFile: File, suppressAssertion: Boolean = false) {
-        val firFileToCompare = testDataFile.latestLVTestDataFile.takeIf(File::exists) ?: return
-        if (!isTeamCityBuild) {
-            firFileToCompare.delete()
-        }
-
-        if (suppressAssertion) {
-            return
-        }
-
-        val message = if (isTeamCityBuild) {
-            "Please remove `${firFileToCompare.path}`"
-        } else {
-            "Deleted `${firFileToCompare.path}`"
-        }
-
-        testServices.assertions.fail {
-            "$message\nPlease re-run the test"
-        }
-    }
 }
+

@@ -6041,6 +6041,218 @@ public inline fun UShortArray.all(predicate: (UShort) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UIntArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun ULongArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UByteArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array are equal to each other.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The elements are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
+ * 
+ * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqual
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public fun UShortArray.allEqual(): Boolean {
+    if (size < 2) return true
+    val first = this[0]
+    for (i in 1..lastIndex) {
+        if (first != this[i]) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualUIntArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualULongArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualUByteArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
+    }
+    return true
+}
+
+/**
+ * Returns `true` if all elements in the array yield the same value
+ * produced by the given [selector] function.
+ * 
+ * Returns `true` for an empty array.
+ * 
+ * The [selector] values are compared sequentially using structural equality (`==`),
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
+ * 
+ * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+ * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+ * 
+ * @sample samples.generated.allequal.AllEqualUShortArraySamples.allEqualBy
+ */
+@SinceKotlin("2.4")
+@ExperimentalStdlibApi
+@ExperimentalUnsignedTypes
+public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
+    if (size < 2) return true
+    val firstKey = selector(this[0])
+    for (i in 1..lastIndex) {
+        val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
+    }
+    return true
+}
+
+/**
  * Returns `true` if array has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any

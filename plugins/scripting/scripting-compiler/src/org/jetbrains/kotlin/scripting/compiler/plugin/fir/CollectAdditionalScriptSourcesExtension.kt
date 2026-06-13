@@ -10,19 +10,23 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.disableStandardScriptDefinition
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
@@ -32,7 +36,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataPr
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
-import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
+import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -91,7 +95,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                     }
                 }.onFailure {
                     for (report in it.reports) {
-                        configuration.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                        configuration.report(report.severity, report.render(withSeverity = false), null)
                     }
                 }.valueOrNull()
             return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
@@ -101,7 +105,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             if (import is FileBasedScriptSource)
                 findVirtualFile(import.file.absoluteFile)?.let { virtualFile -> KtVirtualFileSourceFile(virtualFile) } ?: run {
                     configuration.report(
-                        CompilerMessageSeverity.ERROR,
+                        CliDiagnostics.SCRIPTING_ERROR,
                         "Unable to find imported script ${import.file}"
                     )
                     null
@@ -139,7 +143,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             }.reversed().mapNotNull { sourcesToFiles[it] }
         } catch (e: CycleDetected) {
             configuration.report(
-                CompilerMessageSeverity.ERROR,
+                CliDiagnostics.SCRIPTING_ERROR,
                 "Unable to handle recursive script dependencies, cycle detected on file ${e.node.name ?: e.node.locationId}",
             )
             sourcesToFiles.values
@@ -216,7 +220,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 configuration = configuration,
                 context = sessionFactoryContext,
                 needRegisterJavaElementFinder = true,
-                isForLeafHmppModule = false,
+                kmpModuleKind = KmpModuleKind.SingleModule,
                 init = {},
             ).apply {
                 register(
@@ -228,8 +232,4 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         }
 
     private var dummySessionForAnnotationResolution: FirSession? = null
-}
-
-private fun CompilerConfiguration.report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation? = null) {
-    messageCollector.report(severity, message, location)
 }

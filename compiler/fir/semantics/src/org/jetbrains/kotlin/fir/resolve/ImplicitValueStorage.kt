@@ -127,6 +127,20 @@ class ImplicitValueStorage private constructor(
 
     fun receiversAsReversed(): List<ImplicitReceiverValue<*>> = implicitReceiverStack.asReversed()
 
+    private val labelByImplicitValueMap: Map<ImplicitReceiverValue<*>, Name> by lazy {
+        buildMap {
+            implicitReceiversByLabel.entries.forEach { entry ->
+                entry.value.forEach {
+                    this[it] = entry.key
+                }
+            }
+        }
+    }
+
+    fun ImplicitReceiverValue<*>.label(): Name? {
+        return labelByImplicitValueMap[this@label]
+    }
+
     /**
      * Applies smart-casted type to an [ImplicitValue] identified by its [symbol].
      *
@@ -141,12 +155,12 @@ class ImplicitValueStorage private constructor(
 
     internal fun createSnapshot(mapper: ImplicitValueMapper): ImplicitValueStorage = ImplicitValueStorage(
         implicitReceiverStack = implicitReceiverStack.map { mapper(it) }.toPersistentList(),
-        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, (name, receiverValues) ->
+        implicitReceiversByLabel = implicitReceiversByLabel.entries.fold(PersistentSetMultimap()) { accOuterMap, [name, receiverValues] ->
             receiverValues.fold(accOuterMap) { accMap, receiverValue ->
                 accMap.put(name, mapper(receiverValue))
             }
         },
-        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { (_, v) -> mapper(v) }.toPersistentMap(),
+        implicitValuesBySymbol = implicitValuesBySymbol.mapValues { [_, v] -> mapper(v) }.toPersistentMap(),
     )
 }
 

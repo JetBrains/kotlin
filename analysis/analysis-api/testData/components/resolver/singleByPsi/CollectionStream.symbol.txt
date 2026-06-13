@@ -1,5 +1,8 @@
 KtNameReferenceExpression(112,118): 'stream'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>
     ]
+  PSI class names: ClsMethodImpl

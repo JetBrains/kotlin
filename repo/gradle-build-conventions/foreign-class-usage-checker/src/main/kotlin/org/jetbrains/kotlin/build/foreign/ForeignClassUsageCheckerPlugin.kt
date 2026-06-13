@@ -26,6 +26,11 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import java.io.File
+import java.io.InputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import kotlin.collections.iterator
 
 @Suppress("unused")
 class ForeignClassUsageCheckerPlugin : Plugin<Project> {
@@ -37,7 +42,7 @@ class ForeignClassUsageCheckerPlugin : Plugin<Project> {
                 .map { it.output.classesDirs }
 
             project.tasks.withType<CheckForeignClassUsageTask>().configureEach {
-                classesDirs.from(classesDirsProvider)
+                classes.from(classesDirsProvider)
             }
 
             project.tasks.named("check").configure {
@@ -54,10 +59,10 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     }
 
     /**
-     * Directories with compiled class files to scan for foreign class usage.
+     * Directories or archives with compiled class files to scan for foreign class usage.
      *
-     * This property accepts one or more directories containing `.class` files that will be analyzed
-     * to detect usage of external (foreign) classes in their public API surface.
+     * This property accepts one or more directories containing `.class` files, or JAR files with them,
+     * that will be analyzed to detect usage of external (foreign) classes in their public API surface.
      *
      * By default, this property is configured to point to the output directories of the project's
      * [SourceSet.MAIN_SOURCE_SET_NAME] source set when the `java` plugin is applied.
@@ -65,7 +70,16 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val classesDirs: ConfigurableFileCollection
+    abstract val classes: ConfigurableFileCollection
+
+    /**
+     * Dependencies of [classes] in the same format: directories containing `.class` files, or JAR files with them.
+     *
+     * If the [classpath] property is set, the task verifies that all foreign API classes are present in it.
+     */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val classpath: ConfigurableFileCollection
 
     /**
      * Set of fully qualified names of annotations that mark declarations as non-public API.
@@ -111,9 +125,28 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
      *
      * If the file doesn't exist, it will be created with the current usage. If the file exists but differs from the current usage,
      * the task will fail and update the file.
+     *
+     * If the [outputFile] isn't set, the task will not generate an output file.
+     * This is useful for checks of the foreign API against the provided [classpath].
      */
     @get:OutputFile
+    @get:Optional
     abstract val outputFile: RegularFileProperty
+
+    /**
+     * The output file for the classpath check.
+     *
+     * This file is only accessed if the [classpath] property is not empty.
+     * The file format is the same as in the [outputFile].
+     *
+     * If the [outputFile] isn't set while there are missing classes in the classpath, the task will fail with an explanatory comment.
+     * This should be the desired behavior – no API is ever expected to have broken classpath references.
+     * However, achieving that at once might be non-trivial for existing "dirty" artifacts. In that case, the
+     * [missingClasspathEntriesOutputFile] can at least ensure that there won't be additional API dependency breakages.
+     */
+    @get:OutputFile
+    @get:Optional
+    abstract val missingClasspathEntriesOutputFile: RegularFileProperty
 
     /**
      * Whether to include detailed usage information for each foreign class in the [outputFile].
@@ -140,12 +173,11 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
     @TaskAction
     @Suppress("unused")
     fun execute() {
-        val collectUsages = collectUsages.get()
-        val processor = ForeignClassUsageProcessor(nonPublicMarkers.get(), collectUsages)
+        val processor = ForeignClassUsageProcessor(nonPublicMarkers.get(), collectUsages.get())
 
-        for (classesDir in classesDirs.files) {
-            classesDir.walkTopDown().filter { it.isFile && it.extension == "class" }.forEach { classFile ->
-                processor.process(classFile)
+        for (classesFile in classes.files) {
+            classesFile.processClassFiles { classEntry ->
+                classEntry.withInputStream(processor::process)
             }
         }
 
@@ -170,20 +202,58 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
             filteredClassNames.add(className)
         }
 
-        val actualText = buildString {
-            for ((index, className) in filteredClassNames.withIndex()) {
-                if (index > 0) {
-                    appendLine()
-                }
-                append(className)
-                if (collectUsages) {
-                    appendLine()
-                    processor.usages(className).forEach { appendLine("    $it") }
-                }
+        checkAgainstClasspath(filteredClassNames, processor)
+        checkAgainstDump(filteredClassNames, processor)
+    }
+
+    private fun checkAgainstClasspath(classNames: List<String>, processor: ForeignClassUsageProcessor) {
+        val classpathFiles = classpath.files
+        if (classpathFiles.isEmpty()) {
+            return
+        }
+
+        val classpathClasses = HashSet<String>()
+        for (classpathFile in classpathFiles) {
+            classpathFile.processClassFiles { classEntry ->
+                classpathClasses.add(classEntry.className)
             }
         }
 
-        val expectedFile = outputFile.get().asFile
+        val missingClassNames = classNames.toSet() - classpathClasses
+
+        if (missingClassNames.isEmpty()) {
+            return
+        }
+
+        val expectedFile = missingClasspathEntriesOutputFile.getOrNull()?.asFile
+        if (expectedFile != null) {
+            val actualText = renderClassNames(missingClassNames.toList(), processor)
+            assertEqualsToFile(expectedFile, actualText)
+        } else {
+            val missingClassNamesText = buildString {
+                append(System.lineSeparator())
+                append(renderClassNames(missingClassNames.toList(), processor))
+            }
+
+            throw GradleException("The following class names are missing in the classpath:$missingClassNamesText")
+        }
+    }
+
+    private fun checkAgainstDump(classNames: List<String>, processor: ForeignClassUsageProcessor) {
+        val expectedFile = outputFile.getOrNull()?.asFile
+
+        if (expectedFile == null) {
+            if (classNames.isEmpty()) {
+                throw GradleException("Expected file isn't set, and no foreign API is used")
+            }
+            return
+        }
+
+        val actualText = renderClassNames(classNames, processor)
+        assertEqualsToFile(expectedFile, actualText)
+    }
+
+    private fun assertEqualsToFile(expectedFile: File, actualText: String) {
         if (!expectedFile.exists()) {
             expectedFile.writeText(actualText)
             throw GradleException("Expected file did not exist and has been created. Please review and commit the changes")
@@ -197,6 +267,60 @@ abstract class CheckForeignClassUsageTask : DefaultTask() {
         if (actualLines != expectedLines) {
             expectedFile.writeText(actualText)
             throw GradleException("Expected file has been modified. Please review and commit the changes")
+        }
+    }
+
+    private fun renderClassNames(classNames: List<String>, processor: ForeignClassUsageProcessor): String {
+        val text = buildString {
+            for ((index, className) in classNames.withIndex()) {
+                if (index > 0) {
+                    appendLine()
+                }
+                append(className)
+                if (collectUsages.get()) {
+                    appendLine()
+                    processor.usages(className).forEach { appendLine("    $it") }
+                }
+            }
+        }
+
+        return text.replace("\n", System.lineSeparator())
+    }
+}
+
+private fun File.processClassFiles(processor: (ClassEntry) -> Unit) {
+    if (isFile && extension == "jar") {
+        ZipFile(this).use { zipFile ->
+            for (zipEntry in zipFile.entries()) {
+                if (zipEntry.name.endsWith(".class")) {
+                    val className = zipEntry.name.removeSuffix(".class")
+                    processor(ClassEntry.FromZip(zipFile, zipEntry, className))
+                }
+            }
+        }
+    } else {
+        // Process individual '.class' files and directories with them
+        walkTopDown()
+            .filter { someFile -> someFile.isFile && someFile.extension == "class" }
+            .forEach { classFile ->
+                val className = classFile.toRelativeString(this).removeSuffix(".class")
+                processor(ClassEntry.LocalFile(classFile, className))
+            }
+    }
+}
+
+private sealed class ClassEntry(val className: String) {
+    abstract fun withInputStream(block: (InputStream) -> Unit)
+
+    class FromZip(private val zipFile: ZipFile, private val zipEntry: ZipEntry, className: String) : ClassEntry(className) {
+        override fun withInputStream(block: (InputStream) -> Unit) {
+            zipFile.getInputStream(zipEntry).use(block)
+        }
+    }
+
+    class LocalFile(private val file: File, className: String) : ClassEntry(className) {
+        override fun withInputStream(block: (InputStream) -> Unit) {
+            file.inputStream().buffered().use(block)
         }
     }
 }

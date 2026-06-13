@@ -12,7 +12,7 @@ class SystemPropertyTestDataRootConfigurator(testServices: TestServices) : MetaT
         buildMap {
             val roots = property.split(";")
             for (root in roots) {
-                val (from, to) = root.trim().split("=")
+                val [from, to] = root.trim().split("=")
                 put(from, to)
             }
         }
@@ -20,7 +20,7 @@ class SystemPropertyTestDataRootConfigurator(testServices: TestServices) : MetaT
 
     override fun transformTestDataPath(testDataFileName: String): String {
         if (testDataRoots != null) {
-            for ((from, to) in testDataRoots) {
+            for ([from, to] in testDataRoots) {
                 if (testDataFileName.startsWith(from)) return to + testDataFileName.removePrefix(from)
             }
         }

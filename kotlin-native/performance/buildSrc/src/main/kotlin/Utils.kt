@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin
 
+import kotlinx.benchmark.gradle.BenchmarksExtension
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -12,6 +13,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal val Project.kotlin: KotlinMultiplatformExtension
     get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
+
+internal val Project.kotlinxBenchmark: BenchmarksExtension
+    get() = extensions.getByName("benchmark") as BenchmarksExtension
 
 val hostKotlinNativeTargetName: String
     get() = when (HostManager.host) {

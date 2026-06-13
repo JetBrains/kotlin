@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 interface SyntheticJavaPartsProvider {
 
     companion object {
@@ -50,6 +52,7 @@ interface SyntheticJavaPartsProvider {
 }
 
 @Suppress("IncorrectFormatting") // KTIJ-22227
+@K1Deprecation
 class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaPartsProvider>) : SyntheticJavaPartsProvider {
     override fun getMethodNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> {
         return inner.flatMap { it.getMethodNames(thisDescriptor, c) }

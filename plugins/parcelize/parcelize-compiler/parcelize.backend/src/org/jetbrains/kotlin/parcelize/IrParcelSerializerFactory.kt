@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -66,9 +68,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
         fun getChild(elementType: IrType, allowDataClasses: Boolean = false) =
             get(elementType, scope, parcelizeType, strict(), inDataClass = inDataClass || allowDataClasses)
 
-        scope.getCustomSerializer(irType)?.let { parceler ->
-            return IrCustomParcelSerializer(parceler)
-        }
+        scope.getCustomSerializer(irType)?.let { return it }
 
         val classifier = irType.erasedUpperBound
         val classifierFqName = classifier.fqNameWhenAvailable?.asString()
@@ -248,7 +248,11 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                         }
 
                     if (simpleSerializer != null) {
-                        return simpleSerializer
+                        return if (classifierFqName in BuiltinParcelableTypes.IMMUTABLE_LIST_FQNAMES) {
+                            wrapNullableSerializerIfNeeded(irType, simpleSerializer)
+                        } else {
+                            simpleSerializer
+                        }
                     }
                 }
 
@@ -391,6 +395,9 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
     private val ushortSerializer = IrUnsafeCoerceWrappedSerializer(shortSerializer, symbols.kotlinUShort.defaultType, irBuiltIns.shortType)
     private val uintSerializer = IrUnsafeCoerceWrappedSerializer(intSerializer, symbols.kotlinUInt.defaultType, irBuiltIns.intType)
     private val ulongSerializer = IrUnsafeCoerceWrappedSerializer(longSerializer, symbols.kotlinULong.defaultType, irBuiltIns.longType)
+
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    private val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)
 
     // Unsigned array types
     private val ubyteArraySerializer = IrUnsafeCoerceWrappedSerializer(

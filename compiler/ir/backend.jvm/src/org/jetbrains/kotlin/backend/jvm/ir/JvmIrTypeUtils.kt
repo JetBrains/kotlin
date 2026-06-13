@@ -51,6 +51,9 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
+fun IrType.isFullValueClassType(): Boolean =
+    erasedUpperBound.isFullValueClass
+
 fun IrType.isInlineClassType(): Boolean {
     // Workaround for KT-69856
     return if (this is IrSimpleType && classifier.owner is IrScript) {
@@ -63,9 +66,10 @@ fun IrType.isInlineClassType(): Boolean {
 fun IrType.isBoxedInlineClassType(): Boolean =
     isInlineClassType() && isNullable() && makeNotNull().unboxInlineClass().let { it.isPrimitiveType() || it.isNullable() }
 
-fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isMultiFieldValueClass
+fun IrType.isMultiFieldValueClassType(): Boolean = erasedUpperBound.isJvmInlineMultiFieldValueClass
 
 fun IrType.isValueClassType(): Boolean = erasedUpperBound.isValue
+fun IrType.isBasicValueClassType(): Boolean = erasedUpperBound.isBasicValueClass
 
 val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType

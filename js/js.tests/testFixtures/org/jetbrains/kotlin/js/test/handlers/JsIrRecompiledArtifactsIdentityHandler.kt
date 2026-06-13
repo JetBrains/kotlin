@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts.Js
+import org.jetbrains.kotlin.test.model.IncrementalJsArtifact
+import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -17,10 +19,10 @@ import java.io.File
 
 class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: Js) {
-        if (info !is Js.IncrementalJsArtifact) return
-        val (originalArtifact, incrementalArtifact) = info
+        if (info !is IncrementalJsArtifact) return
+        (val originalArtifact, val incrementalArtifact = recompiledArtifact) = info
         when {
-            originalArtifact is Js.JsIrArtifact && incrementalArtifact is Js.JsIrArtifact -> {
+            originalArtifact is JsIrArtifact && incrementalArtifact is JsIrArtifact -> {
                 compareIrArtifacts(originalArtifact, incrementalArtifact)
             }
             else -> assertions.fail {
@@ -35,7 +37,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
     }
 
     @Suppress("UNUSED_PARAMETER")
-    private fun compareIrArtifacts(originalArtifact: Js.JsIrArtifact, incrementalArtifact: Js.JsIrArtifact) {
+    private fun compareIrArtifacts(originalArtifact: JsIrArtifact, incrementalArtifact: JsIrArtifact) {
         // TODO: enable asserts when binary stability is achieved
         val oldBinaryAsts = originalArtifact.icCache!!
         val newBinaryAsts = incrementalArtifact.icCache!!
@@ -54,7 +56,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
 
         testServices.assertions.assertEquals(originalFilesToCheck.size, recompiledFilesToCheck.size)
 
-        for ((originalFile, recompiledFile) in originalFilesToCheck.zip(recompiledFilesToCheck)) {
+        for ([originalFile, recompiledFile] in originalFilesToCheck.zip(recompiledFilesToCheck)) {
             testServices.assertions.assertEquals(originalFile.name, recompiledFile.name)
 
             val originalOutput = FileUtil.loadFile(originalFile)
@@ -69,7 +71,7 @@ class JsIrRecompiledArtifactsIdentityHandler(testServices: TestServices) : JsBin
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
-private fun Js.JsIrArtifact.allFiles(): Collection<File> {
+private fun JsIrArtifact.allFiles(): Collection<File> {
     return listOf(outputFile) + compilerResult[TranslationMode.FULL_DEV]!!.dependencies.map {
         outputFile.augmentWithModuleName(it.artifactConfiguration.moduleName)
     }.sortedBy { it.name }

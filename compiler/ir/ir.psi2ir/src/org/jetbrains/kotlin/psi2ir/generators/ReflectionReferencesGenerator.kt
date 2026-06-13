@@ -400,7 +400,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             shift = 1
         }
 
-        for ((valueParameter, valueArgument) in adaptedArguments) {
+        for ([valueParameter, valueArgument] in adaptedArguments) {
             val substitutedValueParameter = resolvedCall.resultingDescriptor.valueParameters[valueParameter.index]
             val indexOffset = irAdapteeCall.arguments.size - irAdapteeCall.symbol.descriptor.valueParameters.size
             irAdapteeCall.arguments[valueParameter.index + indexOffset] =
@@ -604,7 +604,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         val symbol = context.symbolTable.descriptorExtension.referenceProperty(descriptor)
         val syntheticJavaProperty = context.extensions.unwrapSyntheticJavaProperty(descriptor)
         if (syntheticJavaProperty != null) {
-            val (getMethod, setMethod) = syntheticJavaProperty
+            val [getMethod, setMethod] = syntheticJavaProperty
             // This is the special case of synthetic java properties when requested property doesn't even exist but IR design
             // requires its symbol to be bound so let do that
             // see `irText/declarations/provideDelegate/javaDelegate.kt` and KT-45297

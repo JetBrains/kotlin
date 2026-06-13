@@ -1,7 +1,0 @@
-KtOperationReferenceExpression(54,56): '+='
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in kotlin.collections) inline operator fun <T> kotlin.collections.MutableCollection<in T>.plusAssign(element: T)

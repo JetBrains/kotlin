@@ -7,14 +7,14 @@ import org.jetbrains.kotlin.BenchmarkRepeatingType
 import org.jetbrains.kotlin.benchmarkingTargets
 
 plugins {
-    id("benchmarking")
+    id("kotlinx-benchmarking")
 }
 
 kotlin {
     benchmarkingTargets()
 }
 
-benchmark {
+kotlinxBenchmark {
     applicationName = "Startup"
     repeatingType = BenchmarkRepeatingType.EXTERNAL
 }

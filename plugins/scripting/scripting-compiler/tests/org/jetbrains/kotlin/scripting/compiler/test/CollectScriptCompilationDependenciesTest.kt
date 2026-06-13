@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
@@ -89,7 +90,7 @@ class CollectScriptCompilationDependenciesTest {
                 )
             )
 
-            addKotlinSourceRoot(File(testDataPath, scriptFile).path)
+            addKotlinSourceRoot(ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + scriptFile).path)
             put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true)
 
             loadScriptingPlugin(this, testRootDisposable)

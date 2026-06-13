@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.psi.util.parentsOfType
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.abbreviatedTypeOrSelf
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.Name
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.logErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+@KaImplementationDetail
 class AllCandidatesResolver(private val firSession: FirSession) {
     private val scopeSession = ScopeSession()
 
@@ -101,7 +104,11 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(resolutionFacade, element)
 
-        val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
+        val constructedType = delegatedConstructorCall.constructedTypeRef
+            .coneType
+            .abbreviatedTypeOrSelf as? ConeClassLikeType
+            ?: return emptyList()
+
         return run {
             val callInfo = bodyResolveComponents.callResolver.callInfoForDelegatingConstructorCall(
                 delegatedConstructorCall,

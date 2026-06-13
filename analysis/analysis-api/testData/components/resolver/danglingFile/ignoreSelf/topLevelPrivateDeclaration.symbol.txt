@@ -1,0 +1,8 @@
+KtNameReferenceExpression(89,92): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/foo(p: kotlin.Int): kotlin.Unit
+    ]
+  additional: [topLevelPrivateDeclaration.kt]

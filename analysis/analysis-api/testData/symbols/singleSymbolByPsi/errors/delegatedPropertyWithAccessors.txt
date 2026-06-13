@@ -3,10 +3,10 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -31,16 +31,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /lazyProp
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -69,7 +67,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: false
   hasGetter: true
@@ -78,7 +76,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: true
+  isDelegated: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -104,7 +102,6 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Internal
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -121,7 +118,6 @@ KaKotlinPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -129,6 +125,7 @@ KaKotlinPropertySymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -154,7 +151,7 @@ KaKotlinPropertySymbol:
       getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -165,7 +162,6 @@ KaKotlinPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -173,6 +169,7 @@ KaKotlinPropertySymbol:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -198,21 +195,21 @@ KaKotlinPropertySymbol:
         getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: INTERNAL
     getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
     getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(delegatedPropertyWithAccessors.kt)
   getContainingJvmClassName: DelegatedPropertyWithAccessorsKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getLazyProp
   javaSetterName: setLazyProp
   isInline: false

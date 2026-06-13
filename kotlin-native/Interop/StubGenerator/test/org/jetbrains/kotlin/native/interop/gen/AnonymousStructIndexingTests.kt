@@ -79,7 +79,7 @@ class AnonymousStructIndexingTests : IndexerTestsBase() {
                 } nested;
             };
         """.trimIndent())
-        val (nested, s) = structs.partition { it.isAnonymous }
+        val [nested, s] = structs.partition { it.isAnonymous }
         assertEquals("struct S", s.single().spelling)
         assertTrue(nested.single().isAnonymous)
     }

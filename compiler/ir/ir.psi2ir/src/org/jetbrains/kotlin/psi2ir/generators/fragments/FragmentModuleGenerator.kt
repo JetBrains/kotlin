@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
+@K1Deprecation
 class FragmentModuleGenerator(
     override val context: GeneratorContext,
     private val fragmentInfo: EvaluatorFragmentInfo

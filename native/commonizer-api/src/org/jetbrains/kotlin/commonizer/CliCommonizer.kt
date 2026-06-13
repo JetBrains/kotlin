@@ -42,7 +42,7 @@ public class CliCommonizer(private val executor: Executor) : NativeDistributionC
                 add("-$DEPENDENCY_LIBRARIES_ALIAS"); add(dependencyLibraries.joinToString(";"))
             }
             add("-$LOG_LEVEL_ALIAS"); add(logLevel.name.lowercase())
-            for ((settingKey, settingValue) in additionalSettings) {
+            for ((val settingKey = key, val settingValue = value) in additionalSettings) {
                 add("-${settingKey.alias}"); add(settingValue.toString())
             }
         }
@@ -62,7 +62,7 @@ public class CliCommonizer(private val executor: Executor) : NativeDistributionC
             add("-$OUTPUT_PATH_ALIAS"); add(outputDirectory.absolutePath)
             add("-$OUTPUT_COMMONIZER_TARGETS_ALIAS"); add(outputTargets.joinToString(";") { it.identityString })
             add("-$LOG_LEVEL_ALIAS"); add(logLevel.name.lowercase())
-            for ((settingKey, settingValue) in additionalSettings) {
+            for ((val settingKey = key, val settingValue = value) in additionalSettings) {
                 add("-${settingKey.alias}"); add(settingValue.toString())
             }
         }

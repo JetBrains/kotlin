@@ -48,7 +48,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
                     !isTopLevel &&
                     functionAccess.origin != JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL &&
-                    (promisifiedWrapperFunction ?: this).isExported(context)
+                    (promisifiedWrapperFunction != null || isExported(context))
         }
     }
 

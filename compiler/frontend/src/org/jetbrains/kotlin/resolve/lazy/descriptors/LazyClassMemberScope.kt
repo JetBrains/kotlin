@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 
+@K1Deprecation
 open class LazyClassMemberScope(
     c: LazyClassContext,
     declarationProvider: ClassMemberDeclarationProvider,

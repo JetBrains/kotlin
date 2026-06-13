@@ -56,7 +56,7 @@ internal class NativeSuspendFunctionsLowering(
         val function = (element as? IrSimpleFunction) ?: return null
         if (!function.isSuspend || function.modality == Modality.ABSTRACT) return null
 
-        val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
+        (val tailSuspendCalls = callSites, val hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
             listOf<IrDeclaration>(buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function)
         } else {
@@ -118,7 +118,7 @@ internal class NativeSuspendFunctionsLowering(
     ) {
         val originalBody = transformingFunction.body!!
 
-        val (thisReceiver, resultArgument) = stateMachineFunction.parameters.also { check(it.size == 2) }
+        val [thisReceiver, resultArgument] = stateMachineFunction.parameters.also { check(it.size == 2) }
 
         val coroutineClass = stateMachineFunction.parentAsClass
 
@@ -224,7 +224,7 @@ internal class NativeSuspendFunctionsLowering(
                 // No constructor argument is first since the call will be lowered to (val inst = alloc(); call(inst, *args); inst)
                 // and therefore an actual first argument will be the just allocated instance.
                 var first = expression !is IrConstructorCall
-                for ((index, child) in children.withIndex()) {
+                for ([index, child] in children.withIndex()) {
                     if (child == null) continue
                     val transformedChild =
                             if (!child.isSpecialBlock())

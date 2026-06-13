@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
  *
  * @see org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
  */
+@KaImplementationDetail
 class FirDesignation(
     /**
      * The path to [target] element.
@@ -65,7 +67,7 @@ class FirDesignation(
     constructor(target: FirElementWithResolveState) : this(emptyList(), target)
 
     init {
-        for ((index, declaration) in path.withIndex()) {
+        for ([index, declaration] in path.withIndex()) {
             when (declaration) {
                 is FirFile -> requireWithAttachment(
                     index == 0,
@@ -116,9 +118,10 @@ class FirDesignation(
     }
 }
 
+@KaImplementationDetail
 fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation: FirDesignation) {
     withEntryGroup(name) {
-        for ((index, declaration) in designation.path.withIndex()) {
+        for ([index, declaration] in designation.path.withIndex()) {
             withFirEntry("path$index", declaration)
         }
 
@@ -126,6 +129,7 @@ fun ExceptionAttachmentBuilder.withFirDesignationEntry(name: String, designation
     }
 }
 
+@KaImplementationDetail
 fun FirDesignation.toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
     yieldAll(path)
     if (includeTarget) yield(target)
@@ -277,7 +281,7 @@ private fun collectDesignationPathWithContainingClassFallback(
     }
 
     val containingClassIds = generateSequence(containingClassId) { it.outerClassId }
-    val (_, containingClasses) = containingClassIds.fold(target to SmartList<FirRegularClass>()) { (declaration, result), classId ->
+    val [_, containingClasses] = containingClassIds.fold(target to SmartList<FirRegularClass>()) { [declaration, result], classId ->
         // Psi-based calculator is called explicitly to avoid `LLFirProvider#getContainingClassSymbol`
         // since we have a fallback logic with strict checking (no dependencies in the search scope)
         val psiBasedContainingClass = LLContainingClassCalculator.getContainingClassSymbol(declaration.symbol)?.fir
@@ -347,7 +351,7 @@ private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): Fir
  * @see tryCollectDesignation
  * @see tryCollectDesignationWithOptionalFile
  */
-fun FirElementWithResolveState.collectDesignationWithOptionalFile(providedFile: FirFile? = null): FirDesignation =
+internal fun FirElementWithResolveState.collectDesignationWithOptionalFile(providedFile: FirFile? = null): FirDesignation =
     tryCollectDesignationWithOptionalFile(providedFile) ?: errorWithAttachment("No designation of local declaration") {
         providedFile?.let { withFirEntry("firFile", it) }
     }
@@ -359,7 +363,7 @@ fun FirElementWithResolveState.collectDesignationWithOptionalFile(providedFile: 
  * @see tryCollectDesignation
  * @see tryCollectDesignationWithOptionalFile
  */
-fun FirElementWithResolveState.collectDesignation(providedFile: FirFile? = null): FirDesignation =
+internal fun FirElementWithResolveState.collectDesignation(providedFile: FirFile? = null): FirDesignation =
     tryCollectDesignation(providedFile) ?: errorWithAttachment("No designation of local declaration") {
         withFirEntry("FirDeclaration", this@collectDesignation)
     }
@@ -377,6 +381,7 @@ fun FirElementWithResolveState.collectDesignation(providedFile: FirFile? = null)
  * @see collectDesignation
  * @see tryCollectDesignation
  */
+@KaImplementationDetail
 fun FirElementWithResolveState.tryCollectDesignationWithOptionalFile(providedFile: FirFile? = null): FirDesignation? =
     tryCollectDesignation(providedFile = providedFile, target = this)
 
@@ -387,7 +392,7 @@ fun FirElementWithResolveState.tryCollectDesignationWithOptionalFile(providedFil
  * @see tryCollectDesignationWithOptionalFile
  * @see collectDesignationWithOptionalFile
  */
-fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? {
+internal fun FirElementWithResolveState.tryCollectDesignation(providedFile: FirFile? = null): FirDesignation? {
     val designation = tryCollectDesignation(providedFile = providedFile, target = this)
     return designation?.takeIf { it.fileOrNull != null }
 }

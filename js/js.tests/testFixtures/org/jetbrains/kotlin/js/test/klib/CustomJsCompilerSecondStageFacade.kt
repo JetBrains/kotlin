@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.TestServices
@@ -94,7 +95,7 @@ class CustomJsCompilerSecondStageFacade(
             File(outputDir.path, module.name + ".js")
                 .renameFollowingTestInfraConvention(jsArtifactFile)
 
-            return BinaryArtifacts.Js.JsIrArtifact(
+            return JsIrArtifact(
                 outputFile = jsArtifactFile,
                 compilerResult = CompilerResult(
                     listOf(

@@ -76,11 +76,11 @@ internal class Frame(subFrameOwner: IrElement, val irFile: IrFile? = null) {
     }
 
     fun copyMemoryInto(newFrame: Frame) {
-        this.getAll().forEach { (symbol, variable) -> if (!newFrame.containsStateInMemory(symbol)) newFrame.storeState(symbol, variable) }
+        this.getAll().forEach { [symbol, variable] -> if (!newFrame.containsStateInMemory(symbol)) newFrame.storeState(symbol, variable) }
     }
 
     fun copyMemoryInto(closure: StateWithClosure) {
-        getAll().reversed().forEach { (symbol, variable) -> closure.upValues[symbol] = variable }
+        getAll().reversed().forEach { [symbol, variable] -> closure.upValues[symbol] = variable }
     }
 
     private fun getAll(): List<Pair<IrSymbol, Variable>> = innerStack.flatMap { it.getAll() }

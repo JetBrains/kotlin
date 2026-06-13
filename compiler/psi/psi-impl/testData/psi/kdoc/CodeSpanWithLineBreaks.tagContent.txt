@@ -1,0 +1,28 @@
+ORIGINAL KDOC:
+* ``
+ * foo
+ * bar
+ * baz
+ * ``
+CONTENT:
+``
+foo
+bar
+baz
+``
+
+ORIGINAL KDOC:
+* `foo bar
+ * baz`
+CONTENT:
+`foo bar
+baz`
+
+ORIGINAL KDOC:
+* `foo bar
+ *
+ * baz`
+CONTENT:
+`foo bar
+
+baz`

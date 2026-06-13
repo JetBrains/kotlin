@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : lib2.file1.kt -> lib2.file1.kt
+    added cache: lib2.file1.kt
+
+// lib1: final class -> open class
+STEP 1:
+    dependencies: lib1
+    modified cache: lib2.file1.kt
+
+// lib1: open class -> final class
+STEP 2:
+    dependencies: lib1
+    unchanged cache: lib2.file1.kt

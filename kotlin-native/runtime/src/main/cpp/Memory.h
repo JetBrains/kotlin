@@ -317,7 +317,7 @@ public:
     ObjHeader* GetExceptionObject() noexcept;
 
     // Exceptions are not on a hot path, so having virtual dispatch is fine.
-    virtual ~ExceptionObjHolder() = default;
+    virtual ~ExceptionObjHolder();
 };
 
 namespace kotlin {

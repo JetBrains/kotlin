@@ -83,7 +83,22 @@ KtUserType(176,183): 'MyClass'
   null
 
 KtNameReferenceExpression(176,183): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(183,185): '()'
   null
@@ -928,7 +943,7 @@ KtNameReferenceExpression(683,694): 'myClassProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(695,697): 'to'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1055,7 +1070,7 @@ KtNameReferenceExpression(710,720): 'stringProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(721,723): 'to'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1148,7 +1163,7 @@ KtNameReferenceExpression(735,750): 'NestedInheritor'
   null
 
 KtOperationReferenceExpression(751,753): 'to'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1298,7 +1313,7 @@ KtValueArgumentList(783,785): '()'
   null
 
 KtOperationReferenceExpression(786,788): 'to'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1904,7 +1919,7 @@ KtNameReferenceExpression(1242,1243): 'a'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1244,1247): '!in'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2019,7 +2034,7 @@ KtNameReferenceExpression(1256,1267): 'myClassProp'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1267,1269): '..'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

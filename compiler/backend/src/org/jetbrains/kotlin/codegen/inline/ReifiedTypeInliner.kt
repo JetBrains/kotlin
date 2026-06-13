@@ -442,7 +442,7 @@ class TypeParameterMappings<KT : KotlinTypeMarker>(
 
     init {
         with(typeSystem) {
-            for ((parameter, type) in typeArguments.entries) {
+            for ([parameter, type] in typeArguments.entries) {
                 val name = parameter.getName().identifier
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
@@ -459,7 +459,7 @@ class TypeParameterMappings<KT : KotlinTypeMarker>(
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
     internal inline fun forEach(block: (String, TypeParameterMapping<KT>) -> Unit) =
-        mappingsByName.entries.forEach { (name, mapping) -> block(name, mapping) }
+        mappingsByName.entries.forEach { [name, mapping] -> block(name, mapping) }
 }
 
 class TypeParameterMapping<KT : KotlinTypeMarker>(

@@ -1,0 +1,350 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(27,199): 'fun test() {'
+  null
+
+KtParameterList(35,37): '()'
+  null
+
+KtBlockExpression(38,199): '{'
+  null
+
+KtDotQualifiedExpression(43,69): 'JavaClass<Int>.staticField'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = staticField
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var staticField: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.staticField
+      typeArgumentsMapping = {}
+
+KtCallExpression(43,57): 'JavaClass<Int>'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+
+KtNameReferenceExpression(43,52): 'JavaClass'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+
+KtTypeArgumentList(52,57): '<Int>'
+  null
+
+KtTypeProjection(53,56): 'Int'
+  null
+
+KtTypeReference(53,56): 'Int'
+  null
+
+KtUserType(53,56): 'Int'
+  null
+
+KtNameReferenceExpression(53,56): 'Int'
+  null
+
+KtNameReferenceExpression(58,69): 'staticField'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Int>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = staticField
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var staticField: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.staticField
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(73,99): 'JavaClass<Long>.unresolved'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
+
+KtCallExpression(73,88): 'JavaClass<Long>'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Long)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+
+KtNameReferenceExpression(73,82): 'JavaClass'
+  KaCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = JavaClass<T>
+          symbol = <constructor>(): JavaClass<T>
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Long)
+        }
+        valueArgumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+
+KtTypeArgumentList(82,88): '<Long>'
+  null
+
+KtTypeProjection(83,87): 'Long'
+  null
+
+KtTypeReference(83,87): 'Long'
+  null
+
+KtUserType(83,87): 'Long'
+  null
+
+KtNameReferenceExpression(83,87): 'Long'
+  null
+
+KtNameReferenceExpression(89,99): 'unresolved'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unresolved'.>
+
+KtCallableReferenceExpression(103,133): 'JavaClass<String>::staticField'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<String>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = staticField
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var staticField: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.staticField
+      typeArgumentsMapping = {}
+
+KtCallExpression(103,120): 'JavaClass<String>'
+  null
+
+KtNameReferenceExpression(103,112): 'JavaClass'
+  null
+
+KtTypeArgumentList(112,120): '<String>'
+  null
+
+KtTypeProjection(113,119): 'String'
+  null
+
+KtTypeReference(113,119): 'String'
+  null
+
+KtUserType(113,119): 'String'
+  null
+
+KtNameReferenceExpression(113,119): 'String'
+  null
+
+KtNameReferenceExpression(122,133): 'staticField'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<String>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaVariableSignature:
+        name = staticField
+        receiverType = null
+        returnType = kotlin.Int!
+        symbol = var staticField: kotlin.Int!
+        contextParameters = []
+        callableId = /JavaClass.staticField
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(137,163): 'JavaClass<Boolean>::method'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+
+KtCallExpression(137,155): 'JavaClass<Boolean>'
+  null
+
+KtNameReferenceExpression(137,146): 'JavaClass'
+  null
+
+KtTypeArgumentList(146,155): '<Boolean>'
+  null
+
+KtTypeProjection(147,154): 'Boolean'
+  null
+
+KtTypeReference(147,154): 'Boolean'
+  null
+
+KtUserType(147,154): 'Boolean'
+  null
+
+KtNameReferenceExpression(147,154): 'Boolean'
+  null
+
+KtNameReferenceExpression(157,163): 'method'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /JavaClass.method(<dispatch receiver>: JavaClass<T>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.method
+      typeArgumentsMapping = {}
+
+KtCallableReferenceExpression(167,197): 'JavaClass<Short>::staticMethod'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Short>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.staticMethod(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.staticMethod
+      typeArgumentsMapping = {}
+
+KtCallExpression(167,183): 'JavaClass<Short>'
+  null
+
+KtNameReferenceExpression(167,176): 'JavaClass'
+  null
+
+KtTypeArgumentList(176,183): '<Short>'
+  null
+
+KtTypeProjection(177,182): 'Short'
+  null
+
+KtTypeReference(177,182): 'Short'
+  null
+
+KtUserType(177,182): 'Short'
+  null
+
+KtNameReferenceExpression(177,182): 'Short'
+  null
+
+KtNameReferenceExpression(185,197): 'staticMethod'
+  KaCallResolutionSuccess:
+    call = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = JavaClass<Short>
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = /JavaClass.staticMethod(): kotlin.String!
+        valueParameters = []
+        contextParameters = []
+        callableId = /JavaClass.staticMethod
+      typeArgumentsMapping = {}

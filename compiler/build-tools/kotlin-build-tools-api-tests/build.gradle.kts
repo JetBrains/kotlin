@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.BaseKotlinCompile
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 
 plugins {
@@ -13,12 +13,20 @@ plugins {
 
 val noArgCompilerPlugin = configurations.dependencyScope("noArgCompilerPlugin")
 val assignmentCompilerPlugin = configurations.dependencyScope("assignmentCompilerPlugin")
+val serializationCompilerPlugin = configurations.dependencyScope("serializationCompilerPlugin")
+val serializationCore = configurations.dependencyScope("serializationCore")
 
 val noArgCompilerPluginResolvable = configurations.resolvable("noArgCompilerPluginResolvable") {
     extendsFrom(noArgCompilerPlugin.get())
 }
 val assignmentCompilerPluginResolvable = configurations.resolvable("assignmentCompilerPluginResolvable") {
     extendsFrom(assignmentCompilerPlugin.get())
+}
+val serializationCompilerPluginResolvable = configurations.resolvable("serializationCompilerPluginResolvable") {
+    extendsFrom(serializationCompilerPlugin.get())
+}
+val serializationCoreResolvable = configurations.resolvable("serializationCoreResolvable") {
+    extendsFrom(serializationCore.get())
 }
 
 val buildToolsApiImpl = configurations.dependencyScope("buildToolsApiImpl")
@@ -32,6 +40,25 @@ val jsStdlibImplResolvable = configurations.resolvable("jsStdlibImplResolvable")
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
         attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "js")
+    }
+}
+
+val wasmStdlibImpl = configurations.dependencyScope("wasmStdlibImpl")
+val wasmStdlibImplResolvable = configurations.resolvable("wasmStdlibImplResolvable") {
+    extendsFrom(wasmStdlibImpl.get())
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "wasm")
+        attribute(Attribute.of("org.jetbrains.kotlin.wasm.target", String::class.java), "js")
+    }
+}
+
+val metadataStdlibImpl = configurations.dependencyScope("metadataStdlibImpl")
+val metadataStdlibImplResolvable = configurations.resolvable("metadataStdlibImplResolvable") {
+    extendsFrom(metadataStdlibImpl.get())
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime"))
+        attribute(Attribute.of("org.jetbrains.kotlin.platform.type", String::class.java), "common")
     }
 }
 
@@ -64,6 +91,8 @@ dependencies {
     noArgCompilerPlugin(project(":kotlin-noarg-compiler-plugin.embeddable"))
     assignmentCompilerPlugin(project(":kotlin-assignment-compiler-plugin.embeddable"))
     scriptingCompilerPlugin(project(":kotlin-scripting-compiler-embeddable"))
+    serializationCompilerPlugin(project(":kotlinx-serialization-compiler-plugin.embeddable"))
+    serializationCore(libs.kotlinx.serialization.core)
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-compat"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-impl"))
     buildToolsApiImpl(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
@@ -71,6 +100,8 @@ dependencies {
         isTransitive = false
     }
     jsStdlibImpl(project(":kotlin-stdlib"))
+    wasmStdlibImpl(project(":kotlin-stdlib"))
+    metadataStdlibImpl(project(":kotlin-stdlib"))
 }
 
 kotlin {
@@ -89,6 +120,17 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
+)
+
+val compatibilityTestsExcludedVersions = listOf(
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 0, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 0, null)),
 )
 
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
@@ -97,6 +139,8 @@ class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolea
 
 val COMPILER_CLASSPATH_PROPERTY = "kotlin.build-tools-api.test.compilerClasspath"
 val JS_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.jsStdlibClasspath"
+val WASM_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.wasmStdlibClasspath"
+val METADATA_STDLIB_CLASSSPATH_PROPERTY = "kotlin.build-tools-api.test.metadataStdlibClasspath"
 
 fun Test.ensureExecutedAgainstExpectedBuildToolsImplVersion(version: BuildToolsVersion) {
     if (version.isCurrent) return
@@ -161,6 +205,8 @@ fun JvmTestSuite.addSnapshotBuildToolsImpl() {
         testTask.configure {
             addClasspathProperty(buildToolsApiImplResolvable.get(), COMPILER_CLASSPATH_PROPERTY)
             addClasspathProperty(jsStdlibImplResolvable.get(), JS_STDLIB_CLASSSPATH_PROPERTY)
+            addClasspathProperty(wasmStdlibImplResolvable.get(), WASM_STDLIB_CLASSSPATH_PROPERTY)
+            addClasspathProperty(metadataStdlibImplResolvable.get(), METADATA_STDLIB_CLASSSPATH_PROPERTY)
         }
     }
 }
@@ -211,9 +257,14 @@ testing {
                 }
                 targets.all {
                     projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                        testTask(
+                            taskName = testTask.name,
+                            jUnitMode = JUnitMode.JUnit5,
+                            javaLauncher = JdkMajorVersion.JDK_1_8,
+                            skipInLocalBuild = false
+                        ) {
                             @OptIn(TemporaryTestFederationApi::class)
-                            isSmokeTest = true
+                            smokeTestConfig = SmokeTestConfig.RunAllTests
 
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -247,8 +298,14 @@ testing {
             targets.all {
                 if (businessLogicTestSuits.any { testTask.name.startsWith(it) }) {
                     projectTests {
-                        testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+                        testTask(
+                            taskName = testTask.name,
+                            jUnitMode = JUnitMode.JUnit5,
+                            javaLauncher = JdkMajorVersion.JDK_1_8,
+                            skipInLocalBuild = false
+                        ) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
+
                         }
                     }
                 }
@@ -324,6 +381,8 @@ testing {
                     addClasspathProperty(noArgCompilerPluginResolvable.get(), "NOARG_COMPILER_PLUGIN")
                     addClasspathProperty(assignmentCompilerPluginResolvable.get(), "ASSIGNMENT_COMPILER_PLUGIN")
                     addClasspathProperty(scriptingCompilerPluginResolvable.get(), "SCRIPTING_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCompilerPluginResolvable.get(), "SERIALIZATION_COMPILER_PLUGIN")
+                    addClasspathProperty(serializationCoreResolvable.get(), "SERIALIZATION_CORE")
 
                     // those classes use compileOnly dependency on scripting and should not be considered as containing test classes to avoid runtime failures
                     exclude(
@@ -340,4 +399,38 @@ testing {
 
 tasks.named("check") {
     dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
+}
+
+val checkCompatibilityCoverageTask = checkCompatibilityCoverage(
+    btaVersion = project.version.toString(),
+    compatibilityTestsVersions = compatibilityTestsVersions.map { it.version },
+    compatibilityTestsExcludedVersions = compatibilityTestsExcludedVersions.map { it.version },
+)
+
+fun Project.checkCompatibilityCoverage(
+    btaVersion: String,
+    compatibilityTestsVersions: List<KotlinToolingVersion>,
+    compatibilityTestsExcludedVersions: List<KotlinToolingVersion>,
+): TaskProvider<JavaExec> {
+    val checkerClasspath = configurations.register("checkerClasspath") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+    }
+
+    dependencies {
+        checkerClasspath(project(":compiler:build-tools:kotlin-build-tools-version-coverage-check"))
+    }
+
+    return tasks.register<JavaExec>("checkCompatibilityCoverage") {
+        group = "verification"
+        description = "Verify that tests cover all versions required by backward compatibility guarantees"
+        classpath = checkerClasspath.get()
+        mainClass.set("org.jetbrains.kotlin.buildtools.versioncoverage.MainKt")
+        args(
+            btaVersion,
+            "backward",
+            compatibilityTestsVersions.joinToString(",") { it.toString() },
+            compatibilityTestsExcludedVersions.joinToString(",") { it.toString() },
+        )
+    }
 }

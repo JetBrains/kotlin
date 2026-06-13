@@ -1,0 +1,6 @@
+KtNameReferenceExpression(66,75): 'TestClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'TestClass'.>

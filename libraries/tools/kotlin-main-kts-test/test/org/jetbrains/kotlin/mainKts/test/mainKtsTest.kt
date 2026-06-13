@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
@@ -66,6 +67,7 @@ const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
 val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5")
 
 
+@SmokeTest
 class MainKtsTest {
 
     @Test

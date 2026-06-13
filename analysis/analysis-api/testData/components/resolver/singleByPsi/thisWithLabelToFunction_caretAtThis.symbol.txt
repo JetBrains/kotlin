@@ -1,13 +1,15 @@
 KtNameReferenceExpression(43,47): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

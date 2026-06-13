@@ -6,11 +6,11 @@
  *
  *   // signature: compBlockFun(Ljava/lang/String;)Ljava/lang/String;
  *   @kotlin/jvm/JvmOverloads
- *   public final fun compBlockFun(k: kotlin/String (* = ... *)): kotlin/String
+ *   public final static fun compBlockFun(k: kotlin/String (* = ... *)): kotlin/String
  *
  *   // field: compBlockVal:Ljava/lang/String;
  *   // getter: getCompBlockVal()Ljava/lang/String;
- *   public final val compBlockVal: kotlin/String
+ *   public final static val compBlockVal: kotlin/String
  *     public final get
  *
  *   // module name: main
@@ -58,20 +58,20 @@ public class J {
  *
  *   // signature: compExtFun(Ljava/lang/String;)Ljava/lang/String;
  *   @kotlin/jvm/JvmOverloads
- *   public final fun A.compExtFun(k: kotlin/String (* = ... *)): kotlin/String
+ *   public final static fun A.compExtFun(k: kotlin/String (* = ... *)): kotlin/String
  *
  *   // signature: compExtFunJ(Ljava/lang/String;)Ljava/lang/String;
  *   @kotlin/jvm/JvmOverloads
- *   public final fun J.compExtFunJ(k: kotlin/String (* = ... *)): kotlin/String
+ *   public final static fun J.compExtFunJ(k: kotlin/String (* = ... *)): kotlin/String
  *
  *   // field: compExtVal:Ljava/lang/String;
  *   // getter: getCompExtVal()Ljava/lang/String;
- *   public final val A.compExtVal: kotlin/String (* = ... *)
+ *   public final static val A.compExtVal: kotlin/String (* = ... *)
  *     public final get
  *
  *   // field: compExtValJ:Ljava/lang/String;
  *   // getter: getCompExtValJ()Ljava/lang/String;
- *   public final val J.compExtValJ: kotlin/String (* = ... *)
+ *   public final static val J.compExtValJ: kotlin/String (* = ... *)
  *     public final get
  *
  *   // module name: main

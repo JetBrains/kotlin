@@ -22,12 +22,31 @@ import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
+@Deprecated(
+    "Moved to the IntelliJ Kotlin plugin",
+    ReplaceWith("EditCommaSeparatedListHelper", "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper")
+)
 object EditCommaSeparatedListHelper {
+    @Deprecated(
+        "Moved to the IntelliJ Kotlin plugin",
+        ReplaceWith(
+            "EditCommaSeparatedListHelper.addItem(list, allItems, item, prefix)",
+            "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
+        )
+    )
+    @Suppress("DEPRECATION")
     @JvmOverloads
     fun <TItem : KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem, prefix: KtToken = KtTokens.LPAR): TItem {
         return addItemBefore(list, allItems, item, null, prefix)
     }
 
+    @Deprecated(
+        "Moved to the IntelliJ Kotlin plugin",
+        ReplaceWith(
+            "EditCommaSeparatedListHelper.addItemAfter(list, allItems, item, anchor, prefix)",
+            "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
+        )
+    )
     @Suppress("UNCHECKED_CAST")
     @JvmOverloads
     fun <TItem : KtElement> addItemAfter(
@@ -56,6 +75,14 @@ object EditCommaSeparatedListHelper {
         }
     }
 
+    @Deprecated(
+        "Moved to the IntelliJ Kotlin plugin",
+        ReplaceWith(
+            "EditCommaSeparatedListHelper.addItemBefore(list, allItems, item, anchor, prefix)",
+            "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
+        )
+    )
+    @Suppress("DEPRECATION")
     @JvmOverloads
     fun <TItem : KtElement> addItemBefore(
         list: KtElement,
@@ -80,6 +107,13 @@ object EditCommaSeparatedListHelper {
         return addItemAfter(list, allItems, item, anchorAfter, prefix)
     }
 
+    @Deprecated(
+        "Moved to the IntelliJ Kotlin plugin",
+        ReplaceWith(
+            "EditCommaSeparatedListHelper.removeItem(item)",
+            "org.jetbrains.kotlin.idea.base.psi.EditCommaSeparatedListHelper"
+        )
+    )
     fun <TItem : KtElement> removeItem(item: TItem) {
         var comma = item.siblings(withItself = false).firstOrNull { it !is PsiWhiteSpace && it !is PsiComment }
         if (comma?.node?.elementType != KtTokens.COMMA) {

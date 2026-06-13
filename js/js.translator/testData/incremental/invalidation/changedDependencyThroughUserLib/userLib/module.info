@@ -1,0 +1,5 @@
+STEP 0:
+    dependencies: externalLib
+    added file: file1.kt, file2.kt
+STEP 1:
+    dependencies: externalLib

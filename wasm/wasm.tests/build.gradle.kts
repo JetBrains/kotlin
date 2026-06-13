@@ -1,5 +1,8 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 import java.net.URI
 import java.util.*
 
@@ -146,7 +149,7 @@ val wasmEdge by configurations.creating {
 }
 
 val jscOsDependentVersion = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
@@ -154,14 +157,14 @@ val jscOsDependentVersion = when (currentOsType.name) {
 
 //https://youtrack.jetbrains.com/articles/KT-A-950/JavaScript-Core-Update-instruction
 val jscOsDependentClassifier = when (currentOsType.name) {
-    OsName.MAC -> "sequoia"
+    OsName.MAC -> "tahoe"
     OsName.LINUX -> "linux64"
     OsName.WINDOWS -> "win64"
     else -> error("unsupported os type $currentOsType")
 }
 
 val jscOsDependentRevision = when (currentOsType.name) {
-    OsName.MAC -> libs.versions.jscSequoia
+    OsName.MAC -> libs.versions.jscTahoe
     OsName.LINUX -> libs.versions.jscLinux
     OsName.WINDOWS -> libs.versions.jscWindows
     else -> error("unsupported os type $currentOsType")
@@ -200,8 +203,10 @@ dependencies {
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesImplementation(intellijCore())
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
+    testImplementation(project(":wasm:wasm.frontend"))
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     implicitDependencies("org.nodejs:node:$nodejsVersion:win-x64@zip")
@@ -223,7 +228,7 @@ dependencies {
 
     jsc("org.jsc:jsc:$jscOsDependentRevision:$jscOsDependentClassifier")
 
-    implicitDependencies("org.jsc:jsc:${libs.versions.jscSequoia.get()}:sequoia")
+    implicitDependencies("org.jsc:jsc:${libs.versions.jscTahoe.get()}:tahoe")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscLinux.get()}:linux64")
     implicitDependencies("org.jsc:jsc:${libs.versions.jscWindows.get()}:win64")
 
@@ -273,6 +278,8 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 fun Test.setupGradlePropertiesForwarding() {
     val rootLocalProperties = Properties().apply {
         rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
@@ -417,6 +424,11 @@ projectTests {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
             }
+            // it is necessary for TypeScript tests
+            with(nodeJsKotlinBuild) {
+                setupNodeJs(nodejsVersion)
+                dependsOn(":js:js.tests:npmInstall")
+            }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
             }
@@ -426,14 +438,8 @@ projectTests {
             setupWasmtime()
             useJUnitPlatform()
             setupGradlePropertiesForwarding()
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.root.out.dir")
-                buildDirectory.set(layout.buildDirectory)
-            }
-            jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-                property.set("kotlin.wasm.test.node.dir")
-                buildDirectory.set(node.nodeProjectDir)
-            }
+            addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+            addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
             body()
             dependsOn(npmInstall)
         }
@@ -444,6 +450,7 @@ projectTests {
         include("**/*.class")
         exclude("**/*SingleModule*TestGenerated.class")
         exclude("**/*MultiModule*TestGenerated.class")
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 
     wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
@@ -457,7 +464,7 @@ projectTests {
 
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/debug/stepping")
+    testData(project(":compiler").isolated, "testData/debug")
     testData(project(":compiler").isolated, "testData/ir/irText")
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler").isolated, "testData/klib/partial-linkage")

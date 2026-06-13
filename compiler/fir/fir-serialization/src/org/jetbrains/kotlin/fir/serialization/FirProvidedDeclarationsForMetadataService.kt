@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.FqName
 
@@ -62,48 +62,81 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
         }
     }
 
-    abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration>
-    abstract fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor>
-    abstract fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration>
+    abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName): List<FirDeclaration>
+    abstract fun getProvidedTopLevelDeclarations(file: FirFile): List<FirDeclaration>
+    abstract fun getProvidedConstructors(owner: FirClassSymbol<*>): List<FirConstructor>
+    abstract fun getProvidedCallables(owner: FirClassSymbol<*>): List<FirCallableDeclaration>
+    abstract fun getProvidedNestedClasses(owner: FirClassSymbol<*>): List<FirRegularClass>
+    abstract fun getProvidedCompanionObject(owner: FirClassSymbol<*>): FirRegularClass?
 
-    abstract fun registerDeclaration(declaration: FirCallableDeclaration)
-
+    abstract fun registerDeclaration(declaration: FirDeclaration, containingDeclaration: FirDeclaration)
 }
 
 private class FirProvidedDeclarationsForMetadataServiceImpl(private val session: FirSession) : FirProvidedDeclarationsForMetadataService() {
-    private val topLevelsCache: MutableMap<FqName, MutableList<FirDeclaration>> = hashMapOf()
+    private val topLevelsCacheByPackage: MutableMap<FqName, MutableList<FirDeclaration>> = hashMapOf()
+    private val topLevelsCacheByFile: MutableMap<FirFile, MutableList<FirDeclaration>> = hashMapOf()
 
     private val memberCache: MutableMap<FirClassSymbol<*>, ClassDeclarations> = hashMapOf()
 
-    override fun registerDeclaration(declaration: FirCallableDeclaration) {
-        val containingClass = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)?.fir
-        if (containingClass == null) {
-            val list = topLevelsCache.getOrPut(declaration.symbol.callableId!!.packageName) { mutableListOf() }
-            list += declaration
-        } else {
-            val declarations = memberCache.getOrPut(containingClass.symbol) { ClassDeclarations() }
-            when (declaration) {
-                is FirConstructor -> declarations.providedConstructors += declaration
-                else -> declarations.providedCallables += declaration
+    override fun registerDeclaration(declaration: FirDeclaration, containingDeclaration: FirDeclaration) {
+        when (containingDeclaration) {
+            is FirFile -> {
+                topLevelsCacheByFile.getOrPut(containingDeclaration) { mutableListOf() }.add(declaration)
+                topLevelsCacheByPackage.getOrPut(containingDeclaration.packageFqName) { mutableListOf() }.add(declaration)
             }
+
+            is FirRegularClass -> {
+                val declarations = memberCache.getOrPut(containingDeclaration.symbol) { ClassDeclarations() }
+                when (declaration) {
+                    is FirConstructor -> declarations.providedConstructors += declaration
+                    is FirCallableDeclaration -> declarations.providedCallables += declaration
+                    is FirRegularClass -> {
+                        if (declaration.isCompanion) {
+                            require(declarations.providedCompanionObject == null) {
+                                "Class ${containingDeclaration.symbol.classId} already has a provided companion object; cannot register another"
+                            }
+                            declarations.providedCompanionObject = declaration
+                        } else {
+                            declarations.providedNestedClasses += declaration
+                        }
+                    }
+                    else -> error("Unsupported declaration type: ${declaration::class.simpleName}")
+                }
+            }
+
+            else -> error("Containing declaration must be either `FirFile` or `FirRegularClass`, but got ${containingDeclaration.render()}")
         }
     }
 
-    override fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
-        return topLevelsCache[packageFqName] ?: emptyList()
+    override fun getProvidedTopLevelDeclarations(packageFqName: FqName): List<FirDeclaration> {
+        return topLevelsCacheByPackage[packageFqName] ?: emptyList()
     }
 
-    override fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor> {
+    override fun getProvidedTopLevelDeclarations(file: FirFile): List<FirDeclaration> {
+        return topLevelsCacheByFile[file] ?: emptyList()
+    }
+
+    override fun getProvidedConstructors(owner: FirClassSymbol<*>): List<FirConstructor> {
         return memberCache[owner]?.providedConstructors ?: emptyList()
     }
 
-    override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
+    override fun getProvidedCallables(owner: FirClassSymbol<*>): List<FirCallableDeclaration> {
         return memberCache[owner]?.providedCallables ?: emptyList()
+    }
+
+    override fun getProvidedNestedClasses(owner: FirClassSymbol<*>): List<FirRegularClass> {
+        return memberCache[owner]?.providedNestedClasses ?: emptyList()
+    }
+
+    override fun getProvidedCompanionObject(owner: FirClassSymbol<*>): FirRegularClass? {
+        return memberCache[owner]?.providedCompanionObject
     }
 
     private class ClassDeclarations {
         val providedCallables: MutableList<FirCallableDeclaration> = mutableListOf()
         val providedConstructors: MutableList<FirConstructor> = mutableListOf()
+        val providedNestedClasses: MutableList<FirRegularClass> = mutableListOf()
+        var providedCompanionObject: FirRegularClass? = null
     }
 }
 

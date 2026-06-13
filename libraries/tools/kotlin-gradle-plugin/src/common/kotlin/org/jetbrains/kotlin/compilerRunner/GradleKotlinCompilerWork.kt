@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
+import org.jetbrains.kotlin.compilerRunner.btapi.BtaToolchain
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.*
@@ -72,9 +73,10 @@ internal class GradleKotlinCompilerWorkArguments(
     val kotlinPluginVersion: String,
     val kotlinLanguageVersion: KotlinVersion,
     val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel,
+    val btaToolchain: BtaToolchain? = null,
 ) : Serializable {
     companion object {
-        const val serialVersionUID: Long = 2L
+        const val serialVersionUID: Long = 3L
     }
 }
 
@@ -265,7 +267,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             targetPlatform = targetPlatform,
             reportCategories = reportCategories(config.isVerbose),
             reportSeverity = reportSeverity(config.isVerbose),
-            requestedCompilationResults = emptyArray(),
+            requestedCompilationResults = requestedCompilationResults().map { it.code }.toTypedArray(),
             kotlinScriptExtensions = config.kotlinScriptExtensions
         )
         val servicesFacade = GradleCompilerServicesFacadeImpl(log, bufferingMessageCollector)

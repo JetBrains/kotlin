@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:descriptors"))
+
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:frontend"))
 
@@ -16,6 +18,8 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
+
+optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()

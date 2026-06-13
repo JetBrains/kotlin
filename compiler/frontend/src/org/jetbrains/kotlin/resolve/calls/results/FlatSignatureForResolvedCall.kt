@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -31,13 +32,14 @@ import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
 
+@K1Deprecation
 fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
     val originalDescriptor = candidateDescriptor.original
     val originalValueParameters = originalDescriptor.valueParameters
 
     var numDefaults = 0
     val valueArgumentToParameterType = HashMap<ValueArgument, KotlinType>()
-    for ((valueParameter, resolvedValueArgument) in valueArguments.entries) {
+    for ([valueParameter, resolvedValueArgument] in valueArguments.entries) {
         if (resolvedValueArgument is DefaultValueArgument) {
             numDefaults++
         } else {
@@ -52,6 +54,7 @@ fun <RC : ResolvedCall<*>> RC.createFlatSignature(): FlatSignature<RC> {
     return FlatSignature.create(this, originalDescriptor, numDefaults, call.valueArguments.map { valueArgumentToParameterType[it] })
 }
 
+@K1Deprecation
 fun createOverloadingConflictResolver(
     builtIns: KotlinBuiltIns,
     module: ModuleDescriptor,

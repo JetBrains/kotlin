@@ -48,18 +48,12 @@ class TargetWithSanitizer(
  */
 fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetWithSanitizer(this, sanitizer)
 
-private val KonanTarget.supportedSanitizers
-    get() = when (this) {
-        is KonanTarget.MACOS_ARM64 -> emptyList() // TODO(KT-85457): TSAN is broken in runtime tests with the newer macOS
-        else -> supportedSanitizers()
-    }
-
 /**
  * All known targets with their sanitizers.
  */
 val PlatformManager.allTargetsWithSanitizers
     get() = enabledTargets(this).flatMap { target ->
-        listOf(target.withSanitizer()) + target.supportedSanitizers.map {
+        listOf(target.withSanitizer()) + target.supportedSanitizers().map {
             target.withSanitizer(it)
         }
     }

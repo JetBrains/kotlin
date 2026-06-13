@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
@@ -311,5 +312,6 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
     }
 }
 
-internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isSingleFieldValueClass && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+@OptIn(ValueClassBackendAgnosticApi::class)
+internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(isJvm: Boolean, functionPresenceChecker: () -> IrSimpleFunction?) =
+    !isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

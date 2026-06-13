@@ -61,16 +61,16 @@ internal object LLContainingClassCalculator {
         val source = symbol.source as? KtPsiSourceElement ?: return null
         return when (source.kind) {
             ImplicitConstructor,
-            EnumGeneratedDeclaration,
+            is EnumGeneratedDeclaration,
             ReplEvalFunction,
                 -> computeContainingClass(symbol, source.psi)
 
-            DefaultAccessor,
-            DelegatedPropertyAccessor,
+            is DefaultAccessor,
+            is DelegatedPropertyAccessor,
             PropertyFromParameter,
                 -> computeContainingClass(symbol, (source.psi as? KtDeclaration)?.containingClassOrScript)
 
-            DataClassGeneratedMembers -> {
+            is DataClassGeneratedMembers -> {
                 val containingClass = when (val psi = source.psi) {
                     is KtClassOrObject -> psi
                     is KtParameter -> psi.containingClassOrObject // component() functions point to 'KtParameter's
@@ -84,7 +84,7 @@ internal object LLContainingClassCalculator {
             DanglingModifierList -> {
                 val modifierList = source.psi as? KtModifierList
                 val body = modifierList?.parent as? KtClassBody
-                computeContainingClass(symbol, body?.parent)
+                computeContainingClass(symbol, body?.containingClassOrObject)
             }
 
             is KtFakeSourceElementKind -> null

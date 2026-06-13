@@ -630,6 +630,38 @@ class KlibDumpParserTest {
         assertNotNull(companionProp)
     }
 
+    @Test
+    fun parseCompanionExtensionFunction() {
+        val input = """$exampleMetadata
+            final class /MyClass { // /MyClass|null[0]
+                constructor <init>() // /MyClass.<init>|<init>(){}[0]
+            }
+            final companion var /mutable // /mutable|#companion@MyClass{}mutable[0]
+                final companion fun (/MyClass).<get-mutable>(): kotlin/String // /mutable.<get-mutable>|<get-mutable>#companion@MyClass(){}[0]
+                final companion fun (/MyClass).<set-mutable>(kotlin/String) // /mutable.<set-mutable>|<set-mutable>#companion@MyClass(kotlin.String){}[0]
+            final companion val /readonly // /readonly|#companion@MyClass{}readonly[0]
+                final companion fun (/MyClass).<get-readonly>(): kotlin/String // /readonly.<get-readonly>|<get-readonly>#companion@MyClass(){}[0]
+            final companion fun (/MyClass)./func(kotlin/String): kotlin/String // /func|func#companion@MyClass(kotlin.String){}[0]
+            final companion fun (/MyClass)./getOk(): kotlin/String // /getOk|getOk#companion@MyClass(){}[0]
+        """
+        val parsed = KlibDumpParser(input).parse()
+        val myClass = parsed.topLevelDeclarations.declarations.filterIsInstance<AbiClass>().single()
+        assertEquals("/MyClass", myClass.qualifiedName.toString())
+
+        val mutable = parsed.topLevelDeclarations.declarations.filterIsInstance<AbiProperty>().single { it.qualifiedName.toString() == "/mutable" }
+        assertEquals("/MyClass", mutable.getter?.companionExtensionsClass?.className?.toString())
+        assertEquals("/MyClass", mutable.setter?.companionExtensionsClass?.className?.toString())
+
+        val readonly = parsed.topLevelDeclarations.declarations.filterIsInstance<AbiProperty>().single { it.qualifiedName.toString() == "/readonly" }
+        assertEquals("/MyClass", readonly.getter?.companionExtensionsClass?.className?.toString())
+
+        val func = parsed.topLevelDeclarations.declarations.filterIsInstance<AbiFunction>().single { it.qualifiedName.toString() == "/func" }
+        assertEquals("/MyClass", func.companionExtensionsClass?.className?.toString())
+
+        val getOk = parsed.topLevelDeclarations.declarations.filterIsInstance<AbiFunction>().single { it.qualifiedName.toString() == "/getOk" }
+        assertEquals("/MyClass", getOk.companionExtensionsClass?.className?.toString())
+    }
+
     companion object {
         private val exampleMetadata =
             """

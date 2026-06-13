@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: JavaClass.NestedClass
   classKind: CLASS
   companionObject: null
-  compilerVisibility: ProtectedStaticVisibility
   contextReceivers: []
   isActual: false
   isData: false
@@ -26,6 +25,6 @@ KaNamedClassSymbol:
   visibility: PACKAGE_PROTECTED
   getContainingFileSymbol: null
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: JavaClass.NestedClass

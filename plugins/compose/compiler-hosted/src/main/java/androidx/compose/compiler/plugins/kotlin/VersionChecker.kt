@@ -16,9 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -30,7 +29,7 @@ enum class VersionCheckerResult {
     NOT_FOUND,
 }
 
-class VersionChecker(val context: IrPluginContext, private val messageCollector: MessageCollector) {
+class VersionChecker(val context: IrPluginContext) {
 
     companion object {
         /**
@@ -75,8 +74,8 @@ class VersionChecker(val context: IrPluginContext, private val messageCollector:
             // If it is a Compose app, it will depend on Compose runtime. Therefore, we must be
             // able to find ComposeVersion. If it is a non-Compose app, we skip this IR lowering.
             if (skipIfRuntimeNotFound) {
-                messageCollector.report(
-                    CompilerMessageSeverity.WARNING, """
+                context.diagnosticReporter.report(
+                    ComposeErrors.COMPOSE_CONFIGURATION_WARNING, """
                         The Compose Compiler requires the Compose Runtime to be on the classpath, but
                         none could be found. Skipping transform because
                         skipIrLoweringIfRuntimeNotFound flag was passed to the compiler.

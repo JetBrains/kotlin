@@ -59,14 +59,14 @@ internal fun IrConst.toPrimitive(): Primitive = convertToPrimitive(value, type)
 fun IrAnnotationContainer?.hasAnnotation(annotation: FqName): Boolean {
     this ?: return false
     if (this.annotations.isNotEmpty()) {
-        return this.annotations.any { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
+        return this.annotations.any { it.isAnnotationWithEqualFqName(annotation) }
     }
     return false
 }
 
-fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrConstructorCall {
-    return this.annotations.firstOrNull { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
-        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.symbol.owner.parentAsClass.fqNameWhenAvailable == annotation }
+fun IrAnnotationContainer.getAnnotation(annotation: FqName): IrAnnotation {
+    return this.annotations.firstOrNull { it.isAnnotationWithEqualFqName(annotation) }
+        ?: ((this as IrFunction).parent as IrClass).annotations.first { it.isAnnotationWithEqualFqName(annotation) }
 }
 
 internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
@@ -244,8 +244,8 @@ internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFun
     }
 
     return (arguments zip irFunction.parameters)
-        .first { (arg, _) -> arg == null }
-        .let { (_, param) -> param.lookup() ?: irFunction }
+        .first { [arg, _] -> arg == null }
+        .let { [_, param] -> param.lookup() ?: irFunction }
 }
 
 internal fun IrValueParameter.getDefaultWithActualParameters(
@@ -341,7 +341,7 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
             Primitive(this.name.asString(), irBuiltIns.stringType),
             Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
         )
-        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { (property, argument) ->
+        irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { [property, argument] ->
             enumClassObject.setField(property.symbol, argument)
         }
     }

@@ -53,3 +53,5 @@ fun random(
     @IntroducedAt("4") c: Long = 1L,
 ) {
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: WithJvmOverloadsAndNonAscendingKt.class[emptyBase;nonAscending;random;randomAlmostSameType]

@@ -1,0 +1,78 @@
+/test(): kotlin.Unit: [
+  lib/MyFileAnnotationSource(value = "source")
+    psi: KtAnnotationEntry
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: KtAnnotationEntry
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: KtAnnotationEntry
+]
+
+<constructor>(): lib.A: [
+]
+
+<constructor>(value: kotlin.String): lib.MyFileAnnotationBinary: [
+]
+
+<constructor>(value: kotlin.String): lib.MyFileAnnotationRuntime: [
+]
+
+<constructor>(value: kotlin.String): lib.MyFileAnnotationSource: [
+]
+
+lib/A: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/A.method(<dispatch receiver>: lib.A): kotlin.Unit: [
+]
+
+lib/B: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/MyFileAnnotationBinary: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/MyFileAnnotationRuntime: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/MyFileAnnotationSource: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+lib/foo(x: kotlin.Int): kotlin.Int: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]
+
+val a: lib.A?: [
+]
+
+val b: {lib.B?=} lib.A?: [
+]
+
+val bar: kotlin.Int: [
+  lib/MyFileAnnotationBinary(value = "binary")
+    psi: null
+  lib/MyFileAnnotationRuntime(value = "runtime")
+    psi: null
+]

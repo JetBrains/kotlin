@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+@K1Deprecation
 class IrLazyTypeParameter(
     override var startOffset: Int,
     override var endOffset: Int,

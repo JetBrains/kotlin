@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.konan.target.Family
@@ -28,7 +29,7 @@ import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
 class FrameworkTest : AbstractNativeSimpleTest() {
-    private val testSuiteDir = File("native/native.tests/testData/framework")
+    private val testSuiteDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/framework")
     private val extras = TestCase.NoTestRunnerExtras("There's no entrypoint in Swift program")
     private val testCompilationFactory = TestCompilationFactory()
 
@@ -108,7 +109,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     @Test
     fun testStdlib() {
         val testName = "stdlib"
-        val testCase = generateObjCFramework(testName)
+        val testCase = generateObjCFramework(testName, testCompilerArgs = listOf("-Xdisable-ir-checkers=IrVisibilityChecker"))
         compileAndRunSwift(testName, testCase)
     }
 
@@ -516,6 +517,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
                     "-module-name", frameworkName,
+                    "-Xdisable-ir-checkers=IrVisibilityChecker",
                 )
             ),
             givenDependencies = setOf(TestModule.Given(library.klibFile)),

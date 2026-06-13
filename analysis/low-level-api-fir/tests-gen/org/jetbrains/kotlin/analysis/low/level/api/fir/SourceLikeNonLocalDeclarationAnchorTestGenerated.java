@@ -46,6 +46,12 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   }
 
   @Test
+  @TestMetadata("companionBlockDanglingModifier.kt")
+  public void testCompanionBlockDanglingModifier() {
+    run("companionBlockDanglingModifier.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameters.kt")
   public void testContextParameters() {
     run("contextParameters.kt");

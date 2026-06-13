@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
-import org.junit.Assert
 import java.io.File
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
@@ -82,7 +83,7 @@ fun parseLanguageVersionSettings(
     val apiVersion = when (apiVersionString) {
         null -> ApiVersion.LATEST_STABLE
         "LATEST" -> ApiVersion.LATEST
-        else -> ApiVersion.parse(apiVersionString) ?: error("Unknown API version: $apiVersionString")
+        else -> ApiVersion.parse(apiVersionString) ?: testInfraError("Unknown API version: $apiVersionString")
     }
 
     val languageVersion = maxOf(defaultLanguageVersion, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
@@ -119,14 +120,12 @@ private fun <T : Any> analysisFlag(flag: AnalysisFlag<T?>, value: @kotlin.intern
 
 fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
     val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
-    if (!matcher.find()) {
-        Assert.fail(
-                "Wrong syntax in the '// $LANGUAGE_DIRECTIVE: ...' directive:\n" +
+    checkTestInfrastructure(matcher.find()) {
+        "Wrong syntax in the '// $LANGUAGE_DIRECTIVE: ...' directive:\n" +
                 "found: '$directives'\n" +
                 "Must be '((+|-)LanguageFeatureName)+'\n" +
                 "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
                 "and language feature names are names of enum entries in LanguageFeature enum class"
-        )
     }
 
     val values = HashMap<LanguageFeature, LanguageFeature.State>()
@@ -134,15 +133,15 @@ fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, Language
         val mode = when (matcher.group(1)) {
             "+" -> LanguageFeature.State.ENABLED
             "-" -> LanguageFeature.State.DISABLED
-            else -> error("Unknown mode for language feature: ${matcher.group(1)}")
+            else -> testInfraError("Unknown mode for language feature: ${matcher.group(1)}")
         }
         val name = matcher.group(2)
-        val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
+        val feature = LanguageFeature.fromString(name) ?: testInfraError(
                 "Language feature not found, please check spelling: $name\n" +
                 "Known features:\n    ${LanguageFeature.entries.joinToString("\n    ")}"
         )
         if (values.put(feature, mode) != null) {
-            Assert.fail("Duplicate entry for the language feature: $name")
+            testInfraError("Duplicate entry for the language feature: $name")
         }
     }
     while (matcher.find())

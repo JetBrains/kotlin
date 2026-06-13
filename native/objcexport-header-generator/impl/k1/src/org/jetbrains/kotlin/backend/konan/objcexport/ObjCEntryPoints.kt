@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 
 /** A predicate which checks whether the given declaration is entry point, and should be exposed in Objective-C. */
 interface ObjCEntryPoints {
@@ -16,6 +17,12 @@ interface ObjCEntryPoints {
 
     companion object {
         val ALL: ObjCEntryPoints = object : ObjCEntryPoints {}
+
+        fun create(descriptors: Set<CallableMemberDescriptor>): ObjCEntryPoints =
+            object : ObjCEntryPoints {
+                override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean =
+                    descriptors.contains(descriptor.original)
+            }
     }
 }
 
@@ -65,3 +72,54 @@ fun File.readObjCEntryPoints(): ObjCEntryPoints =
                     )
             }
         }
+
+fun computeDownwardClosure(
+    entryPoints: ObjCEntryPoints,
+    moduleDescriptors: List<ModuleDescriptor>
+): Set<CallableMemberDescriptor> {
+    val overriddenToOverride = mutableMapOf<CallableMemberDescriptor, MutableSet<CallableMemberDescriptor>>()
+    val matched = mutableSetOf<CallableMemberDescriptor>()
+
+    fun processCallable(descriptor: CallableMemberDescriptor) {
+        descriptor.overriddenDescriptors.forEach { overridden ->
+            overriddenToOverride.getOrPut(overridden.original, ::mutableSetOf).add(descriptor)
+        }
+        if (entryPoints.shouldBeExposed(descriptor)) {
+            matched.add(descriptor.original)
+        }
+    }
+
+    fun processClass(descriptor: ClassDescriptor) {
+        descriptor.unsubstitutedMemberScope.getContributedDescriptors().forEach { descriptor ->
+            when (descriptor) {
+                is CallableMemberDescriptor -> processCallable(descriptor)
+                is ClassDescriptor -> processClass(descriptor)
+            }
+        }
+    }
+
+    moduleDescriptors.forEach {
+        it.getPackageFragments().forEach { fragment ->
+            fragment.getMemberScope().getContributedDescriptors().forEach { descriptor ->
+                when (descriptor) {
+                    is CallableMemberDescriptor -> processCallable(descriptor)
+                    is ClassDescriptor -> processClass(descriptor)
+                }
+            }
+        }
+    }
+
+    val closure = mutableSetOf<CallableMemberDescriptor>()
+    val todo = matched.toMutableList()
+
+    while (todo.isNotEmpty()) {
+        val current = todo.removeLast()
+        if (closure.add(current)) {
+            overriddenToOverride[current]?.forEach { override ->
+                todo.add(override.original)
+            }
+        }
+    }
+
+    return closure
+}

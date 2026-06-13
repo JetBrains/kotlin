@@ -95,6 +95,12 @@ function box(): string {
     const nullableNullResult = foo.acceptNullableValueClass(null);
     assert(nullableNullResult === null, "acceptNullableValueClass with null");
 
+    const echoedNullable = foo.echoNullableValueClass(new foo.IntValueClass(51));
+    assert(echoedNullable?.value === 51, "echoNullableValueClass with value");
+
+    const echoedNull = foo.echoNullableValueClass(null);
+    assert(echoedNull === null, "echoNullableValueClass with null");
+
     // Value class equality
     const eq1 = new foo.IntValueClass(42);
     const eq2 = new foo.IntValueClass(42);

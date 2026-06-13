@@ -67,6 +67,12 @@ public class LLSerializationBlackBoxTestGenerated extends AbstractLLSerializatio
     }
 
     @Test
+    @TestMetadata("companionBlocks.kt")
+    public void testCompanionBlocks() {
+      run("companionBlocks.kt");
+    }
+
+    @Test
     @TestMetadata("constValInSerialName.kt")
     public void testConstValInSerialName() {
       run("constValInSerialName.kt");

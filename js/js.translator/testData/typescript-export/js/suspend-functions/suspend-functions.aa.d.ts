@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function sum(x: number, y: number): Promise<number>;
         function varargInt(x: Int32Array): Promise<number>;
@@ -68,6 +67,11 @@ declare namespace JS_TESTS {
                 readonly "foo.HolderOfSum": unique symbol;
             };
         }
+        namespace HolderOfSum {
+            namespace DefaultImpls {
+                function defaultSum($this: foo.HolderOfSum, x: number, y: number): Promise<number>;
+            }
+        }
         class Test implements foo.HolderOfSum {
             constructor();
             sum(x: number, y: number): Promise<number>;
@@ -82,6 +86,7 @@ declare namespace JS_TESTS {
             genericWithConstraint<T extends string>(x: T): Promise<T>;
             genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
+            defaultSum(x: number, y: number): Promise<number>;
             readonly __doNotUseOrImplementIt: foo.HolderOfSum["__doNotUseOrImplementIt"];
         }
         namespace Test {
@@ -95,6 +100,7 @@ declare namespace JS_TESTS {
             varargInt(x: Int32Array): Promise<number>;
             sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<E>;
+            defaultSum(x: number, y: number): Promise<number>;
         }
         namespace TestChild {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -120,3 +126,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

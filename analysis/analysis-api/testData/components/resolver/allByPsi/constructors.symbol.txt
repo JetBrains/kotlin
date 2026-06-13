@@ -5,7 +5,12 @@ KtPackageDirective(0,9): 'package r'
   null
 
 KtNameReferenceExpression(8,9): 'r'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r
+    ]
 
 KtImportList(9,9): ''
   null
@@ -29,13 +34,24 @@ KtParameter(54,60): 'i: Int'
   null
 
 KtTypeReference(57,60): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(57,60): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(57,60): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(61,61): ''
   KaSymbolResolutionSuccess:
@@ -59,13 +75,24 @@ KtParameter(78,87): 's: String'
   null
 
 KtTypeReference(81,87): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(81,87): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(81,87): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(88,88): ''
   KaSymbolResolutionSuccess:
@@ -95,16 +122,30 @@ KtSuperTypeList(131,140): 'BaseClass'
   null
 
 KtSuperTypeEntry(131,140): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtTypeReference(131,140): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtUserType(131,140): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtNameReferenceExpression(131,140): 'BaseClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtClassBody(141,265): '{'
   null
@@ -119,13 +160,24 @@ KtParameter(159,166): 'ci: Int'
   null
 
 KtTypeReference(163,166): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(163,166): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(163,166): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(170,179): 'super(ci)'
   KaSymbolResolutionSuccess:
@@ -146,6 +198,8 @@ KtValueArgument(176,178): 'ci'
   null
 
 KtNameReferenceExpression(176,178): 'ci'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       ci: kotlin.Int
@@ -161,13 +215,24 @@ KtParameter(196,206): 'cs: String'
   null
 
 KtTypeReference(200,206): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(200,206): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(200,206): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(210,219): 'super(cs)'
   KaSymbolResolutionSuccess:
@@ -188,6 +253,8 @@ KtValueArgument(216,218): 'cs'
   null
 
 KtNameReferenceExpression(216,218): 'cs'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       cs: kotlin.String
@@ -215,6 +282,8 @@ KtSuperExpression(245,250): 'super'
     ]
 
 KtNameReferenceExpression(245,250): 'super'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       r/BaseClass
@@ -227,6 +296,8 @@ KtCallExpression(251,257): 'call()'
     ]
 
 KtNameReferenceExpression(251,255): 'call'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       r/BaseClass.call(<dispatch receiver>: r.BaseClass): kotlin.Unit
@@ -260,13 +331,24 @@ KtConstructorCalleeExpression(294,303): 'BaseClass'
     ]
 
 KtTypeReference(294,303): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtUserType(294,303): 'BaseClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtNameReferenceExpression(294,303): 'BaseClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/BaseClass
+    ]
 
 KtValueArgumentList(303,307): '(42)'
   null
@@ -290,13 +372,24 @@ KtParameter(326,335): 's: String'
   null
 
 KtTypeReference(329,335): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(329,335): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(329,335): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(339,345): 'this()'
   KaSymbolResolutionSuccess:
@@ -335,13 +428,24 @@ KtParameter(377,383): 'i: Int'
   null
 
 KtTypeReference(380,383): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(380,383): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(380,383): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClass(386,456): 'class TypedChild : ClassWithType<Int> {'
   null
@@ -350,16 +454,30 @@ KtSuperTypeList(405,423): 'ClassWithType<Int>'
   null
 
 KtSuperTypeEntry(405,423): 'ClassWithType<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/ClassWithType
+    ]
 
 KtTypeReference(405,423): 'ClassWithType<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/ClassWithType
+    ]
 
 KtUserType(405,423): 'ClassWithType<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/ClassWithType
+    ]
 
 KtNameReferenceExpression(405,418): 'ClassWithType'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      r/ClassWithType
+    ]
 
 KtTypeArgumentList(418,423): '<Int>'
   null
@@ -368,13 +486,24 @@ KtTypeProjection(419,422): 'Int'
   null
 
 KtTypeReference(419,422): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(419,422): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(419,422): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(424,456): '{'
   null

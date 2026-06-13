@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/C.cCompanionFunction
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: test.C
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: test.C.cCompanionFunction
 
@@ -44,10 +43,10 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -67,16 +66,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(class.kt)
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/C.cCompanionProperty
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -100,7 +97,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(class.kt)
     getContainingJvmClassName: test.C
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -109,7 +106,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: true
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -133,7 +130,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingJvmClassName: test.C
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getCCompanionProperty
   javaSetterName: null
   isInline: false
@@ -144,7 +141,6 @@ KaNamedClassSymbol:
   classId: test/C.C2
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -167,8 +163,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.C.C2
 
 KaNamedClassSymbol:
@@ -176,7 +172,6 @@ KaNamedClassSymbol:
   classId: test/C.O2
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -199,8 +194,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.C.O2
 
 KaNamedClassSymbol:
@@ -208,7 +203,6 @@ KaNamedClassSymbol:
   classId: test/C.Companion
   classKind: COMPANION_OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -231,6 +225,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(class.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.C.Companion

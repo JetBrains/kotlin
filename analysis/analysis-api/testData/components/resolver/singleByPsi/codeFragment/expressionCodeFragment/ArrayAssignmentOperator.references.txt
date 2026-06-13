@@ -1,7 +1,0 @@
-KtOperationReferenceExpression(148,149): '='
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in MyList) operator fun set(index: kotlin.Int, value: kotlin.String)

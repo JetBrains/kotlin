@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -229,18 +229,14 @@ internal fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
 internal fun ConeKotlinType.asKaType(analysisSession: KaFirSession): KaType = analysisSession.firSymbolBuilder.typeBuilder.buildKtType(this)
 
 context(analysisSession: KaFirSession)
-internal fun ConeDiagnostic.asKaDiagnostic(
-    source: KtSourceElement,
-    callOrAssignmentSource: KtSourceElement?,
-): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source, callOrAssignmentSource, analysisSession)
+internal fun ConeDiagnostic.asKaDiagnostic(source: KtSourceElement): KaDiagnosticWithPsi<*>? = asKaDiagnostic(source, analysisSession)
 
 internal fun ConeDiagnostic.asKaDiagnostic(
     source: KtSourceElement,
-    callOrAssignmentSource: KtSourceElement?,
     analysisSession: KaFirSession
 ): KaDiagnosticWithPsi<*>? {
     with(analysisSession) {
-        val firDiagnostic = toFirDiagnostics(firSession, source, callOrAssignmentSource).firstOrNull() ?: return null
+        val firDiagnostic = toFirDiagnostics(firSession, source, callOrAssignmentSource = null).firstOrNull() ?: return null
         check(firDiagnostic is KtPsiDiagnostic)
         return firDiagnostic.asKaDiagnostic()
     }

@@ -21,7 +21,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
     /**
      * The type of the given [KtExpression], or `null` if it does not have a type.
      *
-     * Particularly, the method returns:
+     * In particular:
      *
      * - A not-null type for valued expressions (e.g., a variable, a function call, a lambda expression).
      * - [Unit] for statements (e.g., assignments, loops).
@@ -45,7 +45,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      *
      * Note: For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type (unlike
      * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
-     * which returns `T`).
+     * which is `T`).
      *
      * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
      * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are
@@ -128,7 +128,7 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
 /**
  * The type of the given [KtExpression], or `null` if it does not have a type.
  *
- * Particularly, the method returns:
+ * In particular:
  *
  * - A not-null type for valued expressions (e.g., a variable, a function call, a lambda expression).
  * - [Unit] for statements (e.g., assignments, loops).
@@ -156,7 +156,7 @@ public val KtExpression.expressionType: KaType?
  *
  * Note: For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type (unlike
  * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
- * which returns `T`).
+ * which is `T`).
  *
  * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
  * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are

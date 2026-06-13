@@ -6,21 +6,18 @@
 package org.jetbrains.kotlin.backend.common.linkage.issues
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.name.Name
 
 abstract class KotlinIrLinkerIssue {
     protected abstract val errorMessage: String
 
-    fun raiseIssue(messageCollector: MessageCollector): Nothing {
-        messageCollector.report(CompilerMessageSeverity.ERROR, errorMessage, null)
+    fun raiseIssue(consumer: (String) -> Unit): Nothing {
+        consumer(errorMessage)
         throw CompilationErrorException(errorMessage)
     }
 }

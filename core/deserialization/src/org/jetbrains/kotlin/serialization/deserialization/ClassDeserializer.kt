@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.packageFragments
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
+@K1Deprecation
 class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
         components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }

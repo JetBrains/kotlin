@@ -6,7 +6,6 @@ KaNamedClassSymbol:
   classId: Anno
   classKind: ANNOTATION_CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -29,8 +28,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: [FIELD]
-  deprecationStatus: null
+  applicableAnnotationTargets: [FIELD]
+  deprecation: null
   importableFqName: Anno
 
 KaKotlinPropertySymbol:
@@ -41,10 +40,10 @@ KaKotlinPropertySymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -68,16 +67,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: /Test.foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -105,7 +102,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
     getContainingJvmClassName: Test
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -114,7 +111,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -142,7 +139,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingJvmClassName: Test
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   isInline: false
@@ -153,7 +150,6 @@ KaNamedClassSymbol:
   classId: Test
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -176,6 +172,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(explicitBackingFieldAnnotations.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: Test

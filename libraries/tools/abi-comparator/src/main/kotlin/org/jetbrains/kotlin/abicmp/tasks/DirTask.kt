@@ -31,7 +31,7 @@ class DirTask(
         println("Comparing directories: $dir1, $dir2")
         walkRecursively(dir1, dir2)
         val summary = SummaryReport()
-        tasks.forEach { (jarTask, future) ->
+        tasks.forEach { [jarTask, future] ->
             future.get()
             summary.add(jarTask.defectReport)
         }

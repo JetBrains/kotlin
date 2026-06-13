@@ -105,7 +105,7 @@ private fun IrFile.readSourceText(): String? {
 
 private fun String.clearSourcePrefix(offset: Int): String = buildString {
     val upstream = this@clearSourcePrefix
-    for ((i, c) in upstream.withIndex()) {
+    for ([i, c] in upstream.withIndex()) {
         when {
             i >= offset -> {
                 // Append the remaining characters and exit.

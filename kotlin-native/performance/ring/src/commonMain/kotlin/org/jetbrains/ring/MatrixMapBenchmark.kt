@@ -16,20 +16,23 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+private const val BENCHMARK_SIZE = 10000
 
 /**
  * This class emulates matrix behaviour using a hash map as its implementation
  */
-class KMatrix internal constructor(val rows: Int, val columns: Int) {
-    private val matrix: MutableMap<Pair<Int, Int>, Double> = HashMap();
+class KMatrix internal constructor(val rows: Int, val columns: Int, data: DoubleArray) {
+    private val matrix: MutableMap<Pair<Int, Int>, Double> = HashMap()
 
     init {
-        for (row in 0..rows-1) {
-            for (col in 0..columns-1) {
-                matrix.put(Pair(row, col), Random.nextDouble())
-            }
+        for (i in data.indices) {
+            val row = i / columns
+            val col = i % columns
+            matrix.put(Pair(row, col), data[i])
         }
     }
 
@@ -55,20 +58,35 @@ class KMatrix internal constructor(val rows: Int, val columns: Int) {
 /**
  * This class tests hash map performance
  */
-open class MatrixMapBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class MatrixMap {
+    // Use the same seed for reproducibility
+    private val rnd = Random(501)
 
-    //Benchmark
-    fun add(): KMatrix {
-        var rows = BENCHMARK_SIZE
-        var cols = 1
+    private val data1 = DoubleArray(BENCHMARK_SIZE) {
+        rnd.nextDouble()
+    }
+
+    private val data2 = DoubleArray(BENCHMARK_SIZE) {
+        rnd.nextDouble()
+    }
+
+    private var rows = BENCHMARK_SIZE
+    private var cols = 1
+    init {
         while (rows > cols) {
             rows /= 2
             cols *= 2
         }
-        val a = KMatrix(rows, cols)
-        val b = KMatrix(rows, cols)
+    }
+
+    @Benchmark
+    fun add(bh: Blackhole) {
+        val a = KMatrix(rows, cols, data1)
+        val b = KMatrix(rows, cols, data2)
         a += b
-        return a
+        bh.consume(a)
     }
 
 }

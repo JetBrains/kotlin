@@ -50,7 +50,10 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
+    "test" {
+        generatedTestDir()
+        projectDefault()
+    }
     "testFixtures" { projectDefault() }
 }
 

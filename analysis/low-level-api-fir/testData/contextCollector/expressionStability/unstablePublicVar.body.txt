@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lval local: R|Container?|
+Expression Stability: MUTABLE_PROPERTY
+Smart Casts:
+    FirLocalPropertySymbol lval local: R|Container?|
+    Stability: STABLE_VALUE
+    Types:
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] unstablePublicVar.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval local: R|Container?| = R|/Container.Container|()
+        R|<local>/local|?.{ $subj$.R|/Container.value| }
+    }
+    public final [ResolvedTo(STATUS)] class Container : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Container| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] var value: R|Container?| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): R|Container?|
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|Container?|): R|kotlin/Unit|
+
+    }

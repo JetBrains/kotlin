@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
+import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
+import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
+import org.jetbrains.kotlin.konan.test.services.FileCheckTestTotalSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.nativeArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.frontend.objcinterop.ObjCInteropFacade
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
 import org.jetbrains.kotlin.test.klib.setupCustomLanguageVersionForKlibCompatibilityTest
@@ -32,7 +36,13 @@ import org.junit.jupiter.api.Tag
 open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest() {
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
         super.configure(builder)
-        useMetaTestConfigurators(::TargetBackendTestSkipper, ::UnsupportedFeaturesTestConfigurator)
+        useMetaTestConfigurators(
+            ::UnsupportedFeaturesTestConfigurator,
+            ::TargetBackendTestSkipper,
+            ::DisabledNativeTestSkipper,
+            ::CInteropTestSkipper,
+            ::FileCheckTestTotalSkipper,
+        )
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
@@ -58,6 +68,11 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
             ::AdditionalDiagnosticsSourceFilesProvider,
         )
 
+        // CInterop-related tests are not that different from regular tests. That's how they work:
+        // Modules containing .def files are compiled with ObjCInteropFacade to klib artifact using the old CInterop tool.
+        // The rest of the 1st stage pipeline will be skipped naturally, since further facades don't accept klibs as input artifacts.
+        facadeStep(::ObjCInteropFacade.bind(/*isForwardTest*/false, customNativeCompilerSettings.compiler.getIsolatedClassLoader()))
+
         facadeStep(::CustomNativeCompilerFirstStageFacade)
 
         useFailureSuppressors(
@@ -68,9 +83,13 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
 
             // Suppress all tests that failed on the second stage if they are anyway marked as "IGNORE_BACKEND*".
             ::CustomKlibCompilerTestSuppressor,
+            ::CustomFirstStageCInteropTestSuppressor,
         )
         useDirectives(TestDirectives)
-        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(currentCustomNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(
+                currentCustomNativeCompilerSettings,
+                /*isCompatibilityTesting*/ true,
+            ))
         nativeArtifactsHandlersStep {
             useHandlers(::NativeBoxRunner)
         }

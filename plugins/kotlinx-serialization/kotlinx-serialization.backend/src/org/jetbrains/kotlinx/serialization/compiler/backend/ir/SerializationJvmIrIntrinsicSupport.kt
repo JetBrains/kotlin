@@ -350,7 +350,7 @@ class SerializationJvmIrIntrinsicSupport(
         val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
         // Generic args (if present)
         if (argSerializers.isNotEmpty()) {
-            fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+            fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                 generateSerializerForType(type, this, intrinsicType)
             }
             descriptor.append(kSerializerArrayType.descriptor)
@@ -375,7 +375,7 @@ class SerializationJvmIrIntrinsicSupport(
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
             // Generic args (if present)
             if (argSerializers.isNotEmpty()) {
-                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                     generateSerializerForType(type, this, intrinsicType)
                 }
                 descriptor.append(kSerializerArrayType.descriptor)
@@ -434,7 +434,7 @@ class SerializationJvmIrIntrinsicSupport(
         }
 
         fun instantiate(typeArgument: Pair<IrType, IrClassSymbol?>, signature: StringBuilder?) {
-            val (argType, argSerializer) = typeArgument
+            val [argType, argSerializer] = typeArgument
             stackValueSerializerInstance(
                 argType,
                 argSerializer,
@@ -541,7 +541,7 @@ class SerializationJvmIrIntrinsicSupport(
                             aconst(null)
                         }
                         signature.append(kSerializerType.descriptor)
-                        fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                        fillArray(kSerializerType, argSerializers) { _, [type, _] ->
                             generateSerializerForType(type, this, intrinsicType)
                         }
                         signature.append(kSerializerArrayType.descriptor)
@@ -564,7 +564,7 @@ class SerializationJvmIrIntrinsicSupport(
                     aconst(typeMapper.mapTypeCommon(kType, TypeMappingMode.GENERIC_ARGUMENT))
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-                    val (subClasses, subSerializers) = emptyGenerator.allSealedSerializableSubclassesFor(
+                    val [subClasses, subSerializers] = emptyGenerator.allSealedSerializableSubclassesFor(
                         kType.classOrUpperBound()?.owner!!,
                         this@SerializationJvmIrIntrinsicSupport
                     )
@@ -576,7 +576,7 @@ class SerializationJvmIrIntrinsicSupport(
                     signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
                     // Serializers vararg
                     fillArray(kSerializerType, subSerializers) { i, serializer ->
-                        val (argType, argSerializer) = subClasses[i] to serializer
+                        val [argType, argSerializer] = subClasses[i] to serializer
                         assert(
                             stackValueSerializerInstance(
                                 argType,
@@ -607,7 +607,7 @@ class SerializationJvmIrIntrinsicSupport(
                     signature.append("Ljava/lang/Object;")
                 }
                 // all serializers get arguments with serializers of their generic types
-                else -> argSerializers.forEach { (type, _) ->
+                else -> argSerializers.forEach { [type, _] ->
                     generateSerializerForType(type, this, intrinsicType)
                     signature.append(kSerializerType.descriptor)
                 }

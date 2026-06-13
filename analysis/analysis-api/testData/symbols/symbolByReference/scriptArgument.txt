@@ -3,10 +3,10 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -35,16 +35,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -77,7 +75,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
     getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -86,7 +84,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -119,7 +117,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
   getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getArgs
   javaSetterName: null
   isInline: false

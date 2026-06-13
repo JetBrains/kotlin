@@ -57,6 +57,7 @@ class FirSamResolver(
     private val samConstructorsCache = session.samConstructorStorage.samConstructors
     private val samConversionTransformers = session.extensionService.samConversionTransformers
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     fun isSamType(type: ConeKotlinType): Boolean = when (type) {
         is ConeClassLikeType -> {
             val symbol = type.fullyExpandedType().lookupTag.toSymbol()
@@ -117,7 +118,7 @@ class FirSamResolver(
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
         val firRegularClass = type.lookupTag.toRegularClassSymbol()?.fir ?: return null
 
-        val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        (val _ = symbol, val unsubstitutedFunctionType = type) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val functionType = firRegularClass.buildSubstitutorWithUpperBounds(type).substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
@@ -158,7 +159,7 @@ class FirSamResolver(
 
     fun buildSamConstructorForRegularClass(classSymbol: FirRegularClassSymbol): FirNamedFunctionSymbol? {
         val firRegularClass = classSymbol.fir
-        val (functionSymbol, functionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+        (val functionSymbol = symbol, val functionType = type) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
         val syntheticFunctionSymbol = classSymbol.createSyntheticConstructorSymbol()
 
@@ -189,7 +190,7 @@ class FirSamResolver(
             session
         )
 
-        for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
+        for ([newTypeParameter, oldTypeParameter] in newTypeParameters.zip(firRegularClass.typeParameters)) {
             val declared = oldTypeParameter.symbol.fir
             newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
@@ -328,7 +329,7 @@ context(c: SessionHolder)
 private fun FirTypeParameterRefsOwner.buildSubstitutorWithUpperBounds(type: ConeClassLikeType): ConeSubstitutor {
     if (typeParameters.isEmpty()) return ConeSubstitutor.Empty
 
-    val substitutionMap = typeParameters.zip(type.typeArguments).associate { (parameter, projection) ->
+    val substitutionMap = typeParameters.zip(type.typeArguments).associate { [parameter, projection] ->
         val typeArgument =
             projection.type
             // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception

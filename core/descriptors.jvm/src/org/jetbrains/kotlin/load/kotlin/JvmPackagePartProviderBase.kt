@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
+@K1Deprecation
 abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartProvider {
 
     protected data class ModuleMappingInfo<MappingsKey>(val key: MappingsKey, val mapping: ModuleMapping, val name: String)
@@ -48,7 +50,7 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
 
     private fun getPackageParts(packageFqName: String): Collection<PackageParts> {
         val result = mutableMapOf<MappingsKey, PackageParts>()
-        for ((root, mapping) in loadedModules) {
+        for ((val root = key, val mapping) in loadedModules) {
             val newParts = mapping.findPackageParts(packageFqName) ?: continue
             result[root]?.let { parts -> parts += newParts } ?: result.put(root, newParts)
         }
@@ -56,7 +58,7 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
     }
 
     override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
-        return loadedModules.mapNotNull { (_, mapping, name) ->
+        return loadedModules.mapNotNull { (val _ = key, val mapping, val name) ->
             if (name == moduleName) mapping.moduleData.annotations.map(ClassId::fromString) else null
         }.flatten()
     }

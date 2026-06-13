@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols
-import org.jetbrains.kotlin.backend.common.ir.PreSerializationSymbols
+import org.jetbrains.kotlin.ir.util.isTypeOfIntrinsic
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
@@ -154,9 +156,28 @@ private class BackendChecker(
 
     private fun IrConstructor.overridesConstructor(other: IrConstructor) =
             this.parameters.size == other.parameters.size &&
-                    this.parameters.zip(other.parameters).all { (l, r) ->
+                    this.parameters.zip(other.parameters).all { [l, r] ->
                         l.name == r.name && l.type == r.type
                     }
+
+    private fun checkOverrideInitDoesNotCaptureOuterState(irClass: IrClass) {
+        if (!irClass.isLocal) return
+        val overrideInitConstructors = irClass.declarations.filterIsInstance<IrConstructor>().filter { it.isOverrideInit() }
+        if (overrideInitConstructors.isEmpty()) return
+        val closure = ClosureAnnotator(irClass, irClass).getClassClosure(irClass)
+        val captured = closure.capturedValues.map { it.owner.name.asString() } +
+                closure.capturedTypeParameters.map { it.name.asString() }
+        if (captured.isEmpty()) return
+        val capturedRendered = captured.joinToString(prefix = "'", separator = "', '", postfix = "'")
+        for (constructor in overrideInitConstructors) {
+            reportError(
+                constructor,
+                "A local Kotlin Obj-C class '${irClass.name}' with an @${InteropFqNames.objCOverrideInit} " +
+                        "constructor cannot capture values from the enclosing scope. " +
+                        "Captured: $capturedRendered"
+            )
+        }
+    }
 
     // Already migrated to FIR Checker: FirNativeObjCActionChecker.checkCanGenerateActionImp()
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
@@ -287,6 +308,28 @@ private class BackendChecker(
                 )
             }
         }
+
+        checkOverrideInitDoesNotCaptureOuterState(irClass)
+    }
+
+    private fun checkStdlibObjCClass(irClass: IrClass) {
+        // Only check stdlib classes.
+        val pkgFqName = irClass.packageFqName ?: return
+        if (!pkgFqName.isSubpackageOf(FqName("kotlin")) && !pkgFqName.isSubpackageOf(FqName("kotlinx.cinterop"))) return
+
+        // Ensure that allStdlibClassesImplementingObjCObject list is up to date.
+        val isObjCClass = (listOf(irClass) + irClass.getAllSuperclasses())
+            .any { it.classId == NativeStandardInteropNames.objCObjectClassId }
+        val isRegisteredAsObjCClass = irClass.fqNameWhenAvailable in allStdlibClassesImplementingObjCObject
+        if (isObjCClass != isRegisteredAsObjCClass) {
+            reportError(
+                irClass, "Looks like the `allStdlibClassesImplementingObjCObject` list needs to be updated.\n" +
+                        "We need to maintain a special property inside the compiler, listing all Stdlib classes that " +
+                        "(possibly indirectly) inherit from ObjCObject. Apparently \"${irClass.fqNameWhenAvailable}\" either begun or " +
+                        "stopped being a subclass of ObjCObject, so please update the list accordingly.\n" +
+                        "Note that this change may also require advancing the bootstrap compiler used to compile the Stdlib."
+            )
+        }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
@@ -411,7 +454,7 @@ private class BackendChecker(
 
         when (val intrinsicType = tryGetIntrinsicType(expression)) {
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> {
-                val (target, captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
+                (val target = function, val captures) = getUnboundReferencedFunction(expression.arguments[0]!!)
 
                 if (target == null || target.symbol !is IrSimpleFunctionSymbol)
                     reportBoundFunctionReferenceError(expression, callee, captures)
@@ -494,7 +537,7 @@ private class BackendChecker(
                             reportError(it, "incorrect value for binary data: $value")
                     }
                 }
-                PreSerializationSymbols.isTypeOfIntrinsic(callee.symbol) ->
+                callee.symbol.isTypeOfIntrinsic() ->
                     checkIrKType(expression, expression.typeArguments[0]!!)
             }
         }
@@ -610,6 +653,7 @@ private class BackendChecker(
         if (!declaration.isExpect && declaration.isKotlinObjCClass()) {
             checkKotlinObjCClass(declaration)
         }
+        checkStdlibObjCClass(declaration)
         super.visitClass(declaration)
 
     }
@@ -619,7 +663,7 @@ private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expressio
     val callee = expression.symbol.owner
 
     if (isInvoke) {
-        for ((idx, param) in callee.parameters.filter { it.kind == IrParameterKind.Regular }.withIndex()) {
+        for ([idx, param] in callee.parameters.filter { it.kind == IrParameterKind.Regular }.withIndex()) {
             checkCanMapCalleeFunctionParameter(
                     type = expression.typeArguments[idx]!!,
                     isObjCMethod = false,
@@ -638,7 +682,7 @@ private fun BackendChecker.checkCanGenerateCFunctionCallOrGlobalAccess(expressio
 }
 
 private fun BackendChecker.checkCanAddArguments(arguments: List<IrExpression?>, callee: IrFunction, isObjCMethod: Boolean) {
-    for ((argument, parameter) in arguments.zip(callee.parameters)) {
+    for ([argument, parameter] in arguments.zip(callee.parameters)) {
         if (parameter.isVararg)
             checkCanHandleArgumentForVarargParameter(argument, isObjCMethod)
         else

@@ -1,7 +1,6 @@
 KaPropertySetterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -18,7 +17,6 @@ KaPropertySetterSymbol:
   parameter: KaValueParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDeclaredDefaultValue: false
@@ -26,6 +24,7 @@ KaPropertySetterSymbol:
     isActual: false
     isCompanion: false
     isCrossinline: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -46,7 +45,7 @@ KaPropertySetterSymbol:
     getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -57,7 +56,6 @@ KaPropertySetterSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -65,6 +63,7 @@ KaPropertySetterSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -85,12 +84,12 @@ KaPropertySetterSymbol:
       getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(valPropertyWithSetter2.kt)
   getContainingJvmClassName: ValPropertyWithSetter2Kt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

@@ -47,13 +47,24 @@ KtConstructorCalleeExpression(166,173): 'MyClass'
     ]
 
 KtTypeReference(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -68,13 +79,24 @@ KtDeclarationModifierList(187,192): 'infix'
   null
 
 KtTypeReference(197,200): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(197,200): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(197,200): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(218,231): '(arg: MyEnum)'
   null
@@ -83,13 +105,24 @@ KtParameter(219,230): 'arg: MyEnum'
   null
 
 KtTypeReference(224,230): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(224,230): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(224,230): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(231,233): '{}'
   null
@@ -101,13 +134,24 @@ KtDeclarationModifierList(234,239): 'infix'
   null
 
 KtTypeReference(244,247): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(244,247): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(244,247): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameterList(261,275): '(arg: MyClass)'
   null
@@ -116,13 +160,24 @@ KtParameter(262,274): 'arg: MyClass'
   null
 
 KtTypeReference(267,274): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(267,274): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(267,274): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(275,277): '{}'
   null
@@ -149,12 +204,16 @@ KtConstantExpression(310,311): '1'
   null
 
 KtOperationReferenceExpression(312,329): 'infixEnumConsumer'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
     ]
 
 KtNameReferenceExpression(330,340): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -173,12 +232,16 @@ KtConstantExpression(354,355): '1'
   null
 
 KtOperationReferenceExpression(356,373): 'infixEnumConsumer'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /infixEnumConsumer(<extension receiver>: kotlin.Int, arg: MyEnum): kotlin.Unit
     ]
 
 KtNameReferenceExpression(374,389): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -196,12 +259,16 @@ KtConstantExpression(403,404): '1'
   null
 
 KtOperationReferenceExpression(405,418): 'infixConsumer'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /infixConsumer(<extension receiver>: kotlin.Int, arg: MyClass): kotlin.Unit
     ]
 
 KtNameReferenceExpression(419,434): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject

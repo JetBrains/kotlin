@@ -115,7 +115,7 @@ fun recreateAndInitializeTypeParameters(
 
     val typeParametersSubstitutor = createSubstitutorForTypeParameters(interfaceToFunTypeParameters)
 
-    for ((interfaceTypeParameter, funTypeParameter) in interfaceToFunTypeParameters) {
+    for ([interfaceTypeParameter, funTypeParameter] in interfaceToFunTypeParameters) {
         for (upperBound in interfaceTypeParameter.upperBounds) {
             val upperBoundSubstituted =
                 typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT)
@@ -149,7 +149,7 @@ fun createSubstitutorForTypeParameters(
 ): TypeSubstitutor {
     val typeSubstitutionContext =
         originalToAltTypeParameters
-            .map { (key, value) -> key.typeConstructor to value.defaultType.asTypeProjection() }
+            .map { [key, value] -> key.typeConstructor to value.defaultType.asTypeProjection() }
             .toMap()
 
     // TODO: Use IndexedParametersSubstitution here instead of map creation

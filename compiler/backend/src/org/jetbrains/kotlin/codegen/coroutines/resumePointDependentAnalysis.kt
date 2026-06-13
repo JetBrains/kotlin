@@ -62,7 +62,7 @@ private abstract class ReinitializationAnalysis(
     abstract fun calculate(): Array<MutableList<SpillableVariable>>
 
     fun calculateAndPrintPerformanceStats(): Array<MutableList<SpillableVariable>> {
-        val (result, time) = measureTimedValue { calculate() }
+        (val result = value, val time = duration) = measureTimedValue { calculate() }
         println(
             "${this::class.simpleName}.calculate() for $containingClassName::${methodNode.name} " +
                     "took ${time.inWholeMilliseconds} ms; nSP=${suspensionPoints.size}, nLocals=${methodNode.maxLocals}, " +
@@ -88,7 +88,7 @@ private class ReinitializationAnalysisUsingDFS(
         val cfg = ControlFlowGraph.build(methodNode)
         val spEnds: List<Int> = suspensionPoints.map { methodNode.instructions.indexOf(it.suspensionCallEnd) }
         val spIndexBySpEnd = spEnds.withIndex().associateBy({ it.value }, { it.index })
-        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
+        for ([spIndex, suspensionPoint] in suspensionPoints.withIndex()) {
             for (variable in variablesToSpillBySuspensionPointIndex[spIndex]) {
                 val slot = variable.slot
                 val start: Int = methodNode.instructions.indexOf(suspensionPoint.suspensionCallBegin)
@@ -175,7 +175,7 @@ private class ReinitializationAnalysisUsingDFA(
         val afterResumeFrames = analyzer.analyze()
         val variablesForReinitializationBySuspensionPointIndex =
             Array<MutableList<SpillableVariable>>(suspensionPoints.size) { mutableListOf() }
-        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
+        for ([spIndex, suspensionPoint] in suspensionPoints.withIndex()) {
             val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
                 ?: error(
                     "Missing 'after resume' analysis data for ${suspensionPoint.suspensionCallEnd} " +
@@ -261,7 +261,7 @@ private class ReinitializationAnalysisUsingDFA(
         }
 
         val suspensionPointIndexByEnd: Map<AbstractInsnNode, Int> =
-            suspensionPoints.withIndex().associate { (i, sp) -> sp.suspensionCallEnd to i }
+            suspensionPoints.withIndex().associate { [i, sp] -> sp.suspensionCallEnd to i }
 
         val suspensionPointsCount = suspensionPoints.size
     }

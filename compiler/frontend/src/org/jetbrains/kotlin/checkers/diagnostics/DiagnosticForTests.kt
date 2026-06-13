@@ -9,18 +9,22 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 class DebugInfoDiagnostic(element: KtElement, factory: DiagnosticFactory<*>) : AbstractDiagnosticForTests(element, factory)
+@K1Deprecation
 class SyntaxErrorDiagnostic(errorElement: PsiErrorElement) : AbstractDiagnosticForTests(
     errorElement,
     SyntaxErrorDiagnosticFactory.INSTANCE
 )
 
+@K1Deprecation
 open class AbstractDiagnosticForTests(override val psiElement: PsiElement, override val factory: DiagnosticFactory<*>) : Diagnostic {
     override val severity: Severity
         get() = Severity.ERROR

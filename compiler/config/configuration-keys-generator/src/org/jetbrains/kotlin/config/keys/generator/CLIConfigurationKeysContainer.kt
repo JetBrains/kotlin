@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config.keys.generator
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -25,7 +26,8 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
             DeprecationLevel.ERROR,
         ),
         comment = "Used by kotest, Realm, Dokka, KSP compiler plugins.",
-        importsToAdd = listOf("org.jetbrains.kotlin.config.CommonConfigurationKeys")
+        importsToAdd = listOf("org.jetbrains.kotlin.config.CommonConfigurationKeys"),
+        annotations = listOf(MessageCollectorAccess())
     )
 
     val ORIGINAL_MESSAGE_COLLECTOR_KEY by key<MessageCollector>(

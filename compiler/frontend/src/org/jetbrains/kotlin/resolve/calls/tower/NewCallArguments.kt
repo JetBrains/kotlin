@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
+@K1Deprecation
 class SimpleTypeArgumentImpl(
     val typeProjection: KtTypeProjection,
     override val type: UnwrappedType
@@ -38,6 +40,7 @@ class SimpleTypeArgumentImpl(
 
 // all arguments should be inherited from this class.
 // But receivers is not, because for them there is no corresponding valueArgument
+@K1Deprecation
 abstract class PSIKotlinCallArgument : KotlinCallArgument {
     abstract val valueArgument: ValueArgument
     abstract val dataFlowInfoBeforeThisArgument: DataFlowInfo
@@ -46,8 +49,10 @@ abstract class PSIKotlinCallArgument : KotlinCallArgument {
     override fun toString() = valueArgument.getArgumentExpression()?.text?.replace('\n', ' ') ?: valueArgument.toString()
 }
 
+@K1Deprecation
 abstract class SimplePSIKotlinCallArgument : PSIKotlinCallArgument(), SimpleKotlinCallArgument
 
+@K1Deprecation
 val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument
     get() {
         assert(this is PSIKotlinCallArgument) {
@@ -56,6 +61,7 @@ val KotlinCallArgument.psiCallArgument: PSIKotlinCallArgument
         return this as PSIKotlinCallArgument
     }
 
+@K1Deprecation
 val KotlinCallArgument.psiExpression: KtExpression?
     get() {
         return when (this) {
@@ -66,6 +72,7 @@ val KotlinCallArgument.psiExpression: KtExpression?
         }
     }
 
+@K1Deprecation
 class ParseErrorKotlinCallArgument(
     override val valueArgument: ValueArgument,
     override val dataFlowInfoAfterThisArgument: DataFlowInfo,
@@ -85,6 +92,7 @@ class ParseErrorKotlinCallArgument(
         get() = dataFlowInfoAfterThisArgument
 }
 
+@K1Deprecation
 abstract class PSIFunctionKotlinCallArgument(
     val outerCallContext: BasicCallResolutionContext,
     override val valueArgument: ValueArgument,
@@ -99,6 +107,7 @@ abstract class PSIFunctionKotlinCallArgument(
     lateinit var lambdaInitialDataFlowInfo: DataFlowInfo
 }
 
+@K1Deprecation
 class LambdaKotlinCallArgumentImpl(
     outerCallContext: BasicCallResolutionContext,
     valueArgument: ValueArgument,
@@ -124,6 +133,7 @@ class LambdaKotlinCallArgumentImpl(
         }
 }
 
+@K1Deprecation
 class FunctionExpressionImpl(
     outerCallContext: BasicCallResolutionContext,
     valueArgument: ValueArgument,
@@ -139,6 +149,7 @@ class FunctionExpressionImpl(
     override val expression get() = containingBlockForFunction
 }
 
+@K1Deprecation
 class CallableReferenceKotlinCallArgumentImpl(
     val scopeTowerForResolution: ImplicitScopeTower,
     override val valueArgument: ValueArgument,
@@ -151,6 +162,7 @@ class CallableReferenceKotlinCallArgumentImpl(
     override val call: KotlinCall
 ) : CallableReferenceKotlinCallArgument, PSIKotlinCallArgument()
 
+@K1Deprecation
 class CollectionLiteralKotlinCallArgumentImpl(
     override val valueArgument: ValueArgument,
     override val argumentName: Name?,
@@ -162,6 +174,7 @@ class CollectionLiteralKotlinCallArgumentImpl(
     override val isSpread: Boolean get() = valueArgument.getSpreadElement() != null
 }
 
+@K1Deprecation
 class SubKotlinCallArgumentImpl(
     override val valueArgument: ValueArgument,
     override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
@@ -174,6 +187,7 @@ class SubKotlinCallArgumentImpl(
     override val isSafeCall: Boolean get() = false
 }
 
+@K1Deprecation
 class ExpressionKotlinCallArgumentImpl(
     override val valueArgument: ValueArgument,
     override val dataFlowInfoBeforeThisArgument: DataFlowInfo,
@@ -185,6 +199,7 @@ class ExpressionKotlinCallArgumentImpl(
     override val isSafeCall: Boolean get() = false
 }
 
+@K1Deprecation
 class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableReferenceExpression) : ValueArgument {
     override fun getArgumentExpression() = ktExpression.receiverExpression
 
@@ -195,6 +210,7 @@ class FakeValueArgumentForLeftCallableReference(val ktExpression: KtCallableRefe
     override fun isExternal(): Boolean = false
 }
 
+@K1Deprecation
 class FakePositionalValueArgumentForCallableReferenceImpl(
     private val callElement: KtElement,
     override val index: Int
@@ -207,6 +223,7 @@ class FakePositionalValueArgumentForCallableReferenceImpl(
     override fun isExternal(): Boolean = false
 }
 
+@K1Deprecation
 class FakeImplicitSpreadValueArgumentForCallableReferenceImpl(
     private val callElement: KtElement,
     override val expression: ValueArgument
@@ -219,6 +236,7 @@ class FakeImplicitSpreadValueArgumentForCallableReferenceImpl(
     override fun isExternal(): Boolean = false
 }
 
+@K1Deprecation
 class EmptyLabeledReturn(
     val returnExpression: KtReturnExpression,
     builtIns: KotlinBuiltIns
@@ -235,6 +253,7 @@ internal fun KotlinCallArgument.setResultDataFlowInfoIfRelevant(resultDataFlowIn
     }
 }
 
+@K1Deprecation
 fun processFunctionalExpression(
     outerCallContext: BasicCallResolutionContext,
     argumentExpression: KtExpression,
@@ -277,6 +296,7 @@ fun processFunctionalExpression(
     return lambdaArgument
 }
 
+@K1Deprecation
 fun checkNoSpread(context: BasicCallResolutionContext, valueArgument: ValueArgument) {
     valueArgument.getSpreadElement()?.let {
         context.trace.report(Errors.SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE.on(it))

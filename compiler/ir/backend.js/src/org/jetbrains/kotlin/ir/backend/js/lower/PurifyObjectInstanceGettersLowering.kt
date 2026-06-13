@@ -59,7 +59,7 @@ open class PurifyObjectInstanceGettersLowering(val context: JsCommonBackendConte
             body.statements += JsIrBuilder.buildReturn(
                 symbol,
                 JsIrBuilder.buildGetField(instanceField.symbol),
-                objectToCreate.defaultType
+                context.irBuiltIns.nothingType
             )
         }
 

@@ -42,6 +42,10 @@ public abstract class Cls {
  *   public abstract fun foo(abc: kotlin/String): kotlin/Unit
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -51,7 +55,9 @@ public abstract interface Intf {
     java.lang.String abc);
 
     @org.jetbrains.annotations.NotNull()
-    public abstract java.lang.String bar(int bcd);
+    public default java.lang.String bar(int bcd) {
+        return null;
+    }
 
     /**
      * synthetic class
@@ -60,6 +66,7 @@ public abstract interface Intf {
     public static final class DefaultImpls {
 
         @org.jetbrains.annotations.NotNull()
+        @java.lang.Deprecated()
         public static java.lang.String bar(@org.jetbrains.annotations.NotNull()
         Intf $this, int bcd) {
             return null;

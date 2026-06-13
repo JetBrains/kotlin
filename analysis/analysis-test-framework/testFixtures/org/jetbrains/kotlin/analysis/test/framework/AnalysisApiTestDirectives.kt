@@ -41,16 +41,6 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Module
     )
 
-    /*
-    Note: the 'contextElement' can be different from the 'contextModule'.
-    E.g., consider a multiplatform project where the contextElement is in 'commonMain', but the contextModule can be
-    configured as 'jvmMain'
-    */
-    val ANALYSIS_CONTEXT_MODULE by stringDirective(
-        description = "Specifies the module name which should be treated as a context module for the current one (can overwrite 'CONTEXT_MODULE')",
-        applicability = DirectiveApplicability.Module
-    )
-
     /**
      * When applied to a library (source) module, specifies that the library module should depend on a [KaLibraryFallbackDependenciesModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule]
      * instead of the regular dependencies set by the test infrastructure.

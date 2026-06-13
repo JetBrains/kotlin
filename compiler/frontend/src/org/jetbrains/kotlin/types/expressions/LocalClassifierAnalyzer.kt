@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
+@K1Deprecation
 class LocalClassifierAnalyzer(
     private val globalContext: GlobalContext,
     private val storageManager: StorageManager,
@@ -128,6 +130,7 @@ class LocalClassifierAnalyzer(
     }
 }
 
+@K1Deprecation
 class LocalClassDescriptorHolder(
     val writableScope: LexicalWritableScope?,
     val myClass: KtClassOrObject,
@@ -212,6 +215,7 @@ class LocalClassDescriptorHolder(
     }
 }
 
+@K1Deprecation
 class LocalLazyDeclarationResolver(
     globalContext: GlobalContext,
     trace: BindingTrace,
@@ -236,6 +240,7 @@ class LocalLazyDeclarationResolver(
 }
 
 
+@K1Deprecation
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
     lazyDeclarationResolver: LazyDeclarationResolver,
     fileScopeProvider: FileScopeProvider,

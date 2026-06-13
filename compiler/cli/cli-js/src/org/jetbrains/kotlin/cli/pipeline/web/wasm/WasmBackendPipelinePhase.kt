@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.pipeline.web.wasm
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
@@ -42,6 +43,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 result = compileResult,
                 dir = outputDir,
                 fileNameBase = result.baseFileName,
+                configuration = configuration,
             )
             compileResult
         }
@@ -61,7 +63,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
     }
 
     override fun compileNonIncrementally(loadedIrArtifact: WebLoadedIrPipelineArtifact): List<WasmIrModuleConfiguration> {
-        val (loadedIr, module, configuration) = loadedIrArtifact
+        (val loadedIr = moduleInfo, val module = moduleStructure, val configuration) = loadedIrArtifact
         val irFactory = loadedIr.bultins.irFactory as IrFactoryImplForWasmIC
         val compiler = when (configuration.wasmCompilationMode()) {
             WasmCompilationMode.MULTI_MODULE ->
@@ -72,8 +74,12 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 WholeWorldCompiler(configuration, irFactory)
         }
 
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(loadedIr, configuration, module.mainModule)
+        }
+
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(loadedIr, module.mainModule, exportedDeclarations = setOf(FqName("main")))
+            compiler.lowerIr(loadedIr, allModules, context)
         }
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

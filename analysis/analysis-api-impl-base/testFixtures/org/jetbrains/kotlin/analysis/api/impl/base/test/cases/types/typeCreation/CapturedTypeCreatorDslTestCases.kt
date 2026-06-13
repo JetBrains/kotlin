@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @Suppress("UNUSED")
 class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testFromAnotherCapturedTypeMarkedNullable(): KaType {
         val projection = session.typeCreator.starTypeProjection()
         val capturedType = session.typeCreator.capturedType(projection)

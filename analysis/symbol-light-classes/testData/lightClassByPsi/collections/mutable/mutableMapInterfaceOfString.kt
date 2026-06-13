@@ -26,6 +26,10 @@ open class CMutableMap3 : IMutableMap {
         TODO("Not yet implemented")
     }
 
+    override fun remove(key: String, value: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     override val entries: MutableSet<MutableMap.MutableEntry<String, String>>
         get() = TODO("Not yet implemented")
     override val keys: MutableSet<String>

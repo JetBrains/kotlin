@@ -186,6 +186,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
         SwiftExportConstants.SWIFT_EXPORT_COMPILATION,
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
+
             swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map {
                 it.parameters.outputPath.getFile().parentFile
             })

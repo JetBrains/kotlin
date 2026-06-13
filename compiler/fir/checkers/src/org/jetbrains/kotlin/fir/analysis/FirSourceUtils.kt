@@ -102,7 +102,7 @@ inline fun <T> forEachChildOfType(
     val stack = mutableListOf(root to 0)
 
     while (stack.isNotEmpty()) {
-        val (element, currentDepth) = stack.popLast()
+        val [element, currentDepth] = stack.popLast()
 
         if (currentDepth != 0 && getElementType(element) in types) {
             processChild(element)

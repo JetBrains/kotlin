@@ -8,6 +8,7 @@ export declare class WithIgnoredCompanion {
     static get mutable(): string;
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
 }
 export declare namespace WithIgnoredCompanion {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -23,6 +24,7 @@ export declare class WithoutIgnoredCompanion {
     static get mutable(): string;
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
 }
 export declare namespace WithoutIgnoredCompanion {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -39,6 +41,7 @@ export declare namespace WithoutIgnoredCompanion {
                 hidden(): string;
                 get delegated(): string;
                 companionSuspend(): Promise<string>;
+                companionSuspendWithDefault(value?: string): Promise<string>;
                 private constructor();
             }
         }
@@ -53,6 +56,7 @@ export declare abstract class ObjectWithJsStatic {
     static get mutable(): string;
     static set mutable(value: string);
     static staticSuspend(): Promise<string>;
+    static staticSuspendWithDefault(value?: string): Promise<string>;
 }
 export declare namespace ObjectWithJsStatic {
     /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -64,6 +68,7 @@ export declare namespace ObjectWithJsStatic {
             hidden(): string;
             get delegated(): string;
             companionSuspend(): Promise<string>;
+            companionSuspendWithDefault(value?: string): Promise<string>;
             private constructor();
         }
     }

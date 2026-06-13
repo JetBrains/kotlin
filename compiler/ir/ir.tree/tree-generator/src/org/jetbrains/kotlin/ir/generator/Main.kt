@@ -98,7 +98,7 @@ private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<E
         declaredSymbolRemapperType to ::DeclaredSymbolRemapperInterfacePrinter,
         referencedSymbolRemapperType to ::ReferencedSymbolRemapperInterfacePrinter,
         symbolRemapperType to ::SymbolRemapperInterfacePrinter,
-    ).forEach { (type, makePrinter) ->
+    ).forEach { [type, makePrinter] ->
         generatedFiles += printGeneratedType(generationPath, treeGeneratorReadme, type.packageName, type.simpleName) {
             makePrinter(this, model.elements, type).printSymbolRemapper()
         }
@@ -108,7 +108,7 @@ private fun TreeGenerator.printIrSymbolTree(generationPath: File, model: Model<E
         declaredSymbolVisitorType to ::DeclaredSymbolVisitorInterfacePrinter,
         referencedSymbolVisitorType to ::ReferencedSymbolVisitorInterfacePrinter,
         symbolVisitorType to ::SymbolVisitorInterfacePrinter,
-    ).forEach { (type, makePrinter) ->
+    ).forEach { [type, makePrinter] ->
         generatedFiles += printGeneratedType(generationPath, treeGeneratorReadme, type.packageName, type.simpleName) {
             makePrinter(this, model.elements, type).printSymbolVisitor()
         }

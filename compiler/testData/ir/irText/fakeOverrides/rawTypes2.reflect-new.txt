@@ -1,0 +1,61 @@
+KClass: abstract interface A : Any
+  members:
+    public abstract fun A<T>.bar(Inv<kotlin.Int!>!): kotlin.Unit
+    public abstract fun A<T>.baz(Inv<Inv<kotlin.Int!>!>!): kotlin.Unit
+    public open operator fun A<T>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun A<T>.foo(Inv2<Inv<T!>!, Inv<(raw) kotlin.Any!>>!): kotlin.Unit
+    public open fun A<T>.hashCode(): kotlin.Int
+    public open fun A<T>.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun A<T>.bar(Inv<kotlin.Int!>!): kotlin.Unit
+    public abstract fun A<T>.baz(Inv<Inv<kotlin.Int!>!>!): kotlin.Unit
+    public abstract fun A<T>.foo(Inv2<Inv<T!>!, Inv<(raw) kotlin.Any!>>!): kotlin.Unit
+KClass: abstract interface B : A, Any
+  members:
+    public abstract fun B<R>.bar(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public abstract fun B<R>.baz(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public open operator fun B<R>.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun B<R>.foo(Inv2<(raw) kotlin.Any?, (raw) kotlin.Any?>): kotlin.Unit
+    public open fun B<R>.hashCode(): kotlin.Int
+    public open fun B<R>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface C1 : A, Any
+  members:
+    public abstract fun C1.bar(Inv<kotlin.Int!>!): kotlin.Unit
+    public abstract fun C1.baz(Inv<Inv<kotlin.Int!>!>!): kotlin.Unit
+    public open operator fun C1.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun C1.foo(Inv2<Inv<kotlin.Int!>!, Inv<(raw) kotlin.Any!>>!): kotlin.Unit
+    public open fun C1.hashCode(): kotlin.Int
+    public open fun C1.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface C2 : B, Any
+  members:
+    public abstract fun C2.bar(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public abstract fun C2.baz(Inv<(raw) kotlin.Any?>): kotlin.Unit
+    public open operator fun C2.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun C2.foo(Inv2<(raw) kotlin.Any?, (raw) kotlin.Any?>): kotlin.Unit
+    public open fun C2.hashCode(): kotlin.Int
+    public open fun C2.toString(): kotlin.String
+  declaredMembers:
+KClass: class Inv : Any
+  constructors:
+    public final <T> fun `<init>`(T): Inv<T>
+  members:
+    public open operator fun Inv<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Inv<T>.hashCode(): kotlin.Int
+    public open fun Inv<T>.toString(): kotlin.String
+    public final val Inv<T>.t: T
+  declaredMembers:
+    public final val Inv<T>.t: T
+KClass: class Inv2 : Any
+  constructors:
+    public final <A, B> fun `<init>`(A, B): Inv2<A, B>
+  members:
+    public open operator fun Inv2<A, B>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Inv2<A, B>.hashCode(): kotlin.Int
+    public open fun Inv2<A, B>.toString(): kotlin.String
+    public final val Inv2<A, B>.a: A
+    public final val Inv2<A, B>.b: B
+  declaredMembers:
+    public final val Inv2<A, B>.a: A
+    public final val Inv2<A, B>.b: B

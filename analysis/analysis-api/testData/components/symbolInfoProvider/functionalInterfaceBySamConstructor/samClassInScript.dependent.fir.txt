@@ -2,7 +2,6 @@ CONSTRUCTOR:
   KaSamConstructorSymbol:
   annotations: []
   callableId: /IntPredicate
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -35,7 +34,6 @@ CONSTRUCTOR:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -43,6 +41,7 @@ CONSTRUCTOR:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -177,14 +176,14 @@ CONSTRUCTOR:
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaDanglingFileModule "Temporary file"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaDanglingFileModule "Temporary file"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE:
@@ -193,7 +192,6 @@ FUNCTIONAL INTERFACE:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -227,6 +225,6 @@ FUNCTIONAL INTERFACE:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(samClassInScript.kts)
   getContainingModule: KaScriptModule "Script samClassInScript.kts"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: IntPredicate

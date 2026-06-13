@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: one/DataClass.component1
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -39,6 +38,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: one.DataClass
   canBeOperator: true
   getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

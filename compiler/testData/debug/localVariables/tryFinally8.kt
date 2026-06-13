@@ -47,7 +47,7 @@ fun box() {
 // test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f\1\23:int=0:int, z\1:int=32:int, j\1:int=0:int
 // test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f\1\23:int=0:int
 // test.kt:13 compute: y:int=42:int, i:int=0:int, $i$f$f\1\23:int=0:int, e\1:java.lang.Exception=java.lang.RuntimeException
-// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f\1\23:int=0:int, e\1:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1\2\98\0:int=0:int
+// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f\1\23:int=0:int, e\1:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1\2\113\0:int=0:int
 // test.kt:28 compute:
 // test.kt:34 box:
 // test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
@@ -88,3 +88,18 @@ fun box() {
 // test.kt:12 compute: y=42:number, i=0:number, z=32:number, j=0:number
 // test.kt:24 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
 // test.kt:28 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
+
+// EXPECTATIONS WASM
+// test.kt:34 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:21 $compute: $y:i32=0:i32, $i:i32=0:i32, $z:i32=0:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (16, 16)
+// test.kt:22 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=0:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18)
+// test.kt:23 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=0:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (12)
+// test.kt:8 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=0:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (16, 16)
+// test.kt:9 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=32:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (18, 8, 26, 8, 8, 18, 18, 18, 18, 18, 18)
+// test.kt:10 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=32:i32, $j:i32=0:i32, $merged_catch_param:(ref null $kotlin.Throwable)=null, $e:(ref null $kotlin.Exception)=null (18, 37, 37, 37, 37, 37, 37, 35, 35, 35, 35, 35, 38, 38, 38, 35, 40, 40, 40, 40, 40, 40, 35, 18, 12)
+// test.kt:13 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=32:i32, $j:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException) (8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:24 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=32:i32, $j:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException) (23, 23, 23, 16)
+// test.kt:28 $compute: $y:i32=42:i32, $i:i32=0:i32, $z:i32=32:i32, $j:i32=0:i32, $merged_catch_param:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException), $e:(ref $kotlin.RuntimeException)=(ref $kotlin.RuntimeException) (8, 12, 12, 12, 8, 8, 8)
+// test.kt:34 $box: $result:(ref null $kotlin.String)=null, $localX:(ref null $kotlin.String)=null (17)
+// test.kt:35 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref null $kotlin.String)=null (17, 17)
+// test.kt:36 $box: $result:(ref $kotlin.String)=(ref $kotlin.String), $localX:(ref $kotlin.String)=(ref $kotlin.String) (1, 1)

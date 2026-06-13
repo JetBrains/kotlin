@@ -24,7 +24,7 @@ public class SublistMerger<A : Any>(
     public var remainingElements: List<A> = initialElements
 
     public inline fun <reified R : A> merge(create: (List<R>) -> A?) {
-        val (specificElements, remainingElements) = this.remainingElements.partitionIsInstance<_, R>()
+        val [specificElements, remainingElements] = this.remainingElements.partitionIsInstance<_, R>()
         destination.addIfNotNull(create(specificElements))
         this.remainingElements = remainingElements
     }

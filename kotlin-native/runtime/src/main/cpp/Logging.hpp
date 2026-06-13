@@ -91,7 +91,10 @@ ALWAYS_INLINE inline bool enabled(logging::Level level, std_support::span<const 
 }
 
 ALWAYS_INLINE inline bool enabled(logging::Level level, std::initializer_list<const logging::Tag> tags, ...) noexcept {
-    std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
+    if (!compiler::runtimeLogsEnabled()) {
+        return false;
+    }
+    const std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
     return enabled(level, tagsSpan, compiler::runtimeLogs());
 }
 

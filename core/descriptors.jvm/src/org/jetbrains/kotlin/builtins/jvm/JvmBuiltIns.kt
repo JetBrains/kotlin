@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
 
+@K1Deprecation
 class JvmBuiltIns(storageManager: StorageManager, val kind: Kind) : KotlinBuiltIns(storageManager) {
     /**
      * Where built-ins should be loaded from.

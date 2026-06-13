@@ -629,7 +629,7 @@ public class SequenceTest {
 
     @Test fun unzip() {
         val seq = sequenceOf(1 to 'a', 2 to 'b', 3 to 'c')
-        val (ints, chars) = seq.unzip()
+        val [ints, chars] = seq.unzip()
         assertEquals(listOf(1, 2, 3), ints)
         assertEquals(listOf('a', 'b', 'c'), chars)
     }
@@ -785,7 +785,7 @@ public class SequenceTest {
     @Test fun sequenceOfCanBeUsedWithMethodReferences() {
         val strings = listOf("a", "b", "c")
 
-        for ((expected, actual) in (strings.map { listOf(it).asSequence() } zip strings.map(::sequenceOf))) {
+        for ([expected, actual] in (strings.map { listOf(it).asSequence() } zip strings.map(::sequenceOf))) {
             compare(expected, actual) {
                 sequenceBehavior()
             }

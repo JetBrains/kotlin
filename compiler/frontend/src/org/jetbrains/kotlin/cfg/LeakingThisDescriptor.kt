@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
+@K1Deprecation
 interface LeakingThisDescriptor {
     val classOrObject: KtClassOrObject
 

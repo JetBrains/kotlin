@@ -4,10 +4,10 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -27,16 +27,16 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -61,7 +61,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
@@ -70,10 +70,10 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -93,16 +93,16 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -127,7 +127,7 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -135,7 +135,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -158,8 +157,8 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
@@ -168,10 +167,10 @@ KaContextParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -191,16 +190,16 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaContextParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -225,5 +224,5 @@ KaContextParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(danglingContextParameter.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

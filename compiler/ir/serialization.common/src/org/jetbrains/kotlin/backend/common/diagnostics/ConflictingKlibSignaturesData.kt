@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.backend.common.diagnostics
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-internal data class ConflictingKlibSignaturesData(val signature: IdSignature, val declarations: Collection<IrDeclaration>)
+data class ConflictingKlibSignaturesData(val signature: IdSignature, val declarations: Collection<IrDeclaration>)

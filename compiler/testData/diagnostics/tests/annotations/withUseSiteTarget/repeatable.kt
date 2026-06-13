@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
 import kotlin.reflect.KProperty
 
 @Retention(AnnotationRetention.SOURCE)
@@ -54,9 +55,16 @@ public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPro
     <!WRONG_ANNOTATION_TARGET!>@getSetAndParamAnn<!>
     @setparam:getSetAndParamAnn
     var w: Int
-        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY!>@get:getSetAndParamAnn<!> get() = 0
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
-        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY!>@set:getSetAndParamAnn<!> set(arg) {}
+
+    @field:fieldOrPropAnn <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE!>@delegate:fieldOrPropAnn<!>
+    val v: Int = 42
+
+    <!INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD!>@field:fieldOrPropAnn<!> @delegate:fieldOrPropAnn
+    val u: Int by lazy { 42 }
+        <!ACCESSOR_FOR_DELEGATED_PROPERTY!>get() = <!UNRESOLVED_REFERENCE!>field<!><!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetField, annotationUseSiteTargetFieldDelegate,

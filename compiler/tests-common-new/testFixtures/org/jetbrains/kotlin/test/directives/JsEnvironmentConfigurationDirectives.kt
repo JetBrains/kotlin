@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
@@ -135,7 +136,7 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val GENERATE_DTS by directive(
+    val TS_COMPILATION_STRATEGY by enumDirective<TsCompilationStrategy>(
         description = "Will generate corresponding dts files",
         applicability = DirectiveApplicability.Global
     )

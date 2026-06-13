@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
+@K1Deprecation
 class DelegationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
@@ -40,7 +42,7 @@ class DelegationChecker : DeclarationChecker {
                 val superType = specifier.typeReference?.let { context.trace.get(BindingContext.TYPE, it) } ?: continue
                 val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
 
-                for ((delegated, delegatedTo) in DelegationResolver.getDelegates(descriptor, superTypeDescriptor)) {
+                for ([delegated, delegatedTo] in DelegationResolver.getDelegates(descriptor, superTypeDescriptor)) {
                     checkDescriptor(declaration, delegated, delegatedTo, context.trace)
                 }
             }

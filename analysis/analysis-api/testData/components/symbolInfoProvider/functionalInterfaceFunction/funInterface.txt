@@ -4,7 +4,6 @@ CLASS:
   classId: IntPredicate
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -38,15 +37,14 @@ CLASS:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(funInterface.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: IntPredicate
 
 FUNCTIONAL INTERFACE FUNCTION:
   KaNamedFunctionSymbol:
   annotations: []
   callableId: /IntPredicate.accept
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -89,7 +87,6 @@ FUNCTIONAL INTERFACE FUNCTION:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -97,6 +94,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -128,7 +126,7 @@ FUNCTIONAL INTERFACE FUNCTION:
       getContainingFileSymbol: KaFileSymbol(funInterface.kt)
       getContainingJvmClassName: IntPredicate
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -151,6 +149,6 @@ FUNCTIONAL INTERFACE FUNCTION:
   getContainingJvmClassName: IntPredicate
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

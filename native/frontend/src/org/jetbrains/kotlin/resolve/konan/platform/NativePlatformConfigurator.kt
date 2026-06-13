@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.platform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule
 import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsChecker
 import org.jetbrains.kotlin.resolve.konan.diagnostics.*
 
+@K1Deprecation
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         SuperCallWithDefaultArgumentsChecker(),
@@ -47,6 +49,7 @@ object NativePlatformConfigurator : PlatformConfiguratorBase(
     }
 }
 
+@K1Deprecation
 object NativeInliningRule : ReasonableInlineRule {
     override fun isInlineReasonable(
         descriptor: CallableMemberDescriptor,

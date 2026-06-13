@@ -90,7 +90,7 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
 )
 
 private val PRIMITIVE_TYPE_ARRAYS_SIGNATURE: Map<String, String> =
-    PRIMITIVE_TYPE_SIGNATURE.map { (name, desc) ->
+    PRIMITIVE_TYPE_SIGNATURE.map { [name, desc] ->
         "${name}Array" to "[$desc"
     }.toMap()
 
@@ -137,6 +137,7 @@ private fun StringBuilder.appendConeType(
         }
     }
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     when (coneType) {
         is ConeErrorType -> Unit // TODO: just skipping it seems wrong
         is ConeClassLikeType -> {
@@ -150,7 +151,7 @@ private fun StringBuilder.appendConeType(
                 coneType.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
                     val converted = typeConversion(it)
                     if (converted != null) it to converted else null
-                }?.let { (firBound, coneBound) ->
+                }?.let { [firBound, coneBound] ->
                     // TODO: pretty sure Java type conversion does not produce either of these
                     if (firBound !is FirImplicitNullableAnyTypeRef && firBound !is FirImplicitAnyTypeRef) {
                         appendConeType(coneBound, typeConversion, visitedTypeParameters)

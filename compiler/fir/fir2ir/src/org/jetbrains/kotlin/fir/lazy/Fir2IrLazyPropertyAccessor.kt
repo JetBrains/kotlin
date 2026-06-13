@@ -14,17 +14,21 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -111,4 +115,8 @@ class Fir2IrLazyPropertyAccessor(
         get() = firParentProperty.containerSource
 
     private val conversionTypeContext = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
+
+    override var companionExtensionClass: IrClassSymbol?
+        get() = firParentProperty.receiverParameter?.takeIf { firParentProperty.isCompanionExtension }?.typeRef?.toIrType()?.classOrFail
+        set(_) = mutationNotSupported()
 }

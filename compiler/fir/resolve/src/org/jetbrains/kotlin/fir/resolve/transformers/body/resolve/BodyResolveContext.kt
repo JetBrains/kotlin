@@ -108,9 +108,11 @@ class BodyResolveContext(
      * Inside an annotation call or in a default value of an annotation parameter.
      */
     @set:PrivateForInline
+    @ArrayLiteralResolution
     var isInsideAnnotationContext: Boolean = false
 
     @OptIn(PrivateForInline::class)
+    @ArrayLiteralResolution
     inline fun <R> withAnnotationContext(block: () -> R): R {
         val oldMode = this.isInsideAnnotationContext
         this.isInsideAnnotationContext = true
@@ -455,7 +457,7 @@ class BodyResolveContext(
 
     @PrivateForInline
     inline fun <T> withTemporaryRegularContext(newContext: PostponedAtomsResolutionContext?, f: () -> T): T {
-        val (towerDataContext, newInferenceSession) = newContext ?: return f()
+        val [towerDataContext, newInferenceSession] = newContext ?: return f()
 
         return withTowerDataModeCleanup {
             withTowerDataContexts(regularTowerDataContexts.replaceAndSetActiveRegularContext(towerDataContext)) {
@@ -667,7 +669,7 @@ class BodyResolveContext(
             }
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
-        val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
+        val [primaryConstructorPureParametersScope, primaryConstructorAllParametersScope] =
             if (constructor?.isPrimary == true) {
                 constructor.scopesWithPrimaryConstructorParameters(holder.session)
             } else {
@@ -794,8 +796,13 @@ class BodyResolveContext(
         val codeFragmentContext = codeFragment.codeFragmentContext ?: error("Context is not set for a code fragment")
         val towerDataContext = codeFragmentContext.towerDataContext
 
-        val fragmentImportTowerDataElements = computeImportingScopes(file, holder.session, holder.scopeSession)
-            .map { it.asTowerDataElement(isLocal = false) }
+        val fragmentImportTowerDataElements = computeImportingScopes(
+            file,
+            holder.session,
+            holder.scopeSession,
+            includeDefaultImports = false,
+            includePackageImport = false,
+        ).map { it.asTowerDataElement(isLocal = false) }
 
         val base = towerDataContext
             .addNonLocalTowerDataElements(towerDataContext.nonLocalTowerDataElements)

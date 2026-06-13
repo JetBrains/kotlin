@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c) {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 

@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.OPT_IN
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.*
 import org.jetbrains.kotlin.test.services.BatchingPackageInserter
+import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
+import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
@@ -65,6 +67,8 @@ import org.jetbrains.kotlin.test.services.addAnnotations
 import org.jetbrains.kotlin.test.services.child
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.services.packageFqNameForKLib
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
@@ -84,7 +88,7 @@ internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDispos
             if (testDataDir in excludes)
                 return@computeIfAbsent TestCaseGroup.AllDisabled
 
-            val (excludedTestDataFiles, testDataFiles) = testDataDir.listFiles()
+            val [excludedTestDataFiles, testDataFiles] = testDataDir.listFiles()
                 ?.filter { file -> file.isFile && file.extension == "kt" }
                 ?.partition { file -> file in excludes }
                 ?: return@computeIfAbsent null
@@ -194,7 +198,6 @@ private class ExtTestDataFile(
                 && structure.directives[LANGUAGE_VERSION].intersect(INCOMPATIBLE_LANGUAGE_VERSIONS).isEmpty()
                 && !(FILECHECK_STAGE in structure.directives
                 && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
-                && !(optimizationMode != OptimizationMode.OPT && "OptimizeTLSDataLoads" in structure.directives[FILECHECK_STAGE])
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                 && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
@@ -206,18 +209,17 @@ private class ExtTestDataFile(
         args += structure.directives[FREE_COMPILER_ARGS]
         testDataFileSettings.languageSettings.mapTo(args) { "-XXLanguage:$it" }
         testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
-        if (!structure.directives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS].containsNativeOrAny
-        ) {
-            args.add("-Xverify-ir-visibility")
+
+        val disableIrCheckers = IrCheckersDisabledByTestDirectives
+            .filter { structure.directives[it.key].containsNativeOrAny || defaultDirectives[it.key].containsNativeOrAny }.values
+        if (disableIrCheckers.isNotEmpty()) {
+            args.add("-Xdisable-ir-checkers=" + disableIrCheckers.joinToString(","))
         }
 
-        if ((structure.directives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS) ||
-                    defaultDirectives.contains(CodegenTestDirectives.ENABLE_IR_NESTED_OFFSETS_CHECKS)) &&
-            !structure.directives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny &&
-            !defaultDirectives[CodegenTestDirectives.DISABLE_IR_NESTED_OFFSETS_CHECKS].containsNativeOrAny
-        ) {
-            args.add("-Xverify-ir-nested-offsets")
+        val additionalIrCheckers = IrCheckersEnabledByTestDirectives
+            .filter { structure.directives.contains(it.key) || defaultDirectives.contains(it.key) }.values
+        if (additionalIrCheckers.isNotEmpty()) {
+            args.add("-Xadditional-ir-checkers=" + additionalIrCheckers.joinToString(","))
         }
 
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
@@ -248,7 +250,7 @@ private class ExtTestDataFile(
 
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
-        findEntryPoint()?.let { (entryPointFunctionFQN, entryPointIsSuspend) ->
+        findEntryPoint()?.let { [entryPointFunctionFQN, entryPointIsSuspend] ->
             when (testKind) {
                 TestKind.REGULAR, TestKind.STANDALONE -> {
                     generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
@@ -410,7 +412,9 @@ private class ExtTestDataFile(
             """.trimIndent()
         }
         structure.addFileToMainModule("Generated_Box_Main.kt", fileText)
-        structure.addFileToMainModule("coroutineHelpers.kt", File("compiler/testData/debug/nativeTestHelpers/coroutineHelpers.kt").readText())
+        val coroutineHelpersText = this::class.java.getResourceAsStream("/coroutineHelpers.kt")?.bufferedReader()?.readText()
+            ?: error("Resource /coroutineHelpers.kt not found on the classpath")
+        structure.addFileToMainModule("coroutineHelpers.kt", coroutineHelpersText)
     }
 
     private fun doCreateTestCase(
@@ -438,14 +442,11 @@ private class ExtTestDataFile(
             else -> null
         }
         val outputMatcher = lldbSpec?.let {
-            OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
+            OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(structure.directives)
 
-        val expectedExitCode = when (testKind) {
-            TestKind.STANDALONE_NO_TR -> parseExpectedExitCode(structure.directives)
-            TestKind.STANDALONE_LLDB, TestKind.STANDALONE_STEPPING -> ExitCode.SkipIfNot(0) // Mute if fails. See KT-84923.
-            else -> ExitCode.Expected(0)
-        }
+        val expectedExitCode = if (testKind == TestKind.STANDALONE_NO_TR) parseExpectedExitCode(structure.directives)
+        else ExitCode.Expected(0)
 
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(structure.directives)
         val executionTimeoutCheck = if (expectedTimeoutFailure != null) ExecutionTimeout.ShouldExceed(expectedTimeoutFailure)
@@ -559,7 +560,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         val filesToTransform: Iterable<CurrentFileHandler>
             get() = filesAndModules.parsedFiles.filter { it.key.name.endsWith(".kt") || it.key.name.endsWith(".def") }
-                .map { (extTestFile, psiFile) ->
+                .map { [extTestFile, psiFile] ->
                     object : CurrentFileHandler {
                         override val packageFqName get() = psiFile.packageFqNameForKLib
                         override val module = object : CurrentFileHandler.ModuleHandler {
@@ -585,7 +586,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             val supportModule = generateSharedSupportModule(findOrGenerateSharedModule)
 
             // Update texts of parsed test files.
-            filesAndModules.parsedFiles.forEach { (extTestFile, psiFile) -> extTestFile.text = psiFile.text }
+            filesAndModules.parsedFiles.forEach { [extTestFile, psiFile] -> extTestFile.text = psiFile.text }
 
             // Transform internal model into Kotlin/Native test infrastructure test model.
             fun transformDependency(extTestModule: KotlinBaseTest.TestModule): String =
@@ -730,7 +731,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         }
 
         private fun recordRegisteredDirectives(module: ExtTestModule?, directives: Directives) {
-            for ((name, valuesPerLine) in directives.allDirectives) {
+            for ([name, valuesPerLine] in directives.allDirectives) {
                 for (rawValue in valuesPerLine ?: listOf(null)) {
                     // Convert Directive to RegisteredDirective
                     val splitValues = rawValue?.split(RegisteredDirectivesParser.SPACES_PATTERN)
@@ -776,14 +777,14 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
             val modules = generatedFiles.map { it.module }.associateBy { it.name }
 
-            val (supportModuleFiles, nonSupportModuleFiles) = generatedFiles.partition { it.module.isSupport }
+            val [supportModuleFiles, nonSupportModuleFiles] = generatedFiles.partition { it.module.isSupport }
             val parsedFiles = nonSupportModuleFiles.associateWith { psiFactory.createFile(it.name, it.text) }
             val nonParsedFiles = supportModuleFiles.toMutableList()
 
             // Explicitly add support module to other modules' dependencies (as it is not listed there by default).
             val supportModule = modules[SUPPORT_MODULE_NAME]
             if (supportModule != null) {
-                modules.forEach { (moduleName, module) ->
+                modules.forEach { [moduleName, module] ->
                     if (moduleName != SUPPORT_MODULE_NAME && supportModule !in module.dependencies) {
                         module.dependencies += supportModule
                     }

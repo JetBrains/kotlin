@@ -64,7 +64,7 @@ class LazyJVMTest {
 
         assertEquals(2, counter.get())
         @Suppress("NAME_SHADOWING")
-        for ((counter, initialized) in runs) {
+        for ([counter, initialized] in runs) {
             assertEquals(initialized, counter == 2, "Expected uninitialized on first, initialized on second call: initialized=$initialized, counter=$counter")
         }
     }
@@ -85,7 +85,7 @@ class LazyJVMTest {
                      List(threads) { lazy(lock, initializer) }
                  },
                  access = { lazies, runnerIndex -> lazies[runnerIndex].value },
-                 validate = { result -> result.all { (id, initialized) -> initialized == (id != 1) } })
+                 validate = { result -> result.all { [id, initialized] -> initialized == (id != 1) } })
     }
 
     @Test fun publishOnceLazy() {
@@ -168,6 +168,6 @@ class LazyJVMTest {
 
         runners.forEach { it.join() }
 
-        assertTrue(invalidResults.isEmpty(), invalidResults.joinToString("\n") { (index, result) -> "At run #$index: $result" })
+        assertTrue(invalidResults.isEmpty(), invalidResults.joinToString("\n") { [index, result] -> "At run #$index: $result" })
     }
 }

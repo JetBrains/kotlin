@@ -1,4 +1,6 @@
 KtOperationReferenceExpression(75,77): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.plusAssign(<dispatch receiver>: A, i: kotlin.Int): kotlin.Unit

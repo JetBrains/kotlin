@@ -11,5 +11,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] contextReceivers.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar1([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|@ContextFunctionTypeParams(2) context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar2([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|@ContextFunctionTypeParams(2) context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) C.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar1([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) () -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar2([ResolvedTo(ANNOTATION_ARGUMENTS)] x: R|context(ERROR CLASS: Symbol not found for A, ERROR CLASS: Symbol not found for B) C.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

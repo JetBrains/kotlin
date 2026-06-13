@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 
+@K1Deprecation
 class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescriptor) : AdditionalAnnotationChecker {
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,
@@ -144,7 +146,7 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
     }
 
     private fun checkArgumentsAreMarkers(annotationClasses: List<ConstantValue<*>>, trace: BindingTrace, entry: KtAnnotationEntry, annotationFqName: FqName) {
-        for ((index, annotationClass) in annotationClasses.withIndex()) {
+        for ([index, annotationClass] in annotationClasses.withIndex()) {
             val classDescriptor =
                 (annotationClass as? KClassValue)?.getArgumentType(module)?.constructor?.declarationDescriptor as? ClassDescriptor
                     ?: continue
@@ -167,11 +169,11 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
         trace: BindingTrace
     ) {
         val associatedEntries = entries.associateWith { entry -> trace.bindingContext.get(BindingContext.ANNOTATION, entry) }.entries
-        val targetEntry = associatedEntries.firstOrNull { (_, descriptor) ->
+        val targetEntry = associatedEntries.firstOrNull { [_, descriptor] ->
             descriptor?.fqName == StandardNames.FqNames.target
         }
         if (targetEntry != null) {
-            val (entry, descriptor) = targetEntry
+            val [entry, descriptor] = targetEntry
             val allowedTargets = AnnotationChecker.loadAnnotationTargets(descriptor!!) ?: return
             val wrongTargets = allowedTargets.intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
             if (wrongTargets.isNotEmpty()) {
@@ -183,11 +185,11 @@ class OptInMarkerDeclarationAnnotationChecker(private val module: ModuleDescript
                 )
             }
         }
-        val retentionEntry = associatedEntries.firstOrNull { (_, descriptor) ->
+        val retentionEntry = associatedEntries.firstOrNull { [_, descriptor] ->
             descriptor?.fqName == StandardNames.FqNames.retention
         }
         if (retentionEntry != null) {
-            val (entry, descriptor) = retentionEntry
+            val [entry, descriptor] = retentionEntry
             if (descriptor?.getAnnotationRetention() == KotlinRetention.SOURCE) {
                 trace.report(Errors.OPT_IN_MARKER_WITH_WRONG_RETENTION.on(entry))
             }

@@ -1,0 +1,707 @@
+KtFile: 'primaryConstructorVsCompanionInvoke.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,19): 'package com.example'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'com'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(12,19): 'example'
+  NO_CANDIDATES
+
+KtImportList(19,19): ''
+  NO_CANDIDATES
+
+KtClass(21,126): 'class Foo {'
+  NO_CANDIDATES
+
+KtClassBody(31,126): '{'
+  NO_CANDIDATES
+
+KtObjectDeclaration(37,124): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(37,46): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(54,124): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(64,118): 'operator fun invoke(param: Int) = Foo() // constructor'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(64,72): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(83,95): '(param: Int)'
+  NO_CANDIDATES
+
+KtParameter(84,94): 'param: Int'
+  NO_CANDIDATES
+
+KtTypeReference(91,94): 'Int'
+  NO_CANDIDATES
+
+KtUserType(91,94): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(91,94): 'Int'
+  NO_CANDIDATES
+
+KtCallExpression(98,103): 'Foo()'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(98,101): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'param'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(101,103): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(128,231): 'fun main() {'
+  NO_CANDIDATES
+
+KtParameterList(136,138): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(139,231): '{'
+  NO_CANDIDATES
+
+KtCallExpression(145,151): 'Foo(1)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Foo'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(145,148): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(148,151): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(149,150): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(149,150): '1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(156,174): 'com.example.Foo(2)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Foo'.>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(156,167): 'com.example'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(156,159): 'com'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(160,167): 'example'
+  NO_CANDIDATES
+
+KtCallExpression(168,174): 'Foo(2)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Foo'.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(168,171): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(171,174): '(2)'
+  NO_CANDIDATES
+
+KtValueArgument(172,173): '2'
+  NO_CANDIDATES
+
+KtConstantExpression(172,173): '2'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(180,196): 'Foo.Companion(3)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(180,183): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(184,196): 'Companion(3)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(184,193): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Companion
+        symbol = <constructor>(): com.example.Foo.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(193,196): '(3)'
+  NO_CANDIDATES
+
+KtValueArgument(194,195): '3'
+  NO_CANDIDATES
+
+KtConstantExpression(194,195): '3'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(201,229): 'com.example.Foo.Companion(4)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(201,216): 'com.example.Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(201,212): 'com.example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(201,204): 'com'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(205,212): 'example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(213,216): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(217,229): 'Companion(4)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(217,226): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Companion
+        symbol = <constructor>(): com.example.Foo.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(226,229): '(4)'
+  NO_CANDIDATES
+
+KtValueArgument(227,228): '4'
+  NO_CANDIDATES
+
+KtConstantExpression(227,228): '4'
+  NO_CANDIDATES

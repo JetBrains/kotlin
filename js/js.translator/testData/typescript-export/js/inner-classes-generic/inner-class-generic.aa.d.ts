@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     interface Box<T, Self extends Box<T, Self>> {
         unbox(): T;
         copy(newValue: T): Self;
@@ -183,3 +182,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

@@ -185,7 +185,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
         when (value) {
             is Value.LocalClass -> return value.type
             is Value.NormalClass -> {
-                val (classId, arrayDimensions) = value.value
+                (val classId, val arrayDimensions = arrayNestedness) = value.value
                 val descriptor = module.findClassAcrossModuleDependencies(classId)
                     ?: return ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_KCLASS_CONSTANT_VALUE, classId.toString(), arrayDimensions.toString())
 

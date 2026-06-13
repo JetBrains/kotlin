@@ -25,13 +25,16 @@ internal abstract class JavaKFunction(
     abstract val javaTypeParameters: Array<out TypeVariable<*>>
     abstract val isVararg: Boolean
 
-    override val allParameters: List<KParameter> by lazy(PUBLICATION) {
-        computeParameters(includeReceivers = true)
-    }
-
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(includeReceivers = false)
-        else allParameters
+        val allParameters = allParameters
+        if (!isBound) return@lazy allParameters
+        // For bound references, recreate all parameters except the bound one, with the correct indices.
+        check(allParameters.isNotEmpty()) { "Bound function reference has no parameters: $container.$name" }
+        List(allParameters.size - 1) { i ->
+            val parameter = allParameters[i + 1]
+            check(parameter is JavaKParameter) { "Unexpected parameter type: ${parameter::class.simpleName} ($container.$name)" }
+            JavaKParameter(parameter.callable, parameter.name, parameter.type, i, parameter.kind, parameter.isVararg)
+        }
     }
 
     override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
@@ -42,13 +45,6 @@ internal abstract class JavaKFunction(
 
     override val isInline: Boolean get() = false
     override val isExternal: Boolean get() = Modifier.isNative(member.modifiers)
-    override val isOperator: Boolean
-        get() {
-            require(this is JavaKConstructor || Modifier.isStatic(member.modifiers)) {
-                "Only Java constructors and static functions are supported for now: $member"
-            }
-            return false
-        }
     override val isInfix: Boolean get() = false
 
     override fun equals(other: Any?): Boolean {
@@ -63,52 +59,55 @@ internal abstract class JavaKFunction(
         ReflectionObjectRenderer.renderFunction(this)
 }
 
-private fun JavaKFunction.computeParameters(includeReceivers: Boolean): List<KParameter> = buildList {
+internal fun JavaKFunction.computeParameters(typeParameters: List<KTypeParameter>): List<KParameter> = buildList {
     val function = this@computeParameters
-    require(function is JavaKConstructor || Modifier.isStatic(member.modifiers)) {
-        "Only Java constructors and static functions are supported for now: $member"
-    }
 
     val isInnerClassConstructor = member is Constructor<*> && member.declaringClass.isInner
-    val genericParameterTypes = genericParameterTypes
+    val knownTypeParameters = javaTypeParameters.zip(typeParameters).toMap()
 
-    if (includeReceivers) {
-        if (isInnerClassConstructor) {
-            add(InstanceParameter(function, member.declaringClass.declaringClass.kotlin))
-        }
+    val unsubstitutedParameterKTypes =
+        if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1)
+            overriddenStorage.overridden.single().parameters.filter { it.kind == KParameter.Kind.VALUE }.map { it.type }
+        else
+            genericParameterTypes.map { type ->
+                val nullability = if (member.isEnumValuesValueOfMethod()) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
+                type.toKType(knownTypeParameters, nullability)
+            }
+
+    val parameterKTypes = unsubstitutedParameterKTypes.map {
+        function.overriddenStorage.getTypeSubstitutor(typeParameters, function.name).substitute(it).type
+            ?: starProjectionInTopLevelTypeIsNotPossible(function.name)
+    }
+
+    if (isInnerClassConstructor) {
+        add(InstanceParameter(function, member.declaringClass.declaringClass.kotlin))
+    } else if (member is Method && !Modifier.isStatic(member.modifiers)) {
+        add(InstanceParameter(function, container as KClassImpl<*>))
     }
 
     val names = Java8ParameterNamesLoader.loadParameterNames(member)
     // Skip synthetic parameters, such as outer class instance and enum name/ordinal.
-    val shift = names?.size?.minus(genericParameterTypes.size) ?: 0
+    val shift = names?.size?.minus(parameterKTypes.size) ?: 0
 
-    val knownTypeParameters = javaTypeParameters.zip(typeParameters).toMap()
-
-    for ((i, type) in genericParameterTypes.withIndex()) {
+    for ((i, type) in parameterKTypes.withIndex()) {
         // If constructor is generic, its `genericParameterTypes` does not have the outer class instance parameter.
         // If it's not generic, `genericParameterTypes` delegates to `parameterTypes`, which has the outer class instance parameter. We need
         // to skip this parameter because we've added it as `InstanceParameter` above.
-        if (i == 0 && isInnerClassConstructor && genericParameterTypes.size == parameterTypes.size) continue
+        if (i == 0 && isInnerClassConstructor && parameterKTypes.size == parameterTypes.size) continue
 
         // Normally, enum name/ordinal parameters are absent in `genericParameterTypes`, however for some reason, they are present for
         // classes compiled by Groovy (see the test `SimpleKotlinGradleIT.testGroovyInterop`). In this case, we must manually skip them.
         // We detect this case by the fact that `genericParameterTypes` and `parameterTypes` have the same size (note that `parameterTypes`
         // always has the types of name/ordinal, `String` and `int`).
-        if (i < 2 && member.declaringClass.isEnum && member is Constructor<*> && genericParameterTypes.size == parameterTypes.size) continue
+        if (i < 2 && member.declaringClass.isEnum && member is Constructor<*> && parameterKTypes.size == parameterTypes.size) continue
 
         val name = when {
             names != null -> names.getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $member")
             else -> "arg$i"
         }
 
-        val nullability = if (member.isEnumValuesValueOfMethod()) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
-
-        add(
-            JavaKParameter(
-                function, name, type.toKType(knownTypeParameters, nullability), size, KParameter.Kind.VALUE,
-                isVararg = i == genericParameterTypes.lastIndex && isVararg,
-            )
-        )
+        val isVararg = i == parameterKTypes.lastIndex && isVararg
+        add(JavaKParameter(function, name, type, size, KParameter.Kind.VALUE, isVararg = isVararg))
     }
 }
 

@@ -14,6 +14,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 val embedded by configurations
 embedded.isTransitive = false
 configurations.getByName("compileOnly").extendsFrom(embedded)

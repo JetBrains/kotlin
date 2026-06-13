@@ -6,6 +6,7 @@
 
 #include "PassesProfile.h"
 
+#include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringMapEntry.h"
 #include "llvm/ADT/StringRef.h"
@@ -13,7 +14,6 @@
 #include "llvm/Support/CBindingWrapping.h"
 
 #include <string>
-#include <vector>
 
 namespace llvm::kotlin {
 
@@ -47,7 +47,7 @@ private:
 
   bool Enabled = false;
   StringMap<Event> Roots;
-  std::vector<StringMapEntry<Event> *> PendingEventsStack;
+  SmallVector<StringMapEntry<Event> *> PendingEventsStack;
 };
 
 } // namespace llvm::kotlin

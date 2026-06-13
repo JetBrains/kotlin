@@ -19,13 +19,10 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_FILE_SIZE_LIMIT
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.LOGS_PATH
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
-import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
-import org.jetbrains.kotlin.buildtools.internal.arguments.reportRestrictedViolations
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl.Option
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -53,8 +50,8 @@ import java.nio.file.Path
 import java.rmi.RemoteException
 
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
-    val compilerArguments: BtaCompilerArgs,
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    override val compilerArguments: BtaCompilerArgs,
+    protected val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
 
     @UseFromImplModuleRestricted
@@ -62,6 +59,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 
@@ -72,15 +70,16 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun executeCancellableImpl(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
         compilerArguments.reportRestrictedViolations(kotlinLogger)
+        if (compilerArguments.hasValidationErrors()) {
+            compilerArguments.reportValidationErrors(kotlinLogger)
+            return CompilationResult.COMPILATION_ERROR
+        }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
 
         return when (executionPolicy) {
@@ -182,16 +181,19 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             }
         }
 
-        val (daemon, sessionId) = KotlinCompilerRunnerUtils.newDaemonConnection(
-            compilerId,
-            clientIsAliveFile,
-            sessionIsAliveFlagFile,
-            loggerAdapter,
-            loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
-            daemonJVMOptions = jvmOptions,
-            daemonOptions = daemonOptions,
-            daemonLogOptions = daemonLogOptions,
-        ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
+        (
+            val daemon = compileService, val sessionId
+        ) =
+            KotlinCompilerRunnerUtils.newDaemonConnection(
+                compilerId,
+                clientIsAliveFile,
+                sessionIsAliveFlagFile,
+                loggerAdapter,
+                loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
+                daemonJVMOptions = jvmOptions,
+                daemonOptions = daemonOptions,
+                daemonLogOptions = daemonLogOptions,
+            ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
         onCancel {
             daemon.cancelCompilation(sessionId, compilationId)
         }
@@ -212,7 +214,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val metricsReporter = getMetricsReporter()
         val exitCode = daemon.compile(
             sessionId,
-            arguments.toArgumentStrings().toTypedArray(),
+            arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
             daemonCompileOptions,
             BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
             DaemonCompilationResults(

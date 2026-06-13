@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendInput
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.testInfraError
 
 @InternalFir2IrConverterAPI
 internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrResultsConverter(testServices) {
@@ -66,7 +68,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     }
 
     override val klibFactories: KlibMetadataFactories
-        get() = error("Should not be called")
+        get() = testInfraError("Should not be called")
 
     override fun createFir2IrConfiguration(
         compilerConfiguration: CompilerConfiguration,
@@ -106,12 +108,11 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
             diagnosticReporter = diagnosticReporter,
         )
 
-        return IrBackendInput.JvmIrBackendInput(
+        return JvmIrBackendInput(
             generationState,
             JvmIrCodegenFactory(compilerConfiguration),
             backendInput,
             sourceFiles,
-            descriptorMangler = null,
             irMangler = fir2IrResult.components.irMangler,
         )
     }

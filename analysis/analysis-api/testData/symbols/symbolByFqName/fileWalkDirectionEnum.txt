@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -49,14 +47,13 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -64,6 +61,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -83,7 +81,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -91,14 +89,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.collections.CollectionsKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: kotlin.collections.listOf
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/collections/listOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -132,7 +129,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -146,14 +142,13 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -161,6 +156,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -180,7 +176,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: kotlin.collections.CollectionsKt
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -188,7 +184,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.collections.CollectionsKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: kotlin.collections.listOf
 
@@ -198,7 +194,6 @@ KaNamedFunctionSymbol:
       psi: null
   ]
   callableId: kotlin/collections/listOf
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -232,7 +227,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -246,7 +240,7 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: []
@@ -255,6 +249,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: kotlin.collections.CollectionsKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: kotlin.collections.listOf

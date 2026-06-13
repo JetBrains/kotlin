@@ -1,0 +1,96 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable
+@Composable
+fun Wat() {}
+
+@NonRestartableComposable
+@Composable
+fun Foo(x: Int) {
+    Wat()
+    @NonRestartableComposable
+    @Composable fun goo() { Wat() }
+    class Bar {
+        @NonRestartableComposable
+        @Composable fun baz() { Wat() }
+    }
+    goo()
+    Bar().baz()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+@FunctionKeyMeta(key = -1778481022, startOffset = 300, endOffset = 312)
+fun Wat(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Wat):Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@NonRestartableComposable
+@Composable
+@FunctionKeyMeta(key = 1715031247, startOffset = 352, endOffset = 569)
+fun Foo(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Foo)N(x)<Wat()>,<goo()>,<baz()>:Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Wat(%composer, 0)
+  @NonRestartableComposable
+  @Composable
+  @FunctionKeyMeta(key = -1574501024, startOffset = 426, endOffset = 445)
+  fun goo(%composer: Composer?, %changed: Int) {
+    sourceInformationMarkerStart(%composer, <>, "C(goo)<Wat()>:Test.kt#2487m")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Wat(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+  }
+  class Bar {
+    @NonRestartableComposable
+    @Composable
+    @FunctionKeyMeta(key = -1209197795, startOffset = 516, endOffset = 535)
+    fun baz(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(baz)<Wat()>:Test.kt#2487m")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Wat(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+  }
+  goo(%composer, 0)
+  Bar().baz(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

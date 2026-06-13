@@ -62,7 +62,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _returnedType: PsiType by lazyPub {
         withPropertySymbol { propertySymbol ->
-            val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegatedProperty == true
+            val isDelegated = (propertySymbol as? KaKotlinPropertySymbol)?.isDelegated == true
             val ktType = if (isDelegated)
                 (kotlinOrigin as? KtProperty)?.delegateExpression?.expressionType
             else
@@ -105,7 +105,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 return@withPropertySymbol propertyName.asString()
             }
 
-            val baseFieldName = propertyName.asString() + if (symbol.isDelegatedProperty) {
+            val baseFieldName = propertyName.asString() + if (symbol.isDelegated) {
                 JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX
             } else {
                 ""
@@ -166,7 +166,7 @@ internal class SymbolLightFieldForProperty private constructor(
         }
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
-                if (propertySymbol.isVal || propertySymbol.isDelegatedProperty) {
+                if (propertySymbol.isVal || propertySymbol.isDelegated) {
                     PsiModifier.FINAL
                 } else {
                     propertySymbol.computeSimpleModality()?.takeIf { it != PsiModifier.FINAL }
@@ -209,7 +209,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
-                            propertySymbol.isDelegatedProperty -> NullabilityAnnotation.NON_NULLABLE
+                            propertySymbol.isDelegated -> NullabilityAnnotation.NON_NULLABLE
                             !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
                             else -> NullabilityAnnotation.NOT_REQUIRED
                         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.isBoxedArray
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
@@ -121,7 +121,7 @@ internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): Co
         else -> return ConeSubstitutor.Empty
     }
     val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-    for ((index, typeParameter) in typeParameters.withIndex()) {
+    for ([index, typeParameter] in typeParameters.withIndex()) {
         val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
         map[typeParameter.symbol] = typeProjection.typeRef.coneType
     }
@@ -160,11 +160,15 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
     }
 }
 
-val FirCallableSymbol<*>.isInlineClassProperty: Boolean
+@OptIn(ValueClassBackendAgnosticApi::class)
+val FirCallableSymbol<*>.isPotentialInlineClassProperty: Boolean
     get() {
         if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-        val inlineClassRepresentation = containingClass.fir.inlineClassRepresentation ?: return false
+        // when we are not sure if the class is full value class or basic value class,
+        // treat it better as potential inline class when not sure
+        val inlineClassRepresentation = containingClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+            ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }
 

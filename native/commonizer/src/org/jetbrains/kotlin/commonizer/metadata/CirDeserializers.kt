@@ -49,7 +49,7 @@ object CirDeserializers {
         val constantValueArguments: MutableMap<CirName, CirConstantValue> = CommonizerMap(allValueArguments.size)
         val annotationValueArguments: MutableMap<CirName, CirAnnotation> = CommonizerMap(allValueArguments.size)
 
-        allValueArguments.forEach { (name, constantValue) ->
+        allValueArguments.forEach { [name, constantValue] ->
             val cirName = CirName.create(name)
             if (constantValue is KmAnnotationArgument.AnnotationValue)
                 annotationValueArguments[cirName] = annotation(source = constantValue.annotation, typeResolver)

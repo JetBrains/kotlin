@@ -34,6 +34,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":native:unsafe-mem"))
     implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":native:kotlin-native-utils")))
@@ -47,6 +48,8 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 open class TestArgumentProvider @Inject constructor(
         objectFactory: ObjectFactory,
@@ -83,9 +86,5 @@ projectTests {
             "${it.key}=${it.value}"
         })
         environment["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
-
-        // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
-        // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }

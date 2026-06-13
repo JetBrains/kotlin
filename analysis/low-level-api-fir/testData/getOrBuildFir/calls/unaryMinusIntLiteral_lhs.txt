@@ -1,0 +1,12 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1).R|kotlin/Int.unaryMinus|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryMinusIntLiteral_lhs.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        Int(-1)
+    }

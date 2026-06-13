@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: test/testFunction
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: test.testFunction
 
@@ -44,10 +43,10 @@ KaKotlinPropertySymbol:
   backingFieldSymbol: KaBackingFieldSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Private
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -67,16 +66,14 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScript.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   callableId: test/testValue
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -100,7 +97,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script simpleScript.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -109,7 +106,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -133,7 +130,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getTestValue
   javaSetterName: null
   isInline: false
@@ -144,7 +141,6 @@ KaNamedClassSymbol:
   classId: test/C
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -167,8 +163,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.C
 
 KaNamedClassSymbol:
@@ -176,7 +172,6 @@ KaNamedClassSymbol:
   classId: test/I
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -199,8 +194,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.I
 
 KaNamedClassSymbol:
@@ -208,7 +203,6 @@ KaNamedClassSymbol:
   classId: test/O
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -231,6 +225,6 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(simpleScript.kts)
   getContainingModule: KaScriptModule "Script simpleScript.kts"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.O

@@ -1,4 +1,6 @@
 KtNameReferenceExpression(137,143): 'Nested'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /AA.Nested.Companion

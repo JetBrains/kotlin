@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentModuleGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 fun interface Psi2IrPostprocessingStep {
     fun invoke(irModuleFragment: IrModuleFragment)
 }
@@ -44,6 +46,7 @@ fun interface Psi2IrPostprocessingStep {
  *  Note: Some backends (like KLIB-based backends) actually support partial linkage. So, for such backends the value
  *  of [checkNoUnboundSymbols] is `null`, which effectively means that the checks are postponed to the partial linkage phase.
  */
+@K1Deprecation
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
     val configuration: Psi2IrConfiguration,
@@ -99,7 +102,7 @@ class Psi2IrTranslator(
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
-        deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
+        deserializers.forEach { it.postProcess(context.irBuiltIns, inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after generation of IR module ${irModule.name.asString()}" }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
@@ -107,7 +110,7 @@ class Psi2IrTranslator(
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
-        deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
+        deserializers.forEach { it.postProcess(context.irBuiltIns, inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after applying all post-processing steps for the generated IR module ${irModule.name.asString()}" }
 
         return irModule

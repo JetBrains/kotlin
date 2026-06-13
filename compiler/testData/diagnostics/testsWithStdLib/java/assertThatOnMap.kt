@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: AbstractMapAssert.java
 
 import java.util.Map;

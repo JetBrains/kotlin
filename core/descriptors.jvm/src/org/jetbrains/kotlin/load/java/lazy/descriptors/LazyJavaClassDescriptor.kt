@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class LazyJavaClassDescriptor(
     val outerContext: LazyJavaResolverContext,
     containingDeclaration: DeclarationDescriptor,

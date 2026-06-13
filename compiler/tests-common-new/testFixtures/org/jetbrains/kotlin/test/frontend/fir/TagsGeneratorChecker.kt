@@ -305,7 +305,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         if (property.delegateFieldSymbol != null) tags += FirTags.PROPERTY_DELEGATE
         if (property.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) tags += FirTags.DESTRUCTURING_DECLARATION
         if (property.receiverParameter != null) tags += FirTags.PROPERTY_WITH_EXTENSION_RECEIVER
-        if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor)
+        if (property.getter?.symbol?.isDefault == false && property.getter?.source?.kind !is KtFakeSourceElementKind.DelegatedPropertyAccessor)
             tags += FirTags.GETTER
         if (property.setter?.symbol?.isDefault == false) tags += FirTags.SETTER
         if (property.contextParameters.isNotEmpty()) tags += FirTags.PROPERTY_WITH_CONTEXT
@@ -623,7 +623,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
             is FirDeclarationOrigin.Java.Library -> true
             is FirDeclarationOrigin.Synthetic.JavaProperty -> true
             FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
-                KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
+                is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
                 else -> true
             }
             else -> false
@@ -704,14 +704,9 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
 
     fun skipSyntheticDeclaration(source: KtSourceElement?): Boolean {
         return when (source?.kind) {
-            KtFakeSourceElementKind.EnumGeneratedDeclaration -> true
-            KtFakeSourceElementKind.DataClassGeneratedMembers -> true
-            KtFakeSourceElementKind.DesugaredPrefixInc -> true
-            KtFakeSourceElementKind.DesugaredPrefixDec -> true
-            KtFakeSourceElementKind.DesugaredPostfixInc -> true
-            KtFakeSourceElementKind.DesugaredPostfixDec -> true
-            KtFakeSourceElementKind.DesugaredPrefixIncSecondGetReference -> true
-            KtFakeSourceElementKind.DesugaredPrefixDecSecondGetReference -> true
+            is KtFakeSourceElementKind.EnumGeneratedDeclaration -> true
+            is KtFakeSourceElementKind.DataClassGeneratedMembers -> true
+            is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> true
             KtFakeSourceElementKind.ArrayAccessNameReference -> true
             KtFakeSourceElementKind.ArrayIndexExpressionReference -> true
             KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> true

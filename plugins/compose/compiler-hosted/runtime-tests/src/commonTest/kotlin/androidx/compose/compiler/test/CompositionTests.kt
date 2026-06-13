@@ -479,6 +479,62 @@ class CompositionTests {
             AnyParameter(Any())
         }
     }
+
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineFunctionWith2Lambdas() = compositionTest {
+        var elements by mutableStateOf(emptyList<String>())
+        var counter = 0
+        compose {
+            // if lambdas introduce a group, `ReceiveValueGroup` is removed after update
+            elements.associateBy({ it }, { it.length })
+            ReceiveValueGroup(counter)
+        }
+
+        elements = List(100) { "$it" }
+        counter += 10
+        advance()
+    }
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineFunctionWith2LambdasComposable() = compositionTest {
+        var elements by mutableStateOf(emptyList<String>())
+        var counter = 0
+        compose {
+            // if not wrapped with a group, `ReceiveValueGroup` is removed after update
+            elements.associateBy({
+                remember { it }
+            }, {
+                it.length
+            })
+            ReceiveValueGroup(counter)
+        }
+
+        elements = List(100) { "$it" }
+        counter += 10
+        advance()
+    }
+
+    /**
+     * This is a regression test against a bug that made it possible for a value of an unstable type
+     * to get passed into code that was generated to only expect to receive values of stable types.
+     * types. For more details, see https://issuetracker.google.com/issues/511102714.
+     */
+    @Test
+    fun subtypeStabilityNeglectedRegressionTest() = compositionTest {
+        val state = mutableStateOf<LoadingState<Unstable>>(LoadingState.Loading)
+        val result = mutableStateOf(false)
+
+        compose {
+            SubtypeStabilityNeglectedRegressionTestEntrypoint(state.value, result)
+        }
+
+        state.value = LoadingState.Content(Unstable())
+        advance()
+        assertEquals(true, result.value)
+    }
 }
 
 @Composable
@@ -490,6 +546,12 @@ fun getCondition() = remember { false }
 @NonRestartableComposable
 @Composable
 fun ReceiveValue(value: Int) {
+    val string = remember { "$value" }
+    assertEquals(1, string.length)
+}
+
+@Composable
+fun ReceiveValueGroup(value: Int) {
     val string = remember { "$value" }
     assertEquals(1, string.length)
 }
@@ -629,4 +691,23 @@ private fun Modifier.clickable(f: () -> Unit): Modifier = this
 @Composable
 fun AnyParameter(any: Any = Any()) {
     use(any)
+}
+
+internal class Unstable {
+    @Suppress("unused")
+    var x: Int = 0
+}
+
+internal sealed class LoadingState<T> {
+    data object Loading : LoadingState<Unstable>()
+    data class Content<T : Any>(var data: T) : LoadingState<T>()
+}
+
+@Composable
+internal fun <T> LoadingContent(state: LoadingState<T>, result: MutableState<Boolean>) {
+    LaunchedEffect(state) {
+        if (state is LoadingState.Content<*>) {
+            result.value = true
+        }
+    }
 }

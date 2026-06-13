@@ -9,7 +9,6 @@ classifiers: 2
     classId: generated/GenClass1
     classKind: CLASS
     companionObject: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -39,7 +38,6 @@ classifiers: 2
     classId: generated/GenClass2
     classKind: CLASS
     companionObject: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isData: false
@@ -68,7 +66,6 @@ callables: 5
   KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelFun1
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -100,7 +97,6 @@ callables: 5
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -108,6 +104,7 @@ callables: 5
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -134,7 +131,6 @@ callables: 5
   KaNamedFunctionSymbol:
     annotations: []
     callableId: generated/genTopLevelExtension1
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     contractEffects: []
@@ -159,10 +155,10 @@ callables: 5
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -194,10 +190,10 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Private
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -215,13 +211,11 @@ callables: 5
         type: kotlin/String
       visibility: PRIVATE
     callableId: generated/genTopLevelVal1
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -249,7 +243,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
-    isDelegatedProperty: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -279,10 +273,10 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Private
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -300,13 +294,11 @@ callables: 5
         type: kotlin/String
       visibility: PRIVATE
     callableId: generated/genTopLevelVar1
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -334,7 +326,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
-    isDelegatedProperty: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -355,7 +347,6 @@ callables: 5
     setter: KaPropertySetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Internal
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -372,7 +363,6 @@ callables: 5
       parameter: KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -380,6 +370,7 @@ callables: 5
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -406,7 +397,6 @@ callables: 5
         KaValueParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           generatedPrimaryConstructorProperty: null
           hasDeclaredDefaultValue: false
@@ -414,6 +404,7 @@ callables: 5
           isActual: false
           isCompanion: false
           isCrossinline: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -444,10 +435,10 @@ callables: 5
     backingFieldSymbol: KaBackingFieldSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Private
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -465,13 +456,11 @@ callables: 5
         type: kotlin/Int
       visibility: PRIVATE
     callableId: generated/genExtensionVal1
-    compilerVisibility: Public
     contextParameters: []
     contextReceivers: []
     getter: KaPropertyGetterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       hasStableParameterNames: true
       isActual: false
@@ -488,10 +477,10 @@ callables: 5
       receiverParameter: KaReceiverParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -520,7 +509,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
-    isDelegatedProperty: false
+    isDelegated: false
     isExpect: false
     isExtension: true
     isExternal: false
@@ -536,10 +525,10 @@ callables: 5
     receiverParameter: KaReceiverParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false

@@ -1,3 +1,0 @@
-expected symbols:
-Common.kt : receiver parameter kotlin.String
-Common.kt : expect fun kotlin.String.foo()

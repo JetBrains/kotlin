@@ -5,10 +5,14 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
 private const val RUNS = 1_000_000
 
-open class InheritanceBenchmark {
-
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Inheritance {
     open class A() {
         fun a(): Int = 0
 
@@ -491,7 +495,8 @@ open class InheritanceBenchmark {
     val f = F()
     val g = G()
 
-    fun baseCalls(): Int {
+    @Benchmark
+    fun baseCalls(bh: Blackhole) {
         var x = 0
         for (i in 0 until RUNS) {
             x += a.a()
@@ -503,6 +508,6 @@ open class InheritanceBenchmark {
             x += g.f10()
             x += g.g3()
         }
-        return x
+        bh.consume(x)
     }
 }

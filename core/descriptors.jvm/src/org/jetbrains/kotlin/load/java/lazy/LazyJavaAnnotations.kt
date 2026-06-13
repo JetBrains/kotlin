@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner
 import org.jetbrains.kotlin.name.FqName
 
+@K1Deprecation
 class LazyJavaAnnotations(
     private val c: LazyJavaResolverContext,
     private val annotationOwner: JavaAnnotationOwner,
@@ -47,5 +49,6 @@ class LazyJavaAnnotations(
     override fun isEmpty() = annotationOwner.annotations.isEmpty() && !annotationOwner.isDeprecatedInJavaDoc
 }
 
+@K1Deprecation
 fun LazyJavaResolverContext.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations =
     LazyJavaAnnotations(this, annotationsOwner)

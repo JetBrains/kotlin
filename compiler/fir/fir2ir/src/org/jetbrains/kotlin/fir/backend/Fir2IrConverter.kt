@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -241,17 +244,16 @@ class Fir2IrConverter(
         // Add synthetic members *before* fake override generations.
         // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
         if (klass is FirRegularClass && irConstructor != null && (irClass.isValue || irClass.isData)) {
-            declarationStorage.enterScope(irConstructor.symbol)
-            if (irClass.isSingleFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
+            declarationStorage.withScope(irConstructor.symbol) {
+                allDeclarations += when (irClass.valueClassRepresentation) {
+                    is InlineClassRepresentation -> dataClassMembersGenerator.generateSingleFieldValueClassMembers(klass, irClass)
+                    is JvmInlineMultiFieldValueClassRepresentation -> dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
+                    is FullValueClassRepresentation if irClass.modality != Modality.ABSTRACT && irClass.modality != Modality.SEALED ->
+                        dataClassMembersGenerator.generateFullValueClassMembers(klass, irClass)
+                    else if irClass.isData -> dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
+                    else -> emptyList()
+                }
             }
-            if (irClass.isMultiFieldValueClass) {
-                allDeclarations += dataClassMembersGenerator.generateMultiFieldValueClassMembers(klass, irClass)
-            }
-            if (irClass.isData) {
-                allDeclarations += dataClassMembersGenerator.generateDataClassMembers(klass, irClass)
-            }
-            declarationStorage.leaveScope(irConstructor.symbol)
         }
         return irClass
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -28,9 +29,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 
+@K1Deprecation
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        for ((valueParameter, arguments) in resolvedCall.valueArguments) {
+        for ([valueParameter, arguments] in resolvedCall.valueArguments) {
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.varargElementType ?: continue
             } else {

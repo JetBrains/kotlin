@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.junit.jupiter.api.DisplayName
@@ -636,11 +638,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
                 val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
 
-                initSwiftPmProject(cacheDirFile) {
-                    swiftPMDependencies {
-                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("default")
-                    }
-                }
+                initSwiftPmProject(cacheDirFile) {}
 
 
                 val identifierGitIgnoreFuzz = projectPath.resolve(".swiftpm-locks/$fuzzIdentifier/.gitignore")
@@ -756,6 +754,225 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     assertGitIgnoreEquals(
                         identifierGitIgnoreBuzz,
                         "swiftPMCheckout/",
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `identifier synchronization ignores non-Apple consumer projects when generating umbrella lock`(
+        version: GradleVersion,
+    ) {
+        val defaultIdentifier = "default"
+        val sharedIdentifier = "shared"
+        val sharedProjectName = "shared"
+        val sharedRepoName = "SharedPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val sharedRepo = repoRef(sharedRepoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initJvmKmp{
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$sharedProjectName"))
+                    }
+                }
+
+                val sharedProject = project("empty", version) {
+                    withLockFileFixture(
+                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(sharedProjectName),
+                    ) {
+                        initSwiftPmProject(cacheDirFile) {
+                            jvm()
+                            swiftPMDependencies {
+                                packageResolvedSynchronization = identifier(sharedIdentifier)
+
+                                swiftPackage(
+                                    url = url(sharedRepo.url),
+                                    version = from("1.0.0"),
+                                    products = listOf(product(sharedRepo.name)),
+                                )
+                            }
+                        }
+                    }
+                }
+
+                include(sharedProject, sharedProjectName)
+
+
+                val umbrellaRootPackageManifest =
+                    projectPath.resolve(".swiftpm-locks/$defaultIdentifier/swiftImport/Package.swift")
+
+                val umbrellaSharedPackageManifest =
+                    projectPath.resolve(".swiftpm-locks/$sharedIdentifier/swiftImport/Package.swift")
+
+                val sharedPersistedPackageResolved = projectPath.resolve(".swiftpm-locks/$sharedIdentifier/swiftImport/Package.resolved")
+                val rootPersistedPackageResolved = persistedPackageResolvedSyncPath
+
+                build(":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+
+                    assertExactTasksInGraph(
+                        ":$sharedProjectName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":$sharedProjectName:${
+                            GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(
+                                sharedIdentifier
+                            )
+                        }",
+                        ":$sharedProjectName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(sharedIdentifier)}",
+                        ":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":$sharedProjectName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
+                    )
+
+                    assertFileExists(
+                        umbrellaSharedPackageManifest,
+                        "Umbrella Package.swift should be generated"
+                    )
+
+                    val manifestDescription = describeSwiftPackage(umbrellaSharedPackageManifest.parent)
+
+                    assertEquals(
+                        manifestDescription.dependencies.map { it.identity },
+                        listOf("_$sharedProjectName").sorted(),
+                        "Only Apple SwiftPM project must be included in umbrella Package.swift"
+                    )
+
+                    assertResolvedVersions(
+                        persistedPackageResolved = sharedPersistedPackageResolved,
+                        expectedPins = listOf(
+                            sharedRepo to "1.0.0",
+                        ),
+                    )
+
+                    assertResolvedVersions(
+                        persistedPackageResolved = sharedProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
+                        checkoutRepoDir = sharedProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        expectedPins = listOf(
+                            sharedRepo to "1.0.0",
+                        ),
+                    )
+                }
+
+
+                build(":${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+
+                    assertExactTasksInGraph(
+                        ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
+                    )
+
+
+                    assertFileNotExists(
+                        umbrellaRootPackageManifest,
+                        "Umbrella Package.swift should not be generated"
+                    )
+
+                    assertFileNotExists(
+                        rootPersistedPackageResolved,
+                        "Umbrella Package.resolved should be generated"
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `link task skips all SwiftPM import tasks in unrelated project without direct or transitive SwiftPM deps when sibling uses explicit identifier alignment`(
+        version: GradleVersion,
+    ) {
+        val alignedIdentifier = "sharedLock"
+        val emptyIdentifier = "emptyLock"
+        val projectWithDepsName = "projectWithDeps"
+        val projectWithoutDepsName = "projectWithoutDeps"
+        val repoName = "TestPackage"
+
+        project("empty", version) {
+            withLockFileFixture(
+                packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("rootLock")
+            ) {
+                val repo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("rootLock")
+                    }
+                }
+
+                val projectWithDeps = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(alignedIdentifier)
+                            swiftPackage(
+                                url = url(repo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(repo.name)),
+                            )
+                        }
+                    }
+                }
+
+                val projectWithoutDeps = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(emptyIdentifier)
+                        }
+                    }
+                }
+
+                include(projectWithDeps, projectWithDepsName)
+                include(projectWithoutDeps, projectWithoutDepsName)
+
+                val depsGenerateUmbrellaTask =
+                    ":$projectWithDepsName:${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(alignedIdentifier)}"
+                val depsFetchUmbrellaTask =
+                    ":$projectWithDepsName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(alignedIdentifier)}"
+
+                dumpTaskGraph(":$projectWithoutDepsName:linkDebugTestIosSimulatorArm64") {
+
+                    assertExactSwiftImportTasksInGraph(
+                        ":$projectWithoutDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$projectWithoutDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":$projectWithoutDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
+                        ":$projectWithoutDepsName:${
+                            GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(
+                                emptyIdentifier
+                            )
+                        }",
+                        ":$projectWithoutDepsName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(emptyIdentifier)}",
+                        ":$projectWithoutDepsName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":$projectWithoutDepsName:iosSimulatorArm64ProcessResources",
+                        ":$projectWithoutDepsName:computeLocalPackageDependencyInputFiles",
+                        ":$projectWithoutDepsName:compileKotlinIosSimulatorArm64",
+                        ":$projectWithoutDepsName:convertSyntheticImportProjectIntoDefFileIphonesimulator",
+                        ":$projectWithoutDepsName:iosSimulatorArm64MainKlibrary",
+                        ":$projectWithoutDepsName:compileTestKotlinIosSimulatorArm64",
+                        ":$projectWithoutDepsName:linkDebugTestIosSimulatorArm64",
+                    )
+                }
+
+                dumpTaskGraph(":$projectWithDepsName:linkDebugTestIosSimulatorArm64") {
+
+                    assertExactSwiftImportTasksInGraph(
+                        ":$projectWithDepsName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$projectWithDepsName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":$projectWithDepsName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
+                        depsGenerateUmbrellaTask,
+                        depsFetchUmbrellaTask,
+                        ":$projectWithDepsName:${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":$projectWithDepsName:iosSimulatorArm64ProcessResources",
+                        ":$projectWithDepsName:computeLocalPackageDependencyInputFiles",
+                        ":$projectWithDepsName:compileKotlinIosSimulatorArm64",
+                        ":$projectWithDepsName:convertSyntheticImportProjectIntoDefFileIphonesimulator",
+                        ":$projectWithDepsName:cinteropSwiftPMImportIosSimulatorArm64",
+                        ":$projectWithDepsName:iosSimulatorArm64MainKlibrary",
+                        ":$projectWithDepsName:compileTestKotlinIosSimulatorArm64",
+                        ":$projectWithDepsName:linkDebugTestIosSimulatorArm64",
                     )
                 }
             }

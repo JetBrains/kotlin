@@ -11,6 +11,8 @@ import com.intellij.util.ThrowableRunnable
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
@@ -75,7 +77,8 @@ class CompileTimeFibonacciTest {
             is ResultWithDiagnostics.Failure -> {
                 val error = result.reports.first()
 
-                val expectedFile = File("plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts")
+                val expectedFile =
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts")
                 val expectedErrorMessage = """
                     ($expectedFile:3:1) Fibonacci of non-positive numbers like 0 are not supported
                 """.trimIndent()
@@ -91,7 +94,7 @@ class CompileTimeFibonacciTest {
     }
 
     private fun runScript(scriptPath: String): ResultWithDiagnostics<String> {
-        val source = File(testDataPath, scriptPath).toScriptSource()
+        val source = ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + scriptPath).toScriptSource()
         return compileScript(source)
             .onSuccess { compiled ->
                 captureOut {
@@ -118,7 +121,7 @@ class CompileTimeFibonacciTest {
 
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
-        val scriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+        val scriptDefinition = environment.configuration.getCompilerExtensions(ScriptDefinitionProvider).first().findDefinition(script)!!
 
         val scriptCompilationConfiguration = scriptDefinition.compilationConfiguration.with {
             jvm {
@@ -163,7 +166,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                     .collectedData
                     ?.get(ScriptCollectedData.collectedAnnotations)
                     ?.filterByAnnotationType<Fib>()
-                    ?.mapSuccess { (fib, location) ->
+                    ?.mapSuccess { (val fib = annotation, val location) ->
                         fib.number.takeIf { it > 0 }?.asSuccess()
                             ?: makeFailureResult(
                                 message = "Fibonacci of non-positive numbers like ${fib.number} are not supported",

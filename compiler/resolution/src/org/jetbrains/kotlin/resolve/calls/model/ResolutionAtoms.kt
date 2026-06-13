@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -36,22 +37,27 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  *
  * Expression with type is also primitive. This is done for simplification. todo
  */
+@K1Deprecation
 interface ResolutionAtom
 
+@K1Deprecation
 sealed interface CallableReferenceResolutionAtom : ResolutionAtom {
     val lhsResult: LHSResult
     val rhsName: Name
     val call: KotlinCall
 }
 
+@K1Deprecation
 class CallableReferenceKotlinCall(
     override val call: KotlinCall,
     override val lhsResult: LHSResult,
     override val rhsName: Name,
 ) : CallableReferenceResolutionAtom
 
+@K1Deprecation
 sealed interface ResolvedCallableReferenceAtom
 
+@K1Deprecation
 sealed class ResolvedAtom {
     abstract val atom: ResolutionAtom? // CallResolutionResult has no ResolutionAtom
 
@@ -77,6 +83,7 @@ sealed class ResolvedAtom {
     }
 }
 
+@K1Deprecation
 abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract override val atom: KotlinCall
     abstract val candidateDescriptor: CallableDescriptor
@@ -96,18 +103,21 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract fun setCandidateDescriptor(newCandidateDescriptor: CallableDescriptor)
 }
 
+@K1Deprecation
 class SamConversionDescription(
     val convertedTypeByOriginParameter: UnwrappedType,
     val convertedTypeByCandidateParameter: UnwrappedType, // expected type for corresponding argument
     val originalParameterType: UnwrappedType // need to overload resolution on inherited SAM interfaces
 )
 
+@K1Deprecation
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {
     init {
         setAnalyzedResults(listOf())
     }
 }
 
+@K1Deprecation
 class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveIndependently: Boolean) : ResolvedAtom() {
     init {
         if (resolveIndependently)
@@ -118,12 +128,14 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
 }
 
 
+@K1Deprecation
 sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<UnwrappedType>
     abstract override val outputType: UnwrappedType?
     abstract override val expectedType: UnwrappedType?
 }
 
+@K1Deprecation
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: LambdaKotlinCallArgument,
     override val expectedType: UnwrappedType
@@ -153,6 +165,7 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     }
 }
 
+@K1Deprecation
 class ResolvedLambdaAtom(
     override val atom: LambdaKotlinCallArgument,
     val isSuspend: Boolean,
@@ -193,10 +206,12 @@ class ResolvedLambdaAtom(
     override val outputType: UnwrappedType get() = returnType
 }
 
+@K1Deprecation
 fun ResolvedLambdaAtom.unwrap(): ResolvedLambdaAtom {
     return if (resultArgumentsInfo != null) this else subResolvedAtoms!!.single() as ResolvedLambdaAtom
 }
 
+@K1Deprecation
 abstract class ResolvedCallableReferenceArgumentAtom(
     override val atom: CallableReferenceKotlinCallArgument,
     override val expectedType: UnwrappedType?
@@ -216,6 +231,7 @@ abstract class ResolvedCallableReferenceArgumentAtom(
 
 }
 
+@K1Deprecation
 class EagerCallableReferenceAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?
@@ -226,6 +242,7 @@ class EagerCallableReferenceAtom(
     fun transformToPostponed(): PostponedCallableReferenceAtom = PostponedCallableReferenceAtom(this)
 }
 
+@K1Deprecation
 sealed class AbstractPostponedCallableReferenceAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?
@@ -237,11 +254,13 @@ sealed class AbstractPostponedCallableReferenceAtom(
         get() = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.outputType
 }
 
+@K1Deprecation
 class CallableReferenceWithRevisedExpectedTypeAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?,
 ) : AbstractPostponedCallableReferenceAtom(atom, expectedType)
 
+@K1Deprecation
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
 ) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType),
@@ -255,6 +274,7 @@ class PostponedCallableReferenceAtom(
     }
 }
 
+@K1Deprecation
 class ResolvedCollectionLiteralAtom(
     override val atom: CollectionLiteralKotlinCallArgument,
     val expectedType: UnwrappedType?
@@ -264,6 +284,7 @@ class ResolvedCollectionLiteralAtom(
     }
 }
 
+@K1Deprecation
 sealed class CallResolutionResult(
     resultCallAtom: ResolvedCallAtom?,
     val diagnostics: List<KotlinCallDiagnostic>,
@@ -297,12 +318,14 @@ sealed class CallResolutionResult(
     override fun toString(): String = "diagnostics: (${diagnostics.joinToString()})"
 }
 
+@K1Deprecation
 open class SingleCallResolutionResult(
     val resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
     constraintSystem: NewConstraintSystem
 ) : CallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
+@K1Deprecation
 class PartialCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
@@ -310,34 +333,41 @@ class PartialCallResolutionResult(
     val forwardToInferenceSession: Boolean = false
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
+@K1Deprecation
 class CompletedCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
     constraintSystem: NewConstraintSystem
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
+@K1Deprecation
 class ErrorCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
     constraintSystem: NewConstraintSystem
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
+@K1Deprecation
 class AllCandidatesResolutionResult(
     val allCandidates: Collection<CandidateWithDiagnostics>,
     constraintSystem: NewConstraintSystem
 ) : CallResolutionResult(null, emptyList(), constraintSystem)
 
+@K1Deprecation
 data class CandidateWithDiagnostics(val candidate: ResolutionCandidate, val diagnostics: List<KotlinCallDiagnostic>)
 
+@K1Deprecation
 fun CallResolutionResult.resultCallAtom(): ResolvedCallAtom? =
     if (this is SingleCallResolutionResult) resultCallAtom else null
 
+@K1Deprecation
 val ResolvedCallAtom.freshReturnType: UnwrappedType?
     get() {
         val returnType = candidateDescriptor.returnType ?: return null
         return freshVariablesSubstitutor.safeSubstitute(returnType.unwrap())
     }
 
+@K1Deprecation
 class PartialCallContainer(val result: PartialCallResolutionResult?) {
     companion object {
         val empty = PartialCallContainer(null)
@@ -348,6 +378,7 @@ class PartialCallContainer(val result: PartialCallResolutionResult?) {
  * Used only for delegated properties with one good candidate and one for bad
  * e.g. in case `var x by lazy { "" }
  */
+@K1Deprecation
 class StubResolvedAtom(val typeVariable: TypeConstructor) : ResolvedAtom() {
     override val atom: ResolutionAtom? get() = null
 }

@@ -29,6 +29,15 @@ class PatternTest2 {
     fun assertTrue(msg: String, value: Boolean) = assertTrue(value, msg)
     fun assertFalse(msg: String, value: Boolean) = assertFalse(value, msg)
 
+    private fun assertFindAll(regex: Regex, input: String, expected: List<String>) {
+        assertEquals(expected, regex.findAll(input).map(MatchResult::value).toList(), "Unexpected matches for `$regex` in `$input`")
+    }
+
+    private fun assertFailsToCompile(pattern: String): IllegalArgumentException =
+        assertFailsWith<IllegalArgumentException>("IllegalArgumentException expected for pattern `$pattern`") {
+            Regex(pattern)
+        }
+
     /**
      * Tests simple pattern compilation and matching methods
      */
@@ -544,7 +553,12 @@ class PatternTest2 {
         assertTrue(regex.matches("<*xx\t00;^zz 11;"))
 
         // Test x|y pattern
-        // TODO
+        regex = Regex("(?:[a-z]|[0-9])+")
+        assertTrue(regex.matches("a"))
+        assertTrue(regex.matches("0"))
+        assertTrue(regex.matches("a24"))
+        assertFalse(regex.matches("A"))
+        assertFalse(regex.matches("A24"))
     }
 
     @Test fun testPOSIXGroups() {
@@ -652,86 +666,75 @@ class PatternTest2 {
         }
 
         // Test \p{Alpha}
-        // TODO
+        regex = Regex("\\p{Alpha}+")
+        assertTrue(regex.matches("abcXYZ"), "\\p{Alpha}+ should match ASCII letters")
+        assertFalse(regex.matches("abc123"))
+        assertFalse(regex.matches("\u00c0\u00df\u03a9"), "\\p{Alpha}+ should not match non-ASCII letters")
 
         // Test \p{Digit}
-        // TODO
+        regex = Regex("\\p{Digit}+")
+        assertTrue(regex.matches("0123456789"), "\\p{Digit}+ should match ASCII digits")
+        assertFalse(regex.matches("12a45"))
+        assertFalse(regex.matches("١٢٣"), "\\p{Digit}+ should not match non-ASCII digits")
 
         // Test \p{XDigit}
-        // TODO
+        regex = Regex("\\p{XDigit}+")
+        assertTrue(regex.matches("0123456789abcdefABCDEF"), "\\p{XDigit}+ should match hexadecimal digits")
+        assertFalse(regex.matches("01234xyz"))
+        assertFalse(regex.matches("١٢٣"), "\\p{XDigit}+ should not match non-ASCII digits")
 
         // Test \p{Alnum}
-        // TODO
+        regex = Regex("\\p{Alnum}+")
+        assertTrue(regex.matches("abcXYZ123"), "\\p{Alnum}+ should match ASCII letters and digits")
+        assertFalse(regex.matches("abc-123"))
+        assertFalse(regex.matches("\u00c0١٢٣"), "\\p{Alnum}+ should not match non-ASCII letters or digits")
 
         // Test \p{Punct}
-        // TODO
+        regex = Regex("\\p{Punct}+")
+        assertTrue(regex.matches("!\"#\$%&'()*+,-./:;<=>?@[\\\\]^_`{|}~"), "\\p{Punct}+ should match ASCII punctuation")
+        assertFalse(regex.matches("abc!"))
+        assertFalse(regex.matches("«»"), "\\p{Punct}+ should not match non-ASCII punctuation")
 
         // Test \p{Graph}
-        // TODO
+        regex = Regex("\\p{Graph}+")
+        assertTrue(regex.matches("abcXYZ123!@#"), "\\p{Graph}+ should match visible ASCII characters")
+        assertFalse(regex.matches("abc xyz"))
+        assertFalse(regex.matches("abc\u00a1"), "\\p{Graph}+ should not match non-ASCII graphic characters")
 
         // Test \p{Print}
-        // TODO
+        regex = Regex("\\p{Print}+")
+        // TODO: Ignored: KT-85324
+        // assertTrue(regex.matches(" "), "\\p{Print}+ should match a space")
+        // assertTrue(regex.matches("!"), "\\p{Print}+ should match printable punctuation")
+        // assertFalse(regex.matches("\u00a0"), "\\p{Print}+ should not match non-ASCII printable characters")
 
         // Test \p{Blank}
-        // TODO
+        regex = Regex("\\p{Blank}+")
+        assertTrue(regex.matches(" \t  \t"), "\\p{Blank}+ should match spaces and tabs")
+        assertFalse(regex.matches(" \n"))
+        assertFalse(regex.matches("\u00a0"), "\\p{Blank}+ should not match non-ASCII space separators")
 
         // Test \p{Space}
-        // TODO
+        regex = Regex("\\p{Space}+")
+        assertTrue(regex.matches(" \t\n\r\u000B\u000C"), "\\p{Space}+ should match ASCII whitespace")
+        assertFalse(regex.matches(" a "))
+        assertFalse(regex.matches("\u00a0"), "\\p{Space}+ should not match non-ASCII space separators")
 
         // Test \p{Cntrl}
-        // TODO
+        regex = Regex("\\p{Cntrl}+")
+        assertTrue(regex.matches("\u0000\u0001\u001F\u007F"), "\\p{Cntrl}+ should match ASCII control characters")
+        assertFalse(regex.matches("\u0000A"))
+        assertFalse(regex.matches("\u0085"), "\\p{Cntrl}+ should not match non-ASCII control characters")
     }
 
-    @Test fun testUnicodeCategories() {
-        // Test Unicode categories using \p and \P
-        // One letter codes: L, M, N, P, S, Z, C
-        // Two letter codes: Lu, Nd, Sc, Sm, ...
-        // See java.lang.Character and Unicode standard for complete list
-
+    // Regression test for KT-80603
+    @Test fun testNumberCategory() {
         val regex = Regex("\\p{IsN}+")
         assertEquals(listOf("٧٨٩", "०", "๙", "Ⅴ", "Ⅹ", "ⅻ", "123", "½", "¼", "¾", "²", "³", "456"),
             regex.findAll("٧٨٩ ० ๙ Ⅴ Ⅹ ⅻ 123 ½ ¼ ¾ x² + y³ 中文 العربية456")
                 .map(MatchResult::value)
                 .toList()
         )
-
-        // TODO
-        // Test \p{L}
-
-        // ... etc
-
-        // Test two letter codes:
-        // From unicode.org:
-        // Lu
-        // Ll
-        // Lt
-        // Lm
-        // Lo
-        // Mn
-        // Mc
-        // Me
-        // Nd
-        // Nl
-        // No
-        // Pc
-        // Pd
-        // Ps
-        // Pe
-        // Pi
-        // Pf
-        // Po
-        // Sm
-        // Sc
-        // Sk
-        // So
-        // Zs
-        // Zl
-        // Zp
-        // Cc
-        // Cf
-        // Cs
-        // Co
-        // Cn
     }
 
     @Test fun testUnicodeBlocks() {
@@ -766,91 +769,274 @@ class PatternTest2 {
 
     @Test fun testCapturingGroups() {
         // Test simple capturing groups
-        // TODO
+        var result = Regex("(ab)(cd)").matchEntire("abcd")
+        assertNotNull(result)
+        assertEquals(listOf("abcd", "ab", "cd"), result.groupValues)
 
         // Test grouping without capture (?:...)
-        // TODO
+        result = Regex("(?:ab)+(cd)").matchEntire("ababcd")
+        assertNotNull(result)
+        assertEquals(2, result.groups.size)
+        assertEquals("cd", result.groupValues[1])
 
         // Test combination of grouping and capture
-        // TODO
+        result = Regex("((?:ab)+)-(c(d))").matchEntire("abab-cd")
+        assertNotNull(result)
+        assertEquals(listOf("abab-cd", "abab", "cd", "d"), result.groupValues)
 
         // Test \<num> sequence with capturing and non-capturing groups
-        // TODO
+        val regex = Regex("((?:ab)+)-(?:cd)-\\1")
+        assertTrue(regex.matches("abab-cd-abab"))
+        assertFalse(regex.matches("abab-cd-ab"))
 
         // Test \<num> with <num> out of range
-        // TODO
+        assertFailsToCompile("(a)\\2")
     }
 
     @Test fun testRepeats() {
         // Test ?
-        // TODO
+        var regex = Regex("colou?r")
+        assertTrue(regex.matches("color"))
+        assertTrue(regex.matches("colour"))
+        assertFalse(regex.matches("colr"))
+        assertFalse(regex.matches("colouur"))
+        assertFalse(regex.matches("xcolor"))
 
         // Test *
-        // TODO
+        regex = Regex("ab*c")
+        assertTrue(regex.matches("ac"))
+        assertTrue(regex.matches("abbbc"))
+        assertFalse(regex.matches("ab"))
+        assertFalse(regex.matches("abdc"))
+        assertFalse(regex.matches("cabbbc"))
 
         // Test +
-        // TODO
+        regex = Regex("ab+c")
+        assertFalse(regex.matches("ac"))
+        assertTrue(regex.matches("abc"))
+        assertTrue(regex.matches("abbbbbc"))
+        assertFalse(regex.matches("abb"))
+        assertFalse(regex.matches("xabc"))
 
         // Test {<num>}, including 0, 1 and more
-        // TODO
+        assertTrue(Regex("a{0}b").matches("b"))
+        assertTrue(Regex("a{1}b").matches("ab"))
+        assertTrue(Regex("a{3}b").matches("aaab"))
+        assertFalse(Regex("a{1}b").matches("b"))
+        assertFalse(Regex("a{3}b").matches("aaaab"))
+        assertFalse(Regex("a{3}b").matches("aab"))
 
         // Test {<num>,}, including 0, 1 and more
-        // TODO
+        assertTrue(Regex("a{0,}b").matches("b"))
+        assertTrue(Regex("a{1,}b").matches("ab"))
+        assertTrue(Regex("a{3,}b").matches("aaaaab"))
+        assertFalse(Regex("a{1,}b").matches("b"))
+        assertFalse(Regex("a{3,}b").matches("aab"))
+        assertFalse(Regex("a{3,}b").matches("aaaaac"))
 
         // Test {<n1>,<n2>}, with n1 < n2, n1 = n2 and n1 > n2 (illegal?)
-        // TODO
+        assertTrue(Regex("a{2,4}b").matches("aaab"))
+        assertFalse(Regex("a{2,4}b").matches("ab"))
+        assertFalse(Regex("a{2,4}b").matches("aaaaab"))
+        assertTrue(Regex("a{3,3}b").matches("aaab"))
+        assertFalse(Regex("a{3,3}b").matches("aab"))
+        assertFalse(Regex("a{3,3}b").matches("aaaab"))
+        assertFailsToCompile("a{4,2}b")
     }
 
     @Test fun testAnchors() {
         // Test ^, default and MULTILINE
-        // TODO
+        assertTrue(Regex("^foo").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("^bar").containsMatchIn("foo\nbar"))
+        assertTrue(Regex("^foo", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("^bar", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
 
         // Test $, default and MULTILINE
-        // TODO
+        assertTrue(Regex("bar$").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("foo$").containsMatchIn("foo\nbar"))
+        assertTrue(Regex("foo$", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("bar$", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
 
         // Test \b (word boundary)
-        // TODO
+        assertTrue(Regex("\\bcat\\b").containsMatchIn("a cat!"))
+        assertFalse(Regex("\\bcat\\b").containsMatchIn("concatenate"))
 
         // Test \B (not a word boundary)
-        // TODO
+        assertTrue(Regex("c\\Bat").containsMatchIn("category"))
+        assertTrue(Regex("c\\Bat").containsMatchIn("cat"))
+        assertFalse(Regex("c\\Bat").containsMatchIn("c-at"))
+        assertTrue(Regex("\\B").matches(""))
 
         // Test \A (beginning of string)
-        // TODO
+        assertTrue(Regex("\\Afoo").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("\\Abar").containsMatchIn("foo\nbar"))
+        assertFalse(Regex("\\Abar", RegexOption.MULTILINE).containsMatchIn("foo\nbar"))
+        assertTrue(Regex("\\A").matches(""))
 
         // Test \Z (end of string)
-        // TODO
+        assertFalse(Regex("foo\\Z").matches("foo\n"))
+        assertFalse(Regex("foo\\Z", RegexOption.MULTILINE).matches("foo\n"))
+        assertTrue(Regex("foo\\Z").matches("foo"))
+        assertTrue(Regex("\\Z").matches(""))
 
         // Test \z (end of string)
-        // TODO
+        assertFalse(Regex("foo\\z").matches("foo\n"))
+        assertTrue(Regex("foo\\z").matches("foo"))
+        assertTrue(Regex("\\z").matches(""))
 
         // Test \G
-        // TODO
+        assertFindAll(Regex("\\G[0-9]{2}"), "123456 78", listOf("12", "34", "56"))
 
         // Test positive lookahead using (?=...)
-        // TODO
+        assertFindAll(Regex("\\w+(?==)"), "LC_ALL=C LANG", listOf("LC_ALL"))
+        assertFalse(Regex("\\w+(?==)").containsMatchIn("LC_ALL"))
 
         // Test negative lookahead using (?!...)
-        // TODO
+        assertFindAll(Regex("\\w+(?!=)"), "LC_ALL=C LANG", listOf("LC_AL", "C", "LANG"))
+        assertFalse(Regex("\\w+(?!=)").containsMatchIn("=("))
 
         // Test positive lookbehind using (?<=...)
-        // TODO
+        assertFindAll(Regex("(?<=#)\\w+"), "a #tag and #topic", listOf("tag", "topic"))
+        assertFalse(Regex("(?<=#)\\w+").containsMatchIn("not sharp enough"))
 
         // Test negative lookbehind using (?<!...)
-        // TODO
+        assertFindAll(Regex("(?<!#)\\b\\w+\\b"), "a #tag and plain", listOf("a", "and", "plain"))
+        assertFalse(Regex("(?<!#)\\b\\w+\\b").containsMatchIn("#too #sharp"))
+    }
+
+    fun testRegexMatching(
+        pattern: String,
+        matchingStrings: List<String>,
+        nonMatchingStrings: List<String> = emptyList(),
+        vararg options: RegexOption
+    ) {
+        val regex = Regex(pattern, options.toSet())
+        matchingStrings.forEach {
+            assertTrue(regex.matches(it), "$regex did not match '$it'")
+        }
+        nonMatchingStrings.forEach {
+            assertFalse(regex.matches(it), "$regex should not match '$it'")
+        }
+    }
+
+    @Test fun testInlineIgnoreCaseFlag() {
+        testRegexMatching("(?i)abc", listOf("abc", "ABC", "aBc"))
+        testRegexMatching("a(?i)bc", listOf("aBC", "abc", "aBc"), listOf("Abc"))
+        testRegexMatching("(?i)(?-i)a", listOf("a"), listOf("A"))
+        testRegexMatching("(?-i)(?i)a", listOf("a", "A"))
+        testRegexMatching("a(?i)b(?-i)c", listOf("abc", "aBc"), listOf("Abc", "AbC", "abC"))
+        testRegexMatching("(?-i)abc", listOf("abc"), listOf("ABC"), RegexOption.IGNORE_CASE)
+        testRegexMatching("ab(?-i)c", listOf("abc", "ABc", "aBc"), listOf("ABC"), RegexOption.IGNORE_CASE)
+        testRegexMatching("a(?i:bc)d", listOf("aBCd", "abCd"), listOf("AbcD", "Abcd", "abcD"))
+        testRegexMatching("(?i)a(?-i:bc)d", listOf("AbcD", "abcD", "Abcd"), listOf("aBCd", "abCd", "aBcd"))
+        testRegexMatching("a(?-i:b)c", listOf("Abc", "abC"), listOf("aBc"), RegexOption.IGNORE_CASE)
+        testRegexMatching("(?i:(?-i:(?i:abc)))", listOf("aBc"))
+    }
+
+    @Test fun testInlineDotAllFlag() {
+        testRegexMatching("(?s)a.c", listOf("abc", "a\nc"))
+        testRegexMatching(".(?s).c", listOf("abc", "a\nc"), listOf("\nbc"))
+        testRegexMatching("(?s)(?-s).", listOf("a"), listOf("\n"))
+        testRegexMatching("(?-s)(?s).", listOf("a", "\n"))
+        testRegexMatching(".(?s).(?-s).", listOf("abc", "a\nc"), listOf("\n\n\n", "\nab", "ab\n"))
+        testRegexMatching("(?-s).", emptyList(), listOf("\n"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching(".(?-s).", listOf("ab", "\na"), listOf("\n\n", "a\n"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching(".(?s:.).", listOf("abc", "a\nb"), listOf("\n\n\n", "\nab", "ab\n"))
+        testRegexMatching("(?s).(?-s:.).", listOf("abc", "\n_\n", "\nab", "ab\n"), listOf("\n\n\n", "a\nb"))
+        testRegexMatching(".(?-s:.).", listOf("abc", "\n_\n", "\nab", "ab\n"), listOf("\n\n\n", "a\nb"), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching("(?s:(?-s:(?s:.)))", listOf("\n"))
+    }
+
+    @Test fun testInlineCommentsFlag() {
+        // TODO: Ignored: KT-85425
+        // testRegexMatching("(?x)#a b c\nd", listOf("d"), listOf("b c\nd"))
+        // testRegexMatching("(?x)(?-x)#a b c", listOf("#a b c"))
+        // testRegexMatching("(?-x:#a b c)", listOf("#a b c"), emptyList(), RegexOption.COMMENTS)
+        testRegexMatching("(?x)a b", listOf("ab"), listOf("a b"))
+        testRegexMatching("(?x)a b #comment\nc", listOf("abc"))
+        testRegexMatching("(?x)a b(?-x)c d", listOf("abc d"), listOf("a bc d", "abcd"))
+        testRegexMatching("(?-x)a b c", listOf("a b c"), listOf("abc"), RegexOption.COMMENTS)
+        testRegexMatching(" (?x:a b) ", listOf(" ab "), listOf(" a b "))
+        // TODO: Ignored: KT-85425
+        //testRegexMatching(" (?-x:a b) ", listOf("a b"), listOf("ab", " a b "), RegexOption.COMMENTS)
+        testRegexMatching("(?x:(?-x:(?x:a b c)))", listOf("abc"))
+    }
+
+    @Test fun testInlineMultilineFlag() {
+        Regex("(?m)^[a-z]$").let { regex ->
+            assertFindAll(regex, "a", listOf("a"))
+            assertFindAll(regex, "a\nb", listOf("a", "b"))
+            assertFindAll(regex, "a\nb\r\nc\rd", listOf("a", "b", "c", "d"))
+        }
+        Regex("(?m)(?-m)^[a-z]$").let { regex ->
+            assertTrue(regex.matches("a"))
+            assertFalse(regex.containsMatchIn("a\nb"))
+        }
+        Regex("(?-m)^[a-z]$", RegexOption.MULTILINE).let { regex ->
+            assertTrue(regex.matches("a"))
+            assertFalse(regex.containsMatchIn("a\nb"))
+        }
+        Regex("(?m)^a$\n(?-m)^b$").let { regex ->
+            assertFalse(regex.matches("a\nb"))
+        }
+        Regex("a\n(?m:^[a-z]+$)\nb").let { regex ->
+            assertTrue(regex.matches("a\nline\nb"))
+        }
+        Regex("(?m:(?-m:(?m:^[a-z]$)))").let { regex ->
+            assertFindAll(regex, "a\r\nb\nc", listOf("a", "b", "c"))
+        }
+    }
+
+    @Test fun testInlineUnixLinesFlag() {
+        testRegexMatching("(?d).", listOf("\r"), listOf("\n"))
+        testRegexMatching("(?-d).", emptyList(), listOf("\r", "\n"), RegexOption.UNIX_LINES)
+        testRegexMatching("(?s-d).", listOf("\n", "\r"))
+        testRegexMatching("(?-d).", listOf("\n", "\r"), emptyList(), RegexOption.DOT_MATCHES_ALL)
+        testRegexMatching("(?d)(?-d).", listOf("_"), listOf("\n", "\r"))
+
+        testRegexMatching(".(?d)..", listOf("_\r\r"), listOf("\r\r\r", "_\n\r"))
+        testRegexMatching(".(?-d)..", listOf("\r__"), listOf("\r\r\r"), RegexOption.UNIX_LINES)
+        testRegexMatching("(?d:(?-d:(?d:.)))", listOf("\r"), listOf("\n"))
+
+        listOf(Regex("(?d)^[a-z]$", RegexOption.MULTILINE), Regex("(?md)^[a-z]$")).forEach { regex ->
+            assertFindAll(regex, "a\nb\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\nb\r\nc", listOf("a", "c"))
+            assertFindAll(regex, "a\u0085b\u2028c\u2029d", emptyList())
+        }
+        listOf(Regex("(?-d)^[a-z]$", RegexOption.MULTILINE), Regex("(?m-d)^[a-z]$")).forEach { regex ->
+            assertFindAll(regex, "a\nb\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\nb\r\nc", listOf("a", "b", "c"))
+            assertFindAll(regex, "a\u0085b\u2028c\u2029d", listOf("a", "b", "c", "d"))
+        }
+    }
+
+    @Test fun testInlineUnicodeCaseFlag() {
+        // That's a gray area: we don't have an option, but somehow support the flag
+        assertFalse(Regex("þ").matches("Þ"))
+        assertTrue(Regex("(?i)þ").matches("Þ"))
+        assertTrue(Regex("(?iu)þ").matches("Þ"))
+        // TODO: Ignored: KT-51859
+        // assertFalse(Regex("(?i-u)þ").matches("Þ"))
+    }
+
+    @Test fun testInlineFlagsAreNonCapturingGroups() {
+        val regex = Regex("(?i:a)")
+        val match = regex.matchEntire("A")
+        assertNotNull(match)
+        assertEquals(1, match.groups.size)
     }
 
     @Test fun testMisc() {
         var regex: Regex
 
         // Test (?>...)
-        // TODO
-
-        // Test (?onflags-offflags)
-        // Valid flags are i,m,d,s,u,x
-        // TODO
-
-        // Test (?onflags-offflags:...)
-        // TODO
+        regex = Regex("(?>a*)bb")
+        assertFalse(regex.matches("aaabc"))
+        assertTrue(regex.matches("aaabb"))
+        assertTrue(regex.matches("bb"))
+        regex = Regex("(?>a*)abb")
+        // Note that a regular RE, like (a*)abb would match it
+        assertFalse(regex.matches("aaabb"))
 
         // Test \Q, \E
         regex = Regex("[a-z]+;\\Q[a-z]+;\\Q(foo.*);\\E[0-9]+")
@@ -877,7 +1063,9 @@ class PatternTest2 {
         assertTrue(regex.matches("abc;bar0-def[99]-]0x[;123"))
 
         // Test #<comment text>
-        // TODO
+        regex = Regex("(?x)ab# comment\ncd")
+        assertTrue(regex.matches("abcd"))
+        assertFalse(regex.matches("ab# commentcd"))
     }
 
     @Test fun testCompile1() {
@@ -1015,72 +1203,113 @@ class PatternTest2 {
         assertTrue(whiteSpace.matches(wsStr), "${unassigned}.matches(\"$wsStr\")")
     }
 
-    @Test fun testMajorCategory() {
-        val unicodeCodePointFmt = HexFormat {
-            number {
-                prefix = "\\u"
-                minLength = 4
-                removeLeadingZeros = true
+    @Test fun testGeneralCategory() {
+        val categoryToRegexes = unicodeCategoryTestData
+            .map(UnicodeCategorySample::generalCategory)
+            .toSet()
+            .associateWith(::categoryPatternVariants)
+
+        for (sample in unicodeCategoryTestData) {
+            for (regex in categoryToRegexes[sample.generalCategory]!!) {
+                assertTrue(
+                    regex.matches(sample.value),
+                    "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
+                )
             }
-        }
 
-        fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
-
-        // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
-        val characterToCategory = mapOf(
-            // Lu, Ll, Lt, Lm, Lo
-            "a" to "L", // Ll
-            "\u02b6" to "L", // Lm (ʶ)
-            "\u01bb" to "L", // Lo (ƻ)
-            "\u01c5" to "L", // Lt (ǅ)
-            "A" to "L", // Lu,
-            // Mn, Me, Mc
-            "\u0334" to "M", // Mn ̴
-            "\u0488" to "M", // Me (҈)
-            "\u0f7f" to "M", // Mc (ཿ)
-            // Nd, No, Nl
-            "0" to "N", // Nd
-            "\u16ef" to "N", // Nl (ᛯ)
-            "\u00be" to "N", // No (¾),
-            // Zl, Zp, Zs
-            "\u2028" to "Z", // Zl
-            "\u2029" to "Z", // Zp
-            " " to "Z", // Zs
-            // Pc, Pd, Pe, Pf, Pi, Po, Ps
-            "_" to "P", // Pc
-            "-" to "P", // Pd
-            "}" to "P", // Pe
-            "\u00bb" to "P", // Pf (»)
-            "\u00ab" to "P", // Pi («)
-            "@" to "P", // Po
-            "{" to "P", // Ps
-            // Sc, Sk, Sm, So
-            "$" to "S", // Sc
-            "^" to "S", // Sk
-            "+" to "S", // Sm
-            "\u00b0" to "S", // So (°)
-            // CC, Cf, Co, Cs, Cn
-            "\r" to "C", // Cc
-            "\u00ad" to "C", // Cf
-            "\ue000" to "C", // Cp
-            "\ud800" to "C", // Cs
-            "\u0378" to "C", // Cn
-        )
-
-        val categoryToRegex = characterToCategory.values.toSet().associateWith { Regex("\\p{Is$it}") }
-
-        for ((charSample, category) in characterToCategory) {
-            val regex = categoryToRegex[category]!!
-            // Check that a character is matched by a regex corresponding to its major category
-            assertTrue(regex.matches(charSample), "$regex should match \"$charSample\" (${charSample.formatFirstCodePoint()})")
-
-            // Check that regexes for all other categories won't match it
-            for ((otherCategory, regex) in categoryToRegex) {
-                if (otherCategory == category) continue
-                assertFalse(regex.matches(charSample), "$regex should not match \"$charSample\" (${charSample.formatFirstCodePoint()})")
+            for ([otherCategory, otherRegexes] in categoryToRegexes) {
+                if (otherCategory == sample.generalCategory) continue
+                for (otherRegex in otherRegexes) {
+                    assertFalse(
+                        otherRegex.matches(sample.value),
+                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()}) from ${sample.generalCategory}"
+                    )
+                }
             }
         }
     }
+
+    @Test fun testMajorCategory() {
+        val categoryToRegexes = unicodeCategoryTestData
+            .map(UnicodeCategorySample::majorCategory)
+            .toSet()
+            .associateWith(::categoryPatternVariants)
+
+        for (sample in unicodeCategoryTestData) {
+            for (regex in categoryToRegexes[sample.majorCategory]!!) {
+                assertTrue(regex.matches(sample.value), "$regex should match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})")
+            }
+
+            // Check that regexes for all other categories won't match it
+            for ([otherCategory, otherRegexes] in categoryToRegexes) {
+                if (otherCategory == sample.majorCategory) continue
+                for (otherRegex in otherRegexes) {
+                    assertFalse(
+                        otherRegex.matches(sample.value),
+                        "$otherRegex should not match \"${sample.value}\" (${sample.value.formatFirstCodePoint()})"
+                    )
+                }
+            }
+        }
+    }
+
+    private fun String.formatFirstCodePoint(): String = codePointAt(0).toHexString(unicodeCodePointFmt)
+
+    private fun categoryPatternVariants(category: String): List<Regex> = listOf(
+        Regex("\\p{$category}"),
+        Regex("\\p{Is$category}")
+    )
+
+    private val unicodeCodePointFmt = HexFormat {
+        number {
+            prefix = "\\u"
+            minLength = 4
+            removeLeadingZeros = true
+        }
+    }
+
+    private data class UnicodeCategorySample(val value: String, val majorCategory: String, val generalCategory: String)
+
+    // Refer to https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt
+    private val unicodeCategoryTestData = listOf(
+        // Lu, Ll, Lt, Lm, Lo
+        UnicodeCategorySample("a", "L", "Ll"),
+        UnicodeCategorySample("\u02b6", "L", "Lm"), // ʶ
+        UnicodeCategorySample("\u01bb", "L", "Lo"), // ƻ
+        UnicodeCategorySample("\u01c5", "L", "Lt"), // ǅ
+        UnicodeCategorySample("A", "L", "Lu"),
+        // Mn, Me, Mc
+        UnicodeCategorySample("\u0334", "M", "Mn"), // ̴
+        UnicodeCategorySample("\u0488", "M", "Me"), // ҈
+        UnicodeCategorySample("\u0f7f", "M", "Mc"), // ཿ
+        // Nd, No, Nl
+        UnicodeCategorySample("0", "N", "Nd"),
+        UnicodeCategorySample("\u16ef", "N", "Nl"), // ᛯ
+        UnicodeCategorySample("\u00be", "N", "No"), // ¾
+        // Zl, Zp, Zs
+        UnicodeCategorySample("\u2028", "Z", "Zl"),
+        UnicodeCategorySample("\u2029", "Z", "Zp"),
+        UnicodeCategorySample(" ", "Z", "Zs"),
+        // Pc, Pd, Pe, Pf, Pi, Po, Ps
+        UnicodeCategorySample("_", "P", "Pc"),
+        UnicodeCategorySample("-", "P", "Pd"),
+        UnicodeCategorySample("}", "P", "Pe"),
+        UnicodeCategorySample("\u00bb", "P", "Pf"), // »
+        UnicodeCategorySample("\u00ab", "P", "Pi"), // «
+        UnicodeCategorySample("@", "P", "Po"),
+        UnicodeCategorySample("{", "P", "Ps"),
+        // Sc, Sk, Sm, So
+        UnicodeCategorySample("$", "S", "Sc"),
+        UnicodeCategorySample("^", "S", "Sk"),
+        UnicodeCategorySample("+", "S", "Sm"),
+        UnicodeCategorySample("\u00b0", "S", "So"), // °
+        // Cc, Cf, Co, Cs, Cn
+        UnicodeCategorySample("\r", "C", "Cc"),
+        UnicodeCategorySample("\u00ad", "C", "Cf"),
+        UnicodeCategorySample("\ue000", "C", "Co"),
+        UnicodeCategorySample("\ud800", "C", "Cs"),
+        UnicodeCategorySample("\u0378", "C", "Cn"),
+    )
 
     private class UBInfo(var low: Int, var high: Int, var name: String)
 

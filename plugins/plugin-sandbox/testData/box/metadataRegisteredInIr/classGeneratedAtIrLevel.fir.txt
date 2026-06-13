@@ -1,0 +1,297 @@
+Module: a
+FILE: src.kt
+    public open class SourceBase : R|kotlin/Any| {
+        public constructor(): R|SourceBase| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val srcField: R|kotlin/String| = String(src)
+            public get(): R|kotlin/String|
+
+    }
+    public final class SourceWithNested : R|kotlin/Any| {
+        public constructor(): R|SourceWithNested| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceWithCompanion : R|kotlin/Any| {
+        public constructor(): R|SourceWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceOuterPlain : R|kotlin/Any| {
+        public constructor(): R|SourceOuterPlain| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceOuterPlain2 : R|kotlin/Any| {
+        public constructor(): R|SourceOuterPlain2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceOuterGeneric<T> : R|kotlin/Any| {
+        public constructor<T>(): R|SourceOuterGeneric<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceOuterGenericPaired<T> : R|kotlin/Any| {
+        public constructor<T>(): R|SourceOuterGenericPaired<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface Box<T> : R|kotlin/Any| {
+        public abstract val value: R|T|
+            public get(): R|T|
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/GenerateClassFamily|() public final class Marker : R|kotlin/Any| {
+        public constructor(): R|Marker| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+Module: b
+FILE: main.kt
+    public final fun box(): R|kotlin/String| {
+        lval plain: R|Plain| = R|/Plain.Plain|()
+        when () {
+            !=(R|<local>/plain|.R|/Plain.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL plain.x: ), R|<local>/plain|.R|/Plain.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/plain|.R|/Plain.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL plain.foo: ), R|<local>/plain|.R|/Plain.foo|())
+            }
+        }
+
+        lval generic: R|WithGeneric<kotlin/String>| = R|/WithGeneric.WithGeneric|<R|kotlin/String|>()
+        when () {
+            !=(R|<local>/generic|.R|SubstitutionOverride</WithGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL generic.x: ), R|<local>/generic|.R|SubstitutionOverride</WithGeneric.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/generic|.R|SubstitutionOverride</WithGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL generic.foo: ), R|<local>/generic|.R|SubstitutionOverride</WithGeneric.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval es: R|ExtendsSource| = R|/ExtendsSource.ExtendsSource|()
+        when () {
+            !=(R|<local>/es|.R|/ExtendsSource.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL es.x: ), R|<local>/es|.R|/ExtendsSource.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/es|.R|/ExtendsSource.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL es.foo: ), R|<local>/es|.R|/ExtendsSource.foo|())
+            }
+        }
+
+        when () {
+            !=(R|<local>/es|.R|/SourceBase.srcField|, String(src)) ->  {
+                ^box <strcat>(String(FAIL es.srcField (inherited from source): ), R|<local>/es|.R|/SourceBase.srcField|)
+            }
+        }
+
+        lval ep: R|ExtendsPlain| = R|/ExtendsPlain.ExtendsPlain|()
+        when () {
+            !=(R|<local>/ep|.R|/Plain.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL ep.x (inherited from Plain): ), R|<local>/ep|.R|/Plain.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/ep|.R|/Plain.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL ep.foo (inherited from Plain): ), R|<local>/ep|.R|/Plain.foo|())
+            }
+        }
+
+        lval s: R|MySealed| = R|/SubA.SubA|()
+        lval tag: R|kotlin/String| = when (lval <when-subject>: R|MySealed| = R|<local>/s|) {
+            ($subj$ is R|SubA|) ->  {
+                String(a)
+            }
+            ($subj$ is R|SubB|) ->  {
+                String(b)
+            }
+        }
+
+        when () {
+            !=(R|<local>/tag|, String(a)) ->  {
+                ^box <strcat>(String(FAIL sealed when: ), R|<local>/tag|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/s|.R|/MySealed.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL sealed inherited x: ), R|<local>/s|.R|/MySealed.x|)
+            }
+        }
+
+        lval nested: R|SourceWithNested.Nested| = Q|SourceWithNested|.R|/SourceWithNested.Nested.Nested|()
+        when () {
+            !=(R|<local>/nested|.R|/SourceWithNested.Nested.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL nested.x: ), R|<local>/nested|.R|/SourceWithNested.Nested.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/nested|.R|/SourceWithNested.Nested.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL nested.foo: ), R|<local>/nested|.R|/SourceWithNested.Nested.foo|())
+            }
+        }
+
+        when () {
+            !=(Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|)
+            }
+        }
+
+        lval inner: R|WithNestedFamily.Inner| = Q|WithNestedFamily|.R|/WithNestedFamily.Inner.Inner|()
+        when () {
+            !=(R|<local>/inner|.R|/WithNestedFamily.Inner.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL inner.x: ), R|<local>/inner|.R|/WithNestedFamily.Inner.x|)
+            }
+        }
+
+        when () {
+            !=(Q|WithNestedFamily|.R|/WithNestedFamily.Companion.fromCompanion|(), String(from-companion)) ->  {
+                ^box String(FAIL companion fn)
+            }
+        }
+
+        lval innerA: R|SourceOuterPlain.InnerPlain| = R|/SourceOuterPlain.SourceOuterPlain|().R|/SourceOuterPlain.InnerPlain.InnerPlain|()
+        when () {
+            !=(R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL innerA.x: ), R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL innerA.foo: ), R|<local>/innerA|.R|/SourceOuterPlain.InnerPlain.foo|())
+            }
+        }
+
+        lval innerB: R|SourceOuterGeneric.InnerPlain<kotlin/String>| = R|/SourceOuterGeneric.SourceOuterGeneric|<R|kotlin/String|>().R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.InnerPlain>|()
+        when () {
+            !=(R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL innerB.x: ), R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL innerB.foo: ), R|<local>/innerB|.R|SubstitutionOverride</SourceOuterGeneric.InnerPlain.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval innerC: R|SourceOuterPlain2.InnerGeneric<kotlin/String>| = R|/SourceOuterPlain2.SourceOuterPlain2|().R|/SourceOuterPlain2.InnerGeneric.InnerGeneric|<R|kotlin/String|>()
+        when () {
+            !=(R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL innerC.x: ), R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL innerC.foo: ), R|<local>/innerC|.R|SubstitutionOverride</SourceOuterPlain2.InnerGeneric.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval innerD: R|SourceOuterGenericPaired.InnerGeneric<kotlin/String, kotlin/Int>| = R|/SourceOuterGenericPaired.SourceOuterGenericPaired|<R|kotlin/Int|>().R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.InnerGeneric>|<R|kotlin/String|>()
+        when () {
+            !=(R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL innerD.x: ), R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL innerD.foo: ), R|<local>/innerD|.R|SubstitutionOverride</SourceOuterGenericPaired.InnerGeneric.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval withInner: R|WithInnerFamily<kotlin/Int>| = R|/WithInnerFamily.WithInnerFamily|<R|kotlin/Int|>()
+        lval innerE: R|WithInnerFamily.Inner<kotlin/String, kotlin/Int>| = R|<local>/withInner|.R|SubstitutionOverride</WithInnerFamily.Inner.Inner>|<R|kotlin/String|>()
+        when () {
+            !=(R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL innerE.x: ), R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL innerE.foo: ), R|<local>/innerE|.R|SubstitutionOverride</WithInnerFamily.Inner.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval deep: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>| = R|/WithDeepInnerFamily.WithDeepInnerFamily|<R|kotlin/Int|>().R|SubstitutionOverride</WithDeepInnerFamily.Inner.Inner>|<R|kotlin/String|>().R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.DeeplyInner>|<R|kotlin/Double|>()
+        when () {
+            !=(R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL deep.x: ), R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.foo: R|kotlin/String|>|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL deep.foo: ), R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.foo: R|kotlin/String|>|())
+            }
+        }
+
+        lval deepSelf: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.self: R|WithDeepInnerFamily.Inner.DeeplyInner<kotlin/Double, kotlin/String, kotlin/Int>|>|()
+        when () {
+            !=(R|<local>/deepSelf|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL deepSelf.x: ), R|<local>/deepSelf|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.x: R|kotlin/Int|>|)
+            }
+        }
+
+        lval c: R|kotlin/Double| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idC: R|kotlin/Double|>|(Double(3.14))
+        when () {
+            !=(R|<local>/c|, Double(3.14)) ->  {
+                ^box <strcat>(String(FAIL deep.idC: ), R|<local>/c|)
+            }
+        }
+
+        lval b: R|kotlin/String| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idB: R|kotlin/String|>|(String(hi))
+        when () {
+            !=(R|<local>/b|, String(hi)) ->  {
+                ^box <strcat>(String(FAIL deep.idB: ), R|<local>/b|)
+            }
+        }
+
+        lval a: R|kotlin/Int| = R|<local>/deep|.R|SubstitutionOverride</WithDeepInnerFamily.Inner.DeeplyInner.idA: R|kotlin/Int|>|(Int(7))
+        when () {
+            !=(R|<local>/a|, Int(7)) ->  {
+                ^box <strcat>(String(FAIL deep.idA: ), R|<local>/a|)
+            }
+        }
+
+        lval outerBox: R|Outer<kotlin/String>| = R|/Outer.Outer|<R|kotlin/String|>()
+        lval ib: R|Box<kotlin/String>| = R|<local>/outerBox|.R|SubstitutionOverride</Outer.InnerBox.InnerBox>|(String(boxed))
+        when () {
+            !=(R|<local>/ib|.R|SubstitutionOverride</Box.value: R|kotlin/String|>|, String(boxed)) ->  {
+                ^box <strcat>(String(FAIL ib.value: ), R|<local>/ib|.R|SubstitutionOverride</Box.value: R|kotlin/String|>|)
+            }
+        }
+
+        lval ib2: R|Outer.InnerBox<kotlin/String>| = R|<local>/outerBox|.R|SubstitutionOverride</Outer.InnerBox.InnerBox>|(String(direct))
+        when () {
+            !=(R|<local>/ib2|.R|SubstitutionOverride</Outer.InnerBox.value: R|kotlin/String|>|, String(direct)) ->  {
+                ^box <strcat>(String(FAIL ib2.value: ), R|<local>/ib2|.R|SubstitutionOverride</Outer.InnerBox.value: R|kotlin/String|>|)
+            }
+        }
+
+        ^box String(OK)
+    }

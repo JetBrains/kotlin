@@ -171,7 +171,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
             subroutineType(llvmTargetData, this@subroutineType.types)
 
     fun subroutineType(llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef = memScoped {
-        val diTypes = types.withIndex().map { (idx, type) ->
+        val diTypes = types.withIndex().map { [idx, type] ->
             if (idx == 0 && type.isVoidAsReturnType()) null
             else type.diType(llvmTargetData)
         }
@@ -307,7 +307,7 @@ internal fun String?.toFileAndFolder(config: NativeSecondStageCompilationConfig)
     // `.` is a valid DWARF relative path to parent for this case, while an empty string is not.
     var parent = file.parentOrNull ?: "."
     config.configuration[NativeConfigurationKeys.DEBUG_PREFIX_MAP]?.let { debugPrefixMap ->
-        for ((key, value) in debugPrefixMap) {
+        for ([key, value] in debugPrefixMap) {
             if (parent.startsWith(key)) {
                 parent = value + parent.removePrefix(key)
             }

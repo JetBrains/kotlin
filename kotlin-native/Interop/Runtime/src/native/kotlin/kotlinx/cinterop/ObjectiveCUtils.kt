@@ -5,16 +5,9 @@
 
 package kotlinx.cinterop
 
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
-
 @BetaInteropApi
 @OptIn(ExperimentalForeignApi::class)
 public inline fun <R> autoreleasepool(block: () -> R): R {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        returnsResultOf(block)
-    }
     val pool = objc_autoreleasePoolPush()
     return try {
         block()

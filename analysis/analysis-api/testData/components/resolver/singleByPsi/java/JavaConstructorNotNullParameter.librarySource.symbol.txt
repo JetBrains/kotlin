@@ -1,5 +1,0 @@
-KtNameReferenceExpression(51,60): 'JavaClass'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      <constructor>(p0: @EnhancedNullability kotlin.String): JavaClass
-    ]

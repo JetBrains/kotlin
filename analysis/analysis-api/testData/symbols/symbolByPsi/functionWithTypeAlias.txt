@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: A
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -26,14 +25,13 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: A
 
 KaTypeAliasSymbol:
   annotations: []
   classId: TypeAlias
-  compilerVisibility: Public
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -49,13 +47,12 @@ KaTypeAliasSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: TypeAlias
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /function
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -87,7 +84,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -95,6 +91,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -115,7 +112,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -123,14 +120,13 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithTypeAliasKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: function
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /function
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -162,7 +158,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -170,6 +165,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -190,7 +186,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionWithTypeAlias.kt)
       getContainingJvmClassName: FunctionWithTypeAliasKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -198,6 +194,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithTypeAliasKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: function

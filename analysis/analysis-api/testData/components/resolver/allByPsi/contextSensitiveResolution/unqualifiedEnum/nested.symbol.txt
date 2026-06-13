@@ -47,34 +47,67 @@ KtParameter(148,156): 'o: Outer'
   null
 
 KtTypeReference(151,156): 'Outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtUserType(151,156): 'Outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtNameReferenceExpression(151,156): 'Outer'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtParameter(158,166): 'i: Inner'
   null
 
 KtTypeReference(161,166): 'Inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtUserType(161,166): 'Inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtNameReferenceExpression(161,166): 'Inner'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtTypeReference(169,172): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(169,172): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(169,172): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(173,309): '{'
   null
@@ -89,6 +122,8 @@ KtWhenExpression(186,307): 'when (o) {'
   null
 
 KtNameReferenceExpression(192,193): 'o'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       o: Outer
@@ -101,6 +136,8 @@ KtWhenConditionWithExpression(205,210): 'FIRST'
   null
 
 KtNameReferenceExpression(205,210): 'FIRST'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Outer.FIRST
@@ -116,6 +153,8 @@ KtWhenConditionWithExpression(224,230): 'SECOND'
   null
 
 KtNameReferenceExpression(224,230): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Outer.SECOND
@@ -125,6 +164,8 @@ KtWhenExpression(234,301): 'when (i) {'
   null
 
 KtNameReferenceExpression(240,241): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: Inner
@@ -137,6 +178,8 @@ KtWhenConditionWithExpression(257,263): 'SECOND'
   null
 
 KtNameReferenceExpression(257,263): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Inner.SECOND
@@ -152,6 +195,8 @@ KtWhenConditionWithExpression(281,286): 'THIRD'
   null
 
 KtNameReferenceExpression(281,286): 'THIRD'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Inner.THIRD
@@ -170,34 +215,67 @@ KtParameter(319,327): 'o: Outer'
   null
 
 KtTypeReference(322,327): 'Outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtUserType(322,327): 'Outer'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtNameReferenceExpression(322,327): 'Outer'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Outer
+    ]
 
 KtParameter(329,337): 'i: Inner'
   null
 
 KtTypeReference(332,337): 'Inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtUserType(332,337): 'Inner'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtNameReferenceExpression(332,337): 'Inner'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Inner
+    ]
 
 KtTypeReference(340,343): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(340,343): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(340,343): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(344,600): '{'
   null
@@ -212,6 +290,8 @@ KtWhenExpression(357,598): 'when (o) {'
   null
 
 KtNameReferenceExpression(363,364): 'o'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       o: Outer
@@ -224,6 +304,8 @@ KtWhenConditionWithExpression(376,381): 'FIRST'
   null
 
 KtNameReferenceExpression(376,381): 'FIRST'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Outer.FIRST
@@ -239,6 +321,8 @@ KtWhenConditionWithExpression(395,401): 'SECOND'
   null
 
 KtNameReferenceExpression(395,401): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Outer.SECOND
@@ -254,13 +338,24 @@ KtParameterList(426,428): '()'
   null
 
 KtTypeReference(430,433): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(430,433): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(430,433): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(434,564): '{'
   null
@@ -275,6 +370,8 @@ KtWhenExpression(459,550): 'when (i) {'
   null
 
 KtNameReferenceExpression(465,466): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: Inner
@@ -287,6 +384,8 @@ KtWhenConditionWithExpression(490,496): 'SECOND'
   null
 
 KtNameReferenceExpression(490,496): 'SECOND'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Inner.SECOND
@@ -302,6 +401,8 @@ KtWhenConditionWithExpression(522,527): 'THIRD'
   null
 
 KtNameReferenceExpression(522,527): 'THIRD'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /Inner.THIRD
@@ -317,6 +418,8 @@ KtCallExpression(577,582): 'baz()'
     ]
 
 KtNameReferenceExpression(577,580): 'baz'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       baz(): kotlin.Int

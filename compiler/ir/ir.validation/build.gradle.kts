@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:util.runtime"))
     implementation(project(":kotlin-util-klib"))
+    implementation(project(":compiler:frontend.common-psi")) // required for error reporting
 
     compileOnly(intellijCore())
 

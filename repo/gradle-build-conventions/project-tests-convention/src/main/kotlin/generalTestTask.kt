@@ -4,7 +4,6 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
@@ -18,7 +17,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.gradle.kotlin.dsl.withNormalizer
 import org.gradle.process.CommandLineArgumentProvider
 import java.io.File
 import java.lang.Character.isLowerCase
@@ -89,6 +87,7 @@ internal fun Project.createGeneralTestTask(
     taskName: String = "test",
     parallel: Boolean = false,
     jUnitMode: JUnitMode,
+    javaLauncher: JdkMajorVersion = DEFAULT_JAVA_LAUNCHER_FOR_TESTS,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     maxMetaspaceSizeMb: Int = 512,
@@ -107,10 +106,9 @@ internal fun Project.createGeneralTestTask(
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
-    if (shouldInstrument) {
-        evaluationDependsOn(":test-instrumenter")
-    }
     return getOrCreateTask<Test>(taskName) {
+        this.javaLauncher.set(getToolchainLauncherFor(javaLauncher))
+
         if (taskName != "test" && classpath.isEmpty) {
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
@@ -177,18 +175,18 @@ internal fun Project.createGeneralTestTask(
         }
 
         if (shouldInstrument) {
-            val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
-            val testInstrumenterJar: FileCollection =
-                configurations.detachedConfiguration(dependencies.create(dependencies.project(":test-instrumenter")))
-                    .also { it.isTransitive = false }
-            inputs.files(testInstrumenterJar)
-                .withNormalizer(ClasspathNormalizer::class)
-                .withPropertyName("testInstrumenterClasspath")
-            doFirst {
-                val agent = testInstrumenterJar.singleFile
-                val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
-                jvmArgs("-javaagent:$agent$args")
+            val agentJar = configurations.detachedConfiguration(dependencies.project(":test-instrumenter")).apply { isTransitive = false }
+            val bootClasspathJar = configurations.detachedConfiguration(dependencies.project(":test-instrumenter", "bootClasspath"))
+            val debugProperty = kotlinBuildProperties.booleanProperty("test.instrumenter.debug")
+
+            systemProperty("test.instrumenter.debug", debugProperty.get())
+
+            val testInstrumentationProvider = objects.newInstance<TestInstrumentationArgumentProvider>().apply {
+                this.agentJar.from(agentJar)
+                this.bootClasspathJar.from(bootClasspathJar)
+                this.debug.set(debugProperty)
             }
+            jvmArgumentProviders.add(testInstrumentationProvider)
         }
 
         // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores
@@ -248,6 +246,18 @@ internal fun Project.createGeneralTestTask(
         jvmArgumentProviders.add(testArgumentProvider)
 
         systemProperty("idea.ignore.disabled.plugins", "true")
+
+        doFirst {
+            // workaround for a Gradle bug: https://github.com/gradle/gradle/issues/37539
+            // the tests won't be skipped by Gradle but will be disabled by TCParallelTestsExecutionCondition
+            // this can be removed after Gradle updated to a version with the fix (likely 9.6.0)
+            val excludesFile = testArgumentProvider.excludesFile
+            if (excludesFile.isPresent) {
+                logger.warn("Removing excludes set by TeamCity")
+                val parallelTestsExcludes = File(excludesFile.get().path).readLines().filter { !it.startsWith("#") }.toSet()
+                filter.excludePatterns.removeAll(parallelTestsExcludes)
+            }
+        }
 
         val fs = project.serviceOf<FileSystemOperations>()
         doLast {

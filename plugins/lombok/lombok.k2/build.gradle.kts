@@ -6,7 +6,12 @@ plugins {
 
 dependencies {
     implementation(project(":kotlin-lombok-compiler-plugin.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:compiler.common.jvm"))
+
     compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:diagnostic-renderers"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:providers"))
     compileOnly(project(":compiler:fir:resolve"))
@@ -14,6 +19,8 @@ dependencies {
     compileOnly(project(":compiler:fir:fir-jvm"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":compiler:ir.backend.common"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractPsiTypeAsKaTypeTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val (psiDeclaration, useSitePosition) = getTestDataContext(testServices)
+        (val psiDeclaration = targetDeclaration, val useSitePosition) = getTestDataContext(testServices)
 
         val actual = buildString {
             executeOnPooledThreadInReadAction {

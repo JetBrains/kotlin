@@ -1,0 +1,49 @@
+@0:0..8:0 FILE fqName:<root> fileName:/fakeOverridesWithAnnotations.kt
+  @0:0..29 CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    @0:0..29 CONSTRUCTOR visibility:public <> () returnType:<root>.MyAnnotation [primary]
+      @0:0..29 BLOCK_BODY
+        @0:0..29 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:0..29 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.Unit
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @0:0..29 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MyAnnotation
+  @2:0..5:1 CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    @2:0..5:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Base [primary]
+      @2:0..5:1 BLOCK_BODY
+        @2:0..5:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @2:0..5:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    @4:9..30 FUN name:annotatedFun visibility:public modality:OPEN <> (<this>:<root>.Base) returnType:kotlin.Unit
+      annotations:
+        @3:4..17 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyAnnotation' type=<root>.MyAnnotation origin=null
+      @4:9..30 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      @4:28..30 BLOCK_BODY
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @2:0..5:1 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+  @7:0..22 CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
+    @7:0..22 CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      @7:0..22 BLOCK_BODY
+        @7:0..22 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        @7:0..22 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:annotatedFun visibility:public modality:OPEN <> (<this>:<root>.Base) returnType:kotlin.Unit [fake_override]
+      annotations:
+        @-1:-1..-1 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.MyAnnotation' type=<root>.MyAnnotation origin=null
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @7:0..22 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived

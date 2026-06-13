@@ -20,13 +20,24 @@ KtProperty(115,141): 'val superProp: String = ""'
   null
 
 KtTypeReference(130,136): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(130,136): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(130,136): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(139,141): '""'
   null
@@ -68,13 +79,24 @@ KtConstructorCalleeExpression(217,224): 'MyClass'
     ]
 
 KtTypeReference(217,224): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(217,224): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(217,224): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(224,226): '()'
   null
@@ -86,13 +108,24 @@ KtProperty(237,258): 'val prop: String = ""'
   null
 
 KtTypeReference(247,253): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(247,253): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(247,253): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(256,258): '""'
   null
@@ -116,13 +149,24 @@ KtConstructorCalleeExpression(292,299): 'MyClass'
     ]
 
 KtTypeReference(292,299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(292,299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(292,299): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(299,301): '()'
   null
@@ -134,13 +178,24 @@ KtProperty(312,333): 'val prop: String = ""'
   null
 
 KtTypeReference(322,328): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(322,328): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(322,328): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(331,333): '""'
   null
@@ -170,13 +225,24 @@ KtConstructorCalleeExpression(388,393): 'Super'
     ]
 
 KtTypeReference(388,393): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Super
+    ]
 
 KtUserType(388,393): 'Super'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Super
+    ]
 
 KtNameReferenceExpression(388,393): 'Super'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Super
+    ]
 
 KtValueArgumentList(393,395): '()'
   null
@@ -188,13 +254,24 @@ KtProperty(406,439): 'val propMyClass: MyClass = TODO()'
   null
 
 KtTypeReference(423,430): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(423,430): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(423,430): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(433,439): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -203,6 +280,8 @@ KtCallExpression(433,439): 'TODO()'
     ]
 
 KtNameReferenceExpression(433,437): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -215,13 +294,24 @@ KtProperty(448,505): 'val propInheritorClass: InheritorClass = InheritorClass()'
   null
 
 KtTypeReference(472,486): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorClass
+    ]
 
 KtUserType(472,486): 'InheritorClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorClass
+    ]
 
 KtNameReferenceExpression(472,486): 'InheritorClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorClass
+    ]
 
 KtCallExpression(489,505): 'InheritorClass()'
   KaSymbolResolutionSuccess:
@@ -230,9 +320,11 @@ KtCallExpression(489,505): 'InheritorClass()'
     ]
 
 KtNameReferenceExpression(489,503): 'InheritorClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): MyClass.InheritorClass
+      /MyClass.InheritorClass
     ]
 
 KtValueArgumentList(503,505): '()'
@@ -242,15 +334,28 @@ KtProperty(514,572): 'val propInheritorObject: InheritorObject = InheritorObject
   null
 
 KtTypeReference(539,554): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtUserType(539,554): 'InheritorObject'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNameReferenceExpression(539,554): 'InheritorObject'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.InheritorObject
+    ]
 
 KtNameReferenceExpression(557,572): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -260,13 +365,24 @@ KtProperty(581,602): 'val prop: String = ""'
   null
 
 KtTypeReference(591,597): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(591,597): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(591,597): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(600,602): '""'
   null
@@ -278,13 +394,24 @@ KtDeclarationModifierList(611,616): 'const'
   null
 
 KtTypeReference(632,638): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(632,638): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(632,638): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtStringTemplateExpression(641,643): '""'
   null
@@ -293,13 +420,24 @@ KtProperty(652,685): 'val lazyProp: String by lazy {""}'
   null
 
 KtTypeReference(666,672): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(666,672): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(666,672): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtPropertyDelegate(673,685): 'by lazy {""}'
   KaSymbolResolutionSuccess:
@@ -314,6 +452,8 @@ KtCallExpression(676,685): 'lazy {""}'
     ]
 
 KtNameReferenceExpression(676,680): 'lazy'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/lazy(initializer: () -> T): kotlin.Lazy<T>
@@ -341,13 +481,24 @@ KtParameterList(702,704): '()'
   null
 
 KtTypeReference(706,713): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(706,713): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(706,713): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtCallExpression(716,722): 'TODO()'
   KaSymbolResolutionSuccess:
@@ -356,6 +507,8 @@ KtCallExpression(716,722): 'TODO()'
     ]
 
 KtNameReferenceExpression(716,720): 'TODO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -377,6 +530,8 @@ KtBlockExpression(749,764): 'InheritorObject'
   null
 
 KtNameReferenceExpression(749,764): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -398,10 +553,16 @@ KtParameter(808,820): 'l: (T)->Unit'
   null
 
 KtTypeReference(811,820): '(T)->Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1
+    ]
 
 KtFunctionType(811,820): '(T)->Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Function1
+    ]
 
 KtParameterList(811,814): '(T)'
   null
@@ -410,22 +571,44 @@ KtParameter(812,813): 'T'
   null
 
 KtTypeReference(812,813): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(812,813): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(812,813): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtTypeReference(816,820): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtUserType(816,820): 'Unit'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtNameReferenceExpression(816,820): 'Unit'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Unit
+    ]
 
 KtBlockExpression(822,825): '{ }'
   null
@@ -446,6 +629,8 @@ KtCallExpression(869,942): 'receiveParametrizedLambda<MyClass> { i: MyClass -> i
     ]
 
 KtNameReferenceExpression(869,894): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -458,13 +643,24 @@ KtTypeProjection(895,902): 'MyClass'
   null
 
 KtTypeReference(895,902): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(895,902): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(895,902): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(904,942): '{ i: MyClass -> i == InheritorObject }'
   null
@@ -482,13 +678,24 @@ KtParameter(906,916): 'i: MyClass'
   null
 
 KtTypeReference(909,916): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(909,916): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(909,916): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(920,940): 'i == InheritorObject'
   null
@@ -500,18 +707,24 @@ KtBinaryExpression(920,940): 'i == InheritorObject'
     ]
 
 KtNameReferenceExpression(920,921): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(922,924): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(925,940): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -524,6 +737,8 @@ KtCallExpression(947,1016): 'receiveParametrizedLambda<MyClass> { i: MyClass -> 
     ]
 
 KtNameReferenceExpression(947,972): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -536,13 +751,24 @@ KtTypeProjection(973,980): 'MyClass'
   null
 
 KtTypeReference(973,980): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(973,980): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(973,980): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(982,1016): '{ i: MyClass -> i == propMyClass }'
   null
@@ -560,13 +786,24 @@ KtParameter(984,994): 'i: MyClass'
   null
 
 KtTypeReference(987,994): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(987,994): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(987,994): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(998,1014): 'i == propMyClass'
   null
@@ -578,18 +815,24 @@ KtBinaryExpression(998,1014): 'i == propMyClass'
     ]
 
 KtNameReferenceExpression(998,999): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1000,1002): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1003,1014): 'propMyClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val propMyClass: MyClass
@@ -602,6 +845,8 @@ KtCallExpression(1021,1097): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1021,1046): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -614,13 +859,24 @@ KtTypeProjection(1047,1054): 'MyClass'
   null
 
 KtTypeReference(1047,1054): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1047,1054): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1047,1054): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1056,1097): '{ i: MyClass -> i == propInheritorClass }'
   null
@@ -638,13 +894,24 @@ KtParameter(1058,1068): 'i: MyClass'
   null
 
 KtTypeReference(1061,1068): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1061,1068): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1061,1068): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1072,1095): 'i == propInheritorClass'
   null
@@ -656,18 +923,24 @@ KtBinaryExpression(1072,1095): 'i == propInheritorClass'
     ]
 
 KtNameReferenceExpression(1072,1073): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1074,1076): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1077,1095): 'propInheritorClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val propInheritorClass: MyClass.InheritorClass
@@ -680,6 +953,8 @@ KtCallExpression(1102,1179): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1102,1127): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -692,13 +967,24 @@ KtTypeProjection(1128,1135): 'MyClass'
   null
 
 KtTypeReference(1128,1135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1128,1135): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1128,1135): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1137,1179): '{ i: MyClass -> i == propInheritorObject }'
   null
@@ -716,13 +1002,24 @@ KtParameter(1139,1149): 'i: MyClass'
   null
 
 KtTypeReference(1142,1149): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1142,1149): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1142,1149): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1153,1177): 'i == propInheritorObject'
   null
@@ -734,18 +1031,24 @@ KtBinaryExpression(1153,1177): 'i == propInheritorObject'
     ]
 
 KtNameReferenceExpression(1153,1154): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1155,1157): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1158,1177): 'propInheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val propInheritorObject: MyClass.InheritorObject
@@ -758,6 +1061,8 @@ KtCallExpression(1185,1247): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1185,1210): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -770,13 +1075,24 @@ KtTypeProjection(1211,1218): 'MyClass'
   null
 
 KtTypeReference(1211,1218): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1211,1218): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1211,1218): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1220,1247): '{ i: MyClass -> i == prop }'
   null
@@ -794,13 +1110,24 @@ KtParameter(1222,1232): 'i: MyClass'
   null
 
 KtTypeReference(1225,1232): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1225,1232): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1225,1232): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1236,1245): 'i == prop'
   null
@@ -812,18 +1139,24 @@ KtBinaryExpression(1236,1245): 'i == prop'
     ]
 
 KtNameReferenceExpression(1236,1237): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1238,1240): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1241,1245): 'prop'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val prop: kotlin.String
@@ -836,6 +1169,8 @@ KtCallExpression(1252,1319): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1252,1277): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -848,13 +1183,24 @@ KtTypeProjection(1278,1285): 'MyClass'
   null
 
 KtTypeReference(1278,1285): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1278,1285): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1278,1285): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1287,1319): '{ i: MyClass -> i == superProp }'
   null
@@ -872,13 +1218,24 @@ KtParameter(1289,1299): 'i: MyClass'
   null
 
 KtTypeReference(1292,1299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1292,1299): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1292,1299): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1303,1317): 'i == superProp'
   null
@@ -890,18 +1247,24 @@ KtBinaryExpression(1303,1317): 'i == superProp'
     ]
 
 KtNameReferenceExpression(1303,1304): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1305,1307): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1308,1317): 'superProp'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val superProp: kotlin.String
@@ -914,6 +1277,8 @@ KtCallExpression(1324,1391): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1324,1349): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -926,13 +1291,24 @@ KtTypeProjection(1350,1357): 'MyClass'
   null
 
 KtTypeReference(1350,1357): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1350,1357): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1350,1357): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1359,1391): '{ i: MyClass -> i == constProp }'
   null
@@ -950,13 +1326,24 @@ KtParameter(1361,1371): 'i: MyClass'
   null
 
 KtTypeReference(1364,1371): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1364,1371): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1364,1371): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1375,1389): 'i == constProp'
   null
@@ -968,18 +1355,24 @@ KtBinaryExpression(1375,1389): 'i == constProp'
     ]
 
 KtNameReferenceExpression(1375,1376): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1377,1379): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1380,1389): 'constProp'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val constProp: kotlin.String
@@ -992,6 +1385,8 @@ KtCallExpression(1396,1462): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1396,1421): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1004,13 +1399,24 @@ KtTypeProjection(1422,1429): 'MyClass'
   null
 
 KtTypeReference(1422,1429): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1422,1429): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1422,1429): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1431,1462): '{ i: MyClass -> i == lazyProp }'
   null
@@ -1028,13 +1434,24 @@ KtParameter(1433,1443): 'i: MyClass'
   null
 
 KtTypeReference(1436,1443): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1436,1443): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1436,1443): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1447,1460): 'i == lazyProp'
   null
@@ -1046,18 +1463,24 @@ KtBinaryExpression(1447,1460): 'i == lazyProp'
     ]
 
 KtNameReferenceExpression(1447,1448): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1449,1451): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1452,1460): 'lazyProp'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val lazyProp: kotlin.String
@@ -1070,6 +1493,8 @@ KtCallExpression(1468,1538): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1468,1493): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1082,13 +1507,24 @@ KtTypeProjection(1494,1501): 'MyClass'
   null
 
 KtTypeReference(1494,1501): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1494,1501): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1494,1501): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1503,1538): '{ i: MyClass -> i == NestedObject }'
   null
@@ -1106,13 +1542,24 @@ KtParameter(1505,1515): 'i: MyClass'
   null
 
 KtTypeReference(1508,1515): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1508,1515): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1508,1515): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1519,1536): 'i == NestedObject'
   null
@@ -1124,18 +1571,24 @@ KtBinaryExpression(1519,1536): 'i == NestedObject'
     ]
 
 KtNameReferenceExpression(1519,1520): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1521,1523): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1524,1536): 'NestedObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.NestedObject
@@ -1148,6 +1601,8 @@ KtCallExpression(1543,1611): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1543,1568): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1160,13 +1615,24 @@ KtTypeProjection(1569,1576): 'MyClass'
   null
 
 KtTypeReference(1569,1576): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1569,1576): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1569,1576): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1578,1611): '{ i: MyClass -> i == lambdaProp }'
   null
@@ -1184,13 +1650,24 @@ KtParameter(1580,1590): 'i: MyClass'
   null
 
 KtTypeReference(1583,1590): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1583,1590): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1583,1590): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1594,1609): 'i == lambdaProp'
   null
@@ -1202,18 +1679,24 @@ KtBinaryExpression(1594,1609): 'i == lambdaProp'
     ]
 
 KtNameReferenceExpression(1594,1595): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1596,1598): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(1599,1609): 'lambdaProp'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val lambdaProp: () -> MyClass.InheritorObject
@@ -1226,6 +1709,8 @@ KtCallExpression(1617,1681): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1617,1642): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1238,13 +1723,24 @@ KtTypeProjection(1643,1650): 'MyClass'
   null
 
 KtTypeReference(1643,1650): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1643,1650): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1643,1650): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1652,1681): '{ i: MyClass -> i == func() }'
   null
@@ -1262,13 +1758,24 @@ KtParameter(1654,1664): 'i: MyClass'
   null
 
 KtTypeReference(1657,1664): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1657,1664): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1657,1664): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1668,1679): 'i == func()'
   null
@@ -1280,12 +1787,16 @@ KtBinaryExpression(1668,1679): 'i == func()'
     ]
 
 KtNameReferenceExpression(1668,1669): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1670,1672): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1297,6 +1808,8 @@ KtCallExpression(1673,1679): 'func()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
 
 KtNameReferenceExpression(1673,1677): 'func'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'func'.>
@@ -1311,6 +1824,8 @@ KtCallExpression(1686,1755): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1686,1711): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1323,13 +1838,24 @@ KtTypeProjection(1712,1719): 'MyClass'
   null
 
 KtTypeReference(1712,1719): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1712,1719): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1712,1719): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1721,1755): '{ i: MyClass -> i == superFunc() }'
   null
@@ -1347,13 +1873,24 @@ KtParameter(1723,1733): 'i: MyClass'
   null
 
 KtTypeReference(1726,1733): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1726,1733): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1726,1733): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1737,1753): 'i == superFunc()'
   null
@@ -1365,12 +1902,16 @@ KtBinaryExpression(1737,1753): 'i == superFunc()'
     ]
 
 KtNameReferenceExpression(1737,1738): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1739,1741): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1382,6 +1923,8 @@ KtCallExpression(1742,1753): 'superFunc()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
 
 KtNameReferenceExpression(1742,1751): 'superFunc'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'superFunc'.>
@@ -1396,6 +1939,8 @@ KtCallExpression(1760,1834): 'receiveParametrizedLambda<MyClass> { i: MyClass ->
     ]
 
 KtNameReferenceExpression(1760,1785): 'receiveParametrizedLambda'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receiveParametrizedLambda(l: (T) -> kotlin.Unit): kotlin.Unit
@@ -1408,13 +1953,24 @@ KtTypeProjection(1786,1793): 'MyClass'
   null
 
 KtTypeReference(1786,1793): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1786,1793): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1786,1793): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtLambdaArgument(1795,1834): '{ i: MyClass -> i == InheritorClass() }'
   null
@@ -1432,13 +1988,24 @@ KtParameter(1797,1807): 'i: MyClass'
   null
 
 KtTypeReference(1800,1807): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(1800,1807): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(1800,1807): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(1811,1832): 'i == InheritorClass()'
   null
@@ -1450,12 +2017,16 @@ KtBinaryExpression(1811,1832): 'i == InheritorClass()'
     ]
 
 KtNameReferenceExpression(1811,1812): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: MyClass
     ]
 
 KtOperationReferenceExpression(1813,1815): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1467,6 +2038,8 @@ KtCallExpression(1816,1832): 'InheritorClass()'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>
 
 KtNameReferenceExpression(1816,1830): 'InheritorClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorClass'.>

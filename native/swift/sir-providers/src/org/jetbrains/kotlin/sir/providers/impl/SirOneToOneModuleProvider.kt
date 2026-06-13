@@ -14,15 +14,24 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirModuleProvider
+import org.jetbrains.kotlin.sir.util.SirCinteropModule
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 
 /**
- * A module provider implementation that generates a [SirModule] for each given [KaModule]
+ * A module provider implementation that generates a [SirModule] for each given [KaModule].
+ *
+ * [platformLibs] are Kotlin/Native distribution platform libraries, represented as [SirPlatformModule].
+ * [cinteropReexportLibs] are user-provided cinterop klibs to be re-exported through an existing ObjC module,
+ * represented as [SirCinteropModule]. For both, no Swift code is generated; references become `import <name>`.
  */
-public class SirOneToOneModuleProvider(platformLibs: Collection<KaLibraryModule>) : SirModuleProvider {
+public class SirOneToOneModuleProvider(
+    platformLibs: Collection<KaLibraryModule>,
+    cinteropReexportLibs: Collection<KaLibraryModule> = emptyList(),
+) : SirModuleProvider {
 
-    private val moduleCache: MutableMap<KaModule, SirModule> = platformLibs.associate {
-        it to SirPlatformModule(it.moduleName)
+    private val moduleCache: MutableMap<KaModule, SirModule> = buildMap<KaModule, SirModule> {
+        platformLibs.forEach { put(it, SirPlatformModule(it.moduleName)) }
+        cinteropReexportLibs.forEach { put(it, SirCinteropModule(it.moduleName)) }
     }.toMutableMap()
 
     public val modules: Map<KaModule, SirModule>

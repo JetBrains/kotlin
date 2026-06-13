@@ -5,14 +5,26 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 val nodeJs = NodeJsPlugin.apply(project)
 val wasmNodeJs = WasmNodeJsPlugin.apply(project)
 
-extensions.create<NodeJsExtension>(
+val nodeJsKotlinBuild = extensions.create<NodeJsExtension>(
     "nodeJsKotlinBuild",
     project,
     nodeJs,
+    "javascript.engine.path.NodeJs",
+    "versions.nodejs.lts",
 )
 
-extensions.create<NodeJsExtension>(
+val wasmNodeJsKotlinBuild = extensions.create<NodeJsExtension>(
     "wasmNodeJsKotlinBuild",
     project,
     wasmNodeJs,
+    "wasm.javascript.engine.path.NodeJs",
+    "versions.nodejs",
 )
+
+with(nodeJsKotlinBuild) {
+    nodeJs.version.set(nodeJsVersion)
+}
+
+with(wasmNodeJsKotlinBuild) {
+    wasmNodeJs.version.set(nodeJsVersion)
+}

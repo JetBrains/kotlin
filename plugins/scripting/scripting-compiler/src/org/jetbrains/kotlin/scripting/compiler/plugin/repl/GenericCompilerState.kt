@@ -47,7 +47,7 @@ class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : Ba
 
 
     private fun checkConsistent(removedCompiledLines: Iterable<ILineId>, removedAnalyzedLines: List<SourceCodeByReplLine>) {
-        removedCompiledLines.zip(removedAnalyzedLines).forEach { (removedCompiledLine, removedAnalyzedLine) ->
+        removedCompiledLines.zip(removedAnalyzedLines).forEach { [removedCompiledLine, removedAnalyzedLine] ->
             if (removedCompiledLine.no != removedAnalyzedLine.no) {
                 throw IllegalStateException("History mismatch when resetting lines: ${removedCompiledLine.no} != $removedAnalyzedLine")
             }

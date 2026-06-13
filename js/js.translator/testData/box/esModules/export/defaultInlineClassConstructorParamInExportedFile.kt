@@ -16,7 +16,7 @@ class Bar(val koo: Koo = Koo())
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
 
-import { Bar } from "./defaultInlineClassConstructorParamInExportedFile-kotlin_lib_v5.mjs";
+import { Bar } from "./kotlin_lib.mjs";
 
 export function box() {
     return new Bar().koo;

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.psi.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 
+@K1Deprecation
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
     interface DataFlowExtras {
         val canBeNull: Boolean
@@ -70,6 +72,7 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
 private val KtExpression.textForRuntimeAssertionInfo
     get() = StringUtil.trimMiddle(text, 50)
 
+@K1Deprecation
 class RuntimeAssertionsDataFlowExtras(
     private val c: ResolutionContext<*>,
     private val expressionType: KotlinType,
@@ -85,6 +88,7 @@ class RuntimeAssertionsDataFlowExtras(
         get() = expression.textForRuntimeAssertionInfo
 }
 
+@K1Deprecation
 object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
     override fun checkType(
         expression: KtExpression,
@@ -107,6 +111,7 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
 
 }
 
+@K1Deprecation
 object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (resolvedCall.call.isSafeCall()) return

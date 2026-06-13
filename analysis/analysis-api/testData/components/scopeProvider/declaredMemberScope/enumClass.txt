@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Private
   containingClassId: test/E
   contextReceivers: []
   hasStableParameterNames: true
@@ -25,5 +24,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(enumClass.kt)
   getContainingJvmClassName: test.E
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: test.E

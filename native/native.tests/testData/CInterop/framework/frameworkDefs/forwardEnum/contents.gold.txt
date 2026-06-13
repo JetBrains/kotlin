@@ -111,18 +111,18 @@ library {
 
       public final var enumWithoutConstantVar: pod1/EnumWithoutConstant
         @kotlinx/cinterop/internal/CGlobalAccess(name = "enumWithoutConstantVar")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_enumWithoutConstantVar_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_enumWithoutConstantVar_getter_0")
         public final /* non-default */ external get
         @kotlinx/cinterop/internal/CGlobalAccess(name = "enumWithoutConstantVar")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_enumWithoutConstantVar_setter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_enumWithoutConstantVar_setter_0")
         public final /* non-default */ external set(value: pod1/EnumWithoutConstant)
 
       public final var forwardEnumVar: pod1/ForwardEnum
         @kotlinx/cinterop/internal/CGlobalAccess(name = "forwardEnumVar")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_forwardEnumVar_getter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_forwardEnumVar_getter_0")
         public final /* non-default */ external get
         @kotlinx/cinterop/internal/CGlobalAccess(name = "forwardEnumVar")
-        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_forwardEnumVar_setter")
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod1_forwardEnumVar_setter_0")
         public final /* non-default */ external set(value: pod1/ForwardEnum)
     }
   }

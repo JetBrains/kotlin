@@ -3,6 +3,9 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// KT-85735 Reflection: Java wildcard type based on Kotlin type with declaration-site variance is loaded differently in new implementation
+// KOTLIN_REFLECT_DUMP_MISMATCH
+
 // FILE: Java1.java
 import java.util.*;
 

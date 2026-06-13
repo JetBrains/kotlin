@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * This class is intended to create data flow values for different kind of expressions.
  * Then data flow values serve as keys to obtain data flow information for these expressions.
  */
+@K1Deprecation
 interface DataFlowValueFactory {
     fun createDataFlowValue(
         expression: KtExpression,

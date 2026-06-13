@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.scripting.compiler.test
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
-import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
+import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.ByteArrayOutputStream
@@ -21,9 +21,8 @@ import kotlin.script.experimental.api.onSuccess
 import kotlin.script.experimental.api.valueOr
 import kotlin.script.experimental.api.with
 import kotlin.script.experimental.jvm.baseClassLoader
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
-import kotlin.test.*
+import kotlin.test.assertEquals
 
 internal const val NUM_4_LINE = "num: 4"
 
@@ -66,14 +65,13 @@ internal fun compileScript(
     parentClassLoader: ClassLoader? = null
 ): Pair<KClass<*>?, ExitCode> {
     val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
-    val messageCollector = environment.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val scriptDefinition =
-        ScriptDefinitionProvider.getInstance(environment.project)?.findDefinition(script)
+        environment.configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull()?.findDefinition(script)
             ?: return null to ExitCode.COMPILATION_ERROR
 
     val compileResult = scriptCompiler.compile(script, scriptDefinition.compilationConfiguration)
     for (report in compileResult.reports) {
-        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+        environment.configuration.report(report.severity, report.render(withSeverity = false), null)
     }
 
     val compiledScript = compileResult.onSuccess {
@@ -96,7 +94,7 @@ internal fun compileAndExecuteScript(
     environment: KotlinCoreEnvironment,
     scriptArgs: List<String>
 ): ExitCode {
-    val (compiled, code) = compileScript(script, environment)
+    val [compiled, code] = compileScript(script, environment)
 
     if (compiled == null || code != ExitCode.OK) return code
 

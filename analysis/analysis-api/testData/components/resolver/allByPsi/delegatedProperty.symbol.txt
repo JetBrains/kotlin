@@ -5,7 +5,12 @@ KtPackageDirective(16,30): 'package myPack'
   null
 
 KtNameReferenceExpression(24,30): 'myPack'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      myPack
+    ]
 
 KtImportList(32,63): 'import kotlin.reflect.KProperty'
   null
@@ -20,13 +25,28 @@ KtDotQualifiedExpression(39,53): 'kotlin.reflect'
   null
 
 KtNameReferenceExpression(39,45): 'kotlin'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(46,53): 'reflect'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.reflect
+    ]
 
 KtNameReferenceExpression(54,63): 'KProperty'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtProperty(65,87): 'var prop by Delegate()'
   null
@@ -45,9 +65,11 @@ KtCallExpression(77,87): 'Delegate()'
     ]
 
 KtNameReferenceExpression(77,85): 'Delegate'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): myPack.Delegate
+      myPack/Delegate
     ]
 
 KtValueArgumentList(85,87): '()'
@@ -72,28 +94,53 @@ KtParameter(132,145): 'thisRef: Any?'
   null
 
 KtTypeReference(141,145): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNullableType(141,145): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(141,144): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(141,144): 'Any'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtParameter(147,169): 'property: KProperty<*>'
   null
 
 KtTypeReference(157,169): 'KProperty<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtUserType(157,169): 'KProperty<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtNameReferenceExpression(157,166): 'KProperty'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtTypeArgumentList(166,169): '<*>'
   null
@@ -102,13 +149,24 @@ KtTypeProjection(167,168): '*'
   null
 
 KtTypeReference(172,178): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(172,178): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(172,178): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(179,204): '{'
   null
@@ -135,28 +193,53 @@ KtParameter(232,245): 'thisRef: Any?'
   null
 
 KtTypeReference(241,245): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNullableType(241,245): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(241,244): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(241,244): 'Any'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtParameter(247,269): 'property: KProperty<*>'
   null
 
 KtTypeReference(257,269): 'KProperty<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtUserType(257,269): 'KProperty<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtNameReferenceExpression(257,266): 'KProperty'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KProperty
+    ]
 
 KtTypeArgumentList(266,269): '<*>'
   null
@@ -168,13 +251,24 @@ KtParameter(271,284): 'value: String'
   null
 
 KtTypeReference(278,284): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(278,284): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(278,284): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(286,294): '{'
   null

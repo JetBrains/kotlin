@@ -1,3 +1,6 @@
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
+// ^^^ KT-81017 is fixed in 2.3.20-Beta1
+
 // TARGET_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
 // MODULE: cinterop

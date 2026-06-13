@@ -20,14 +20,12 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.ir.IrElement
@@ -38,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -62,6 +61,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.File
 import java.io.PrintWriter
@@ -102,21 +102,6 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
             registerInProject(project)
         }
 
-        val compilerConfiguration = CompilerConfiguration.create().apply {
-            put(CommonConfigurationKeys.MODULE_NAME, mainModule.testModule.name)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, mainModule.testModule.languageVersionSettings)
-
-            testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
-                ?.let { put(CODE_FRAGMENT_CLASS_NAME, it) }
-
-            testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
-                ?.let { put(CODE_FRAGMENT_METHOD_NAME, it) }
-
-            mainModule.testModule.directives[Directives.ACTUALIZATION]
-                .takeIf { it.isNotEmpty() }
-                ?.let { put(MODULE_ACTUALIZER, createModuleActualizer(it, testServices)) }
-        }
-
         val callStack = mutableListOf<PsiElement>()
         var stackDepth = 0
         while (true) {
@@ -130,15 +115,28 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
 
         analyzeForTest(mainFile) {
-            val target = KaCompilerTarget.Jvm(
-                isTestMode = true,
-                compiledClassHandler = null,
-                debuggerExtension = KaDebuggerExtension(callStack.asSequence())
-            )
+            val options = createCompilationOptions {
+                target(KaCompilationTarget.JVM)
+                moduleName(mainModule.testModule.name)
+                languageVersionSettings(mainModule.testModule.languageVersionSettings)
+                jvmOutputAsmListing(true)
+                jvmExecutionStack(callStack.asSequence())
+                allowedErrorFilter(TestAllowedErrorFilter)
+
+                testFile.directives[Directives.CODE_FRAGMENT_CLASS_NAME].singleOrNull()
+                    ?.let { codeFragmentClassName(it) }
+
+                testFile.directives[Directives.CODE_FRAGMENT_METHOD_NAME].singleOrNull()
+                    ?.let { codeFragmentMethodName(it) }
+
+                mainModule.testModule.directives[Directives.ACTUALIZATION]
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { moduleActualizer(createModuleActualizer(it, testServices)) }
+            }
 
             val exceptionExpected = mainModule.testModule.directives.contains(Directives.CODE_COMPILATION_EXCEPTION)
             val result = try {
-                compile(mainFile, compilerConfiguration, target, TestAllowedErrorFilter)
+                compile(mainFile, options)
             } catch (e: Throwable) {
                 if (exceptionExpected && e is KaCodeCompilationException) {
                     e.cause?.message?.let { testServices.assertions.assertEqualsToTestOutputFile("CODE_COMPILATION_EXCEPTION:\n$it") }
@@ -182,7 +180,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
 
         val namesByModule = testServices.ktTestModuleStructure.mainModules.associate { it.ktModule to it.name }
 
-        for ((commonModule, implementationModule) in mapping) {
+        for ([commonModule, implementationModule] in mapping) {
             fun checkModuleExistence(moduleName: String) {
                 if (moduleName !in namesByModule.values) error("Unknown module $moduleName")
             }
@@ -192,7 +190,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
 
         return object : KaCompilerFacilityModuleActualizer {
-            override fun actualize(module: KaModule, target: KaCompilerTarget): KaModule? {
+            override fun actualize(module: KaModule, target: KaCompilationTarget): KaModule? {
                 val moduleName = namesByModule[module] ?: error("Unknown module $module")
                 val actualizedModuleName = mapping[moduleName] ?: return null
                 return testServices.ktTestModuleStructure.getKtTestModule(actualizedModuleName).ktModule
@@ -356,7 +354,7 @@ private fun dumpClassFromClassReaders(
     return classes.joinToString("\n\n") { node ->
         if (dumpCode) {
             val writer = StringWriter()
-            node.accept(TraceClassVisitor(PrintWriter(writer)))
+            node.accept(TraceClassVisitor(null, MetadataStrippingTextifier(), PrintWriter(writer)))
             writer.toString()
         } else {
             val visitor = BytecodeListingTextCollectingVisitor(
@@ -369,6 +367,19 @@ private fun dumpClassFromClassReaders(
             visitor.text
         }
     }
+}
+
+private class MetadataStrippingTextifier : Textifier(Opcodes.API_VERSION) {
+    override fun visitClassAnnotation(descriptor: String, visible: Boolean): Textifier {
+        if (descriptor == "Lkotlin/Metadata;" || descriptor == "Lkotlin/coroutines/jvm/internal/DebugMetadata;") {
+            // Don't render contents of @Metadata/@DebugMetadata because they're binary.
+            text.add("$tab@$descriptor" + if (visible) "\n" else " // invisible\n")
+            return MetadataStrippingTextifier()
+        }
+        return super.visitClassAnnotation(descriptor, visible)
+    }
+
+    override fun createTextifier(): Textifier = MetadataStrippingTextifier()
 }
 
 internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices: TestServices): KtCodeFragment? {
@@ -450,6 +461,6 @@ private class CollectingIrGenerationExtension(private val annotationToCheckCalls
 
         private fun IrAnnotationContainer.containsAnnotationToCheckCalls() =
             @OptIn(UnsafeDuringIrConstructionAPI::class)
-            annotations.any { it.symbol.owner.parentClassId == annotationClassId }
+            annotations.any { it.classId == annotationClassId }
     }
 }

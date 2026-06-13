@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.boundClosure
 import org.jetbrains.kotlin.types.typeUtil.constituentTypes
 import org.jetbrains.kotlin.utils.DFS
 
+@K1Deprecation
 object NonExpansiveInheritanceRestrictionChecker {
     @JvmStatic
     fun check(

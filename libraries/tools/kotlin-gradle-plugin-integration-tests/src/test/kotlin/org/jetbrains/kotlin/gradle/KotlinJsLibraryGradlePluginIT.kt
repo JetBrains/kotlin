@@ -31,7 +31,7 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
                 projectPath.resolve("build/$DIST/js/productionLibrary/package.json").reader()
                     .use { Gson().fromJson(it, JsonObject::class.java) }
                     .getAsJsonObject("dependencies")
-                    ?.entrySet()?.associate { (k, v) -> k to v.asString }
+                    ?.entrySet()?.associate { [k, v] -> k to v.asString }
                     .let { dependencies ->
                         assertNotNull(dependencies?.get("decamelize")) { "Direct npm dependency missing in package.json" }
                         assertNotNull(dependencies?.get("@js-joda/core")) { "Transitive npm dependency missing in package.json" }

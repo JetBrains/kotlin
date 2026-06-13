@@ -21,7 +21,7 @@ object JsTestFunctionTransformer {
             JsInvocation(it.testFunctionName.makeRef()).makeStmt()
         } // String -> [IrSimpleFunction]
 
-        for ((pkg, testCalls) in tests) {
+        for ([pkg, testCalls] in tests) {
             val pkgTestFun = JsFunction(emptyScope, JsBlock(), "test fun for $pkg")
             pkgTestFun.body.statements += testCalls
             testFun.body.statements += JsInvocation(suiteFunRef, JsStringLiteral(pkg), JsBooleanLiteral(false), pkgTestFun).makeStmt()
@@ -61,7 +61,7 @@ fun CachedTestFunctionsWithTheirPackage.asTestFunctionContainers(
     suiteFunction: String?,
     nameBindings: Map<String, JsName>
 ): List<JsTestFunctionTransformer.TestFunctionContainer> {
-    return entries.flatMap { (packageFqn, testFunctions) ->
+    return entries.flatMap { [packageFqn, testFunctions] ->
         testFunctions.map {
             JsTestFunctionTransformer.TestFunctionContainer(
                 packageFqn,

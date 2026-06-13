@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspend
@@ -55,6 +56,7 @@ class MethodInliner(
 ) {
     private val languageVersionSettings = inliningContext.state.config.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
+    private val anonymousObjectCapturedFieldsByConstructorArgumentCache = hashMapOf<String, List<String?>>()
 
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
@@ -197,14 +199,14 @@ class MethodInliner(
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
-                    transformResult.getChangedTypes().forEach { (oldType, newType) ->
+                    transformResult.getChangedTypes().forEach { [oldType, newType] ->
                         // KT-65503 For all changed types, if oldType is a lambda or an anonymous object,
                         // and the newType is a name for an inline call,
                         // it should be added to the remapper to ensure correct inline conversion of nested anonymous objects or lambdas.
                         if (newType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
                             !oldType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
                             isAnonymousClass(oldType) &&
-                            !remapper.hasNoAdditionalMapping(oldType)
+                            !remapper.hasPrimaryMapping(oldType)
                         ) {
                             remapper.addMapping(oldType, newType)
                         }
@@ -602,7 +604,6 @@ class MethodInliner(
 
         node.accept(transformationVisitor)
 
-        transformCaptured(transformedNode)
         transformFinallyDeepIndex(transformedNode, finallyDeepShift)
 
         return transformedNode
@@ -617,7 +618,7 @@ class MethodInliner(
 
         val sources = analyzeMethodNodeWithInterpreter(processingNode, FunctionalArgumentInterpreter(this))
         val instructions = processingNode.instructions
-        val toDelete = markObsoleteInstruction(instructions, sources)
+        val [toDelete, toReplaceWithPop] = markObsoleteInstruction(instructions, sources)
 
         var awaitClassReification = false
         var currentFinallyDeep = 0
@@ -736,15 +737,13 @@ class MethodInliner(
                             nodeRemapper is InlinedLambdaRemapper &&
                             nodeRemapper.originalLambdaInternalName == fieldInsn.owner
                         ) {
-                            val stackTransformations = mutableSetOf<AbstractInsnNode>()
                             val lambdaInfo = frame.peek(1)?.functionalArgument
-                            if (lambdaInfo is LambdaInfo && stackTransformations.all { it is VarInsnNode }) {
+                            if (lambdaInfo is LambdaInfo) {
                                 assert(lambdaInfo.lambdaClassType.internalName == nodeRemapper.originalLambdaInternalName) {
                                     "Wrong bytecode template for contract template: ${lambdaInfo.lambdaClassType.internalName} != ${nodeRemapper.originalLambdaInternalName}"
                                 }
                                 fieldInsn.name = foldName(fieldInsn.name)
                                 fieldInsn.opcode = Opcodes.PUTSTATIC
-                                toDelete.addAll(stackTransformations)
                             }
                         }
                     }
@@ -762,6 +761,12 @@ class MethodInliner(
             }
         }
 
+        for (instruction in toReplaceWithPop) {
+            processingNode.instructions.insertBefore(instruction, withInstructionAdapter {
+                pop()
+            })
+            toDelete.add(instruction)
+        }
         processingNode.remove(toDelete)
 
         //clean dead try/catch blocks
@@ -770,10 +775,14 @@ class MethodInliner(
         return processingNode
     }
 
-    private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): SmartSet<AbstractInsnNode> {
-        return instructions.filterIndexedTo(SmartSet.create()) { index, insn ->
-            // Parameter checks are processed separately
-            !insn.isAloadBeforeCheckParameterIsNotNull() && when (insn.opcode) {
+    private fun markObsoleteInstruction(instructions: InsnList, sources: Array<out Frame<BasicValue>?>): Pair<SmartSet<AbstractInsnNode>, SmartSet<AbstractInsnNode>> {
+        fun isGetLambdaFieldFromCreatedObject(index: Int, insn: AbstractInsnNode): Boolean =
+            insn.opcode == Opcodes.GETFIELD &&
+                    sources[index]?.top() is AnonymousObjectValue &&
+                    sources[index + 1]?.top().functionalArgument is LambdaInfo
+
+        fun isGetOrPutLambdaArgument(index: Int, insn: AbstractInsnNode): Boolean =
+            when (insn.opcode) {
                 Opcodes.GETFIELD, Opcodes.GETSTATIC, Opcodes.ALOAD ->
                     sources[index + 1]?.top().functionalArgument is LambdaInfo
                 Opcodes.PUTFIELD, Opcodes.PUTSTATIC, Opcodes.ASTORE ->
@@ -782,7 +791,31 @@ class MethodInliner(
                     sources[index]?.peek(0).functionalArgument is LambdaInfo || sources[index]?.peek(1).functionalArgument is LambdaInfo
                 else -> false
             }
+
+        fun isCallGetAccessorOfLambdaFieldFromCreatedObject(index: Int, insn: AbstractInsnNode): Boolean =
+            insn.opcode == Opcodes.INVOKESTATIC &&
+                    sources[index]?.top() is AnonymousObjectValue &&
+                    sources[index + 1]?.top().functionalArgument is LambdaInfo
+
+        val toDelete = SmartSet.create<AbstractInsnNode>()
+        val toReplaceWithPop = SmartSet.create<AbstractInsnNode>()
+        for ([index, insn] in instructions.withIndex()) {
+            when {
+                insn.isAloadBeforeCheckParameterIsNotNull() -> {
+                    // Parameter checks are processed separately
+                }
+                isGetLambdaFieldFromCreatedObject(index, insn) -> {
+                    // no need to recognize/delete ALOAD+GETFIELD patterns, as ALOAD+POP will be cleaned away on later stages
+                    toReplaceWithPop.add(insn)
+                }
+                isCallGetAccessorOfLambdaFieldFromCreatedObject(index, insn) -> {
+                    // same as above, but accesses the field through synthetic accessor
+                    toReplaceWithPop.add(insn)
+                }
+                isGetOrPutLambdaArgument(index, insn) -> toDelete.add(insn)
+            }
         }
+        return toDelete to toReplaceWithPop
     }
 
     private fun preprocessNodeBeforeInline(node: MethodNode, returnLabels: Map<String, Label?>) {
@@ -799,6 +832,8 @@ class MethodInliner(
             ApiVersionCallsPreprocessingMethodTransformer(targetApiVersion).transform("fake", node)
         }
 
+        transformCaptured(node)
+
         removeFakeVariablesInitializationIfPresent(node)
 
         val analyzer = FastStackAnalyzer("<fake>", node, FixStackInterpreter()) { nLocals, nStack -> Frame(nLocals, nStack) }
@@ -806,7 +841,7 @@ class MethodInliner(
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
-        for ((index, insnNode) in node.instructions.toArray().withIndex()) {
+        for ([index, insnNode] in node.instructions.toArray().withIndex()) {
             val frame = frames[index] ?: continue
             // Don't care about dead code, it will be eliminated
 
@@ -927,7 +962,15 @@ class MethodInliner(
     }
 
     private fun isAlreadyRegenerated(owner: String): Boolean {
-        return inliningContext.typeRemapper.hasNoAdditionalMapping(owner)
+        return inliningContext.typeRemapper.hasPrimaryMapping(owner)
+    }
+
+    internal fun resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName: String): List<String?> {
+        require(isAnonymousClass(ownerInternalName)) { "An anonymous object class name is expected, but got $ownerInternalName" }
+        return anonymousObjectCapturedFieldsByConstructorArgumentCache.getOrPut(ownerInternalName) {
+            inliningContext.root.sourceCompilerForInline.resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName)
+                ?: getAnonymousObjectCapturedFieldsByConstructorArgumentFromBytecode(inliningContext.state, ownerInternalName)
+        }
     }
 
     internal fun getFunctionalArgumentIfExists(insnNode: FieldInsnNode): FunctionalArgument? {
@@ -981,25 +1024,21 @@ class MethodInliner(
         }
 
         // Fold all captured variables access chains
-        //          ALOAD 0
-        //          [ALOAD this$0]*
-        //          GETFIELD $captured
+        //          ALOAD 0 // or local alias of `this` previously stored to another local
+        //          [GETFIELD this$0]*
+        //          GETFIELD $captured || INVOKESTATIC $access$get$captured$p
         //  to GETFIELD $$$$captured
         // On future decoding this field could be inlined or unfolded to another field access chain
         // (this chain could differ cause some of this$0 could be inlined)
-        var cur: AbstractInsnNode? = node.instructions.first
-        while (cur != null) {
+        val thisAliasFrames = analyzeThisAliases(node)
+        for ([index, cur] in node.instructions.toArray().withIndex()) {
             if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD) {
-                val varIndex = cur.`var`
-                if (varIndex == 0 || nodeRemapper.shouldProcessNonAload0FieldAccessChains()) {
+                val isLoadThis = cur.`var` == 0 || thisAliasFrames[index]?.isThisValue(cur.`var`) == true
+                if (isLoadThis || nodeRemapper.shouldProcessNonAload0FieldAccessChains()) {
                     val accessChain = getCapturedFieldAccessChain((cur as VarInsnNode?)!!)
-                    val insnNode = nodeRemapper.foldFieldAccessChainIfNeeded(accessChain, node)
-                    if (insnNode != null) {
-                        cur = insnNode
-                    }
+                    nodeRemapper.foldFieldAccessChainIfNeeded(accessChain, node)
                 }
             }
-            cur = cur.next
         }
     }
 
@@ -1138,15 +1177,15 @@ class MethodInliner(
             }
         }
 
-        private fun getCapturedFieldAccessChain(aload0: VarInsnNode): List<AbstractInsnNode> {
-            val lambdaAccessChain = mutableListOf<AbstractInsnNode>(aload0).apply {
-                addAll(InsnSequence(aload0.next, null).filter { it.isMeaningful }.takeWhile { insnNode ->
+        private fun getCapturedFieldAccessChain(aloadThis: VarInsnNode): List<AbstractInsnNode> {
+            val lambdaAccessChain = mutableListOf<AbstractInsnNode>(aloadThis).apply {
+                addAll(InsnSequence(aloadThis.next, null).filter { it.isMeaningful }.takeWhile { insnNode ->
                     insnNode is FieldInsnNode && AsmUtil.CAPTURED_THIS_FIELD == insnNode.name
                 }.toList())
             }
 
             return lambdaAccessChain.apply {
-                last().getNextMeaningful().takeIf { insn -> insn is FieldInsnNode }?.also {
+                last().getNextMeaningful()?.takeIf { insn -> insn is FieldInsnNode || insn.isCallGetAccessorToCapturedField() }?.also {
                     //captured field access
                         insn ->
                     add(insn)

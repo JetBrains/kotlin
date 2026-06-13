@@ -1,0 +1,10 @@
+MODULES: state, lib1, lib2, main
+
+STEP 0:
+    libs: state, lib1, lib2, main
+    dirty js modules: state, lib1, lib2, main
+    dirty js files: state/state, lib1/eagerA, lib1, lib2/placeholder, main/m, main/m.export, main
+STEP 1:
+    libs: state, lib1, lib2, main
+    dirty js modules: state, lib1, lib2, main
+    dirty js files: state/state, lib2/eagerB, lib2, main

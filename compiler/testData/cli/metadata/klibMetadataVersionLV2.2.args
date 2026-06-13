@@ -1,0 +1,10 @@
+$TESTDATA_DIR$/klibMetadataVersionSource.kt
+-d
+$TEMP_DIR$
+-Xtarget-platform=JS,WasmJs,WasmWasi,Native
+-cp
+$STDLIB_COMMON_PATH$
+
+-language-version
+2.2
+

@@ -76,7 +76,7 @@ internal class PrivateTypeFromNonPrivateInlineUsageChecker(
             if (caller.isInline && !caller.isEffectivelyPrivate() && callee.isEffectivelyPrivate()) {
                 val privateClassIds = PrivateTypeFromNonPrivateInlineUsageChecker(context).findPrivateClassUsages(node)
                 for (classId in privateClassIds) {
-                    context.ktDiagnosticReporter.at(call, caller.fileParent)
+                    context.diagnosticReporter.at(call, caller.fileParent)
                         .report(JvmBackendErrors.PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION, classId)
                 }
             }

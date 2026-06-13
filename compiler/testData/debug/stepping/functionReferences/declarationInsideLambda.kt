@@ -23,15 +23,16 @@ fun box(): String {
 // test.kt:6 box
 
 // EXPECTATIONS WASM
-// test.kt:6 $box (11)
+// test.kt:6 $box (15, 11)
 // test.kt:3 $foo (37, 43, 37)
+// test.kt:6 $box$lambda.invoke (15)
 // test.kt:10 $box$lambda.invoke (8)
-// test.kt:8 $invoke$localFun (12)
+// test.kt:8 $localFun (19, 12)
 // test.kt:10 $box$lambda.invoke (8, 19, 8)
-// test.kt:8 $box$lambda$localFun$lambda.invoke (34, 35)
+// test.kt:8 $box$lambda$localFun$lambda.invoke (19, 34, 35)
 // test.kt:10 $box$lambda.invoke (8, 24)
-// test.kt:3 $foo (37, 46)
 
+// test.kt:3 $foo (37, 46)
 // test.kt:6 $box (4)
 
 // EXPECTATIONS JS_IR

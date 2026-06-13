@@ -61,7 +61,7 @@ package test;
  *
  *   // field: TESTS_ARRAY:[Llib/Prop;
  *   // getter: getTESTS_ARRAY()[Llib/Prop;
- *   public final val TESTS_ARRAY: kotlin/Array<lib/Prop<test/Cl>>
+ *   public final val TESTS_ARRAY: kotlin/Array<out lib/Prop<test/Cl>>
  *     public final get
  *
  *   // field: TESTS_LIST:Ljava/util/List;

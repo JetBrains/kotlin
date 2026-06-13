@@ -1,0 +1,1 @@
+<expr>this</expr>::class

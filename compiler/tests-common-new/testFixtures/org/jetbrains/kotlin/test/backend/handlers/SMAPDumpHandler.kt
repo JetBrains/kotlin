@@ -36,6 +36,7 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
     private val dumper = MultiModuleInfoDumper(moduleHeaderTemplate = null)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         if (!GENERATE_SMAP) return
         if (DUMP_SMAP !in module.directives) return
 

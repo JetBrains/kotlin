@@ -27,7 +27,7 @@ internal fun generateJsMainFunctionExecutionMode(
                 K2JsArgumentConstants::NO_CALL.name to K2JsArgumentConstants.NO_CALL
             )
 
-            for ((key, value) in modes) {
+            for ([key, value] in modes) {
                 println("/***/")
                 println("$key(\"$value\"),")
             }
@@ -71,7 +71,7 @@ internal fun generateJsModuleKind(
                 K2JsArgumentConstants::MODULE_ES.name to K2JsArgumentConstants.MODULE_ES
             )
 
-            for ((key, value) in kinds) {
+            for ([key, value] in kinds) {
                 println("/***/")
                 println("$key(\"$value\"),")
             }
@@ -113,7 +113,7 @@ internal fun generateJsSourceMapEmbedMode(
                 K2JsArgumentConstants::SOURCE_MAP_SOURCE_CONTENT_INLINING.name to K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING,
             )
 
-            for ((key, value) in modes) {
+            for ([key, value] in modes) {
                 println("/***/")
                 println("$key(\"$value\"),")
             }
@@ -155,7 +155,7 @@ internal fun generateJsSourceMapNamesPolicy(
                 K2JsArgumentConstants::SOURCE_MAP_NAMES_POLICY_FQ_NAMES.name to K2JsArgumentConstants.SOURCE_MAP_NAMES_POLICY_FQ_NAMES,
             )
 
-            for ((key, value) in modes) {
+            for ([key, value] in modes) {
                 println("/***/")
                 println("$key(\"$value\"),")
             }

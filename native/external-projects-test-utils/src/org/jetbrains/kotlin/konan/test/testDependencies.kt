@@ -33,9 +33,9 @@ private val testDependencyKlibs = System.getProperty("testDependencyKlibs").orEm
     .map(::Path)
 
 private fun getLibrary(name: String): Library {
-    val (cinteropKlibs, regularKlibs) = testDependencyKlibs
-        .filter { it.pathString.contains(name) }
-        .partition { it.pathString.contains("interop") }
+    val [cinteropKlibs, regularKlibs] = testDependencyKlibs
+        .filter { it.fileName.pathString.contains(name) }
+        .partition { it.fileName.pathString.contains("interop") }
 
     return Library(
         mainKlib = regularKlibs.singleOrNull() ?: error("Missing '$name' in 'testDependencyKlibs' System Property"),

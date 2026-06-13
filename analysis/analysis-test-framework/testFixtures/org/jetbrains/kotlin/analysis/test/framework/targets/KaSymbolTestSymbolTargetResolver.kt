@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaContextParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaTypeParameterOwnerSymbol
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) : TestSymbolTargetResolver<KaSymbol>() {
     override fun resolvePackageTarget(target: PackageTarget): List<KaSymbol> = with(session) {
@@ -37,21 +40,45 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
     }
 
     override fun resolveCallableTarget(target: CallableTarget): List<KaSymbol> = with(session) {
-        val callableId = target.callableId
-        val classId = callableId.classId
+        val symbols = findCallables(target.callableId)
+        symbols.ifEmpty { error("Cannot find a symbol for the callable `${target.callableId}`.") }
+    }
 
-        val symbols = if (classId == null) {
+    override fun resolvePropertyTarget(target: PropertyTarget): List<KaSymbol> = with(session) {
+        val properties = findCallables(target.callableId).filterIsInstance<KaPropertySymbol>()
+        properties.ifEmpty { error("Cannot find a property for `${target.callableId}`.") }
+    }
+
+    override fun resolveFunctionTarget(target: FunctionTarget): List<KaSymbol> = with(session) {
+        var functions = findCallables(target.callableId).filterIsInstance<KaNamedFunctionSymbol>()
+        if (target.parameterNames != null) {
+            functions = functions.filter { it.matchesParameterNames(target.parameterNames) }
+        }
+        functions.ifEmpty { error("Cannot find a function for `$target`.") }
+    }
+
+    override fun resolveConstructorTarget(target: ConstructorTarget): List<KaSymbol> = with(session) {
+        val classSymbol = resolveClass(target.classId)
+        var constructors = classSymbol.declaredMemberScope.constructors.toList()
+        if (target.parameterNames != null) {
+            constructors = constructors.filter { it.matchesParameterNames(target.parameterNames) }
+        }
+        constructors.ifEmpty { error("Cannot find a constructor for `$target`.") }
+    }
+
+    context(_: KaSession)
+    private fun findCallables(callableId: CallableId): List<KaCallableSymbol> {
+        val classId = callableId.classId
+        return if (classId == null) {
             findTopLevelCallables(callableId.packageName, callableId.callableName).toList()
         } else {
             val classSymbol = resolveClass(classId)
             findMatchingCallableSymbols(callableId, classSymbol)
         }
+    }
 
-        if (symbols.isEmpty()) {
-            error("Cannot find a symbol for the callable `$callableId`.")
-        }
-
-        symbols
+    private fun KaFunctionSymbol.matchesParameterNames(expected: List<Name>): Boolean {
+        return valueParameters.map { it.name } == expected
     }
 
     override fun resolveEnumEntryInitializerTarget(target: EnumEntryInitializerTarget): List<KaSymbol> = with(session) {
@@ -88,6 +115,11 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
     override fun resolveValueParameterTarget(target: ValueParameterTarget, owner: KaSymbol): KaSymbol? {
         requireSpecificOwner<KaFunctionSymbol>(target, owner)
         return owner.valueParameters.find { it.name == target.name }
+    }
+
+    override fun resolveContextParameterTarget(target: ContextParameterTarget, owner: KaSymbol): KaSymbol? {
+        requireSpecificOwner<KaContextParameterOwnerSymbol>(target, owner)
+        return owner.contextParameters.find { it.name == target.name }
     }
 
     override fun resolveGetterTarget(target: GetterTarget, owner: KaSymbol): KaSymbol? {

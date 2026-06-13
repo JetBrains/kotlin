@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.types.IrErrorType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.kapt.base.javac.kaptError
 import org.jetbrains.kotlin.kapt.base.mapJList
 import org.jetbrains.kotlin.kapt.base.mapJListIndexed
@@ -99,7 +103,7 @@ class ErrorTypeCorrector(
 
         if (qualifier == null) {
             if (referencedName in substitutions) {
-                val (typeParameter, projection) = substitutions.getValue(referencedName)
+                val [typeParameter, projection] = substitutions.getValue(referencedName)
                 return convertTypeProjection(projection, null, typeParameter.variance, emptyMap())
             }
 
@@ -187,7 +191,7 @@ class ErrorTypeCorrector(
     private fun convertFunctionType(type: KtFunctionType, coneType: ConeKotlinType?, substitutions: SubstitutionMap): JCTree.JCExpression {
         val receiverType = type.receiverTypeReference
         val coneTypeArguments = (coneType as? ConeClassLikeType)?.typeArguments
-        var parameterTypes = mapJList(type.parameters.withIndex()) { (index, parameterKtType) ->
+        var parameterTypes = mapJList(type.parameters.withIndex()) { [index, parameterKtType] ->
             convert(
                 parameterKtType.typeReference,
                 (coneTypeArguments?.getOrNull(index + if (receiverType != null) 1 else 0) as? ConeKotlinTypeProjection)?.type,
@@ -258,7 +262,7 @@ class ErrorTypeCorrector(
 
                 if (qualifier == null) {
                     if (referencedName in substitutions) {
-                        val (typeParameter, projection, coneProjection) = substitutions.getValue(referencedName)
+                        val [typeParameter, projection, coneProjection] = substitutions.getValue(referencedName)
                         return convertTypeProjection(projection, coneProjection, typeParameter.variance, emptyMap())
                     }
 
@@ -302,4 +306,10 @@ fun KotlinType.containsErrorTypes(allowedDepth: Int = 10): Boolean {
     if (this.isError) return true
     if (this.arguments.any { !it.isStarProjection && it.type.containsErrorTypes(allowedDepth - 1) }) return true
     return false
+}
+
+fun IrType.containsErrorTypes(allowedDepth: Int = 10): Boolean {
+    if (allowedDepth <= 0) return false
+    return this is IrErrorType ||
+            this is IrSimpleType && arguments.any { it.typeOrNull?.containsErrorTypes(allowedDepth - 1) == true }
 }

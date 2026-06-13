@@ -31,7 +31,7 @@ class TypeRemapper private constructor(
         typeMapping[type] = newType
     }
 
-    fun hasNoAdditionalMapping(type: String): Boolean {
+    fun hasPrimaryMapping(type: String): Boolean {
         return typeMapping.containsKey(type)
     }
 

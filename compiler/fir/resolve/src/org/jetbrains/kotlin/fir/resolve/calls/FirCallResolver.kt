@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -322,7 +323,7 @@ class FirCallResolver(
             towerResolver.runResolver(info, resolutionContext, collector)
         }
 
-        var (reducedCandidates, applicability) = reduceCandidates(resultCollector, resolutionContext)
+        var [reducedCandidates, applicability] = reduceCandidates(resultCollector, resolutionContext)
 
         if (LanguageFeature.EagerLambdaAnalysis.isDisabled()) {
             @OptIn(OnlyForDefaultLanguageFeatureDisabled::class)
@@ -488,7 +489,7 @@ class FirCallResolver(
             expectedCallKind = if (functionCallExpected) CallKind.Function else null
         )
 
-        val (referencedSymbol, resolvedSymbolOrigin) = when (nameReference) {
+        val [referencedSymbol, resolvedSymbolOrigin] = when (nameReference) {
             is FirResolvedNamedReference -> nameReference.resolvedSymbol to nameReference.resolvedSymbolOrigin
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol to nameReference.candidate.originScope?.toResolvedSymbolOrigin()
             else -> null to null
@@ -523,11 +524,8 @@ class FirCallResolver(
                         referencedSymbol
                     ),
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
-                        nameReference.source,
                         qualifiedAccess.explicitReceiver,
-                        referencedSymbol,
                         nonFatalDiagnosticFromExpressionWithExtra,
-                        session
                     ),
                     annotations = qualifiedAccess.annotations,
                     resolvedSymbolOrigin = resolvedSymbolOrigin,
@@ -604,7 +602,7 @@ class FirCallResolver(
             )
         }
 
-        val (reducedCandidates, applicability) = reduceCandidates(result)
+        val [reducedCandidates, applicability] = reduceCandidates(result)
 
         (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
             reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }
@@ -652,6 +650,8 @@ class FirCallResolver(
         val chosenCandidate = reducedCandidates.single()
         chosenCandidate.updateSourcesOfReceivers()
 
+        callableReferenceAccess.replaceContextArguments(chosenCandidate.contextArguments())
+
         // Due to CandidateFactory.Companion.createForCallableReferenceCandidate, it's guaranteed that
         // all callable reference candidates' CS are effectively clones of the containing call's constraint systems.
         //
@@ -680,7 +680,7 @@ class FirCallResolver(
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
         val typeArguments = constructedType?.typeArguments
-            ?.take((symbol?.fir as? FirRegularClass)?.typeParameters?.count { it is FirTypeParameter } ?: 0)
+            ?.take(symbol?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0)
             ?.map { it.toFirTypeProjection() }
             ?: emptyList()
 
@@ -744,16 +744,19 @@ class FirCallResolver(
         }
     }
 
-    fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
-        val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
+    fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall {
+        val reference = annotation.calleeReference as FirSimpleNamedReference
         val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
         val annotationTypeRef = annotation.annotationTypeRef
         val annotationConeType = annotationTypeRef.coneType
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
             val constructorSymbol = getAnnotationConstructorSymbol(annotationConeType, annotationClassSymbol)
 
-            transformer.transformAnnotationCallArguments(annotation, constructorSymbol)
-
+            if (useArrayLiteralResolution()) {
+                // in CL resolution arguments are already transformed
+                @OptIn(ArrayLiteralResolution::class)
+                transformer.transformAnnotationCallArgumentsPreCollectionLiterals(annotation, constructorSymbol)
+            }
             val callInfo = toCallInfo(annotation, reference)
 
             if (constructorSymbol != null) {
@@ -774,8 +777,10 @@ class FirCallResolver(
                 )
             }
         } else {
-            annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
-
+            if (useArrayLiteralResolution()) {
+                // in CL resolution arguments are already transformed
+                transformer.transformCallArguments(annotation, ResolutionMode.ContextDependent)
+            }
             val callInfo = toCallInfo(annotation, reference)
 
             buildReferenceWithErrorCandidate(
@@ -845,7 +850,7 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val (reducedCandidates, applicability) = reduceCandidates(result)
+        val [reducedCandidates, applicability] = reduceCandidates(result)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,
@@ -918,7 +923,11 @@ class FirCallResolver(
                         when {
                             classLikeBySuperRef?.isInterface == true -> ConeNoConstructorError
                             classLikeBySuperRef?.isExpect == true -> ConeNoImplicitDefaultConstructorOnExpectClass
-                            else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
+                            else -> ConeUnresolvedNameError(
+                                name = name,
+                                operatorToken = operatorToken,
+                                receiverType = explicitReceiver?.takeIf { it !is FirResolvedQualifier }?.resolvedType,
+                            )
                         }
                     }
                 }
@@ -1086,6 +1095,7 @@ class AllCandidatesCollector(
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
     private val allCandidatesMap = mutableMapOf<FirBasedSymbol<*>, Candidate>()
+    private var bestCandidates: List<Candidate>? = null
 
     override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
         // Filter duplicate symbols. In the case of typealias constructor calls, we consider the original constructor for uniqueness.
@@ -1100,6 +1110,28 @@ class AllCandidatesCollector(
 
     // We want to get candidates at all tower levels.
     override fun shouldStopAtTheGroup(group: TowerGroup): Boolean = false
+
+    /**
+     * `result.candidates` is computed via [AllCandidatesCollector], which never stops the tower walk
+     * (`shouldStopAtTheGroup == false`). Because of that, a candidate found on a higher-priority tower level that
+     * normal stop-early resolution would never reach can evict the candidate actually selected by the call.
+     *
+     * For example, for a qualifier call `C()` with a `companion operator fun C.invoke()` (KT-86685), the all-candidate
+     * walk reaches the companion `invoke` extension and reports it as the only best candidate, even though the call
+     * resolves to the constructor. To keep `isInBestCandidates` consistent with the actual resolution result, anchor
+     * the best candidate to the first resolved group.
+     */
+    override fun dropOldCandidates() {
+        if (currentApplicability.shouldStopResolve && bestCandidates == null) {
+            bestCandidates = super.bestCandidates().toList()
+        }
+
+        super.dropOldCandidates()
+    }
+
+    override fun bestCandidates(): List<Candidate> {
+        return bestCandidates ?: super.bestCandidates()
+    }
 
     val allCandidates: Collection<Candidate>
         get() = allCandidatesMap.values

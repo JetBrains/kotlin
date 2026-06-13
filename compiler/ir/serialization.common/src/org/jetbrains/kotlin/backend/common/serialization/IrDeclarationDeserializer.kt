@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
@@ -67,7 +64,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
 
 class IrDeclarationDeserializer(
-    builtIns: IrBuiltIns,
+    private val unitType: IrType,
+    private val nothingType: IrType,
     private val symbolTable: SymbolTable,
     val irFactory: IrFactory,
     private val libraryFile: IrLibraryFile,
@@ -84,7 +82,8 @@ class IrDeclarationDeserializer(
         settings.deserializeFunctionBodies == DeserializeFunctionBodies.ALL
 
     private val bodyDeserializer = IrBodyDeserializer(
-        builtIns = builtIns,
+        unitType = unitType,
+        nothingType = nothingType,
         irFactory = irFactory,
         libraryFile = libraryFile,
         declarationDeserializer = this,
@@ -248,7 +247,7 @@ class IrDeclarationDeserializer(
         setParent: Boolean = true,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T,
     ): T where T : IrDeclaration, T : IrSymbolOwner {
-        val (s, uid) = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
+        val [s, uid] = symbolDeserializer.deserializeSymbolToDeclareInCurrentFile(proto.symbol)
         val coords = deserializeCoordinates(
             proto.hasGlobalCoordinates(), proto.globalCoordinates, proto.localCoordinates, parentStart
         )
@@ -400,7 +399,8 @@ class IrDeclarationDeserializer(
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
                     proto.hasMultiFieldValueClassRepresentation() ->
                         deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)
-                    else -> computeMissingInlineClassRepresentationForCompatibility(this)
+                    // Inline classes with KLib version <= 1.5.20 are no longer supported
+                    else -> deserializeFullValueClassRepresentation(this)
                 }
 
                 // It has been decided not to deserialize the list of sealed subclasses because of KT-54028
@@ -416,25 +416,23 @@ class IrDeclarationDeserializer(
             deserializeIrType(proto.underlyingPropertyType) as IrSimpleType,
         )
 
-    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): MultiFieldValueClassRepresentation<IrSimpleType> {
+    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): JvmInlineMultiFieldValueClassRepresentation<IrSimpleType> {
         val names = proto.underlyingPropertyNameList.memoryOptimizedMap { deserializeName(it) }
         val types = proto.underlyingPropertyTypeList.memoryOptimizedMap { deserializeIrType(it) as IrSimpleType }
-        return MultiFieldValueClassRepresentation(names memoryOptimizedZip types)
+        return JvmInlineMultiFieldValueClassRepresentation(names memoryOptimizedZip types)
     }
 
-    private fun computeMissingInlineClassRepresentationForCompatibility(irClass: IrClass): InlineClassRepresentation<IrSimpleType> {
-        // For inline classes compiled with 1.5.20 or earlier, try to reconstruct inline class representation from the single parameter of
-        // the primary constructor. Something similar is happening in `DeserializedClassDescriptor.computeInlineClassRepresentation`.
-        // This code will be unnecessary as soon as klibs compiled with Kotlin 1.5.20 are no longer supported.
-        val ctor = irClass.primaryConstructor ?: error("Inline class has no primary constructor: ${irClass.render()}")
-        val parameter =
-            ctor.parameters.singleOrNull() ?: error("Failed to get single parameter of inline class constructor: ${ctor.render()}")
-        return InlineClassRepresentation(parameter.name, parameter.type as IrSimpleType)
+    private fun deserializeFullValueClassRepresentation(irClass: IrClass): FullValueClassRepresentation<IrSimpleType> {
+        if (irClass.modality == Modality.ABSTRACT || irClass.modality == Modality.SEALED) return FullValueClassRepresentation(null)
+        val ctor = irClass.primaryConstructor ?: error("Full value class has no primary constructor: ${irClass.render()}")
+        return FullValueClassRepresentation(ctor.parameters.map { it.name to it.type as IrSimpleType })
     }
 
-    private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, parentStart: Int?, setParent: Boolean = true): IrTypeAlias =
-        withDeserializedIrDeclarationBase(proto.base, parentStart, setParent) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
+    private fun deserializeIrTypeAlias(proto: ProtoTypeAlias, parentStart: Int?): IrTypeAlias =
+        withDeserializedIrDeclarationBase(proto.base, parentStart, setParent = false) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             symbolTable.declareTypeAlias(uniqId, { symbol.checkSymbolType(TYPEALIAS_SYMBOL) }) {
+                // This is a quick fix for KT-86501
+                if (it.isBound) return@declareTypeAlias it.owner
                 createIfUnbound(it) {
                     val flags = TypeAliasFlags.decode(fcode)
                     val nameType = BinaryNameAndType.decode(proto.nameType)
@@ -448,8 +446,12 @@ class IrDeclarationDeserializer(
                         isActual = flags.isActual,
                         expandedType = deserializeIrType(nameType.typeIndex),
                     )
+                }.apply {
+                    parent = currentDeclarationParent
                 }
             }.usingDeclarationParent {
+                // This check is a quick fix for KT-86501
+                if (typeParameters.isNotEmpty()) return@usingDeclarationParent
                 typeParameters = deserializeTypeParameters(proto.typeParameterList, true, startOffset)
             }
         }
@@ -620,9 +622,19 @@ class IrDeclarationDeserializer(
                         isInfix = flags.isInfix,
                         isExternal = flags.isExternal || isEffectivelyExternal,
                         isFakeOverride = flags.isFakeOverride,
+                        companionExtensionClass = proto.base.companionExtensionClass.takeIf { proto.base.hasCompanionExtensionClass() }
+                            ?.let { symbol -> deserializeIrSymbol(symbol).checkSymbolType(CLASS_SYMBOL) }
                     )
                 }
             }.apply {
+                // TODO KT-83545: `overriddenSymbols` are recalculated later by `IrFakeOverrideBuilder`, so deserializing them here should be
+                //  in principle redundant. However, the JS/Wasm incremental-compilation dependency tracking (`CacheUpdater` /
+                //  `IdSignatureHashCalculator`) reads these symbols on partially deserialized IR (before final fakeoverrides recalculation)
+                //  where `IrFakeOverrideBuilder` cannot reconstruct the full override chain (supertypes are loaded with reduced strategies),
+                //  so the recalculated symbols are not stable across IC steps. Therefore, for JS/Wasm the overriddenSymbols _must_ be deserialized,
+                //  while for Native backend, it _should_ be also deserialized just for consistency with JS/Wasm.
+                // TODO KT-86658: Reorganize dependency calculation and dirty files calculation in JS/Wasm to not use fake overrides.
+                //  After it, this deserialization can be dropped.
                 overriddenSymbols =
                     proto.overriddenList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(FUNCTION_SYMBOL) }
             }
@@ -840,7 +852,7 @@ class IrDeclarationDeserializer(
             IR_VALUE_PARAMETER -> error("") // deserializeIrValueParameter(proto.irValueParameter, proto.irValueParameter.index)
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry, parentStart, setParent)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty, parentStart, setParent)
-            IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias, parentStart, setParent)
+            IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias, parentStart)
             DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 

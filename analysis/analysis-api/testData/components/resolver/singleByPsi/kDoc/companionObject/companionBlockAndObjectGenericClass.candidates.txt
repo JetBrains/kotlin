@@ -1,0 +1,95 @@
+<caret_1>:
+  KDocName(499,526): 'Container.Vector.ZeroObject'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(532,569): 'Container.Vector.Companion.ZeroObject'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(575,601): 'Container.Vector.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(607,643): 'Container.Vector.Companion.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(649,686): 'Container.Vector.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(692,723): 'Container.Vector.UnitXExtension'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(729,776): 'Container.Vector.Companion.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(782,823): 'Container.Vector.Companion.UnitXExtension'
+    NO_CANDIDATES
+
+<caret_9>:
+  KDocName(859,879): 'Container.ZeroObject'
+    NO_CANDIDATES
+
+<caret_10>:
+  KDocName(885,915): 'Container.Companion.ZeroObject'
+    NO_CANDIDATES
+
+<caret_11>:
+  KDocName(921,940): 'Container.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_12>:
+  KDocName(946,975): 'Container.Companion.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_13>:
+  KDocName(981,1011): 'Container.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_14>:
+  KDocName(1017,1041): 'Container.UnitXExtension'
+    NO_CANDIDATES
+
+<caret_15>:
+  KDocName(1047,1087): 'Container.Companion.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_16>:
+  KDocName(1093,1127): 'Container.Companion.UnitXExtension'
+    NO_CANDIDATES
+
+<caret_17>:
+  KDocName(1136,1157): 'VectorImpl.ZeroObject'
+    NO_CANDIDATES
+
+<caret_18>:
+  KDocName(1163,1194): 'VectorImpl.Companion.ZeroObject'
+    NO_CANDIDATES
+
+<caret_19>:
+  KDocName(1200,1220): 'VectorImpl.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_20>:
+  KDocName(1226,1256): 'VectorImpl.Companion.ZeroBlock'
+    NO_CANDIDATES
+
+<caret_21>:
+  KDocName(1262,1293): 'VectorImpl.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_22>:
+  KDocName(1299,1324): 'VectorImpl.UnitXExtension'
+    NO_CANDIDATES
+
+<caret_23>:
+  KDocName(1330,1371): 'VectorImpl.Companion.UnitXObjectExtension'
+    NO_CANDIDATES
+
+<caret_24>:
+  KDocName(1377,1412): 'VectorImpl.Companion.UnitXExtension'
+    NO_CANDIDATES

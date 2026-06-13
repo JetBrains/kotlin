@@ -23,6 +23,7 @@ Tower Data Context:
         Implicit receiver:
             FirReceiverParameterSymbol <explicit receiver parameter>: R|<local>/Scope1|
                 Type: <local>.Scope1
+Expression Stability: PROPERTY_WITH_GETTER
 Smart Casts:
     FirLocalPropertySymbol lval df1: R|DataFrame<<local>/DataFrameType>|
     Stability: STABLE_VALUE

@@ -7,6 +7,7 @@ package test;
  *   public constructor(key: kotlin/String?)
  *
  *   // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+ *   // must-use return value
  *   public final operator fun getValue(thisRef: kotlin/Any, property: kotlin/reflect/KProperty<*>): T#0
  *
  *   // signature: setNullableValue(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V
@@ -16,6 +17,7 @@ package test;
  *   public abstract fun setValue(bundle: kotlin/Any, key: kotlin/String, value: T#0): kotlin/Unit
  *
  *   // signature: setValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+ *   // must-use return value
  *   public final operator fun setValue(thisRef: kotlin/Any, property: kotlin/reflect/KProperty<*>, value: T#0?): kotlin/Unit
  *
  *   // module name: main
@@ -93,12 +95,14 @@ package test;
  *   public abstract fun getValue(bundle: kotlin/Any, key: kotlin/String): T#0?
  *
  *   // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+ *   // must-use return value
  *   public open operator fun getValue(thisRef: kotlin/Any, property: kotlin/reflect/KProperty<*>): T#0?
  *
  *   // signature: setNullableValue(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V
  *   public abstract fun setNullableValue(bundle: kotlin/Any, key: kotlin/String, value: T#0?): kotlin/Unit
  *
  *   // signature: setValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+ *   // must-use return value
  *   public open operator fun setValue(thisRef: kotlin/Any, property: kotlin/reflect/KProperty<*>, value: T#0?): kotlin/Unit
  *
  *   // signature: toKey(Lkotlin/reflect/KProperty;)Ljava/lang/String;

@@ -35,14 +35,10 @@ KtNameReferenceExpression(36,39): 'Foo'
   null
 
 KtNameReferenceExpression(40,43): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNameReferenceExpression(44,47): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNamedFunction(51,99): 'fun testFun() {'
   null
@@ -72,14 +68,10 @@ KtNameReferenceExpression(86,89): 'Foo'
   null
 
 KtNameReferenceExpression(90,93): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNameReferenceExpression(94,97): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
+  null
 
 KtNamedFunction(101,137): 'fun <T> take(action: (T) -> Unit) {}'
   null
@@ -170,7 +162,7 @@ KtCallExpression(150,190): 'take {'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar.Baz)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
+    diagnostic = ERROR<EXPECTED_PARAMETER_TYPE_MISMATCH: Parameter type mismatch: actual type is '??? (Unresolved qualified name: Foo.Bar.Baz)', but 'uninferred T (of fun <T> take)' was expected.>
 
 KtNameReferenceExpression(150,154): 'take'
   KaCallResolutionError:
@@ -210,7 +202,7 @@ KtNameReferenceExpression(150,154): 'take'
             callableId = null)
         }
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '(??? (Unresolved qualified name: Foo.Bar.Baz)) -> Unit', but '(uninferred T (of fun <T> take)) -> Unit' was expected.>
+    diagnostic = ERROR<EXPECTED_PARAMETER_TYPE_MISMATCH: Parameter type mismatch: actual type is '??? (Unresolved qualified name: Foo.Bar.Baz)', but 'uninferred T (of fun <T> take)' was expected.>
 
 KtLambdaArgument(155,190): '{'
   null
@@ -243,14 +235,10 @@ KtNameReferenceExpression(174,177): 'Foo'
   null
 
 KtNameReferenceExpression(178,181): 'Bar'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+  null
 
 KtNameReferenceExpression(182,185): 'Baz'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
+  null
 
 KtBlockExpression(189,189): ''
   null

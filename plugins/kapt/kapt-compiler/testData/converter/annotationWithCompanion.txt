@@ -37,6 +37,7 @@ public abstract @interface Foo {
      *   private constructor()
      *
      *   // signature: create(Ljava/lang/String;)LFoo;
+     *   @kotlin/jvm/JvmStatic
      *   public final fun create(value: kotlin/String): Foo
      *
      *   // module name: main

@@ -19,6 +19,14 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
+import org.gradle.configuration.project.ConfigureProjectBuildOperationType
+import org.gradle.internal.operations.BuildOperationDescriptor
+import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.internal.operations.OperationFinishEvent
+import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.internal.operations.OperationProgressEvent
+import org.gradle.internal.operations.OperationStartEvent
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskExecutionResult
@@ -27,31 +35,32 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
-import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
+import org.jetbrains.kotlin.build.report.statistics.HttpReportParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
+import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import java.lang.management.ManagementFactory
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
-import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
     val buildMetricsService: Property<BuildMetricsService?>
 }
 
-abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener {
+abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters>, AutoCloseable, OperationCompletionListener,
+    BuildOperationListener {
 
     //Part of BuildReportService
     interface Parameters : BuildServiceParameters {
@@ -76,6 +85,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
+    private val processedMessages = ConcurrentHashMap<Long, Boolean>()
+
     open fun addTask(
         taskPath: String,
         taskClass: Class<*>,
@@ -89,17 +100,17 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
-    open fun addTransformMetrics(
-        transformPath: String,
-        transformClass: Class<*>,
-        isKotlinTransform: Boolean,
+    open fun addConfigurationRecord(
+        path: String,
+        clazz: Class<*>,
         startTimeMs: Long,
         totalTimeMs: Long,
         buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
-        failureMessage: String?,
+        failureMessage: String? = null,
+        logs: List<String> = emptyList(),
     ) {
         buildOperationRecords.add(
-            TransformRecord(transformPath, transformClass.name, isKotlinTransform, startTimeMs, totalTimeMs, buildMetrics)
+            ConfigurationRecord(path, clazz.name, startTimeMs, totalTimeMs, buildMetrics, logs)
         )
         failureMessage?.let { failureMessages.add(it) }
     }
@@ -152,10 +163,48 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         }
     }
 
+    override fun finished(
+        operationDescriptor: BuildOperationDescriptor?,
+        event: OperationFinishEvent?,
+    ) {
+        val details = operationDescriptor?.details
+        if (details is ConfigureProjectBuildOperationType.Details) {
+            if (processedMessages.putIfAbsent(operationDescriptor.id.id, true) != null) {
+                log.debug("Skipping duplicate message with id ${operationDescriptor.id.id}")
+                return
+            }
+
+            val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric> = BuildMetrics()
+            buildMetrics.buildTimes.addTimeMs(GRADLE_CONFIGURATION_TIME, ((event?.endTime ?: 0) - (event?.startTime ?: 0)))
+            addConfigurationRecord(
+                getPath(details),
+                OperationFinishEvent::class.java,
+                event?.startTime ?: 0,
+                (event?.endTime ?: 0) - (event?.startTime ?: 0),
+                buildMetrics
+            )
+        }
+    }
+
+    override fun progress(
+        operationIdentifier: OperationIdentifier?,
+        operationProgressEvent: OperationProgressEvent?,
+    ) {
+        //ignore
+    }
+
+    override fun started(
+        operationDescriptor: BuildOperationDescriptor?,
+        operationStartEvent: OperationStartEvent?,
+    ) {
+        //ignore
+    }
+
     companion object {
         private val serviceClass = BuildMetricsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
         private val log = Logging.getLogger(BuildMetricsService::class.java)
+        private const val CONFIGURATION = "configuration"
 
         private fun Parameters.toBuildReportParameters() = BuildReportParameters(
             startParameters = startParameters.get(),
@@ -168,8 +217,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             additionalTags = HashSet(buildConfigurationTags.get()),
         )
 
+        @Synchronized
         private fun registerIfAbsentImpl(
             project: Project,
+            buildOperationListenerManager: BuildOperationListenerManager
         ): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
@@ -212,6 +263,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.buildConfigurationTags.value(setupTags(project))
             }.also {
                 subscribeForTaskEvents(project, it)
+                buildOperationListenerManager.addListener(it.get())
             }
 
         }
@@ -295,8 +347,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
         }
 
-        fun registerIfAbsent(project: Project) =
-            registerIfAbsentImpl(project)?.also { serviceProvider ->
+        fun registerIfAbsent(project: Project, buildOperationListenerManager: BuildOperationListenerManager) =
+            registerIfAbsentImpl(project, buildOperationListenerManager)?.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
                     project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
                         task.buildMetricsService.value(serviceProvider).disallowChanges()
@@ -319,6 +371,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 additionalTags.add(StatTag.GRADLE_DEBUG)
             }
             return additionalTags
+        }
+
+        private fun getPath(details: ConfigureProjectBuildOperationType.Details): String = when (details.projectPath) {
+            ":" -> ":${CONFIGURATION}"
+            else -> "${details.projectPath}:${CONFIGURATION}"
         }
     }
 
@@ -349,15 +406,15 @@ internal class TaskRecord(
     override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }
 
-private class TransformRecord(
+private class ConfigurationRecord(
     override val path: String,
     override val classFqName: String,
-    override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
     override val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+    override val icLogLines: List<String>,
 ) : BuildOperationRecord {
+    override val isFromKotlinPlugin: Boolean = true
     override val didWork: Boolean = true
     override val skipMessage: String? = null
-    override val icLogLines: List<String> = emptyList()
 }

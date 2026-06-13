@@ -1,0 +1,13 @@
+IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6, WASM
+// ^^^KT-86320:
+// On Native, the compiler crashes with `java.lang.AssertionError: Function `kfun:[...]` is already defined. New definition is required [...].`
+// On JS, the wrong overload is being called at runtime.
+// On Wasm, there appears to be no problem (at least in the currently tested compiler modes), but it is still dangerous to rely on.
+
+MODULES: lib1, lib2, main
+
+STEP 0:
+    libs: lib1, lib2
+
+STEP 1:
+    libs: lib1, main

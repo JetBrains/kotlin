@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.JsCompositeBlock
+import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.common.safeModuleName
 import org.jetbrains.kotlin.js.config.*
@@ -139,22 +140,6 @@ enum class TranslationMode(
     }
 }
 
-class JsCodeGenerator(
-    private val program: JsIrProgram,
-    private val artifactConfiguration: WebArtifactConfiguration,
-    private val sourceMapsInfo: SourceMapsInfo?
-) {
-    fun generateJsCode(relativeRequirePath: Boolean, outJsProgram: Boolean): CompilationOutputsBuilt {
-        return generateWrappedModuleBody(
-            artifactConfiguration,
-            program,
-            sourceMapsInfo,
-            relativeRequirePath,
-            outJsProgram
-        )
-    }
-}
-
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     moduleToName: Map<IrModuleFragment, String> = emptyMap(),
@@ -207,7 +192,6 @@ class IrModuleToJsTransformer(
     fun generateModule(
         modules: Iterable<IrModuleFragment>,
         artifactConfigurations: List<WebArtifactConfiguration>,
-        relativeRequirePath: Boolean,
         outJsProgram: Boolean,
     ): CompilerResult {
         val exportData = associateIrAndExport(modules)
@@ -216,7 +200,7 @@ class IrModuleToJsTransformer(
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
         artifactConfigurations.filter { !it.production }.forEach {
-            result[it.translationMode] = makeJsCodeGeneratorFromIr(exportData, it).generateJsCode(relativeRequirePath, outJsProgram)
+            result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
         }
 
         if (artifactConfigurations.any { it.production }) {
@@ -224,7 +208,7 @@ class IrModuleToJsTransformer(
         }
 
         artifactConfigurations.filter { it.production }.forEach {
-            result[it.translationMode] = makeJsCodeGeneratorFromIr(exportData, it).generateJsCode(relativeRequirePath, outJsProgram)
+            result[it.translationMode] = generateJsCode(exportData, it, outJsProgram)
         }
 
         return CompilerResult(result)
@@ -276,10 +260,11 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private fun makeJsCodeGeneratorFromIr(
+    private fun generateJsCode(
         exportData: List<IrAndExportedDeclarations>,
         artifactConfiguration: WebArtifactConfiguration,
-    ): JsCodeGenerator {
+        outJsProgram: Boolean,
+    ): CompilationOutputsBuilt {
         if (artifactConfiguration.minimizedMemberNames) {
             backendContext.fieldDataCache.clear()
             backendContext.minimizedNameGenerator.clear()
@@ -290,7 +275,23 @@ class IrModuleToJsTransformer(
                 .generateArtifacts(exportData, artifactConfiguration.granularity)
         )
 
-        return JsCodeGenerator(program, artifactConfiguration, sourceMapInfo)
+        return when (artifactConfiguration.granularity) {
+            JsGenerationGranularity.WHOLE_PROGRAM -> generateSingleWrappedModuleBody(
+                artifactConfiguration,
+                program.asFragments(),
+                sourceMapInfo,
+                generateCallToMain = true,
+                outJsProgram = outJsProgram,
+            )
+            JsGenerationGranularity.PER_FILE,
+            JsGenerationGranularity.PER_MODULE,
+                -> generateMultiWrappedModuleBody(
+                artifactConfiguration,
+                program,
+                sourceMapInfo,
+                outJsProgram,
+            )
+        }
     }
 
     private inner class ArtifactProducer(
@@ -397,7 +398,6 @@ class IrModuleToJsTransformer(
     ): JsIrProgramFragment? {
         if (exports.isEmpty()) return null
 
-        val globalNames = NameTable<String>(nameScope)
         val nameGenerator = JsNameLinkingNamer(backendContext, mode.minimizedMemberNames, isEsModules)
         val internalModuleName = ReservedJsNames.makeInternalModuleName().takeIf { !isEsModules }
         val staticContext = JsStaticContext(backendContext, nameGenerator, nameScope, mode)
@@ -439,8 +439,8 @@ class IrModuleToJsTransformer(
             if (generateRegionComments || generateFilePaths) {
                 val originalPath = fileExports.file.path
                 val path = pathPrefixMap.entries
-                    .find { (k, _) -> originalPath.startsWith(k) }
-                    ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                    .find { [k, _] -> originalPath.startsWith(k) }
+                    ?.let { [k, v] -> v + originalPath.substring(k.length) }
                     ?: originalPath
 
                 startComment += "file: $path"
@@ -456,7 +456,7 @@ class IrModuleToJsTransformer(
             }
         }
 
-        staticContext.classModels.entries.forEach { (symbol, model) ->
+        staticContext.classModels.entries.forEach { [symbol, model] ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
                 JsIrIcClassModel(model.dependsOnClasses.memoryOptimizedMap(staticContext::getNameForClass)).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
@@ -479,9 +479,10 @@ class IrModuleToJsTransformer(
         backendContext.testFunsPerFile[fileExports.file]
             ?.let { definitionSet.computeTag(it) }
             ?.let {
-                val suiteFunctionTag = definitionSet.computeTag(backendContext.symbols.suiteFun!!.owner)
+                val suiteFun = backendContext.symbols.suiteFun!!
+                val suiteFunctionTag = definitionSet.computeTag(suiteFun.owner)
                     ?: irError("Expect suite function tag exists") {
-                        withIrEntry("backendContext.suiteFun.owner", backendContext.symbols.suiteFun.owner)
+                        withIrEntry("backendContext.suiteFun.owner", suiteFun.owner)
                     }
                 result.testEnvironment = JsIrProgramTestEnvironment(it, suiteFunctionTag)
             }
@@ -520,7 +521,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.nameMap.entries.forEach { (declaration, name) ->
+        nameGenerator.nameMap.entries.forEach { [declaration, name] ->
             definitions.computeTag(declaration)?.let { tag ->
                 nameBindings[tag] = name
                 if (isBuiltInClass(declaration) || checkIsFunctionInterface(declaration.symbol.signature)) {
@@ -534,7 +535,7 @@ class IrModuleToJsTransformer(
         definitions: Set<IrDeclaration>,
         nameGenerator: JsNameLinkingNamer
     ) {
-        nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
+        nameGenerator.imports.entries.forEach { [declaration, importExpression] ->
             val tag = definitions.computeTag(declaration)
                 ?: irError("No tag for imported declaration") {
                     withIrEntry("declaration", declaration)
@@ -566,45 +567,18 @@ class IrModuleToJsTransformer(
     private fun IrFile.couldBeSkipped(): Boolean = declarations.all { it.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN }
 }
 
-private fun generateWrappedModuleBody(
-    artifactConfiguration: WebArtifactConfiguration,
-    program: JsIrProgram,
-    sourceMapsInfo: SourceMapsInfo?,
-    relativeRequirePath: Boolean,
-    outJsProgram: Boolean
-): CompilationOutputsBuilt {
-    return when (artifactConfiguration.granularity) {
-        JsGenerationGranularity.WHOLE_PROGRAM -> generateSingleWrappedModuleBody(
-            artifactConfiguration,
-            program.asFragments(),
-            sourceMapsInfo,
-            generateCallToMain = true,
-            outJsProgram = outJsProgram
-        )
-        JsGenerationGranularity.PER_FILE,
-        JsGenerationGranularity.PER_MODULE -> generateMultiWrappedModuleBody(
-            artifactConfiguration,
-            program,
-            sourceMapsInfo,
-            relativeRequirePath,
-            outJsProgram
-        )
-    }
-}
-
 private fun generateMultiWrappedModuleBody(
     artifactConfiguration: WebArtifactConfiguration,
     program: JsIrProgram,
     sourceMapsInfo: SourceMapsInfo?,
-    relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
     // mutable container allows explicitly remove elements from itself,
     // so we are able to help GC to free heavy JsIrModule objects
     // TODO: It makes sense to invent something better, because this logic can be easily broken
-    val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind, relativeRequirePath).toMutableList()
+    val moduleToRef = program.asCrossModuleDependencies(artifactConfiguration.moduleKind).toMutableList()
 
-    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
+    val mainModule = moduleToRef.removeLast().let { [main, mainRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration,
             main.fragments,
@@ -615,7 +589,7 @@ private fun generateMultiWrappedModuleBody(
         )
     }
 
-    mainModule.dependencies = moduleToRef.map { (module, moduleRef) ->
+    mainModule.dependencies = moduleToRef.map { [module, moduleRef] ->
         generateSingleWrappedModuleBody(
             artifactConfiguration.copy(moduleName = module.externalModuleName, outputName = module.externalModuleName),
             module.fragments,
@@ -656,7 +630,9 @@ fun generateSingleWrappedModuleBody(
         val sourceMapPrefix = sourceMapsInfo.sourceMapPrefix
         val outputDir = sourceMapsInfo.outputDir?.resolve(artifactConfiguration.moduleName.substringBeforeLast("/", ""))
 
-        sourceMapBuilder = SourceMap3Builder(null, jsCode::getColumn, sourceMapPrefix)
+        sourceMapBuilder = SourceMap3Builder(null, jsCode::getColumn, sourceMapPrefix).apply {
+            addIgnoredSource(JsLocation.IGNORED.file)
+        }
 
         val pathResolver = SourceFilePathResolver.create(sourceMapsInfo.sourceRoots, sourceMapPrefix, outputDir)
 

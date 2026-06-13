@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: kotlin/Cloneable.clone
-  compilerVisibility: Protected
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -43,6 +42,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: null
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library kotlin-stdlib-js"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: null

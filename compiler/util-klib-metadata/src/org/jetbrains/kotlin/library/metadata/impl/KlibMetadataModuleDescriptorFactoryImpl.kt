@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.library.metadata.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
+import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -18,7 +21,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
@@ -26,10 +31,13 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@K1Deprecation
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
-    override val flexibleTypeDeserializer: FlexibleTypeDeserializer
+    override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
+    val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -154,9 +162,10 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             ErrorReporter.DO_NOTHING,
             lookupTracker,
             flexibleTypeDeserializer,
-            emptyList(),
+            fictitiousClassDescriptorFactories,
             notFoundClasses,
             ContractDeserializerImpl(configuration, storageManager),
+            additionalClassPartsProvider = additionalClassPartsProvider,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
             samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,

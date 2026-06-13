@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -40,18 +40,12 @@ import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
-import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.INITIALIZATION_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.extensionsStorage
@@ -89,6 +83,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
+import org.jetbrains.kotlin.utils.isGraalNativeImageRuntime
 import java.io.File
 
 class KotlinCoreEnvironment private constructor(
@@ -173,8 +168,11 @@ class KotlinCoreEnvironment private constructor(
 
         fun registerExtensionsFromPlugins(configuration: CompilerConfiguration) {
             if (!extensionRegistered) {
-                registerPluginExtensionPoints(project)
-                registerExtensionsFromPlugins(project, configuration)
+                if (!isGraalNativeImageRuntime) {
+                    // native image currently does not support dynamic class loading
+                    registerPluginExtensionPoints(project)
+                    registerExtensionsFromPlugins(project, configuration)
+                }
                 extensionRegistered = true
             }
         }
@@ -186,7 +184,16 @@ class KotlinCoreEnvironment private constructor(
                     this.getService(JavaFileManager::class.java) as CoreJavaFileManager
                 )
 
-                registerKotlinLightClassSupport(project)
+                val traceHolder = CliTraceHolder(project)
+                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
+
+                // We don't pass Disposable because in some tests, we manually unregister these extensions, and that leads to LOG.error
+                // exception from `ExtensionPointImpl.doRegisterExtension`, because the registered extension can no longer be found
+                // when the project is being disposed.
+                // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
+                // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API. (KT-64296)
+                @Suppress("DEPRECATION")
+                PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
 
                 registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
                 registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
@@ -252,10 +259,10 @@ class KotlinCoreEnvironment private constructor(
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
-        val (initialRoots, javaModules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
+        (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
         this.initialRoots.addAll(initialRoots)
 
-        val (roots, singleJavaFileRoots) =
+        val [roots, singleJavaFileRoots] =
             initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         // REPL and kapt2 update classpath dynamically
@@ -646,8 +653,8 @@ class KotlinCoreEnvironment private constructor(
 
             registerProjectServices(project)
 
-            for (extension in CompilerConfigurationExtension.getInstances(project)) {
-                extension.updateConfiguration(configuration)
+            for (extension in configuration.getCompilerExtensions(CompilerConfigurationExtension)) {
+                extension.updateConfiguration(project, configuration)
             }
         }
 
@@ -687,11 +694,9 @@ class KotlinCoreEnvironment private constructor(
             PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
 
             // K1 extensions for scripting
-            CompilerConfigurationExtension.registerExtensionPoint(project)
             CollectAdditionalSourcesExtension.registerExtensionPoint(project)
             ProcessSourcesBeforeCompilingExtension.registerExtensionPoint(project)
             ExtraImportsProviderExtension.registerExtensionPoint(project)
-            ScriptEvaluationExtension.registerExtensionPoint(project)
             ShellExtension.registerExtensionPoint(project)
         }
 
@@ -700,24 +705,7 @@ class KotlinCoreEnvironment private constructor(
                 return "The provided plugin ${extension.javaClass.name} is not compatible with this version of compiler"
             }
 
-            for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-                try {
-                    registrar.registerProjectComponents(project, configuration)
-                } catch (e: AbstractMethodError) {
-                    val message = createErrorMessage(registrar)
-                    // Since the scripting plugin is often discovered in the compiler environment, it is often taken from the incompatible
-                    // location, and in many cases this is not a fatal error, therefore strong warning is generated instead of exception
-                    if (registrar.javaClass.simpleName == "ScriptingCompilerConfigurationComponentRegistrar") {
-                        configuration.report(COMPILER_PLUGIN_INITIALIZATION_WARNING, "Default scripting plugin is disabled: $message")
-                    } else {
-                        val errorMessageWithStackTrace = "$message.\n" +
-                                e.stackTraceToString().lines().take(6).joinToString("\n")
-                        configuration.report(COMPILER_PLUGIN_INITIALIZATION_ERROR, errorMessageWithStackTrace)
-                    }
-                }
-            }
-
-            val extensionStorage = configuration.extensionsStorage ?: error("Extensions storage is not registered")
+            val extensionStorage = configuration.extensionsStorage ?: return
             for (registrar in configuration.getList(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)) {
                 with(registrar) { extensionStorage.registerExtensions(configuration) }
             }
@@ -795,31 +783,6 @@ class KotlinCoreEnvironment private constructor(
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
              */
-        }
-
-        // made public for Android Lint
-        @JvmStatic
-        @K1Deprecation
-        fun registerKotlinLightClassSupport(project: MockProject) {
-            with(project) {
-                val traceHolder = CliTraceHolder(project)
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder, project)
-                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(project, traceHolder)
-                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
-                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
-
-                // We don't pass Disposable because in some tests, we manually unregister these extensions, and that leads to LOG.error
-                // exception from `ExtensionPointImpl.doRegisterExtension`, because the registered extension can no longer be found
-                // when the project is being disposed.
-                // For example, see the `unregisterExtension` call in `GenerationUtils.compileFilesUsingFrontendIR`.
-                // TODO: refactor this to avoid registering unneeded extensions in the first place, and avoid using deprecated API. (KT-64296)
-                @Suppress("DEPRECATION")
-                PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this))
-                @Suppress("DEPRECATION")
-                PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
-            }
         }
     }
 }

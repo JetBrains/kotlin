@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
+import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
@@ -46,10 +46,12 @@ import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.service
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
+@AffectedByAnalysisApi
 abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     private var _disposable: Disposable? = null
     protected val disposable: Disposable get() = _disposable!!
@@ -67,7 +69,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
         _disposable = null
     }
 
-    protected fun ignoreTest(filePath: String, configuration: NonGroupingPhaseTestConfiguration): Boolean {
+    protected fun ignoreTest(filePath: String, configuration: NonGroupingStageTestConfiguration): Boolean {
         val modules = configuration.moduleStructureExtractor.splitTestDataByModules(filePath, configuration.directives)
 
         if (modules.modules.none { it.files.any { it.isKtFile } }) {
@@ -80,7 +82,7 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     /**
      * Consider [org.jetbrains.kotlin.test.model.TestFailureSuppressor.suppressIfNeeded] firstly
      */
-    protected open fun shouldSkipTest(filePath: String, configuration: NonGroupingPhaseTestConfiguration): Boolean = false
+    protected open fun shouldSkipTest(filePath: String, configuration: NonGroupingStageTestConfiguration): Boolean = false
 
     @OptIn(TestInfrastructureInternals::class)
     override fun configureInternal(builder: TestConfigurationBuilder) = with(builder) {

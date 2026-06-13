@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.toJsStringLiteral
 import org.jetbrains.kotlin.backend.wasm.jsFunctionForExternalAdapterFunction
 import org.jetbrains.kotlin.backend.wasm.topLevelFunctionForNestedExternal
 import org.jetbrains.kotlin.backend.wasm.utils.getJsBuiltinDescriptor
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -140,7 +140,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
         if (jsFunAnnotation != null) {
-            function.annotations = function.annotations.filter { it.symbol != jsFunAnnotation.symbol }
+            function.annotations = function.annotations.filter { it.classSymbol != jsFunAnnotation.classSymbol }
             jsFunction.annotations = listOf(jsFunAnnotation)
         }
 
@@ -210,7 +210,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
         }
         function.annotations = function.annotations.filter {
-            it.symbol != jsRelatedSymbols.jsExportConstructor && it.symbol != jsRelatedSymbols.jsExportDefaultConstructor
+            it.classSymbol != jsRelatedSymbols.jsExport && it.classSymbol != jsRelatedSymbols.jsExportDefault
         }
 
         return listOf(function, newFun)
@@ -225,7 +225,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ) = builder.irBlockBody {
         +irReturn(
             irCall(functionToCall).let { call ->
-                for ((index, valueParameter) in function.parameters.withIndex()) {
+                for ([index, valueParameter] in function.parameters.withIndex()) {
                     val get = irGet(valueParameter)
                     call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
                 }
@@ -324,9 +324,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
             // Kotlin's closures are objects that implement FunctionN interface.
             // JavaScript can receive opaque reference to them but cannot call them directly.
-            // Thus, we export helper "caller" method that JavaScript will use to call kotlin closures:
+            // Thus, we define trampolines that JavaScript will use to call kotlin closures for each closure signature:
             //
-            //     @JsExport
             //     fun __callFunction_<signatureString>(f: structref, p1: JsType1, p2: JsType2, ...): JsTypeRes {
             //          return adapt(
             //              cast<FunctionN>(f).invoke(
@@ -338,25 +337,36 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             //     }
             //
 
-            context.getFileContext(currentFile).closureCallExports.getOrPut(functionTypeInfo.signatureString) {
+            val trampolineFunction = context.getFileContext(currentFile).closureCallTrampolines.getOrPut(functionTypeInfo.signatureString) {
                 createKotlinClosureCaller(functionTypeInfo)
             }
 
-            // Converter functions creates new JavaScript closures that delegate to Kotlin closures
-            // using above-mentioned "caller" export:
-            //
-            //     @JsFun("""(f) => {
-            //        (p1, p2, ...) => <wasm-exports>.__callFunction_<signatureString>(f, p1, p2, ...)
-            //     }""")
-            //     external fun __convertKotlinClosureToJsClosure_<signatureString>(f: structref): ExternalRef
-            //
-            val kotlinToJsClosureConvertor =
-                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(functionTypeInfo.signatureString) {
-                    createKotlinToJsClosureConvertor(functionTypeInfo)
-                }
-            return FunctionBasedAdapter(kotlinToJsClosureConvertor)
-        }
+            val trampolineReference = trampolineFunction.run {
+                IrRawFunctionReferenceImpl(
+                    startOffset, endOffset,
+                    type,
+                    symbol
+                )
+            }
 
+            // Converter functions will create new JavaScript closures that delegate to Kotlin closures,
+            // using the above-mentioned trampolines, which are passed in as an argument from the WebAssembly side.
+            // Only one converter function needs to be created per arity, as the type adaptation code has
+            // all been factored out into the trampoline.
+            // For each f, we can additionally cache the created Javascript closure.
+            //
+            //     @JsFun("""(f, trampoline) => {
+            //        (p1, p2, ...) => <cache_lookup>(trampoline(f, p1, p2, ...))
+            //     }""")
+            //     external fun __convertKotlinClosureToJsClosure_<arity>(f: structref, trampoline: funcref): ExternalRef
+            val arity = functionTypeInfo.parametersAdapters.size
+            val kotlinToJsClosureConvertor =
+                context.getFileContext(currentFile).kotlinClosureToJsConverters.getOrPut(arity) {
+                    createKotlinToJsClosureConvertor(arity)
+                }
+
+            return TrampolineBasedAdapter(kotlinToJsClosureConvertor, trampolineReference)
+        }
         return SendKotlinObjectToJsAdapter(this)
     }
 
@@ -526,15 +536,14 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             +irReturn(info.resultAdapter.adaptIfNeeded(callInvoke, builder))
         }
 
-        // TODO find out a better way to export the such declarations only when it's required. Also, fix building roots for DCE, then.
-        result.annotations += builder.irAnnotation(jsRelatedSymbols.jsExportConstructor, typeArguments = emptyList())
         additionalDeclarations += result
+        context.jsCalledFunctions.add(result.symbol)
         return result
     }
 
-    private fun createKotlinToJsClosureConvertor(info: FunctionTypeInfo): IrSimpleFunction {
+    private fun createKotlinToJsClosureConvertor(arity: Int): IrSimpleFunction {
         val result = context.irFactory.buildFun {
-            name = Name.identifier("__convertKotlinClosureToJsClosure_${info.signatureString}")
+            name = Name.identifier("__convertKotlinClosureToJsClosure_${arity}")
             returnType = jsRelatedSymbols.jsAnyType
             isExternal = true
         }
@@ -543,17 +552,17 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("f")
             type = context.wasmSymbols.wasmStructRefType
         }
+        result.addValueParameter {
+            name = Name.identifier("trampoline")
+            type = context.wasmSymbols.wasmFuncRefType
+        }
         val builder = context.createIrBuilder(result.symbol)
-        // TODO: Cache created JS closures
-        val arity = info.parametersAdapters.size
         val jsCode = buildString {
-            append("(f) => ")
+            append("(f, trampoline) => ")
             append("getCachedJsObject(f, ")
             append("(")
             appendParameterList(arity)
-            append(") => wasmExports[")
-            append("$CALL_FUNCTION${info.signatureString}".toJsStringLiteral())
-            append("](f, ")
+            append(") => trampoline(f, ")
             appendParameterList(arity)
             append(")")
             append(")")
@@ -628,7 +637,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             body = lambdaBuilder.irBlockBody {
                 val jsClosureCallerCall = irCall(jsClosureCaller)
                 jsClosureCallerCall.arguments[0] = irGetField(irGet(dispatchReceiverParameter!!), closureClassField)
-                for ((adapterIndex, paramAdapter) in info.parametersAdapters.withIndex()) {
+                for ([adapterIndex, paramAdapter] in info.parametersAdapters.withIndex()) {
                     jsClosureCallerCall.arguments[adapterIndex + 1] =
                         paramAdapter.adaptIfNeeded(
                             irGet(parameters[adapterIndex + 1]),
@@ -715,7 +724,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 originalResultType.jsToKotlinAdapterIfNeeded(isReturn = true)
 
         val adaptedParameterTypes: List<IrType> =
-            originalParameterTypes.zip(parametersAdapters).map { (parameterType, adapter) ->
+            originalParameterTypes.zip(parametersAdapters).map { [parameterType, adapter] ->
                 (if (toJs) adapter?.fromType else adapter?.toType) ?: parameterType
             }
 
@@ -774,6 +783,23 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             val call = builder.irCall(function)
             call.arguments[0] = expression
+            return call
+        }
+    }
+
+    /**
+     * Adapter implemented with a trampoline
+     */
+    class TrampolineBasedAdapter(
+        private val function: IrSimpleFunction,
+        private val trampoline: IrExpression
+    ) : InteropTypeAdapter {
+        override val fromType = function.parameters[0].type
+        override val toType = function.returnType
+        override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
+            val call = builder.irCall(function)
+            call.arguments[0] = expression
+            call.arguments[1] = trampoline
             return call
         }
     }

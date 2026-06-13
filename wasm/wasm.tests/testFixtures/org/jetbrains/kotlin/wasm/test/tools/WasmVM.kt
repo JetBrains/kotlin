@@ -14,44 +14,49 @@ import kotlin.test.fail
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
 internal sealed class WasmVM(
-    val shortName: String,
     val property: String,
     val entryPointIsJsFile: Boolean
 ) {
     protected val tool = ExternalTool(System.getProperty(property))
+    val vmName: String
+        get() = javaClass.simpleName
 
     abstract fun run(
         entryFile: String,
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
+        useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
     ): String
 
-    object V8 : WasmVM(shortName = "V8", property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
+    object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 *jsFiles.toTypedArray(),
                 "--module",
-                *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
+                *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh") else emptyArray(),
+                *if (useStackSwitching) arrayOf("--experimental-wasm-wasmfx") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
             )
     }
 
-    object SpiderMonkey : WasmVM(shortName = "SM", property = "javascript.engine.path.SpiderMonkey", entryPointIsJsFile = true) {
+    object SpiderMonkey : WasmVM(property = "javascript.engine.path.SpiderMonkey", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -63,12 +68,13 @@ internal sealed class WasmVM(
             )
     }
 
-    object JavaScriptCore : WasmVM(shortName = "JSC", property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
+    object JavaScriptCore : WasmVM(property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
@@ -79,12 +85,13 @@ internal sealed class WasmVM(
             )
     }
 
-    object WasmEdge : WasmVM(shortName = "WasmEdge", property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
+    object WasmEdge : WasmVM(property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -95,12 +102,13 @@ internal sealed class WasmVM(
             )
     }
 
-    object Wasmtime : WasmVM(shortName = "Wasmtime", property = "wasm.engine.path.Wasmtime", entryPointIsJsFile = false) {
+    object Wasmtime : WasmVM(property = "wasm.engine.path.Wasmtime", entryPointIsJsFile = false) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -114,12 +122,13 @@ internal sealed class WasmVM(
             )
     }
 
-    object NodeJs : WasmVM(shortName = "NodeJs", property = "javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
+    object NodeJs : WasmVM(property = "wasm.javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useStackSwitching: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// Issue: KT-35075
+// ISSUE: KT-35075
+// LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs
 
 fun foo() {}
 
@@ -24,11 +25,12 @@ fun main() {
     val x16 = <!SAFE_CALLABLE_REFERENCE_CALL!><!SAFE_CALLABLE_REFERENCE_CALL!><!SAFE_CALLABLE_REFERENCE_CALL!><!UNRESOLVED_REFERENCE!>logger<!>!!?::<!UNRESOLVED_REFERENCE!>info<!><!>?::<!UNRESOLVED_REFERENCE!>print<!><!>?::<!UNRESOLVED_REFERENCE!>print<!><!>
     val x17 = <!SAFE_CALLABLE_REFERENCE_CALL!><!SAFE_CALLABLE_REFERENCE_CALL!><!UNRESOLVED_REFERENCE!>logger<!>::info<!NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE!>!!<!>?::<!UNRESOLVED_REFERENCE!>print<!><!>?::<!UNRESOLVED_REFERENCE!>print<!><!>
 
-    // It must be OK
-    val x18 = String?::hashCode <!USELESS_ELVIS!>?: ::foo<!>
+    // TODO(KT-86000): `String?::hashCode` is **not** resolved to `Any?.hashCode()`, but rather is bound to receiver `String.Companion`.
+    //  This is incorrect.
+    val x18 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>String<!>?::hashCode <!USELESS_ELVIS!>?: ::foo<!>
     val x19 = String::hashCode <!USELESS_ELVIS!>?: ::foo<!>
-    val x20 = String?::hashCode::hashCode
-    val x21 = kotlin.String?::hashCode::hashCode
+    val x20 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>String<!>?::hashCode::hashCode
+    val x21 = <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>kotlin.String<!>?::hashCode::hashCode
 }
 
 /* GENERATED_FIR_TAGS: callableReference, checkNotNullCall, elvisExpression, functionDeclaration, integerLiteral,

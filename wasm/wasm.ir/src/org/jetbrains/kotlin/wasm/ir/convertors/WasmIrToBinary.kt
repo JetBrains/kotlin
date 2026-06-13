@@ -24,6 +24,7 @@ private object WasmBinary {
     const val FUNC_TYPE: Byte = -0x20 // 0x60
     const val STRUCT_TYPE: Byte = -0x21 // 0x5F
     const val ARRAY_TYPE: Byte = -0x22 // 0x5E
+    const val CONT_TYPE: Byte = -0x23 // 0x5D
     const val SUB_TYPE: Byte = -0x30 // 0x50
     const val SUB_FINAL_TYPE: Byte = -0x31 // 0x4F
     const val REC_GROUP: Byte = -0x32 // 0x4E
@@ -111,8 +112,14 @@ class WasmIrToBinary(
                 is WasmStructDeclaration -> appendStructTypeDeclaration(type)
                 is WasmArrayDeclaration -> appendArrayTypeDeclaration(type)
                 is WasmFunctionType -> appendFunctionTypeDeclaration(type)
+                is WasmContType -> appendContTypeDeclaration(type)
             }
         }
+    }
+
+    private fun appendContTypeDeclaration(type: WasmContType) {
+        b.writeVarInt7(WasmBinary.CONT_TYPE)
+        appendHeapType(type.funType)
     }
 
     fun appendWasmModule() {
@@ -253,7 +260,7 @@ class WasmIrToBinary(
 
         // Emit a custom section for each annotation type in the format described here:
         // https://github.com/WebAssembly/tool-conventions/blob/main/CodeMetadata.md
-        for ((kind, entries) in byKind) {
+        for ([kind, entries] in byKind) {
             appendSection(WasmBinary.Section.CUSTOM) {
                 b.writeString(kind.sectionName)
 
@@ -263,7 +270,7 @@ class WasmIrToBinary(
 
                 b.writeVarUInt32(byFunction.size)
 
-                for ((funcIdx, annotations) in byFunction) {
+                for ([funcIdx, annotations] in byFunction) {
                     b.writeVarUInt32(funcIdx)
                     b.writeVarUInt32(annotations.size)
 
@@ -370,10 +377,6 @@ class WasmIrToBinary(
                     val markId = (instr.firstImmediateOrNull()!! as WasmImmediate.ConstI32).value
                     annotations.add(ResolvedAnnotation(AnnotationKind.TRACE_INST, byteOffset, markId))
                 }
-                WasmOp.PSEUDO_ANNOTATION_JS_CALLED -> {
-                    require(byteOffset == 0) { "js.called annotation must be emitted at function start." }
-                    annotations.add(ResolvedAnnotation(AnnotationKind.JS_CALLED, byteOffset))
-                }
                 WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {}
                 WasmOp.PSEUDO_COMMENT_GROUP_START -> {}
                 WasmOp.PSEUDO_COMMENT_GROUP_END -> {}
@@ -444,6 +447,11 @@ class WasmIrToBinary(
                 b.writeVarUInt32(x.type.opcode)
                 x.immediates.forEach(this::appendImmediate)
             }
+
+            is WasmImmediate.ContHandle -> {
+                b.writeVarUInt32(x.type.opcode)
+                x.immediates.forEach(this::appendImmediate)
+            }
         }
     }
 
@@ -481,7 +489,7 @@ class WasmIrToBinary(
     private fun appendBlockType(type: WasmImmediate.BlockType) {
         when (type) {
             is WasmImmediate.BlockType.Function -> {
-                val field = type.type.owner
+                val field = resolver.resolve(type.type)
                 val id = field.id
                     ?: error("${field::class} ${field.name} ID is unlinked")
                 b.writeVarInt32(id)
@@ -595,7 +603,6 @@ class WasmIrToBinary(
         b.writeByte(0) // attribute
 
         val tagType = resolver.resolve(t.type) as WasmFunctionType
-        check(tagType.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
         val typeId = tagType.id
         check(typeId != null) { "Unlinked tag id" }
         b.writeVarUInt32(typeId)
@@ -704,6 +711,14 @@ class WasmIrToBinary(
             // Code annotation offsets are relative to the first byte
             // of the locals.
             currentFunctionCodeStart = b.written
+
+            for (annotation in function.functionAnnotations) {
+                val annotations = currentFunctionAnnotations ?: mutableListOf<ResolvedAnnotation>().also { currentFunctionAnnotations = it }
+                val kind = when (annotation) {
+                    WasmFunctionAnnotation.JsCalled -> AnnotationKind.JS_CALLED
+                }
+                annotations.add(ResolvedAnnotation(kind, 0))
+            }
 
             b.writeVarUInt32(function.locals.count { !it.isParameter })
             function.locals.forEach { local ->

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
+@K1Deprecation
 class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget) : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return

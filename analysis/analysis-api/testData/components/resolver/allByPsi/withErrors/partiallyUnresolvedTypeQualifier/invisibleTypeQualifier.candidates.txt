@@ -1,0 +1,35 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtProperty(3,49): '// FILE: main.kt'
+  NO_CANDIDATES
+
+KtTypeReference(27,40): 'Hidden.Nested'
+  NO_CANDIDATES
+
+KtUserType(27,40): 'Hidden.Nested'
+  NO_CANDIDATES
+
+KtUserType(27,33): 'Hidden'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(27,33): 'Hidden'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(34,40): 'Nested'
+  NO_CANDIDATES
+
+KtPostfixExpression(43,49): 'null!!'
+  NO_CANDIDATES
+
+KtConstantExpression(43,47): 'null'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(47,49): '!!'
+  NO_CANDIDATES

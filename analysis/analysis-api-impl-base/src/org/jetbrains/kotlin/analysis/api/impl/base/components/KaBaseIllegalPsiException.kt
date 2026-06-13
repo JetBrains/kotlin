@@ -49,6 +49,7 @@ class KaBaseIllegalPsiException private constructor(
         }
     }
 
+    @KaImplementationDetail
     companion object {
         fun create(session: KaSession, psi: PsiElement): KaBaseIllegalPsiException = with(session) {
             val psiModule = getModule(psi)

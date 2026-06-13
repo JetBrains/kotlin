@@ -8,6 +8,7 @@ package test;
  *
  *   // field: key:Ljava/lang/Object;
  *   // getter: getKey()Ljava/lang/Object;
+ *   // must-use return value
  *   public open val key: T#0
  *     public open get
  *

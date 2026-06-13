@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.cache.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
+@KaImplementationDetail
 class LLSessionProvider(
     val useSiteModule: KaModule,
     private val useSiteSessionFactory: (KaModule) -> LLFirSession

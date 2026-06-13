@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
+@K1Deprecation
 interface NewTypeSubstitutor : TypeSubstitutorMarker {
     fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType?
 
@@ -215,18 +217,21 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
     }
 }
 
+@K1Deprecation
 object EmptySubstitutor : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = null
 
     override val isEmpty: Boolean get() = true
 }
 
+@K1Deprecation
 class NewTypeSubstitutorByConstructorMap(val map: Map<TypeConstructor, UnwrappedType>) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? = map[constructor]
 
     override val isEmpty: Boolean get() = map.isEmpty()
 }
 
+@K1Deprecation
 class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromCallableDescriptor>) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
         val indexProposal = (constructor.declarationDescriptor as? TypeParameterDescriptor)?.index ?: return null
@@ -243,6 +248,7 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
     }
 }
 
+@K1Deprecation
 fun createCompositeSubstitutor(appliedFirst: TypeSubstitutor, appliedLast: NewTypeSubstitutor): NewTypeSubstitutor {
     if (appliedFirst.isEmpty) return appliedLast
 
@@ -278,4 +284,5 @@ fun createCompositeSubstitutor(appliedFirst: TypeSubstitutor, appliedLast: NewTy
     }
 }
 
+@K1Deprecation
 fun TypeSubstitutor.composeWith(appliedAfter: NewTypeSubstitutor) = createCompositeSubstitutor(this, appliedAfter)

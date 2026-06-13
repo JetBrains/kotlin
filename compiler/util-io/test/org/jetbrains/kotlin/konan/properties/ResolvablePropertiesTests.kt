@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.properties
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertThrows
 
 class ResolvablePropertiesTests {
@@ -125,6 +126,47 @@ class ResolvablePropertiesTests {
             "include" to "-I\$absoluteTargetSysRoot/usr/include/c++/4.9.4"
         )
         assertEquals("-I/usr/include/c++/4.9.4", props.resolvablePropertyString("include"))
+    }
+
+    @Test
+    fun `cascade resolve`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2" to "v2-\${k1}",
+            "v2-\${k1}" to "test",
+        )
+        assertEquals(
+            "test", props.resolvablePropertyString(
+                props.resolvablePropertyString("k2")!!
+            )
+        )
+    }
+
+    @Test
+    fun `braced vars`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2" to "foo_\${k1}-bar",
+        )
+        assertEquals("foo_v1-bar", props.resolvablePropertyString("k2"))
+    }
+
+    @Test
+    fun `vars in keys`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2.\$k1" to "v2.\$k1",
+        )
+        assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
+    }
+
+    @Test
+    fun `braces vars in keys`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2.\${k1}" to "v2.\${k1}",
+        )
+        assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
     }
 
     companion object {

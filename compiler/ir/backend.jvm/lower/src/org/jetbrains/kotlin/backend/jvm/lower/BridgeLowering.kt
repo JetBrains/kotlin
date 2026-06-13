@@ -324,9 +324,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // e.g., signature clashes.
             return
         } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-            // Do not generate bridge methods for exposed methods, since we already generate bridges for
-            // their mangled counterparts. Generating both bridges will lead to declaration clash.
-            return
+            val bridgeTargetFunctions = irClass.functions.mapNotNull { it.asBridgeTargetOrNull()?.function }.toSet()
+
+            if (irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)) {
+                return
+            }
         }
 
         // For concrete fake overrides, some bridges may be inherited from the super-classes. Specifically, bridges for all
@@ -371,6 +373,22 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             .filter { it.signature !in blacklist }
             .forEach { irClass.addBridge(it, bridgeTarget) }
     }
+
+    // Do not generate bridge methods for exposed methods, since we already generate bridges for
+    // their mangled counterparts. Generating both bridges will lead to declaration clash.
+    //
+    // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
+    // For example, when the bridge is using Any?, but the exposed method uses String.
+    private fun IrClass.hasNonExposedBridgeTargetCounterpart(
+        irFunction: IrSimpleFunction,
+        bridgeTargetFunctions: Set<IrSimpleFunction>,
+    ): Boolean =
+        functions.any {
+            it !== irFunction &&
+                    it in bridgeTargetFunctions &&
+                    it.attributeOwnerId == irFunction.attributeOwnerId &&
+                    !it.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        }
 
     private fun IrSimpleFunction.isClashingWithPotentialBridge(name: Name, signature: Method): Boolean =
         (!this.isFakeOverride || this.modality == Modality.FINAL) && this.name == name && this.jvmMethod == signature
@@ -652,7 +670,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
         val bridgeParamsStructure = getStructure(this) ?: this.parameters.map { RegularMapping(it) }
         val targetParamsStructure = getStructure(target) ?: target.parameters.map { RegularMapping(it) }
-        for ((bridgeParameterStructure, targetParameterStructure) in bridgeParamsStructure zip targetParamsStructure) {
+        for ([bridgeParameterStructure, targetParameterStructure] in bridgeParamsStructure zip targetParamsStructure) {
             // in case of multi-field source parameters, use only the first one from the group
             val targetParameter = targetParameterStructure.parameters.first()
             for (bridgeParameter in bridgeParameterStructure.parameters) {
@@ -709,7 +727,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     ) = irCastIfNeeded(irBlock {
         +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
             if (getStructure(target) == null && getStructure(bridge) == null) {
-                for ((param, targetParam) in bridge.parameters.zip(target.parameters)) {
+                for ([param, targetParam] in bridge.parameters.zip(target.parameters)) {
                     val argument = irGet(param).let { argument ->
                         if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                     }
@@ -740,7 +758,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 if (sourceParameter == bridge.dispatchReceiverParameter) irGet(sourceParameter)
                 else irCastIfNeeded(irGet(sourceParameter), targetParameterType)
             }
-        for ((parameter, argument) in parameters2arguments) {
+        for ([parameter, argument] in parameters2arguments) {
             if (argument != null) {
                 irCall.arguments[parameter] = argument
             }

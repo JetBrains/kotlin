@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         function takesO(o: typeof foo.O): number;
         function getParent(): typeof foo.Parent;
@@ -191,7 +190,7 @@ declare namespace JS_TESTS {
                 abstract class constructor implements foo.Interface1, foo.Interface2 {
                     foo(): string;
                     bar(): string;
-                    readonly __doNotUseOrImplementIt: foo.Interface1["__doNotUseOrImplementIt"] & foo.Interface2["__doNotUseOrImplementIt"];
+                    readonly __doNotUseOrImplementIt: foo.Interface2["__doNotUseOrImplementIt"] & foo.Interface1["__doNotUseOrImplementIt"];
                     private constructor();
                 }
             }
@@ -229,7 +228,7 @@ declare namespace JS_TESTS {
                 abstract class constructor extends foo.BaseWithCompanion.$metadata$.constructor implements foo.Interface1, foo.Interface2 {
                     foo(): string;
                     bar(): string;
-                    readonly __doNotUseOrImplementIt: foo.Interface1["__doNotUseOrImplementIt"] & foo.Interface2["__doNotUseOrImplementIt"];
+                    readonly __doNotUseOrImplementIt: foo.Interface2["__doNotUseOrImplementIt"] & foo.Interface1["__doNotUseOrImplementIt"];
                     private constructor();
                 }
             }
@@ -278,7 +277,7 @@ declare namespace JS_TESTS {
                 abstract class constructor implements foo.Interface1, foo.Interface2 {
                     foo(): string;
                     bar(): string;
-                    readonly __doNotUseOrImplementIt: foo.Interface1["__doNotUseOrImplementIt"] & foo.Interface2["__doNotUseOrImplementIt"];
+                    readonly __doNotUseOrImplementIt: foo.Interface2["__doNotUseOrImplementIt"] & foo.Interface1["__doNotUseOrImplementIt"];
                     private constructor();
                 }
             }
@@ -349,7 +348,7 @@ declare namespace JS_TESTS {
                 abstract class constructor extends foo.BaseWithCompanion.$metadata$.constructor implements foo.Interface1, foo.Interface2 {
                     foo(): string;
                     bar(): string;
-                    readonly __doNotUseOrImplementIt: foo.Interface1["__doNotUseOrImplementIt"] & foo.Interface2["__doNotUseOrImplementIt"];
+                    readonly __doNotUseOrImplementIt: foo.Interface2["__doNotUseOrImplementIt"] & foo.Interface1["__doNotUseOrImplementIt"];
                     private constructor();
                 }
             }
@@ -403,3 +402,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

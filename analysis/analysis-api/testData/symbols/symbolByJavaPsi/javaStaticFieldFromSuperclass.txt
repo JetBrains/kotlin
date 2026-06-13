@@ -1,10 +1,10 @@
 KaJavaFieldSymbol:
   annotations: []
   callableId: /SuperClass.count
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -22,5 +22,5 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: SuperClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: SuperClass.count

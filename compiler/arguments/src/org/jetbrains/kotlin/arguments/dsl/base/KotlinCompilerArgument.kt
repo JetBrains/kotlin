@@ -20,6 +20,7 @@ import kotlin.properties.ReadOnlyProperty
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param delimiter if an argument accepts a list of file paths - defines an accepted delimiter between these paths.
  * @param affectsCompilationOutcome if the argument affects the compilation outcome (e.g. affects the generated code).
+ * @param restrictedToCompilerPhase if set to something else than null, that means the argument only applies to the given compiler phase
  * @param valueType the argument value type.
  * @param valueDescription describes which values are accepted by the argument.
  * The description text may have a different value for different Kotlin releases,
@@ -39,6 +40,7 @@ data class KotlinCompilerArgument(
     val description: ReleaseDependent<String>,
     val delimiter: Delimiter?,
     val affectsCompilationOutcome: Boolean = true,
+    val restrictedToCompilerPhase: KotlinCompilerPhase? = null,
 
     val valueType: KotlinArgumentValueType<*>,
     val valueDescription: ReleaseDependent<String?> = null.asReleaseDependent(),
@@ -66,6 +68,10 @@ data class KotlinCompilerArgument(
         Space("space"),
         Semicolon("semicolon"),
     }
+}
+
+enum class KotlinCompilerPhase {
+    KLIB_COMPILATION, BACKEND_COMPILATION
 }
 
 /**
@@ -136,6 +142,11 @@ internal class KotlinCompilerArgumentBuilder {
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     /**
+     * @see KotlinCompilerArgument.restrictedToCompilerPhase
+     */
+    var restrictedToCompilerPhase: KotlinCompilerPhase? = null
+
+    /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
      */
     fun lifecycle(
@@ -176,6 +187,7 @@ internal class KotlinCompilerArgumentBuilder {
         compilerName = compilerName,
         delimiter = delimiter,
         affectsCompilationOutcome = affectsCompilationOutcome,
+        restrictedToCompilerPhase = restrictedToCompilerPhase
     )
 }
 

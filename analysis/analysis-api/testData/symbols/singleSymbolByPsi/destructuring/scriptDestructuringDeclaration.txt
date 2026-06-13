@@ -1,6 +1,5 @@
 KaDestructuringDeclarationSymbol:
   annotations: []
-  compilerVisibility: Local
   entries: [
     KaKotlinPropertySymbol(/a)
     KaKotlinPropertySymbol(/b)
@@ -14,5 +13,5 @@ KaDestructuringDeclarationSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(scriptDestructuringDeclaration.kts)
   getContainingModule: KaScriptModule "Script scriptDestructuringDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

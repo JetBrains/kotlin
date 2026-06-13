@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.findSpecializedResolveFunctions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
-import org.jetbrains.kotlin.analysis.api.resolution.KaCompoundSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionAttempt
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionError
-import org.jetbrains.kotlin.analysis.api.resolution.KaSymbolResolutionSuccess
-import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
+import org.jetbrains.kotlin.analysis.api.resolution.*
+import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExperimentalApi
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 @OptIn(KtExperimentalApi::class)
 abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
@@ -29,14 +29,17 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        builder.forTestsMatching("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/*") {
-            defaultDirectives {
-                +AnalysisApiTestDirectives.DISABLE_DEPENDED_MODE
-            }
-        }
+        builder.useDirectives(Directives)
     }
 
-    override fun generateResolveOutput(mainElement: KtElement, testServices: TestServices): String = analyzeForTest(mainElement) {
+    open fun <R> analyzeSymbolElement(element: KtElement, testServices: TestServices, action: KaSession.() -> R): R {
+        return analyzeForTest(element, action)
+    }
+
+    override fun generateResolveOutput(
+        mainElement: KtElement,
+        testServices: TestServices,
+    ): String = analyzeSymbolElement(mainElement, testServices) {
         val symbolAttempt = tryResolveSymbols(mainElement)
         val secondSymbolAttempt = tryResolveSymbols(mainElement)
 
@@ -45,7 +48,7 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
 
             if (mainElement is KtResolvableCall) {
                 val callAttempt = mainElement.tryResolveCall()
-                assertStableResult(testServices, symbolAttempt, callAttempt)
+                assertStableResult(mainElement, testServices, symbolAttempt, callAttempt)
             }
         }
 
@@ -54,13 +57,46 @@ abstract class AbstractResolveSymbolTest : AbstractResolveByElementTest() {
             assertSpecificResolutionApi(testServices, symbolAttempt, mainElement)
         }
 
-        stringRepresentation(symbolAttempt)
+        prettyPrint {
+            if (mainElement is KtSimpleNameExpression) {
+                appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
+                appendLine("usesContextSensitiveResolution: ${mainElement.usesContextSensitiveResolution}")
+            }
+
+            val representation = stringRepresentation(symbolAttempt)
+            append(representation)
+
+            if (Directives.RENDER_PSI_CLASS_NAME in testServices.moduleStructure.allDirectives) {
+                val symbols = symbolAttempt?.symbols.orEmpty()
+                printCollectionIfNotEmpty(symbols, prefix = "\nPSI class names: ") { symbol ->
+                    append(symbol.psi?.let { it::class.simpleName }.toString())
+                }
+            }
+
+            val additionalInfo = symbolAttempt?.let { additionalSymbolInfo(it) }
+            if (additionalInfo != null) {
+                appendLine()
+                append("additional: ")
+                withIndent {
+                    append(additionalInfo)
+                }
+            }
+        }
     }
+
+    context(session: KaSession)
+    open fun additionalSymbolInfo(attempt: KaSymbolResolutionAttempt): String? = null
 
     private fun KaSession.tryResolveSymbols(element: KtElement): KaSymbolResolutionAttempt? = if (element is KtResolvable) {
         element.tryResolveSymbols()
     } else {
         null
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val RENDER_PSI_CLASS_NAME by directive(
+            "Render also PSI class name for resolved symbols"
+        )
     }
 }
 

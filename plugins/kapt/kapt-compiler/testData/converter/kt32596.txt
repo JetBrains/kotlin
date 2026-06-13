@@ -76,6 +76,7 @@ import kotlin.reflect.KClass;
 @Anno(klass = ABC.class)
 @ABC()
 /**
+ * @Anno
  * public final class ErrorSomeMissingAnnotations : kotlin/Any {
  *
  *   // signature: <init>()V

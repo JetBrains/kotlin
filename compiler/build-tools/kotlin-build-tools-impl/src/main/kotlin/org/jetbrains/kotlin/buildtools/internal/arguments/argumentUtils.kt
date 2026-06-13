@@ -9,11 +9,14 @@ package org.jetbrains.kotlin.buildtools.internal.arguments
 
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.getArgumentsInfo
 import java.nio.file.Path
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmName
 
 internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLogger) {
@@ -22,6 +25,15 @@ internal fun CommonToolArgumentsImpl.reportRestrictedViolations(logger: KotlinLo
             is RestrictedArgViolation.Error -> throw CompilerArgumentsParseException(violation.message)
             is RestrictedArgViolation.Warning -> logger.warn(violation.message)
         }
+    }
+}
+
+internal fun CommonToolArgumentsImpl.hasValidationErrors(): Boolean =
+    argumentValidationErrors.isNotEmpty()
+
+internal fun CommonToolArgumentsImpl.reportValidationErrors(logger: KotlinLogger) {
+    for (error in argumentValidationErrors) {
+        logger.error(error)
     }
 }
 
@@ -54,5 +66,39 @@ internal fun List<String>.checkNoneContains(other: CharSequence) {
                     "This character is currently not supported in this context. " +
                     "If you need its support, please let us know: https://youtrack.jetbrains.com/issue/KT-85553"
         )
+    }
+}
+
+internal fun checkCaseMatches(
+    restrictedArgViolations: MutableList<RestrictedArgViolation>,
+    argument: KProperty<*>,
+    stringValue: String,
+    passedValue: String
+) {
+    if (stringValue == passedValue) return
+    else {
+        val argumentName = argument.javaField?.getAnnotation(Argument::class.java)?.value!!
+        restrictedArgViolations.add(RestrictedArgViolation.Warning("Case mismatch for $argumentName: expected '$stringValue', got '$passedValue'. This will become an error in Kotlin compiler version 2.6.0"))
+    }
+}
+
+internal fun populateExplicitArguments(arguments: CommonToolArguments) {
+    val argumentsInfo = getArgumentsInfo(arguments.javaClass)
+
+    arguments.explicitArguments = buildMap {
+        for (argumentField in argumentsInfo.cliArgNameToArguments.values) {
+            val actualValue = argumentField.getter.invoke(arguments)
+            val defaultValue = argumentsInfo.getDefaultValue(argumentField)
+
+            val isDefaultValue = if (actualValue is Array<*>) {
+                actualValue.contentEquals(defaultValue as Array<*>)
+            } else {
+                actualValue == defaultValue
+            }
+
+            if (!isDefaultValue) {
+                this[argumentField] = listOf(actualValue)
+            }
+        }
     }
 }

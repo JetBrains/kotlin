@@ -6,10 +6,10 @@ public synthetic final class AnnotationCtorCallGenerateSyntheticKt$annotationImp
     inner (anonymous) class AnnotationCtorCallGenerateSyntheticKt$annotationImpl$Foo$0
     public method <init>(p0: int): void
     public synthetic final method annotationType(): java.lang.Class
-    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method equals(p0: java.lang.Object): boolean
     public final method hashCode(): int
     public synthetic final method int(): int
-    public final @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method toString(): java.lang.String
 }
 
 @kotlin.Metadata

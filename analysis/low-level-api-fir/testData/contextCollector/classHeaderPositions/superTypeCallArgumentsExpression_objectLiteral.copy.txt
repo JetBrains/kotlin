@@ -18,6 +18,7 @@ Tower Data Context:
         Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
     Element 7
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpression_objectLiteral.kt
     public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {

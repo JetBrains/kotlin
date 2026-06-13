@@ -50,14 +50,8 @@ fun Project.customCompilerTest(
         addClasspathProperty(runtimeDependencies, "kotlin.internal.wasm.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.wasm.test.compat.customCompilerVersion", version.rawVersion)
         systemProperty("kotlin.wasm.stdlib.klib.path", "libraries/stdlib/build/classes/kotlin/wasmJs/main")
-        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-            property.set("kotlin.wasm.test.root.out.dir")
-            buildDirectory.set(layout.buildDirectory)
-        }
-        jvmArgumentProviders += objects.newInstance<AbsolutePathArgumentProvider>().apply {
-            property.set("kotlin.wasm.test.node.dir")
-            buildDirectory.set(node.nodeProjectDir)
-        }
+        addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+        addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
         with(binaryenKotlinBuild) {
             setupBinaryen()
         }
@@ -67,6 +61,7 @@ fun Project.customCompilerTest(
 
 fun Project.customFirstStageTest(
     rawVersion: String,
+    addWritePermissionsForAllProperties: Boolean = false,
 ): TaskProvider<out Task> {
     val version = CustomCompilerVersion(rawVersion)
 
@@ -74,7 +69,14 @@ fun Project.customFirstStageTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
         tag = "custom-first-stage"
-    )
+    ) {
+        if (addWritePermissionsForAllProperties)
+            testInputsCheck {
+                // compiler version 2.1.20 and earlier needs `write` permissions to all system properties. This was fixed in commit 7473dc76
+                // So to invoke older compilers, more permissions are given.
+                extraPermissions.add("""permission java.util.PropertyPermission "*", "write";""")
+            }
+    }
 }
 
 fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
@@ -96,12 +98,18 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
 }
 
 /* Custom-first-stage test tasks for different compiler versions. */
+customFirstStageTest("1.9.20", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.0.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.1.0", addWritePermissionsForAllProperties = true)
+customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
+customFirstStageTest("2.4.0-Beta2")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating the following compiler versions to be the previous one and latest one(as as soon it's released).
 customSecondStageTest("2.3.0")
+customSecondStageTest("2.4.0-Beta2")
 
 // TODO: Keep updating the following compiler version to be the previous major one.
 customStagesAggregateTest("2.3.0")

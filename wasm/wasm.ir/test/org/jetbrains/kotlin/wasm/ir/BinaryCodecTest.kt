@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.Ignore
 import org.junit.Test
 
 class BinaryCodecTest {
+    @SmokeTest
     @Test
     fun core() {
         runSpecTests("core", wasmTestSuitePath, emptyList())

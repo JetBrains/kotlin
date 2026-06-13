@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 
+@K1Deprecation
 open class DeserializedPackageMemberScope(
     private val packageDescriptor: PackageFragmentDescriptor,
     val proto: ProtoBuf.Package,

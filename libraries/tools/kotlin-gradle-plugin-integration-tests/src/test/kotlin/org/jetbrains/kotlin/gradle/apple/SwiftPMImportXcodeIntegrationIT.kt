@@ -429,6 +429,62 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `KT-86155 - forEmbedAndSignLinkage prints changed files when linkage package is mutated`(version: GradleVersion) {
+        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
+            initDefaultKmpWithLocalSPM()
+
+            // Step 1: generate the synthetic project via the standard flow so it exists on disk.
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            )
+
+            // Step 2: mutate a tracked file inside the synthetic project root so the next
+            // generation produces a non-idempotent diff.
+            val syntheticRoot = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME")
+            val mutatedFile = syntheticRoot.resolve(
+                "Sources/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.m"
+            )
+            assertTrue(mutatedFile.exists(), "expected generated synthetic source file at $mutatedFile")
+            mutatedFile.writeText("// tampered content - KT-86155 reproducer")
+
+            val taskName = ":generateSyntheticLinkageSwiftPMImportProjectForEmbedAndSignLinkage"
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val xcodeBuildOutput = projectPath.resolve("build/xcodeOutput")
+
+            // Step 3: run the embed-and-sign-variant of the task; it has failOnNonIdempotentChanges=true.
+            buildAndFail(
+                taskName,
+                environmentVariables = EnvironmentalVariables(
+                    "CONFIGURATION" to "Debug",
+                    "ARCHS" to "arm64",
+                    "SDK_NAME" to "iphonesimulator",
+                    "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
+                    "TARGET_BUILD_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "BUILT_PRODUCTS_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            ) {
+                // Legacy prelude must still be present (back-compat with any existing user tooling that scrapes it).
+                assertOutputContains("Synthetic project regenerated")
+                // The Gradle exception message surfaced by error(...) in the task.
+                assertOutputContains("Synthetic project state updated")
+
+                // The new diagnostic: file-level breakdown.
+                assertOutputContains("Synthetic linkage package files changed during the build:")
+                assertOutputContains("Sources/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.m (modified)")
+                // Only the tampered file is reported; no spurious added/removed entries.
+                assertOutputDoesNotContain("(added)")
+                assertOutputDoesNotContain("(removed)")
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage reruns synthetic manifest generation when new Package is added`(version: GradleVersion) {
         project("emptyxcode", version) {
             val includeSecondPackageProp = "includeSecondPackage"
@@ -1138,6 +1194,64 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `integrateLinkagePackage preserves symlink path for local package dependencies`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            val realPackageDir = projectPath.resolveSibling("realLocalSwiftPackage")
+            val symlinkPackagePath = "symlinkLocalSwiftPackage"
+            val symlinkPackageDir = projectPath.resolve(symlinkPackagePath)
+
+            createLocalSwiftPackage(realPackageDir)
+            symlinkPackageDir.createSymbolicLinkPointingTo(realPackageDir)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    listOf(
+                        iosArm64(),
+                        iosSimulatorArm64()
+                    ).forEach {
+                        it.binaries.framework {
+                            baseName = "Shared"
+                            isStatic = true
+                        }
+                    }
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(symlinkPackagePath),
+                            products = listOf("LocalSwiftPackage"),
+                        )
+                    }
+                }
+            }
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                val manifestFile = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/Package.swift")
+                val dump = dumpSwiftPackage(manifestFile.parent)
+                val depPath = dump.dependencies.single().fileSystem!!.single().path
+
+                assertEquals(
+                    symlinkPackagePath,
+                    Path(depPath).fileName.pathString,
+                    "Manifest should preserve the configured symlink path for the local package"
+                )
+                assertNotEquals(
+                    realPackageDir.name,
+                    Path(depPath).fileName.pathString,
+                    "Manifest should not rewrite the local package dependency to the symlink target path"
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage with XCODEPROJ_PATH outside of the project with relative path`(version: GradleVersion) {
         project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
@@ -1266,38 +1380,6 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `integrateEmbedAndSign uses root project task path without duplicate separators`(version: GradleVersion) {
-        Assumptions.assumeTrue(version >= GradleVersion.version("8.14.4"))
-
-        project("emptyxcode-no-embedandsign", version) {
-            initDefaultKmpWithLocalSPM()
-
-            val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
-
-            build(
-                "integrateEmbedAndSign",
-                environmentVariables = EnvironmentalVariables(
-                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
-                    "GRADLEW_PATH" to projectPath.resolve("gradlew").absolutePathString(),
-                    "GRADLE_PROJECT_PATH" to ":",
-                )
-            ) {
-                val pbxFileContent = pbxFile.readText()
-
-                assertContains(
-                    pbxFileContent,
-                    "./gradlew :embedAndSignAppleFrameworkForXcode -i",
-                    message = "Generated embed-and-sign phase should target the root project task path",
-                )
-                assertFalse(
-                    pbxFileContent.contains("./gradlew ::embedAndSignAppleFrameworkForXcode -i"),
-                    "Generated embed-and-sign phase should not contain duplicate separators in the task path",
-                )
-            }
-        }
-    }
-
-    @GradleTest
     fun `embedAndSignAppleFrameworkForXcode uses root gradlew for external xcode project`(version: GradleVersion) {
         project("emptyxcode", version) {
             initDefaultKmpWithLocalSPM()
@@ -1371,6 +1453,59 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 )
             ) {
                 assertTasksExecuted(":integrateLinkagePackage")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateLinkagePackage without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateLinkagePackage",
+                // No XCODEPROJ_PATH — intentional
+                environmentVariables = EnvironmentalVariables(),
+            ) {
+                assertOutputContains("Please specify the path to the Xcode project in the XCODEPROJ_PATH environment variable")
+                assertOutputContains("./gradlew :integrateLinkagePackage")
+                assertOutputDoesNotContain("syntheticImportProjectRoot")
+                assertOutputDoesNotContain("because it has no value available")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateEmbedAndSign without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateEmbedAndSign",
+                environmentVariables = EnvironmentalVariables(),
+            ) {
+                assertOutputContains("Please specify the path to the Xcode project in the XCODEPROJ_PATH environment variable")
+                assertOutputContains("./gradlew :integrateEmbedAndSign")
+                assertOutputDoesNotContain("syntheticImportProjectRoot")
+                assertOutputDoesNotContain("because it has no value available")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateLinkagePackage with invalid XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "does-not-exist/iosApp.xcodeproj",
+                ),
+            ) {
+                assertOutputContains("does not point to an Xcode project directory")
+                assertOutputContains("does-not-exist/iosApp.xcodeproj")
+                assertOutputDoesNotContain("plutil")
             }
         }
     }

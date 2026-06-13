@@ -3,15 +3,17 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:serialization"))
-    api(project(":js:js.ast"))
+    api(kotlinStdlib())
     api(project(":js:js.config"))
-    compileOnly(intellijCore())
+    api(project(":core:deserialization.common"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":core:metadata"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+optInToK1Deprecation()

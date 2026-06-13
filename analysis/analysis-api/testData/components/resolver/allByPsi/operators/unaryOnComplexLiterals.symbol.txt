@@ -1,0 +1,443 @@
+KtFile: 'unaryOnComplexLiterals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,86): 'fun main() {'
+  null
+
+KtParameterList(8,10): '()'
+  null
+
+KtBlockExpression(11,86): '{'
+  null
+
+KtPrefixExpression(17,48): '-(l1@ +(@Anno(33) (-(-(+1L)))))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(17,18): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtParenthesizedExpression(18,48): '(l1@ +(@Anno(33) (-(-(+1L)))))'
+  null
+
+KtLabeledExpression(19,47): 'l1@ +(@Anno(33) (-(-(+1L))))'
+  null
+
+KtContainerNode(19,22): 'l1@'
+  null
+
+KtLabelReferenceExpression(19,22): 'l1@'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  null
+
+KtPrefixExpression(23,47): '+(@Anno(33) (-(-(+1L))))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(23,24): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtParenthesizedExpression(24,47): '(@Anno(33) (-(-(+1L))))'
+  null
+
+KtAnnotatedExpression(25,46): '@Anno(33) (-(-(+1L)))'
+  null
+
+KtAnnotationEntry(25,34): '@Anno(33)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(v: kotlin.Int): Anno
+    ]
+
+KtConstructorCalleeExpression(26,30): 'Anno'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(v: kotlin.Int): Anno
+    ]
+
+KtTypeReference(26,30): 'Anno'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
+
+KtUserType(26,30): 'Anno'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
+
+KtNameReferenceExpression(26,30): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Anno
+    ]
+
+KtValueArgumentList(30,34): '(33)'
+  null
+
+KtValueArgument(31,33): '33'
+  null
+
+KtConstantExpression(31,33): '33'
+  null
+
+KtParenthesizedExpression(35,46): '(-(-(+1L)))'
+  null
+
+KtPrefixExpression(36,45): '-(-(+1L))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(36,37): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtParenthesizedExpression(37,45): '(-(+1L))'
+  null
+
+KtPrefixExpression(38,44): '-(+1L)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(38,39): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtParenthesizedExpression(39,44): '(+1L)'
+  null
+
+KtPrefixExpression(40,43): '+1L'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtOperationReferenceExpression(40,41): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+    ]
+
+KtConstantExpression(41,43): '1L'
+  null
+
+KtPrefixExpression(54,84): '-(l2@ +(@Anno(44) (-(-(+2)))))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(54,55): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtParenthesizedExpression(55,84): '(l2@ +(@Anno(44) (-(-(+2)))))'
+  null
+
+KtLabeledExpression(56,83): 'l2@ +(@Anno(44) (-(-(+2))))'
+  null
+
+KtContainerNode(56,59): 'l2@'
+  null
+
+KtLabelReferenceExpression(56,59): 'l2@'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  null
+
+KtPrefixExpression(60,83): '+(@Anno(44) (-(-(+2))))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(60,61): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtParenthesizedExpression(61,83): '(@Anno(44) (-(-(+2))))'
+  null
+
+KtAnnotatedExpression(62,82): '@Anno(44) (-(-(+2)))'
+  null
+
+KtAnnotationEntry(62,71): '@Anno(44)'
+  null
+
+KtConstructorCalleeExpression(63,67): 'Anno'
+  null
+
+KtTypeReference(63,67): 'Anno'
+  null
+
+KtUserType(63,67): 'Anno'
+  null
+
+KtNameReferenceExpression(63,67): 'Anno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  null
+
+KtValueArgumentList(67,71): '(44)'
+  null
+
+KtValueArgument(68,70): '44'
+  null
+
+KtConstantExpression(68,70): '44'
+  null
+
+KtParenthesizedExpression(72,82): '(-(-(+2)))'
+  null
+
+KtPrefixExpression(73,81): '-(-(+2))'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(73,74): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtParenthesizedExpression(74,81): '(-(+2))'
+  null
+
+KtPrefixExpression(75,80): '-(+2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(75,76): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtParenthesizedExpression(76,80): '(+2)'
+  null
+
+KtPrefixExpression(77,79): '+2'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtOperationReferenceExpression(77,78): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
+
+KtConstantExpression(78,79): '2'
+  null
+
+KtClass(88,197): '@Retention(AnnotationRetention.SOURCE)'
+  null
+
+KtDeclarationModifierList(88,174): '@Retention(AnnotationRetention.SOURCE)'
+  null
+
+KtAnnotationEntry(88,126): '@Retention(AnnotationRetention.SOURCE)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
+
+KtConstructorCalleeExpression(89,98): 'Retention'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(value: kotlin.annotation.AnnotationRetention): kotlin.annotation.Retention
+    ]
+
+KtTypeReference(89,98): 'Retention'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
+
+KtUserType(89,98): 'Retention'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
+
+KtNameReferenceExpression(89,98): 'Retention'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
+
+KtValueArgumentList(98,126): '(AnnotationRetention.SOURCE)'
+  null
+
+KtValueArgument(99,125): 'AnnotationRetention.SOURCE'
+  null
+
+KtDotQualifiedExpression(99,125): 'AnnotationRetention.SOURCE'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.SOURCE
+    ]
+
+KtNameReferenceExpression(99,118): 'AnnotationRetention'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention
+    ]
+
+KtNameReferenceExpression(119,125): 'SOURCE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationRetention.SOURCE
+    ]
+
+KtAnnotationEntry(127,163): '@Target(AnnotationTarget.EXPRESSION)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
+
+KtConstructorCalleeExpression(128,134): 'Target'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+    ]
+
+KtTypeReference(128,134): 'Target'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
+
+KtUserType(128,134): 'Target'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
+
+KtNameReferenceExpression(128,134): 'Target'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
+
+KtValueArgumentList(134,163): '(AnnotationTarget.EXPRESSION)'
+  null
+
+KtValueArgument(135,162): 'AnnotationTarget.EXPRESSION'
+  null
+
+KtDotQualifiedExpression(135,162): 'AnnotationTarget.EXPRESSION'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.EXPRESSION
+    ]
+
+KtNameReferenceExpression(135,151): 'AnnotationTarget'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget
+    ]
+
+KtNameReferenceExpression(152,162): 'EXPRESSION'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/AnnotationTarget.EXPRESSION
+    ]
+
+KtPrimaryConstructor(185,197): '(val v: Int)'
+  null
+
+KtParameterList(185,197): '(val v: Int)'
+  null
+
+KtParameter(186,196): 'val v: Int'
+  null
+
+KtTypeReference(193,196): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(193,196): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(193,196): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]

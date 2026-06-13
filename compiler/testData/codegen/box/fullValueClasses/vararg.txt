@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class Point {
+    // source: 'vararg.kt'
+    private final field x: int
+    private final field y: int
+    public method <init>(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Point1 {
+    // source: 'vararg.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class VarargKt {
+    // source: 'vararg.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public varargs final static @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: Point1[]): java.lang.String
+    public varargs final static @org.jetbrains.annotations.NotNull method f(@org.jetbrains.annotations.NotNull p0: Point[]): java.lang.String
+}

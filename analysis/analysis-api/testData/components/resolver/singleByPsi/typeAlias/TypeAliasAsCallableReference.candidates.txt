@@ -1,2 +1,15 @@
 KtNameReferenceExpression(88,95): 'MyAlias'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = {test.MyAlias=} test.MyClass
+        symbol = <constructor>(): {test.MyAlias=} test.MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

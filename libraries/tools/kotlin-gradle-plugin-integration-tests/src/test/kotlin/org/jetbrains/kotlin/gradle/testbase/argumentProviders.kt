@@ -141,10 +141,10 @@ open class GradleArgumentsProvider : ArgumentsProvider {
     protected fun gradleVersions(context: ExtensionContext): Set<GradleVersion> {
         val versionsAnnotation = findAnnotationOrNull<GradleTestVersions>(context) ?: GradleTestVersions()
 
-        fun max(a: GradleVersion, b: GradleVersion) = if (a >= b) a else b
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
-        val maxGradleVersion = max(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
+        val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
+        if (testFederationMode == TestFederationMode.Smoke) return setOf(maxGradleVersion)
 
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
@@ -239,7 +239,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                     .map { it to providedJdk }
             }
             .asSequence()
-            .filter { (gradleVersion, _) -> versionFilter.map { gradleVersion == it }.orElse(true) }
+            .filter { [gradleVersion, _] -> versionFilter.map { gradleVersion == it }.orElse(true) }
             .map {
                 Arguments.of(it.first, it.second)
             }
@@ -261,9 +261,10 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             // All Gradle versions fit
             filteredVersions.count() == initialVersionsCount -> this
             // No Gradle versions fit
-            filteredVersions.count() == 0 -> error(
-                "Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}."
-            )
+            filteredVersions.isEmpty() -> {
+                println("Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}.")
+                emptySet()
+            }
             // Some Gradle versions fit
             filteredVersions.count() <= initialVersionsCount -> {
                 filteredVersions.toSet()

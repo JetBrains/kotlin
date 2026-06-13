@@ -23,9 +23,12 @@ dependencies {
     testFixturesApi(project(":compiler:ir.serialization.native"))
     testFixturesApi(project(":compiler:test-infrastructure"))
     testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":compiler:ir.psi2ir"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesApi(testFixtures(project(":native:kotlin-native-utils")))
     testFixturesApi(testFixtures(project(":native:native.tests")))
     testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
+    testImplementation(project(":kotlin-util-klib-metadata"))
 
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
         llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))
@@ -39,6 +42,8 @@ sourceSets {
     }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 projectTests {
     testData(project(":compiler").isolated, "testData/klib")
@@ -55,6 +60,7 @@ projectTests {
         "test",
         allowParallelExecution = true,
         requirePlatformLibs = true,
+        enableGroupingTestEngine = true,
     ) {
         val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
@@ -75,8 +81,6 @@ projectTests {
         // With JDK 11, some JVM args are required to silence the warnings caused by that:
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
-        // nativeTest sets workingDir to rootDir so here we need to override it
-        workingDir = projectDir
         systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
     }
 
@@ -84,5 +88,3 @@ projectTests {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
 }
-
-testsJar {}

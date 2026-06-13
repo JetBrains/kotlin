@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirAvailability
@@ -75,9 +74,8 @@ public class SirVisibilityCheckerImpl(
                     visibility.value = SirVisibility.PUBLIC
             }
         }
-
         // We care only about public API.
-        if (!ktSymbol.compilerVisibility.isPublicAPI || ktSymbol.compilerVisibility == Visibilities.Protected) {
+        if (!ktSymbol.visibility.isExposedToSwift) {
             visibility.value = SirVisibility.PRIVATE
         }
         // Hidden declarations are, well, hidden.
@@ -232,6 +230,12 @@ public class SirVisibilityCheckerImpl(
     }
 }
 
+private val KaSymbolVisibility.isExposedToSwift: Boolean
+    get() = when (this) {
+        KaSymbolVisibility.PUBLIC, KaSymbolVisibility.PACKAGE_PROTECTED -> true
+        else -> false
+    }
+
 context(ka: KaSession)
 private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
     return symbol.annotations.any { annotation ->
@@ -275,7 +279,7 @@ private fun hasUnboundInputTypeParameters(
         upperBounds.singleOrNull() // null indicates multiple bounds
     }
     if (typeParamUpperBounds.isEmpty()) return@let false
-    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { (argument, bound) ->
+    classType.typeArguments.zipIfSizesAreEqual(typeParamUpperBounds)?.any { [argument, bound] ->
         argument.type?.let { it != bound } ?: false // .type == null indicates star projection
     } ?: false
 } ?: false

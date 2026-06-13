@@ -16,6 +16,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.allowHoldsinContract = from.allowHoldsinContract
     to.allowKotlinPackage = from.allowKotlinPackage
     to.allowReifiedTypeInCatch = from.allowReifiedTypeInCatch
+    to.allowReturnsResultOf = from.allowReturnsResultOf
     to.annotationDefaultTarget = from.annotationDefaultTarget
     to.annotationTargetAll = from.annotationTargetAll
     to.apiVersion = from.apiVersion
@@ -34,6 +35,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.detailedPerf = from.detailedPerf
     to.directJavaActualization = from.directJavaActualization
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
+    to.disableIrCheckers = from.disableIrCheckers.copyOf()
     to.disablePhases = from.disablePhases.copyOf()
     to.dontSortSourceFiles = from.dontSortSourceFiles
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
@@ -41,6 +43,8 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
+    to.eagerLambdaAnalysis = from.eagerLambdaAnalysis
+    to.enableAdditionalIrCheckers = from.enableAdditionalIrCheckers.copyOf()
     to.expectActualClasses = from.expectActualClasses
     to.explicitApi = from.explicitApi
     to.explicitBackingFields = from.explicitBackingFields
@@ -48,6 +52,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.explicitReturnTypes = from.explicitReturnTypes
     to.fragmentDependencies = from.fragmentDependencies.copyOf()
     to.fragmentFriendDependencies = from.fragmentFriendDependencies.copyOf()
+    to.fragmentIncrementalClasspath = from.fragmentIncrementalClasspath.copyOf()
     to.fragmentRefines = from.fragmentRefines.copyOf()
     to.fragmentSources = from.fragmentSources.copyOf()
     to.fragments = from.fragments.copyOf()
@@ -58,6 +63,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.inlineClasses = from.inlineClasses
     @Suppress("DEPRECATION")
     to.intellijPluginRoot = from.intellijPluginRoot
+    to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome
     to.languageVersion = from.languageVersion
     to.lenientMode = from.lenientMode
@@ -110,8 +116,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useK2 = from.useK2
     to.verbosePhases = from.verbosePhases.copyOf()
     to.verifyIr = from.verifyIr
-    to.verifyIrNestedOffsets = from.verifyIrNestedOffsets
-    to.verifyIrVisibility = from.verifyIrVisibility
     to.warningLevels = from.warningLevels.copyOf()
     to.whenGuards = from.whenGuards
 

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.scopes
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
@@ -22,15 +21,63 @@ import org.jetbrains.kotlin.name.Name
 public interface KaScope : KaScopeLike {
     /**
      * A sequence of all [KaDeclarationSymbol]s contained in the scope.
+     *
+     * The result yields, in order, every element of [callables], [classifiers], and [constructors] — i.e., every declaration this scope can
+     * provide:
+     *
+     * - All [callables] (functions and properties).
+     * - All [classifiers] (classes, objects, companion objects, and type aliases — see [classifiers] for the precise set per scope kind).
+     * - All [constructors].
+     *
+     * To restrict the result to declarations matching a given name, use one of the [declarations] overloads. Those overloads omit
+     * constructors, which cannot be meaningfully filtered by name.
      */
     public val declarations: Sequence<KaDeclarationSymbol>
-        get() = withValidityAssertion {
-            sequence {
-                yieldAll(callables)
-                yieldAll(classifiers)
-                yieldAll(constructors)
-            }
-        }
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the [nameFilter].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function needs to retrieve a set of all possible names before processing declarations. The overload with
+     * `Collection<Name>` should be used when the candidate name set is known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol>
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
+     * known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol>
+
+    /**
+     * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
+     *
+     * Unlike the [declarations] property, [constructors] are **not** included in the result, as they are not filtered by name. Use the
+     * [constructors] property directly if constructors are required.
+     *
+     * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
+     * known.
+     *
+     * @see callables
+     * @see classifiers
+     */
+    @KaExperimentalApi
+    public fun declarations(vararg names: Name): Sequence<KaDeclarationSymbol>
 
     /**
      * A sequence of [KaCallableSymbol]s contained in the scope.
@@ -39,7 +86,6 @@ public interface KaScope : KaScopeLike {
      * `Collection<Name>` should be used when the candidate name set is known.
      */
     public val callables: Sequence<KaCallableSymbol>
-        get() = callables { true }
 
     /**
      * Returns a sequence of [KaCallableSymbol]s contained in the scope which match the [nameFilter].
@@ -63,8 +109,7 @@ public interface KaScope : KaScopeLike {
      * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
      * known.
      */
-    public fun callables(vararg names: Name): Sequence<KaCallableSymbol> =
-        callables(names.toList())
+    public fun callables(vararg names: Name): Sequence<KaCallableSymbol>
 
     /**
      * A sequence of [KaClassifierSymbol]s contained in the scope.
@@ -80,7 +125,6 @@ public interface KaScope : KaScopeLike {
      * `Collection<Name>` should be used when the candidate name set is known.
      */
     public val classifiers: Sequence<KaClassifierSymbol>
-        get() = classifiers { true }
 
     /**
      * Returns a sequence of [KaClassifierSymbol]s contained in the scope which match the [nameFilter].
@@ -125,8 +169,7 @@ public interface KaScope : KaScopeLike {
      * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
      * known.
      */
-    public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol> =
-        classifiers(names.toList())
+    public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol>
 
     /**
      * A sequence of [KaConstructorSymbol] contained in the scope.

@@ -97,7 +97,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     /**
      * Constructs a new immutable [JvmCompilerArguments] instance with the options set in this builder.
      */
-    public fun build(): JvmCompilerArguments
+    override fun build(): JvmCompilerArguments
   }
 
   public companion object {
@@ -180,6 +180,17 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_BACKEND_THREADS: JvmCompilerArgument<Int> =
         JvmCompilerArgument("X_BACKEND_THREADS", KotlinReleaseVersion(1, 6, 20))
+
+    /**
+     * Specifies the destination for common fragments metadata.
+     * This metadata is used solely for incremental compilation and should not be used directly.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_COMMON_FRAGMENTS_METADATA_DESTINATION: JvmCompilerArgument<String?> =
+        JvmCompilerArgument("X_COMMON_FRAGMENTS_METADATA_DESTINATION", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Enable behaviour needed to compile builtins as part of JVM stdlib
@@ -746,7 +757,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
      *                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
      * -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-     * The default value is 'inline'.
+     * The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

@@ -17,7 +17,7 @@ private val ANY_LINE_ENDING_REGEX = """(\r\n|\r|\n)""".toRegex()
 
 class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) : FirInferenceLogsDumper() {
     override fun renderDump(sessionsToLoggers: Map<FirSession, FirInferenceLogger>): String =
-        sessionsToLoggers.entries.joinToString("\n\n") { (session, logger) ->
+        sessionsToLoggers.entries.joinToString("\n\n") { [session, logger] ->
             val structure = buildAdditionalPrintingStructure(logger.topLevelElements)
             val renderedElements = structure.renderNotNullWithIndex { render(it) }
             listOf("## `${session}`", *renderedElements.orEmpty().toTypedArray()).joinToString("\n\n")
@@ -66,7 +66,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
 
         withIndent {
             var index = 0
-            map.mapNotNullTo(lines) { (variable, info) ->
+            map.mapNotNullTo(lines) { [variable, info] ->
                 if (variable == chosen) return@mapNotNullTo null
                 val number = "$indent${index++ + 1}. "
                 number + formatCode(variable) + " is " + formatCode(info.renderReadiness(number.length))
@@ -93,8 +93,8 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
 
     private fun CandidateNode.render(): String? {
         @OptIn(SymbolInternals::class)
-        val signature = FirRenderer.forReadability().renderElementAsString(owner.candidate.symbol.fir)
-        val title = "$indent#### Candidate ${index + 1}: `${owner.candidate.symbol}` --- `${makeSingleLine(signature)}`"
+        val signature = FirRenderer.forReadability().renderElementAsString(owner.candidate.symbol.fir, trim = true)
+        val title = "$indent#### Candidate ${index + 1}: `${owner.candidate.symbol}` --- `$signature`"
 
         val contents = blocks.renderList()?.joinToString("\n\n") ?: return null
         return listOf(title, contents).joinToString("\n")

@@ -2,13 +2,11 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /<unused var>
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -32,7 +30,7 @@ KaKotlinPropertySymbol:
     getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
     getContainingJvmClassName: null
     getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -41,7 +39,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -65,7 +63,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: <no name provided>
   javaSetterName: null
   isInline: false
@@ -74,7 +72,6 @@ KaKotlinPropertySymbol:
 KaPropertyGetterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -98,5 +95,5 @@ KaPropertyGetterSymbol:
   getContainingFileSymbol: KaFileSymbol(entryUnderscoreInScriptDestructuringDeclaration.kts)
   getContainingJvmClassName: null
   getContainingModule: KaScriptModule "Script entryUnderscoreInScriptDestructuringDeclaration.kts"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

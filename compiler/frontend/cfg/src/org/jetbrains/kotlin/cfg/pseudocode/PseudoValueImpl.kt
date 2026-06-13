@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
+@K1Deprecation
 class PseudoValueImpl(
     override val debugName: String,
     override val element: KtElement?,
@@ -27,6 +29,7 @@ class PseudoValueImpl(
     override fun toString(): String = debugName
 }
 
+@K1Deprecation
 open class PseudoValueFactoryImpl : PseudoValueFactory {
     private var lastIndex: Int = 0
 

@@ -103,7 +103,7 @@ class SimpleBridgeGeneratorImpl(
             "p${it.index}" to it.value.type.nativeType
         }
 
-        val joinedCParameters = cFunctionParameters.joinToString { (name, type) -> "$type $name" }
+        val joinedCParameters = cFunctionParameters.joinToString { [name, type] -> "$type $name" }
         val cReturnType = returnType.nativeType
 
         val cFunctionHeader = when (platform) {
@@ -132,7 +132,7 @@ class SimpleBridgeGeneratorImpl(
         nativeLines.add(cFunctionHeader + " {")
 
         buildNativeCodeLines(topLevelNativeScope) {
-            val cExpr = block(cFunctionParameters.takeLast(kotlinValues.size).map { (name, _) -> name })
+            val cExpr = block(cFunctionParameters.takeLast(kotlinValues.size).map { [name, _] -> name })
             if (returnType != BridgedType.VOID) {
                 out("return ($cReturnType)$cExpr;")
             }
@@ -181,7 +181,7 @@ class SimpleBridgeGeneratorImpl(
         val cFunctionParameters = nativeValues.withIndex().map {
             "p${it.index}" to it.value.type.nativeType
         }
-        val joinedCParameters = cFunctionParameters.joinToString { (name, type) -> "$type $name" }
+        val joinedCParameters = cFunctionParameters.joinToString { [name, type] -> "$type $name" }
         val cReturnType = returnType.nativeType
 
         val symbolName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
@@ -193,7 +193,7 @@ class SimpleBridgeGeneratorImpl(
         kotlinLines.add("private fun $kotlinFunctionName($joinedKotlinParameters): $kotlinReturnType {")
 
         buildKotlinCodeLines(topLevelKotlinScope) {
-            var kotlinExpr = block(kotlinParameters.map { (name, _) -> name })
+            var kotlinExpr = block(kotlinParameters.map { [name, _] -> name })
             require(returnType != BridgedType.OBJC_POINTER) { "Objective-C interop should not reach here" }
             returnResult(kotlinExpr)
         }.forEach {
@@ -229,7 +229,7 @@ class SimpleBridgeGeneratorImpl(
                     }
                 }
 
-        nativeBridges.mapNotNullTo(includedBridges) { (nativeBacked, nativeBridge) ->
+        nativeBridges.mapNotNullTo(includedBridges) { [nativeBacked, nativeBridge] ->
             if (nativeBacked in excludedClients) {
                 null
             } else {

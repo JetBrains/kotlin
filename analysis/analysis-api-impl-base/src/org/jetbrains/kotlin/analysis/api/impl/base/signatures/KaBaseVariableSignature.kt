@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.signatures
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+@KaImplementationDetail
 abstract class KaBaseVariableSignature<out S : KaVariableSymbol> : KaVariableSignature<S> {
     override val name: Name
         get() = withValidityAssertion {
@@ -39,7 +41,7 @@ abstract class KaBaseVariableSignature<out S : KaVariableSymbol> : KaVariableSig
 
     private fun findParameterNameAnnotation(): KaAnnotation? {
         val allParameterNameAnnotations = returnType.annotations[StandardNames.FqNames.parameterNameClassId]
-        val (explicitAnnotations, implicitAnnotations) = allParameterNameAnnotations.partition { it.psi != null }
+        val [explicitAnnotations, implicitAnnotations] = allParameterNameAnnotations.partition { it.psi != null }
 
         return if (explicitAnnotations.isNotEmpty()) {
             explicitAnnotations.first()

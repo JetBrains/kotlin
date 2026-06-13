@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
+@K1Deprecation
 interface FlexibleTypeDeserializer {
     fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
 

@@ -72,8 +72,8 @@ private class ConeContractDescriptionElementToAnalysisApi(
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KaContractCallsInPlaceContractEffectDeclaration =
         KaBaseContractCallsInPlaceContractEffectDeclaration(
-            callsEffect.valueParameterReference.accept(),
-            callsEffect.kind,
+            backingValueParameterReference = callsEffect.valueParameterReference.accept(),
+            backingOccurrencesRange = callsEffect.kind,
         )
 
     override fun visitReturnsResultOfEffectDeclaration(

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.abi.utils.referenceJvmDumpFile
 import org.jetbrains.kotlin.gradle.dsl.abi.BinariesSource
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.testbase.*
-import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
 @JvmGradlePluginTests
@@ -83,9 +82,66 @@ class AbiValidationJvmMavenPublicationsIT : KGPBaseTest() {
 
         assertEquals(compilationsDump, dumpFromPublication)
     }
+
+    @GradleTest
+    fun testClassifierArtifactsAreIgnored(
+        gradleVersion: GradleVersion,
+    ) {
+        var compilationsDump = ""
+        project(
+            "base-kotlin-jvm-library",
+            gradleVersion,
+        ) {
+            abiValidation()
+            addSampleSource()
+
+            build("updateKotlinAbi")
+            compilationsDump = referenceJvmDumpFile().readText()
+        }
+
+        var dumpFromPublication = ""
+        project(
+            "base-kotlin-jvm-library",
+            gradleVersion,
+        ) {
+            plugins {
+                id("org.gradle.maven-publish")
+            }
+
+            abiValidation {
+                binariesSource.set(BinariesSource.MAVEN_PUBLICATIONS)
+            }
+
+            buildScriptInjection {
+                val sourcesJar = project.tasks.register("sourcesJar", org.gradle.jvm.tasks.Jar::class.java) { jar ->
+                    jar.archiveClassifier.set("sources")
+                    jar.from("src/main/kotlin")
+                }
+
+                val javadocJar = project.tasks.register("javadocJar", org.gradle.jvm.tasks.Jar::class.java) { jar ->
+                    jar.archiveClassifier.set("javadoc")
+                }
+
+                publishing.publications.create<MavenPublication>("maven") {
+                    from(this@buildScriptInjection.project.components.getByName("java"))
+                    artifact(sourcesJar)
+                    artifact(javadocJar)
+
+                    groupId = this@buildScriptInjection.project.group.toString()
+                    artifactId = this@buildScriptInjection.project.name
+                    version = this@buildScriptInjection.project.version.toString()
+                }
+            }
+
+            addSampleSource()
+
+            build("updateKotlinAbi")
+            dumpFromPublication = referenceJvmDumpFile().readText()
+        }
+
+        assertEquals(compilationsDump, dumpFromPublication)
+    }
 }
-
-
 
 private fun GradleProject.addSampleSource() {
     kotlinSourcesDir().source("org/jetbrains/tests") { SOURCE_FILE }
@@ -101,4 +157,3 @@ private val SOURCE_FILE = """
         }
     }
 """.trimIndent()
-

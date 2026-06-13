@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -16,12 +15,13 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
 import org.jetbrains.kotlin.ir.backend.js.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
-import org.jetbrains.kotlin.ir.backend.js.lower.isExportedDefaultImplementation
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.isExportedDefaultImplementation
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.*
@@ -44,6 +44,9 @@ private const val notImplementablePropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
+    private val allowExportSuspendLambdas = context.configuration.languageVersionSettings.supportsFeature(
+        LanguageFeature.JsExportingSuspendLambdas
+    )
     private val allowImplementingInterfaces = context.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay
     )
@@ -362,7 +365,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             .filter { (it.classifierOrFail.owner as? IrDeclaration)?.isExportedImplicitlyOrExplicitly(context) ?: false }
             .map { exportType(it, typeParameterScope) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes, typeParameterScope)
+        val [members, nestedClasses] = exportClassDeclarations(klass, superTypes, typeParameterScope)
         return ExportedRegularClass(
             name = name,
             isInterface = true,
@@ -392,7 +395,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         }
 
         val typeParameterScope = newTypeParameterScope(klass, outerClassTypeParameterScope, renameOuterTypeParameters = true)
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes, typeParameterScope)
+        val [members, nestedClasses] = exportClassDeclarations(klass, superTypes, typeParameterScope)
         return exportClass(
             klass,
             superTypes,
@@ -421,7 +424,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             enumEntries
                 .keysToMap(enumEntries::indexOf)
 
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes, emptyMap()) { candidate ->
+        val [members, nestedClasses] = exportClassDeclarations(klass, superTypes, emptyMap()) { candidate ->
             val enumExportedMember = exportAsEnumMember(candidate, enumEntriesToOrdinal)
             enumExportedMember
         }
@@ -648,7 +651,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         val allSuperTypesWithBrandProperty = klass.collectAllImplementableAndNotImplementableInterfaces(superTypes)
         val typeItselfShouldNotBeImplemented = klass.shouldContainNotImplementableProperty(klassHasNotExportedAbstractMember)
 
-        val (implementableSuperTypes, notImplementableSuperTypes) = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
+        val [implementableSuperTypes, notImplementableSuperTypes] = allSuperTypesWithBrandProperty.partition { it is InterfaceSuperType.ImplementableInterface }
 
         implementableSuperTypes.forEach { superType ->
             addImplementableSymbolProperty(superType.irClass)
@@ -795,7 +798,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
                             .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
                             ?: ExportedType.Primitive.Nothing
                         "ordinal" -> enumEntriesToOrdinal
-                            .map { (_, ordinal) -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
+                            .map { [_, ordinal] -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
                             .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) }
                             ?: ExportedType.Primitive.Nothing
                         else -> return emptyList()
@@ -877,7 +880,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
         val nameTable = NameTable<IrTypeParameterSymbol>()
         if (shouldIncludeOuterScope && !renameOuterTypeParameters) {
-            for ((irTypeParameter, exported) in outerScope) {
+            for ([irTypeParameter, exported] in outerScope) {
                 nameTable.declareStableName(irTypeParameter, exported.name)
             }
         }
@@ -891,7 +894,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         var shouldRecomputeOuterConstraints = false
         if (shouldIncludeOuterScope) {
             if (renameOuterTypeParameters) {
-                for ((irTypeParameter, exported) in outerScope) {
+                for ([irTypeParameter, exported] in outerScope) {
                     shouldRecomputeOuterConstraints = true
                     val disambiguatedName = irTypeParameter.owner.parentDeclarationsWithSelf.joinToString(separator = "\$") {
                         (it as IrDeclarationWithName).getExportedIdentifier()
@@ -905,7 +908,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
 
         // Then compute the constraints
         var i = 0
-        for ((tp, exported) in this) {
+        for ([tp, exported] in this) {
             if (!shouldRecomputeOuterConstraints && i == newTypeParameters.size) {
                 // Don't compute constraints for type parameters from the `outerScope` map, they should already be computed at this point.
                 // Unless we've renamed those type parameters, in which case we have to compute the constraints for them again.
@@ -960,11 +963,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             nonNullType.isBoolean() -> ExportedType.Primitive.Boolean
             nonNullType.isLong() || nonNullType.isULong() -> {
                 if (!context.configuration.compileLongAsBigint) {
-                    context.report(
-                        CompilerMessageSeverity.ERROR,
-                        typeOwner,
-                        typeOwner?.file,
-                        "Long can't be exported without using of the bigint type. Add -Xes-long-as-bigint compiler argument or set target to 'es2015'"
+                    context.diagnosticReporter.report(
+                        JsKlibErrors.JS_LONG_EXPORT_ERROR,
+                        "",
+                        typeOwner?.getCompilerMessageLocation(typeOwner.file)
                     )
                 }
                 ExportedType.Primitive.BigInt
@@ -992,16 +994,32 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             nonNullType.isUnit() -> ExportedType.Primitive.Unit
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
             nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner, typeParameterScope))
-            nonNullType.isSuspendFunction() -> ExportedType.ErrorType("Suspend functions are not supported")
-            nonNullType.isFunction() -> ExportedType.Function(
-                parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
-                    ExportedParameter(
-                        name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
-                        type = exportTypeArgument(it, typeOwner, typeParameterScope),
+            nonNullType.isFunction() ->
+                ExportedType.Function(
+                    parameters = nonNullType.exportFunctionTypeArguments(typeOwner, typeParameterScope),
+                    returnType = nonNullType.exportFunctionTypeReturnType(typeOwner, typeParameterScope)
+                )
+
+            nonNullType.isSuspendFunction() -> when {
+                !allowExportSuspendLambdas -> ExportedType.ErrorType("Suspend functions are not supported")
+                else -> {
+                    if (!context.configuration.compileSuspendAsJsGenerator) {
+                        context.diagnosticReporter.report(
+                            JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR,
+                            "",
+                            typeOwner?.getCompilerMessageLocation(typeOwner.file)
+                        )
+                    }
+
+                    ExportedType.Function(
+                        parameters = nonNullType.exportFunctionTypeArguments(typeOwner, typeParameterScope),
+                        returnType = ExportedType.ClassType(
+                            name = FqName("Promise"),
+                            arguments = listOf(nonNullType.exportFunctionTypeReturnType(typeOwner, typeParameterScope))
+                        )
                     )
-                },
-                returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner, typeParameterScope)
-            )
+                }
+            }
 
             classifier is IrTypeParameterSymbol -> typeParameterScope[classifier]?.let(ExportedType::TypeParameterRef)
                 ?: error("Type parameter '${classifier.owner.render()}' is not in scope")
@@ -1068,6 +1086,18 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             .also { currentlyProcessedTypes.remove(type) }
     }
 
+    private fun IrSimpleType.exportFunctionTypeArguments(typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): List<ExportedParameter> {
+        return arguments.dropLast(1).memoryOptimizedMap {
+            ExportedParameter(
+                name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
+                type = exportTypeArgument(it, typeOwner, typeParameterScope),
+            )
+        }
+    }
+
+    private fun IrSimpleType.exportFunctionTypeReturnType(typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): ExportedType {
+        return exportTypeArgument(arguments.last(), typeOwner, typeParameterScope)
+    }
 
     /**
      * With this method we're collecting all the super types that may contain either implementable or non-implementable properties
@@ -1192,7 +1222,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
         while (stack.isNotEmpty()) {
             val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
 
-            if (processedClass.isJsImplicitExport()) {
+            if (processedClass.couldBeConvertedToExplicitExport() == false) {
                 result[processedClass] = InterfaceSuperType.NotImplementableInterface(processedClass)
                 continue
             }

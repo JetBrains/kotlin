@@ -5,24 +5,34 @@
 
 package org.jetbrains.kotlin.ir.backend.js.wasm
 
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.exportedJsExportName
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.isJsExportDeclaration
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.isJsExportIgnoreDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isExpect
+import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.WasmStandardClassIds
-import kotlin.sequences.associateWith
 import kotlin.sequences.filter
 
-typealias ExportNamesMap = Map<ExportKind, Map<IrFile, Map<IrDeclarationWithName, String>>>
-
-enum class ExportKind {
-    JsExport,
-    WasmExport
+enum class ExportKind(
+    val clashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>,
+    val crossClashError: KtDiagnosticFactory3<String, String, List<WasmKlibExportingDeclaration>>
+) {
+    JsExport(
+        WasmKlibErrors.EXPORTING_JS_NAME_CLASH,
+        WasmKlibErrors.EXPORTING_JS_NAME_WASM_EXPORT_CLASH
+    ),
+    WasmExport(
+        WasmKlibErrors.WASM_EXPORT_CLASH,
+        WasmKlibErrors.WASM_EXPORT_EXPORTING_JS_NAME_CLASH
+    )
 }
 
 fun IrAnnotationContainer.isWasmExportDeclaration(): Boolean {
@@ -35,13 +45,40 @@ fun IrDeclarationWithName.getWasmExportName(): String {
     return nameFromAnnotation ?: name.identifier
 }
 
-fun IrModuleFragment.collectWasmExportNames(): Map<IrFile, Map<IrDeclarationWithName, String>> =
-    files.associateWith { irFile ->
-        irFile.declarations.asSequence()
-            .filterIsInstance<IrDeclarationWithName>()
-            .filter { it.isWasmExportDeclaration() && !it.isEffectivelyExternal() }
-            .associateWith { it.getWasmExportName() }
+fun IrModuleFragment.collectWasmExportNamesList(): List<WasmKlibExportingDeclaration> = buildList {
+    for (irFile in files) {
+        for (declaration in irFile.declarations) {
+            // expect declarations are eliminated during wasmLowerings - export declarations not generated
+            // KT-86267 K/Wasm: prohibit placing JsExport/WasmExport on expect declarations
+            if (declaration is IrDeclarationWithName &&
+                declaration.isWasmExportDeclaration() &&
+                !declaration.isEffectivelyExternal() &&
+                !declaration.isExpect
+            ) {
+                add(WasmKlibExportingDeclaration(declaration.getWasmExportName(), irFile, declaration, ExportKind.WasmExport))
+            }
+        }
     }
+}
 
-fun IrModuleFragment.collectAllExportNames(): ExportNamesMap =
-    mapOf(ExportKind.JsExport to collectJsExportNames(), ExportKind.WasmExport to collectWasmExportNames())
+fun IrModuleFragment.collectJsExportNamesList(): List<WasmKlibExportingDeclaration> = buildList {
+    for (irFile in files) {
+        val isFileJsExported = irFile.annotations.hasAnnotation(
+            JsStandardClassIds.Annotations.JsExport.asSingleFqName()
+        )
+        for (declaration in irFile.declarations) {
+            // expect declarations are eliminated during wasmLowerings - export declarations not generated
+            // KT-86267 K/Wasm: prohibit placing JsExport/WasmExport on expect declarations
+            if (declaration is IrDeclarationWithName &&
+                !declaration.isEffectivelyExternal() &&
+                !declaration.isExpect &&
+                (isFileJsExported && !declaration.isJsExportIgnoreDeclaration() || declaration.isJsExportDeclaration())
+            ) {
+                add(WasmKlibExportingDeclaration(declaration.exportedJsExportName, irFile, declaration, ExportKind.JsExport))
+            }
+        }
+    }
+}
+
+fun IrModuleFragment.collectAllExportNames(): List<WasmKlibExportingDeclaration> =
+    collectWasmExportNamesList() + collectJsExportNamesList()

@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
+import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
+import org.jetbrains.kotlin.backend.jvm.ir.isBasicValueClassType
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isValueClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -55,7 +56,7 @@ object InlineClassAbi {
     fun mangledNameFor(context: JvmBackendContext, irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.isValue) {
+            assert(irFunction.constructedClass.isBasicValueClass) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
@@ -65,7 +66,7 @@ object InlineClassAbi {
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isValue != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isBasicValueClass != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 
@@ -117,7 +118,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isValue = isValueClassType(),
+            isValue = isBasicValueClassType(),
             isNullable = isNullable()
         )
 
@@ -129,7 +130,7 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
     val irClass = erasedUpperBound
     return !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME) && when {
         irClass.isSingleFieldValueClass -> includeInline
-        irClass.isMultiFieldValueClass -> includeMFVC
+        irClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }
 }
@@ -137,12 +138,12 @@ fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boole
 fun IrFunction.hasMangledParameters(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean =
     (dispatchReceiverParameter != null && when {
         parentAsClass.isSingleFieldValueClass -> includeInline
-        parentAsClass.isMultiFieldValueClass -> includeMFVC
+        parentAsClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     }) || nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) }
             || (this is IrConstructor && when {
         constructedClass.isSingleFieldValueClass -> includeInline
-        constructedClass.isMultiFieldValueClass -> includeMFVC
+        constructedClass.isJvmInlineMultiFieldValueClass -> includeMFVC
         else -> false
     })
 
@@ -158,10 +159,10 @@ val IrFunction.isInlineClassFieldGetter: Boolean
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true
 
 val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction &&
+    get() = (parent as? IrClass)?.isJvmInlineMultiFieldValueClass == true && this is IrSimpleFunction &&
             hasShape(dispatchReceiver = true) &&
             correspondingPropertySymbol?.let {
-                val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
-                    ?: error("Multi-field value class must have multiFieldValueClassRepresentation: ${parentAsClass.render()}")
+                val multiFieldValueClassRepresentation = parentAsClass.jvmInlineMultiFieldValueClassRepresentation
+                    ?: error("@JvmInline Multi-field value class must have jvmInlineMultiFieldValueClassRepresentation: ${parentAsClass.render()}")
                 it.owner.getter == this && multiFieldValueClassRepresentation.containsPropertyWithName(it.owner.name)
             } == true

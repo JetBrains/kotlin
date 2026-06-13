@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.config.konanNoDefaultLibs
 import org.jetbrains.kotlin.konan.config.konanNoStdlib
 import org.jetbrains.kotlin.konan.config.konanTarget
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
-import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.Klib
@@ -46,7 +46,8 @@ abstract class NativeEnvironmentConfigurator(
          * that are capable of locating and properly loading libraries, this function returns just the list of raw library paths.
          *
          * That could be not enough in certain cases. For example, in the case of loading the libraries from the Kotlin/Native distribution,
-         * which all need to be marked with [Klib.isFromKotlinNativeDistribution] flag that is checked by the Kotlin/Native backend later.
+         * which all need to be marked with [Klib.isImplicitlyLoadedFromKotlinNativeDistribution] flag that is checked
+         * by the Kotlin/Native backend later.
          */
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
             return testServices.nativeEnvironmentConfigurator.getRuntimeLibraryProviders(module).flatMap { it.getLibraryPaths() }

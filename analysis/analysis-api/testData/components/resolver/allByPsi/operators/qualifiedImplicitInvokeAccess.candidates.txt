@@ -1,0 +1,782 @@
+KtFile: 'qualifiedImplicitInvokeAccess.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,0): ''
+  NO_CANDIDATES
+
+KtImportList(0,0): ''
+  NO_CANDIDATES
+
+KtClass(0,142): 'class MyClass {'
+  NO_CANDIDATES
+
+KtClassBody(14,142): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(19,59): 'operator fun invoke(argument: String) {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(19,27): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(38,56): '(argument: String)'
+  NO_CANDIDATES
+
+KtParameter(39,55): 'argument: String'
+  NO_CANDIDATES
+
+KtTypeReference(49,55): 'String'
+  NO_CANDIDATES
+
+KtUserType(49,55): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(49,55): 'String'
+  NO_CANDIDATES
+
+KtBlockExpression(57,59): '{}'
+  NO_CANDIDATES
+
+KtProperty(63,95): 'val itself: MyClass get() = this'
+  NO_CANDIDATES
+
+KtTypeReference(75,82): 'MyClass'
+  NO_CANDIDATES
+
+KtUserType(75,82): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(75,82): 'MyClass'
+  NO_CANDIDATES
+
+KtPropertyAccessor(83,95): 'get() = this'
+  NO_CANDIDATES
+
+KtParameterList(86,88): '()'
+  NO_CANDIDATES
+
+KtThisExpression(91,95): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(91,95): 'this'
+  NO_CANDIDATES
+
+KtProperty(99,140): 'val nullableItself: MyClass? get() = this'
+  NO_CANDIDATES
+
+KtTypeReference(119,127): 'MyClass?'
+  NO_CANDIDATES
+
+KtNullableType(119,127): 'MyClass?'
+  NO_CANDIDATES
+
+KtUserType(119,126): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(119,126): 'MyClass'
+  NO_CANDIDATES
+
+KtPropertyAccessor(128,140): 'get() = this'
+  NO_CANDIDATES
+
+KtParameterList(131,133): '()'
+  NO_CANDIDATES
+
+KtThisExpression(136,140): 'this'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(136,140): 'this'
+  NO_CANDIDATES
+
+KtNamedFunction(144,297): 'fun main() {'
+  NO_CANDIDATES
+
+KtParameterList(152,154): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(155,297): '{'
+  NO_CANDIDATES
+
+KtProperty(160,187): 'val s: MyClass? = MyClass()'
+  NO_CANDIDATES
+
+KtTypeReference(167,175): 'MyClass?'
+  NO_CANDIDATES
+
+KtNullableType(167,175): 'MyClass?'
+  NO_CANDIDATES
+
+KtUserType(167,174): 'MyClass'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(167,174): 'MyClass'
+  NO_CANDIDATES
+
+KtCallExpression(178,187): 'MyClass()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(178,185): 'MyClass'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(185,187): '()'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(191,205): 's?.itself("1")'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = itself
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(191,192): 's'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = MyClass?
+        symbol = val s: MyClass?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(194,205): 'itself("1")'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = itself
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "1" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(194,200): 'itself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = true
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = itself
+        receiverType = null
+        returnType = MyClass
+        symbol = val itself: MyClass
+        contextParameters = []
+        callableId = /MyClass.itself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(200,205): '("1")'
+  NO_CANDIDATES
+
+KtValueArgument(201,204): '"1"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(201,204): '"1"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(202,203): '1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(209,224): 's!!.itself("2")'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = itself
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtPostfixExpression(209,212): 's!!'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(209,210): 's'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = MyClass?
+        symbol = val s: MyClass?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(210,212): '!!'
+  NO_CANDIDATES
+
+KtCallExpression(213,224): 'itself("2")'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = itself
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "2" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(213,219): 'itself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s!!
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = itself
+        receiverType = null
+        returnType = MyClass
+        symbol = val itself: MyClass
+        contextParameters = []
+        callableId = /MyClass.itself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(219,224): '("2")'
+  NO_CANDIDATES
+
+KtValueArgument(220,223): '"2"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(220,223): '"2"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(221,222): '2'
+  NO_CANDIDATES
+
+KtCallExpression(228,234): 's("3")'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s
+        isSafeNavigation = false
+        type = MyClass?
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "3" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<UNSAFE_IMPLICIT_INVOKE_CALL: Reference has a nullable type 'MyClass?'. Use explicit '?.invoke' to make a function-like call instead.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(228,229): 's'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = MyClass?
+        symbol = val s: MyClass?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(229,234): '("3")'
+  NO_CANDIDATES
+
+KtValueArgument(230,233): '"3"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(230,233): '"3"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(231,232): '3'
+  NO_CANDIDATES
+
+KtSafeQualifiedExpression(239,268): 's.nullableItself?.invoke("4")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s.nullableItself
+        isSafeNavigation = true
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "4" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(239,255): 's.nullableItself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = MyClass?
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = nullableItself
+        receiverType = null
+        returnType = MyClass?
+        symbol = val nullableItself: MyClass?
+        contextParameters = []
+        callableId = /MyClass.nullableItself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(239,240): 's'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = MyClass?
+        symbol = val s: MyClass?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(241,255): 'nullableItself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = MyClass?
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = nullableItself
+        receiverType = null
+        returnType = MyClass?
+        symbol = val nullableItself: MyClass?
+        contextParameters = []
+        callableId = /MyClass.nullableItself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallExpression(257,268): 'invoke("4")'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s.nullableItself
+        isSafeNavigation = true
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "4" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(257,263): 'invoke'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s.nullableItself
+        isSafeNavigation = true
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "4" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(263,268): '("4")'
+  NO_CANDIDATES
+
+KtValueArgument(264,267): '"4"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(264,267): '"4"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(265,266): '4'
+  NO_CANDIDATES
+
+KtCallExpression(272,295): 's.nullableItself!!("5")'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = s.nullableItself!!
+        isSafeNavigation = false
+        type = MyClass
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /MyClass.invoke(<dispatch receiver>: MyClass, argument: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = argument
+            receiverType = null
+            returnType = kotlin.String
+            symbol = argument: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = /MyClass.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "5" -> (KaVariableSignature:
+          name = argument
+          receiverType = null
+          returnType = kotlin.String
+          symbol = argument: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtPostfixExpression(272,290): 's.nullableItself!!'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(272,288): 's.nullableItself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = MyClass?
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = nullableItself
+        receiverType = null
+        returnType = MyClass?
+        symbol = val nullableItself: MyClass?
+        contextParameters = []
+        callableId = /MyClass.nullableItself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(272,273): 's'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = s
+        receiverType = null
+        returnType = MyClass?
+        symbol = val s: MyClass?
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(274,288): 'nullableItself'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaSmartCastedReceiverValue:
+        original = KaExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = MyClass?
+        type = MyClass
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = nullableItself
+        receiverType = null
+        returnType = MyClass?
+        symbol = val nullableItself: MyClass?
+        contextParameters = []
+        callableId = /MyClass.nullableItself
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(288,290): '!!'
+  NO_CANDIDATES
+
+KtValueArgumentList(290,295): '("5")'
+  NO_CANDIDATES
+
+KtValueArgument(291,294): '"5"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(291,294): '"5"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(292,293): '5'
+  NO_CANDIDATES

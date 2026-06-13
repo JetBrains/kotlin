@@ -26,6 +26,7 @@ Tower Data Context:
                 Type: kotlin.Boolean
     Element 10
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] contextParameterAnonymousFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {

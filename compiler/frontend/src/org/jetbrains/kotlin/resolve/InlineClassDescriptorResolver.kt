@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 object InlineClassDescriptorResolver {
     @JvmField
     val BOX_METHOD_NAME = Name.identifier("box")

@@ -1,0 +1,17 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateFunAndPropertyThroughCompanionExtensionFun.kt */
+
+private val k: String
+    /* TARGET declaration */ private fun <get-k>(): String
+/* TARGET declaration */ private fun o(): String
+internal inline companion fun A.internalInlineFun(): String
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt()
+    /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt()
+public fun box(): String
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt()
+    /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt()
+/* ACCESSOR declaration */ internal fun access$o$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tLeakingPrivateFunAndPropertyThroughCompanionExtensionFunKt(): String
+    /* TARGET use-site */ <get-k>()

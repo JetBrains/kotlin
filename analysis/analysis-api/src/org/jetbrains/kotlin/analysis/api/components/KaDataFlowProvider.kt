@@ -39,7 +39,6 @@ public interface KaDataFlowProvider : KaSessionComponent {
     public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
 
     @KaNonPublicApi
-    @KaK1Unsupported
     public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 }
 
@@ -108,13 +107,13 @@ public class KaDataFlowExitPointSnapshot(
     /**
      * A list of expressions that return a value.
      *
-     * Returned expressions are not necessarily [KtReturnExpression]s.
+     * The expressions are not necessarily [KtReturnExpression]s.
      * For instance, implicit return from a lambda can be an arbitrary expression.
      */
     public val valuedReturnExpressions: List<KtExpression>,
 
     /**
-     * A common supertype of values returned in [valuedReturnExpressions].
+     * A common supertype of values in [valuedReturnExpressions].
      */
     public val returnValueType: KaType?,
 
@@ -150,7 +149,7 @@ public class KaDataFlowExitPointSnapshot(
     /**
      * local variable reassignments found in given statements.
      */
-    public val variableReassignments: List<VariableReassignment>
+    public val variableReassignments: List<VariableReassignment>,
 ) {
     /**
      * Represents a default expression (generally, a last given statement if it has a meaningful result type).
@@ -162,7 +161,7 @@ public class KaDataFlowExitPointSnapshot(
         public val expression: KtExpression,
 
         /** The default expression type. */
-        public val type: KaType
+        public val type: KaType,
     )
 
     /**
@@ -177,7 +176,7 @@ public class KaDataFlowExitPointSnapshot(
         public val variable: KaVariableSymbol,
 
         /** `true` if the variable is both read and set (as in `x += y` or `x++`). */
-        public val isAugmented: Boolean
+        public val isAugmented: Boolean,
     )
 }
 
@@ -214,7 +213,6 @@ public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceive
 
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot {

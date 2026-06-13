@@ -1,7 +1,7 @@
 // TARGET_BACKEND: WASM
 // ^^ For JS_IR and JS_IR_ES6, we don't have and don't plan to have @WasmImport and @WasmExport annotations
 // WASM_NO_JS_TAG
-// WASM_FAILS_IN_SINGLE_MODULE_MODE
+// WASM_IGNORE_FOR: mode=single-module
 
 /// MODULE: main
 // FILE: main.kt

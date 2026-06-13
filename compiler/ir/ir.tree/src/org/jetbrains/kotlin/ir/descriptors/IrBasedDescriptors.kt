@@ -587,7 +587,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
-    override fun isInline() = owner.isSingleFieldValueClass
+    override fun isInline() = error("Should not be called, use K2")
 
     override fun isFun() = owner.isFun
 

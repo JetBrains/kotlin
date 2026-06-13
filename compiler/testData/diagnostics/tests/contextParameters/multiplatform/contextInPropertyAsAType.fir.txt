@@ -1,0 +1,58 @@
+Module: m1-common
+FILE: common.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final expect val expectActualMatch: R|context(A) () -> kotlin/Unit|
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final expect val expectWithoutContext: R|() -> kotlin/Unit|
+        public get(): R|() -> kotlin/Unit|
+    public final expect val actualWithoutContext: R|context(A) () -> kotlin/Unit|
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final expect val mismatchedContext: R|context(A, C) () -> kotlin/Unit|
+        public get(): R|context(A, C) () -> kotlin/Unit|
+    public final expect val expectContextActualExtension: R|context(A) () -> kotlin/Unit|
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final expect val expectExtensionActualContext: R|A.() -> kotlin/Unit|
+        public get(): R|A.() -> kotlin/Unit|
+Module: m2-jvm
+FILE: jvm.kt
+    public final actual val expectActualMatch: R|context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final actual val expectWithoutContext: R|context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final actual val actualWithoutContext: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|() -> kotlin/Unit|
+    public final actual val mismatchedContext: R|context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|context(A) () -> kotlin/Unit|
+    public final actual val expectContextActualExtension: R|A.() -> kotlin/Unit| = fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|A.() -> kotlin/Unit|
+    public final actual val expectExtensionActualContext: R|context(A) () -> kotlin/Unit| = context(<unused var>: R|A|) fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        ^ Unit
+    }
+
+        public get(): R|context(A) () -> kotlin/Unit|

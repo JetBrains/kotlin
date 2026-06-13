@@ -2,7 +2,6 @@ Resolved constructor:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyTypeAlias
     contextReceivers: []
     hasStableParameterNames: true
@@ -30,7 +29,6 @@ Resolved constructor:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -38,6 +36,7 @@ Resolved constructor:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -58,21 +57,20 @@ Resolved constructor:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: null
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyTypeAlias
 
 Original constructor if type aliased:
   KaConstructorSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     containingClassId: test/MyClass
     contextReceivers: []
     hasStableParameterNames: true
@@ -97,7 +95,6 @@ Original constructor if type aliased:
     typeParameters: [
       KaTypeParameterSymbol:
         annotations: []
-        compilerVisibility: Local
         isActual: false
         isExpect: false
         isExternal: false
@@ -111,14 +108,13 @@ Original constructor if type aliased:
         visibility: LOCAL
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     valueParameters: [
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -126,6 +122,7 @@ Original constructor if type aliased:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -145,12 +142,12 @@ Original constructor if type aliased:
         getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
         getContainingJvmClassName: test.MyClass
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
     getContainingFileSymbol: KaFileSymbol(withTypeParametersFixed.kt)
     getContainingJvmClassName: test.MyClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: test.MyClass

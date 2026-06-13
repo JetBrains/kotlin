@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
+@K1Deprecation
 fun ModuleMapping.Companion.loadModuleMapping(
     bytes: ByteArray?,
     debugName: String,

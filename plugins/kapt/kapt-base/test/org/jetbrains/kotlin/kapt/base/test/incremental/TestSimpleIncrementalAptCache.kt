@@ -25,7 +25,7 @@ class TestSimpleIncrementalAptCache {
 
     @BeforeEach
     fun setUp(@TempDir tmp: File) {
-        cache = JavaClassCacheManager(tmp.newCacheFolder())
+        cache = JavaClassCacheManager(tmp.newCacheFolder(), null)
         generatedSources = tmp.newGeneratedSourcesFolder()
         compiledSources = listOf(tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
         cache.close()

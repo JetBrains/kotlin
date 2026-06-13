@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.google.gson.GsonBuilder
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
-import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
 
@@ -79,7 +79,7 @@ internal class GradleNodeModuleBuilder(
         // npm requires semver
         packageJson.version = fixSemver(packageJson.version)
 
-        return makeNodeModule(cacheDir, packageJson) { nodeModule ->
+        return createNodeModule(cacheDir, packageJson) { nodeModule ->
             fs.copy { copy ->
                 copy.from(fileTrees)
                 copy.into(nodeModule)
@@ -102,4 +102,32 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
             || name.endsWith(".wasm")
             || name.endsWith(".js.map")
             || name.endsWith(".html")
+}
+
+private fun createNodeModule(
+    container: File,
+    packageJson: PackageJson,
+    files: (File) -> Unit,
+): File {
+    /** imported package directory */
+    val dir = container.resolve(packageJson.name).resolve(packageJson.version)
+
+    if (dir.exists()) dir.deleteRecursively()
+
+    check(dir.mkdirs()) {
+        "Cannot create directory: $dir"
+    }
+
+    val gson = GsonBuilder()
+        .setPrettyPrinting()
+        .disableHtmlEscaping()
+        .create()
+
+    files(dir)
+
+    dir.resolve("package.json").writer().use {
+        gson.toJson(packageJson, it)
+    }
+
+    return dir
 }

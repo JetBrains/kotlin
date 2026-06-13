@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FIR_DUMP
 open class Base
 class Derived : Base()

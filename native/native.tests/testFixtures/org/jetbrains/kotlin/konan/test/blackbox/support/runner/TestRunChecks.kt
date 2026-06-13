@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
 import org.opentest4j.AssertionFailedError
+import org.opentest4j.TestAbortedException
 import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
@@ -63,8 +64,6 @@ sealed interface TestRunCheck {
 
         data class Expected(val expectedExitCode: Int) : ExitCode()
 
-        data class SkipIfNot(val expectedExitCode: Int) : ExitCode()
-
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             // Don't check the exit code if it is unknown.
             val knownExitCode: Int = runResult.exitCode ?: return Result.Passed
@@ -79,10 +78,6 @@ sealed interface TestRunCheck {
                     if (knownExitCode != expectedExitCode)
                         Result.Failed("Exit code is $knownExitCode while $expectedExitCode was expected.")
                     else Result.Passed
-                }
-                is SkipIfNot -> {
-                    Assumptions.assumeTrue(knownExitCode == expectedExitCode)
-                    Result.Passed
                 }
             }
         }
@@ -122,10 +117,11 @@ sealed interface TestRunCheck {
                     Result.Failed("Tested process output has not passed validation.")
                 } else Result.Passed
             } catch (t: Throwable) {
-                if (t is Exception || t is AssertionError) {
-                    Result.Failed("Tested process output has not passed validation: ${t.message}", t)
-                } else {
-                    throw t
+                when (t) {
+                    is TestAbortedException -> throw t // E.g., propagate `assumeFalse` instead of making it fail the test.
+                    is Exception, is AssertionError ->
+                        Result.Failed("Tested process output has not passed validation: ${t.message}", t)
+                    else -> throw t
                 }
             }
     }

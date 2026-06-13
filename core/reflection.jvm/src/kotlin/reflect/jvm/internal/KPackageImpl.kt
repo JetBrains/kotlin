@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
@@ -55,7 +56,7 @@ internal class KPackageImpl(
                     is KotlinClassMetadata.MultiFileClassPart -> listOf(metadata.kmPackage)
                     // 3. Multi-file class facade.
                     is KotlinClassMetadata.MultiFileClassFacade -> metadata.partClassNames.flatMap { partName ->
-                        val part = getOrCreateKotlinPackage(jClass.classLoader.loadClass(partName.replace('/', '.'))) as KPackageImpl
+                        val part = getOrCreateKotlinPackage(jClass.safeClassLoader.loadClass(partName.replace('/', '.'))) as KPackageImpl
                         part.data.value.kmPackages
                     }
                     // 4. Non-Kotlin class, or a Kotlin class with an incompatible metadata version.
@@ -95,7 +96,7 @@ internal class KPackageImpl(
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
             if (facadeName != null && facadeName.isNotEmpty())
-                jClass.classLoader.loadClass(facadeName.replace('/', '.'))
+                jClass.safeClassLoader.loadClass(facadeName.replace('/', '.'))
             else null
         }
 

@@ -19,6 +19,8 @@ dependencies {
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:ir.objcinterop"))
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())
 
@@ -33,3 +35,5 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
+
+optInToK1Deprecation()

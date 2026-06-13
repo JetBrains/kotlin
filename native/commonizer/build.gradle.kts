@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -36,6 +36,10 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
 
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":core:deserialization"))
+    compileOnly(project(":core:deserialization.common"))
+
     // This dependency is necessary to keep the right dependency record inside of POM file:
     publishedCompile(project(":kotlin-compiler"))
 
@@ -64,26 +68,18 @@ sourceSets {
     test { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5)
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        // Use the bootstrap K/N stdlib for compiling test code samples.
+        val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
+        val compilerDirectory = project.layout.dir(providers.provider { nativeDistributionDownloader.compilerDirectory })
+        addClasspathProperty("kotlin.internal.native.test.nativeHome") { from(compilerDirectory) }
+    }
     testData(project.isolated, "testData")
-    withMockJdkRuntime()
 }
 
 runtimeJar()
 emptySourcesJar()
 emptyJavadocJar()
-
-tasks.test.configure {
-    // Use the bootstrap K/N stdlib for compiling test code samples.
-    val nativeDistributionDownloader = NativeCompilerDownloader(project).also { it.downloadIfNeeded() }
-
-    jvmArgumentProviders += objects.newInstance<SystemPropertyClasspathProvider>().apply {
-        val compilerDirectory = project.layout.dir(
-            providers.provider { nativeDistributionDownloader.compilerDirectory }
-        )
-
-        classpath.from(compilerDirectory)
-        property = "kotlin.internal.native.test.nativeHome"
-    }
-}

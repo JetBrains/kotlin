@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // ISSUE: KT-64872, KT-65911
 
 fun test1(cond1: Boolean) {

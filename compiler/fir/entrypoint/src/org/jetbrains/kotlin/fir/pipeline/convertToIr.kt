@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -39,19 +40,15 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.validation.IrValidationError
-import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.*
 import org.jetbrains.kotlin.ir.validation.checkers.IrNestedOffsetRangeChecker
-import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrExpressionBodyInFunctionChecker
+import org.jetbrains.kotlin.ir.validation.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallTypeArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
-import org.jetbrains.kotlin.ir.validation.validateIr
-import org.jetbrains.kotlin.ir.validation.withBasicFirstStageChecks
-import org.jetbrains.kotlin.ir.validation.withVarargChecks
+import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -66,7 +63,7 @@ value class AllModulesFrontendOutput(val outputs: List<SingleModuleFrontendOutpu
 data class SingleModuleFrontendOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
-    val fir: List<FirFile>
+    val fir: List<FirFile>,
 )
 
 data class Fir2IrActualizedResult(
@@ -142,7 +139,7 @@ private class Fir2IrPipeline(
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irTypeSystemContext: IrTypeSystemContext,
-        val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver
+        val fakeOverrideResolver: SpecialFakeOverrideSymbolsResolver,
     ) {
         val componentsStorage: Fir2IrComponentsStorage = componentsStoragePerSourceSession.values.last()
     }
@@ -200,7 +197,7 @@ private class Fir2IrPipeline(
 
         val dependentIrFragments = fragments.dropLast(1)
         val mainIrFragment = fragments.last()
-        val (irBuiltIns, symbolTable) = createBuiltInsAndSymbolTable(
+        val [irBuiltIns, symbolTable] = createBuiltInsAndSymbolTable(
             componentsStorages.values.last(),
             syntheticIrBuiltinsSymbolsContainer
         )
@@ -241,14 +238,16 @@ private class Fir2IrPipeline(
 
         generateSyntheticBodiesOfDataValueMembers()
 
-        val (fakeOverrideStrategy, delegatedMembersGenerationStrategy) =
+        val [fakeOverrideStrategy, delegatedMembersGenerationStrategy] =
             buildFakeOverridesAndPlatformSpecificDeclarations(irActualizer)
 
         val expectActualMap = irActualizer?.actualizeCallablesAndMergeModules() ?: IrExpectActualMap()
 
         val pluginContext = Fir2IrPluginContext(
             componentsStorage, irBuiltIns, componentsStorage.moduleDescriptor, symbolTable,
-            fir2IrConfiguration.messageCollector, fir2IrConfiguration.diagnosticReporter
+            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
+            fir2IrConfiguration.messageCollector,
+            fir2IrConfiguration.diagnosticReporter
         )
         if (fir2IrConfiguration.diagnosticReporter.hasErrors) {
             irActualizer?.runChecksAndFinalize(expectActualMap)
@@ -290,10 +289,7 @@ private class Fir2IrPipeline(
             referenceAllCommonDependencies(outputs)
 
             IrActualizer(
-                KtDiagnosticReporterWithImplicitIrBasedContext(
-                    fir2IrConfiguration.diagnosticReporter,
-                    fir2IrConfiguration.languageVersionSettings
-                ),
+                fir2IrConfiguration.diagnosticReporter,
                 irTypeSystemContext,
                 fir2IrConfiguration.languageVersionSettings,
                 fir2IrConfiguration.expectActualTracker,
@@ -316,7 +312,7 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.createFakeOverrideBuilder(
-        irActualizer: IrActualizer?
+        irActualizer: IrActualizer?,
     ): Pair<IrFakeOverrideBuilder, Fir2IrDelegatedMembersGenerationStrategy> {
         val session = componentsStorage.session
         val delegatedMembersGenerationStrategy = Fir2IrDelegatedMembersGenerationStrategy(
@@ -337,7 +333,7 @@ private class Fir2IrPipeline(
     private fun Fir2IrConversionResult.buildFakeOverridesAndPlatformSpecificDeclarations(
         irActualizer: IrActualizer?,
     ): Pair<Fir2IrFakeOverrideStrategy, Fir2IrDelegatedMembersGenerationStrategy> {
-        val (fakeOverrideBuilder, delegatedMembersGenerationStrategy) = createFakeOverrideBuilder(irActualizer)
+        val [fakeOverrideBuilder, delegatedMembersGenerationStrategy] = createFakeOverrideBuilder(irActualizer)
         buildFakeOverrides(fakeOverrideBuilder)
         if (!componentsStorage.configuration.skipBodies) {
             delegatedMembersGenerationStrategy.generateDelegatedBodies()
@@ -363,7 +359,7 @@ private class Fir2IrPipeline(
             mainIrFragment,
             irBuiltIns,
             IrValidatorConfig(checkUnboundSymbols = true),
-            fir2IrConfiguration.messageCollector,
+            fir2IrConfiguration.diagnosticReporter,
             IrVerificationMode.ERROR,
         )
     }
@@ -380,7 +376,7 @@ private class Fir2IrPipeline(
 
     private fun IrFakeOverrideBuilder.buildForAll(
         modules: List<IrModuleFragment>,
-        resolver: SpecialFakeOverrideSymbolsResolver
+        resolver: SpecialFakeOverrideSymbolsResolver,
     ) {
         val builtFakeOverridesClasses = mutableSetOf<IrClass>()
         fun buildFakeOverrides(clazz: IrClass) {
@@ -495,8 +491,8 @@ private class Fir2IrPipeline(
             // It would be too confusing to blame plugins, even if one really contributed to an invalid IR as well,
             // when it is primarily our fault.
             hasIrValidationErrorFromFrontend -> null
-            verificationMode == IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-            verificationMode == IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+            verificationMode == IrVerificationMode.WARNING -> IrValidationSeverity.WARNING
+            verificationMode == IrVerificationMode.ERROR -> IrValidationSeverity.ERROR
             else -> null
         }
 
@@ -511,22 +507,13 @@ private class Fir2IrPipeline(
                     IrCrossFileFieldUsageChecker,
                     IrValueAccessScopeChecker,
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
+                    IrVisibilityChecker.Strict,
                 )
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVisibilityChecks) { // KT-80071
-                    // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
-                    // so visibility checks are only performed if requested via a flag, and in tests.
-                    withCheckers(IrVisibilityChecker.Strict)
-                }
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrNestedOffsetsChecks) {
-                    withCheckers(IrNestedOffsetRangeChecker)
-                }
+                .withVarargChecks()
                 .applyIf(extension == null) {
                     // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,
                     //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
                     withCheckers(IrCallTypeArgumentCountChecker)
-                }
-                .applyIf(fir2IrConfiguration.irVerificationSettings.enableIrVarargTypesChecks) {
-                    withVarargChecks()
                 }
                 .applyIf(
                     // On JVM we may sometimes generate non-private fields (KT-71243), and we allow plugins to do so too.
@@ -537,8 +524,13 @@ private class Fir2IrPipeline(
                 .applyIf(validateForKlibSerialization) {
                     // Serializing IrExpressionBody in IrFunction.body is not supported
                     withCheckers(IrExpressionBodyInFunctionChecker)
-                },
-            fir2IrConfiguration.messageCollector,
+                }
+                .withCheckersByName(
+                    fir2IrConfiguration.irVerificationSettings.additionalIrCheckers,
+                    listOf(IrNestedOffsetRangeChecker)
+                )
+                .withoutCheckersByName(fir2IrConfiguration.irVerificationSettings.disableIrCheckers),
+            fir2IrConfiguration.diagnosticReporter,
             getSeverity = { error ->
                 if (validateForKlibSerialization) {
                     // In case we are going to serialize the IR into Klib, we report the most severe violations as errors, unconditionally.
@@ -546,13 +538,13 @@ private class Fir2IrPipeline(
                     // or even from reporting those errors itself, because at this point there is not much that the user could do to
                     // mitigate them.
                     when (error.cause) {
-                        is IrValidationError.Cause.UnboundSymbol -> CompilerMessageSeverity.ERROR
-                        is IrExpressionBodyInFunctionChecker -> CompilerMessageSeverity.ERROR
-                        is IrFieldVisibilityChecker -> CompilerMessageSeverity.ERROR
+                        is IrValidationError.Cause.UnboundSymbol -> IrValidationSeverity.ERROR
+                        is IrExpressionBodyInFunctionChecker -> IrValidationSeverity.ERROR
+                        is IrFieldVisibilityChecker -> IrValidationSeverity.ERROR
                         is IrCrossFileFieldUsageChecker ->
                             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs))
-                                CompilerMessageSeverity.ERROR
-                            else CompilerMessageSeverity.WARNING
+                                IrValidationSeverity.ERROR
+                            else IrValidationSeverity.WARNING
                         else -> regularSeverity
                     }
                 } else regularSeverity

@@ -26,7 +26,7 @@ interface IrInlineCallGenerator : IrCallGenerator {
         val element = IrInlineFunctionSource(expression)
         val descriptor = expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor()
         if (!codegen.state.globalInlineContext.enterIntoInlining(descriptor, element) { reportOn, callee ->
-                codegen.context.ktDiagnosticReporter.at((reportOn as IrInlineFunctionSource).ir, codegen.irFunction.fileParent)
+                codegen.context.diagnosticReporter.at((reportOn as IrInlineFunctionSource).ir, codegen.irFunction.fileParent)
                     .report(JvmBackendErrors.INLINE_CALL_CYCLE, callee.name)
             }) {
             genCycleStub(expression.psiElement?.text ?: "<no source>", codegen)

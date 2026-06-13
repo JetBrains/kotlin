@@ -54,6 +54,13 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
         val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
+
+        if (extension.addRuntimeDependency.getOrElse(true)) {
+            kotlinCompilation.defaultSourceSet.dependencies {
+                implementation(kotlin("power-assert-runtime"))
+            }
+        }
+
         return extension.functions.map { functions ->
             functions.map {
                 SubpluginOption(key = FUNCTION_ARG_NAME, value = it)

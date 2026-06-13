@@ -135,7 +135,7 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
 
     private fun IrCall.transform(castReturnType: IrType?): IrCall {
         val function = symbol.owner
-        val (regularParameters, nonRegularParameters) = function.parameters.partition { it.kind == IrParameterKind.Regular }
+        val [regularParameters, nonRegularParameters] = function.parameters.partition { it.kind == IrParameterKind.Regular }
         val regularParameter = regularParameters.singleOrNull()
         require(regularParameter?.varargElementType != null) {
             "@PolymorphicSignature methods should only have a single vararg argument: ${dump()}"

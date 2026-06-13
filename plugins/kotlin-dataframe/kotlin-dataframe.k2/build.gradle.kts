@@ -7,6 +7,8 @@ plugins {
 
 dependencies {
     implementation(project(":kotlin-dataframe-compiler-plugin.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
 
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
@@ -32,6 +33,7 @@ open class IrMangleComputer(
     mode: MangleMode,
     protected val compatibleMode: Boolean,
     allowOutOfScopeTypeParameters: Boolean = false,
+    useEffectiveTypeVariances: Boolean = false,
 ) : BaseKotlinMangleComputer<
         /*Declaration=*/IrDeclaration,
         /*Type=*/IrType,
@@ -40,7 +42,12 @@ open class IrMangleComputer(
         /*TypeParameterContainer=*/IrDeclaration,
         /*FunctionDeclaration=*/IrFunction,
         /*Session=*/Nothing?,
-        >(builder, mode, allowOutOfScopeTypeParameters) {
+        >(
+    builder,
+    mode,
+    allowOutOfScopeTypeParameters = allowOutOfScopeTypeParameters,
+    useEffectiveTypeVariances = useEffectiveTypeVariances
+) {
 
     final override fun getTypeSystemContext(session: Nothing?) = object : IrTypeSystemContext {
         override val irBuiltIns: IrBuiltIns
@@ -87,6 +94,21 @@ open class IrMangleComputer(
             .filter { it.kind == IrParameterKind.Regular }
             .filterNot { it.isHidden }
 
+    override fun getCompanionExtensionName(function: IrFunction): String? {
+        if (function !is IrSimpleFunction) return null
+        val symbol = function.companionExtensionClass ?: return null
+        return getCompanionExtensionName(symbol)
+    }
+
+    private fun getCompanionExtensionName(symbol: IrClassSymbol): String {
+        val signature = symbol.signature
+        return when {
+            symbol.isBound -> symbol.owner.classIdOrFail.asString()
+            signature is IdSignature.CommonSignature -> signature.computeName()
+            else -> error("Unbound classifier with signature $signature")
+        }
+    }
+
     override fun getReturnType(function: IrFunction) = function.returnType
 
     override fun getTypeParametersWithIndices(function: IrFunction, container: IrDeclaration): List<IndexedValue<IrTypeParameterSymbol>> =
@@ -121,12 +143,7 @@ open class IrMangleComputer(
                         when {
                             classifier.isBound -> with(copy(MangleMode.FQNAME)) { classifier.owner.visit() }
                             signature is IdSignature.CommonSignature -> with(copy(MangleMode.SIGNATURE)) {
-                                val packageFqName = signature.packageFqName()
-                                if (!packageFqName.isRoot) {
-                                    builder.appendSignature(packageFqName.asString())
-                                    builder.appendSignature(MangleConstant.FQN_SEPARATOR)
-                                }
-                                builder.appendSignature(signature.declarationFqName)
+                                builder.appendSignature(signature.computeName())
                             }
                             else -> error("Unbound classifier with signature $signature inside type ${type.render()}")
                         }
@@ -145,6 +162,15 @@ open class IrMangleComputer(
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
             is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
         }
+    }
+
+    private fun IdSignature.CommonSignature.computeName(): String = buildString {
+        val packageFqName = packageFqName()
+        if (!packageFqName.isRoot) {
+            this.append(packageFqName.asString())
+            this.append(MangleConstant.FQN_SEPARATOR)
+        }
+        this.append(declarationFqName)
     }
 
     private inner class Visitor : IrVisitorVoid() {
@@ -189,6 +215,13 @@ open class IrMangleComputer(
 
             if (isStaticProperty) {
                 builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
+            }
+
+            val companionExtensionClass = accessor?.companionExtensionClass
+            if (companionExtensionClass != null) {
+                builder.appendSignature(MangleConstant.COMPANION_EXTENSION_MARK)
+                builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+                builder.appendSignature(getCompanionExtensionName(companionExtensionClass))
             }
 
             val contextParameters = accessor?.parameters?.filter { it.kind == IrParameterKind.Context }.orEmpty()

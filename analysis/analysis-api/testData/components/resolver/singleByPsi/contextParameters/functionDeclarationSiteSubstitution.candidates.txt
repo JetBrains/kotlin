@@ -7,10 +7,10 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -31,10 +31,10 @@ KtDotQualifiedExpression(203,225): 'another.foo(1L, "str")'
           symbol = KaReceiverParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

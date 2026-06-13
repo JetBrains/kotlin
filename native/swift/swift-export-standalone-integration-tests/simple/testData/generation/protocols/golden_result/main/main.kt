@@ -46,10 +46,34 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ContainerProtocol.NestedProtocol.NestedClass::class, "4main90__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(SealedFoeble.SealedBarable::class, "__SealedFoeble_SealedBarable")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import packagewithprotocols.foo as packagewithprotocols_foo
+
+@ImportedBridge("Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
+internal external fun Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Barable::class, "bar")
+public fun Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse(self: Barable, arg: Foeble): Barable {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
+    val __result = Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as Barable
+}
+
+@ImportedBridge("Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
+internal external fun Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Foeble::class, "bar")
+public fun Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse(self: Foeble, arg: Foeble): Foeble {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
+    val __result = Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as Foeble
+}
 
 @ExportedBridge("Bar_bar__TypesOfArguments__anyU20main_Foeble__")
 public fun Bar_bar__TypesOfArguments__anyU20main_Foeble__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

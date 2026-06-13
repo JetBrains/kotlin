@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.test.AbstractLoadedMetadataDumpHandler
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -31,8 +29,6 @@ class KlibNativeLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
 ) {
     override val targetPlatform: TargetPlatform
         get() = NativePlatforms.unspecifiedNativePlatform
-    override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = NativePlatformAnalyzerServices
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 

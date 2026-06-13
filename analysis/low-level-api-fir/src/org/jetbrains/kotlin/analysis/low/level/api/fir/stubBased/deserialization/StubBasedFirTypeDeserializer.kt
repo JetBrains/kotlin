@@ -88,7 +88,7 @@ internal class StubBasedFirTypeDeserializer(
                 }
             }
 
-            for ((index, typeParameter) in typeParameters.withIndex()) {
+            for ([index, typeParameter] in typeParameters.withIndex()) {
                 val builder = builders[index]
                 builder.apply {
                     typeParameter.extendsBound?.let { bounds.add(typeRef(it)) }

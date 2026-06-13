@@ -77,7 +77,7 @@ open class IrPluginContextImpl(
 
         linker.getDeclaration(symbol)
         if (linker is IrDeserializer) {
-            linker.postProcess(inOrAfterLinkageStep = false)
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
         }
 
         return symbol
@@ -94,7 +94,7 @@ open class IrPluginContextImpl(
         symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
 
         if (linker is IrDeserializer) {
-            linker.postProcess(inOrAfterLinkageStep = false)
+            linker.postProcess(irBuiltIns, inOrAfterLinkageStep = false)
         }
 
         return symbols
@@ -217,6 +217,10 @@ open class IrPluginContextImpl(
         override fun registerFunctionAsMetadataVisible(irFunction: IrSimpleFunction) {}
 
         override fun registerConstructorAsMetadataVisible(irConstructor: IrConstructor) {}
+
+        override fun registerPropertyAsMetadataVisible(irProperty: IrProperty) {}
+
+        override fun registerClassAsMetadataVisible(irClass: IrClass) {}
 
         override fun addCustomMetadataExtension(irDeclaration: IrDeclaration, pluginId: String, data: ByteArray) {}
 

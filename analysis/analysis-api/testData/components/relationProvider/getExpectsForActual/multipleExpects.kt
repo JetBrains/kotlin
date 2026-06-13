@@ -1,19 +1,30 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/foo
 
-// MODULE: commonMain1
+// MODULE: common1
+// TARGET_PLATFORM: Common
 // FILE: Common1.kt
 
 package sample
+
 expect fun foo()
 
-// MODULE: commonMain2
+// MODULE: common2
+// TARGET_PLATFORM: Common
 // FILE: Common2.kt
 
 package sample
+
 expect fun foo()
 
-// MODULE: androidMain()()(commonMain1, commonMain2)
-// FILE: JvmAndroid.kt
+// MODULE: jvm()()(common1, common2)
+// TARGET_PLATFORM: JVM
+
+// "Conflicting overloads" reported by the compiler
+// COMPILATION_ERRORS
+
+// FILE: Jvm.kt
 
 package sample
-actual fun f<caret>oo() {}
+
+<expr>actual fun foo() {}</expr>

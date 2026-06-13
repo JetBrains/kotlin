@@ -58,9 +58,8 @@ private fun Field.getFeaturesAndValues(triple: AnnotationAndMethods): List<Featu
 fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature, String> {
     val compilerArgumentsClass = classLoader.loadClass(COMPILER_ARGUMENTS_CLASS)
 
-    val (argumentClass, getValueFromArgument) = classLoader.loadArgumentAnnotationInfo()
+    val [argumentClass, getValueFromArgument] = classLoader.loadArgumentAnnotationInfo()
     val enables = classLoader.loadEnablesOrDisablesAnnotationInfo(ENABLES_CLASS)
-    val disables = classLoader.loadEnablesOrDisablesAnnotationInfo(DISABLES_CLASS)
 
     data class ArgumentAndValue(val argument: String, val value: String)
 
@@ -68,11 +67,10 @@ fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature,
         .flatMap { field ->
             val name = field.getAnnotationsByType(argumentClass).firstOrNull()?.let { getValueFromArgument(it) as? String }
                 ?: return@flatMap emptyList()
-            val features = field.getFeaturesAndValues(enables) + field.getFeaturesAndValues(disables)
-            features.map { it to name }
+            field.getFeaturesAndValues(enables).map { it to name }
         }
         .groupBy(keySelector = { it.first.feature }, valueTransform = { ArgumentAndValue(argument = it.second, value = it.first.value) })
-        .mapValues { (_, values) ->
+        .mapValues { [_, values] ->
             val argument = values.first().argument
             if (values.any { it.value.isNotEmpty() }) {
                 buildString {

@@ -27,4 +27,28 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             removedVersion = KotlinReleaseVersion.v2_2_0,
         )
     }
+
+    compilerArgument {
+        name = "Xverify-ir-visibility"
+        description =
+            "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
+
+    compilerArgument {
+        name = "Xverify-ir-nested-offsets"
+        description =
+            "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_20,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
 }

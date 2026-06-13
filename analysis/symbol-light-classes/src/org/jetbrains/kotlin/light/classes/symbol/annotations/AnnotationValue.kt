@@ -1,31 +1,33 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.*
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
-import java.util.Objects
+import java.util.*
 
 /**
  * Represents a name-value annotation argument pair.
  */
 internal class AnnotationArgument(val name: Name, val value: AnnotationValue)
 
-internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(): AnnotationArgument {
-    return AnnotationArgument(name, expression.toLightClassAnnotationValue())
+internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(useSiteModule: KaModule): AnnotationArgument {
+    return AnnotationArgument(name, expression.toLightClassAnnotationValue(useSiteModule))
 }
 
 /**
@@ -33,29 +35,28 @@ internal fun KaNamedAnnotationValue.toLightClassAnnotationArgument(): Annotation
  *
  * @param annotation The applied annotation value.
  * @param isDumb If `true`, the [annotation] only contains a [ClassId]. Both constructor pointer and arguments are not provided.
- * @param useSiteTarget Specifies a user-provided use-site annotation target if an annotation is applied on a declaration.
  * @param relativeIndex A relative index of the annotation with the same [ClassId] in an owner.
  */
 internal data class AnnotationApplication(
     val annotation: AnnotationValue.Annotation,
     val isDumb: Boolean,
-    val useSiteTarget: AnnotationUseSiteTarget?,
     val relativeIndex: Int,
 )
 
-internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: Int): AnnotationApplication {
+internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: Int, kaModule: KaModule): AnnotationApplication {
     val value = AnnotationValue.Annotation(
         classId,
+        useSiteModule = kaModule,
         constructorSymbolPointer = constructorSymbol?.createPointer(),
         arguments = emptyList(),
         sourcePsi = psi,
     )
 
-    return AnnotationApplication(value, true, useSiteTarget, relativeIndex)
+    return AnnotationApplication(value, true, relativeIndex)
 }
 
-internal fun KaAnnotation.toLightClassAnnotationApplication(relativeIndex: Int): AnnotationApplication {
-    return AnnotationApplication(toLightClassAnnotationValue(), false, useSiteTarget, relativeIndex)
+internal fun KaAnnotation.toLightClassAnnotationApplication(relativeIndex: Int, kaModule: KaModule): AnnotationApplication {
+    return AnnotationApplication(toLightClassAnnotationValue(kaModule), false, relativeIndex)
 }
 
 internal sealed class AnnotationValue {
@@ -84,6 +85,7 @@ internal sealed class AnnotationValue {
      */
     class Annotation(
         val classId: ClassId?,
+        val useSiteModule: KaModule,
         val constructorSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
         val arguments: List<AnnotationArgument>,
         override val sourcePsi: KtCallElement?
@@ -130,11 +132,11 @@ internal sealed class AnnotationValue {
     }
 }
 
-internal fun KaAnnotationValue.toLightClassAnnotationValue(): AnnotationValue {
+internal fun KaAnnotationValue.toLightClassAnnotationValue(useSiteModule: KaModule): AnnotationValue {
     return when (this) {
         is KaAnnotationValue.UnsupportedValue -> AnnotationValue.Unsupported(sourcePsi)
-        is KaAnnotationValue.ArrayValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue() }, sourcePsi)
-        is KaAnnotationValue.NestedAnnotationValue -> annotation.toLightClassAnnotationValue()
+        is KaAnnotationValue.ArrayValue -> AnnotationValue.Array(values.map { it.toLightClassAnnotationValue(useSiteModule) }, sourcePsi)
+        is KaAnnotationValue.NestedAnnotationValue -> annotation.toLightClassAnnotationValue(useSiteModule)
         is KaAnnotationValue.ClassLiteralValue -> toLightClassAnnotationValue()
         is KaAnnotationValue.EnumEntryValue -> AnnotationValue.EnumValue(callableId, sourcePsi)
         is KaAnnotationValue.ConstantValue -> AnnotationValue.Constant(value, sourcePsi)
@@ -156,7 +158,7 @@ internal fun KaAnnotationValue.ClassLiteralValue.toLightClassAnnotationValue(): 
     }
 }
 
-internal fun KaAnnotation.toLightClassAnnotationValue(): AnnotationValue.Annotation {
-    val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue()) }
-    return AnnotationValue.Annotation(classId, constructorSymbol?.createPointer(), arguments, psi)
+internal fun KaAnnotation.toLightClassAnnotationValue(useSiteModule: KaModule): AnnotationValue.Annotation {
+    val arguments = arguments.map { AnnotationArgument(it.name, it.expression.toLightClassAnnotationValue(useSiteModule)) }
+    return AnnotationValue.Annotation(classId, useSiteModule, constructorSymbol?.createPointer(), arguments, psi)
 }

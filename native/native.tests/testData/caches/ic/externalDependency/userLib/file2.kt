@@ -1,1 +1,0 @@
-fun bar2() = external.foo2()

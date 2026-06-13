@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 
 /**
  * Unlike [AbstractJsTypeScriptExportTest], which runs the full compiler pipeline and also executes the generated code in addition
  * to verifying the generated `.d.ts` files, in these tests we only run the first compilation stage (which produces KLIBs),
  * generate `.d.ts` files from Kotlin metadata serialized in those KLIBs, and verify them without running the generated code.
  */
+@AffectedByAnalysisApi
 abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerTest() {
     protected fun TestConfigurationBuilder.configureTypeScriptExport() {
         defaultDirectives {

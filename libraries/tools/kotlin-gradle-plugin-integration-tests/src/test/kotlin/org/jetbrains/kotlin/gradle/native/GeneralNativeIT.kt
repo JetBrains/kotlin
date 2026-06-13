@@ -350,8 +350,8 @@ class GeneralNativeIT : KGPBaseTest() {
                 "bazDebugExecutable" to "my-baz",
             )
             val linkTasks =
-                binaries.map { (name, _) -> "link${name.capitalize()}Host" }
-            val outputFiles = binaries.associate { (name, fileBaseName) ->
+                binaries.map { [name, _] -> "link${name.capitalize()}Host" }
+            val outputFiles = binaries.associate { [name, fileBaseName] ->
                 val outputKind = NativeOutputKind.entries.single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
                 val prefix = outputKind.prefix(HostManager.host)
                 val suffix = outputKind.suffix(HostManager.host)
@@ -368,7 +368,7 @@ class GeneralNativeIT : KGPBaseTest() {
             build("hostMainBinaries") {
                 assertTasksExecuted(linkTasks.map { ":$it" })
                 assertTasksExecuted(":compileKotlinHost")
-                outputFiles.forEach { (_, file) ->
+                outputFiles.forEach { [_, file] ->
                     assertFileInProjectExists(file)
                 }
             }
@@ -1028,6 +1028,12 @@ class GeneralNativeIT : KGPBaseTest() {
     fun shouldAllowToOverrideDownloadUrl(gradleVersion: GradleVersion, @TempDir customKonanDir: Path) {
         nativeProject(
             "native-parallel", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    distributionDownloadFromMaven = false // please remove this test, when this flag is removed
+                ),
+                konanDataDir = customKonanDir.toAbsolutePath()
+            ),
             dependencyManagement = DependencyManagement.DisabledDependencyManagement
         ) {
             gradleProperties.appendText(
@@ -1038,16 +1044,14 @@ class GeneralNativeIT : KGPBaseTest() {
             )
 
             gradleProperties.replaceText("cacheRedirectorEnabled=true", "cacheRedirectorEnabled=false")
+            // Force loading build dependencies through cache redirector to avoid Maven central throttling/429 error
+            settingsGradleKts.readText()
+                .replace("mavenCentral()", "maven(url = \"https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2\")")
+                .replace("google()", "maven(url = \"https://cache-redirector.jetbrains.com/maven.google.com\")")
+                .replace("gradlePluginPortal()", "maven(url = \"https://cache-redirector.jetbrains.com/plugins.gradle.org/m2\")")
+                .let { settingsGradleKts.writeText(it) }
 
-            buildAndFail(
-                "build",
-                buildOptions = defaultBuildOptions.copy(
-                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                        distributionDownloadFromMaven = false // please remove this test, when this flag is removed
-                    ),
-                    konanDataDir = customKonanDir.toAbsolutePath()
-                )
-            ) {
+            buildAndFail("build") {
                 assertOutputContains("Could not HEAD 'https://non-existent.net")
             }
         }

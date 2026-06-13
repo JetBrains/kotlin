@@ -16,16 +16,19 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
 
 /**
  * There is a subset of Kotlin language in Effect system (expressions
  *   in right hand side of conditional effect) and [ESExpression] with subtypes
  *   precisely enumerate what can be found here.
  */
+@K1Deprecation
 interface ESExpression {
     fun <T> accept(visitor: ESExpressionVisitor<T>): T
 }
 
+@K1Deprecation
 interface ESOperator : ESExpression {
     /**
      * [Functor] that contains logic of concrete operator
@@ -33,4 +36,5 @@ interface ESOperator : ESExpression {
     val functor: Functor
 }
 
+@K1Deprecation
 interface ESValue : Computation, ESExpression

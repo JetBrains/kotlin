@@ -290,7 +290,7 @@ private fun <T> BodyGenerator.createBinaryTable(
 
     val size = toExcl - fromIncl
     if (size == 1) {
-        val (case, result) = sortedCases[fromIncl]
+        val [case, result] = sortedCases[fromIncl]
         body.buildGetLocal(selectorLocal, location)
         body.buildConstI32(case, location)
         body.buildInstr(WasmOp.I32_EQ, location)

@@ -5,6 +5,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:descriptors"))
+
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(intellijCore())
@@ -15,7 +17,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 runtimeJar()
 sourcesJar()
 javadocJar()
-

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class LazyJavaPackageFragmentProvider(
     components: JavaResolverComponents
 ) : PackageFragmentProviderOptimized {

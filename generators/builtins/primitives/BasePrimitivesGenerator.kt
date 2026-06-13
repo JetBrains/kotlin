@@ -279,7 +279,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
         companionObject {
             val className = thisKind.capitalized
             if (thisKind == PrimitiveType.FLOAT || thisKind == PrimitiveType.DOUBLE) {
-                val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(thisKind)
+                val [minValue, maxValue, posInf, negInf, nan] = primitiveConstants(thisKind)
                 property {
                     appendDoc("A constant holding the smallest *positive* nonzero value of $className.")
                     name = "MIN_VALUE"
@@ -317,7 +317,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             }
 
             if (thisKind == PrimitiveType.INT || thisKind == PrimitiveType.LONG || thisKind == PrimitiveType.SHORT || thisKind == PrimitiveType.BYTE) {
-                val (minValue, maxValue) = primitiveConstants(thisKind)
+                val [minValue, maxValue] = primitiveConstants(thisKind)
                 property {
                     appendDoc("A constant holding the minimum value an instance of $className can have.")
                     name = "MIN_VALUE"
@@ -420,7 +420,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             }.modifyGeneratedUnaryOperation(thisKind)
         }
 
-        for ((operatorName, doc) in unaryPlusMinusOperators) {
+        for ([operatorName, doc] in unaryPlusMinusOperators) {
             val opReturnType = when (thisKind) {
                 in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) -> PrimitiveType.INT.capitalized
                 else -> thisKind.capitalized
@@ -498,7 +498,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     private fun ClassBuilder.generateBitShiftOperators(thisKind: PrimitiveType) {
         val className = thisKind.capitalized
         val detail = shiftOperatorsDocDetail(thisKind)
-        for ((operatorName, doc) in shiftOperators) {
+        for ([operatorName, doc] in shiftOperators) {
             method {
                 appendDoc(doc + END_LINE + END_LINE + detail)
                 annotations += intrinsicConstEvaluationAnnotation
@@ -516,7 +516,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     }
 
     private fun ClassBuilder.generateBitwiseOperators(thisKind: PrimitiveType) {
-        for ((operatorName, doc) in bitwiseOperators) {
+        for ([operatorName, doc] in bitwiseOperators) {
             method {
                 appendDoc(doc)
                 annotations += intrinsicConstEvaluationAnnotation

@@ -1,0 +1,35 @@
+STEP 0:
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+// file1.1.kt: private fun hidden() update
+STEP 1:
+    modifications:
+        U : file1.1.kt -> file1.kt
+    modified cache: file1.kt, file2.kt
+
+// file1.2.kt: fun foo() update
+STEP 2:
+    modifications:
+        U : file1.2.kt -> file1.kt
+    modified cache: file1.kt, file2.kt
+
+// file1.3.kt: demoField update
+STEP 3:
+    modifications:
+        U : file1.3.kt -> file1.kt
+   modified cache: file1.kt, file2.kt
+
+// file1.4.kt: add new constructor param
+STEP 4:
+    modifications:
+        U : file1.4.kt -> file1.kt
+   modified cache: file1.kt, file2.kt
+
+// file1.5.kt: change default value of field y
+STEP 5:
+    modifications:
+        U : file1.5.kt -> file1.kt
+    modified cache: file1.kt, file2.kt

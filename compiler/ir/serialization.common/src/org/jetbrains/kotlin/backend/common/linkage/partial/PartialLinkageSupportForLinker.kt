@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -59,7 +60,7 @@ interface PartialLinkageSupportForLinker {
      * Generate stubs for the remaining unbound symbols.
      * Process (and patch, if necessary) all declarations previously scheduled for processing via [enqueueDeclaration].
      */
-    fun generateStubsAndPatchUsages(symbolTable: SymbolTable)
+    fun generateStubsAndPatchUsages(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
     fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider)
 
@@ -76,7 +77,7 @@ interface PartialLinkageSupportForLinker {
             override fun enqueueDeclaration(declaration: IrDeclaration) = Unit
             override fun exploreClassifiers(fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
-            override fun generateStubsAndPatchUsages(symbolTable: SymbolTable) = Unit
+            override fun generateStubsAndPatchUsages(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) = Unit
             override fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
             override fun collectAllStubbedSymbols(): Set<IrSymbol> = emptySet()
         }

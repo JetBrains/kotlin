@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// SKIP_TXT
 // FILE: test.kt
 
 import kotlinx.serialization.*

@@ -2,6 +2,7 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {})
 /**
+ * @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.PROPERTY])
  * public final annotation class Anno : kotlin/Annotation {
  *
  *   // signature: <init>()V
@@ -24,6 +25,10 @@ public abstract @interface Anno {
  *   public open fun inherited(): kotlin/Unit
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -32,7 +37,8 @@ public abstract interface Base {
     /**
      * Inherited doc comment.
      */
-    public abstract void inherited();
+    public default void inherited() {
+    }
 
     /**
      * synthetic class
@@ -43,6 +49,7 @@ public abstract interface Base {
         /**
          * Inherited doc comment.
          */
+        @java.lang.Deprecated()
         public static void inherited(@org.jetbrains.annotations.NotNull()
         Base $this) {
         }
@@ -160,6 +167,7 @@ public final class Obj {
  *   // field: prop2:Ljava/lang/String;
  *   // getter: getProp2()Ljava/lang/String;
  *   // synthetic method for annotations: getProp2$annotations()V
+ *   @Anno
  *   public final val prop2: kotlin/String
  *     public final get
  *
@@ -356,6 +364,10 @@ public final class Test4 {
  * public abstract interface TestComponent : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

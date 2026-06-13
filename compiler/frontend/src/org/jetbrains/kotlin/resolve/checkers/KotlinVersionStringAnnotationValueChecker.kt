@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+@K1Deprecation
 abstract class KotlinVersionStringAnnotationValueChecker(
     private val annotationFqName: FqName
 ) : DeclarationChecker {
@@ -52,6 +54,7 @@ abstract class KotlinVersionStringAnnotationValueChecker(
     }
 }
 
+@K1Deprecation
 object SinceKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChecker(SINCE_KOTLIN_FQ_NAME) {
     override fun extraCheck(
         declaration: KtDeclaration,
@@ -73,4 +76,5 @@ object SinceKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChe
     }
 }
 
+@K1Deprecation
 object RequireKotlinAnnotationValueChecker : KotlinVersionStringAnnotationValueChecker(RequireKotlinConstants.FQ_NAME)

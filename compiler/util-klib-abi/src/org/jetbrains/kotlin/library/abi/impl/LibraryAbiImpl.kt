@@ -119,6 +119,7 @@ internal class AbiConstructorImpl(
 
     @Suppress("OVERRIDE_DEPRECATION")
     override val contextReceiverParametersCount get() = valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
+    override val companionExtensionsClass: AbiClassifierReference.ClassReference? = null
     override val returnType get() = null // No need to render return type for constructors.
     override val typeParameters get() = emptyList<AbiTypeParameter>()
 
@@ -135,6 +136,7 @@ internal class AbiFunctionImpl(
     modality: AbiModality,
     isInline: Boolean,
     isSuspend: Boolean,
+    override val companionExtensionsClass: AbiClassifierReference.ClassReference?,
     override val typeParameters: List<AbiTypeParameter>,
     override val valueParameters: List<AbiValueParameter>,
     override val returnType: AbiType?

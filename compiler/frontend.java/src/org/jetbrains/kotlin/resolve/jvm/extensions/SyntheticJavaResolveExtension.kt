@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.resolve.jvm.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.jvm.CompositeSyntheticJavaPartsProvider
 import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 
+@K1Deprecation
 interface SyntheticJavaResolveExtension {
 
     companion object : ProjectExtensionDescriptor<SyntheticJavaResolveExtension>(

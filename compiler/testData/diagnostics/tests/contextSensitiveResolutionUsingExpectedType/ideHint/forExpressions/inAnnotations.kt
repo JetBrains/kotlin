@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // IDE_MODE
+// LATEST_LV_DIFFERENCE
 
 // FILE: test.kt
 package test

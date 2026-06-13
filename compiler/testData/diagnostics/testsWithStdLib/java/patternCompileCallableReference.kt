@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FULL_JDK
-// SKIP_TXT
 
 import java.util.regex.Pattern
 

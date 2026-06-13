@@ -1,6 +1,6 @@
-/plusAssignPrecedence.kt:96:19: error: Unresolved reference 'plusAssign'.
+/plusAssignPrecedence.kt:96:19: error: Unresolved reference 'plusAssign' on receiver of type 'StringProperty'.
 
-/plusAssignPrecedence.kt:97:19: error: Unresolved reference 'plusAssign'.
+/plusAssignPrecedence.kt:97:19: error: Unresolved reference 'plusAssign' on receiver of type 'StringProperty'.
 
 /plusAssignPrecedence.kt:101:40: error: Ambiguity between assign operator candidates:
 fun plus(v: String): StringPropertyWithPlusAndPlusAssign

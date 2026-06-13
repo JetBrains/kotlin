@@ -4,7 +4,7 @@ package test;
  * public final data class test/C : kotlin/Any {
  *
  *   // signature: <init>(Lerror/NonExistentClass;Ljava/util/List;Lerror/NonExistentClass;)V
- *   public constructor(x: error/NonExistentClass, y: kotlin/collections/List<error/NonExistentClass>, z: error/NonExistentClass)
+ *   public constructor(x: error/NonExistentClass, y: kotlin/collections/List<error/NonExistentClass>, z: error/NonExistentClass (* = test/TA^<error/NonExistentClass> *))
  *
  *   // signature: component1()Lerror/NonExistentClass;
  *   public final (* synthesized *) operator fun component1(): error/NonExistentClass
@@ -13,18 +13,21 @@ package test;
  *   public final (* synthesized *) operator fun component2(): kotlin/collections/List<error/NonExistentClass>
  *
  *   // signature: component3()Lerror/NonExistentClass;
- *   public final (* synthesized *) operator fun component3(): error/NonExistentClass
+ *   public final (* synthesized *) operator fun component3(): error/NonExistentClass (* = test/TA^<error/NonExistentClass> *)
  *
  *   // signature: copy(Lerror/NonExistentClass;Ljava/util/List;Lerror/NonExistentClass;)Ltest/C;
- *   public final (* synthesized *) fun copy(x: error/NonExistentClass (* = ... *), y: kotlin/collections/List<error/NonExistentClass> (* = ... *), z: error/NonExistentClass (* = ... *)): test/C
+ *   public final (* synthesized *) fun copy(x: error/NonExistentClass (* = ... *), y: kotlin/collections/List<error/NonExistentClass> (* = ... *), z: error/NonExistentClass (* = test/TA^<error/NonExistentClass> *) (* = ... *)): test/C
  *
  *   // signature: equals(Ljava/lang/Object;)Z
+ *   // must-use return value
  *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
  *
  *   // signature: hashCode()I
+ *   // must-use return value
  *   public open (* synthesized *) fun hashCode(): kotlin/Int
  *
  *   // signature: toString()Ljava/lang/String;
+ *   // must-use return value
  *   public open (* synthesized *) fun toString(): kotlin/String
  *
  *   // field: x:Lerror/NonExistentClass;
@@ -39,7 +42,7 @@ package test;
  *
  *   // field: z:Lerror/NonExistentClass;
  *   // getter: getZ()Lerror/NonExistentClass;
- *   public final val z: error/NonExistentClass
+ *   public final val z: error/NonExistentClass (* = test/TA^<error/NonExistentClass> *)
  *     public final get
  *
  *   // module name: main
@@ -53,6 +56,28 @@ public final class C {
     private final java.util.List<U3> y = null;
     @org.jetbrains.annotations.NotNull()
     private final U1<U4> z = null;
+
+    public C(@org.jetbrains.annotations.NotNull()
+    U2 x, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends U3> y, @org.jetbrains.annotations.NotNull()
+    U1<U4> z) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final U2 getX() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<U3> getY() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final U1<U4> getZ() {
+        return null;
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Object component1() {
@@ -91,28 +116,6 @@ public final class C {
     @java.lang.Override()
     @org.jetbrains.annotations.NotNull()
     public java.lang.String toString() {
-        return null;
-    }
-
-    public C(@org.jetbrains.annotations.NotNull()
-    U2 x, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends U3> y, @org.jetbrains.annotations.NotNull()
-    U1<U4> z) {
-        super();
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final U2 getX() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<U3> getY() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final U1<U4> getZ() {
         return null;
     }
 }

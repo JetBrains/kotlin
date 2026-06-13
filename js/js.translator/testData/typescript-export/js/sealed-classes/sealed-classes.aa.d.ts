@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     namespace foo {
         abstract class AbstractClassWithProtected {
             constructor();
@@ -48,3 +47,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

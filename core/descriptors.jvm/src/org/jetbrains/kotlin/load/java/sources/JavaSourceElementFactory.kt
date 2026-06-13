@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.load.java.sources
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 
+@K1Deprecation
 interface JavaSourceElementFactory {
     fun source(javaElement: JavaElement): JavaSourceElement
 }
 
+@K1Deprecation
 interface JavaSourceElement : SourceElement {
     val javaElement: JavaElement
 }

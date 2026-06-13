@@ -60,6 +60,20 @@ annotation class InvalidArgumentValueCommonCompilerArgumentsWithBtaVersionsTest
 annotation class InvalidRawValueCommonCompilerArgumentsWithBtaVersionsTest
 
 /**
+ * Parameterized test annotation for validating that common compiler arguments with invalid raw values
+ * produce a compilation error (not a crash) using only BTAv2 and both execution strategies.
+ *
+ * @see InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Retention(AnnotationRetention.RUNTIME)
+@ParameterizedTest(name = "{0}: {displayName}")
+@ArgumentsSource(
+    InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticArgumentProvider::class
+)
+annotation class InvalidRawValueCommonCompilerArgumentsBtaV2StrategyAgnosticTest
+
+/**
  * Parameterized test annotation for validating backward compatibility of nullable common compiler arguments
  * across Build Tools API versions (BTAv1 and BTAv2).
  *

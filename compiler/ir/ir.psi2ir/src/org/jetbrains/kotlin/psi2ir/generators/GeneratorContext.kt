@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
+@K1Deprecation
 class GeneratorContext private constructor(
     val configuration: Psi2IrConfiguration,
     val compilerConfiguration: CompilerConfiguration,

@@ -1,6 +1,5 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // OPT_IN: kotlin.contracts.ExperimentalContracts
-// SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)

@@ -37,6 +37,18 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnExplicitBackingField.kt")
+    public void testAllAnnotationOnExplicitBackingField() {
+      run("allAnnotationOnExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter.kt")
+    public void testAllAnnotationOnParameter() {
+      run("allAnnotationOnParameter.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInAnnotations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/annotations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -237,6 +249,18 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("allAnnotationOnExplicitBackingField.kt")
+    public void testAllAnnotationOnExplicitBackingField() {
+      run("allAnnotationOnExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter.kt")
+    public void testAllAnnotationOnParameter() {
+      run("allAnnotationOnParameter.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInClassIds() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyAnnotations/classIds"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
@@ -428,6 +452,42 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
   public class Contains {
     private void run(String fileName) {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/contains/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingField.kt")
+    public void testAllAnnotationOnExplicitBackingField() {
+      run("allAnnotationOnExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingFieldFalse.kt")
+    public void testAllAnnotationOnExplicitBackingFieldFalse() {
+      run("allAnnotationOnExplicitBackingFieldFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingFieldFalseProperty.kt")
+    public void testAllAnnotationOnExplicitBackingFieldFalseProperty() {
+      run("allAnnotationOnExplicitBackingFieldFalseProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter.kt")
+    public void testAllAnnotationOnParameter() {
+      run("allAnnotationOnParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalse.kt")
+    public void testAllAnnotationOnParameterFalse() {
+      run("allAnnotationOnParameterFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalseProperty.kt")
+    public void testAllAnnotationOnParameterFalseProperty() {
+      run("allAnnotationOnParameterFalseProperty.kt");
     }
 
     @Test
@@ -724,6 +784,42 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
   public class Get {
     private void run(String fileName) {
       runTest("analysis/low-level-api-fir/testData/lazyAnnotations/get/" + fileName);
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingField.kt")
+    public void testAllAnnotationOnExplicitBackingField() {
+      run("allAnnotationOnExplicitBackingField.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingFieldFalse.kt")
+    public void testAllAnnotationOnExplicitBackingFieldFalse() {
+      run("allAnnotationOnExplicitBackingFieldFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnExplicitBackingFieldFalseProperty.kt")
+    public void testAllAnnotationOnExplicitBackingFieldFalseProperty() {
+      run("allAnnotationOnExplicitBackingFieldFalseProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameter.kt")
+    public void testAllAnnotationOnParameter() {
+      run("allAnnotationOnParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalse.kt")
+    public void testAllAnnotationOnParameterFalse() {
+      run("allAnnotationOnParameterFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("allAnnotationOnParameterFalseProperty.kt")
+    public void testAllAnnotationOnParameterFalseProperty() {
+      run("allAnnotationOnParameterFalseProperty.kt");
     }
 
     @Test

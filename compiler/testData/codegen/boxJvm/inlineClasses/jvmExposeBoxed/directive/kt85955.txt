@@ -1,0 +1,85 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Delegating {
+    // source: 'Test.kt'
+    private final @org.jetbrains.annotations.NotNull field id: java.lang.String
+    public method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Id): void
+    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
+    public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Id {
+    // source: 'Test.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic final static method box-impl(p0: java.lang.String): Id
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+}
+
+@kotlin.Metadata
+public final enum class MyEnum {
+    // source: 'Test.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: MyEnum[]
+    public final enum static field ONE: MyEnum
+    public final enum static field TWO: MyEnum
+    private final @org.jetbrains.annotations.NotNull field id: java.lang.String
+    private synthetic final static method $values(): MyEnum[]
+    static method <clinit>(): void
+    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(p0: java.lang.String, p1: int): void
+    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(p0: java.lang.String, p1: int, p2: Id): void
+    private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String, p3: kotlin.jvm.internal.BoxingConstructorMarker): void
+    synthetic method <init>(p0: java.lang.String, p1: int, p2: java.lang.String, p3: kotlin.jvm.internal.BoxingConstructorMarker, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
+    public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String
+    public static method valueOf(p0: java.lang.String): MyEnum
+    public static method values(): MyEnum[]
+}
+
+@kotlin.Metadata
+public final class Regular {
+    // source: 'Test.kt'
+    private final @org.jetbrains.annotations.NotNull field id: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Id): void
+    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
+    public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class ResultHolder {
+    // source: 'Test.kt'
+    private final @org.jetbrains.annotations.NotNull field result: java.lang.Object
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.Result): void
+    private method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: kotlin.Result, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getResult(): kotlin.Result
+    public final @org.jetbrains.annotations.NotNull method getResult-d1pmJ48(): java.lang.Object
+    public final inner class kotlin/Result$Companion
+}

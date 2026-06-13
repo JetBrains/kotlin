@@ -11,13 +11,13 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.btapi.BtaToolchain
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.btapi.GradleBuildToolsApiCompilerRunner
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -223,12 +223,30 @@ internal open class GradleCompilerRunner(
             //no need to log warnings in MessageCollector hear it will be logged by compiler
             kotlinLanguageVersion = compilerArgs.languageVersion?.let { v -> KotlinVersion.fromVersion(v) } ?: KotlinVersion.DEFAULT,
             compilerArgumentsLogLevel = environment.compilerArgumentsLogLevel,
+            btaToolchain = toBtaToolchain(compilerClassName, compilerArgs),
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
             workArgs,
             taskOutputsBackup
         )
+    }
+
+    private fun toBtaToolchain(
+        compilerClassName: String,
+        compilerArgs: CommonCompilerArguments,
+    ): BtaToolchain? = when (compilerClassName) {
+        KotlinCompilerClass.JVM -> BtaToolchain.JVM
+        KotlinCompilerClass.JS -> {
+            if ((compilerArgs as K2JSCompilerArguments).includes == null) BtaToolchain.JS_COMPILATION
+            else BtaToolchain.JS_LINKING
+        }
+        KotlinCompilerClass.WASM -> {
+            if ((compilerArgs as KotlinWasmCompilerArguments).includes == null) BtaToolchain.WASM_COMPILATION
+            else BtaToolchain.WASM_LINKING
+        }
+        KotlinCompilerClass.METADATA -> BtaToolchain.METADATA
+        else -> null
     }
 
     protected open fun runCompilerAsync(

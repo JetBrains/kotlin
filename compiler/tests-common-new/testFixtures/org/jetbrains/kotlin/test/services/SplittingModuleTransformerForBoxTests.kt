@@ -88,7 +88,7 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
         if (!testServices.splitStateProvider.hasBeenSplit) return true
         val modules = testServices.moduleStructure.modules
         assert(modules.size == 2) // It's expected that SplittingModuleTransformerForBoxTests splits testData to exactly two modules
-        val (moduleLib, moduleMain) = modules
+        val [moduleLib, moduleMain] = modules
 
         if (moduleLib.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
             // Multiplatform tests must not be tested with SplittingModuleTransformerForBoxTests

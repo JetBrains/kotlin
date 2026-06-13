@@ -8,17 +8,18 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDependencyTrackerImpl
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
+import org.jetbrains.kotlin.backend.wasm.WasmBackendErrors.WASM_BACKEND_MISSING_CUSTOM_FORMATTERS
 import org.jetbrains.kotlin.backend.wasm.export.ExportModelGenerator
 import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
-import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
@@ -34,15 +37,10 @@ import org.jetbrains.kotlin.js.config.generateDts
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmDebug
-import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
-import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmNoJsTag
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
@@ -84,17 +82,15 @@ data class LoweredIrWithExtraArtifacts(
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
-fun compileToLoweredIr(
+fun linkIr(
     irModuleInfo: IrModuleInfo,
-    mainModule: MainModule,
     configuration: CompilerConfiguration,
-    exportedDeclarations: Set<FqName> = emptySet(),
-): LoweredIrWithExtraArtifacts {
-    val (moduleFragment, moduleDependencies, irBuiltIns, symbolTable, irLinker) = irModuleInfo
+    mainModule: MainModule,
+): Pair<List<IrModuleFragment>, WasmBackendContext> {
+    (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
 
-    val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(
-        module = moduleDescriptor,
+        module = moduleFragment.descriptor,
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         irModuleFragment = moduleFragment,
@@ -111,16 +107,35 @@ fun compileToLoweredIr(
         is MainModule.SourceFiles -> error("Main module must be klib")
         is MainModule.Klib -> sortedModuleDependencies.all
     }
-
     allModules.forEach { it.patchDeclarationParents() }
 
-    irLinker.postProcess(inOrAfterLinkageStep = true)
+    irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
     irLinker.clear()
+    return allModules to context
+}
 
-    for (module in allModules)
-        for (file in module.files)
-            markExportedDeclarations(context, file, exportedDeclarations)
+fun compileToLoweredIr(
+    configuration: CompilerConfiguration,
+    irLinker: KotlinIrLinker,
+    allModules: List<IrModuleFragment>,
+    context: WasmBackendContext,
+): LoweredIrWithExtraArtifacts {
+    // Ad-hoc export for box functions in compiler tests.
+    configuration.wasmTestBoxFunctionToExport?.let { testBoxFunToExport ->
+        val boxPackage = testBoxFunToExport.parent()
+        val boxName = testBoxFunToExport.shortName()
+        for (module in allModules) {
+            for (file in module.files) {
+                if (file.packageFqName != boxPackage) continue
+                markFunctionToExport(context, file) {
+                    // The majority of tests use `fun box(): String` as entry point.
+                    // But some parts of stepping tests may have `box` fun returning `Unit`.
+                    name == boxName && parameters.isEmpty() && (returnType.isString() || returnType.isUnit())
+                }
+            }
+        }
+    }
 
     val typeScriptFragment = runIf(configuration.generateDts) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
@@ -221,10 +236,13 @@ fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
 
     val wasmCommandModuleInitialization = configuration.get(WasmConfigurationKeys.WASM_COMMAND_MODULE) ?: false
 
+    val useStackSwitching = configuration.wasmUseStackSwitchingProposal
+
     return wasmCompiledModuleFragment.linkWasmCompiledFragments(
         multimoduleOptions = multimoduleParameters,
         exceptionTagType = exceptionTagType,
         wasmCommandModuleInitialization = wasmCommandModuleInitialization,
+        useStackSwitching = useStackSwitching,
     )
 }
 
@@ -487,12 +505,28 @@ $wasmTagInitialization
 
 // Placed here to give access to it from externals (js_code)
 let wasmExports;
-let require;
 
 if (typeof process !== 'undefined' && process.release.name === 'node') {
-    const module = await import(/* webpackIgnore: true */'node:module');
-    const importMeta = import.meta;
-    require = module.default.createRequire(importMeta.url);
+    function doNotUseRequire() {
+        throw new Error("Do not use top-level require. Prefer to use JS import or define your own require instead. Read more: https://kotl.in/r9txlt")
+    }
+
+    var require = new Proxy((function() {}), {
+        apply(target, thisArg, argumentsList) {
+            if (globalThis.require != null) {
+                return globalThis.require.apply(thisArg, argumentsList);
+            } else {
+                doNotUseRequire();
+            }
+        },
+        get(target, prop, receiver) {
+            if (globalThis.require != null) {
+                return Reflect.get(globalThis.require, prop);
+            } else {
+                doNotUseRequire();
+            }
+        },
+    });
 }
 
 export function setWasmExports(exports) {
@@ -647,52 +681,32 @@ $staticImports
 
 let wasmInstance;
 
-const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
-const isDeno = !isNodeJs && (typeof Deno !== 'undefined')
-const isStandaloneJsVM =
-    !isDeno && !isNodeJs && (
-        typeof d8 !== 'undefined' // V8
-        || typeof inIon !== 'undefined' // SpiderMonkey
-        || typeof jscOptions !== 'undefined' // JavaScriptCore
-    );
-const isBrowser = !isNodeJs && !isDeno && !isStandaloneJsVM && (typeof window !== 'undefined' || typeof self !== 'undefined');
-
-if (!isNodeJs && !isDeno && !isStandaloneJsVM && !isBrowser) {
-  throw "Supported JS engine not detected";
-}
-
-const wasmFilePath = $pathJsStringLiteral;
 const wasmOptions = { builtins: ['${builtinsList.joinToString(", ")}'], importedStringConstants: "$importedStringConstants" }
 
 try {
-  if (isNodeJs) {
-    const module = await import(/* webpackIgnore: true */'node:module');
-    const importMeta = import.meta;
-    const require = module.default.createRequire(importMeta.url);
-    const fs = require('fs');
-    const url = require('url');
-    const filepath = import.meta.resolve(wasmFilePath);
+  if ((typeof process !== 'undefined') && (process.release.name === 'node')) {
+    const fs = await import(/* webpackIgnore: true */'node:fs');
+    const url = await import(/* webpackIgnore: true */'node:url');
+    const filepath = import.meta.resolve($pathJsStringLiteral);
     const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
     const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
     wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
-  }
-
-  if (isDeno) {
+  } else if (typeof Deno !== 'undefined') {
     const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
-    const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
+    const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve($pathJsStringLiteral)));
     const module = await WebAssembly.compile(binary, wasmOptions);
     wasmInstance = await WebAssembly.instantiate(module, importObject);
-  }
-
-  if (isStandaloneJsVM) {
-    const importMeta = import.meta;
-    const filepath = importMeta.url.replace(/\.mjs$/, '.wasm');
+  } else if (
+    (typeof d8 !== 'undefined' // V8
+      || typeof inIon !== 'undefined' // SpiderMonkey
+      || typeof jscOptions !== 'undefined' // JavaScriptCore
+    )
+  ) {
+    const filepath = import.meta.url.replace(/\.mjs$/, '.wasm');
     const wasmBuffer = read(filepath, 'binary');
     const wasmModule = new WebAssembly.Module(wasmBuffer, wasmOptions);
     wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
-  }
-
-  if (isBrowser) {
+  } else {
     wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, wasmOptions)).instance;
   }
 } catch (e) {
@@ -700,7 +714,7 @@ try {
     let text = `Please make sure that your runtime environment supports the latest version of Wasm GC and Exception-Handling proposals.
 For more information, see https://kotl.in/wasm-help
 `;
-    if (isBrowser) {
+    if (typeof console !== "undefined" && console.error !== void 0) {
       console.error(text);
     } else {
       const t = "\n" + text;
@@ -725,7 +739,7 @@ fun writeCompilationResult(
     result: WasmCompilerResult,
     dir: File,
     fileNameBase: String,
-    messageCollector: MessageCollector? = null
+    configuration: CompilerConfiguration? = null
 ) {
     dir.mkdirs()
     if (result.wat != null) {
@@ -746,10 +760,7 @@ fun writeCompilationResult(
         val classLoader = WasmCompilerResult::class.java.classLoader
         val customFormattersInputStream = classLoader.getResourceAsStream(fileName) ?: run {
             val message = "Custom formatters won't work because a required resource is missing from the compiler: $fileName"
-            messageCollector?.report(
-                CompilerMessageSeverity.STRONG_WARNING,
-                message
-            )
+            configuration?.report(WASM_BACKEND_MISSING_CUSTOM_FORMATTERS, message)
             "console.warn(\"$message\");".byteInputStream()
         }
 
@@ -778,7 +789,7 @@ fun generateExports(
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
 
-    val (validIdentifiers, notValidIdentifiers) = exportNames.partition { it.name.isValidES5Identifier() }
+    val [validIdentifiers, notValidIdentifiers] = exportNames.partition { it.name.isValidES5Identifier() }
     val regularlyExportedVariables = validIdentifiers
         .ifNotEmpty {
             """

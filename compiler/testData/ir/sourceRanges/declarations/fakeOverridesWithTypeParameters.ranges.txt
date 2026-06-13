@@ -1,0 +1,38 @@
+@0:0..5:0 FILE fqName:<root> fileName:/fakeOverridesWithTypeParameters.kt
+  @0:0..2:1 CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    @0:0..2:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Base [primary]
+      @0:0..2:1 BLOCK_BODY
+        @0:0..2:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:0..2:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    @1:9..40 FUN name:genericFun visibility:public modality:OPEN <T> (<this>:<root>.Base, x:T of <root>.Base.genericFun) returnType:T of <root>.Base.genericFun
+      @1:14..15 TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      @1:9..40 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      @1:28..32 VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.Base.genericFun
+      @1:39..40 BLOCK_BODY
+        @1:40..40 RETURN type=kotlin.Nothing from='public open fun genericFun <T> (x: T of <root>.Base.genericFun): T of <root>.Base.genericFun declared in <root>.Base'
+          @1:39..40 GET_VAR 'x: T of <root>.Base.genericFun declared in <root>.Base.genericFun' type=T of <root>.Base.genericFun origin=null
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @0:0..2:1 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base
+  @4:0..22 CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
+    @4:0..22 CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      @4:0..22 BLOCK_BODY
+        @4:0..22 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        @4:0..22 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.Unit
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:genericFun visibility:public modality:OPEN <T> (<this>:<root>.Base, x:T of <root>.Derived.genericFun) returnType:T of <root>.Derived.genericFun [fake_override]
+      @-1:-1..-1 TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:x index:1 type:T of <root>.Derived.genericFun
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> (<this>:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @-1:-1..-1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> (<this>:kotlin.Any) returnType:kotlin.String [fake_override]
+      @-1:-1..-1 VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+    @4:0..22 VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived

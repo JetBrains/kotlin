@@ -8,13 +8,20 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.isGeneratedStaticEnumMember
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.unwrapUseSiteSubstitutionOverrides
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     return symbol.getContainingDeclaration(session)?.fir
@@ -88,4 +95,22 @@ var FirCodeFragment.codeFragmentContext: FirCodeFragmentContext? by FirDeclarati
 
 fun FirBasedSymbol<*>.isContextParameter(): Boolean {
     return this is FirValueParameterSymbol && this.fir.valueParameterKind == FirValueParameterKind.ContextParameter
+}
+
+fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
+    if (this !is FirCallableSymbol) return false
+    if (isJavaOrEnhancement) return false
+    if (!isStatic) return false
+    // The only static Kotlin declarations that existed before were enum entries and Enum.entires/values/valueOf
+    if (this is FirEnumEntrySymbol) return false
+    (this.getContainingClassSymbol() as? FirClassSymbol)?.let { containingClassSymbol ->
+        if (this.fir.isGeneratedStaticEnumMember(containingClassSymbol.fir)) return false
+    }
+    return true
+}
+
+fun FirBasedSymbol<*>.isSyntheticSamConstructor(): Boolean {
+    if (this !is FirSyntheticFunctionSymbol) return false
+
+    return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.SamConstructor
 }

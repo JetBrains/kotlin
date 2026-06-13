@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.file.File
@@ -64,6 +65,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveCacheBitcodeDependencies()
         saveClassFields()
         saveEagerInitializedProperties()
+        saveTrivialGetters()
     }
 
     private fun saveMetadata() {
@@ -90,5 +92,10 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
     private fun saveEagerInitializedProperties() {
         outputFiles.eagerInitializedPropertiesFile!!.writeBytes(
                 EagerInitializedPropertySerializer.serialize(generationState.eagerInitializedFiles))
+    }
+
+    private fun saveTrivialGetters() {
+        outputFiles.trivialGettersFile!!.writeBytes(
+                TrivialGettersSerializer.serialize(generationState.trivialGetters))
     }
 }

@@ -1,2 +1,5 @@
-KtNamedFunction(43,84): '/**'
-  null
+KDocName(51,59): 'A.toName'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A.toName(<dispatch receiver>: A): kotlin.String
+    ]

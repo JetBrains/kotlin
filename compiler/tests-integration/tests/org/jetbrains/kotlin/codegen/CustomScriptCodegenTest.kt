@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -15,11 +16,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.FirParser.LightTree
 import org.jetbrains.kotlin.test.FirParser.Psi
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
+import org.jetbrains.kotlin.test.runners.codegen.TestScriptWithReceivers
 import java.io.File
 import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
@@ -45,7 +42,7 @@ class FirPsiCustomScriptCodegenTest : CustomScriptCodegenTest() {
         get() = Psi
 }
 
-open class CustomScriptCodegenTest : CodegenTestCase() {
+abstract class CustomScriptCodegenTest : CodegenTestCase() {
     open fun testAnnotatedDefinition() {
         createScriptTestEnvironment("org.jetbrains.kotlin.codegen.TestScriptWithAnnotatedBaseClass")
         loadScript("val x = 1")
@@ -60,7 +57,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
     private fun generateScriptClass(): Class<*> = generateClass("ScriptTest")
 
     private fun loadScript(text: String) {
-        myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment.project)
+        myFiles = CodegenTestFiles.create("scriptTest.kts", text, myEnvironment!!.project)
     }
 
     private fun createScriptTestEnvironment(vararg scriptDefinitions: String) {
@@ -72,12 +69,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
             scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
                     containingDependencyPath<TestScriptWithReceivers>() +
                     containingDependencyPath<TestScriptWithAnnotatedBaseClass>() +
-                    with(PathUtil.kotlinPathsForDistDirectory) {
-                        arrayOf(
-                            KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
-                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
-                        ).mapNotNull { jarName -> File(libPath, jarName).also { assertTrue("$it not found", it.exists()) } }
-                    }
+                    ForTestCompileRuntime.scriptingPluginFilesForTests()
 
         val configuration = createConfiguration(
             ConfigurationKind.ALL,
@@ -102,7 +94,7 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
     }
 }
 
-private inline fun <reified T> containingDependencyPath(): File? {
+private inline fun <reified T> containingDependencyPath(): File {
     return File(T::class.java.protectionDomain.codeSource.location.toURI().path)
 }
 

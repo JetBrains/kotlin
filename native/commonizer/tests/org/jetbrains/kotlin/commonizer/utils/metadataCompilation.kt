@@ -118,7 +118,7 @@ fun serializeModuleAndAllDependenciesToMetadata(
 
     for (dependency in module.dependencies) {
         if (dependency !in dependencyToMetadata) {
-            val (configuration, dependencyArtifact) = serializeModuleAndAllDependenciesToMetadata(
+            val [configuration, dependencyArtifact] = serializeModuleAndAllDependenciesToMetadata(
                 dependency, disposable, dependencyToMetadata, compiledDependenciesRoot,
             )
             configuration.metadataDestinationDirectory = File(compiledDependenciesRoot.path + File.pathSeparator + dependency.name)

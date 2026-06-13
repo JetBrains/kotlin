@@ -3,9 +3,33 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(SelfReferencing::class, "14f_bounded_type15SelfReferencingC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyComparable::class, "_MyComparable")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
+internal external fun MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(MyComparable::class, "compareTo")
+public fun MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: MyComparable<kotlin.Any?>, other: kotlin.Any?): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __other = if (other == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(other)
+    val __result = MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __other)
+    return __result
+}
+
+@ImportedBridge("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift")
+internal external fun SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(SelfReferencing::class, "compareTo")
+public fun SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse(self: MyComparable<kotlin.Any?>, other: SelfReferencing<*>): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __other = kotlin.native.internal.ref.createRetainedExternalRCRef(other)
+    val __result = SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing____reverse_swift(__self, __other)
+    return __result
+}
 
 @ExportedBridge("MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
 public fun MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {

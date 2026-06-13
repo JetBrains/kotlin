@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.java.LanguageLevel
+import com.intellij.psi.FileResolveScopeProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFileFactory
@@ -19,12 +20,16 @@ import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.SourceTreeToPsiMap
 import com.intellij.psi.impl.source.tree.TreeElement
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiUtil
 import com.intellij.util.AstLoadingFilter
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.KtPsiMutationService
 import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 
@@ -32,7 +37,7 @@ open class FakeFileForLightClass(
     val ktFile: KtFile,
     private val lightClass: KtLightClass,
     private val packageFqName: FqName = ktFile.packageFqName,
-) : ClsFileImpl(ktFile.viewProvider) {
+) : ClsFileImpl(ktFile.viewProvider), FileResolveScopeProvider {
     override fun getVirtualFile(): VirtualFile =
         ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: super.getVirtualFile()
 
@@ -105,13 +110,25 @@ open class FakeFileForLightClass(
 
     override fun isEquivalentTo(another: PsiElement?) = this == another
 
+    @OptIn(KtNonPublicApi::class)
     override fun setPackageName(packageName: String) {
         if (lightClass is KtLightClassForFacade) {
-            ktFile.packageDirective?.fqName = FqName(packageName)
+            ktFile.packageDirective?.let {
+                KtPsiMutationService.getInstance().setPackageFqName(it, FqName(packageName))
+            }
         } else {
             super.setPackageName(packageName)
         }
     }
 
     override fun isPhysical() = false
+
+    /**
+     * Defines the resolution scope for declarations in this file.
+     */
+    override fun getFileResolveScope(): GlobalSearchScope {
+        return KotlinAsJavaSupport.getInstance(this.project).getResolutionScope(this)
+    }
+
+    override fun ignoreReferencedElementAccessibility(): Boolean = false
 }

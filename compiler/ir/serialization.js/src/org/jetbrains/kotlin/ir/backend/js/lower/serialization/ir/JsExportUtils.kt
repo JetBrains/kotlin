@@ -25,7 +25,7 @@ internal fun IrAnnotationContainer.isJsExportIgnoreDeclaration(): Boolean {
     return annotations.hasAnnotation(JsStandardClassIds.Annotations.JsExportIgnore.asSingleFqName())
 }
 
-private val IrDeclarationWithName.exportedJsExportName: String
+internal val IrDeclarationWithName.exportedJsExportName: String
     get() = getAnnotation(JsStandardClassIds.Annotations.JsName.asSingleFqName())?.getSingleConstStringArgument() ?: name.toString()
 
 internal fun IrConstructorCall.getSingleConstStringArgument() =

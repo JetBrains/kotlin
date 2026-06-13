@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.objcinterop
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_CINTEROP_ARGS
@@ -18,6 +19,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
+import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
+import org.jetbrains.kotlin.konan.test.klib.customNativeCompilerSettings
+import org.jetbrains.kotlin.konan.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -28,15 +33,25 @@ import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CIN
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.testInfraError
 import kotlin.collections.flatMap
 import kotlin.io.extension
 
-class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<ResultingArtifact.Source, BinaryArtifacts.KLib>() {
+/*
+ * When [customClassLoader] is not null, it means ObjCInteropFacade is used in scope of forward compatibility testing:
+ */
+class ObjCInteropFacade(
+    val testServices: TestServices,
+    val isForwardTest: Boolean = false,
+    customClassLoader: ClassLoader? = null
+) : AbstractTestFacade<ResultingArtifact.Source, BinaryArtifacts.KLib>() {
+
     override val inputKind = SourcesKind
     override val outputKind = ArtifactKinds.KLib
     private val settings = testServices.testRunSettings
     private val targets: KotlinNativeTargets = settings.get()
-    private val classLoader: KotlinNativeClassLoader = settings.get()
+    private val classLoader: ClassLoader = customClassLoader
+        ?: settings.get<KotlinNativeClassLoader>().classLoader
 
     override fun shouldTransform(module: TestModule): Boolean {
         return module.files.any { it.name.endsWith(".def") }
@@ -48,7 +63,10 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
         val sourceFiles = module.files.map { sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val defFiles = sourceFiles.filter { it.name.endsWith(".def") }
-        val defFile = defFiles.singleOrNull() ?: error("Only one .def file is allowed: ${defFiles.map { it.name }}")
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        val defFile = defFiles.singleOrNull()
+            ?: testInfraError("Only one .def file is allowed: ${defFiles.map { it.name }}")
         val defRealFileFolder = defFile.parentFile
         val cSourceFiles = sourceFiles.filter {
             it.name.substringAfterLast(".") in CINTEROP_SOURCE_EXTENSIONS
@@ -64,7 +82,9 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
                 clangMode = when (it.extension) {
                     "c", "m" -> ClangMode.C
                     "cpp", "mm" -> ClangMode.CXX
-                    else -> error("unexpected file extension: $it")
+                    // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                    // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                    else -> testInfraError("unexpected file extension: $it")
                 },
                 sourceFiles = listOf(it),
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),
@@ -94,15 +114,32 @@ class ObjCInteropFacade(val testServices: TestServices) : AbstractTestFacade<Res
             }
             add("-compiler-option")
             add("-I$defRealFileFolder")
+            if (isForwardTest && customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE) {
+                add("-Xkonan-home")
+                add(currentCustomNativeCompilerSettings.nativeHome.absolutePath)
+                customNativeCompilerSettings.defaultLanguageVersion.let {
+                    add("-Xklib-abi-compatibility-level")
+                    add("${it.major}.${it.minor}")
+                }
+                if (!this.contains("-Xccall-mode")) {
+                    add("-Xccall-mode")
+                    add("direct")
+                }
+            }
+            add("-libraryPath")
+            add(expectedArtifact.klibFile.parentFile.absolutePath)
         }
 
         val loggedCInteropParameters = LoggedData.CInteropParameters(args, defFile)
-        val (loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>) = try {
-            val (exitCode, cinteropOutput, cinteropOutputHasErrors, duration) = invokeCInterop(
-                classLoader.classLoader,
-                expectedArtifact.klibFile,
-                args.toTypedArray()
-            )
+        val [loggedCall: LoggedData, immediateResult: TestCompilationResult.ImmediateResult<out KLIB>] = try {
+            (
+                val exitCode, val cinteropOutput = toolOutput, val cinteropOutputHasErrors = toolOutputHasErrors, val duration
+            ) =
+                invokeCInterop(
+                    classLoader,
+                    expectedArtifact.klibFile,
+                    args.toTypedArray()
+                )
 
             val loggedInteropCall = LoggedData.CompilationToolCall(
                 toolName = "CINTEROP",

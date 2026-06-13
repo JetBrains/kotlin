@@ -86,7 +86,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
     indent: String,
     mode: MultiplatformDiagnosticRenderingMode
 ) {
-    for ((compatibility, descriptors) in map) {
+    for ([compatibility, descriptors] in map) {
         append(indent)
         append("The following declaration")
         if (descriptors.size == 1) append(" is") else append("s are")
@@ -107,7 +107,7 @@ private fun StringBuilder.renderIncompatibleClassScopes(
 ) {
     mode.renderList(this, unfulfilled.indices.map { index ->
         {
-            val (descriptor, mapping) = unfulfilled[index]
+            val [descriptor, mapping] = unfulfilled[index]
             mode.renderSymbol(this, descriptor, indent)
             if (mapping.isNotEmpty()) {
                 mode.newLine(this)

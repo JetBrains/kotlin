@@ -69,6 +69,15 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         auxiliary.compileDependencyFiles += main.output.classesDirs
 
+        // Propagate cinterop klib outputs from 'main' to 'auxiliary' so that any associated
+        // compilation (test, swiftExportMain, custom, …) sees all cinterop klibs at compile and
+        // link time without requiring per-feature workarounds. See KT-86015.
+        val mainCinteropOutputs = (main as? AbstractKotlinNativeCompilation)?.cinteropOutputs
+        if (mainCinteropOutputs != null) {
+            auxiliary.compileDependencyFiles += mainCinteropOutputs
+            (auxiliary as? KotlinNativeCompilation)?.cinterops?.all { it.dependencyFiles += mainCinteropOutputs }
+        }
+
         target.project.configurations.named(auxiliary.legacyImplementationConfigurationName).configure { configuration ->
             configuration.extendsFrom(target.project.configurations.findByName(main.legacyImplementationConfigurationName))
         }

@@ -60,7 +60,7 @@ internal class KaFirTypeAliasedConstructorMemberPointer(
         val firSession = analysisSession.firSession
         val scopeSession = analysisSession.getScopeSessionFor(firSession)
 
-        val (_, typeAliasConstructorsSubstitutingScope) = typeAlias.expandedClassWithConstructorsScope(
+        val [_, typeAliasConstructorsSubstitutingScope] = typeAlias.expandedClassWithConstructorsScope(
             firSession,
             scopeSession,
             memberRequiredPhaseForRegularClasses = FirResolvePhase.STATUS

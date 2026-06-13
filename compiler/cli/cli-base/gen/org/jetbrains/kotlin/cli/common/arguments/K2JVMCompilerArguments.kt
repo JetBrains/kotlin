@@ -110,6 +110,17 @@ The default value is 1.""",
         }
 
     @Argument(
+        value = "-Xcommon-fragments-metadata-destination",
+        description = """Specifies the destination for common fragments metadata.
+This metadata is used solely for incremental compilation and should not be used directly.""",
+    )
+    var commonFragmentsMetadataDestination: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xdebug",
         description = """Enable debug mode for compilation.
 Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
@@ -688,7 +699,7 @@ This can be used in the event of problems with the new implementation.""",
 -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
 -Xwhen-expressions=inline       Generate type-checking 'when' expressions as a chain of type checks.
-The default value is 'inline'.""",
+The default value is 'indy' if the JVM target version is 21 or greater, and 'inline' otherwise.""",
     )
     var whenExpressionsGeneration: String? = null
         set(value) {

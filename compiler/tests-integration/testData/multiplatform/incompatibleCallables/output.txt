@@ -17,37 +17,37 @@ compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:3
   reason: the parameter names are different
 actual fun f2(otherName: String) {}
            ^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:5:12: error: 'public final actual fun f3(name: Double): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:5:12: error: 'public final actual fun f3(name: Double): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter types are different:
     expect fun f3(name: String): Unit
 
 actual fun f3(name: Double) {}
            ^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:6:19: error: 'public final actual fun Double.f3ext(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:6:19: error: 'public final actual fun Double.f3ext(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter types are different:
     expect fun String.f3ext(): Unit
 
 actual fun Double.f3ext() {}
                   ^^^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:8:19: error: 'public final actual fun String.f4(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:8:19: error: 'public final actual fun String.f4(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
     expect fun f4(name: String): Unit
 
 actual fun String.f4() {}
                   ^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:10:12: error: 'public final actual fun f5(name: String): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:10:12: error: 'public final actual fun f5(name: String): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter shapes are different (extension vs non-extension):
     expect fun String.f5(): Unit
 
 actual fun f5(name: String) {}
            ^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:12:12: error: 'public final actual fun f6(p2: Int): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:12:12: error: 'public final actual fun f6(p2: Int): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because the number of value parameters is different:
     expect fun f6(p1: String, p2: Int): Unit
 
 actual fun f6(p2: Int) {}
            ^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:14:19: error: 'public final actual fun <K, V> f7(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:14:19: error: 'public final actual fun <K, V> f7(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because the number of type parameters is different:
     expect fun <T> f7(): Unit
 
@@ -59,19 +59,19 @@ compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:1
   reason: the visibilities are different
 internal actual fun f10() {}
                     ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:19:29: error: 'public final actual fun <T : Annotation> f11(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:19:29: error: 'public final actual fun <T : Annotation> f11(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because the upper bounds of type parameters are different:
     expect fun <T : Number> f11(): Unit
 
 actual fun <T : Annotation> f11() {}
                             ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:20:42: error: 'public final actual fun <U : MutableList<out String>> f12(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:20:42: error: 'public final actual fun <U : MutableList<out String>> f12(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because the upper bounds of type parameters are different:
     expect fun <U : MutableList<String>> f12(): Unit
 
 actual fun <U : MutableList<out String>> f12() {}
                                          ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:21:35: error: 'public final actual fun <A, B : Comparable<B>> f13(): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:21:35: error: 'public final actual fun <A, B : Comparable<B>> f13(): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because the upper bounds of type parameters are different:
     expect fun <A, B : Comparable<A>> f13(): Unit
 
@@ -83,7 +83,7 @@ compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:2
   reason: some type parameter is reified in one declaration and non-reified in the other
 actual inline fun <reified X> f14() {}
                               ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: actual function cannot have default argument values. They must be declared in the expected function.
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:26:16: error: 'actual' function cannot have default argument values. They must be declared in the 'expect' function.
 actual fun f16(s: String = "") {}
                ^^^^^^^^^^^^^^
 compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:28:12: error: the 'expect' and the 'actual' declarations are incompatible.
@@ -110,13 +110,13 @@ compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:3
   reason: some value parameter is noinline in one declaration and not noinline in the other
 actual inline fun f20(noinline s: () -> Unit) {}
                   ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:32:12: error: 'public final actual fun f21(c: Unit.() -> Unit): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:32:12: error: 'public final actual fun f21(c: Unit.() -> Unit): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter types are different:
     expect fun f21(c: suspend Unit.() -> Unit): Unit
 
 actual fun f21(c: Unit.() -> Unit) {}
            ^^^
-compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:33:12: error: 'public final actual fun f22(c: suspend Unit.() -> Unit): Unit' has no corresponding expected declaration
+compiler/tests-integration/testData/multiplatform/incompatibleCallables/jvm.kt:33:12: error: 'public final actual fun f22(c: suspend Unit.() -> Unit): Unit' has no corresponding 'expect' declaration
 The following declaration is incompatible because parameter types are different:
     expect fun f22(c: Unit.() -> Unit): Unit
 

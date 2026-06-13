@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 sealed class K1ExpectActualCompatibility<out D> {
 
     // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
@@ -99,14 +101,17 @@ sealed class K1ExpectActualCompatibility<out D> {
     object Compatible : K1ExpectActualCompatibility<Nothing>()
 }
 
+@K1Deprecation
 val K1ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
     get() = this is K1ExpectActualCompatibility.Compatible
             || this is K1ExpectActualCompatibility.Incompatible.WeakIncompatible
 
+@K1Deprecation
 val K1ExpectActualCompatibility<*>.compatible: Boolean
     get() = this == K1ExpectActualCompatibility.Compatible
 
 @OptIn(ExperimentalContracts::class)
+@K1Deprecation
 fun K1ExpectActualCompatibility<*>.isIncompatible(): Boolean {
     contract {
         returns(true) implies (this@isIncompatible is K1ExpectActualCompatibility.Incompatible<*>)

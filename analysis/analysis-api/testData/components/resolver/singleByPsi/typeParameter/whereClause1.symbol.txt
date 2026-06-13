@@ -1,2 +1,7 @@
 KtNameReferenceExpression(65,69): 'From'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      From
+    ]

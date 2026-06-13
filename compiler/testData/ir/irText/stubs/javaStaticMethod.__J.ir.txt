@@ -14,4 +14,4 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:pu
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Any
-  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:OPEN returnType:kotlin.Unit
+  FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:OPEN returnType:kotlin.Unit [companion]

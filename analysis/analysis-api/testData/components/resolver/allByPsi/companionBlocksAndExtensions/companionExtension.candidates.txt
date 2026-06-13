@@ -1,0 +1,337 @@
+KtFile: 'companionExtension.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(43,55): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'test'
+  NO_CANDIDATES
+
+KtImportList(55,55): ''
+  NO_CANDIDATES
+
+KtClass(57,64): 'class C'
+  NO_CANDIDATES
+
+KtNamedFunction(66,90): 'companion fun C.foo() {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(66,75): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(80,81): 'C'
+  NO_CANDIDATES
+
+KtUserType(80,81): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(80,81): 'C'
+  NO_CANDIDATES
+
+KtParameterList(85,87): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(88,90): '{}'
+  NO_CANDIDATES
+
+KtProperty(91,126): 'companion val C.prop: Int get() = 1'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(91,100): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(105,106): 'C'
+  NO_CANDIDATES
+
+KtUserType(105,106): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(105,106): 'C'
+  NO_CANDIDATES
+
+KtTypeReference(113,116): 'Int'
+  NO_CANDIDATES
+
+KtUserType(113,116): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(113,116): 'Int'
+  NO_CANDIDATES
+
+KtPropertyAccessor(117,126): 'get() = 1'
+  NO_CANDIDATES
+
+KtParameterList(120,122): '()'
+  NO_CANDIDATES
+
+KtConstantExpression(125,126): '1'
+  NO_CANDIDATES
+
+KtNamedFunction(128,190): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(137,139): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(140,190): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(146,153): 'C.foo()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(146,147): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(148,153): 'foo()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(148,151): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(151,153): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(158,164): 'C.prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(158,159): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(160,164): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(170,176): 'C::foo'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(170,171): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(173,176): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C
+        returnType = kotlin.Unit
+        symbol = test/foo(<extension receiver>: test.C): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtCallableReferenceExpression(181,188): 'C::prop'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(181,182): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(184,188): 'prop'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaVariableSignature:
+        name = prop
+        receiverType = test.C
+        returnType = kotlin.Int
+        symbol = val prop: kotlin.Int
+        contextParameters = []
+        callableId = test/prop
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

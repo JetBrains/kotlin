@@ -2,6 +2,8 @@ plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
     id("generated-sources")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -9,7 +11,24 @@ dependencies {
     api(project(":compiler:arguments.common"))
     api(project(":compiler:plugin-api"))
     api(project(":compiler:resolution.common"))
-    api(project(":compiler:light-classes"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend:cfg"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":compiler:psi:parser"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":compiler:backend"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:frontend.common.jvm"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:resolution.common.jvm"))
+    implementation(project(":compiler:util"))
+    implementation(project(":core:compiler.common.jvm"))
 
     implementation(project(":compiler:config.jvm"))
     implementation(project(":js:js.config"))
@@ -25,13 +44,24 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
     "main" {
         projectDefault()
     }
-    "test" { none() }
+    "test" {
+        projectDefault()
+    }
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 optInToExperimentalCompilerApi()

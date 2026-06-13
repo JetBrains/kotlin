@@ -20,13 +20,24 @@ KtParameter(8,17): 's: String'
   null
 
 KtTypeReference(11,17): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(11,17): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(11,17): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(26,28): '()'
   null
@@ -50,6 +61,8 @@ KtCallExpression(49,58): 'foo(s = )'
     ]
 
 KtNameReferenceExpression(49,52): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(): kotlin.Unit
@@ -65,4 +78,9 @@ KtValueArgumentName(53,54): 's'
   null
 
 KtNameReferenceExpression(53,54): 's'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      s: kotlin.String
+    ]

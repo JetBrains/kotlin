@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
@@ -32,7 +33,7 @@ import kotlin.test.assertIs
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseLibrary")
 
         doTestPreReleaseKotlinLibrary(rootDir)
     }
@@ -43,7 +44,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         // To be refactored later, after
         // CompileKotlinAgainstCustomBinariesTest.testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck is fixed.
         val rootDir =
-            File("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck")
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck")
 
         doTestPreReleaseKotlinLibrary(
             rootDir = rootDir,
@@ -87,7 +88,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testObjCExportDiagnostics() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
         val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportReportNameCollisions=true"))
         val goldenData = rootDir.resolve("output.txt")
 
@@ -96,7 +97,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testObjCExportDiagnosticsErrors() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
         val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportErrorOnNameCollisions=true"))
         assertIs<TestCompilationResult.Failure>(compilationResult)
         val goldenData = rootDir.resolve("error.txt")
@@ -105,15 +106,15 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
-    fun testLoggingWarningWithDistCache() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/runtimeLogging")
+    fun testLogging() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
         val testCase = generateTestCaseWithSingleFile(
             rootDir.resolve("main.kt"),
             freeCompilerArgs = TestCompilerArgs("-Xruntime-logs=gc=info"),
             extras = TestCase.NoTestRunnerExtras("main"),
             testKind = TestKind.STANDALONE_NO_TR,
         )
-        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_warning_with_cache"))
+        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_with_cache"))
         val compilation = ExecutableCompilation(
             testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
@@ -123,16 +124,38 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             expectedArtifact = expectedArtifact,
         )
         val compilationResult = compilation.result
-        val goldenData = rootDir.resolve(
-            if (testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries) "logging_cache_warning.txt" else "empty.txt"
+        val goldenData = rootDir.resolve("empty.txt")
+
+        TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
+    }
+
+    @Test
+    fun testLoggingInvalid() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/runtimeLogging")
+        val testCase = generateTestCaseWithSingleFile(
+            rootDir.resolve("main.kt"),
+            freeCompilerArgs = TestCompilerArgs("-Xruntime-logs=invalid=unknown,logging=debug"),
+            extras = TestCase.NoTestRunnerExtras("main"),
+            testKind = TestKind.STANDALONE_NO_TR,
         )
+        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_invalid"))
+        val compilation = ExecutableCompilation(
+            testRunSettings,
+            freeCompilerArgs = testCase.freeCompilerArgs,
+            sourceModules = testCase.modules,
+            extras = testCase.extras,
+            dependencies = emptyList(),
+            expectedArtifact = expectedArtifact,
+        )
+        val compilationResult = compilation.result
+        val goldenData = rootDir.resolve("logging_invalid_error.txt")
 
         TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
     }
 
     @Test
     fun testCacheLinkageErrorMessage() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/cacheLinkageErrorMessage")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/cacheLinkageErrorMessage")
 
         // Trigger the binary linkage to fail by requesting a non-existing library:
         val secondStageCompilerArgs = listOf("-linker-option", "-ldoes-not-exist")
@@ -151,9 +174,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             assertContains(
                 output,
                 """
-                |Please try to disable compiler caches and rerun the build.
-                |To disable compiler caches, use `disableNativeCache` in the binary declaration in the Gradle build script.
-                |See https://kotl.in/disable-native-cache for specific instructions.
+                |Please try to disable compiler caches (https://kotl.in/disable-native-cache) and rerun the build.
                 |
                 |Also, consider filing an issue with full Gradle log here: https://kotl.in/issue""".trimMargin()
             )
@@ -167,7 +188,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
         Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
 
-        val rootDir = File("native/native.tests/testData/compilerOutput/cacheBuildErrorMessage")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/cacheBuildErrorMessage")
 
         // Make sure the stdlib cache is built. Otherwise, it will fail instead of the main.klib cache.
         compileToExecutableInTwoStages(rootDir).assertSuccess()
@@ -202,7 +223,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         // MinGW support for caches is limited to stdlib, so these tests won't work as expected.
         Assumptions.assumeFalse(targets.testTarget == KonanTarget.MINGW_X64)
 
-        val rootDir = File("native/native.tests/testData/compilerOutput/incrementalBuildErrorMessage")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/incrementalBuildErrorMessage")
 
         // Make sure the stdlib cache is built. Otherwise, it will fail instead of the main.klib incremental cache.
         compileToExecutableInTwoStages(rootDir).assertSuccess()
@@ -271,31 +292,6 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         }
     }
 
-    @Test
-    fun testLoggingInvalid() {
-        Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForDistributionLibraries)
-        val rootDir = File("native/native.tests/testData/compilerOutput/runtimeLogging")
-        val testCase = generateTestCaseWithSingleFile(
-            rootDir.resolve("main.kt"),
-            freeCompilerArgs = TestCompilerArgs("-Xruntime-logs=invalid=unknown,logging=debug"),
-            extras = TestCase.NoTestRunnerExtras("main"),
-            testKind = TestKind.STANDALONE_NO_TR,
-        )
-        val expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("logging_invalid"))
-        val compilation = ExecutableCompilation(
-            testRunSettings,
-            freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
-            extras = testCase.extras,
-            dependencies = emptyList(),
-            expectedArtifact = expectedArtifact,
-        )
-        val compilationResult = compilation.result
-        val goldenData = rootDir.resolve("logging_invalid_error.txt")
-
-        TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
-    }
-
     private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
         Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
 
@@ -320,7 +316,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         ).result
     }
 
-    private val testClashingBindClassToObjCNameRootDir = File("native/native.tests/testData/compilerOutput/clashingBindClassToObjCName")
+    private val testClashingBindClassToObjCNameRootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/clashingBindClassToObjCName")
 
     private fun doTestClashingBindClassToObjCName(
         name: String,
@@ -411,7 +407,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 class CompilerOutputTest : CompilerOutputTestBase() {
     @Test
     fun testReleaseCompilerAgainstPreReleaseFeature() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseFeature")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/releaseCompilerAgainstPreReleaseFeature")
 
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
@@ -440,7 +436,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
 
     @Test
     fun testReleaseCompilerWithoutUsageOfPreReleaseFeature() {
-        val rootDir = File("native/native.tests/testData/compilerOutput/releaseCompilerWithoutUsageOfPreReleaseFeature")
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/releaseCompilerWithoutUsageOfPreReleaseFeature")
 
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 

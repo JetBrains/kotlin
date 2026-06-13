@@ -229,7 +229,7 @@ class FirJavaElementFinder(
                     }
                 }
 
-                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression> {}?.asString()
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.resultOrNull<FirLiteralExpression>()?.asString()
             }
 
             override fun getName(): String = firProperty.name.identifier
@@ -400,6 +400,7 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
 }
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeErrorType -> ERROR_TYPE_STUB
         else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)

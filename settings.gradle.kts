@@ -2,8 +2,8 @@ import java.io.File
 import java.util.Properties
 
 pluginManagement {
+    includeBuild("repo/kotlin-build-helpers")
     includeBuild("repo/gradle-settings-conventions")
-    includeBuild("repo/gradle-build-conventions")
 
     repositories {
         maven {
@@ -42,6 +42,7 @@ pluginManagement {
 
 plugins {
     id("internal-gradle-setup") // it's recommended to apply this plugin at first, as it changes the local.properties file
+    id("kotlin-build-helpers")
     id("kotlin-bootstrap")
     id("develocity")
     id("jvm-toolchain-provisioning")
@@ -101,6 +102,8 @@ dependencyResolutionManagement {
 }
 
 val buildProperties = getKotlinBuildPropertiesForSettings(settings)
+
+includeBuild("repo/gradle-build-conventions")
 
 // modules
 include(
@@ -163,7 +166,6 @@ include(
     ":compiler:backend.jvm.entrypoint",
     ":compiler:backend",
     ":compiler:plugin-api",
-    ":compiler:light-classes",
     ":compiler:javac-wrapper",
     ":compiler:cli:cli-arguments-generator",
     ":compiler:cli-base",
@@ -230,6 +232,7 @@ include(
     ":core:descriptors.jvm",
     ":core:deserialization",
     ":core:descriptors.runtime",
+    ":core:reflection.common.jvm",
     ":core:metadata",
     ":core:metadata.jvm",
     ":core:deserialization.common",
@@ -240,6 +243,8 @@ include(
     ":dependencies:android-sdk",
     ":dependencies:tools-jar-api",
     ":dependencies:intellij-core",
+    ":dependencies:intellij-java-psi-api",
+    ":dependencies:intellij-core-implementation",
     ":dependencies:bootstrap:kotlin-stdlib-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-api-bootstrap",
     ":dependencies:bootstrap:kotlin-build-tools-impl-bootstrap",
@@ -329,6 +334,7 @@ include(
     ":kotlin-compiler",
     ":kotlin-compiler-embeddable",
     ":kotlin-compiler-client-embeddable",
+    ":kotlin-compiler-native-image",
     ":kotlin-klib-abi-reader",
     ":kotlin-reflect",
     ":compiler:tests-java8",
@@ -352,7 +358,6 @@ include(
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generator",
     ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
     ":kotlin-gradle-plugin-dsl-codegen",
-    ":kotlin-gradle-plugin-npm-versions-codegen",
     ":kotlin-gradle-statistics",
     ":kotlin-gradle-build-metrics",
     ":kotlin-gradle-plugin",
@@ -507,10 +512,10 @@ include(
 
 include(
     ":compiler:test-infrastructure",
+    ":compiler:test-infrastructure:grouping-test-engine",
     ":compiler:test-infrastructure-utils",
     ":compiler:test-infrastructure-utils.common",
     ":compiler:tests-common-new",
-    ":compiler:test-engine-sandbox"
 )
 
 include(
@@ -597,6 +602,15 @@ include(
 )
 
 include(
+    ":prepare:analysis-api:kotlin-analysis-api",
+    ":prepare:analysis-api:kotlin-analysis-api-surface",
+    ":prepare:analysis-api:kotlin-analysis-api-platform-interface",
+    ":prepare:analysis-api:kotlin-analysis-api-implementation",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
+    ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
+)
+
+include(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",
@@ -605,7 +619,8 @@ include(
     ":compiler:build-tools:kotlin-build-tools-jdk-utils",
     ":compiler:build-tools:kotlin-build-tools-generator",
     ":compiler:build-tools:util-kotlinpoet",
-    ":compiler:build-tools:kotlin-build-tools-cri-impl"
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
+    ":compiler:build-tools:kotlin-build-tools-version-coverage-check"
 )
 
 include(
@@ -614,7 +629,8 @@ include(
     ":plugins:compose-compiler-plugin:compiler-hosted",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-    ":plugins:compose-compiler-plugin:group-mapping"
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils",
+    ":plugins:compose-compiler-plugin:group-mapping",
 )
 
 if (buildProperties.isInIdeaSync.get()) {
@@ -634,7 +650,6 @@ include(
     ":native:swift:swift-export-standalone-integration-tests:simple",
     ":native:swift:swift-export-standalone-integration-tests:external",
     ":native:swift:swift-export-standalone-integration-tests:coroutines",
-    ":generators:sir-tests-generator"
 )
 
 include(":native:swift:swift-export-embeddable")
@@ -667,21 +682,18 @@ include(
     ":analysis:analysis-internal-utils",
     ":analysis:analysis-test-framework",
     ":analysis:test-data-manager",
-    ":analysis:kt-references",
     ":analysis:stubs",
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-api-standalone:analysis-api-standalone-base",
     ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
-    ":analysis:analysis-api-fe10",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-js",
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":prepare:analysis-api-test-framework",
     ":tools:ide-plugin-dependencies-validator"
 )
 
@@ -749,6 +761,7 @@ project(":kotlin-compiler").projectDir = File("$rootDir/prepare/compiler")
 project(":kotlin-jklib-compiler").projectDir = File("$rootDir/prepare/jklib-compiler")
 project(":kotlin-compiler-embeddable").projectDir = File("$rootDir/prepare/compiler-embeddable")
 project(":kotlin-compiler-client-embeddable").projectDir = File("$rootDir/prepare/compiler-client-embeddable")
+project(":kotlin-compiler-native-image").projectDir = File("$rootDir/prepare/compiler-native-image")
 project(":kotlin-klib-abi-reader").projectDir = File("$rootDir/libraries/tools/klib-abi-reader")
 project(":kotlin-preloader").projectDir = File("$rootDir/compiler/preloader")
 project(":kotlin-build-common").projectDir = File("$rootDir/build-common")
@@ -873,8 +886,6 @@ project(":kotlin-gradle-plugin-idea-proto").projectDir = File("$rootDir/librarie
 project(":kotlin-gradle-plugin-idea-for-compatibility-tests").projectDir =
     File("$rootDir/libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests")
 project(":kotlin-gradle-plugin-dsl-codegen").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen")
-project(":kotlin-gradle-plugin-npm-versions-codegen").projectDir =
-    File("$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen")
 project(":kotlin-gradle-statistics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-statistics")
 project(":kotlin-gradle-build-metrics").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-build-metrics")
 project(":kotlin-gradle-plugin").projectDir = File("$rootDir/libraries/tools/kotlin-gradle-plugin")
@@ -973,6 +984,8 @@ project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests").pr
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
 project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes").projectDir =
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
+project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils").projectDir =
+    file("$rootDir/plugins/compose/compiler-hosted/runtime-test-utils")
 project(":plugins:compose-compiler-plugin:group-mapping").projectDir = file("$rootDir/plugins/compose/group-mapping")
 
 if (buildProperties.isInIdeaSync.get()) {
@@ -989,10 +1002,12 @@ project(":kotlin-scripting-compiler-impl").projectDir = File("$rootDir/plugins/s
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
+
+includeBuild("kotlin-native/build-tools") {
+    name = "native-build-tools"
+}
+
 if (buildProperties.isKotlinNativeEnabled.get()) {
-    includeBuild("kotlin-native/build-tools") {
-        name = "native-build-tools"
-    }
     include(":kotlin-native:dependencies")
     include(":kotlin-native:endorsedLibraries:kotlinx.cli")
     include(":kotlin-native:Interop:StubGenerator")

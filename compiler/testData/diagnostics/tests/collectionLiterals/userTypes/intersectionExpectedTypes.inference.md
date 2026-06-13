@@ -26,6 +26,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -39,7 +40,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
 Q|kotlin/collections|.listOf#(IntegerLiteral(42))
 ```
 
-#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>`
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
@@ -63,6 +64,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -97,6 +99,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -110,7 +113,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
 Q|kotlin/collections|.listOf#()
 ```
 
-#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>`
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|()_
@@ -134,6 +137,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -168,7 +172,7 @@ when () {
 
 ```
 
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL` --- `fun <K> WHEN_CALL(vararg branches: K): K↩`
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL` --- `fun <K> WHEN_CALL(vararg branches: K): K`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/WHEN_CALL`s parameter 0
@@ -188,6 +192,7 @@ when () {
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -242,6 +247,7 @@ expectThroughTV#(when () {
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -255,7 +261,7 @@ expectThroughTV#(when () {
 Q|kotlin/collections|.listOf#(String(42))
 ```
 
-#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>`
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(String(42))_
@@ -299,6 +305,7 @@ expectThroughTV#(when () {
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -313,7 +320,7 @@ expectThroughTV#(when () {
 Null(null)!!
 ```
 
-#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/CHECK_NOT_NULL_CALL` --- `fun <K> CHECK_NOT_NULL_CALL(arg: K?): K & Any↩`
+#### Candidate 1: `FirSyntheticFunctionSymbol _synthetic/CHECK_NOT_NULL_CALL` --- `fun <K> CHECK_NOT_NULL_CALL(arg: K?): K & Any`
 ##### Resolution Stages > CreateFreshTypeVariableSubstitutorStage:
 
 1. New `TypeVariable(K)` for `FirSyntheticFunctionSymbol _synthetic/CHECK_NOT_NULL_CALL`s parameter 0
@@ -339,6 +346,7 @@ Null(null)!!
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -379,6 +387,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -394,6 +403,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -428,6 +438,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -441,7 +452,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
 Q|kotlin/collections|.listOf#(IntegerLiteral(42))
 ```
 
-#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>`
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
@@ -465,6 +476,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -478,7 +490,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
 put#(Q|A|.R|/A.Companion.of|())
 ```
 
-#### Candidate 1: `FirNamedFunctionSymbol <local>/Box.put` --- `fun put(x: A): Unit↩`
+#### Candidate 1: `FirNamedFunctionSymbol <local>/Box.put` --- `fun put(x: A): Unit`
 ##### Resolution Stages > CheckArguments:
 
 1. `A <: TypeVariable(X)` _from Argument Q|A|.R|/A.Companion.of|()_
@@ -510,6 +522,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -525,6 +538,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	 true HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -545,6 +559,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	 true HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -585,6 +600,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -600,6 +616,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -634,6 +651,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	false HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -647,7 +665,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
 Q|kotlin/collections|.listOf#(IntegerLiteral(42))
 ```
 
-#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>↩`
+#### Candidate 1: `FirErrorFunctionSymbol special/error` --- `unknown (): <ERROR TYPE REF: Unresolved name: listOf>`
 ##### Resolution Stages > CheckLowPriorityInOverloadResolution:
 
 1. `ERROR CLASS: Unresolved name: listOf <: TypeVariable(T)` _from Argument Q|kotlin/collections|.R?C|special/error|(IntegerLiteral(42))_
@@ -671,6 +689,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -703,6 +722,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -718,6 +738,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -733,6 +754,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -748,6 +770,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
        	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
        	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+       	false REIFIED
        	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
        	false HAS_PROPER_NON_ILT_CONSTRAINT
        	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
@@ -765,6 +788,7 @@ buildBox#(<L> = buildBox@fun <implicit>.<anonymous>(): <implicit> <inline=Unknow
    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+   	false REIFIED
    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
    	false HAS_PROPER_NON_ILT_CONSTRAINT
    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT

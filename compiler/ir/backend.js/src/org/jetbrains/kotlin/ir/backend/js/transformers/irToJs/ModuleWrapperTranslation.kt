@@ -129,14 +129,14 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapEsModule(function: JsFunction): List<JsStatement> {
-        val (alreadyPresentedImportStatements, restStatements) = function.body.statements
+        val [alreadyPresentedImportStatements, restStatements] = function.body.statements
             .flatMap { if (it is JsCompositeBlock) it.statements else listOf(it) }
             .partitionIsInstance<JsStatement, JsImport>()
-        val (multipleElementsImport, defaultImports) = alreadyPresentedImportStatements.partition { it.target is JsImport.Target.Elements }
+        val [multipleElementsImport, defaultImports] = alreadyPresentedImportStatements.partition { it.target is JsImport.Target.Elements }
 
         val mergedImports = multipleElementsImport
             .groupBy { it.module }
-            .map { (module, import) ->
+            .map { [module, import] ->
                 JsImport(module, *import.flatMap { it.elements }.distinctBy { it.name.ident }.toTypedArray())
             }
 

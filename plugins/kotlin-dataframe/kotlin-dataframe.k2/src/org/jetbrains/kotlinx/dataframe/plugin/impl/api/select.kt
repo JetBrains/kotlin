@@ -35,9 +35,24 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val df = receiver.insertImpliedColumns(columns)
-        return df.modify { select { columns.toColumnSet() } }
+        return receiver.select(columns)
     }
+}
+
+internal class DataFrameGetColumns : AbstractInterpreter<PluginDataFrameSchema>() {
+    val Arguments.receiver: PluginDataFrameSchema by dataFrame()
+    val Arguments.first: String by arg()
+    val Arguments.other: List<String> by arg(defaultValue = Present(emptyList()))
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        val columns = listOf(first) + other
+        return receiver.select(columns)
+    }
+}
+
+context(_: Arguments)
+private fun PluginDataFrameSchema.select(columns: List<String>): PluginDataFrameSchema {
+    return insertImpliedColumns(columns).modify { select { columns.toColumnSet() } }
 }
 
 internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
@@ -975,4 +990,38 @@ fun Arguments.ColumnPathApproximation(
         columnPath,
         stringApiColumnResolver(columnPath, type)
     )
+}
+
+class MapColumn : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.transform by type()
+
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(transform)
+    }
+}
+
+class MapColumnKType : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.type by ignore()
+    val Arguments.transform by type()
+
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(transform)
+    }
+}
+
+class AnyColCast : AbstractInterpreter<ResolvedDataColumn>() {
+    val Arguments.receiver: ResolvedDataColumn by arg()
+    val Arguments.typeArg0 by type()
+    override fun Arguments.interpret(): ResolvedDataColumn {
+        return receiver.changeType(typeArg0)
+    }
+}
+
+context(_: KotlinTypeFacade)
+fun ResolvedDataColumn.changeType(newType: ColumnType): ResolvedDataColumn {
+    val before = col.column
+    val mapped = col.copy(column = simpleColumnOf(before.name, newType.coneType))
+    return ResolvedDataColumn(mapped)
 }

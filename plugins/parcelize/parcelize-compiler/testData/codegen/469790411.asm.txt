@@ -1,0 +1,132 @@
+public final class MyClass : java/lang/Object, java/io/Serializable {
+    private final java.lang.String name
+
+    public void <init>(java.lang.String name)
+
+    public final java.lang.String getName()
+}
+
+public final class MyClassParceler : java/lang/Object, kotlinx/parcelize/Parceler {
+    public final static MyClassParceler INSTANCE
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public java.lang.Void create(android.os.Parcel parcel)
+
+    public java.lang.Object create(android.os.Parcel parcel)
+
+    public MyClass[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+
+    public java.lang.Void write(MyClass $this$write, android.os.Parcel parcel, int flags)
+
+    public void write(java.lang.Object $this$write, android.os.Parcel parcel, int flags)
+}
+
+public final class MyParcelableThing1$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final MyParcelableThing1 createFromParcel(android.os.Parcel parcel) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (parcel)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+          NEW (MyParcelableThing1)
+          DUP
+          ALOAD (1)
+          INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
+          IFNE (L2)
+          ACONST_NULL
+          GOTO (L3)
+        LABEL (L2)
+          GETSTATIC (MyClassParceler, INSTANCE, LMyClassParceler;)
+          ALOAD (1)
+          INVOKEVIRTUAL (MyClassParceler, create, (Landroid/os/Parcel;)Ljava/lang/Void;)
+          POP
+          NEW (kotlin/KotlinNothingValueException)
+          DUP
+          INVOKESPECIAL (kotlin/KotlinNothingValueException, <init>, ()V)
+          ATHROW
+        LABEL (L3)
+          INVOKESPECIAL (MyParcelableThing1, <init>, (LMyClass;)V)
+          ARETURN
+        LABEL (L4)
+    }
+
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (MyParcelableThing1$Creator, createFromParcel, (Landroid/os/Parcel;)LMyParcelableThing1;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final MyParcelableThing1[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class MyParcelableThing1 : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final MyClass p
+
+    static void <clinit>()
+
+    public void <init>(MyClass p)
+
+    public final MyClass component1()
+
+    public final MyParcelableThing1 copy(MyClass p)
+
+    public static MyParcelableThing1 copy$default(MyParcelableThing1 p0, MyClass p1, int p2, java.lang.Object p3)
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object other)
+
+    public final MyClass getP()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (dest)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (0)
+          GETFIELD (MyParcelableThing1, p, LMyClass;)
+          ASTORE (3)
+          ALOAD (3)
+          IFNONNULL (L1)
+          ALOAD (1)
+          ICONST_0
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GOTO (L2)
+        LABEL (L1)
+          ALOAD (1)
+          ICONST_1
+          INVOKEVIRTUAL (android/os/Parcel, writeInt, (I)V)
+          GETSTATIC (MyClassParceler, INSTANCE, LMyClassParceler;)
+          ALOAD (3)
+          ALOAD (1)
+          ILOAD (2)
+          INVOKEVIRTUAL (MyClassParceler, write, (LMyClass;Landroid/os/Parcel;I)Ljava/lang/Void;)
+          POP
+          NEW (kotlin/KotlinNothingValueException)
+          DUP
+          INVOKESPECIAL (kotlin/KotlinNothingValueException, <init>, ()V)
+          ATHROW
+        LABEL (L2)
+        LINENUMBER (20)
+          RETURN
+        LABEL (L3)
+    }
+}

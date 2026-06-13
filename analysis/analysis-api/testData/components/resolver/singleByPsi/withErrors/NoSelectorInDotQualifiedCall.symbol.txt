@@ -1,4 +1,6 @@
 KtNameReferenceExpression(108,115): 'makeFoo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       testing/makeFoo(): testing.Foo

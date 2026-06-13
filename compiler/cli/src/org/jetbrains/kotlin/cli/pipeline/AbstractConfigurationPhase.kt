@@ -7,11 +7,14 @@
 
 package org.jetbrains.kotlin.cli.pipeline
 
+import org.jetbrains.kotlin.backend.common.CommonBackendErrors
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationErrors
+import org.jetbrains.kotlin.backend.common.diagnostics.SerializationErrors
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME
 import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_K2_REGISTRAR_NAME
-import org.jetbrains.kotlin.cli.common.CLICompiler.Companion.SCRIPT_PLUGIN_REGISTRAR_NAME
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.cli.plugins.extractPluginClasspathAndOptions
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
@@ -19,10 +22,10 @@ import org.jetbrains.kotlin.cli.reportInfo
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -42,9 +45,16 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     postActions: Set<Action<ConfigurationPipelineArtifact, PipelineContext>> = emptySet(),
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
-    override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact? {
+    override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact {
         val configuration = input.configuration
         configuration.setupCommonConfiguration(input)
+
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
+            IrActualizationErrors,
+            CommonBackendErrors,
+            SerializationErrors,
+            IrValidationDiagnostics,
+        )
 
         for (filler in configurationUpdaters) {
             filler.fillConfiguration(input, configuration)
@@ -61,7 +71,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
-        val (arguments, _, _, _, performanceManager) = input
+        (val arguments, val _ = services, val _ = rootDisposable, val _ = messageCollector, val performanceManager) = input
         perfManager = performanceManager
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
@@ -80,10 +90,10 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         configuration: CompilerConfiguration,
     ) {
         val arguments = input.arguments
-        val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
-        val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
-        val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
-        val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
+        val pluginClasspaths = arguments.pluginClasspaths.toMutableList()
+        val pluginOptions = arguments.pluginOptions.toMutableList()
+        val pluginConfigurations = arguments.pluginConfigurations.asList()
+        val pluginOrderConstraints = arguments.pluginOrderConstraints.asList()
 
         if (!checkPluginsArguments(configuration, useK2 = true, pluginClasspaths, pluginOptions, pluginConfigurations)) {
             return
@@ -95,7 +105,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         if (!arguments.disableDefaultScriptingPlugin) {
             scriptingPluginOptions += provideCustomScriptingPluginOptions(arguments)
             val explicitScriptingPlugin =
-                extractPluginClasspathAndOptions(pluginConfigurations).any { (_, classpath, _) ->
+                extractPluginClasspathAndOptions(pluginConfigurations).any { (val _ = rawArgument, val classpath, val _ = options) ->
                     classpath.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
                 } || pluginClasspaths.any { File(it).name.startsWith(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME) }
             val explicitOrLoadedScriptingPlugin = explicitScriptingPlugin ||
@@ -103,7 +113,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             if (!explicitOrLoadedScriptingPlugin) {
                 val kotlinPaths = paths ?: PathUtil.kotlinPathsForCompiler
                 val libPath = kotlinPaths.libPath.takeIf { it.exists() && it.isDirectory } ?: File(".")
-                val (jars, missingJars) =
+                val [jars, missingJars] =
                     PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
                 if (missingJars.isEmpty()) {
                     scriptingPluginClasspath.addAll(0, jars.map { it.canonicalPath })
@@ -135,15 +145,11 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         pluginOptions: List<String>,
     ): Boolean {
         return try {
-            val pluginRegistrarClass = PluginCliParser::class.java.classLoader.loadClass(SCRIPT_PLUGIN_REGISTRAR_NAME)
-            val pluginRegistrar = (pluginRegistrarClass.getDeclaredConstructor().newInstance() as? ComponentRegistrar)?.also {
-                configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, it)
-            }
             val pluginK2RegistrarClass = PluginCliParser::class.java.classLoader.loadClass(SCRIPT_PLUGIN_K2_REGISTRAR_NAME)
             val pluginK2Registrar = (pluginK2RegistrarClass.getDeclaredConstructor().newInstance() as? CompilerPluginRegistrar)?.also {
                 configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, it)
             }
-            if (pluginRegistrar != null || pluginK2Registrar != null) {
+            if (pluginK2Registrar != null) {
                 processScriptPluginCliOptions(pluginOptions, configuration)
                 true
             } else false

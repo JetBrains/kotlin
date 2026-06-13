@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
@@ -37,11 +39,15 @@ internal interface XcodebuildDefFileWorkParameters : WorkParameters {
     val clangDumpIntermediatesDir: DirectoryProperty
     val additionalXcodeArgs: ListProperty<String>
     val cinteropNamespace: Property<String>
+    val ideaSyncEnabled: Property<Boolean>
+    val errorFile: RegularFileProperty
 }
 
 internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
     private val execOps: ExecOperations,
 ) : WorkAction<XcodebuildDefFileWorkParameters> {
+
+    private val logger = Logging.getLogger(XcodebuildDefFileWorkAction::class.java)
 
     override fun execute() {
         val sdk = parameters.xcodebuildSdk.get()
@@ -50,23 +56,38 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
         val defFilesDir = parameters.defFilesOutputDir.getFile()
         val ldDumpDir = parameters.ldDumpOutputDir.getFile()
 
+        // KT-85468: Clear any error marker left by a previous lenient failure.
+        val errorFile = parameters.errorFile.get().asFile
+        errorFile.delete()
+
         if (!parameters.hasSwiftPMDependencies.get()) {
-            architectures.forEach { architecture ->
-                defFilesDir.resolve(XcodebuildDefFileUtils.defFileName(architecture)).writeText(
-                    """
-                        language = Objective-C
-                        package = $cinteropNamespace
-                    """.trimIndent()
-                )
-                ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)).writeText("0")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)).writeText("\n")
-                ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)).writeText("\n")
-            }
+            writeStubOutputs(architectures, defFilesDir, ldDumpDir, cinteropNamespace)
             return
         }
 
+        try {
+            executeXcodebuildAndParse(sdk, architectures, cinteropNamespace, defFilesDir, ldDumpDir)
+        } catch (t: Throwable) {
+            // KT-85468: During IDE sync, downgrade xcodebuild/parsing failures to a warning
+            // and fall back to stub outputs so downstream cinterop/link tasks get well-formed empty inputs.
+            if (parameters.ideaSyncEnabled.get()) {
+                val errorText = "Warning: Failed to generate SwiftPM cinterop def files via xcodebuild: ${t.message ?: ""}"
+                logger.warn(errorText, t)
+                writeStubOutputs(architectures, defFilesDir, ldDumpDir, cinteropNamespace)
+                errorFile.writeText(errorText)
+                return
+            }
+            throw t
+        }
+    }
+
+    private fun executeXcodebuildAndParse(
+        sdk: String,
+        architectures: Set<AppleArchitecture>,
+        cinteropNamespace: String,
+        defFilesDir: File,
+        ldDumpDir: File,
+    ) {
         val dumpIntermediates = parameters.clangDumpIntermediatesDir.getFile().also {
             if (it.exists()) {
                 it.deleteRecursively()
@@ -198,6 +219,30 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                 .writeText(parsedLdCall.linkTimeFrameworkSearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
             ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture))
                 .writeText(parsedLdCall.librarySearchPaths.joinToString(DUMP_FILE_ARGS_SEPARATOR))
+        }
+    }
+
+    // KT-85468: Stub outputs identical to the "no dependencies" branch, used as fallback on sync failure.
+    private fun writeStubOutputs(
+        architectures: Set<AppleArchitecture>,
+        defFilesDir: File,
+        ldDumpDir: File,
+        cinteropNamespace: String,
+    ) {
+        defFilesDir.mkdirs()
+        ldDumpDir.mkdirs()
+        architectures.forEach { architecture ->
+            defFilesDir.resolve(XcodebuildDefFileUtils.defFileName(architecture)).writeText(
+                """
+                    language = Objective-C
+                    package = $cinteropNamespace
+                """.trimIndent()
+            )
+            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkLdFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.ldFingerprintFileName(architecture)).writeText("0")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.frameworkSearchpathFileName(architecture)).writeText("\n")
+            ldDumpDir.resolve(XcodebuildDefFileUtils.librarySearchpathFileName(architecture)).writeText("\n")
         }
     }
 }

@@ -26,10 +26,7 @@ sourceSets {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        val testClassesDirs = testSourceSet.output.classesDirs
-        doFirst {
-            systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
-        }
+        addClasspathProperty(testSourceSet.output.classesDirs, "kotlin.test.script.classpath")
 
         systemProperty(
             "kotlin.daemon.custom.run.files.path.for.tests",

@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("../../repo/kotlin-build-helpers")
     apply(from = "cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     apply(from = "kotlin-bootstrap/src/main/kotlin/kotlin-bootstrap.settings.gradle.kts")
 
@@ -9,17 +10,11 @@ pluginManagement {
     }
 }
 
-buildscript {
-    val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
-    }
-}
-
 plugins {
+    id("kotlin-build-helpers")
     // Versions here should be also synced with the versions in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-    id("com.gradle.develocity") version("4.2.2")
+    id("com.gradle.develocity") version ("4.2.2")
 }
 
 dependencyResolutionManagement {

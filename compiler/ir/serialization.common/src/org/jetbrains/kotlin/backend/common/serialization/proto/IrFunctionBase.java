@@ -126,6 +126,11 @@ public final class IrFunctionBase extends
             contextParameter_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry));
             break;
           }
+          case 80: {
+            bitField0_ |= 0x00000020;
+            companionExtensionClass_ = input.readInt64();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -338,23 +343,38 @@ public final class IrFunctionBase extends
   private int body_;
   /**
    * <code>optional int32 body = 7;</code>
-   *
-   * <pre>
-   *optional int32 context_receiver_parameters_count = 8;
-   * </pre>
    */
   public boolean hasBody() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
    * <code>optional int32 body = 7;</code>
+   */
+  public int getBody() {
+    return body_;
+  }
+
+  public static final int COMPANIONEXTENSIONCLASS_FIELD_NUMBER = 10;
+  private long companionExtensionClass_;
+  /**
+   * <code>optional int64 companionExtensionClass = 10;</code>
    *
    * <pre>
    *optional int32 context_receiver_parameters_count = 8;
    * </pre>
    */
-  public int getBody() {
-    return body_;
+  public boolean hasCompanionExtensionClass() {
+    return ((bitField0_ & 0x00000020) == 0x00000020);
+  }
+  /**
+   * <code>optional int64 companionExtensionClass = 10;</code>
+   *
+   * <pre>
+   *optional int32 context_receiver_parameters_count = 8;
+   * </pre>
+   */
+  public long getCompanionExtensionClass() {
+    return companionExtensionClass_;
   }
 
   private void initFields() {
@@ -366,6 +386,7 @@ public final class IrFunctionBase extends
     extensionReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     regularParameter_ = java.util.Collections.emptyList();
     body_ = 0;
+    companionExtensionClass_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -446,6 +467,9 @@ public final class IrFunctionBase extends
     for (int i = 0; i < contextParameter_.size(); i++) {
       output.writeMessage(9, contextParameter_.get(i));
     }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      output.writeInt64(10, companionExtensionClass_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -486,6 +510,10 @@ public final class IrFunctionBase extends
     for (int i = 0; i < contextParameter_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(9, contextParameter_.get(i));
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt64Size(10, companionExtensionClass_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -597,6 +625,8 @@ public final class IrFunctionBase extends
       bitField0_ = (bitField0_ & ~0x00000040);
       body_ = 0;
       bitField0_ = (bitField0_ & ~0x00000080);
+      companionExtensionClass_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -655,6 +685,10 @@ public final class IrFunctionBase extends
         to_bitField0_ |= 0x00000010;
       }
       result.body_ = body_;
+      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        to_bitField0_ |= 0x00000020;
+      }
+      result.companionExtensionClass_ = companionExtensionClass_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -705,6 +739,9 @@ public final class IrFunctionBase extends
       }
       if (other.hasBody()) {
         setBody(other.getBody());
+      }
+      if (other.hasCompanionExtensionClass()) {
+        setCompanionExtensionClass(other.getCompanionExtensionClass());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -1366,30 +1403,18 @@ public final class IrFunctionBase extends
     private int body_ ;
     /**
      * <code>optional int32 body = 7;</code>
-     *
-     * <pre>
-     *optional int32 context_receiver_parameters_count = 8;
-     * </pre>
      */
     public boolean hasBody() {
       return ((bitField0_ & 0x00000080) == 0x00000080);
     }
     /**
      * <code>optional int32 body = 7;</code>
-     *
-     * <pre>
-     *optional int32 context_receiver_parameters_count = 8;
-     * </pre>
      */
     public int getBody() {
       return body_;
     }
     /**
      * <code>optional int32 body = 7;</code>
-     *
-     * <pre>
-     *optional int32 context_receiver_parameters_count = 8;
-     * </pre>
      */
     public Builder setBody(int value) {
       bitField0_ |= 0x00000080;
@@ -1399,14 +1424,58 @@ public final class IrFunctionBase extends
     }
     /**
      * <code>optional int32 body = 7;</code>
+     */
+    public Builder clearBody() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      body_ = 0;
+      
+      return this;
+    }
+
+    private long companionExtensionClass_ ;
+    /**
+     * <code>optional int64 companionExtensionClass = 10;</code>
      *
      * <pre>
      *optional int32 context_receiver_parameters_count = 8;
      * </pre>
      */
-    public Builder clearBody() {
-      bitField0_ = (bitField0_ & ~0x00000080);
-      body_ = 0;
+    public boolean hasCompanionExtensionClass() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional int64 companionExtensionClass = 10;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
+     */
+    public long getCompanionExtensionClass() {
+      return companionExtensionClass_;
+    }
+    /**
+     * <code>optional int64 companionExtensionClass = 10;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
+     */
+    public Builder setCompanionExtensionClass(long value) {
+      bitField0_ |= 0x00000100;
+      companionExtensionClass_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int64 companionExtensionClass = 10;</code>
+     *
+     * <pre>
+     *optional int32 context_receiver_parameters_count = 8;
+     * </pre>
+     */
+    public Builder clearCompanionExtensionClass() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      companionExtensionClass_ = 0L;
       
       return this;
     }

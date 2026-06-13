@@ -1,0 +1,15 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateFunWithIntroducedAtParameters.kt */
+
+/* TARGET declaration */ private fun privateFun(ok1: String, ok2: String): String
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithIntroducedAtParametersKt()
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateFun$tLeakingPrivateFunWithIntroducedAtParametersKt()
+private fun privateFun(ok1: String): String
+    /* TARGET use-site */ privateFun(ok1 = ok1)
+private fun privateFun(): String
+    /* TARGET use-site */ privateFun()
+/* ACCESSOR declaration */ internal fun access$privateFun$tLeakingPrivateFunWithIntroducedAtParametersKt(ok1: String, ok2: String): String
+    /* TARGET use-site */ privateFun(ok1 = ok1, ok2 = ok2)

@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+
+@KaImplementationDetail
 data class DiagnosticCheckerFilter(
     val runDefaultCheckers: Boolean,
     val runExtraCheckers: Boolean,
     val runExperimentalCheckers: Boolean,
 ) {
+    @KaImplementationDetail
     companion object {
         val ONLY_DEFAULT_CHECKERS = DiagnosticCheckerFilter(
             runDefaultCheckers = true, runExtraCheckers = false, runExperimentalCheckers = false,
@@ -23,6 +27,7 @@ data class DiagnosticCheckerFilter(
     }
 }
 
+@KaImplementationDetail
 operator fun DiagnosticCheckerFilter.plus(other: DiagnosticCheckerFilter) =
     DiagnosticCheckerFilter(
         runDefaultCheckers || other.runDefaultCheckers,

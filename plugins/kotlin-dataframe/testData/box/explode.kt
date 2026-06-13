@@ -1,3 +1,5 @@
+// CHECK_TYPE_WITH_EXACT
+
 import org.jetbrains.kotlinx.dataframe.*
 import org.jetbrains.kotlinx.dataframe.annotations.*
 import org.jetbrains.kotlinx.dataframe.api.*
@@ -15,10 +17,8 @@ fun box(): String {
     // exploding multiple columns will introduce nulls
     df3.print()
     // compiler needs to play safe and make both selected columns nullable
-    df3.compileTimeSchema().columns.let {
-        assert(it["a"]!!.nullable)
-        assert(it["b"]!!.nullable)
-    }
+    checkExactType<Int?>(df3[0].a)
+    checkExactType<Int?>(df3[0].b)
     // compile time schema is still compatible with runtime
     df3.compareSchemas()
     return "OK"

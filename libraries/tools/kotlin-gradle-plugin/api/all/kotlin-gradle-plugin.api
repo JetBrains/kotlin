@@ -2127,17 +2127,21 @@ public final class org/jetbrains/kotlin/gradle/plugin/statistics/plugins/Observa
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/statistics/plugins/ObservablePlugins;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/report/BuildMetricsService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/tooling/events/OperationCompletionListener {
+public abstract class org/jetbrains/kotlin/gradle/report/BuildMetricsService : java/lang/AutoCloseable, org/gradle/api/services/BuildService, org/gradle/internal/operations/BuildOperationListener, org/gradle/tooling/events/OperationCompletionListener {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/report/BuildMetricsService$Companion;
 	public fun <init> ()V
+	public fun addConfigurationRecord (Ljava/lang/String;Ljava/lang/Class;JJLorg/jetbrains/kotlin/build/report/metrics/BuildMetrics;Ljava/lang/String;Ljava/util/List;)V
+	public static synthetic fun addConfigurationRecord$default (Lorg/jetbrains/kotlin/gradle/report/BuildMetricsService;Ljava/lang/String;Ljava/lang/Class;JJLorg/jetbrains/kotlin/build/report/metrics/BuildMetrics;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)V
 	public fun addTask (Ljava/lang/String;Ljava/lang/Class;Lorg/jetbrains/kotlin/build/report/metrics/BuildMetricsReporter;)V
-	public fun addTransformMetrics (Ljava/lang/String;Ljava/lang/Class;ZJJLorg/jetbrains/kotlin/build/report/metrics/BuildMetrics;Ljava/lang/String;)V
 	public fun close ()V
+	public fun finished (Lorg/gradle/internal/operations/BuildOperationDescriptor;Lorg/gradle/internal/operations/OperationFinishEvent;)V
 	public fun onFinish (Lorg/gradle/tooling/events/FinishEvent;)V
+	public fun progress (Lorg/gradle/internal/operations/OperationIdentifier;Lorg/gradle/internal/operations/OperationProgressEvent;)V
+	public fun started (Lorg/gradle/internal/operations/BuildOperationDescriptor;Lorg/gradle/internal/operations/OperationStartEvent;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/report/BuildMetricsService$Companion {
-	public final fun registerIfAbsent (Lorg/gradle/api/Project;)Lorg/gradle/api/provider/Provider;
+	public final fun registerIfAbsent (Lorg/gradle/api/Project;Lorg/gradle/internal/operations/BuildOperationListenerManager;)Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/report/BuildMetricsService$Parameters : org/gradle/api/services/BuildServiceParameters {
@@ -2581,6 +2585,19 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 	public fun getPlatformDisambiguator ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
+	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
+	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BundleKotlinJsTestsTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/dsl/Distribution$Companion;
 	public static final field DIST Ljava/lang/String;
@@ -2598,6 +2615,9 @@ public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/j
 public abstract interface annotation class org/jetbrains/kotlin/gradle/targets/js/dsl/ExperimentalMainFunctionArgumentsDsl : java/lang/annotation/Annotation {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl : org/gradle/api/Named, org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode : java/lang/Enum {
 	public static final field DEVELOPMENT Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;
 	public static final field PRODUCTION Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;
@@ -2607,8 +2627,45 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
 	public abstract fun commonWebpackConfig (Lorg/gradle/api/Action;)V
+	public abstract fun getTest ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;
 	public abstract fun runTask (Lorg/gradle/api/Action;)V
+	public abstract fun test (Lorg/gradle/api/Action;)V
 	public abstract fun webpackTask (Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl {
+	public abstract fun browserDefaults (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
+	public abstract fun chromium (Ljava/lang/String;)V
+	public abstract fun chromium (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun firefox (Ljava/lang/String;)V
+	public abstract fun firefox (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun getAllBrowserRunners ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getBrowserDefaults ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
+	public abstract fun getDefaultBundleTask ()Lorg/gradle/api/tasks/TaskProvider;
+	public abstract fun getDefaultTestsLocation ()Lorg/gradle/api/provider/Provider;
+	public abstract fun webkit (Ljava/lang/String;)V
+	public abstract fun webkit (Ljava/lang/String;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl$ChromiumTestRunnerDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl {
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl$DefaultImpls {
+	public static fun chromium (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;)V
+	public static synthetic fun chromium$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;ILjava/lang/Object;)V
+	public static synthetic fun chromium$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public static fun firefox (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;)V
+	public static synthetic fun firefox$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;ILjava/lang/Object;)V
+	public static synthetic fun firefox$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+	public static fun webkit (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;)V
+	public static synthetic fun webkit$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;ILjava/lang/Object;)V
+	public static synthetic fun webkit$default (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;Ljava/lang/String;Lorg/gradle/api/Action;ILjava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl$FirefoxTestRunnerDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl$WebkitTestRunnerDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinBrowserTestRunnerDsl {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetDsl {
@@ -2675,6 +2732,15 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun produceExecutable (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestDevServerService {
+	public abstract fun use (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestsLocation {
+	public abstract fun getBundleLocation ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getDevServer ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl {
@@ -2972,8 +3038,10 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinBrowserJsI
 	public fun commonWebpackConfig (Lorg/gradle/api/Action;)V
 	public fun configureDefaultTestFramework (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;)V
 	public fun configureTestDependencies (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary;)V
+	public fun getTest ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserTestDsl;
 	public fun getTestTaskDescription ()Ljava/lang/String;
 	public fun runTask (Lorg/gradle/api/Action;)V
+	public fun test (Lorg/gradle/api/Action;)V
 	public fun webpackTask (Lorg/gradle/api/Action;)V
 }
 
@@ -3283,7 +3351,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec$C
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	protected fun exec ()V
@@ -3956,6 +4024,14 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/Requi
 	public abstract fun getRequiredNpmDependencies ()Ljava/util/Set;
 }
 
+public final class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies$DefaultImpls {
+	public static fun getPath (Lorg/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies;)Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+	public abstract fun getPath ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/SemVer : java/lang/Comparable {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/npm/SemVer$Companion;
 	public fun <init> (Ljava/math/BigInteger;Ljava/math/BigInteger;Ljava/math/BigInteger;Ljava/lang/String;Ljava/lang/String;)V
@@ -4242,9 +4318,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/subtargets/DefaultDist
 	public fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
-	public synthetic fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
-	protected fun createTestExecutionSpec ()Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest : org/jetbrains/kotlin/gradle/tasks/KotlinTest, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+	protected fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	protected fun createTestExecutionSpec ()Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public final fun environment (Ljava/lang/String;Ljava/lang/String;)V
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public final fun getCompilationId ()Ljava/lang/String;
@@ -4274,13 +4350,21 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTes
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework : org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$Companion;
-	public abstract fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
+	public abstract fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	public abstract fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public abstract fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public abstract fun getSettingsState ()Ljava/lang/String;
 	public abstract fun getWorkingDir ()Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$Companion {
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$DefaultImpls {
+	public static fun createTestExecuter (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	public static fun getFrameworkTaskInputs (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/Object;
+	public static fun getPath (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinTestRunnerCliArgs {
@@ -4354,10 +4438,13 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KarmaSta
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKarma : org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework {
+	public fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	public synthetic fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public final fun getDebugPath ()Lorg/gradle/api/provider/Property;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public fun getPath ()Ljava/lang/String;
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
 	public fun getSettingsState ()Ljava/lang/String;
@@ -4389,9 +4476,12 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKa
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha : org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha$Companion;
+	public fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
+	public synthetic fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public fun getPath ()Ljava/lang/String;
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
 	public fun getSettingsState ()Ljava/lang/String;
@@ -4403,7 +4493,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMo
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask$Companion;
 	public static final field NAME Ljava/lang/String;
 	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
@@ -4422,7 +4512,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/Infrastructure
 	public final fun setValue (Z)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependencies {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
 	public fun cssSupport (Lorg/gradle/api/Action;)V
 	public final fun doExecute ()V
 	public final fun getArgs ()Ljava/util/List;
@@ -4466,8 +4556,8 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpa
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig : org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl {
-	public fun <init> (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZ)V
-	public synthetic fun <init> (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZLorg/gradle/api/provider/Property;Ljava/util/List;)V
+	public synthetic fun <init> (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZLorg/gradle/api/provider/Property;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun appendTo (Ljava/lang/Appendable;)V
 	public final fun component1 ()Lorg/gradle/api/provider/Provider;
 	public final fun component10 ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;
@@ -4482,6 +4572,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackC
 	public final fun component19 ()Z
 	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;
 	public final fun component20 ()Z
+	public final fun component21 ()Lorg/gradle/api/provider/Property;
 	public final fun component3 ()Ljava/io/File;
 	public final fun component4 ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;
 	public final fun component5 ()Ljava/io/File;
@@ -4489,11 +4580,12 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackC
 	public final fun component7 ()Ljava/io/File;
 	public final fun component8 ()Ljava/io/File;
 	public final fun component9 ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
-	public final fun copy (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZ)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;
+	public final fun copy (Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZLorg/gradle/api/provider/Property;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;Lorg/gradle/api/provider/Provider;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Mode;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput;Ljava/io/File;Ljava/lang/String;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$WatchOptions;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWebpackRulesContainer;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$Optimization;ZZZZZLorg/gradle/api/provider/Property;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig;
 	public fun cssSupport (Lorg/gradle/api/Action;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getConfigDirectory ()Ljava/io/File;
+	public final fun getDefineNonBrowserEnvironmentProperties ()Lorg/gradle/api/provider/Property;
 	public final fun getDevServer ()Lorg/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackConfig$DevServer;
 	public final fun getDevtool ()Ljava/lang/String;
 	public final fun getEntry ()Ljava/io/File;
@@ -4685,6 +4777,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpa
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpackOutput {
+	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -5321,6 +5414,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getOutputFileName ()Lorg/gradle/api/provider/Property;
 	public final fun getOutputFileProperty ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getPerFileBinaryenArguments ()Lorg/gradle/api/provider/MapProperty;
 	public final fun setBinaryenArgs (Ljava/util/List;)V
 }
 
@@ -5646,8 +5740,11 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public synthetic fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/PackageManagerEnvironment;
 	public fun getEnvironment ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnvironment;
 	public final fun getIgnoreScripts ()Z
+	public final fun getIgnoreScriptsProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getLockFileDirectory ()Ljava/io/File;
+	public final fun getLockFileDirectoryProperty ()Lorg/gradle/api/file/DirectoryProperty;
 	public final fun getLockFileName ()Ljava/lang/String;
+	public final fun getLockFileNameProperty ()Lorg/gradle/api/provider/Property;
 	public fun getName ()Ljava/lang/String;
 	public final fun getNodeJsRoot ()Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/BaseNodeJsRootExtension;
 	public synthetic fun getPackageManager ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/NpmApiExecution;
@@ -5656,11 +5753,15 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public fun getPreInstallTasks ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getProject ()Lorg/gradle/api/Project;
 	public final fun getReportNewYarnLock ()Z
+	public final fun getReportNewYarnLockProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getResolutions ()Ljava/util/List;
+	public final fun getResolutionsProperty ()Lorg/gradle/api/provider/ListProperty;
 	public final fun getRestoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getStoreYarnLockTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun getYarnLockAutoReplace ()Z
+	public final fun getYarnLockAutoReplaceProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getYarnLockMismatchReport ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
+	public final fun getYarnLockMismatchReportProperty ()Lorg/gradle/api/provider/Property;
 	public final fun getYarnSetupTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
 	public final fun resolution (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun resolution (Ljava/lang/String;Lorg/gradle/api/Action;)V

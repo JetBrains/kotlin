@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -143,7 +144,7 @@ fun Fir2IrConversionScope.createTemporaryVariableForSafeCallConstruction(
     createTemporaryVariable(receiverExpression, "safe_receiver")
 
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
-    require((klass.valueClassRepresentation != null) == klass.isInlineOrValue) {
+    require((klass.valueClassRepresentation != null) == (klass.isInlineOrValue) || klass.isExpect) {
         "Value class has no representation: ${klass.render()}"
     }
     return klass.valueClassRepresentation?.mapUnderlyingType {
@@ -163,7 +164,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     }
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
-    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { (packageFqName, classIds) ->
+    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { [packageFqName, classIds] ->
         createSyntheticFirFileForFir2Ir(
             fileName = generatedBuiltinsDeclarationsFileName,
             packageFqName = packageFqName,

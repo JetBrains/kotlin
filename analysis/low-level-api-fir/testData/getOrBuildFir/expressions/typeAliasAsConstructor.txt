@@ -1,0 +1,21 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|test/MyClass.MyClass|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsConstructor.kt
+    package test
+
+    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|test/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias MyAlias = R|test/MyClass|
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        R|test/MyClass.MyClass|()
+    }

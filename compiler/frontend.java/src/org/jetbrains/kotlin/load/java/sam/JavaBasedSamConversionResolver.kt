@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.synthetic.hasJavaOriginInHierarchy
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
+@K1Deprecation
 object JavaBasedSamConversionResolver : SamConversionResolver {
     override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? {
         if (classDescriptor !is JavaClassDescriptor) return null
@@ -24,6 +26,7 @@ object JavaBasedSamConversionResolver : SamConversionResolver {
     }
 }
 
+@K1Deprecation
 object JavaBasedSamConversionOracle : SamConversionOracle {
     override fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean {
         val functionDescriptor = candidate.original as? FunctionDescriptor ?: return false

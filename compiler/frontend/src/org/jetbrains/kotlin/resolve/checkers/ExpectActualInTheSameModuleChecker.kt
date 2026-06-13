@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
+@K1Deprecation
 object ExpectActualInTheSameModuleChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -29,8 +31,8 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
         val module = descriptor.module
         val actuals = ExpectedActualResolver.findActualForExpected(descriptor, module)
-            ?.filter { (compatibility, _) -> compatibility.isCompatibleOrWeaklyIncompatible }
-            ?.flatMap { (_, members) -> members }
+            ?.filter { [compatibility, _] -> compatibility.isCompatibleOrWeaklyIncompatible }
+            ?.flatMap { [_, members] -> members }
             ?.takeIf(List<MemberDescriptor>::isNotEmpty) ?: return
 
         // There are 4 cases:

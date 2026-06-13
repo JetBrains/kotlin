@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.backend.konan.serialization.CInteropModuleDeserializ
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -38,7 +36,7 @@ import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput.DeserializedFromKlibBackendInput
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.frontend.classic.ModuleDescriptorProvider
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
@@ -70,7 +68,6 @@ class NativeDeserializerFacade(
     }
 
     private fun loadIrFromKlib(module: TestModule, configuration: CompilerConfiguration): IrModuleInfo {
-        val messageCollector = configuration.messageCollector
         val symbolTable = SymbolTable(IdSignatureDescriptor(KonanManglerDesc), IrFactoryImpl)
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
@@ -85,7 +82,6 @@ class NativeDeserializerFacade(
             friendModules,
             configuration,
             symbolTable,
-            messageCollector,
         ) { if (it == mainModuleLib) moduleDescriptor else testServices.libraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
@@ -96,7 +92,6 @@ class NativeDeserializerFacade(
         friendModules: Map<String, List<String>>,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
-        messageCollector: MessageCollector,
         mapping: (KotlinLibrary) -> ModuleDescriptor,
     ): IrModuleInfo {
         val mainModuleLib = sortedDependencies.last()
@@ -117,28 +112,24 @@ class NativeDeserializerFacade(
 
         val irLinker = KonanIrLinker(
             currentModule = moduleDescriptor,
-            messageCollector = messageCollector,
-            builtIns = irBuiltIns,
+            configuration = configuration,
             symbolTable = symbolTable,
             friendModules = friendModules,
             forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             stubGenerator = stubGenerator,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
             exportedDependencies = emptyList(),
-            partialLinkageSupport = createPartialLinkageSupportForLinker(
-                partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
-                builtIns = irBuiltIns,
-                diagnosticReporter = irDiagnosticReporter,
-            ),
+            partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
+            irDiagnosticReporter = irDiagnosticReporter,
             libraryBeingCached = null,
-            externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
+            externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
         )
 
         val moduleDependencies: IrModuleDependencies = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
 
         irLinker.init(null)
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-        irLinker.postProcess(inOrAfterLinkageStep = true)
+        irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
 
         return IrModuleInfo(
             module = moduleDependencies.included!!,
@@ -189,6 +180,7 @@ object CInteropModuleDeserializerFactoryMock : CInteropModuleDeserializerFactory
     override fun createIrModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary,
+        linker: KonanIrLinker,
     ): IrModuleDeserializer {
         TODO("TODO (KT-85312): Implement IR deserialization for C-interop libraries in tests")
     }

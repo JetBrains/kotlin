@@ -4,10 +4,10 @@ KaJavaFieldSymbol:
       psi: null
   ]
   callableId: /JavaClass.field
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -32,5 +32,5 @@ KaJavaFieldSymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

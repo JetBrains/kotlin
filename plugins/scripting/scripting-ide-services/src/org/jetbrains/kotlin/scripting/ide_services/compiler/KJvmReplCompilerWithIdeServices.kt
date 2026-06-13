@@ -119,28 +119,34 @@ class KJvmReplCompilerWithIdeServices(hostConfiguration: ScriptingHostConfigurat
 
         updateResolutionFilterWithHistory(configuration)
 
-        val (_, errorHolder, snippetKtFile) = prepareForAnalyze(
-            newSnippet,
-            messageCollector,
-            compilationState,
-            failOnSyntaxErrors = false
-        ).valueOr { return it }
+        (
+            val _ = context, val errorHolder, val snippetKtFile
+        ) =
+            prepareForAnalyze(
+                newSnippet,
+                messageCollector,
+                compilationState,
+                failOnSyntaxErrors = false
+            ).valueOr { return it }
 
         val analyzerEngine = compilationState.analyzerEngine as IdeLikeReplCodeAnalyzer
         val analysisResult =
             analyzerEngine.statelessAnalyzeWithImportedScripts(snippetKtFile, emptyList(), state.getNextLineNo() + 1)
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
 
-        val (_, bindingContext, resolutionFacade, moduleDescriptor, resultProperty) = when (analysisResult) {
-            is IdeLikeReplCodeAnalyzer.ReplLineAnalysisResultWithStateless.Stateless -> {
-                analysisResult
+        (
+            val _ = diagnostics, val bindingContext, val resolutionFacade, val moduleDescriptor, val resultProperty
+        ) =
+            when (analysisResult) {
+                is IdeLikeReplCodeAnalyzer.ReplLineAnalysisResultWithStateless.Stateless -> {
+                    analysisResult
+                }
+                else -> return failure(
+                    newSnippet,
+                    messageCollector,
+                    "Unexpected result ${analysisResult::class.java}"
+                )
             }
-            else -> return failure(
-                newSnippet,
-                messageCollector,
-                "Unexpected result ${analysisResult::class.java}"
-            )
-        }
 
         return AnalyzeWithCursorResult(
             snippetKtFile, bindingContext, resolutionFacade, moduleDescriptor, cursorAbs, resultProperty

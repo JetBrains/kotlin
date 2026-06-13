@@ -48,6 +48,7 @@ class LLFirSessionInvalidationService(private val project: Project) {
         invalidator.invalidateAll(includeLibraryModules, diagnosticInformation)
     }
 
+    @KaImplementationDetail
     companion object {
         fun getInstance(project: Project): LLFirSessionInvalidationService =
             project.getService(LLFirSessionInvalidationService::class.java)

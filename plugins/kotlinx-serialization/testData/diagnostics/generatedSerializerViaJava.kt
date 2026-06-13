@@ -1,4 +1,3 @@
-// SKIP_TXT
 // WITH_STDLIB
 // ISSUE: KT-76414
 

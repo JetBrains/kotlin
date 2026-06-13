@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: -NoBuilderInferenceWithoutAnnotationRestriction
-// SKIP_TXT
 
 fun List<Int>.myExt() {}
 fun <T> List<T>.myGenericExt() {}

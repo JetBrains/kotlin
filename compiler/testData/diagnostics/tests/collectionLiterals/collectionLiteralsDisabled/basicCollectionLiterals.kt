@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // CHECK_TYPE
 // DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 
 fun test() {
     val a = <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!>

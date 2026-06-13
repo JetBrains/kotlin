@@ -43,7 +43,7 @@ import java.io.File
 @OptIn(ExperimentalLibraryAbiReader::class)
 abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimpleTest() {
     fun runTest(localPath: String) {
-        val (sourceFile, dumpFiles) = computeTestFiles(localPath)
+        val [sourceFile, dumpFiles] = computeTestFiles(localPath)
         val (moduleName, filters, klibAbiLevel) = parseDirectives(sourceFile)
 
         val customDependencies: List<ExistingDependency<TestCompilationArtifact.KLIB>> =
@@ -70,7 +70,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
 
         val libraryAbi = LibraryAbiReader.readAbiInfo(library, filters)
 
-        dumpFiles.entries.forEach { (signatureVersion, dumpFile) ->
+        dumpFiles.entries.forEach { [signatureVersion, dumpFile] ->
             val abiDump = LibraryAbiRenderer.render(
                 libraryAbi,
                 AbiRenderingSettings(signatureVersion)

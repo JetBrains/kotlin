@@ -1,6 +1,5 @@
 // LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: BACKEND
-// NI_EXPECTED_FILE
 
 class Foo<A : Number>
 class Bar<B : CharSequence>

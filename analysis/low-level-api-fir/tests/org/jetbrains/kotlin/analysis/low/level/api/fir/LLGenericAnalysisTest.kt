@@ -9,19 +9,25 @@ import com.intellij.psi.util.descendantsOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLPartialBodyElementMapper
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.bodyBlock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
+import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -65,6 +71,40 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
             val ktSecondCall = ktFile.descendantsOfType<KtCallExpression>().first { it.text == "consume(2)" }
             val firSecondCall = ktSecondCall.getOrBuildFirOfType<FirFunctionCall>(resolutionFacade)
             assertEquals(ktSecondCall, firSecondCall.psi)
+        }
+    }
+
+    @Test
+    fun abstractFunctionWithDefault(ktFile: KtFile, testServices: TestServices) {
+        withResolutionFacade(ktFile) { resolutionFacade ->
+            val targetPsiClass = ktFile.declarations.last() as KtClass
+            val targetPsiFunction = targetPsiClass.declarations.last() as KtNamedFunction
+            val targetFirFunction = targetPsiFunction.resolveToFirSymbolOfType<FirNamedFunctionSymbol>(resolutionFacade)
+            val psiStatements = targetPsiFunction.bodyBlock?.statements.orEmpty()
+            psiStatements.first().getOrBuildFirOfType<FirStatement>(resolutionFacade)
+
+            fun renderTarget(element: FirElement) = lazyResolveRenderer(StringBuilder()).renderElementAsString(element).trim()
+
+            testServices.assertions.assertEquals(
+                """
+                    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [PartialBodyAnalysisStateKey=1(1/2) #1] fun g(): R|kotlin/collections/List<kotlin/Int>| {
+                        [ResolvedTo(BODY_RESOLVE)] lval e: R|kotlin/collections/List<T>| = Null(null)!!
+                        ^g e#.myMap#(::f#)
+                    }
+                """.trimIndent(),
+                renderTarget(targetFirFunction.fir),
+            )
+
+            val lastFirElement = executeOnPooledThreadInReadAction {
+                psiStatements.last().getOrBuildFirOfType<FirElement>(resolutionFacade)
+            }
+
+            testServices.assertions.assertEquals(
+                """
+                        ^g R|<local>/e|.R|/myMap|<R|T|, R|kotlin/Int|>(::R|SubstitutionOverride</G.f: R|kotlin/Int|>|)
+                    """.trimIndent(),
+                renderTarget(lastFirElement),
+            )
         }
     }
 }

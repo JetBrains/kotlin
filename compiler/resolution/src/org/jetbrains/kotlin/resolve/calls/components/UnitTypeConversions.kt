@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
+@K1Deprecation
 object UnitTypeConversions : ParameterTypeConversion {
     override fun conversionDefinitelyNotNeeded(
         candidate: ResolutionCandidate,

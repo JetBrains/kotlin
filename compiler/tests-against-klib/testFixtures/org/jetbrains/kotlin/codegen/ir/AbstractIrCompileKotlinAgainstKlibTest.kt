@@ -37,7 +37,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
-        setupEnvironment(myEnvironment)
+        setupEnvironment(myEnvironment!!)
 
 
         // All files but last are Klib's sources.
@@ -71,7 +71,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     // the JS_IR compiler.
     private fun compileToKlib(files: List<TestFile>) {
         val sourceFiles = loadMultiFilesReal(files)
-        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+        val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             K2JSCompiler(),
             listOf(
                 "-ir-output-dir", outputDir.normalize().absolutePath,

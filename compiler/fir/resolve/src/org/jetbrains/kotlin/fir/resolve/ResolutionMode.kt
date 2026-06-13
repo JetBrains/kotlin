@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.ArrayLiteralResolution
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
@@ -99,7 +100,9 @@ sealed class ResolutionMode(
     }
 
     enum class ArrayLiteralPosition {
+        @ArrayLiteralResolution
         AnnotationArgument,
+
         AnnotationParameter,
     }
 

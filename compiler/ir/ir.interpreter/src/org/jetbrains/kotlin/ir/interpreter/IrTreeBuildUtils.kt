@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
@@ -60,8 +62,8 @@ internal fun IrClass.createGetObject(): IrGetObjectValue {
     return IrGetObjectValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.defaultType, this.symbol)
 }
 
-internal fun IrFunction.createReturn(value: IrExpression): IrReturn {
-    return IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.returnType, this.symbol, value)
+internal fun IrFunction.createReturn(value: IrExpression, nothingType: IrType): IrReturn {
+    return IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, nothingType, this.symbol, value)
 }
 
 internal fun createTempFunction(
@@ -206,17 +208,17 @@ fun IrElement.toConstantValue(): ConstantValue<*> {
 }
 
 internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
-    fun createKClassValue(argumentType: IrType): KClassValue? {
-        if (argumentType is IrErrorType) return null
-        if (argumentType !is IrSimpleType) return null
-
-        var type = argumentType
+    fun createKClassValue(possiblyArrayType: IrType): KClassValue? {
+        var type = possiblyArrayType
         var arrayDimensions = 0
         while (type.isArray()) {
-            if (type.isPrimitiveArray()) break
-            val argument = (type as? IrSimpleType)?.arguments?.singleOrNull()
-            type = argument?.typeOrNull ?: break
             arrayDimensions++
+            type = (type as? IrSimpleType)?.arguments?.singleOrNull()?.typeOrNull
+                ?: return KClassValue(StandardClassIds.Any, arrayDimensions) // `kotlin/Array<*>`
+        }
+
+        if (type is IrErrorType) {
+            return KClassValue(type.symbol.owner.classId!!, arrayDimensions)
         }
 
         val irClass = type.getClass() ?: return null
@@ -230,12 +232,12 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
     return when (this) {
         is IrConst -> this.toConstantValue()
         is IrConstructorCall -> {
-            if (!this.type.isAnnotation()) return null
+            if (!this.type.isAnnotation() && this.type !is IrErrorType) return null
             val classId = this.symbol.owner.constructedClass.classId ?: return null
             val rawArguments = this.getAllArgumentsWithIr()
             val argumentMapping = rawArguments
                 .filter { it.second != null }
-                .associate { (parameter, expression) -> parameter.name to expression!!.toConstantValue() }
+                .associate { [parameter, expression] -> parameter.name to expression!!.toConstantValue() }
             AnnotationValue.create(classId, argumentMapping)
         }
         is IrGetEnumValue -> {

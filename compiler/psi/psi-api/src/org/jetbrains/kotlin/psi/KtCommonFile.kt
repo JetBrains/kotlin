@@ -12,7 +12,6 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayFactory
-import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -78,14 +77,13 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     var packageFqName: FqName
         get() = greenStub?.getPackageFqName() ?: packageDirective?.fqName ?: FqName.ROOT
+        @Deprecated(
+            "Use setPackageFqName(value) instead",
+            ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
+        )
+        @OptIn(KtNonPublicApi::class)
         set(value) {
-            val packageDirective = packageDirective
-            if (packageDirective != null) {
-                packageDirective.fqName = value
-            } else {
-                val newPackageDirective = KtPsiFactory(project).createPackageDirectiveIfNeeded(value) ?: return
-                addAfter(newPackageDirective, null)
-            }
+            KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
 
     @Deprecated("Use 'packageFqName' property instead", ReplaceWith("packageFqName"))
@@ -309,17 +307,16 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getAnnotationEntries(): List<KtAnnotationEntry> =
         fileAnnotationList?.annotationEntries ?: emptyList()
 
+    @OptIn(KtNonPublicApi::class)
     @Throws(IncorrectOperationException::class)
-    override fun setName(name: String): PsiElement {
-        val result = super.setName(name)
-        val willBeScript = name.endsWith(KotlinFileType.SCRIPT_EXTENSION)
-        if (isScript() != willBeScript) {
-            FileContentUtilCore.reparseFiles(listOfNotNull(virtualFile))
-        }
-        return result
-    }
+    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setCommonFileName(this, name)
 
     override fun getPsiOrParent(): KtElement = this
+
+    @KtNonPublicApi
+    override fun rawDelete() {
+        super.delete()
+    }
 
     @Suppress("unused") //keep for compatibility with potential plugins
     fun shouldChangeModificationCount(@Suppress("UNUSED_PARAMETER") place: PsiElement): Boolean {

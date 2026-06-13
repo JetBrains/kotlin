@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /booleanConstReferenceInImplies
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -48,6 +47,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: BooleanConstReferenceInImpliesKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: booleanConstReferenceInImplies

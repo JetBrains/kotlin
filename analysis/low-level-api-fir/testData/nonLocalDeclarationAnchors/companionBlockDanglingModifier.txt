@@ -1,0 +1,23 @@
+/* anchor (KtClass) --> */class Owner {
+    companion {
+        /* anchor (KtNamedFunction) --> */fun before() {}/* <-- */
+
+        for (i in 1..10) /* anchor (KtNamedFunction) --> */{
+        }/* <-- */
+    }
+
+    companion {
+        /* anchor (KtNamedFunction) --> */fun t2() {}/* <-- */
+
+        @Anno
+    }
+
+    /* anchor (KtNamedFunction) --> */@Anno2
+    companion {
+        fun t3() {}
+
+        @Anno3
+    }/* <-- */
+
+    @Anno4
+}/* <-- */

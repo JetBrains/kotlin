@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
+import org.jetbrains.kotlin.backend.konan.getExportedDependencies
+import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.config.bundleId
-import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.platformName
 import org.jetbrains.kotlin.name.Name
 
 internal enum class BundleType {
@@ -165,7 +171,7 @@ internal class InfoPListBuilder(
         val bundleIdOption = configuration[BinaryOptions.bundleId]
         if (deprecatedBundleIdOption != null && bundleIdOption != null && deprecatedBundleIdOption != bundleIdOption) {
             configuration.report(
-                    CompilerMessageSeverity.ERROR,
+                    CliDiagnostics.KONAN_ARGUMENT_ERROR,
                     "Both the deprecated -Xbundle-id=<id> and the new -Xbinary=bundleId=<id> options supplied with different values: " +
                             "'$deprecatedBundleIdOption' and '$bundleIdOption'. " +
                             "Please use only one of the options or make sure they have the same value."
@@ -184,7 +190,7 @@ internal class InfoPListBuilder(
 
         if (mainPackage.isRoot) {
             configuration.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
+                    CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                     "Cannot infer a bundle ID from packages of source files and exported dependencies, " +
                             "use the bundle name instead: $bundleName. " +
                             "Please specify the bundle ID explicitly using the -Xbinary=bundleId=<id> compiler flag."

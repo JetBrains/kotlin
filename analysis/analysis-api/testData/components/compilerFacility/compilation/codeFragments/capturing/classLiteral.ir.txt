@@ -5,7 +5,7 @@ MODULE_FRAGMENT
       CONSTRUCTOR visibility:public returnType:<root>.CodeFragment [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-      FUN name:run visibility:public modality:FINAL returnType:kotlin.reflect.KClass<<root>.Clazz>
+      FUN name:run visibility:public modality:FINAL returnType:kotlin.reflect.KClass<<root>.Clazz> [companion]
         EXPRESSION_BODY
           BLOCK type=kotlin.reflect.KClass<<root>.Clazz> origin=null
             CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Clazz modality:FINAL visibility:private superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Clazz>

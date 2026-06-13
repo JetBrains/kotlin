@@ -7,3 +7,5 @@ class A {
 
     }
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: A.class[f]

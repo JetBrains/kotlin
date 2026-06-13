@@ -39,8 +39,8 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
         val actual = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val typeSpec = mainModule.testModule.directives.singleOrZeroValue(Directives.TYPE_PARAMETER_TYPE)
 
-            val (typeParameterReferenceText, typeParameterSymbol) = if (typeSpec != null) {
-                val (classId, typeParameterName) = parseTypeSpec(typeSpec)
+            val [typeParameterReferenceText, typeParameterSymbol] = if (typeSpec != null) {
+                val [classId, typeParameterName] = parseTypeSpec(typeSpec)
                 val classSymbol = findClassJavaAware(classId) ?: error("Class $classId not found")
                 val typeParameterSymbol = classSymbol.typeParameters.find { it.name == typeParameterName }
                     ?: error("Type parameter $typeParameterName not found")

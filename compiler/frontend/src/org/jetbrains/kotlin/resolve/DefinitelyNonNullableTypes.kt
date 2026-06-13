@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.types.DefinitelyNotNullType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
+@K1Deprecation
 fun KotlinType.containsIncorrectExplicitDefinitelyNonNullableType(): Boolean = contains {
     it is DefinitelyNotNullType && it.original.isTypeParameter() && !it.original.isNullable()
 }

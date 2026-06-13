@@ -1,5 +1,7 @@
 KtNameReferenceExpression(80,82): 'AA'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): AA
+      /AA
     ]

@@ -539,6 +539,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/checker.args");
     }
 
+    @TestMetadata("contracts.args")
+    public void testContracts() {
+      runTest("compiler/testData/cli/jvm/diagnosticTests/crv/contracts.args");
+    }
+
     @TestMetadata("full.args")
     public void testFull() {
       runTest("compiler/testData/cli/jvm/diagnosticTests/crv/full.args");
@@ -1160,6 +1165,29 @@ public class CliTestGenerated extends AbstractCliTest {
     }
   }
 
+  @TestMetadata("compiler/testData/cli/jvm/XeagerLambdaAnalysis")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class XeagerLambdaAnalysis extends AbstractCliTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInXeagerLambdaAnalysis() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/XeagerLambdaAnalysis"), Pattern.compile("^(.+)\\.args$"), null, false);
+    }
+
+    @TestMetadata("executorSubmitDefault.args")
+    public void testExecutorSubmitDefault() {
+      runTest("compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmitDefault.args");
+    }
+
+    @TestMetadata("executorSubmitEnabled.args")
+    public void testExecutorSubmitEnabled() {
+      runTest("compiler/testData/cli/jvm/XeagerLambdaAnalysis/executorSubmitEnabled.args");
+    }
+  }
+
   @TestMetadata("compiler/testData/cli/jvm/XnewInference")
   @TestDataPath("$PROJECT_ROOT")
   @RunWith(JUnit3RunnerWithInners.class)
@@ -1626,6 +1654,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
     }
 
+    @TestMetadata("kmpDifferentAnnotationsSuppressed.args")
+    public void testKmpDifferentAnnotationsSuppressed() {
+      runTest("compiler/testData/cli/jvm/kmpDifferentAnnotationsSuppressed.args");
+    }
+
     @TestMetadata("kmpMissingActual.args")
     public void testKmpMissingActual() {
       runTest("compiler/testData/cli/jvm/kmpMissingActual.args");
@@ -1784,6 +1817,11 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportPerfWithInitError.args")
     public void testReportPerfWithInitError() {
       runTest("compiler/testData/cli/jvm/reportPerfWithInitError.args");
+    }
+
+    @TestMetadata("scriptAsRegularSourceFile.args")
+    public void testScriptAsRegularSourceFile() {
+      runTest("compiler/testData/cli/jvm/scriptAsRegularSourceFile.args");
     }
 
     @TestMetadata("selfUpperBoundInference.args")
@@ -2204,6 +2242,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/sourceMapRootMultiple.args");
     }
 
+    @TestMetadata("sourceMapSourceRoot.args")
+    public void testSourceMapSourceRoot() {
+      runTest("compiler/testData/cli/js/sourceMapSourceRoot.args");
+    }
+
     @TestMetadata("successfulHmpp.args")
     public void testSuccessfulHmpp() {
       runTest("compiler/testData/cli/js/successfulHmpp.args");
@@ -2358,6 +2401,21 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("inheritorOfExpectSealedClass.args")
     public void testInheritorOfExpectSealedClass() {
       runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
+    }
+
+    @TestMetadata("klibMetadataVersionLV2.2.args")
+    public void testKlibMetadataVersionLV2_2() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionLV2.2.args");
+    }
+
+    @TestMetadata("klibMetadataVersionLV2.4.args")
+    public void testKlibMetadataVersionLV2_4() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionLV2.4.args");
+    }
+
+    @TestMetadata("klibMetadataVersionOverrideFlag.args")
+    public void testKlibMetadataVersionOverrideFlag() {
+      runTest("compiler/testData/cli/metadata/klibMetadataVersionOverrideFlag.args");
     }
 
     @TestMetadata("kotlinPackage.args")

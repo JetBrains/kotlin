@@ -1,4 +1,6 @@
 KtOperationReferenceExpression(138,140): '--'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.dec(<dispatch receiver>: MyClass): MyClass

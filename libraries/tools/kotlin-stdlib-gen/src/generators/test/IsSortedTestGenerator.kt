@@ -10,7 +10,7 @@ import java.io.BufferedWriter
 
 object IsSortedTestGenerator {
     fun generate() {
-        forEachIsSortedFamily { family, primitive -> generate(family, primitive) }
+        forEachCollectionFamily { family, primitive -> generate(family, primitive) }
     }
 
     private fun generate(family: Family, primitive: PrimitiveType? = null) {

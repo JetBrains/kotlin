@@ -195,6 +195,32 @@ class KaptApiTest {
         assertEquals("foo", kaptGenerateStubsTask.get().compilerOptions.moduleName.get())
     }
 
+    @Test
+    fun testGenerateStubsCompilerArgsNotDuplicated() {
+        // KT-55452: freeCompilerArgs set on KaptGenerateStubs (e.g. via tasks.withType(KotlinCompile))
+        // must not be duplicated through the compile-task → stubs-task compilerOptions wiring.
+        val customCompileTask = plugin.registerKotlinJvmCompileTask(
+            "customCompileKotlin",
+            plugin.createCompilerJvmOptions(),
+        )
+        customCompileTask.configure {
+            it.compilerOptions.freeCompilerArgs.addAll(
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true",
+                "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=/tmp/compose_metrics",
+            )
+        }
+
+        val kaptGenerateStubsTask = plugin.registerKaptGenerateStubsTask(
+            GENERATE_STUBS,
+            customCompileTask,
+            plugin.kaptExtension,
+        ).get()
+
+        val freeArgs = kaptGenerateStubsTask.compilerOptions.freeCompilerArgs.get()
+        assertEquals(2, freeArgs.count { it == "-P" })
+        assertEquals(1, freeArgs.count { it == "plugin:androidx.compose.compiler.plugins.kotlin:intrinsicRemember=true" })
+    }
+
     private fun configureKapt(configAction: Kapt.() -> Unit): KaptWithoutKotlincTask {
         val provider = plugin.registerKaptTask(TASK_NAME, plugin.kaptExtension)
         provider.configure(configAction)

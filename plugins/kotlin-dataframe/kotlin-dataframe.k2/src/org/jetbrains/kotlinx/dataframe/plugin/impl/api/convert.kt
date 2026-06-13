@@ -13,6 +13,8 @@ import org.jetbrains.kotlinx.dataframe.api.convert
 import org.jetbrains.kotlinx.dataframe.api.pathOf
 import org.jetbrains.kotlinx.dataframe.columns.toColumnSet
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.ColumnType
+import org.jetbrains.kotlinx.dataframe.plugin.findSchemaArgument
+import org.jetbrains.kotlinx.dataframe.plugin.getSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
@@ -205,4 +207,15 @@ internal class ToSpecificTypeZone : AbstractToSpecificType() {
 internal class ToSpecificTypePattern : AbstractToSpecificType() {
     val Arguments.pattern by ignore()
     val Arguments.locale by ignore()
+}
+
+class ConvertAsFrame : AbstractSchemaModificationInterpreter() {
+    val Arguments.receiver: ConvertApproximation by arg()
+    val Arguments.expression by type()
+
+    override fun Arguments.interpret(): PluginDataFrameSchema {
+        return receiver.schema.convertAsColumn(receiver.columns) {
+            SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()))
+        }
+    }
 }

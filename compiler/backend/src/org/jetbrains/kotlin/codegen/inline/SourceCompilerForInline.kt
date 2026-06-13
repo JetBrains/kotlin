@@ -61,6 +61,8 @@ interface SourceCompilerForInline {
 
     val isFinallyMarkerRequired: Boolean
 
+    fun resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName: String): List<String?>?
+
     fun isSuspendLambdaCapturedByOuterObjectOrLambda(name: String): Boolean
 
     fun getContextLabels(): Map<String, Label?>

@@ -19,13 +19,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_JAVA_FACADE
 import org.jetbrains.kotlin.test.java.JavaCompilerFacade
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.SourceFileInfo
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 
 abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBackendFacade<BinaryArtifacts.Jvm>(testServices, ArtifactKinds.Jvm) {
     private val javaCompilerFacade = JavaCompilerFacade(testServices)
@@ -70,15 +68,15 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
                     else listOf(SourceFileInfo(sourceFile, getFileClassInfoFromIrFile(irFile, sourceFile.name)))
                 }
                 is MultifileFacadeFileEntry -> {
-                    if (!allowNestedMultifileFacades) error("nested multi-file facades are not allowed")
+                    if (!allowNestedMultifileFacades) testInfraError("nested multi-file facades are not allowed")
                     else fileEntry.partFiles.flatMap { sourceFileInfos(it, allowNestedMultifileFacades = false) }
                 }
                 else -> {
-                    error("unknown kind of file entry: $fileEntry")
+                    testInfraError("unknown kind of file entry: $fileEntry")
                 }
             }
 
-        return BinaryArtifacts.Jvm(
+        return JvmClassFileArtifact(
             state.factory,
             inputArtifact.irModuleFragment.files.flatMap {
                 sourceFileInfos(it, allowNestedMultifileFacades = true)
@@ -89,7 +87,7 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
 
 class JvmIrBackendFacade(testServices: TestServices) : AbstractJvmIrBackendFacade(testServices) {
     override fun produceGenerationState(inputArtifact: IrBackendInput): GenerationState {
-        require(inputArtifact is IrBackendInput.JvmIrBackendInput) {
+        checkTestInfrastructure(inputArtifact is JvmIrBackendInput) {
             "JvmIrBackendFacade expects IrBackendInput.JvmIrBackendInput as input"
         }
         val state = inputArtifact.state
@@ -98,5 +96,5 @@ class JvmIrBackendFacade(testServices: TestServices) : AbstractJvmIrBackendFacad
     }
 
     override val IrBackendInput.sourceFiles: Collection<KtSourceFile>
-        get() = (this as IrBackendInput.JvmIrBackendInput).sourceFiles
+        get() = (this as JvmIrBackendInput).sourceFiles
 }

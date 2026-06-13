@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -30,8 +31,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 sealed class OperatorDiagnostic {
-    class IllegalOperatorDiagnostic(val message: String) : OperatorDiagnostic()
-    class DeprecatedOperatorDiagnostic(val message: String, val feature: LanguageFeature) : OperatorDiagnostic()
+    class IllegalOperatorDiagnostic(val message: String, val deprecatingFeature: LanguageFeature? = null) : OperatorDiagnostic()
     class Unsupported(val feature: LanguageFeature) : OperatorDiagnostic()
     class ReturnTypeMismatchWithOuterClass(
         val outer: FirRegularClassSymbol,
@@ -240,8 +240,7 @@ private object Checks {
 
                 val message = "must have at most $n value parameter" + (if (n > 1) "s" else "")
 
-                if (feature != null) OperatorDiagnostic.DeprecatedOperatorDiagnostic(message, feature)
-                else OperatorDiagnostic.IllegalOperatorDiagnostic(message)
+                OperatorDiagnostic.IllegalOperatorDiagnostic(message, feature)
             }
 
         val single = simple("must have a single value parameter") { function, _ ->
@@ -356,8 +355,11 @@ private object Checks {
     object EqualsOverridesEqualsOfAny : Check() {
         override fun check(function: FirNamedFunction, session: FirSession, scopeSession: ScopeSession?): OperatorDiagnostic? {
             if (scopeSession == null) return null
-            val containingClassSymbol = function.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
+            val containingClassSymbol = function.containingClassLookupTag()?.toClassSymbol(session) ?: return null
             val customEqualsSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
+            val deprecatingFeature = LanguageFeature.ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects.takeIf {
+                containingClassSymbol !is FirRegularClassSymbol
+            }
 
             if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)
                     .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
@@ -374,7 +376,7 @@ private object Checks {
                     append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
                 }
             }
-            return OperatorDiagnostic.IllegalOperatorDiagnostic(message)
+            return OperatorDiagnostic.IllegalOperatorDiagnostic(message, deprecatingFeature)
         }
     }
 

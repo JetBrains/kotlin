@@ -15,6 +15,10 @@
  *   // nested class: Companion
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 @DefaultImplementation(PlatformDiagnosticSuppressor.Default::class)
+@K1Deprecation
 interface PlatformDiagnosticSuppressor : PlatformSpecificExtension<PlatformDiagnosticSuppressor>{
     // Function without binding context is kept for binary compatibility
     // Diagnostic should be suppressed if any of two overloads return false
@@ -40,6 +42,7 @@ interface PlatformDiagnosticSuppressor : PlatformSpecificExtension<PlatformDiagn
     }
 }
 
+@K1Deprecation
 class CompositePlatformDiagnosticSuppressor(private val suppressors: List<PlatformDiagnosticSuppressor>) : PlatformDiagnosticSuppressor {
     override fun shouldReportUnusedParameter(parameter: VariableDescriptor, bindingContext: BindingContext): Boolean =
         suppressors.all { it.shouldReportUnusedParameter(parameter, bindingContext) }
@@ -55,6 +58,7 @@ class CompositePlatformDiagnosticSuppressor(private val suppressors: List<Platfo
         suppressors.all { it.shouldReportNoBody(descriptor) }
 }
 
+@K1Deprecation
 class PlatformDiagnosticSuppressorClashesResolver : PlatformExtensionsClashResolver<PlatformDiagnosticSuppressor>(
     PlatformDiagnosticSuppressor::class.java
 ) {

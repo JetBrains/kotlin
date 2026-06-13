@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.nio.file.Path
 
 /**
@@ -78,7 +77,10 @@ public sealed interface ExecutionPolicy {
          * @see get
          * @see set
          */
-        public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+        public class Option<V> internal constructor(
+            id: String,
+            public val availableSinceVersion: KotlinReleaseVersion,
+        ) : BaseOption<V>(id)
 
         /**
          * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -93,13 +95,13 @@ public sealed interface ExecutionPolicy {
              * A list of JVM arguments to pass to the Kotlin daemon.
              */
             @JvmField
-            public val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS")
+            public val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS", KotlinReleaseVersion(2, 3, 0))
 
             /**
              * The time in milliseconds that the daemon process continues to live after all clients have disconnected.
              */
             @JvmField
-            public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS")
+            public val SHUTDOWN_DELAY_MILLIS: Option<Long?> = Option("SHUTDOWN_DELAY_MILLIS", KotlinReleaseVersion(2, 3, 0))
 
             /**
              * Specify a custom path for daemon runtime files.
@@ -111,7 +113,7 @@ public sealed interface ExecutionPolicy {
              */
             @JvmField
             @DelicateBuildToolsApi
-            public val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH")
+            public val DAEMON_RUN_DIR_PATH: Option<Path> = Option("DAEMON_RUN_DIR_PATH", KotlinReleaseVersion(2, 3, 20))
 
             /**
              * The path to a directory where the daemon logs files should be stored.
@@ -121,7 +123,7 @@ public sealed interface ExecutionPolicy {
              * @since 2.4.0
              */
             @JvmField
-            public val LOGS_PATH: Option<Path> = Option("LOGS_PATH")
+            public val LOGS_PATH: Option<Path> = Option("LOGS_PATH", KotlinReleaseVersion(2, 4, 0))
 
             /**
              * The limit for the maximum size of log files, expressed in bytes.
@@ -137,7 +139,7 @@ public sealed interface ExecutionPolicy {
              * @since 2.4.0
              */
             @JvmField
-            public val LOGS_FILE_SIZE_LIMIT: Option<Long?> = Option("LOGS_FILE_SIZE_LIMIT")
+            public val LOGS_FILE_SIZE_LIMIT: Option<Long?> = Option("LOGS_FILE_SIZE_LIMIT", KotlinReleaseVersion(2, 4, 0))
 
             /**
              * Specifies the maximum number of log files that can be retained when [[LOGS_FILE_SIZE_LIMIT]] is set.
@@ -152,7 +154,7 @@ public sealed interface ExecutionPolicy {
              * @since 2.4.0
              */
             @JvmField
-            public val LOGS_FILE_COUNT_LIMIT: Option<Int?> = Option("LOGS_FILE_COUNT_LIMIT")
+            public val LOGS_FILE_COUNT_LIMIT: Option<Int?> = Option("LOGS_FILE_COUNT_LIMIT", KotlinReleaseVersion(2, 4, 0))
         }
     }
 }

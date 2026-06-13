@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromJvmExposeBoxedAnnotation
-import org.jetbrains.kotlin.backend.jvm.ir.isBoxedInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.backend.jvm.ir.upperBound
@@ -51,20 +50,6 @@ internal abstract class JvmValueClassAbstractLowering(
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
                     return transformFlattenedConstructor(function, constructorReplacement)
-                } else if (function.shouldBeExposed()) {
-                    val constructorWithPotentialMarker = if (function.areAllParamsBoxedInlineClasses()) {
-                        // no replacement -> return listOf(function),
-                        // but `transformFunctionFlat` accepts null as initial fun as well for optimization reasons
-                        function.withAddedMarkerParameterToNonExposedConstructor() ?: return null
-                    } else {
-                        function
-                    }
-                    constructorWithPotentialMarker.transformChildrenVoid()
-                    return listOfNotNull(
-                        constructorWithPotentialMarker,
-                        createExposedConstructor(constructorWithPotentialMarker),
-                        createExposedNoArgConstructor(constructorWithPotentialMarker),
-                    )
                 }
             }
             function.transformChildrenVoid()
@@ -79,6 +64,24 @@ internal abstract class JvmValueClassAbstractLowering(
                 function.overriddenSymbols = replacements.replaceOverriddenSymbols(function)
             }
             return null
+        } else if (replacement is IrConstructor) {
+            require(function is IrConstructor) {
+                "Expected ${replacement.render()} to be a replacement of constructor, but got ${function.render()}"
+            }
+            addBindingsFor(function, replacement)
+            val declarations = transformFlattenedConstructor(function, replacement)
+            return declarations + if (function.shouldBeExposed()) {
+                listOfNotNull(
+                    createExposedConstructor(replacement, function),
+                    createExposedNoArgConstructor(replacement, function),
+                )
+            } else {
+                emptyList()
+            }
+        }
+
+        require(replacement is IrSimpleFunction) {
+            "Expected ${function.render()} to be replaced by simple function, but got ${replacement.render()}"
         }
 
         if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun }) {
@@ -97,24 +100,15 @@ internal abstract class JvmValueClassAbstractLowering(
         }
     }
 
-    private fun IrConstructor.areAllParamsBoxedInlineClasses(): Boolean {
-        // If all inline class parameters are boxes in non-exposed constructor, we need to add an additional
-        // parameter to non-exposed constructor to distinguish it from exposed one
-        val inlineClassParams = parameters.filter { it.type.isInlineClassType() }
-        return inlineClassParams.isNotEmpty() && inlineClassParams.all { it.type.isBoxedInlineClassType() }
-    }
-
     // Returns true if not just an annotation exists, but if it is also applicable to the constructor
     private fun IrConstructor.shouldBeExposed(): Boolean =
         shouldBeExposedByAnnotationOrFlag(context) &&
                 parameters.any { it.type.isInlineClassType() } &&
                 !constructedClass.isSpecificLoweringLogicApplicable()
 
-    abstract fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor?
+    abstract fun createExposedConstructor(constructor: IrConstructor, original: IrConstructor): IrConstructor?
 
-    abstract fun createExposedConstructor(constructor: IrConstructor): IrConstructor?
-
-    abstract fun createExposedNoArgConstructor(constructor: IrConstructor): IrConstructor?
+    abstract fun createExposedNoArgConstructor(constructor: IrConstructor, original: IrConstructor): IrConstructor?
 
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.parameters.forEach {

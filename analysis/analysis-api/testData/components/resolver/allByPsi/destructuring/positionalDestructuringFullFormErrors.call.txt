@@ -278,7 +278,7 @@ KtDestructuringDeclaration(323,338): '[val first] = y'
 KtDestructuringDeclarationEntry(324,333): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 
 KtNameReferenceExpression(337,338): 'y'
   KaCallResolutionSuccess:
@@ -627,7 +627,7 @@ KtForExpression(508,541): 'for ([val first: String] in y) {}'
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'hasNext'.>
     iteratorCallAttempt = KaCallResolutionError:
       candidateCalls = []
-      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator'.>
+      diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'iterator' on receiver of type 'NonDataTuple'.>
     nextCallAttempt = KaCallResolutionError:
       candidateCalls = []
       diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'next'.>
@@ -1110,7 +1110,7 @@ KtDestructuringDeclaration(728,739): '[val first]'
 KtDestructuringDeclarationEntry(729,738): 'val first'
   KaCallResolutionError:
     candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1'.>
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'component1' on receiver of type 'NonDataTuple'.>
 
 KtBlockExpression(743,743): ''
   null

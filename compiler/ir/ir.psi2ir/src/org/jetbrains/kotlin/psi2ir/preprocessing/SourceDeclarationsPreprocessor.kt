@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.preprocessing
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
+@K1Deprecation
 class SourceDeclarationsPreprocessor(private val context: GeneratorContext) {
 
     fun run(ktFiles: Collection<KtFile>) {

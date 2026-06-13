@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import javax.inject.Inject
 
+@K1Deprecation
 interface ModuleClassResolver {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
+@K1Deprecation
 class SingleModuleClassResolver : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = resolver.resolveClass(javaClass)
 
@@ -33,6 +36,7 @@ class SingleModuleClassResolver : ModuleClassResolver {
         @Inject set
 }
 
+@K1Deprecation
 class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver) : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = descriptorResolverByJavaClass(javaClass).resolveClass(javaClass)
 }

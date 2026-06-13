@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.testing.normalizeSnapshotJarName
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
@@ -51,7 +52,7 @@ class KotlinSubpluginApiTest {
         allButAndroid.flatMap { it.compilations }.forEach { compilation ->
             val compileTask = compilation.compileTaskProvider.get() as KotlinCompilerArgumentsProducer
             val args = compileTask.createCompilerArguments(pluginClasspathResolutionContext) as CommonCompilerArguments
-            if (args.pluginClasspaths.orEmpty().any { File(it).name == parcelizeJar })
+            if (args.pluginClasspaths.orEmpty().any { File(it).name.normalizeSnapshotJarName() == parcelizeJar })
                 fail("No kotlin-parcelize plugin should be present in args for compile task $compileTask")
         }
 
@@ -59,7 +60,7 @@ class KotlinSubpluginApiTest {
         androidTarget.compilations.forEach { compilation ->
             val compileTask = compilation.compileTaskProvider.get() as KotlinCompilerArgumentsProducer
             val args = compileTask.createCompilerArguments(pluginClasspathResolutionContext) as CommonCompilerArguments
-            if (args.pluginClasspaths.orEmpty().none { File(it).name == parcelizeJar })
+            if (args.pluginClasspaths.orEmpty().none { File(it).name.normalizeSnapshotJarName() == parcelizeJar })
                 fail("kotlin-parcelize plugin should be present in args for compile task $compileTask")
         }
     }

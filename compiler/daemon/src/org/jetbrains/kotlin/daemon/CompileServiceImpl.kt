@@ -100,6 +100,7 @@ class EventManagerImpl : EventManager {
 abstract class CompileServiceImplBase(
     val daemonOptions: DaemonOptions,
     val compilerId: CompilerId,
+    val javaLanguageVersion: JavaLanguageVersion,
     val port: Int,
     val timer: Timer,
     val onShutdown: () -> Unit,
@@ -248,7 +249,7 @@ abstract class CompileServiceImplBase(
             runFileDir,
             makeRunFilenameString(
                 timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                digest = compilerId.digest(),
+                digest = makeRunFileDigest(javaLanguageVersion, compilerId.compilerClasspath.map { Path(it) }),
                 port = port.toString()
             )
         )
@@ -575,7 +576,7 @@ abstract class CompileServiceImplBase(
                 }
 
                 // this will only be reported if if appropriate (e.g. ByClass) profiler is used
-                for ((obj, counters) in rpcProfiler.getCounters()) {
+                for ([obj, counters] in rpcProfiler.getCounters()) {
                     "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
                         daemonMessageReporter.report(ReportSeverity.INFO, it)
                         log.info(it)
@@ -682,7 +683,7 @@ abstract class CompileServiceImplBase(
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
         reporter: RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-        configurationInputs: ConfigurationInputs? = null
+        configurationInputs: ConfigurationInputs? = null,
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
@@ -816,10 +817,11 @@ class CompileServiceImpl(
     compilerId: CompilerId,
     daemonOptions: DaemonOptions,
     val daemonJVMOptions: DaemonJVMOptions,
+    javaLanguageVersion: JavaLanguageVersion,
     port: Int,
     timer: Timer,
     onShutdown: () -> Unit,
-) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, port, timer, onShutdown) {
+) : CompileService, CompileServiceImplBase(daemonOptions, compilerId, javaLanguageVersion, port, timer, onShutdown) {
 
     private inline fun <R> withValidRepl(
         sessionId: Int,
@@ -1118,12 +1120,12 @@ class CompileServiceImpl(
             val aliveWithOpts = walkDaemons(
                 File(daemonOptions.runFilesPathOrDefault),
                 compilerId,
+                javaLanguageVersion,
                 runFile,
                 filter = { _, p -> p != port },
-                report = { _, msg -> log.info(msg) }).toList().sortedWith(comparator)
-
-            fun hasLowerPriorityThan(other: DaemonWithMetadata): Boolean =
-                daemonJVMOptions memorywiseFitsInto other.jvmOptions && FileAgeComparator().compare(other.runFile, runFile) > 0
+                report = { _, msg -> log.info(msg) }
+            ).toList()
+                .sortedWith(comparator)
 
             fun hasHigherPriorityThan(other: DaemonWithMetadata): Boolean =
                 other.jvmOptions memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
@@ -1131,13 +1133,16 @@ class CompileServiceImpl(
                     runFile
                 ) < 0
 
+            fun hasLowerPriorityThan(other: DaemonWithMetadata): Boolean =
+                daemonJVMOptions memorywiseFitsInto other.jvmOptions && FileAgeComparator().compare(other.runFile, runFile) > 0
+
             var bestDaemonWithMetadata = aliveWithOpts.firstOrNull() ?: return@ifAliveUnit
 
             if (hasHigherPriorityThan(bestDaemonWithMetadata)) {
                 // all others are smaller that me, take overs' clients and shut them down
                 log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${aliveWithOpts.first().runFile.name} (${aliveWithOpts.first().runFile.lastModified()})")
 
-                aliveWithOpts.forEach { (daemon, runFile, _) ->
+                aliveWithOpts.forEach { (val daemon, val runFile) ->
                     try {
                         daemon.getClients().takeIf { it.isGood }?.let {
                             it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }
@@ -1167,9 +1172,9 @@ class CompileServiceImpl(
             //    C performs election: (1) is false because B is better than A and B does not fit into C, (2) is false C does not fit into neither A nor B.
             //    Result: all daemons are alive and well.
             for (i in 0 until aliveWithOpts.size) {
-                // there is at least one bigger, try to handover my clients to it and shutdown
                 bestDaemonWithMetadata = aliveWithOpts[i]
                 if (hasLowerPriorityThan(bestDaemonWithMetadata)) {
+                    // there is at least one bigger, try to handover my clients to it and shutdown
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, try to handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     val clients = getClients().takeIf { it.isGood }?.get() ?: emptyList()
                     val handoverSuccessful = clients

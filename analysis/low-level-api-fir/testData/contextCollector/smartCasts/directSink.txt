@@ -39,3 +39,4 @@ FILE: [ResolvedTo(IMPORTS)] directSink.kt
         }
         )
     }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] R> run([ResolvedTo(RAW_FIR)] block: ( () -> R )): R|kotlin/Unit| { LAZY_BLOCK }

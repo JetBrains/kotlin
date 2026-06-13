@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList
 
+@K1Deprecation
 class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : SimpleGenericDiagnostics<Diagnostic>(diagnostics), Diagnostics {
     //copy to prevent external change
     private val diagnostics = ArrayList(diagnostics)

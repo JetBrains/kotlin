@@ -5,11 +5,15 @@ description = "Kotlin Scripting Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
 val kotlinDataFrameGradlePluginClasspath by configurations.creating
 val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
+val kotlinAllOpenPluginJar by configurations.creating
+val kotlinScriptingCommonJar by configurations.creating
+val powerAssertCompilerPluginJar by configurations.creating
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -25,6 +29,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":core:descriptors.runtime"))
+    compileOnly(project(":core:reflection.common.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
@@ -35,6 +40,12 @@ dependencies {
     api(commonDependency("org.jline", "jline"))
     compileOnly(intellijCore())
 
+    compileOnly(project(":core:descriptors"))
+    compileOnly(project(":core:descriptors.jvm"))
+    compileOnly(project(":core:deserialization"))
+    compileOnly(project(":compiler:container"))
+    compileOnly(project(":compiler:ir.psi2ir"))
+    compileOnly(project(":compiler:resolution"))
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
@@ -64,6 +75,9 @@ dependencies {
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinDataFrameGradlePluginClasspath(project(":kotlin-dataframe-compiler-plugin.embeddable")) { isTransitive = true }
     kotlinxCoroutinesCoreGradlePluginClasspath(libs.kotlinx.coroutines.core) { isTransitive = false }
+    kotlinAllOpenPluginJar(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
+    kotlinScriptingCommonJar(project(":kotlin-scripting-common")) { isTransitive = false }
+    powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
 }
 
 optInToExperimentalCompilerApi()
@@ -91,19 +105,46 @@ testsJar()
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist", kotlinxSerializationGradlePluginClasspath, kotlinDataFrameGradlePluginClasspath, kotlinxCoroutinesCoreGradlePluginClasspath)
-        workingDir = rootDir
-        val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
-        val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-        val localKotlinDataFramePluginClasspath: FileCollection = kotlinDataFrameGradlePluginClasspath
-        val localKotlinxCoroutinesCorePluginClasspath: FileCollection = kotlinxCoroutinesCoreGradlePluginClasspath
-        doFirst {
-            systemProperty("kotlin.test.script.classpath", scriptClasspath)
-            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
-            systemProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath", localKotlinDataFramePluginClasspath.asPath)
-            systemProperty("kotlin.script.test.kotlinx.coroutines.core.classpath", localKotlinxCoroutinesCorePluginClasspath.asPath)
+        testInputsCheck {
+            extraPermissions.addAll(
+                """permission java.lang.reflect.ReflectPermission "newProxyInPackage.org.jetbrains.kotlin.scripting.compiler.test";""",
+                """permission java.util.PropertyPermission "*", "read,write";""",
+                """permission java.net.NetPermission "getProxySelector";""",
+                """permission java.io.FilePermission "someDependency1.jar", "read";""",
+                """permission java.io.FilePermission "someDependency2.jar", "read";""",
+                """permission java.io.FilePermission "script.kts", "read";""",
+                // FileSystemDependenciesResolver tries to load from the current path
+                """permission java.io.FilePermission "junit:junit:4.11", "read";""",
+            )
         }
+        systemProperty("kotlin.main.kts.compiled.scripts.cache.dir", "build/main.kts.compiled.cache")
+        // MavenDependenciesResolver() tries to load from mavenLocal folder, so this file moves mavenLocal inside build folder.
+        addFileProperty(project.layout.projectDirectory.file("test-maven-settings.xml"), "org.apache.maven.user-settings")
+        val scriptClasspath = testSourceSet.output.classesDirs
+        addClasspathProperty(scriptClasspath,"kotlin.test.script.classpath")
+        addClasspathProperty(kotlinxSerializationGradlePluginClasspath, "kotlin.script.test.kotlinx.serialization.plugin.classpath")
+        addClasspathProperty(kotlinDataFrameGradlePluginClasspath, "kotlin.script.test.kotlin.dataframe.plugin.classpath")
+        addClasspathProperty(kotlinxCoroutinesCoreGradlePluginClasspath, "kotlin.script.test.kotlinx.coroutines.core.classpath")
+        withAllOpenCompilerPluginJar()
+        withMainKtsJar()
+        addClasspathProperty(kotlinScriptingCommonJar, "kotlin.scripting.common.jar")
+        addClasspathProperty(powerAssertCompilerPluginJar, "kotlin.power.assert.compiler.plugin.jar")
     }
 
+    testData(isolated, "testData")
+
     withJvmStdlibAndReflect()
+    withStdlibCommon()
+    withThirdPartyAnnotations()
+    withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
+    withStdlibCommon()
+    withJsRuntime()
+    withWasmRuntime()
+    withScriptRuntime()
+    withScriptingPlugin()
+    withTestJar()
+    withMockJdkRuntime()
+    @OptIn(KotlinCompilerDistUsage::class)
+    withDist()
 }

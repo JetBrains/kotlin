@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: Base.java
 public class Base<T extends CharSequence> {
     public T foo(T t) { return t; }

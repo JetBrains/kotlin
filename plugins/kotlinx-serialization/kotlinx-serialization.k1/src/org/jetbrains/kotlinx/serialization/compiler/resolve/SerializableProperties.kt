@@ -37,7 +37,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
         primaryConstructorProperties =
             primaryConstructorParameters.asSequence()
                 .map { parameter -> bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter] to parameter.declaresDefaultValue() }
-                .mapNotNull { (a, b) -> if (a == null) null else a to b }
+                .mapNotNull { [a, b] -> if (a == null) null else a to b }
                 .toMap()
 
         fun isPropSerializable(it: PropertyDescriptor) =

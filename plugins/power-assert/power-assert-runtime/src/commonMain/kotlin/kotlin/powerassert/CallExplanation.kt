@@ -8,7 +8,6 @@ package kotlin.powerassert
 /**
  * Provides information about a function call, including its source and arguments.
  */
-// TODO CallArgumentsExplanation?
 @ExperimentalPowerAssert
 public class CallExplanation(
     override val offset: Int,
@@ -60,7 +59,7 @@ public class CallExplanation(
             DISPATCH,
             CONTEXT,
             EXTENSION,
-            VALUE, // TODO REGULAR?
+            VALUE,
         }
     }
 }

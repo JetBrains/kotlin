@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.codegen.TestScriptWithReceivers
+// KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.test.runners.codegen.TestScriptWithReceivers
 
 // receiver: abracadabra
 // expected: rv=cadabra

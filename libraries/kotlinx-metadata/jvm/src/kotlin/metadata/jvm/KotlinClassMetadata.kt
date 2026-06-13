@@ -105,7 +105,7 @@ public sealed class KotlinClassMetadata {
             return wrapWriteIntoIAE {
                 val writer = ClassWriter(JvmStringTable())
                 writer.writeClass(kmClass)
-                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                val [d1, d2] = writeProtoBufData(writer.t.build(), writer.c)
                 Metadata(CLASS_KIND, version.toIntArray(), d1, d2, extraInt = flags)
             }
         }
@@ -150,7 +150,7 @@ public sealed class KotlinClassMetadata {
             return wrapWriteIntoIAE {
                 val writer = PackageWriter(JvmStringTable())
                 writer.writePackage(kmPackage)
-                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                val [d1, d2] = writeProtoBufData(writer.t.build(), writer.c)
                 Metadata(FILE_FACADE_KIND, version.toIntArray(), d1, d2, extraInt = flags)
             }
         }
@@ -192,7 +192,7 @@ public sealed class KotlinClassMetadata {
                 val writer = LambdaWriter(JvmStringTable())
                 writer.writeLambda(kmLambda!!)
                 val proto = writer.t?.build()
-                val (d1, d2) =
+                val [d1, d2] =
                     if (proto != null) writeProtoBufData(proto, writer.c)
                     else Pair(emptyArray<String>(), emptyArray<String>())
                 Metadata(SYNTHETIC_CLASS_KIND, version.toIntArray(), d1, d2, extraInt = flags)
@@ -319,7 +319,7 @@ public sealed class KotlinClassMetadata {
             return wrapWriteIntoIAE {
                 val writer = PackageWriter(JvmStringTable())
                 writer.writePackage(kmPackage)
-                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                val [d1, d2] = writeProtoBufData(writer.t.build(), writer.c)
                 Metadata(
                     MULTI_FILE_CLASS_PART_KIND, version.toIntArray(), d1, d2, facadeClassName, extraInt = flags
                 )

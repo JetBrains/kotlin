@@ -17,8 +17,6 @@ val KotlinBuildProperties.proguard: Boolean get() = postProcessing && booleanPro
 
 val KotlinBuildProperties.jarCompression: Boolean get() = booleanProperty("kotlin.build.jar.compression", isTeamcityBuild).get()
 
-val KotlinBuildProperties.ignoreTestFailures: Boolean get() = booleanProperty("ignoreTestFailures", isTeamcityBuild).get()
-
 val KotlinBuildProperties.disableWerror: Boolean
     get() = booleanProperty("kotlin.build.disable.werror").get() || useFir.get() || booleanProperty("test.progressive.mode").get()
 

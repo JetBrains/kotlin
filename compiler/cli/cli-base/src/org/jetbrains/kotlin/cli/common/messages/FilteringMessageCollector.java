@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
-public class FilteringMessageCollector implements MessageCollector {
+public class FilteringMessageCollector implements MessageCollectorWithDiagnosticId {
     private final MessageCollector messageCollector;
     private final Predicate<CompilerMessageSeverity> decline;
 
@@ -37,8 +37,18 @@ public class FilteringMessageCollector implements MessageCollector {
 
     @Override
     public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
+        report(severity, message, location, null);
+    }
+
+    @Override
+    public void report(
+            @NotNull CompilerMessageSeverity severity,
+            @NotNull String message,
+            @Nullable CompilerMessageSourceLocation location,
+            @Nullable String diagnosticId
+    ) {
         if (!decline.test(severity)) {
-            messageCollector.report(severity, message, location);
+            MessageCollectorKt.report(messageCollector, severity, message, location, diagnosticId);
         }
     }
 

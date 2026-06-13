@@ -1,6 +1,5 @@
 // DISABLE_JAVA_FACADE
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 
 // FILE: ObjectStubSerializer.java
 import org.jetbrains.annotations.*;

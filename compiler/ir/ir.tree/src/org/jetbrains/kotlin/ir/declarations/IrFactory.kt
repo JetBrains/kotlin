@@ -85,6 +85,35 @@ open class IrFactory(
             this.hasEnumEntries = hasEnumEntries
         }
 
+    fun createConstructorWithLateBinding(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        visibility: DescriptorVisibility,
+        isInline: Boolean,
+        isExpect: Boolean,
+        returnType: IrType?,
+        isPrimary: Boolean,
+        isExternal: Boolean = false,
+    ): IrConstructor =
+        IrConstructorWithLateBindingImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            isInline = isInline,
+            isExternal = isExternal,
+            isPrimary = isPrimary,
+            isExpect = isExpect,
+            factory = this
+        ).declarationCreated().apply {
+            if (returnType != null) {
+                this.returnType = returnType
+            }
+        }
+
     fun createConstructor(
         startOffset: Int,
         endOffset: Int,
@@ -178,6 +207,7 @@ open class IrFactory(
         isExternal: Boolean = false,
         containerSource: DeserializedContainerSource? = null,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        companionExtensionClass: IrClassSymbol? = null,
     ): IrSimpleFunction =
         IrFunctionImpl(
             startOffset = startOffset,
@@ -196,7 +226,8 @@ open class IrFactory(
             isExpect = isExpect,
             isFakeOverride = isFakeOverride,
             containerSource = containerSource,
-            factory = this
+            factory = this,
+            companionExtensionClass = companionExtensionClass,
         ).declarationCreated().apply {
             if (returnType != null) {
                 this.returnType = returnType
@@ -219,6 +250,7 @@ open class IrFactory(
         isInfix: Boolean,
         isExternal: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        companionExtensionClass: IrClassSymbol? = null,
     ): IrFunctionWithLateBinding =
         IrFunctionWithLateBindingImpl(
             startOffset = startOffset,
@@ -235,7 +267,8 @@ open class IrFactory(
             isInfix = isInfix,
             isExpect = isExpect,
             isFakeOverride = isFakeOverride,
-            factory = this
+            factory = this,
+            companionExtensionClass = companionExtensionClass,
         ).declarationCreated().apply {
             if (returnType != null) {
                 this.returnType = returnType

@@ -1,0 +1,128 @@
+KtFile: 'nestedCompanionBlock.kt'
+  null
+
+KtPackageDirective(43,55): 'package test'
+  null
+
+KtNameReferenceExpression(51,55): 'test'
+  null
+
+KtImportList(55,55): ''
+  null
+
+KtClass(57,171): 'class C {'
+  null
+
+KtClassBody(65,171): '{'
+  null
+
+KtCompanionBlock(71,169): 'companion {'
+  null
+
+KtDeclarationModifierList(71,80): 'companion'
+  null
+
+KtClassBody(81,169): '{'
+  null
+
+KtCompanionBlock(91,139): 'companion {'
+  null
+
+KtDeclarationModifierList(91,100): 'companion'
+  null
+
+KtClassBody(101,139): '{'
+  null
+
+KtNamedFunction(115,129): 'fun inner() {}'
+  null
+
+KtParameterList(124,126): '()'
+  null
+
+KtBlockExpression(127,129): '{}'
+  null
+
+KtNamedFunction(149,163): 'fun outer() {}'
+  null
+
+KtParameterList(158,160): '()'
+  null
+
+KtBlockExpression(161,163): '{}'
+  null
+
+KtNamedFunction(173,202): 'fun usage() {'
+  null
+
+KtParameterList(182,184): '()'
+  null
+
+KtBlockExpression(185,202): '{'
+  null
+
+KtDotQualifiedExpression(191,200): 'C.outer()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.outer(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.outer
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(191,192): 'C'
+  null
+
+KtCallExpression(193,200): 'outer()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.outer(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.outer
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(193,198): 'outer'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.outer(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.outer
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(198,200): '()'
+  null

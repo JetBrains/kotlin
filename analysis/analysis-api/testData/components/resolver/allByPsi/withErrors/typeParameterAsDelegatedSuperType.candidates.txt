@@ -1,0 +1,94 @@
+KtFile: 'typeParameterAsDelegatedSuperType.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,11): 'package bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'bar'
+  NO_CANDIDATES
+
+KtImportList(11,11): ''
+  NO_CANDIDATES
+
+KtClass(13,34): 'interface MyInterface'
+  NO_CANDIDATES
+
+KtClass(36,110): 'class MyClass<T : MyInterface>(val i: T) {'
+  NO_CANDIDATES
+
+KtTypeParameterList(49,66): '<T : MyInterface>'
+  NO_CANDIDATES
+
+KtTypeParameter(50,65): 'T : MyInterface'
+  NO_CANDIDATES
+
+KtTypeReference(54,65): 'MyInterface'
+  NO_CANDIDATES
+
+KtUserType(54,65): 'MyInterface'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(54,65): 'MyInterface'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(66,76): '(val i: T)'
+  NO_CANDIDATES
+
+KtParameterList(66,76): '(val i: T)'
+  NO_CANDIDATES
+
+KtParameter(67,75): 'val i: T'
+  NO_CANDIDATES
+
+KtTypeReference(74,75): 'T'
+  NO_CANDIDATES
+
+KtUserType(74,75): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(74,75): 'T'
+  NO_CANDIDATES
+
+KtClassBody(77,110): '{'
+  NO_CANDIDATES
+
+KtClass(82,108): 'inner class Inner : T by i'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(82,87): 'inner'
+  NO_CANDIDATES
+
+KtSuperTypeList(102,108): 'T by i'
+  NO_CANDIDATES
+
+KtDelegatedSuperTypeEntry(102,108): 'T by i'
+  NO_CANDIDATES
+
+KtTypeReference(102,103): 'T'
+  NO_CANDIDATES
+
+KtUserType(102,103): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(102,103): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(107,108): 'i'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = bar/MyClass
+        type = bar.MyClass<T>
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = i
+        receiverType = null
+        returnType = T
+        symbol = val i: T
+        contextParameters = []
+        callableId = bar/MyClass.i
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_NEW_INFERENCE
-// SKIP_TXT
 
 class ExcA : Exception()
 class ExcB : Exception()

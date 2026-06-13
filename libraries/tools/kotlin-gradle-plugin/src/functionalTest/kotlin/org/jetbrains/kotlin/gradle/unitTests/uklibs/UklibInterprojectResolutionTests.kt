@@ -983,12 +983,12 @@ class UklibInterprojectResolutionTests {
         }
         a.kotlin {
             dependencies {
-                testImplementation(project.dependencies.project(":b"))
+                testImplementation(project(":b"))
             }
         }
         b.kotlin {
             dependencies {
-                api(project.dependencies.project(":a"))
+                api(project(":a"))
             }
         }
         a.evaluate()

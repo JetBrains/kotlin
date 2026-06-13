@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -33,6 +34,15 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirTypeAlias) {
         if (!context.isTopLevel) {
             declaration.requireFeatureSupport(if (declaration.isLocal) LanguageFeature.LocalTypeAliases else LanguageFeature.NestedTypeAliases)
+
+            if (declaration.isExpect) {
+                /**
+                 * Report it only on nested type aliases to avoid multiple errors that prohibit similar things.
+                 * [FirErrors.WRONG_MODIFIER_TARGET] is always reported on expect top-level type aliases (`expect typealias`).
+                 * `expect` is explicit for top-level declaration but is not for nested ones.
+                 */
+                reporter.reportOn(declaration.source, FirErrors.EXPECTED_TYPEALIAS)
+            }
         }
 
         val expandedTypeRef = declaration.expandedTypeRef

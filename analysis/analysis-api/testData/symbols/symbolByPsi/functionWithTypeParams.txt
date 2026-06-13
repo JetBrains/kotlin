@@ -1,6 +1,5 @@
 KaTypeParameterSymbol:
   annotations: []
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -14,13 +13,12 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /foo
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -50,7 +48,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -64,14 +61,13 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -79,6 +75,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -98,7 +95,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(functionWithTypeParams.kt)
       getContainingJvmClassName: FunctionWithTypeParamsKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -106,6 +103,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: FunctionWithTypeParamsKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: foo

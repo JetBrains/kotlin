@@ -9,6 +9,7 @@ plugins {
     `maven-publish`
     id("signing-convention")
     id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
     id("binaryen-configuration")
 }
 

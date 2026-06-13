@@ -34,12 +34,10 @@ The Analysis API consists of several interconnected components, each serving a s
 - **Implementations**
     - Analysis API implementations
         - K2 implementation, based on the new K2 compiler frontend ([source](../../analysis-api-fir))
-        - K1 implementation, based on the classic, K1 compiler frontend ([source](../../analysis-api-fe10))
     - Platform interface implementations
         - Kotlin IntelliJ IDEA plugin ([source](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin/base/analysis-api-platform))
         - Analysis API Standalone ([source](../../analysis-api-standalone))
     - PSI Implementation, including stubs ([source](../../../compiler/psi/psi-impl))
-    - PSI Reference Implementations ([source](../../kt-references))
 
 - **Light Classes** ([source](../../symbol-light-classes))
     - A Java view for Kotlin declarations designed mainly for Java interoperability

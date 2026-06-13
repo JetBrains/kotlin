@@ -38,6 +38,7 @@ kotlin {
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
             JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
@@ -56,9 +57,6 @@ projectTests {
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
     testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
     testData(project(":compiler:fir:raw-fir:psi2fir").isolated, "testData/rawBuilder")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/metadataDiagnostic")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/resolve")
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData/resolveWithStdlib")
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/diagnostics")
     testData(project(":plugins:scripting:scripting-tests").isolated, "testData/codegen")

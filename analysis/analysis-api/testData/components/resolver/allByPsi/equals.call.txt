@@ -244,7 +244,22 @@ KtUserType(142,149): 'Another'
   null
 
 KtNameReferenceExpression(142,149): 'Another'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Another
+        symbol = <constructor>(): Another
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(149,151): '()'
   null
@@ -595,7 +610,7 @@ KtNameReferenceExpression(318,320): 'm1'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(321,323): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -701,7 +716,7 @@ KtNameReferenceExpression(331,333): 'm1'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(334,336): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1035,7 +1050,7 @@ KtNameReferenceExpression(391,393): 'm2'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(394,396): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1141,7 +1156,7 @@ KtNameReferenceExpression(404,406): 'm2'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(407,409): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1524,7 +1539,7 @@ KtNameReferenceExpression(530,537): 'another'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(538,540): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1650,7 +1665,7 @@ KtNameReferenceExpression(555,562): 'another'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(563,565): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2104,7 +2119,7 @@ KtNameReferenceExpression(708,713): 'child'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(714,716): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2358,7 +2373,7 @@ KtNameReferenceExpression(755,762): 'myClass'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(763,765): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2431,7 +2446,7 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(776,777): '!'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2652,7 +2667,7 @@ KtNameReferenceExpression(804,811): 'another'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(812,814): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2906,7 +2921,7 @@ KtNameReferenceExpression(851,856): 'child'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(857,859): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3160,7 +3175,7 @@ KtNameReferenceExpression(899,906): 'another'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(907,909): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3414,7 +3429,7 @@ KtNameReferenceExpression(950,957): 'myClass'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(958,960): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -3487,7 +3502,7 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
       valueArgumentMapping = {}
 
 KtOperationReferenceExpression(973,974): '!'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

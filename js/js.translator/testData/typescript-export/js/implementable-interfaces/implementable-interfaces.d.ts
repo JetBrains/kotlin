@@ -58,6 +58,9 @@ declare namespace JS_TESTS {
             delegatingToSuperDefaultImplementation(): string;
             anotherDefaultImplementation(): string;
             readonly propertyWithDefaultGetter: string;
+            getT(): T;
+            setTWithDefaultImpl(value: T): void;
+            getTWithDefaultImpl(): T;
             readonly [foo.IFoo.Symbol]: true;
         }
         namespace IFoo {
@@ -71,6 +74,8 @@ declare namespace JS_TESTS {
                 const propertyWithDefaultGetter: {
                     get<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): string;
                 };
+                function setTWithDefaultImpl<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>, value: T): void;
+                function getTWithDefaultImpl<T extends unknown/* kotlin.Comparable<T> */>($this: foo.IFoo<T>): T;
             }
         }
         function makeFunInterfaceWithSam(): foo.FunIFace;
@@ -82,6 +87,26 @@ declare namespace JS_TESTS {
         function justCallAsyncFoo(foo: foo.IFoo<any>): Promise<string>;
         function justCallParentAsyncMethod(foo: foo.IFoo<any>): Promise<string>;
         function justCallSuspendWithDefaultImplementation(foo: foo.IFoo<any>): Promise<string>;
+        function callTypeScriptDefaultSuspend(value: foo.TypeScriptDefaultSuspend): Promise<string>;
+        interface TypeScriptDefaultSuspend {
+            marker(): string;
+            suspendDefault(): Promise<string>;
+            readonly [foo.TypeScriptDefaultSuspend.Symbol]: true;
+        }
+        namespace TypeScriptDefaultSuspend {
+            const Symbol: unique symbol;
+            namespace DefaultImpls {
+                function suspendDefault($this: foo.TypeScriptDefaultSuspend): Promise<string>;
+            }
+        }
+        function callTsAbstractSuspend(value: foo.TsSuspendDispatch): Promise<string>;
+        interface TsSuspendDispatch {
+            abstractSuspend(): Promise<string>;
+            readonly [foo.TsSuspendDispatch.Symbol]: true;
+        }
+        namespace TsSuspendDispatch {
+            const Symbol: unique symbol;
+        }
         function callingWithDefaultsWithoutParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithParameter(foo: foo.IFoo<any>): string;
         function callingWithDefaultsAndDefaultImplementationWithoutParameter(foo: foo.IFoo<any>): string;
@@ -107,11 +132,14 @@ declare namespace JS_TESTS {
             asyncFoo(): Promise<string>;
             parentAsyncMethod(): Promise<string>;
             delegatingToSuperDefaultImplementation(): string;
+            getT(): string;
             withDefaultsAndDefaultImplementation(value?: string): string;
             suspendWithDefaultImplementation(): Promise<string>;
             genericWithDefaultImplementation<T>(x: T): string;
             anotherDefaultImplementation(): string;
             get propertyWithDefaultGetter(): string;
+            setTWithDefaultImpl(value: string): void;
+            getTWithDefaultImpl(): string;
             withDefaultImplementation(): string;
             get propertyWithDefaultSetter(): string;
             set propertyWithDefaultSetter(value: string);
@@ -135,6 +163,11 @@ declare namespace JS_TESTS {
         interface ChildOfNoRuntime extends foo.NoRuntimeIface {
             child(): string;
         }
+        interface Listener {
+            readonly id: string;
+            onStart(): string;
+        }
+        function beginWork(listener: foo.Listener): string;
         class KotlinNoRuntimeImpl implements foo.NoRuntimeIface {
             constructor(a: string);
             get a(): string;
@@ -194,10 +227,22 @@ declare namespace JS_TESTS {
         interface NoRuntimeLeaf extends foo.MidNormal {
             leaf(): string;
         }
-        interface ShouldBeNotImplementable {
+        interface ShouldBeNotImplementableWithIgnoredProperty {
             leaf(): string;
             readonly __doNotUseOrImplementIt: {
-                readonly "foo.ShouldBeNotImplementable": unique symbol;
+                readonly "foo.ShouldBeNotImplementableWithIgnoredProperty": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredFun {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredFun": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredSuspend {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredSuspend": unique symbol;
             };
         }
     }

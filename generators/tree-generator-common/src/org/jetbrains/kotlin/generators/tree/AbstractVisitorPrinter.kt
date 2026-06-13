@@ -33,7 +33,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
     open val constructorParameters: List<PrimaryConstructorParameter>
         get() = emptyList()
 
-    open val optIns: List<ClassRef<*>>
+    open val optIns: List<PrintableAnnotation>
         get() = emptyList()
 
     /**
@@ -166,7 +166,9 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
             for (annotation in annotations) {
                 printAnnotation(annotation)
             }
-            optIns.forEach { println("@OptIn(", it.render(), "::class)") }
+            if (optIns.isNotEmpty()) {
+                println("@OptIn(${optIns.joinToString { it.asClassRefString }})")
+            }
             print(implementationKind.title, " ")
             print(visitorType.simpleName, visitorTypeParameters.typeParameters())
             if (constructorParameters.isNotEmpty()) {

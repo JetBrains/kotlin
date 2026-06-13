@@ -47,6 +47,7 @@ lib/kotlin-stdlib-js-sources.jar
 lib/kotlin-stdlib-js.klib
 lib/kotlin-stdlib-sources.jar
 lib/kotlin-stdlib-wasm-js.klib
+lib/kotlin-stdlib-wasm-wasi.klib
 lib/kotlin-stdlib.jar
 lib/kotlin-test-js-sources.jar
 lib/kotlin-test-js.klib

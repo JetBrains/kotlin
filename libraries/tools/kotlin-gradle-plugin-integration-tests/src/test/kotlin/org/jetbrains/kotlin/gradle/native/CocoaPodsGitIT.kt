@@ -568,7 +568,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
                     async { repo to runCatching { client.get(repo).status }.recover { it }.getOrNull() }
                 }
                 .awaitAll()
-                .filter { (_, status) -> status != HttpStatusCode.OK }
+                .filter { [_, status] -> status != HttpStatusCode.OK }
             Assumptions.assumeTrue(nonAvailableRepos.isEmpty()) {
                 "The following repositories of ${repos.joinToString()} are not available: ${nonAvailableRepos.joinToString()}"
             }

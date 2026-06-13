@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes.utils
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -28,19 +29,23 @@ import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 val HierarchicalScope.parentsWithSelf: Sequence<HierarchicalScope>
     get() = generateSequence(this) { it.parent }
 
+@K1Deprecation
 val HierarchicalScope.parents: Sequence<HierarchicalScope>
     get() = parentsWithSelf.drop(1)
 
 /**
  * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
  */
+@K1Deprecation
 fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = collectFromMeAndParent {
     if (it is LexicalScope) listOfNotNull(it.implicitReceiver) + it.contextReceiversGroup else null
 }.flatten()
 
+@K1Deprecation
 fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = collectAllFromMeAndParent {
     if (it is LexicalScope && it.isOwnerDescriptorAccessibleByLabel && it.ownerDescriptor.name == labelName) {
         listOf(it.ownerDescriptor)
@@ -50,6 +55,7 @@ fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Declaration
 }
 
 // Result is guaranteed to be filtered by kind and name.
+@K1Deprecation
 fun HierarchicalScope.collectDescriptorsFiltered(
     kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
     nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
@@ -65,6 +71,7 @@ fun HierarchicalScope.collectDescriptorsFiltered(
 }
 
 @Deprecated("Use getContributedProperties instead")
+@K1Deprecation
 fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     return findFirstFromMeAndParent { originalScope ->
         // Unpacking LexicalScopeWrapper may be important to check that it is not ImportingScope
@@ -85,9 +92,11 @@ fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     }
 }
 
+@K1Deprecation
 fun HierarchicalScope.findClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
     findFirstFromMeAndParent { it.getContributedClassifier(name, location) }
 
+@K1Deprecation
 fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     scopeForResolution: HierarchicalScope,
     location: LookupLocation
@@ -112,6 +121,7 @@ fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     return false
 }
 
+@K1Deprecation
 fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(
     name: Name,
     location: LookupLocation
@@ -119,14 +129,18 @@ fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(
     return findFirstFromMeAndParent { it.getContributedClassifierIncludeDeprecated(name, location) }
 }
 
+@K1Deprecation
 fun HierarchicalScope.findPackage(name: Name): PackageViewDescriptor? = findFirstFromImportingScopes { it.getContributedPackage(name) }
 
+@K1Deprecation
 fun HierarchicalScope.collectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> =
     collectAllFromMeAndParent { it.getContributedVariables(name, location) }
 
+@K1Deprecation
 fun HierarchicalScope.collectFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> =
     collectAllFromMeAndParent { it.getContributedFunctions(name, location) }
 
+@K1Deprecation
 fun HierarchicalScope.findVariable(
     name: Name,
     location: LookupLocation,
@@ -138,6 +152,7 @@ fun HierarchicalScope.findVariable(
     return null
 }
 
+@K1Deprecation
 fun HierarchicalScope.findFunction(
     name: Name,
     location: LookupLocation,
@@ -149,9 +164,11 @@ fun HierarchicalScope.findFunction(
     return null
 }
 
+@K1Deprecation
 fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 @JvmOverloads
+@K1Deprecation
 fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope =
     MemberScopeToImportingScopeAdapter(parentScope, this)
 
@@ -189,6 +206,7 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
     }
 }
 
+@K1Deprecation
 inline fun HierarchicalScope.processForMeAndParent(process: (HierarchicalScope) -> Unit) {
     var currentScope = this
     while (true) {
@@ -213,6 +231,7 @@ private inline fun <T : Any> HierarchicalScope.collectFromMeAndParent(
     return result ?: emptyList()
 }
 
+@K1Deprecation
 inline fun <T : Any> HierarchicalScope.collectAllFromMeAndParent(
     collect: (HierarchicalScope) -> Collection<T>
 ): Collection<T> {
@@ -221,21 +240,25 @@ inline fun <T : Any> HierarchicalScope.collectAllFromMeAndParent(
     return result ?: emptySet()
 }
 
+@K1Deprecation
 inline fun <T : Any> HierarchicalScope.findFirstFromMeAndParent(fetch: (HierarchicalScope) -> T?): T? {
     processForMeAndParent { fetch(it)?.let { return it } }
     return null
 }
 
+@K1Deprecation
 inline fun <T : Any> HierarchicalScope.collectAllFromImportingScopes(
     collect: (ImportingScope) -> Collection<T>
 ): Collection<T> {
     return collectAllFromMeAndParent { if (it is ImportingScope) collect(it) else emptyList() }
 }
 
+@K1Deprecation
 inline fun <T : Any> HierarchicalScope.findFirstFromImportingScopes(fetch: (ImportingScope) -> T?): T? {
     return findFirstFromMeAndParent { if (it is ImportingScope) fetch(it) else null }
 }
 
+@K1Deprecation
 fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): LexicalScope {
     val lastLexicalScope = parentsWithSelf.last { it is LexicalScope }
     val firstImporting = lastLexicalScope.parent as ImportingScope
@@ -243,8 +266,10 @@ fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): Lexical
     return replaceImportingScopes(newFirstImporting)
 }
 
+@K1Deprecation
 fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope = addImportingScopes(listOf(importScope))
 
+@K1Deprecation
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
     return object : ImportingScope by this {
         override val parent: ImportingScope?
@@ -252,6 +277,7 @@ fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
     }
 }
 
+@K1Deprecation
 fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): LexicalScope {
     val newImportingScopeChain = importingScopeChain ?: ImportingScope.Empty
     if (this is LexicalScopeWrapper) {
@@ -260,6 +286,7 @@ fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): L
     return LexicalScopeWrapper(this, newImportingScopeChain)
 }
 
+@K1Deprecation
 fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescriptor?): LexicalScope {
     return LexicalScopeImpl(
         parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel,
@@ -292,6 +319,7 @@ private class LexicalScopeWrapper(
     override fun toString() = kind.toString()
 }
 
+@K1Deprecation
 fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = null): ImportingScope? {
     return scopes.asReversed()
         .fold(tail) { current, scope ->
@@ -300,6 +328,7 @@ fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = n
         }
 }
 
+@K1Deprecation
 class ErrorLexicalScope : LexicalScope {
     override val parent: HierarchicalScope = object : HierarchicalScope {
         override val parent: HierarchicalScope? = null

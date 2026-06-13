@@ -6,22 +6,31 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 enum class ConstraintSystemCompletionMode(
+    // Enabled for FULL only
     val allPostponedAtomsShouldBeAnalyzed: Boolean,
-    // Actually, it's related to all ConeFunctionTypeRelatedPostponedResolvedAtom including callable references
+    // Actually, it's related to all ConeFunctionTypeRelatedPostponedResolvedAtom including callable references.
+    // Enabled for FULL and PCLA_POSTPONED_CALL
+    // Invariant: allPostponedAtomsShouldBeAnalyzed => allLambdasShouldBeAnalyzed
     val allLambdasShouldBeAnalyzed: Boolean = allPostponedAtomsShouldBeAnalyzed,
+    // Enabled for FULL and UNTIL_FIRST_LAMBDA
     val shouldForkPointConstraintsBeResolved: Boolean,
+    // FULL-only
     val fixNotInferredTypeVariablesToErrorType: Boolean,
+    // PARTIAL-only
+    val preventFixingTypeVariablesRelatedToReturnType: Boolean,
 ) {
     FULL(
         allPostponedAtomsShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = true,
         fixNotInferredTypeVariablesToErrorType = true,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     ),
     PCLA_POSTPONED_CALL(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = true,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     ),
 
     /**
@@ -39,9 +48,10 @@ enum class ConstraintSystemCompletionMode(
         allLambdasShouldBeAnalyzed = false,
         shouldForkPointConstraintsBeResolved = false,
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = true,
     ),
 
-    @ExclusiveForOverloadResolutionByLambdaReturnType
+    @ExclusiveForOverloadResolutionByLambdaReturnType // Becomes unused in K2 since ELA
     UNTIL_FIRST_LAMBDA(
         allPostponedAtomsShouldBeAnalyzed = false,
         allLambdasShouldBeAnalyzed = false,
@@ -49,6 +59,7 @@ enum class ConstraintSystemCompletionMode(
         shouldForkPointConstraintsBeResolved = true,
         // We shouldn't do it here because of input type semi-fixing
         fixNotInferredTypeVariablesToErrorType = false,
+        preventFixingTypeVariablesRelatedToReturnType = false,
     );
 
     @OptIn(ExclusiveForOverloadResolutionByLambdaReturnType::class)

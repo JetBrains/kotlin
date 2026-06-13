@@ -5,7 +5,9 @@
 
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {
@@ -18,11 +20,14 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
+
+    testFixturesCompileOnly(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 generatedDiagnosticContainersAndCheckerComponents()

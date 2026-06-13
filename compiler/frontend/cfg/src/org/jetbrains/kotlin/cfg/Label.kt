@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
+@K1Deprecation
 interface Label {
     val pseudocode: Pseudocode
 

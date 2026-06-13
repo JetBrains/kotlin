@@ -16,6 +16,11 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+private const val BENCHMARK_SIZE = 10000
+
 /**
  * This test checks work with long numbers using Fibonacci sequence
  *
@@ -25,10 +30,11 @@ package org.jetbrains.ring
  * but when we have a progression it's used directly with its iterator and so.
  */
 
-open class FibonacciBenchmark {
-
-    //Benchmark
-    fun calcClassic(): Long {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Fibonacci : SkipWhenBaseOnly() {
+    @Benchmark
+    fun calcClassic(bh: Blackhole) {
         var a = 1L
         var b = 2L
         val size = BENCHMARK_SIZE
@@ -37,11 +43,11 @@ open class FibonacciBenchmark {
             a = b
             b = next
         }
-        return b
+        bh.consume(b)
     }
 
-    //Benchmark
-    fun calc(): Long {
+    @Benchmark
+    fun calc(bh: Blackhole) {
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
         var b = 2L
@@ -51,11 +57,12 @@ open class FibonacciBenchmark {
             a = b
             b = next
         }
-        return b
+        bh.consume(b)
     }
 
-    //Benchmark
-    fun calcWithProgression(): Long {
+    @Benchmark
+    fun calcWithProgression(bh: Blackhole) {
+        skipWhenBaseOnly()
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
         var b = 2L
@@ -65,11 +72,12 @@ open class FibonacciBenchmark {
             a = b
             b = next
         }
-        return b
+        bh.consume(b)
     }
 
-    //Benchmark
-    fun calcSquare(): Long {
+    @Benchmark
+    fun calcSquare(bh: Blackhole) {
+        skipWhenBaseOnly()
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
         var b = 2L
@@ -81,6 +89,6 @@ open class FibonacciBenchmark {
             a = b
             b = next
         }
-        return b
+        bh.consume(b)
     }
 }

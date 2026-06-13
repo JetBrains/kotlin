@@ -2,7 +2,6 @@ KaKotlinPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: null
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   getter: null
@@ -13,7 +12,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -39,7 +38,7 @@ KaKotlinPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getDynamicPropertyAccess
   javaSetterName: setDynamicPropertyAccess
   isInline: false

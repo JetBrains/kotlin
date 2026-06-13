@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // ISSUE: KT-52543
 
 abstract class A {

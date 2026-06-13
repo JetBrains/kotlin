@@ -21,8 +21,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar {}
-
 projectTests {
     testData(isolated, "testData")
 
@@ -47,6 +45,4 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCliTestsKt", generateTestsInBuildDirectory = true) {
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
     }
-
-    withStdlibCommon()
 }

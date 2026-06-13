@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 
 infix fun Int.suspend(c: () -> Unit) {}
 

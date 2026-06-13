@@ -53,6 +53,8 @@ class JsModule(
 
     private val dependencyFiles: List<Path>
         get() = dependencies.map { it.location }.plus(stdlibKlibLocation)
+    override val expectedOutputFileName: String
+        get() = "$moduleName.js"
 
     override fun link(
         strategyConfig: ExecutionPolicy,

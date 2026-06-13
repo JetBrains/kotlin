@@ -244,7 +244,7 @@ object StandaloneProjectFactory {
             addAll(jdkRoots)
         }
 
-        val (roots, singleJavaFileRoots) =
+        val [roots, singleJavaFileRoots] =
             rootsWithSingleJavaFileRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
 
         val corePackageIndex = project.getService(PackageIndex::class.java) as CorePackageIndex
@@ -523,7 +523,7 @@ object StandaloneProjectFactory {
             // To work with that JRT handler, a hacky workaround here is to add "modules" before the module name so that it can
             // find the actual file path.
             // See [LLFirJavaFacadeForBinaries#getBinaryPath] and [StandaloneProjectFactory#getBinaryPath] for a similar hack.
-            val (libHomePath, pathInImage) = CoreJrtFileSystem.splitPath(pathString)
+            val [libHomePath, pathInImage] = CoreJrtFileSystem.splitPath(pathString)
             libHomePath + JAR_SEPARATOR + "modules/$pathInImage"
         } else
             pathString

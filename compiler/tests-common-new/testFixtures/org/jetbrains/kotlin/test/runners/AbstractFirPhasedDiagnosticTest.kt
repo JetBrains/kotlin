@@ -35,18 +35,21 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
 
-        setupJvmPipelineSteps(parser)
+        setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
         configureCommonDiagnosticTestPaths()
 
         configureFirHandlersStep {
             setupHandlersForDiagnosticTest()
-            useHandlers(::NoFirCompilationErrorsHandler, ::TagsGeneratorChecker)
+            useHandlers(
+                ::TagsGeneratorChecker,
+                ::NoFirCompilationErrorsHandler
+            )
         }
 
         configureIrHandlersStep {
             useHandlers(
                 ::IrDiagnosticsHandler,
-                ::NoIrCompilationErrorsHandler,
+                ::NoIrCompilationErrorsHandler
             )
         }
 

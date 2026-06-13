@@ -74,7 +74,7 @@ abstract class BinaryArtifactHandler<A : ResultingArtifact.Binary<A>>(
 
 // ----------------------------- grouping handlers -----------------------------
 
-abstract class GroupingPhaseHandler<A : ResultingArtifact<A>>(
+abstract class GroupingStageHandler<A : ResultingArtifact<A>>(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean,
     doNotRunIfThereWerePreviousFailures: Boolean

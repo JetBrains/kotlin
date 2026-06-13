@@ -23,9 +23,12 @@ interface ReferencedSymbolRemapper {
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrClass.sealedSubclasses]
+     * - [IrFunctionWithLateBinding.companionExtensionClass]
      * - [IrScript.targetClass]
      * - [IrReplSnippet.stateObject]
      * - [IrReplSnippet.targetClass]
+     * - [IrSimpleFunction.companionExtensionClass]
+     * - [IrAnnotation.classSymbol]
      * - [IrGetObjectValue.symbol]
      * - [IrCall.superQualifierSymbol]
      * - [IrInstanceInitializerCall.classSymbol]

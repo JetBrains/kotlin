@@ -44,6 +44,7 @@ package b;
 
 @B(value = @a.A())
 /**
+ * @b/B(value = a/A())
  * public final class b/C : kotlin/Any {
  *
  *   // signature: <init>()V

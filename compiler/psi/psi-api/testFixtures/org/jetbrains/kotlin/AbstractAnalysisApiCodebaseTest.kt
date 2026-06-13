@@ -11,18 +11,19 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.*
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseTest.SourceDirectory
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import java.io.File
 
 /**
@@ -32,11 +33,12 @@ import java.io.File
  *
  * See [AbstractAnalysisApiCodebaseDumpFileComparisonTest] and [AbstractAnalysisApiCodebaseValidationTest]
  */
-abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTestCase() {
+@AffectedByAnalysisApi
+abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDisposable() {
     protected fun doTest() {
-        val environment = createProjectEnvironment(
+        val environment = JvmFrontendPipelinePhase.createProjectEnvironment(
             CompilerConfiguration.create(),
-            testRootDisposable,
+            disposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
         )
         val psiManager = PsiManager.getInstance(environment.project)
@@ -69,6 +71,54 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
         if (this.isDirectory) return null
         if (this.extension != "kt" && this.extension != "java") return null
         return createPsiFile(this.path, psiManager, fileSystem)
+    }
+
+    /**
+     * Adds a new annotation to the given declaration with the given text and returns the resulting file text.
+     */
+    protected fun fileTextWithNewAnnotation(declaration: KtDeclaration, newAnnotationText: String): String =
+        fileTextWithNewAnnotations(listOf(CodebaseDeclarationAnnotation(declaration, newAnnotationText)))
+
+    /**
+     * Pairs an unmarked [declaration] with the [annotation] text (including the leading `@`) that should be inserted above it.
+     *
+     * @see AbstractAnalysisApiCodebaseTest.fileTextWithNewAnnotations
+     */
+    data class CodebaseDeclarationAnnotation(val declaration: KtDeclaration, val annotation: String)
+
+    /**
+     * Inserts each `(declaration, annotation)` pair into the containing file's text in a single pass and returns the rewritten content.
+     *
+     * All [insertions] must refer to declarations of the same [KtFile]. The new annotation line is indented to match the declaration it
+     * precedes. Insertions are applied in reverse offset order so earlier offsets remain valid.
+     */
+    protected fun fileTextWithNewAnnotations(insertions: List<CodebaseDeclarationAnnotation>): String {
+        require(insertions.isNotEmpty())
+
+        val text = insertions.first().declaration.containingKtFile.text
+
+        val edits = insertions.map { (declaration, annotation) ->
+            // `anchor.nextLeaf()?.endOffset` lands right past any trailing whitespace after a KDoc or the last existing annotation, which
+            // puts us at the column of the declaration's first keyword. When no anchor is present, `declaration.startOffset` is already at
+            // the keyword. We then back up to the start of the keyword's line and preserve that line's indent, so the inserted annotation
+            // aligns with the keyword regardless of nesting.
+            val anchor = declaration.annotationEntries.lastOrNull() ?: declaration.docComment
+            val keywordOffset = anchor?.nextLeaf()?.endOffset ?: declaration.startOffset
+
+            val lineStart = text.lastIndexOf('\n', keywordOffset - 1) + 1
+            val indent = leadingIndentOf(text, keywordOffset)
+            lineStart to "$indent$annotation\n"
+        }.sortedByDescending { it.first }
+
+        val sb = StringBuilder(text)
+        for ([offset, payload] in edits) {
+            sb.insert(offset, payload)
+        }
+        return sb.toString()
+    }
+
+    protected fun KtAnnotated.hasAnnotation(annotationName: String): Boolean = annotationEntries.any { annotation ->
+        annotation.shortName.toString() == annotationName
     }
 
     sealed class SourceDirectory(val sourcePaths: List<String>) {
@@ -121,6 +171,15 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : KtUsefulTe
         val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
         val psiFile = psiManager.findFile(file)
         return psiFile
+    }
+
+    private fun leadingIndentOf(text: String, offset: Int): String {
+        val lineStart = text.lastIndexOf('\n', offset - 1) + 1
+        var i = lineStart
+        while (i < offset && (text[i] == ' ' || text[i] == '\t')) {
+            i += 1
+        }
+        return text.substring(lineStart, i)
     }
 }
 

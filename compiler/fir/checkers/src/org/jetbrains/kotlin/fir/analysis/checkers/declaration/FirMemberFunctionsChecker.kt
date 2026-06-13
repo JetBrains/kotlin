@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 // See old FE's [DeclarationsChecker]
-object FirMemberFunctionsChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirMemberFunctionsChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val containingDeclaration = context.containingDeclarations.lastIsInstanceOrNull<FirClassSymbol<*>>() ?: return

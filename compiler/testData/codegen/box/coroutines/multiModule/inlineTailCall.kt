@@ -6,7 +6,7 @@ suspend inline fun foo(v: String): String = v
 
 suspend inline fun bar(): String = foo("O")
 
-// MODULE: main(lib, support)
+// MODULE: main(lib)
 // FILE: main.kt
 import helpers.*
 import kotlin.coroutines.*

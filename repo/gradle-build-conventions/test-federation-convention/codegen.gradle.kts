@@ -60,7 +60,6 @@ tasks.register("generateDomainSources") {
                 this += "|"
                 for (domain in domains) {
                     this += "|internal object ${domain.name}DomainInfo : DomainInfo {"
-                    this += "|    override val home = \"${domain.home}\""
                     this += "|    override val domain = Domain.${domain.name}"
                     this += "|    override val include: List<String> = listOf(${domain.includes.joinToString { "\"$it\"" }})"
                     this += "|    override val exclude: List<String> = listOf(${domain.excludes.joinToString { "\"$it\"" }})"
@@ -85,7 +84,6 @@ tasks.register("generateDomainSources") {
 private fun JsonNode.toDomainDTO(key: String): DomainDTO {
     return DomainDTO(
         name = key,
-        home = get("home").asText(),
         includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
         excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
         fullyAffectedBy = get("fullyAffectedBy")?.valueStream()?.toList().orEmpty().map { it.asText() },
@@ -94,7 +92,6 @@ private fun JsonNode.toDomainDTO(key: String): DomainDTO {
 
 private data class DomainDTO(
     val name: String,
-    val home: String,
     val includes: List<String>,
     val excludes: List<String>,
     val fullyAffectedBy: List<String>,

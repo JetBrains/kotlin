@@ -61,11 +61,13 @@ class JavaElementFinder(
         val classOrObjectDeclarations = kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope)
 
         for (declaration in classOrObjectDeclarations) {
-            if (declaration !is KtEnumEntry) {
-                val lightClass = kotlinAsJavaSupport.getLightClass(declaration)
-                if (lightClass != null) {
-                    answer.add(lightClass)
-                }
+            if (declaration is KtEnumEntry) {
+                continue
+            }
+
+            val lightClass = kotlinAsJavaSupport.getLightClass(declaration, scope)
+            if (lightClass != null) {
+                answer.add(lightClass)
             }
         }
     }
@@ -92,7 +94,7 @@ class JavaElementFinder(
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             if (predicate(classOrObject)) {
-                val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject) ?: continue
+                val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject, scope) ?: continue
                 val implsClass = interfaceClass.findInnerClassByName(syntheticName, false) ?: continue
                 answer.add(implsClass)
             }
@@ -143,7 +145,7 @@ class JavaElementFinder(
 
         val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
         for (declaration in declarations) {
-            val aClass = kotlinAsJavaSupport.getLightClass(declaration) ?: continue
+            val aClass = kotlinAsJavaSupport.getLightClass(declaration, scope) ?: continue
             answer.add(aClass)
         }
 

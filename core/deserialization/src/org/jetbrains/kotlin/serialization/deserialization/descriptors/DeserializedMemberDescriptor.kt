@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
@@ -15,10 +16,12 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
+@K1Deprecation
 interface DescriptorWithContainerSource : MemberDescriptor {
     val containerSource: DeserializedContainerSource?
 }
 
+@K1Deprecation
 interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescriptor, DescriptorWithContainerSource {
     val proto: MessageLite
 
@@ -36,8 +39,10 @@ interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescripto
     override val containerSource: DeserializedContainerSource?
 }
 
+@K1Deprecation
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
 
+@K1Deprecation
 class DeserializedSimpleFunctionDescriptor(
     containingDeclaration: DeclarationDescriptor,
     original: SimpleFunctionDescriptor?,
@@ -73,6 +78,7 @@ class DeserializedSimpleFunctionDescriptor(
     }
 }
 
+@K1Deprecation
 class DeserializedPropertyDescriptor(
         containingDeclaration: DeclarationDescriptor,
         original: PropertyDescriptor?,
@@ -114,6 +120,7 @@ class DeserializedPropertyDescriptor(
     override fun isExternal() = Flags.IS_EXTERNAL_PROPERTY.get(proto.flags)
 }
 
+@K1Deprecation
 class DeserializedClassConstructorDescriptor(
     containingDeclaration: ClassDescriptor,
     original: ConstructorDescriptor?,
@@ -154,6 +161,7 @@ class DeserializedClassConstructorDescriptor(
     override fun isSuspend(): Boolean = false
 }
 
+@K1Deprecation
 class DeserializedTypeAliasDescriptor(
     storageManager: StorageManager,
     containingDeclaration: DeclarationDescriptor,

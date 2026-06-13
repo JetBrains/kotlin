@@ -1,0 +1,5 @@
+expression: (-(+2))
+constant: -2
+constantValueKind: IntValue
+constantValueSource: PREFIX_EXPRESSION
+constantValueSourceText: -(+2)

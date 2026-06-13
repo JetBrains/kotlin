@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralAtomMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.K2Only
@@ -54,21 +54,30 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         return false
     }
 
+    @K1Deprecation
     fun <A : PostponedResolvedAtomMarker> analyzeNextReadyPostponedArgument(
         postponedArguments: List<A>,
         completionMode: ConstraintSystemCompletionMode,
         analyze: (A) -> Unit
     ): Boolean {
         if (completionMode.allLambdasShouldBeAnalyzed) {
-            val argumentWithTypeVariableAsExpectedType = findPostponedArgumentWithRevisableExpectedType(postponedArguments)
-
-            if (argumentWithTypeVariableAsExpectedType != null) {
-                analyze(argumentWithTypeVariableAsExpectedType)
-                return true
-            }
+            if (analyzeNextReadyPostponedArgumentWithRevisableExpectedType(postponedArguments, analyze)) return true
         }
 
         return analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze)
+    }
+
+    fun <A : PostponedResolvedAtomMarker> analyzeNextReadyPostponedArgumentWithRevisableExpectedType(
+        postponedArguments: List<A>,
+        analyze: (A) -> Unit,
+    ): Boolean {
+        val argumentWithTypeVariableAsExpectedType = findPostponedArgumentWithRevisableExpectedType(postponedArguments)
+
+        if (argumentWithTypeVariableAsExpectedType != null) {
+            analyze(argumentWithTypeVariableAsExpectedType)
+            return true
+        }
+        return false
     }
 
     fun <A : PostponedResolvedAtomMarker> analyzeRemainingNotAnalyzedPostponedArgument(

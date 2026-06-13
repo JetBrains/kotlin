@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.extensions.internal
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -36,9 +37,11 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
+@K1Deprecation
 annotation class InternalNonStableExtensionPoints
 
 @InternalNonStableExtensionPoints
+@K1Deprecation
 interface TypeResolutionInterceptorExtension {
     fun interceptFunctionLiteralDescriptor(
         expression: KtLambdaExpression,
@@ -54,6 +57,7 @@ interface TypeResolutionInterceptorExtension {
 }
 
 @InternalNonStableExtensionPoints
+@K1Deprecation
 interface CallResolutionInterceptorExtension {
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,

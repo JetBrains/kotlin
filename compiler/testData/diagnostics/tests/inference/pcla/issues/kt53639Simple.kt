@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
-// SKIP_TXT
 fun <From, To> InputWrapper<From>.doMapping(
     foo: (From) -> List<To>,
     bar: (List<To>) -> Boolean = { it.isNotEmpty() },

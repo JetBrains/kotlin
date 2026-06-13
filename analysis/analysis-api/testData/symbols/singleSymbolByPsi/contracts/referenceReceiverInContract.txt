@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /referenceReceiverInContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -15,10 +14,10 @@ KaNamedFunctionSymbol:
             KaReceiverParameterSymbol:
               annotations: []
               callableId: null
-              compilerVisibility: Public
               contextReceivers: []
               isActual: false
               isCompanion: false
+              isDelegated: false
               isExpect: false
               isExtension: false
               isExternal: false
@@ -42,9 +41,9 @@ KaNamedFunctionSymbol:
               getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
               getContainingJvmClassName: ReferenceReceiverInContractKt
               getContainingModule: KaSourceModule "Sources of main"
-              deprecationStatus: null
+              deprecation: null
               importableFqName: null
-      occurrencesRange: EXACTLY_ONCE
+      invocationKind: EXACTLY_ONCE
   ]
   hasStableParameterNames: true
   isActual: false
@@ -67,10 +66,10 @@ KaNamedFunctionSymbol:
   receiverParameter: KaReceiverParameterSymbol:
     annotations: []
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -94,7 +93,7 @@ KaNamedFunctionSymbol:
     getContainingFileSymbol: KaFileSymbol(referenceReceiverInContract.kt)
     getContainingJvmClassName: ReferenceReceiverInContractKt
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   returnType: KaUsualClassType:
     annotations: []
@@ -107,6 +106,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReferenceReceiverInContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: referenceReceiverInContract

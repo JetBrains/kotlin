@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.BinaryArtifacts.WasmCompilationSet
+import org.jetbrains.kotlin.test.model.WasmCompilationSet
+import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+open class WasmDebugRunner(testServices: TestServices, includeLocalVariableInformation: Boolean = false) :
+    WasmDebugRunnerBase(testServices, includeLocalVariableInformation) {
     private fun processCompilationSet(compilationSet: WasmCompilationSet, mode: String) {
         val outputDirBase = testServices.getWasmTestOutputDirectory()
         val devDir = File(outputDirBase, mode)
@@ -31,7 +32,7 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
-            val artifacts = modulesToArtifact.values.single() as BinaryArtifacts.Wasm.CompilationSets
+            val artifacts = modulesToArtifact.values.single() as WasmCompilationSetsBinaryArtifact
             processCompilationSet(artifacts.compilation, "dev")
             artifacts.dceCompilation?.let {
                 processCompilationSet(it, "dce")
@@ -39,3 +40,6 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
         }
     }
 }
+
+class WasmLocalVariableDebugRunner(testServices: TestServices) :
+        WasmDebugRunner(testServices, includeLocalVariableInformation = true)

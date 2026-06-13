@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtomWithPostponedChi
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.asCone
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -62,7 +61,7 @@ context(components: BodyResolveComponents)
 private fun runEagerLambdaAnalysisForFirstReadyLambda(
     candidates: Set<Candidate>,
 ): Boolean {
-    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isCollectionLiteralCall }) return false
+    if (candidates.any { !it.isSuccessful || it.hasNonTrivialContracts() || it.callInfo.isNonTrivialCollectionLiteralCall }) return false
     val call = candidates.first().callInfo.callSite as? FirFunctionCall ?: return false
 
     // NB: for each `lambdaAtomGroup` all the atoms refer to the same FirAnonymousFunction
@@ -73,6 +72,11 @@ private fun runEagerLambdaAnalysisForFirstReadyLambda(
 
     try {
         for (lambdaAtomGroup in lambdaAtomGroups) {
+            // We haven't found lambda atoms for some candidates.
+            // It might happen because some of them are ConeLambdaWithTypeVariableAsExpectedTypeAtom which we currently ignore.
+            if (lambdaAtomGroup.size < candidates.size) continue
+            check(lambdaAtomGroup.size == candidates.size)
+
             if (!lambdaAtomGroup.same { it.atom.parameterTypes.size }) continue
             if (!lambdaAtomGroup.all { it.atom.expectedType?.isSomeFunctionType(components.session) == true }) continue
             if (!runEagerLambdaAnalysisForLambdaAtomGroup(lambdaAtomGroup, call)) continue
@@ -98,13 +102,11 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
     val inferenceSession = components.context.inferenceSession
     val callCompleter = components.callCompleter
 
-    for ((candidate, atom) in lambdaAtomGroup) {
+    for ([candidate, atom] in lambdaAtomGroup) {
         call.replaceCalleeReference(candidate.temporaryNamedReference())
-        callCompleter.runCompletionForCall(
+        callCompleter.runCompletionUntilFirstLambdaIsReady(
             candidate,
-            ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA,
             call,
-            components.initialTypeOfCandidate(candidate)
         )
         for (inputType in atom.inputTypes) {
             inferenceSession.semiFixTypeVariablesAllowingFixationToOtherOnes(inputType, myCs = candidate.system)
@@ -115,7 +117,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
     if (!lambdaAtomGroup.inputTypesAreTheSame(semiFixedVariables)) return false
 
     val iterator = lambdaAtomGroup.iterator()
-    val (firstCandidate, firstAtom) = iterator.next()
+    val [firstCandidate, firstAtom] = iterator.next()
 
     val postponedArgumentsAnalyzer = callCompleter.createPostponedArgumentsAnalyzer(
         components.resolutionContext
@@ -134,7 +136,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
 
     // NB: Results from the first atom have been already applied to the candidate
     while (iterator.hasNext()) {
-        val (candidate, atom) = iterator.next()
+        val [candidate, atom] = iterator.next()
         call.replaceCalleeReference(candidate.temporaryNamedReference())
         val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
         postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
@@ -163,7 +165,7 @@ private fun runEagerLambdaAnalysisForLambdaAtomGroup(
 private fun Collection<LambdaAtomWithCandidate>.inputTypesAreTheSame(
     // PCLA-only
     semiFixedVariables: Map<TypeConstructorMarker, KotlinTypeMarker>,
-): Boolean = same { (candidate, lambda) ->
+): Boolean = same { [candidate, lambda] ->
     val substitutor = candidate.system.buildCurrentSubstitutor(semiFixedVariables).asCone()
     lambda.inputTypes.map { substitutor.substituteOrSelf(it) }
 }

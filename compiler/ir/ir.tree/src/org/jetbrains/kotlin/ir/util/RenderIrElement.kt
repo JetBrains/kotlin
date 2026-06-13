@@ -861,7 +861,8 @@ private fun IrSimpleFunction.renderSimpleFunctionFlags(renderer: FlagsRenderer):
         "expect".takeIf { isExpect },
         "fake_override".takeIf { isFakeOverride },
         "operator".takeIf { isOperator },
-        "infix".takeIf { isInfix }
+        "infix".takeIf { isInfix },
+        "companion".takeIf { isStatic },
     )
 
 private fun IrConstructor.renderConstructorFlags(renderer: FlagsRenderer) =

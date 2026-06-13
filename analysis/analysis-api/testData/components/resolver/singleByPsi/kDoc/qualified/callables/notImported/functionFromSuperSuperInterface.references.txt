@@ -1,7 +1,0 @@
-KDocName(50,61): 'foo.Foo.foo'
-  KDocReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in foo.Baz) fun foo()

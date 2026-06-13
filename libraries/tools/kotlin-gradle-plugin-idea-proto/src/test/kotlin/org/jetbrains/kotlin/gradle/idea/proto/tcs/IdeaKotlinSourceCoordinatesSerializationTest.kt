@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinSourceCoordinatesProto
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
-import org.junit.Test
+import kotlin.test.Test
 
 class IdeaKotlinSourceCoordinatesSerializationTest : AbstractSerializationTest<IdeaKotlinSourceCoordinates>() {
     override fun serialize(value: IdeaKotlinSourceCoordinates): ByteArray =

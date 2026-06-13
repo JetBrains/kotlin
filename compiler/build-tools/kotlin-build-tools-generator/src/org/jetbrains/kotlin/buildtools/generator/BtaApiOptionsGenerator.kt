@@ -18,13 +18,17 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 
 internal class BtaApiOptionsGenerator(
-    private val targetPackage: String,
+    override val targetPackage: String,
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaOptionsGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(
+        level: KotlinCompilerArgumentsLevel,
+        parentClass: ClassName?,
+        additionalInterfaces: List<ClassName>
+    ): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
@@ -34,6 +38,7 @@ internal class BtaApiOptionsGenerator(
                     addAnnotation(ANNOTATION_EXPERIMENTAL)
                 }
                 parentClass?.let { addSuperinterface(it) }
+                additionalInterfaces.forEach { addSuperinterface(it) }
                 val argument =
                     generateArgumentType(
                         className,
@@ -51,17 +56,23 @@ internal class BtaApiOptionsGenerator(
                         addKdoc("\n\n@since 2.3.20")
                     }
                     generateGetPutFunctions(argumentTypeName, level)
-                    if (level.isLeaf()) {
-                        function("build") {
-                            addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
-                            addModifiers(KModifier.ABSTRACT)
-                            returns(ClassName(targetPackage, className))
+                    function("build") {
+                        addKdoc("Constructs a new immutable [$className] instance with the options set in this builder.")
+                        addModifiers(KModifier.ABSTRACT)
+                        if (parentClass != null) {
+                            addModifiers(KModifier.OVERRIDE)
                         }
+                        if (!level.isLeaf()) {
+                            addKdoc("\n\n")
+                            addKdoc(KDOC_SINCE_2_4_20)
+                        }
+                        returns(ClassName(targetPackage, className))
                     }
                     if (parentClass == null) {
                         addApplyArgumentStringsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
+                        additionalInterfaces.forEach { addSuperinterface(it.nestedClass("Builder")) }
                     }
                 }
                 generateGetPutFunctions(argumentTypeName, level, deprecateSet = true)
@@ -133,6 +144,9 @@ internal class BtaApiOptionsGenerator(
                         type.java.isEnum -> {
                             generatedEnumType(type)
                         }
+                        type == List::class && (argumentType.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
+                            listTypeNameOf(generatedEnumType(argumentType.arguments.first().type?.classifier as KClass<*>))
+                        }
                         else -> {
                             argumentType.asTypeName()
                         }
@@ -162,7 +176,7 @@ internal class BtaApiOptionsGenerator(
             }
         }
 
-        enumsToGenerate.forEach { (type, typeSpecBuilder) ->
+        enumsToGenerate.forEach { [type, typeSpecBuilder] ->
             if (enumsExperimental.getOrDefault(type, false)) {
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
@@ -343,7 +357,8 @@ private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
             """
         Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
         
-        @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when the `arguments` contain errors and cannot be parsed
+        When compiling with Kotlin compiler 2.4.20 and above, parsing errors are collected on this instance and reported as compilation errors when the compilation is executed.
+        @throws org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException when compiling with Kotlin compiler below 2.4.20 and the `arguments` contain errors and cannot be parsed
         """.trimIndent()
         )
         addParameter(

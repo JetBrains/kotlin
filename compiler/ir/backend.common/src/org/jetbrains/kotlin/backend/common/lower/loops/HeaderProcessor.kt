@@ -118,7 +118,7 @@ internal class HeaderProcessor(
         //   val it = someIterable.iterator()
         val iteratorCall = variable.initializer as? IrCall
         val iterable = iteratorCall?.run {
-            arguments.zip(symbol.owner.parameters).last { (_, parameter) ->
+            arguments.zip(symbol.owner.parameters).last { [_, parameter] ->
                 parameter.kind == IrParameterKind.ExtensionReceiver || parameter.kind == IrParameterKind.DispatchReceiver
             }.first
         }

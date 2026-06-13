@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
+@K1Deprecation
 class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
                              private val javac: JavacWrapper) {
 
@@ -90,6 +92,7 @@ class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
 
 }
 
+@K1Deprecation
 class MockKotlinClassifier(override val classId: ClassId,
                            private val classOrObject: KtClassOrObject?,
                            private val ktFile: KtFile?,
@@ -174,6 +177,7 @@ class MockKotlinClassifier(override val classId: ClassId,
     override fun findAnnotation(fqName: FqName) = shouldNotBeCalled()
 }
 
+@K1Deprecation
 class MockKotlinClassifierType(override val classifier: JavaClassifier) : JavaClassifierType {
     override val typeArguments get() = shouldNotBeCalled()
     override val isRaw get() = shouldNotBeCalled()
@@ -184,6 +188,7 @@ class MockKotlinClassifierType(override val classifier: JavaClassifier) : JavaCl
     override val isDeprecatedInJavaDoc get() = shouldNotBeCalled()
 }
 
+@K1Deprecation
 class MockKotlinField(private val psiField: PsiField) : JavaField {
 
     override val initializerValue: Any?

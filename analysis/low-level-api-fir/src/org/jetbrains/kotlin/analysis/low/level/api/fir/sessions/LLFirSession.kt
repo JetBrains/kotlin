@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -53,6 +54,7 @@ import kotlin.uuid.Uuid
  * `KaFirSessionProvider`, but keep a strong reference to the [LLFirSession].
  */
 @OptIn(PrivateSessionConstructor::class)
+@KaImplementationDetail
 abstract class LLFirSession(
     val ktModule: KaModule,
     override val builtinTypes: BuiltinTypes,
@@ -180,14 +182,17 @@ private class LLFirSessionValidityModificationTracker(private val sessionRef: We
     }
 }
 
+@KaImplementationDetail
 abstract class LLFirModuleSession(
     ktModule: KaModule,
     builtinTypes: BuiltinTypes,
     kind: Kind
 ) : LLFirSession(ktModule, builtinTypes, kind)
 
+@KaImplementationDetail
 val FirElementWithResolveState.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession
 
+@KaImplementationDetail
 val FirBasedSymbol<*>.llFirSession: LLFirSession
     get() = moduleData.session as LLFirSession

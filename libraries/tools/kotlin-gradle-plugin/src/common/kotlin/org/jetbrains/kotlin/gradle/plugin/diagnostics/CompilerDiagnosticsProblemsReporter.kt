@@ -22,6 +22,7 @@ internal interface CompilerDiagnosticsProblemsReporter {
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     )
 
     interface Factory : VariantImplementationFactories.VariantImplementationFactory {
@@ -38,13 +39,14 @@ internal abstract class DefaultCompilerDiagnosticsProblemsReporter @Inject const
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     ) {
         val gradleSeverity = severity.toGradleSeverity() ?: return
         val diagnosticGroup = severity.toDiagnosticGroup()
         val problemId = ProblemId.create(
-            severity.problemId,
-            severity.toDisplayName(),
-            diagnosticGroup.toProblemGroup()
+            severity.resolvedProblemId(diagnosticId),
+            severity.resolvedDisplayName(diagnosticId),
+            diagnosticGroup.toProblemGroup(),
         )
 
         try {
@@ -72,6 +74,7 @@ internal abstract class NoOpCompilerDiagnosticsProblemsReporter : CompilerDiagno
         severity: CompilerMessageRenderer.Severity,
         message: String,
         location: CompilerMessageRenderer.SourceLocation?,
+        diagnosticId: String?,
     ) {
     }
 
@@ -102,6 +105,12 @@ internal fun CompilerMessageRenderer.Severity.toDisplayName(): String = when (th
     CompilerMessageRenderer.Severity.INFO -> "Kotlin compiler info"
     CompilerMessageRenderer.Severity.DEBUG -> "Kotlin compiler debug"
 }
+
+internal fun CompilerMessageRenderer.Severity.resolvedProblemId(diagnosticId: String?): String =
+    diagnosticId ?: problemId
+
+internal fun CompilerMessageRenderer.Severity.resolvedDisplayName(diagnosticId: String?): String =
+    diagnosticId?.let { "Kotlin compiler: $it" } ?: toDisplayName()
 
 internal fun CompilerMessageRenderer.Severity.toGradleSeverity(): Severity? = when (this) {
     CompilerMessageRenderer.Severity.ERROR -> Severity.ERROR

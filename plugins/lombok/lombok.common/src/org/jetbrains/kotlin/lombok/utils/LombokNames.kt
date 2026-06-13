@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 object LombokNames {
+    val LOMBOK = FqName("lombok")
 
     val ACCESSORS = FqName("lombok.experimental.Accessors")
     val GETTER = FqName("lombok.Getter")
@@ -25,6 +26,14 @@ object LombokNames {
     val SUPER_BUILDER = FqName("lombok.experimental.SuperBuilder")
     val SINGULAR = FqName("lombok.Singular")
     val LOG = FqName("lombok.extern.java.Log")
+    val SLF4J = FqName("lombok.extern.slf4j.Slf4j")
+    val LOG4J = FqName("lombok.extern.log4j.Log4j")
+    val COMMONS_LOG = FqName("lombok.extern.apachecommons.CommonsLog")
+    val FLOGGER = FqName("lombok.extern.flogger.Flogger")
+    val JBOSS_LOG = FqName("lombok.extern.jbosslog.JBossLog")
+    val LOG4J2 = FqName("lombok.extern.log4j.Log4j2")
+    val XSLF4J = FqName("lombok.extern.slf4j.XSlf4j")
+    val TO_STRING = FqName("lombok.ToString")
 
     val TABLE = FqName("Table".guavaPackage())
 
@@ -41,11 +50,17 @@ object LombokNames {
     val ALL_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(ALL_ARGS_CONSTRUCTOR)
     val REQUIRED_ARGS_CONSTRUCTOR_ID = ClassId.topLevel(REQUIRED_ARGS_CONSTRUCTOR)
 
-    val TABLE_CLASS_ID = ClassId.topLevel(TABLE)
-
-    val CAN_EQUAL = Name.identifier("canEqual")
-
     val LOG_ID = ClassId.topLevel(LOG)
+    val SLF4J_ID = ClassId.topLevel(SLF4J)
+    val LOG4J_ID = ClassId.topLevel(LOG4J)
+    val COMMONS_LOG_ID = ClassId.topLevel(COMMONS_LOG)
+    val FLOGGER_ID = ClassId.topLevel(FLOGGER)
+    val JBOSS_LOG_ID = ClassId.topLevel(JBOSS_LOG)
+    val LOG4J2_ID = ClassId.topLevel(LOG4J2)
+    val XSLF4J_ID = ClassId.topLevel(XSLF4J)
+    val TO_STRING_ID = ClassId.topLevel(TO_STRING)
+    val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Include"))
+    val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))
 
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(

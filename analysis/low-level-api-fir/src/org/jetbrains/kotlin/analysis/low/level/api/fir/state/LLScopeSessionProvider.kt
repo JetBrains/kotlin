@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
+@KaImplementationDetail
 interface LLScopeSessionProvider {
     fun getScopeSession(session: LLFirSession): ScopeSession
 }

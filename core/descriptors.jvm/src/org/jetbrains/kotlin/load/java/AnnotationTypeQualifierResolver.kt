@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@K1Deprecation
 class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancementState) :
     AbstractAnnotationTypeQualifierResolver<AnnotationDescriptor>(javaTypeEnhancementState) {
 
@@ -40,7 +42,7 @@ class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancem
         get() = fqName
 
     override fun AnnotationDescriptor.enumArguments(onlyValue: Boolean): Iterable<String> =
-        allValueArguments.flatMap { (parameter, argument) ->
+        allValueArguments.flatMap { [parameter, argument] ->
             if (!onlyValue || parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()
             else

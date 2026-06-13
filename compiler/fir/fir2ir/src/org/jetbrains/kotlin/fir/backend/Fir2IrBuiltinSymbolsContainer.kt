@@ -243,7 +243,7 @@ class Fir2IrBuiltinSymbolsContainer(
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
-        unsignedTypesToUnsignedArrays.map { (k, v) -> v to loadClass(k.classId).owner.defaultType }.toMap()
+        unsignedTypesToUnsignedArrays.map { [k, v] -> v to loadClass(k.classId).owner.defaultType }.toMap()
     }
 
     // --------------------------- synthetic symbols ---------------------------
@@ -277,7 +277,7 @@ class Fir2IrBuiltinSymbolsContainer(
         syntheticMap: Map<PrimitiveType, IrSimpleFunctionSymbol>
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
         return buildMap {
-            for ((classSymbol, type) in primitiveSymbolToPrimitiveType) {
+            for ([classSymbol, type] in primitiveSymbolToPrimitiveType) {
                 val functionSymbol = syntheticMap[type] ?: continue
                 put(classSymbol, functionSymbol)
             }

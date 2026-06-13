@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.javac.resolve.MockKotlinClassifier
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import javax.lang.model.type.TypeKind
 
+@K1Deprecation
 abstract class TreeBasedType<out T : JCTree>(
     val tree: T,
     val compilationUnit: CompilationUnitTree,
@@ -75,6 +77,7 @@ abstract class TreeBasedType<out T : JCTree>(
 
 }
 
+@K1Deprecation
 class TreeBasedPrimitiveType(
     tree: JCTree.JCPrimitiveTypeTree,
     compilationUnit: CompilationUnitTree,
@@ -92,6 +95,7 @@ class TreeBasedPrimitiveType(
 
 }
 
+@K1Deprecation
 class TreeBasedArrayType(
     tree: JCTree.JCArrayTypeTree,
     compilationUnit: CompilationUnitTree,
@@ -105,6 +109,7 @@ class TreeBasedArrayType(
 
 }
 
+@K1Deprecation
 class TreeBasedWildcardType(
     tree: JCTree.JCWildcard,
     compilationUnit: CompilationUnitTree,
@@ -121,6 +126,7 @@ class TreeBasedWildcardType(
 
 }
 
+@K1Deprecation
 sealed class TreeBasedClassifierType<out T : JCTree>(
     tree: T,
     compilationUnit: CompilationUnitTree,
@@ -167,6 +173,7 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
 
 }
 
+@K1Deprecation
 class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : JavaClassifierType {
 
     override val typeArguments: List<JavaType>
@@ -190,6 +197,7 @@ class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : J
         get() = false
 }
 
+@K1Deprecation
 class TreeBasedNonGenericClassifierType(
     tree: JCTree.JCExpression,
     compilationUnit: CompilationUnitTree,
@@ -205,6 +213,7 @@ class TreeBasedNonGenericClassifierType(
 
 }
 
+@K1Deprecation
 class TreeBasedGenericClassifierType(
     tree: JCTree.JCTypeApply,
     compilationUnit: CompilationUnitTree,

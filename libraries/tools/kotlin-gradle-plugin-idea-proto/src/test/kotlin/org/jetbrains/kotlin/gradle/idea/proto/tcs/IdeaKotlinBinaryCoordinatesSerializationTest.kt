@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoor
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryAttributes
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.junit.Test
+import kotlin.test.Test
 
 class IdeaKotlinBinaryCoordinatesSerializationTest : AbstractSerializationTest<IdeaKotlinBinaryCoordinates>() {
     override fun serialize(value: IdeaKotlinBinaryCoordinates): ByteArray = IdeaKotlinBinaryCoordinatesProto(value).toByteArray()

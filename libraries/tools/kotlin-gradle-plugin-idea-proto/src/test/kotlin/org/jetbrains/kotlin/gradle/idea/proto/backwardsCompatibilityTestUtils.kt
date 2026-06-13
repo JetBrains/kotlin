@@ -17,7 +17,7 @@ fun classpathForBackwardsCompatibleClasses(): List<File> {
     val compatibilityTestClasspath = System.getProperty("compatibilityTestClasspath")
         ?: error("Missing compatibilityTestClasspath system property")
 
-    return compatibilityTestClasspath.split(";").map { path -> File(path) }
+    return compatibilityTestClasspath.split(File.pathSeparator).map { path -> File(path) }
         .onEach { file -> if (!file.exists()) println("[WARNING] Missing $file") }
         .flatMap { file -> if (file.isDirectory) file.listFiles().orEmpty().toList() else listOf(file) }
 }

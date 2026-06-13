@@ -1,5 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// FILE: JConstructor.java
+
+public class JConstructor {}
+
+// FILE: box.kt
 
 import kotlin.reflect.KCallable
 import kotlin.test.assertTrue
@@ -49,6 +54,7 @@ fun box(): String {
     checkAbstract(AbstractClass::abstractVar.setter)
 
     checkFinal(::Constructor)
+    checkFinal(::JConstructor)
 
     return "OK"
 }

@@ -23,7 +23,7 @@ object FirDuplicateParameterNameInFunctionTypeChecker : FirResolvedTypeRefChecke
         val nameToArgumentProjection = typeRef.coneType.typeArguments.dropLast(1)
             .groupBy { it.type?.valueParameterName(context.session) }
 
-        for ((name, projections) in nameToArgumentProjection) {
+        for ([name, projections] in nameToArgumentProjection) {
             if (name != null && projections.size >= 2) {
                 reporter.reportOn(typeRef.source, FirErrors.DUPLICATE_PARAMETER_NAME_IN_FUNCTION_TYPE)
             }

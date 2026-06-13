@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 /**
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 internal class NpmResolverPluginApplier(
     private val nodeJsRootApply: (Project) -> BaseNodeJsRootExtension,
     private val singleNodeJsApply: (Project) -> Unit,
-    private val requiredNpmDependenciesPredicate: (RequiresNpmDependencies) -> Boolean,
+    private val requiredNpmDependenciesPredicate: (RequiresNpmDependenciesTask) -> Boolean,
 ) {
     fun apply(project: Project) {
         val nodeJsRoot = nodeJsRootApply(project)
@@ -32,13 +32,11 @@ internal class NpmResolverPluginApplier(
         nodeJsRoot.resolver.addProject(project)
         project.whenEvaluated {
             project.tasks
-                .implementing(RequiresNpmDependencies::class)
+                .withType<RequiresNpmDependenciesTask>()
                 .matching { task ->
-                    task as RequiresNpmDependencies
                     task.enabled && requiredNpmDependenciesPredicate(task)
                 }
                 .configureEach { task ->
-                    task as RequiresNpmDependencies
                     // KotlinJsTest delegates npm dependencies to testFramework,
                     // which can be defined after this configure action
                     if (task !is KotlinJsTest) {

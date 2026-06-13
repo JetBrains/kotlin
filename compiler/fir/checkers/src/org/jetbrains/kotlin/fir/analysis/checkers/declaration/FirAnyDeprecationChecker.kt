@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 
-object FirAnyDeprecationChecker : FirSimpleFunctionChecker(MppCheckerKind.Common) {
+object FirAnyDeprecationChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (!declaration.isOverride || !declaration.symbol.isMethodOfAny) return

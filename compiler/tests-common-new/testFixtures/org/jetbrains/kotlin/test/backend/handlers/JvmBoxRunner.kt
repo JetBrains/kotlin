@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.extractUrls
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.codegenSuppressionChecker
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.clientserver.TestProxy
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ATTACH_DEBUGGER
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.LOAD_METADATA_DIRECTLY_IN_REFLECTION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_LEGACY_REFLECTION_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
@@ -32,6 +36,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -58,6 +63,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        checkArtifact(info)
         val fileInfos = info.fileInfos.ifEmpty { return }
         val reportProblems = !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
@@ -116,7 +122,9 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         } catch (e: LinkageError) {
             throw AssertionError("Failed to load class '$className':\n${classFileFactory.createText()}", e)
         }
-        val method = clazz.getBoxMethodOrNull() ?: error("box method not found")
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        val method = clazz.getBoxMethodOrNull() ?: testInfraError("box method not found")
         return clazz to method
     }
 
@@ -193,19 +201,25 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
-            else -> error("Unsupported JDK kind: $jdkKind")
+            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            else -> testInfraError("Unsupported JDK kind: $jdkKind")
         }
 
         val javaExe = File(jdkHome, "bin/java.exe").takeIf(File::exists)
             ?: File(jdkHome, "bin/java").takeIf(File::exists)
-            ?: error("Can't find 'java' executable in $jdkHome")
+            // Test-infrastructure/environment invariant violation (not a failure of the code under test): throw a
+            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            ?: testInfraError("Can't find 'java' executable in $jdkHome")
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
 
         val mainClassAndArguments = testServices.jvmBoxMainClassProvider?.getMainClassNameAndAdditionalArguments(module) ?: run {
             val mainFile = module.files.firstOrNull {
                 it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
-            } ?: error("No file with main function was generated. Please check TODO source provider")
+                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            } ?: testInfraError("No file with main function was generated. Please check TODO source provider")
 
             val mainFqName = listOfNotNull(
                 MainFunctionForBlackBoxTestsSourceProvider.detectPackage(mainFile),
@@ -245,7 +259,11 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         classPath: List<URL>,
         mainClassAndArguments: List<String>
     ): Process {
-        require(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives)
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
+            "$USE_LEGACY_REFLECTION_IMPLEMENTATION is not supported when running the box test in a separate JVM process"
+        }
         val command = listOfNotNull(
             javaExe.absolutePath,
             runIf(ATTACH_DEBUGGER in module.directives) { "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" },
@@ -321,13 +339,23 @@ fun generatedTestClassLoader(
     testServices: TestServices,
     module: TestModule,
     classFileFactory: ClassFileFactory,
+    addClassPathFromConfiguration: Boolean = false,
 ): GeneratedClassLoader {
     val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
     val classpath = computeTestRuntimeClasspath(testServices, module)
+    if (addClassPathFromConfiguration) {
+        classpath += configuration.jvmClasspathRoots
+    }
     val withReflection = configuration[TEST_CONFIGURATION_KIND_KEY]?.withReflection == true
     if (PREFER_IN_TEST_OVER_STDLIB in module.directives) {
-        require(USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION !in module.directives)
-        require(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives)
+        // Test-infrastructure invariant violations (not failures of the code under test): throw
+        // TestInfrastructureException so they are never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION !in module.directives) {
+            "$USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
+        }
+        checkTestInfrastructure(USE_LEGACY_REFLECTION_IMPLEMENTATION !in module.directives) {
+            "$USE_LEGACY_REFLECTION_IMPLEMENTATION is incompatible with $PREFER_IN_TEST_OVER_STDLIB"
+        }
         val libPathProvider = testServices.standardLibrariesPathProvider
         classpath += libPathProvider.runtimeJarForTests()
         if (withReflection) {
@@ -339,6 +367,8 @@ fun generatedTestClassLoader(
     } else {
         val parentClassLoader = when {
             !withReflection -> testServices.standardLibrariesPathProvider.getRuntimeJarClassLoader()
+            LOAD_METADATA_DIRECTLY_IN_REFLECTION in module.directives ->
+                testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader()
             USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION in module.directives ->
                 testServices.standardLibrariesPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader()
             USE_LEGACY_REFLECTION_IMPLEMENTATION in module.directives ->

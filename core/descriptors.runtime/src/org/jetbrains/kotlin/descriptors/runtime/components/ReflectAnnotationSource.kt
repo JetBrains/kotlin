@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 
+@K1Deprecation
 class ReflectAnnotationSource(val annotation: Annotation) : SourceElement {
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

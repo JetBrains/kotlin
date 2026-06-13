@@ -1,0 +1,11 @@
+STEP 0:
+    dependencies: externalLib
+    modifications:
+        U : file1.kt -> file1.kt
+        U : file2.kt -> file2.kt
+    added cache: file1.kt, file2.kt
+
+// Check both file caches will be recompiled after changing only one file in the external library.
+STEP 1:
+    dependencies: externalLib
+    modified cache: file1.kt, file2.kt

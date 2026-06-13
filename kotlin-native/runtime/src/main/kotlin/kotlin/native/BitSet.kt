@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -60,10 +60,6 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     private val Int.bitOffset: Int
         get() = this % ELEMENT_SIZE
 
-    // Transforms a bit index in the set into a pair of a `bits` element index and a bit index in the element.
-    private val Int.asBitCoordinates: Pair<Int, Int>
-        get() = Pair(elementIndex, bitOffset)
-
     // Transforms a bit offset to the mask with only bit set corresponding to the offset.
     private val Int.asMask: Long
         get() = 0x1L shl this
@@ -95,7 +91,8 @@ actual constructor(size: Int = ELEMENT_SIZE) {
 
     // Sets all bits after the last available bit (size - 1) to 0.
     private fun clearUnusedTail() {
-        val (lastElementIndex, lastBitOffset) = lastIndex.asBitCoordinates
+        val lastElementIndex = lastIndex.elementIndex
+        val lastBitOffset = lastIndex.bitOffset
         bits[bits.lastIndex] = bits[bits.lastIndex] and lastBitOffset.asMaskBefore
         for (i in lastElementIndex + 1 until bits.size) {
             bits[i] = ALL_FALSE
@@ -141,8 +138,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun set(index: Int, value: Boolean = true) {
         ensureCapacity(index)
-        val (elementIndex, offset) = index.asBitCoordinates
-        setBitsWithMask(elementIndex, offset.asMask, value)
+        setBitsWithMask(index.elementIndex, index.bitOffset.asMask, value)
     }
 
     /** Sets the bits with indices between [from] (inclusive) and [to] (exclusive) to the specified value. */
@@ -159,8 +155,10 @@ actual constructor(size: Int = ELEMENT_SIZE) {
             return
         }
         ensureCapacity(range.endInclusive)
-        val (fromIndex, fromOffset) = range.start.asBitCoordinates
-        val (toIndex, toOffset) = range.endInclusive.asBitCoordinates
+        val fromIndex = range.start.elementIndex
+        val fromOffset = range.start.bitOffset
+        val toIndex = range.endInclusive.elementIndex
+        val toOffset = range.endInclusive.bitOffset
         if (toIndex == fromIndex) {
             val mask = getMaskBetween(fromOffset, toOffset)
             setBitsWithMask(fromIndex, mask, value)
@@ -194,8 +192,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     /** Reverses the bit specified. */
     public fun flip(index: Int) {
         ensureCapacity(index)
-        val (elementIndex, offset) = index.asBitCoordinates
-        flipBitsWithMask(elementIndex, offset.asMask)
+        flipBitsWithMask(index.elementIndex, index.bitOffset.asMask)
     }
 
     /** Reverses the bits with indices between [from] (inclusive) and [to] (exclusive). */
@@ -210,8 +207,10 @@ actual constructor(size: Int = ELEMENT_SIZE) {
             return
         }
         ensureCapacity(range.endInclusive)
-        val (fromIndex, fromOffset) = range.start.asBitCoordinates
-        val (toIndex, toOffset) = range.endInclusive.asBitCoordinates
+        val fromIndex = range.start.elementIndex
+        val fromOffset = range.start.bitOffset
+        val toIndex = range.endInclusive.elementIndex
+        val toOffset = range.endInclusive.bitOffset
         if (toIndex == fromIndex) {
             val mask = getMaskBetween(fromOffset, toOffset)
             flipBitsWithMask(fromIndex, mask)
@@ -241,7 +240,8 @@ actual constructor(size: Int = ELEMENT_SIZE) {
         if (startIndex >= size) {
             return if (lookFor) -1 else startIndex
         }
-        val (startElementIndex, startOffset) = startIndex.asBitCoordinates
+        val startElementIndex = startIndex.elementIndex
+        val startOffset = startIndex.bitOffset
         // Look for the next set bit in the first element.
         var element = bits[startElementIndex]
         for (offset in startOffset..MAX_BIT_OFFSET) {
@@ -303,7 +303,8 @@ actual constructor(size: Int = ELEMENT_SIZE) {
             return -1
         }
 
-        val (startElementIndex, startOffset) = correctStartIndex.asBitCoordinates
+        val startElementIndex = correctStartIndex.elementIndex
+        val startOffset = correctStartIndex.bitOffset
         // Look for the next set bit in the first element.
         var element = bits[startElementIndex]
         for (offset in startOffset downTo 0) {
@@ -350,8 +351,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
         if (index >= size) {
             return false
         }
-        val (elementIndex, offset) = index.asBitCoordinates
-        return bits[elementIndex] and offset.asMask != 0L
+        return bits[index.elementIndex] and index.bitOffset.asMask != 0L
     }
 
     private inline fun doOperation(another: BitSet, operation: Long.(Long) -> Long) {

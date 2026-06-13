@@ -5,6 +5,8 @@
 
 package generators
 
+import generators.test.AllEqualSampleGenerator
+import generators.test.AllEqualTestGenerator
 import generators.test.IsSortedSampleGenerator
 import generators.test.IsSortedTestGenerator
 import generators.test.MinMaxTestGenerator
@@ -14,4 +16,6 @@ fun main() {
     MinMaxTestGenerator.generate()
     IsSortedSampleGenerator.generate()
     IsSortedTestGenerator.generate()
+    AllEqualSampleGenerator.generate()
+    AllEqualTestGenerator.generate()
 }

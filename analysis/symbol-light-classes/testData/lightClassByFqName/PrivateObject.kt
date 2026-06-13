@@ -10,3 +10,5 @@ private object PrivateObject {
     internal fun internalFun() {}
     private fun privateFun() {}
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: PrivateObject.class[INSTANCE;PrivateObject]

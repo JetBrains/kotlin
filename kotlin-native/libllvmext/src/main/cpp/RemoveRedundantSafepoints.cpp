@@ -8,9 +8,12 @@
 
 #include "llvm-c/Core.h"
 
+#include "llvm/ADT/SmallVector.h"
+
 #include <cstring>
 #include <string>
-#include <vector>
+
+using namespace llvm;
 
 static constexpr const char *FunctionPrologueSafepointName =
     "Kotlin_mm_safePointFunctionPrologue";
@@ -43,7 +46,7 @@ static void removeOrInlinePrologueSafepointInstructions(
     LLVMBasicBlockRef BB, bool RemoveFirst, bool IsSafepointInliningAllowed) {
   // Collect safepoint calls to erase and inline.
   LLVMValueRef ToInline = nullptr;
-  std::vector<LLVMValueRef> ToErase;
+  SmallVector<LLVMValueRef> ToErase;
   bool First = true;
   for (auto Inst = LLVMGetFirstInstruction(BB); Inst;
        Inst = LLVMGetNextInstruction(Inst)) {

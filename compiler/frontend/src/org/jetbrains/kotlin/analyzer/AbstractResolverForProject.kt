@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analyzer
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
+@K1Deprecation
 abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
     protected val projectContext: ProjectContext,
@@ -257,7 +259,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     }
 
     private fun renderResolverModuleInfos(): String = projectContext.storageManager.compute {
-        moduleInfoByDescriptor.entries.joinToString(",\n") { (descriptor, moduleInfo) ->
+        moduleInfoByDescriptor.entries.joinToString(",\n") { [descriptor, moduleInfo] ->
             """
             {
                 moduleDescriptor: $descriptor
@@ -368,4 +370,5 @@ private object DiagnoseUnknownModuleInfoReporter {
     private fun otherError(message: String) = KotlinExceptionWithAttachments(message)
 }
 
+@K1Deprecation
 class InvalidResolverException(message: String) : IllegalStateException(message)

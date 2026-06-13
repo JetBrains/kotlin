@@ -242,7 +242,7 @@ object ManagedTestAssertions {
         } else {
             "No expected file found for secondary test with variant chain ${context.variantChain}. " +
                     "Searched: ${context.readableFiles.joinToString { it.name }}. " +
-                    "Run golden test first to generate base file, or run 'manageTestDataGlobally --mode=update' to auto-generate."
+                    "Run golden test first to generate base file, or run 'updateTestData' to auto-generate."
         }
 
         return AssertionFailedError(

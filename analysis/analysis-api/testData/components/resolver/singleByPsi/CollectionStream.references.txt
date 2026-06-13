@@ -1,7 +1,0 @@
-KtNameReferenceExpression(112,118): 'stream'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in kotlin.collections.Collection) {psi: ClsMethodImpl} fun stream(): java.util.stream.Stream<E>

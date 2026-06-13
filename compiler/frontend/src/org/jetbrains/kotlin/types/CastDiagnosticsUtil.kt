@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.types
 
 import com.google.common.collect.Maps
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
+@K1Deprecation
 object CastDiagnosticsUtil {
 
     // As this method produces a warning, it must be _complete_ (not sound), i.e. every time it says "cast impossible",

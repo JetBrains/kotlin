@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
+@K1Deprecation
 class IrLazyProperty(
     override var startOffset: Int,
     override var endOffset: Int,

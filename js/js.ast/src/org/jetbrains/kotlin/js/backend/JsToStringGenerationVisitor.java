@@ -734,9 +734,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (x.isEs6Arrow()) {
             printEs6Arrow(x);
         } else {
-            p.print(CHARS_FUNCTION);
-            space();
-            printFunction(x);
+            printRegularFunction(x);
         }
 
         printCommentsAfterNode(x);
@@ -756,8 +754,36 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         rightParen();
     }
 
-    // [static?] [get|set?] [name|computedName](<params>) { <body> }
-    private void printFunction(@NotNull JsFunction x) {
+    // function <declaration>
+    private void printRegularFunction(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
+        p.print(CHARS_FUNCTION);
+        space();
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // constructor <declaration>
+    private void printConstructor(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
+        p.print(CHARS_CONSTRUCTOR);
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // [static?] [get|set?] <declaration>
+    private void printClassMember(@NotNull JsFunction x) {
+        pushDeclaration(x);
+        pushSourceInfo(x.getSource());
+
         if (x.isStatic()) {
             p.print(CHARS_STATIC);
             space();
@@ -771,6 +797,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             space();
         }
 
+        printFunction(x);
+
+        popSourceInfo();
+        popDeclaration();
+    }
+
+    // [name|computedName](<params>) { <body> }
+    private void printFunction(@NotNull JsFunction x) {
         if (x.isGenerator()) {
             p.print(CHARS_GENERATOR);
         }
@@ -785,7 +819,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             nameOf(x);
         }
 
-        pushSourceInfo(x.getSource());
         printFunctionParameterList(x.getParameters());
         space();
 
@@ -794,9 +827,6 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.pushSourceInfo(null);
         printJsBlock(x.getBody(), true, x.getBody().getSource());
         sourceLocationConsumer.popSourceInfo();
-
-        popSourceInfo();
-
         needSemi = true;
     }
 
@@ -813,6 +843,8 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             if (singleStatement instanceof JsReturn) {
                 JsReturn jsReturn = (JsReturn) singleStatement;
                 jsReturn.getExpression().accept(this);
+                popSourceInfo();
+                needSemi = true;
                 return;
             }
         }
@@ -853,14 +885,13 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             blockOpen();
 
             if (x.getConstructor() != null) {
-                p.print(CHARS_CONSTRUCTOR);
                 x.getConstructor().setName(null);
-                printFunction(x.getConstructor());
+                printConstructor(x.getConstructor());
                 newline();
             }
 
             for (JsFunction m : x.getMembers()) {
-                printFunction(m);
+                printClassMember(m);
                 newline();
             }
 
@@ -1703,6 +1734,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
+    private void pushDeclaration(@NotNull JsFunction declaration) {
+        sourceLocationConsumer.pushDeclarationInfo(declaration.getSource());
+    }
+
     private void printCommentsBeforeNode(JsNode x) {
        printComments(x.getCommentsBeforeNode(), false);
     }
@@ -1733,6 +1768,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         if (!sourceInfoStack.isEmpty() && sourceInfoStack.remove(sourceInfoStack.size() - 1) != null) {
             sourceLocationConsumer.popSourceInfo();
         }
+    }
+
+    private void popDeclaration() {
+        sourceLocationConsumer.popDeclarationInfo();
     }
 
     private void printJsBlock(JsBlock x, boolean finalNewline, @Nullable JsLocationWithSource defaultClosingBraceLocation) {

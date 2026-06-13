@@ -116,7 +116,6 @@ enum class KaptFlag(val description: String, val defaultValue: Boolean = false) 
     SHOW_PROCESSOR_STATS("Show processor stats"),
     VERBOSE("Verbose mode"),
     INFO_AS_WARNINGS("Info as warnings"),
-    USE_LIGHT_ANALYSIS("Use light analysis", defaultValue = true),
     CORRECT_ERROR_TYPES("Correct error types"),
     DUMP_DEFAULT_PARAMETER_VALUES("Dump default parameter values"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),

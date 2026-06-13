@@ -91,6 +91,7 @@ object FirWhenExhaustivenessComputer {
 
     context(c: SessionHolder)
     private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(): Collection<ConeKotlinType> {
+        @Suppress("SuspiciousWhenOverConeKotlinType")
         return when (this) {
             is ConeIntersectionType -> intersectedTypes
             is ConeTypeParameterType if LanguageFeature.ImprovedExhaustivenessChecksIn21.isEnabled()
@@ -452,7 +453,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
         whenExpression.accept(ConditionChecker, info)
         val notCheckedSubclasses = allSubclasses - checkedSubclasses
-        val (notCheckedEnumClasses, notCheckedRegularClasses) = notCheckedSubclasses.partition { it.isEnumClass }
+        val [notCheckedEnumClasses, notCheckedRegularClasses] = notCheckedSubclasses.partition { it.isEnumClass }
 
         for (notCheckedEnumClasses in notCheckedEnumClasses) {
             WhenOnEnumExhaustivenessChecker.computeMissingCases(

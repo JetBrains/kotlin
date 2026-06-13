@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.wasm.ir.WasmContType
 import org.jetbrains.kotlin.wasm.ir.WasmFunctionType
 import org.jetbrains.kotlin.wasm.ir.WasmStructDeclaration
+import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 import org.jetbrains.kotlin.wasm.ir.WasmTypeDeclaration
 
 private const val ENCODE_BYTE_COUNT = 9
@@ -60,6 +62,26 @@ open class WasmTypeCodegenContext(
         }
     }
 
+    fun defineContType(arity: Int, wasmContType: WasmContType) {
+        wasmFileFragment.contTypes[arity] = wasmContType
+    }
+
+    fun defineContFunctionType(arity: Int, wasmType: WasmFunctionType) {
+        wasmFileFragment.contFunctionTypes[arity] = wasmType
+    }
+
+    fun referenceWasmFunctionType(wasmFunctionType: WasmFunctionType): FunctionTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
+        return FunctionTypeSymbol(signature)
+    }
+
+    fun referenceWasmFunctionHeapType(wasmFunctionType: WasmFunctionType): FunctionHeapTypeSymbol {
+        val signature = getFunctionTypeSignature(wasmFunctionType)
+        wasmFileFragment.definedFunctionTypes.putIfAbsent(signature, wasmFunctionType)
+        return FunctionHeapTypeSymbol(signature)
+    }
+
     open fun referenceGcType(irClass: IrClassSymbol): GcTypeSymbol =
         GcTypeSymbol(irClass.getReferenceKey())
 
@@ -77,4 +99,13 @@ open class WasmTypeCodegenContext(
 
     open fun referenceFunctionHeapType(irClass: IrFunctionSymbol): FunctionHeapTypeSymbol =
         FunctionHeapTypeSymbol(irClass.getReferenceKey())
+
+    fun referenceContType(arity: Int): ContTypeSymbol =
+        ContTypeSymbol(arity)
+
+    fun referenceHeapContType(arity: Int): ContHeapTypeSymbol =
+        ContHeapTypeSymbol(arity)
+
+    fun referenceHeapContFunctionType(arity: Int): ContFunctionHeapTypeSymbol =
+        ContFunctionHeapTypeSymbol(arity)
 }

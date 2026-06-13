@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.wasm.test.klib
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.TestAbortedException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 @Tag("sanity")
 @Tag("aggregate")
@@ -35,26 +40,25 @@ class CustomWasmJsCompilerSecondStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<AssertionError> {
+        val exception = assertThrows<WasmVMException> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "incorrectBoxResult")
     }
 
-    private fun checkIncorrectBoxResult(exception: AssertionError) {
-        assertEquals(
-            true,
-            exception.message?.contains("""Wrong box result 'FAIL'; Expected "OK""""),
-            exception.message
-        )
+    private fun checkIncorrectBoxResult(exception: WasmVMException, testName: String) {
+        assertContains(exception.message!!, "WasmVM V8 failed", message = exception.message!!)
+        exception.cause!!.message!!.let {
+            assertContains(it, """Wrong box result 'FAIL'; Expected "OK"""", message = it)
+        }
     }
 
     @Test
-    fun checkNotMutedWithIgnoreBackendErrors1stStage() {
-        val exception = assertThrows<AssertionError> {
-            runTest(testDataRoot + "mutedWithIgnoreBackendErrors1stStage.kt")
+    fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
+        val exception = assertThrows<WasmVMException> {
+            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
-        checkIncorrectBoxResult(exception)
+        checkIncorrectBoxResult(exception, "mutedWithIgnoreRuntimeErrors1stStage")
     }
 
     @Test
@@ -66,11 +70,32 @@ class CustomWasmJsCompilerSecondStageSanity :
     }
 
     @Test
-    fun checkMutedDueToFrontendErrorWithCustom1stStage() {
-        val exception = assertThrows<TestAbortedException> {
+    fun checkMutedDueToFrontendErrorWithCustom1stStageOfLatestLV() {
+        Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
+        val exception = assertThrows<Throwable> {
             runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
+        // Frontend errors are not suppressed when testing within one major compiler version
+        assertIs<IllegalStateException>(exception)
+        assertContains(exception.message!!, "UNRESOLVED_REFERENCE: Unresolved reference 'FAIL'. at mutedDueToFrontendErrorWithCustom1stStage.kt:")
+    }
+
+    @Test
+    fun checkMutedDueToFrontendErrorWithCustom1stStageOfOldLV() {
+        Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customWasmJsCompilerSettings.defaultLanguageVersion)
+        val exception = assertThrows<Throwable> {
+            runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+        }
+        // Some tests cannot be compiled with previous LV. These are just ignored
+        assertIs<TestAbortedException>(exception)
         assertEquals(null, exception.message)
+    }
+
+    @Test
+    fun checkMutedWithWASM_IGNORE_FOR() {
+        // `IGNORE_*` directives report failed test as ignored. Contrary to that, directive `// WASM_IGNORE_FOR: ...` reports test as passed,
+        // since there are other executors that succeed, and it's an issue neither in the compiler nor in the test, but in the executor's mentioned in the directive.
+        runTest(testDataRoot + "mutedWithWASM_IGNORE_FOR.kt")
     }
 
     @Test

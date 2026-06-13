@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
+
 // This class will be later used by K2. That's why it's placed in compiler.common module
+@K1Deprecation
 data class K1ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember: M, val expectClass: C) {
     /**
      * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
@@ -56,6 +59,7 @@ data class K1ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMemb
     }
 }
 
+@K1Deprecation
 fun K1ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): K1ExpectActualMemberDiff.Kind? = when (this) {
     K1ExpectActualCompatibility.Incompatible.CallableKind,
     K1ExpectActualCompatibility.Incompatible.ParameterCount,

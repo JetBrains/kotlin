@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -344,7 +345,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
         name: Name,
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> =
-        resolutionScope.getContributedObjectVariablesIncludeDeprecated(name, location).map { (classifier, isDeprecated) ->
+        resolutionScope.getContributedObjectVariablesIncludeDeprecated(name, location).map { (val classifier = descriptor, val isDeprecated) ->
             createCandidateDescriptor(
                 classifier,
                 dispatchReceiver = null,
@@ -531,11 +532,13 @@ private fun ResolutionScope.getContributedObjectVariablesIncludeDeprecated(
     name: Name,
     location: LookupLocation
 ): Collection<DescriptorWithDeprecation<VariableDescriptor>> {
-    val (classifier, isOwnerDeprecated) = getContributedClassifierIncludeDeprecated(name, location) ?: return emptyList()
+    (val classifier = descriptor, val isOwnerDeprecated = isDeprecated) = getContributedClassifierIncludeDeprecated(name, location)
+        ?: return emptyList()
     val objectDescriptor = getFakeDescriptorForObject(classifier) ?: return emptyList()
     return listOf(DescriptorWithDeprecation(objectDescriptor, isOwnerDeprecated))
 }
 
+@K1Deprecation
 fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
     when (classifier) {
         is TypeAliasDescriptor ->

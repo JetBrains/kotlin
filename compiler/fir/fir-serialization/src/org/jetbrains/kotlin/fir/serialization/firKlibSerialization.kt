@@ -37,7 +37,7 @@ fun serializeSingleFirFile(
 
     val classesProto = mutableListOf<Pair<ProtoBuf.Class, Int>>()
 
-    fun FirClass.makeClassProtoWithNested() {
+    fun FirClass.makeClassProtoWithNested(parentSerializer: FirElementSerializer?) {
         if (!isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) ||
             !isNotPrivateOrShouldBeSerialized(produceHeaderKlib)
         ) {
@@ -45,7 +45,7 @@ fun serializeSingleFirFile(
         }
 
         val classSerializer = FirElementSerializer.create(
-            session, scopeSession, klass = this, serializerExtension, parentSerializer = null,
+            session, scopeSession, klass = this, serializerExtension, parentSerializer,
             approximator, languageVersionSettings, produceHeaderKlib
         )
         val index = classSerializer.stringTable.getFqNameIndex(this)
@@ -53,12 +53,15 @@ fun serializeSingleFirFile(
         classesProto += classSerializer.classProto(this, file).build() to index
 
         for (nestedClassifierSymbol in classSerializer.computeNestedClassifiersForClass(symbol)) {
-            (nestedClassifierSymbol as? FirClassSymbol<*>)?.fir?.makeClassProtoWithNested()
+            (nestedClassifierSymbol as? FirClassSymbol<*>)?.fir?.makeClassProtoWithNested(parentSerializer = classSerializer)
         }
     }
 
     for (declaration in file.declarations) {
-        (declaration as? FirClass)?.makeClassProtoWithNested()
+        (declaration as? FirClass)?.makeClassProtoWithNested(parentSerializer = null)
+    }
+    for (declaration in session.providedDeclarationsForMetadataService.getProvidedTopLevelDeclarations(file)) {
+        (declaration as? FirClass)?.makeClassProtoWithNested(parentSerializer = null)
     }
 
     val fileAnnotationProtos = file.nonSourceAnnotations(session).mapNotNull { annotation ->

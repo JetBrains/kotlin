@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 open class FieldRemapper(
@@ -66,13 +68,24 @@ open class FieldRemapper(
             }
         }
 
-        val insnNode = capturedFieldAccess[currentInstruction] as FieldInsnNode
-        if (canProcess(insnNode.owner, insnNode.name, true)) {
-            insnNode.name = Companion.foldName(getFieldNameForFolding(insnNode))
+        val insnNode = capturedFieldAccess[currentInstruction]
+        if (insnNode is FieldInsnNode && canProcess(insnNode.owner, insnNode.name, true)) {
+            insnNode.name = foldName(getFieldNameForFolding(insnNode))
             insnNode.opcode = Opcodes.GETSTATIC
 
             node.remove(InsnSequence(capturedFieldAccess[0], insnNode))
             return capturedFieldAccess[capturedFieldAccess.size - 1]
+        } else if (insnNode is MethodInsnNode) {
+            require(insnNode.isCallGetAccessorToCapturedField()) { "Expected GETSTATIC access\$get\$capturedField\$p"}
+            val fieldName = insnNode.name.extractAccessedCapturedField()
+            val fieldDesc = Type.getReturnType(insnNode.desc).descriptor
+            if (canProcess(insnNode.owner, fieldName, true)) {
+                // replace accessor call to direct captured field access
+                val fieldInsnNode = FieldInsnNode(Opcodes.GETSTATIC, insnNode.owner, foldName(fieldName), fieldDesc)
+                node.instructions.insertBefore(capturedFieldAccess[0], fieldInsnNode)
+                node.remove(InsnSequence(capturedFieldAccess[0], insnNode.next))
+                return fieldInsnNode
+            }
         }
 
         return null

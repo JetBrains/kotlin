@@ -5,20 +5,34 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objc
 
-import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.backend.konan.ir.annotations.allBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCTypeAdapter.Companion.ObjCTypeAdapterForBindClassToObjCName
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoOverrideError
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.bindObjCExportTypeAdapterTo
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
+    val reverseBridgesByClass = collectReverseBridgeAdapters(file)
+
     file.allBindClassToObjCName.forEach {
-        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName)
+        val layoutBuilder = generationState.context.getLayoutBuilder(it.kotlinClass)
+        val isInterface = it.kotlinClass.isInterface
+        val vtableSize = if (isInterface) -1 else layoutBuilder.vtableEntries.size
+        val itableSize = if (isInterface) layoutBuilder.interfaceVTableEntries.size else 0
+        val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: emptyList()
+        val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize, itableSize, reverseAdapters)
         val typeAdapter = staticData.placeGlobal("", adapter).pointer
+        val adaptersMap = if (it.kotlinClass.isInterface) {
+            generationState.bindClassToObjCNameInterfaceAdapters
+        } else {
+            generationState.bindClassToObjCNameClassAdapters
+        }
+        adaptersMap[it.objCName] = typeAdapter
         try {
             bindObjCExportTypeAdapterTo(it.kotlinClass, typeAdapter)
         } catch (e: WritableTypeInfoOverrideError) {
@@ -26,11 +40,10 @@ internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
                 WritableTypeInfoOverrideError.Reason.NON_OVERRIDABLE -> "class cannot have ObjC class attachments"
                 WritableTypeInfoOverrideError.Reason.ALREADY_OVERRIDDEN -> "another ObjC class is already bound"
             }
-            context.report(
-                    CompilerMessageSeverity.ERROR,
-                    element = it.annotationElement,
-                    irFile = file,
-                    message = "Cannot bind ObjC class `${it.objCName}` to ${it.kotlinClass.kotlinFqName}: $reason",
+            context.diagnosticReporter.report(
+                    NativeBackendDiagnostics.NATIVE_BACKEND_ERROR,
+                    "Cannot bind ObjC class `${it.objCName}` to ${it.kotlinClass.kotlinFqName}: $reason",
+                    it.annotationElement.getCompilerMessageLocation(file)
             )
         }
     }

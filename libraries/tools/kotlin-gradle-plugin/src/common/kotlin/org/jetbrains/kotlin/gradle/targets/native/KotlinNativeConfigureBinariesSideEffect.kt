@@ -125,6 +125,7 @@ private fun Project.createLinkTask(binary: NativeBinary) {
         task.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
         task.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
+        task.generateCompilerRefIndex.value(false).disallowChanges() // CRI requires BTA, which is not supported for K/N
         task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget, project))
 
         // Frameworks actively uses symlinks.

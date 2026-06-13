@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     kotlin("jvm")
@@ -12,7 +13,14 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:language.targets.jvm"))
+    implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:ir.psi2ir"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
@@ -21,8 +29,6 @@ dependencies {
     implementation(project(":compiler:backend.jvm.entrypoint"))
     api(intellijCore())
     implementation(project(":analysis:analysis-api-platform-interface"))
-    implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:kt-references"))
     implementation(project(":analysis:symbol-light-classes"))
     implementation(project(":native:native.config"))
     implementation(libs.caffeine)
@@ -41,6 +47,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testImplementation(testFixtures(project(":compiler:psi:psi-api")))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -58,17 +65,20 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 optInToUnsafeDuringIrConstructionAPI()
 
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
         useJUnitPlatform()
 
         @OptIn(TemporaryTestFederationApi::class)
-        isSmokeTest = true
+        smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 5)
 
         testInputsCheck {
             allowFlightRecorder = true
@@ -94,6 +104,13 @@ projectTests {
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
+
+    testCodebaseTask(dumpDirs = emptyList()) {
+        // Forward the source-code-update flag (used by the `analysis-api-mark-internal-apis` skill) from a Gradle property to the test
+        // JVM. Combine with `-Pkotlin.test.instrumentation.disable.inputs.check=true` so the test can write to source files.
+        val updateSourceCode = "kotlin.analysis.codebaseTest.internalApi.updateSourceCode"
+        systemProperty(updateSourceCode, project.providers.gradleProperty(updateSourceCode).orElse("false").get())
+    }
 }
 
 allprojects {

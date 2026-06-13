@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
@@ -199,14 +200,7 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
             // Given `C<T extends @Nullable V>`, unannotated `C<?>` is `C<out (V..V?)>`.
             val typeParameters = this.lookupTag.toClassLikeSymbol(session)?.fir?.typeParameters
             if (typeParameters != null) {
-                val bound = typeParameters[currentArgLocalIndex].symbol.fir.bounds.first().coneType
-                return@Array ConeKotlinTypeProjectionOut(
-                    ConeFlexibleType(
-                        bound.lowerBoundIfFlexible().withNullability(nullable = false, session.typeContext),
-                        bound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext),
-                        isTrivial = false,
-                    )
-                )
+                return@Array createForcedFlexibleOutProjectionInsteadOfStar(session, typeParameters, currentArgLocalIndex)
             }
         }
         arg.type?.enhanceConeKotlinType(
@@ -236,6 +230,55 @@ private fun ConeLookupTagBasedType.enhanceInflexibleType(
         ConeDefinitelyNotNullType.create(enhancedType, session.typeContext) ?: enhancedType
     else
         enhancedType
+}
+
+/**
+ * Returns a replacement of `?` which would signal that the captured type behind the projection should be flexible.
+ *
+ * Let this `?` would be a part of some `C<.., ?, ..>` type:
+ *
+ * @param typeParameters of that C class
+ * @param argIndex of the type argument for the considered wildcard
+ *
+ * For non-recursive type parameters it's just `out <FirstBound>!`
+ * For recursive ones, it's `out Any!`
+ */
+private fun createForcedFlexibleOutProjectionInsteadOfStar(
+    session: FirSession,
+    typeParameters: List<FirTypeParameterRef>,
+    argIndex: Int,
+): ConeKotlinTypeProjectionOut {
+    val lookupTagsForTypeParameters = typeParameters.mapTo(mutableSetOf()) { it.symbol.toLookupTag() }
+    val bounds = typeParameters[argIndex].symbol.fir.bounds
+
+    // If some bounds refer to other type parameters of `C`, return `out Any!`
+    // Otherwise, we would return `out SomeBound<.., Y, ..>!` which is totally incorrect as it refers to a type parameter which is not
+    // even in the scope of the considered `C<.., ?, ..>` type.
+    //
+    // From the Java point-of-view `? extends Object` is well-formed for any position, though it's not 100% true for kotlin and `out Any!`.
+    // For out-projections in Kotlin source code we require the type to be a subtype of all the bounds, just to avoid suspicious types.
+    // But for most cases, they should work well, so e.g., when capturing such a projection, we would make an intersection with all the bounds.
+    //
+    // Potentially, we might even unconditionally return `out Any!`, but probably it's better to play safe here and only apply it
+    // for types which are already in some sense broken.
+    if (bounds.any { bound -> bound.coneType.contains { (it as? ConeTypeParameterType)?.lookupTag in lookupTagsForTypeParameters } }) {
+        return ConeKotlinTypeProjectionOut(
+            ConeFlexibleType(
+                StandardTypes.Any,
+                StandardTypes.NullableAny,
+                isTrivial = true,
+            )
+        )
+    }
+
+    val firstBound = bounds.first().coneType
+    return ConeKotlinTypeProjectionOut(
+        ConeFlexibleType(
+            firstBound.lowerBoundIfFlexible().withNullability(nullable = false, session.typeContext),
+            firstBound.upperBoundIfFlexible().withNullability(nullable = true, session.typeContext),
+            isTrivial = true,
+        )
+    )
 }
 
 private fun contentIdentityEqual(a: Array<out ConeTypeProjection>, b: Array<out ConeTypeProjection>): Boolean {

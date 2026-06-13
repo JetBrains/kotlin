@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
-// NI_EXPECTED_FILE
 // ISSUE: KT-15566, KT-56489
 
 import DefaultHttpClient.client

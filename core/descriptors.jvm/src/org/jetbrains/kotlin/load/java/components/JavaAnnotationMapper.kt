@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.SimpleType
 import java.util.*
 
+@K1Deprecation
 object JavaAnnotationMapper {
     internal val DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message")
     internal val TARGET_ANNOTATION_ALLOWED_TARGETS = Name.identifier("allowedTargets")
@@ -83,6 +85,7 @@ object JavaAnnotationMapper {
         )
 }
 
+@K1Deprecation
 open class JavaAnnotationDescriptor(
     c: LazyJavaResolverContext,
     annotation: JavaAnnotation?,
@@ -99,6 +102,7 @@ open class JavaAnnotationDescriptor(
     override val isIdeExternalAnnotation: Boolean = annotation?.isIdeExternalAnnotation == true
 }
 
+@K1Deprecation
 class JavaDeprecatedAnnotationDescriptor(
     annotation: JavaAnnotation?,
     c: LazyJavaResolverContext
@@ -108,6 +112,7 @@ class JavaDeprecatedAnnotationDescriptor(
     }
 }
 
+@K1Deprecation
 class JavaTargetAnnotationDescriptor(
     annotation: JavaAnnotation,
     c: LazyJavaResolverContext
@@ -122,6 +127,7 @@ class JavaTargetAnnotationDescriptor(
     }
 }
 
+@K1Deprecation
 class JavaRetentionAnnotationDescriptor(
     annotation: JavaAnnotation,
     c: LazyJavaResolverContext
@@ -132,6 +138,7 @@ class JavaRetentionAnnotationDescriptor(
     }
 }
 
+@K1Deprecation
 object JavaAnnotationTargetMapper {
     private val targetNameLists = mapOf(
         "PACKAGE" to EnumSet.noneOf(KotlinTarget::class.java),

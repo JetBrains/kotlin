@@ -17,16 +17,30 @@ KtParameter(9,19): 'a: String?'
   null
 
 KtTypeReference(12,19): 'String?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNullableType(12,19): 'String?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(12,18): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(12,18): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtBlockExpression(21,32): '{'
   null
@@ -35,10 +49,14 @@ KtPostfixExpression(27,30): 'a!!'
   null
 
 KtNameReferenceExpression(27,28): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       a: kotlin.String?
     ]
 
 KtOperationReferenceExpression(28,30): '!!'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null

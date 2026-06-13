@@ -22,6 +22,10 @@ public final class C implements I {
  * public abstract interface I : kotlin/Any {
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()

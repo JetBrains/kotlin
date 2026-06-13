@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.linkIr
 import org.jetbrains.kotlin.backend.wasm.linkWasmIr
+import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldCompiler
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.WholeWorldMultiModuleCompiler
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -23,13 +25,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.GENERATE_DWARF
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
@@ -37,7 +42,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.config.*
-import org.jetbrains.kotlin.wasm.test.handlers.WASM_BASE_FILE_NAME
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import org.jetbrains.kotlin.wasm.test.tools.WasmOptimizer
 import java.io.File
@@ -50,6 +55,7 @@ internal fun CompilerConfiguration.configureWith(directives: RegisteredDirective
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmUseNewExceptionProposal =
         (USE_OLD_EXCEPTION_HANDLING_PROPOSAL !in directives) && (USE_NEW_EXCEPTION_HANDLING_PROPOSAL in directives || wasmTarget == WasmTarget.WASI)
+    wasmUseStackSwitchingProposal = USE_STACK_SWITCHING_PROPOSAL in directives
     wasmForceDebugFriendlyCompilation = FORCE_DEBUG_FRIENDLY_COMPILATION in directives
     useDebuggerCustomFormatters = debugMode >= DebugMode.DEBUG || useDebuggerCustomFormatters
     wasmGenerateWat = debugMode >= DebugMode.DEBUG || wasmGenerateWat
@@ -69,7 +75,7 @@ class WasmLoweringFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Wasm? {
         require(WasmEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is IrBackendInput.DeserializedFromKlibBackendInput<*>)
+        require(inputArtifact is DeserializedFromKlibBackendInput<*>)
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         val moduleInfo = inputArtifact.moduleInfo
@@ -95,7 +101,7 @@ class WasmLoweringFacade(
         }
 
         val testPackage = extractTestPackage(testServices)
-        val exportedBoxDeclaration = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
@@ -107,8 +113,16 @@ class WasmLoweringFacade(
             WholeWorldCompiler(configuration, irFactory)
         }
 
+        val [allModules, context] = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            linkIr(moduleInfo, configuration, mainModule)
+        }
+
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, mainModule, exportedBoxDeclaration)
+            compiler.lowerIr(moduleInfo, allModules, context)
+        }
+
+        if (configuration.diagnosticsCollector.hasErrors) {
+            return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
         }
 
         val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {
@@ -126,36 +140,36 @@ class WasmLoweringFacade(
             val multiModuleOptimization = configuration.wasmGenerateClosedWorldMultimodule
             val optimisedResult = dceCompilationSet.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
             val optimisedDependencies = dceCompilationSet.compilationDependencies.map {
-                BinaryArtifacts.WasmCompilationSet(
+                WasmCompilationSet(
                     compiledModule = it.compiledModule,
                     compilerResult = it.compilerResult.runThirdPartyOptimizer(multiModule = multiModuleOptimization)
                 )
             }
-            BinaryArtifacts.WasmCompilationSet(
+            WasmCompilationSet(
                 compiledModule = dceCompilationSet.compiledModule,
                 compilerResult = optimisedResult,
                 compilationDependencies = optimisedDependencies
             )
         }
 
-        return BinaryArtifacts.Wasm.CompilationSets(
+        return WasmCompilationSetsBinaryArtifact(
             compilation = compilationSet,
             dceCompilation = dceCompilationSet,
             optimisedCompilation = optimised,
         )
     }
 
-    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): BinaryArtifacts.WasmCompilationSet {
+    fun makeCompilationSet(parameters: List<WasmIrModuleConfiguration>): WasmCompilationSet {
         val compilationSets = parameters.map { current ->
             val linkedModule = linkWasmIr(current)
             val compilerResult = compileWasmIrToBinary(current, linkedModule)
-            BinaryArtifacts.WasmCompilationSet(linkedModule, compilerResult)
+            WasmCompilationSet(linkedModule, compilerResult)
         }
 
         val main = compilationSets.last()
         val dependencies = compilationSets.dropLast(1)
 
-        return BinaryArtifacts.WasmCompilationSet(
+        return WasmCompilationSet(
             main.compiledModule,
             main.compilerResult,
             dependencies
@@ -163,7 +177,7 @@ class WasmLoweringFacade(
     }
 
     private fun WasmCompilerResult.runThirdPartyOptimizer(multiModule: Boolean): WasmCompilerResult {
-        val (newWasm, newWat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
+        (val newWasm = wasm, val newWat = wat) = supportedOptimizer.run(wasm, withText = wat != null, multiModule = multiModule)
         return WasmCompilerResult(
             wat = newWat,
             jsWrapper = jsWrapper,

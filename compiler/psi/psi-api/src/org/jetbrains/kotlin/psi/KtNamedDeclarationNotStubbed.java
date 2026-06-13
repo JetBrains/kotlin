@@ -62,10 +62,7 @@ abstract class KtNamedDeclarationNotStubbed extends KtDeclarationImpl implements
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        PsiElement identifier = getNameIdentifier();
-        if (identifier == null) throw new IncorrectOperationException();
-
-        return identifier.replace(new KtPsiFactory(getProject()).createNameIdentifier(name));
+        return KtPsiMutationService.getInstance().setNamedDeclarationName(this, name);
     }
 
     @Override

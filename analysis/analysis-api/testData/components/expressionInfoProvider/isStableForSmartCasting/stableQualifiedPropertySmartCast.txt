@@ -1,0 +1,3 @@
+expression: DOT_QUALIFIED_EXPRESSION
+text: foo.value
+isStableForSmartCasting: true

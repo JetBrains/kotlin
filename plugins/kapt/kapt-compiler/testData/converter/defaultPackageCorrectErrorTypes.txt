@@ -70,6 +70,10 @@ import java.lang.Number;
  *   public abstract fun someMethod(): RootClass
  *
  *   // module name: main
+ *
+ *   // has method bodies in interface
+ *
+ *   // is compiled in compatibility mode
  * }
  */
 @kotlin.Metadata()
@@ -93,6 +97,7 @@ import java.lang.Number;
 
 @ClassRefAnnotation(value = {RootClass.class})
 /**
+ * @test/ClassRefAnnotation(value = [RootClass::class])
  * public final class test/PackedWithAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V

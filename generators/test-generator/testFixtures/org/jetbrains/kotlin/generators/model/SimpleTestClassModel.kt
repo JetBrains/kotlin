@@ -48,6 +48,8 @@ class SimpleTestClassModel(
     private val additionalMethods: Collection<MethodModel<*>>,
     val skipTestAllFilesCheck: Boolean,
     override val testKClass: Class<*>,
+    override val isSmokeTest: Boolean,
+    override val smokeTestLimit: Int,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -82,6 +84,8 @@ class SimpleTestClassModel(
                 additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass },
                 skipTestAllFilesCheck,
                 testKClass,
+                isSmokeTest,
+                smokeTestLimit
             )
         }.sortedWith(BY_NAME)
     }
@@ -105,7 +109,7 @@ class SimpleTestClassModel(
                 rootDir = rootFile,
                 file = rootFile,
                 filenamePattern,
-                extractTagsFromTestFile(rootFile)
+                extractTagsFromTestFile(rootFile),
             )
             return@lazy listOf(methodModel)
         }
@@ -119,7 +123,8 @@ class SimpleTestClassModel(
                 add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))
             }
             addAll(additionalMethods)
-            rootFile.listFiles().orEmpty().mapNotNullTo(this) l@{ file ->
+
+            val simpleTestMethods = rootFile.listFiles().orEmpty().mapNotNull l@{ file ->
                 val fileName = file.name
                 // doesn't match testdata pattern
                 if (!filenamePattern.matcher(fileName).matches()) return@l null
@@ -144,9 +149,15 @@ class SimpleTestClassModel(
                     rootFile,
                     file,
                     filenamePattern,
-                    extractTagsFromTestFile(file)
+                    extractTagsFromTestFile(file),
                 )
+            }.sortedWith(BY_NAME).mapIndexed { index, model ->
+                if (isSmokeTest && index < smokeTestLimit) model.copy(isSmokeTest = true)
+                else model
             }
+
+            addAll(simpleTestMethods)
+
         }.sortedWith(BY_NAME)
     }
 

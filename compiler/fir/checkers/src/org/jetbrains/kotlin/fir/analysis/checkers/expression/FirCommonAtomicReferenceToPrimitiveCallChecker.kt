@@ -46,7 +46,7 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
                 atomicReferenceClassId, appropriateCandidatesForArgument
             )
 
-            for ((argument, parameter) in expression.arguments.zip(callable.valueParameterSymbols)) {
+            for ([argument, parameter] in expression.arguments.zip(callable.valueParameterSymbols)) {
                 if (
                     !argument.resolvedType.hasStableIdentityForAtomicOperations &&
                     isDangerousAtomicCallParameterNameWithin(callable, parameter.name)

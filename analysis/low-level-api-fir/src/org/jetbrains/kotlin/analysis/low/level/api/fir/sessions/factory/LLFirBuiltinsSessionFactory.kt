@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configuration.LLPlatformSessionConfiguration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.factories.LLLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
@@ -35,8 +35,7 @@ import org.jetbrains.kotlin.fir.session.registerJavaComponents
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.has
-import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.util.concurrent.ConcurrentHashMap
@@ -106,10 +105,9 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
                 registerJavaComponents(JavaModuleResolver.getInstance(project))
             }
 
-            val kotlinScopeProvider = when {
-                platform.isJvm() -> FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
-                else -> FirKotlinScopeProvider()
-            }
+            val platformSessionConfiguration = LLPlatformSessionConfiguration.forPlatform(platform, project)
+
+            val kotlinScopeProvider = platformSessionConfiguration.createBuiltinsScopeProvider()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val symbolProvider = createCompositeSymbolProvider(this) {
@@ -120,9 +118,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
                 )
 
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
-                if (platform.has<JvmPlatform>()) {
-                    add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
-                }
+                platformSessionConfiguration.createPlatformSpecificSymbolProvidersForBuiltinsSession(session).forEach(::add)
             }
 
             register(FirSymbolProvider::class, symbolProvider)
@@ -131,6 +127,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         }
     }
 
+    @LLFirInternals
     companion object {
         fun getInstance(project: Project): LLFirBuiltinsSessionFactory = project.service()
     }

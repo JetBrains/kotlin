@@ -54,7 +54,8 @@ internal class FirScriptingCompilerExtensionIdeRegistrar(
                     providerFromProject?.let {
                         ScriptRefinedCompilationConfigurationCacheOverConfigurationsProvider(
                             legacyConfigurationsProvider = it,
-                            definitionsProvider = this@with[ScriptingHostConfiguration.scriptCompilationConfigurationProvider]
+                            definitionsProvider = this@with[ScriptingHostConfiguration.scriptCompilationConfigurationProvider],
+                            project = project
                         )
                     } ?: ScriptRefinedCompilationConfigurationCacheImpl()
                 }

@@ -14,7 +14,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
@@ -40,45 +42,38 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Comp
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_OPTIMIZE_GENERATED_JS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_SUSPEND_LAMBDA_EXPORTING
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JsArgumentsImpl.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.JsCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JsArgumentsImpl(
   private val adapter: JsArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonJsAndWasmArgumentsImpl(adapter, restrictedArgViolations),
-    JsArguments,
-    JsArguments.Builder,
+) : CommonJsAndWasmArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
+    JsCompilerArguments,
+    JsCompilerArguments.Builder,
+    JsCompilerKlibArguments,
+    JsCompilerKlibArguments.Builder,
+    JsCompilerLinkingArguments,
+    JsCompilerLinkingArguments.Builder,
     DeepCopyable<JsArgumentsImpl> {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
   init {
     applyCompilerArguments(K2JSCompilerArguments())
-  }
-
-  @Suppress("UNCHECKED_CAST")
-  @UseFromImplModuleRestricted
-  override operator fun <V> `get`(key: JsArguments.JsArgument<V>): V {
-    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
-    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
-  }
-
-  @UseFromImplModuleRestricted
-  override operator fun <V> `set`(key: JsArguments.JsArgument<V>, `value`: V) {
-    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
-      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
-    }
-    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
   }
 
   @Suppress("UNCHECKED_CAST")
@@ -90,12 +85,58 @@ internal class JsArgumentsImpl(
 
   public operator fun contains(key: JsArgument<*>): Boolean = key.id in optionsMap
 
-  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: JsCompilerArguments.JsCompilerArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
 
-  override fun build(): JsArguments = deepCopy()
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: JsCompilerArguments.JsCompilerArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: JsCompilerKlibArguments.JsCompilerKlibArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: JsCompilerLinkingArguments.JsCompilerLinkingArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  override fun deepCopy(): JsArgumentsImpl = JsArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
+
+  override fun build(): JsArgumentsImpl = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
+  public fun toCompilerArguments(): K2JSCompilerArguments {
+    val arguments = K2JSCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
@@ -119,16 +160,18 @@ internal class JsArgumentsImpl(
     if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
     if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
     if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
+    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
     try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
     try { if (OUTPUT in this) { arguments.setUsingReflection("outputFile", get(OUTPUT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: OUTPUT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
     if (TARGET in this) { arguments.target = get(TARGET)?.stringValue}
     arguments.internalArguments = parseCommandLineArguments<K2JSCompilerArguments>(internalArguments.toList()).internalArguments
+    populateExplicitArguments(arguments)
     return arguments
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
+  protected fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = arguments.extensionFunctionsInExternals } catch (_: NoSuchMethodError) {  }
     try { this[X_ENABLE_IMPLEMENTING_INTERFACES_FROM_TYPESCRIPT] = arguments.allowImplementableInterfacesExporting } catch (_: NoSuchMethodError) {  }
@@ -145,13 +188,14 @@ internal class JsArgumentsImpl(
     try { this[X_IR_PER_FILE] = arguments.irPerFile } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE] = arguments.irPerModule } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irSafeExternalBooleanDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-safe-external-boolean-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_OPTIMIZE_GENERATED_JS] = arguments.optimizeGeneratedJs } catch (_: NoSuchMethodError) {  }
     try { this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = arguments.platformArgumentsProviderJsExpression } catch (_: NoSuchMethodError) {  }
+    try { this[X_SUSPEND_LAMBDA_EXPORTING] = arguments.allowExportingSuspendLambdas } catch (_: NoSuchMethodError) {  }
     try { this[X_TYPED_ARRAYS] = arguments.getUsingReflection("typedArrays") } catch (_: NoSuchMethodError) {  }
-    try { this[MODULE_KIND] = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[MODULE_KIND] = arguments.moduleKind?.let { JsModuleKind.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::moduleKind, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[OUTPUT] = arguments.getUsingReflection("outputFile") } catch (_: NoSuchMethodError) {  }
-    try { this[TARGET] = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[TARGET] = arguments.target?.let { JsEcmaVersion.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::target, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -176,6 +220,7 @@ internal class JsArgumentsImpl(
     if (X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC in this) { arguments.irSafeExternalBooleanDiagnostic = get(X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)?.stringValue}
     if (X_OPTIMIZE_GENERATED_JS in this) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS)}
     if (X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION in this) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION)}
+    if (X_SUSPEND_LAMBDA_EXPORTING in this) { arguments.allowExportingSuspendLambdas = get(X_SUSPEND_LAMBDA_EXPORTING)}
     try { if (X_TYPED_ARRAYS in this) { arguments.setUsingReflection("typedArrays", get(X_TYPED_ARRAYS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_TYPED_ARRAYS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.3.0""").initCause(e) }
     if (MODULE_KIND in this) { arguments.moduleKind = get(MODULE_KIND)?.stringValue}
     try { if (OUTPUT in this) { arguments.setUsingReflection("outputFile", get(OUTPUT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: OUTPUT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.2.0""").initCause(e) }
@@ -186,12 +231,12 @@ internal class JsArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2JSCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     applyCompilerArguments(compilerArgs)
   }
 
   override fun toArgumentStrings(): List<String> {
-    val arguments = toCompilerArguments().compilerToArgumentStrings()
+    val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)
     return arguments
   }
 
@@ -202,7 +247,7 @@ internal class JsArgumentsImpl(
    * only sets arguments that have been explicitly assigned, and [compilerToArgumentStrings][org.jetbrains.kotlin.compilerRunner.toArgumentStrings]
    * skips properties whose value matches the default.
    */
-  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()
+  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public class JsArgument<V>(
     public val id: String,
@@ -257,6 +302,9 @@ internal class JsArgumentsImpl(
 
     public val X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION: JsArgument<String?> =
         JsArgument("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION")
+
+    public val X_SUSPEND_LAMBDA_EXPORTING: JsArgument<Boolean> =
+        JsArgument("X_SUSPEND_LAMBDA_EXPORTING")
 
     public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
 

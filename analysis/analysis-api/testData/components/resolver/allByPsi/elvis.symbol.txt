@@ -26,25 +26,50 @@ KtParameter(40,51): 'other: Any?'
   null
 
 KtTypeReference(47,51): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNullableType(47,51): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(47,50): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(47,50): 'Any'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(54,61): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtUserType(54,61): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtNameReferenceExpression(54,61): 'Boolean'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtBlockExpression(62,113): '{'
   null
@@ -65,6 +90,8 @@ KtSafeQualifiedExpression(79,98): 'other?.equals(this)'
     ]
 
 KtNameReferenceExpression(79,84): 'other'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       other: kotlin.Any?
@@ -77,6 +104,8 @@ KtCallExpression(86,98): 'equals(this)'
     ]
 
 KtNameReferenceExpression(86,92): 'equals'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -95,12 +124,16 @@ KtThisExpression(93,97): 'this'
     ]
 
 KtNameReferenceExpression(93,97): 'this'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
     ]
 
 KtOperationReferenceExpression(99,101): '?:'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtConstantExpression(102,107): 'false'
@@ -116,31 +149,59 @@ KtParameter(127,138): 'm: MyClass?'
   null
 
 KtTypeReference(130,138): 'MyClass?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNullableType(130,138): 'MyClass?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(130,137): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(130,137): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtParameter(140,152): 'm2: MyClass?'
   null
 
 KtTypeReference(144,152): 'MyClass?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNullableType(144,152): 'MyClass?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(144,151): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(144,151): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(154,209): '{'
   null
@@ -155,21 +216,29 @@ KtBinaryExpression(168,175): 'm ?: m2'
   null
 
 KtNameReferenceExpression(168,169): 'm'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       m: MyClass?
     ]
 
 KtOperationReferenceExpression(170,172): '?:'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(173,175): 'm2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass?
     ]
 
 KtOperationReferenceExpression(176,178): '?:'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtConstantExpression(179,183): 'null'
@@ -179,15 +248,21 @@ KtBinaryExpression(188,195): 'f ?: m2'
   null
 
 KtNameReferenceExpression(188,189): 'f'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val f: MyClass?
     ]
 
 KtOperationReferenceExpression(190,192): '?:'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(193,195): 'm2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass?
@@ -197,15 +272,21 @@ KtBinaryExpression(200,207): 'm2 ?: m'
   null
 
 KtNameReferenceExpression(200,202): 'm2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass?
     ]
 
 KtOperationReferenceExpression(203,205): '?:'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(206,207): 'm'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       m: MyClass?

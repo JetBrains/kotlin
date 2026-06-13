@@ -1,4 +1,4 @@
-idePluginDependency {
+idePluginPublishingLatch {
     apply<JavaPlugin>()
 
     publish()

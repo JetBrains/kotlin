@@ -6,24 +6,39 @@
 package org.jetbrains.kotlin.commonizer.repository
 
 import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
+import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
+import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.library.loader.KlibLoader
+import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 internal class KonanDistributionRepository(
     konanDistribution: KonanDistribution,
     targets: Set<KonanTarget>,
-    libraryLoader: NativeLibraryLoader,
+    logger: CliLoggerAdapter,
 ) : Repository {
     private val librariesByTarget: Map<KonanTarget, Lazy<Set<NativeLibrary>>> =
         targets.associateWith { target ->
             lazy {
-                konanDistribution.platformLibsDir
-                    .resolve(target.name)
-                    .takeIf { it.isDirectory }
-                    ?.listFiles()
-                    .orEmpty().toList()
-                    .map { libraryLoader(it) }
-                    .toSet()
+                val klibLoaderResult = KlibLoader {
+                    libraryProviders(
+                        KlibNativeDistributionLibraryProvider(konanDistribution.root.toPath().toFile()) {
+                            withPlatformLibs(target)
+                        }
+                    )
+                }.load()
+
+                klibLoaderResult.reportLoadingProblemsIfAny { _, message -> logger.errorAndExitJvmProcess(message) }
+
+                klibLoaderResult.librariesStdlibFirst.mapToSetOrEmpty { library ->
+                    if (library.versions.metadataVersion == null)
+                        logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: ${library.libraryFile}")
+
+                    NativeLibrary(library)
+                }
             }
         }
 

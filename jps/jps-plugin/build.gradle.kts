@@ -93,6 +93,8 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 apply(plugin = "idea")
 idea {
     this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))
@@ -114,7 +116,12 @@ tasks.compileKotlin {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(
+        parallel = true,
+        jUnitMode = JUnitMode.JUnit4,
+        javaLauncher = JdkMajorVersion.JDK_17_0,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
         // do not replace with compile/runtime dependency,
         // because it forces Intellij reindexing after each compiler change
         dependsOn(":kotlin-compiler:dist")
@@ -144,11 +151,7 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
-        javaLauncher.set(
-            javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(17))
-            }
-        )
+        javaLauncher = project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)
     }
 
     withJvmStdlibAndReflect()

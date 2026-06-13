@@ -1,0 +1,1396 @@
+KtFile: 'primaryConstructorVsCompanionInvokeOnNestedClass.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,19): 'package com.example'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'com'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(12,19): 'example'
+  NO_CANDIDATES
+
+KtImportList(21,50): 'import com.example.Foo.Nested'
+  NO_CANDIDATES
+
+KtImportDirective(21,50): 'import com.example.Foo.Nested'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(28,50): 'com.example.Foo.Nested'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(28,43): 'com.example.Foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(28,39): 'com.example'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(28,31): 'com'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(32,39): 'example'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(40,43): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(44,50): 'Nested'
+  NO_CANDIDATES
+
+KtClass(52,204): 'class Foo {'
+  NO_CANDIDATES
+
+KtClassBody(62,204): '{'
+  NO_CANDIDATES
+
+KtClass(67,202): 'class Nested(s: String) {'
+  NO_CANDIDATES
+
+KtPrimaryConstructor(79,90): '(s: String)'
+  NO_CANDIDATES
+
+KtParameterList(79,90): '(s: String)'
+  NO_CANDIDATES
+
+KtParameter(80,89): 's: String'
+  NO_CANDIDATES
+
+KtTypeReference(83,89): 'String'
+  NO_CANDIDATES
+
+KtUserType(83,89): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(83,89): 'String'
+  NO_CANDIDATES
+
+KtClassBody(91,202): '{'
+  NO_CANDIDATES
+
+KtObjectDeclaration(99,197): 'companion object {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(99,108): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(116,197): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(127,189): 'operator fun invoke(param: Int) = Nested("str") // constructor'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(127,135): 'operator'
+  NO_CANDIDATES
+
+KtParameterList(146,158): '(param: Int)'
+  NO_CANDIDATES
+
+KtParameter(147,157): 'param: Int'
+  NO_CANDIDATES
+
+KtTypeReference(154,157): 'Int'
+  NO_CANDIDATES
+
+KtUserType(154,157): 'Int'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(154,157): 'Int'
+  NO_CANDIDATES
+
+KtCallExpression(161,174): 'Nested("str")'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(161,167): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'Int' was expected.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(167,174): '("str")'
+  NO_CANDIDATES
+
+KtValueArgument(168,173): '"str"'
+  NO_CANDIDATES
+
+KtStringTemplateExpression(168,173): '"str"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(169,172): 'str'
+  NO_CANDIDATES
+
+KtNamedFunction(206,369): 'fun main() {'
+  NO_CANDIDATES
+
+KtParameterList(214,216): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(217,369): '{'
+  NO_CANDIDATES
+
+KtCallExpression(222,231): 'Nested(1)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(222,228): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(228,231): '(1)'
+  NO_CANDIDATES
+
+KtValueArgument(229,230): '1'
+  NO_CANDIDATES
+
+KtConstantExpression(229,230): '1'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(235,238): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(239,248): 'Nested(2)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(239,245): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(245,248): '(2)'
+  NO_CANDIDATES
+
+KtValueArgument(246,247): '2'
+  NO_CANDIDATES
+
+KtConstantExpression(246,247): '2'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(252,267): 'com.example.Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(252,263): 'com.example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(252,255): 'com'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(256,263): 'example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(264,267): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(268,277): 'Nested(3)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Nested
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = s
+          receiverType = null
+          returnType = kotlin.String
+          symbol = s: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'Int', but 'String' was expected.>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(268,274): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(274,277): '(3)'
+  NO_CANDIDATES
+
+KtValueArgument(275,276): '3'
+  NO_CANDIDATES
+
+KtConstantExpression(275,276): '3'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(282,301): 'Nested.Companion(4)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(282,288): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(289,301): 'Companion(4)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(289,298): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested.Companion
+        symbol = <constructor>(): com.example.Foo.Nested.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(298,301): '(4)'
+  NO_CANDIDATES
+
+KtValueArgument(299,300): '4'
+  NO_CANDIDATES
+
+KtConstantExpression(299,300): '4'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(305,328): 'Foo.Nested.Companion(5)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(305,315): 'Foo.Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(305,308): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(309,315): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(316,328): 'Companion(5)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        5 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(316,325): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested.Companion
+        symbol = <constructor>(): com.example.Foo.Nested.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(325,328): '(5)'
+  NO_CANDIDATES
+
+KtValueArgument(326,327): '5'
+  NO_CANDIDATES
+
+KtConstantExpression(326,327): '5'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(332,367): 'com.example.Foo.Nested.Companion(6)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        6 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(332,354): 'com.example.Foo.Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(332,347): 'com.example.Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtDotQualifiedExpression(332,343): 'com.example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(332,335): 'com'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(336,343): 'example'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(344,347): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(348,354): 'Nested'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = <constructor>(s: kotlin.String): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = s
+            receiverType = null
+            returnType = kotlin.String
+            symbol = s: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(355,367): 'Companion(6)'
+  KaApplicableCallCandidate:
+    candidate = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Nested.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested
+        symbol = com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Nested.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        6 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(355,364): 'Companion'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo.Nested.Companion
+        symbol = <constructor>(): com.example.Foo.Nested.Companion
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtValueArgumentList(364,367): '(6)'
+  NO_CANDIDATES
+
+KtValueArgument(365,366): '6'
+  NO_CANDIDATES
+
+KtConstantExpression(365,366): '6'
+  NO_CANDIDATES

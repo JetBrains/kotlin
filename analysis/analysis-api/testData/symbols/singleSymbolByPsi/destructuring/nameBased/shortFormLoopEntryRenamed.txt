@@ -1,10 +1,10 @@
 KaLocalVariableSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -23,5 +23,5 @@ KaLocalVariableSymbol:
   getContainingFileSymbol: KaFileSymbol(shortFormLoopEntryRenamed.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

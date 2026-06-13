@@ -910,10 +910,10 @@ KtCallExpression(625,630): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -950,10 +950,10 @@ KtNameReferenceExpression(625,628): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1468,10 +1468,10 @@ KtCallExpression(891,896): 'foo()'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1508,10 +1508,10 @@ KtNameReferenceExpression(891,894): 'foo'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -2167,10 +2167,10 @@ KtCallExpression(1272,1282): 'body(this)'
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
+import org.jetbrains.kotlin.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.services.*
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.NonGroupingPhaseTestConfiguration
+import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.bind
@@ -75,6 +76,7 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
+@AffectedByAnalysisApi
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest {
     abstract val configurator: AnalysisApiTestConfigurator
 
@@ -175,7 +177,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * Use only if [doTestByMainModuleAndOptionalMainFile] is not suitable for your use case.
      */
     protected open fun doTest(testServices: TestServices) {
-        val (mainFile, mainModule) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
+        (val mainFile, val mainModule = module) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
 
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
     }
@@ -471,7 +473,8 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             return
         }
 
-        if (isFirDisabledForTheTest() ||
+        if (
+            isFirDisabledForTheTest() ||
             configurator.analysisApiMode == AnalysisApiMode.Standalone && isStandaloneDisabledForTheTest()
         ) {
             return
@@ -483,7 +486,15 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             return
         }
 
-        block(testServices)
+        var isFailure = false
+        try {
+            block(testServices)
+        } catch (t: Throwable) {
+            isFailure = true
+            throw t
+        } finally {
+            onTestFinished(testConfiguration, isFailure)
+        }
     }
 
     @AfterEach
@@ -495,13 +506,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         }
     }
 
-    private fun createTestConfiguration(): NonGroupingPhaseTestConfiguration {
+    private fun createTestConfiguration(): NonGroupingStageTestConfiguration {
         val testConfiguration = testConfiguration(testDataPath.toString(), configure)
         Disposer.register(disposable, testConfiguration.rootDisposable)
         return testConfiguration
     }
 
-    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingPhaseTestConfiguration) {
+    private fun createAndRegisterTestModuleStructure(testConfiguration: NonGroupingStageTestConfiguration) {
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             testDataPath.toString(),
             testConfiguration.directives,
@@ -510,7 +521,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         testServices.register(TestModuleStructure::class, moduleStructure)
     }
 
-    private fun prepareToTheAnalysis(testConfiguration: NonGroupingPhaseTestConfiguration) {
+    private fun prepareToTheAnalysis(testConfiguration: NonGroupingStageTestConfiguration) {
         val moduleStructure = testServices.moduleStructure
         val artifactsProvider = ArtifactsProvider()
         testServices.registerArtifactsProvider(artifactsProvider)
@@ -521,6 +532,10 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         testServices.ktTestModuleStructure.mainModules.forEach { ktTestModule ->
             configurator.prepareFilesInModule(ktTestModule, testServices)
         }
+    }
+
+    private fun onTestFinished(testConfiguration: NonGroupingStageTestConfiguration, isFailure: Boolean) {
+        testConfiguration.afterAnalysisCheckers.forEach { it.check(isFailure) }
     }
 
     private fun isDependentModeDisabledForTheTest(): Boolean =

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -84,7 +85,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
             // in case it is a complex type that quantifies
             // over many other types.
             if (varargParameterType.leastUpperBound(context.session).fullyExpandedType().isNothingOrNullableNothing ||
-                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
+                (varargParameterType.isBasicSingleFieldValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
@@ -98,7 +99,7 @@ object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkUninitializedParameter(function: FirFunction) {
-        for ((index, parameter) in function.valueParameters.withIndex()) {
+        for ([index, parameter] in function.valueParameters.withIndex()) {
             // Alas, CheckerContext.qualifiedAccesses stack is not available at this point.
             // Thus, manually visit default value expression and report the diagnostic on qualified accesses of interest.
             parameter.defaultValue?.accept(object : FirVisitorVoid() {

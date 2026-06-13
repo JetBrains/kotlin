@@ -1,10 +1,10 @@
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -23,16 +23,16 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -51,16 +51,16 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -79,16 +79,16 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null
 
 KaReceiverParameterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -107,5 +107,5 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(baseConditions.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

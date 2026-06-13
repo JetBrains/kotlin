@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
+import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
@@ -43,7 +44,6 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.io.readText
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
@@ -291,6 +291,7 @@ fun createLocalSwiftPackageWithBinaryTarget(
 internal fun createSwiftPmGitRepoWithTags(
     reposRoot: Path,
     packageName: String,
+    source: String,
     tags: List<String>,
     fileByTag: Map<String, Map<String, String>> = emptyMap(),
 ): Path {
@@ -310,9 +311,7 @@ internal fun createSwiftPmGitRepoWithTags(
 
     // Seed sources dir
     repoDir.resolve("Sources/$packageName").createDirectories()
-    repoDir.resolve("Sources/$packageName/$packageName.swift").writeText(
-        "public struct $packageName { public static let v = \"seed\" }\n"
-    )
+    repoDir.resolve("Sources/$packageName/$packageName.swift").writeText(source)
 
     runGit("add", ".", repoDir = repoDir)
     runGit("commit", "--quiet", "-m", "init", repoDir = repoDir)
@@ -322,7 +321,7 @@ internal fun createSwiftPmGitRepoWithTags(
         val files = fileByTag[tag]
             ?: mapOf("Sources/$packageName/$packageName.swift" to "public struct $packageName { public static let v = \"$tag\" }\n")
 
-        files.forEach { (rel, content) ->
+        files.forEach { [rel, content] ->
             val f = repoDir.resolve(rel)
             f.parent.createDirectories()
             f.writeText(content)
@@ -344,7 +343,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { (filePath, fileContent) ->
+    files?.forEach { [filePath, fileContent] ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -355,10 +354,28 @@ internal fun addSwiftPmGitTag(
     runGit("tag", tag, repoDir = repoDir)
 }
 
-internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -> Unit = {}) {
+internal fun TestProject.initKmpPluginsOnly() {
     plugins {
         kotlin("multiplatform")
     }
+}
+
+internal fun TestProject.initJvmKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            jvm()
+            extra()
+        }
+    }
+}
+
+internal fun TestProject.initDefaultKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
     buildScriptInjection {
         project.applyMultiplatform {
             listOf(
@@ -429,39 +446,94 @@ internal fun TestProject.initSwiftPmProject(
     extra: KotlinMultiplatformExtension.() -> Unit,
 ) {
     initDefaultKmp {
-        project.tasks
-            .withType(FetchSyntheticImportProjectPackages::class.java)
-            .configureEach { task ->
-                task.additionalSwiftPackageResolveArgs.set(
-                    listOf(
-                        "--resolver-fingerprint-checking", "warn",
-                        "--cache-path", cacheDirFile.path,
-                    )
-                )
-            }
-
-        project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
-            .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
-            }
-
+        configureSwiftPmTestArgs(cacheDirFile)
         extra()
     }
+}
+
+internal fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
+    cacheDirFile: File,
+) {
+    project.tasks
+        .withType(FetchSyntheticImportProjectPackages::class.java)
+        .configureEach { task ->
+            task.additionalSwiftPackageResolveArgs.set(
+                listOf(
+                    "--resolver-fingerprint-checking", "warn",
+                    "--cache-path", cacheDirFile.path,
+                )
+            )
+        }
+
+    project.tasks
+        .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+        .configureEach { task ->
+            task.additionalXcodeArgs.set(
+                listOf(
+                    "-packageFingerprintPolicy", "warn",
+                    "-packageCachePath", cacheDirFile.path,
+                )
+            )
+        }
+}
+
+internal fun TestProject.dumpTaskGraph(
+    taskName: String,
+    assertions: Set<String>.() -> Unit = {},
+): Set<String> {
+    lateinit var taskGraph: Set<String>
+
+    build(taskName, "--dry-run") {
+        taskGraph = output
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.endsWith(" SKIPPED") }
+            .map { it.removeSuffix(" SKIPPED") }
+            .filter { it.startsWith(":") }
+            .toSet()
+    }
+
+    assertions(taskGraph)
+    return taskGraph
+}
+
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : String) {
+    val taskToExclude = setOf(
+        ":kmpPartiallyResolvedDependenciesChecker",
+        ":downloadKotlinNativeDistribution",
+        ":checkKotlinGradlePluginConfigurationErrors",
+    )
+    // we also need to exlcude "right:checkKotlinGradlePluginConfigurationErrors"
+    val filteredGraph = filterNot { taskPath ->
+        taskToExclude.any { suffix ->
+            taskPath.endsWith(suffix)
+        }
+    }.toSet()
+    filteredGraph.assertExactTaskGraph(*tasks)
+}
+
+internal fun Set<String>.assertExactTaskGraph(vararg tasks : String) {
+    val expected = tasks.toSet()
+
+    val difference = (this - expected + (expected - this)).toSet()
+    assertEquals(
+        expected, this, "Executed tasks should be exactly the expected ones \n" +
+                "Expected: ${expected}\n" +
+                "Actual: ${this} \n" +
+                "Difference: ${difference}\n"
+    )
 }
 
 internal fun LockFileTestFixture.createRepo(
     name: String,
     tags: List<String>,
+    @Language("Swift")
+    source: String = "public struct $name { public static let v = \"seed\" }\n"
 ): Path {
     return createSwiftPmGitRepoWithTags(
         reposRoot = reposRoot,
         packageName = name,
+        source = source,
         tags = tags,
     )
 }
@@ -498,7 +570,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { (repoRef, version) ->
+        pins = expectedPins.map { [repoRef, version] ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
@@ -594,10 +666,6 @@ internal data class SwiftPmPinState(
     val branch: String? = null,
 )
 
-private val swiftPmJson = Json {
-    ignoreUnknownKeys = true
-}
-
 
 internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
     copy(pins = pins.map { it.copy(state = it.state.copy(revision = "<ignored>")) })
@@ -605,7 +673,7 @@ internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
 internal fun SwiftPmPackageResolved.ignoreTopLevelVersion(): SwiftPmPackageResolved =
     copy(version = -1)
 
-internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = swiftPmJson.decodeFromString(jsonString)
+internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = JsonHolder.json.decodeFromString(jsonString)
 
 // Package.resolved DTO
 
@@ -687,8 +755,10 @@ data class SwiftPackageTarget(
 
 // endregion
 
-private val appleToolJson = Json {
-    ignoreUnknownKeys = true
+private object JsonHolder {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 }
 
 private inline fun <reified T> runAppleToolCommand(
@@ -704,7 +774,7 @@ private inline fun <reified T> runAppleToolCommand(
         "Failed to run command ${command.joinToString(" ")} at $workingDir: ${result.output}"
     }
     val jsonContent = outputFile?.readText() ?: result.output
-    return appleToolJson.decodeFromString<T>(jsonContent)
+    return JsonHolder.json.decodeFromString<T>(jsonContent)
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
@@ -832,7 +902,31 @@ internal fun runGit(vararg args: String, repoDir: Path): String {
 @Serializable
 data class SwiftPackageDump(
     val name: String,
+    val dependencies: List<SwiftPackageDumpDependency> = emptyList(),
     val targets: List<SwiftPackageDumpTarget> = emptyList(),
+)
+
+@Serializable
+data class SwiftPackageDumpDependency(
+    val fileSystem: List<SwiftPackageDumpFileSystemDependency>? = null,
+    val sourceControl: List<SwiftPackageDumpSourceControlDependency>? = null,
+)
+
+@Serializable
+data class SwiftPackageDumpFileSystemDependency(
+    val identity: String,
+    val path: String,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlDependency(
+    val identity: String,
+    val location: SwiftPackageDumpSourceControlLocation,
+)
+
+@Serializable
+data class SwiftPackageDumpSourceControlLocation(
+    val remote: List<String>? = null,
 )
 
 
@@ -1009,7 +1103,7 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
 
 fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
     val gradleMetadata = rootComponent.gradleMetadata.readText().let {
-        swiftPmJson.decodeFromString<GradleMetadata>(it)
+        JsonHolder.json.decodeFromString<GradleMetadata>(it)
     }
 
     assertEquals(

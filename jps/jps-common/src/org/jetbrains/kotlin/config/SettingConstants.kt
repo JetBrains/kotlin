@@ -18,7 +18,12 @@ package org.jetbrains.kotlin.config
 
 object SettingConstants {
     const val KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION = "KotlinCommonCompilerArguments"
+
+    @Suppress("unused") // Used on IJ side
     const val KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION = "Kotlin2JsCompilerArguments"
+
+    @Suppress("unused") // Used on IJ side
+    const val KOTLIN_TO_WASM_COMPILER_ARGUMENTS_SECTION = "KotlinWasmCompilerArguments"
     const val KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION = "Kotlin2JvmCompilerArguments"
     const val KOTLIN_COMPILER_SETTINGS_SECTION = "KotlinCompilerSettings"
     const val KOTLIN_JPS_PLUGIN_SETTINGS_SECTION = "KotlinJpsPluginSettings"

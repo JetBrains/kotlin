@@ -8,8 +8,11 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.DependencyScopeConfiguration
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.artifacts.ResolvableConfiguration
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
 const val NATIVE_TEST_DEPENDENCY_KLIBS_CONFIGURATION_NAME = "testDependencyLibraryKlibs"
@@ -20,16 +23,17 @@ val NamedDomainObjectContainer<Configuration>.embedded: NamedDomainObjectProvide
 fun DependencyHandler.embedded(dependencyNotation: Any): Dependency? =
     add("embedded", dependencyNotation)
 
-val NamedDomainObjectContainer<Configuration>.implicitDependencies: NamedDomainObjectProvider<Configuration>
-    get() = named("implicitDependencies")
-
-fun DependencyHandler.implicitDependencies(dependencyNotation: Any, configure: Action<ExternalModuleDependency>? = null): Dependency? =
-    add("implicitDependencies", dependencyNotation)?.also {
-        if (it is ExternalModuleDependency) {
-            configure?.execute(it)
-        }
-    }
 
 fun Project.getOrCreateConfiguration(taskName: String, body: Configuration.() -> Unit): Configuration {
     return configurations.findByName(taskName)?.apply { body() } ?: configurations.create(taskName) { body() }
 }
+
+fun ConfigurationContainer.dependencyScopeNamedOrRegister(
+    name: String,
+    action: DependencyScopeConfiguration.() -> Unit,
+): NamedDomainObjectProvider<out Configuration> = if (names.contains(name)) named(name) else this.dependencyScope(name, action)
+
+fun ConfigurationContainer.resolvableNamedOrRegister(
+    name: String,
+    action: ResolvableConfiguration.() -> Unit,
+): NamedDomainObjectProvider<out Configuration> = if (names.contains(name)) named(name) else this.resolvable(name, action)

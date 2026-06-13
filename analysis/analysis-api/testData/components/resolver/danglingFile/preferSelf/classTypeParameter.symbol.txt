@@ -1,0 +1,8 @@
+KtNameReferenceExpression(48,53): 'Value'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      Value
+    ]
+  additional: [fake.kt]

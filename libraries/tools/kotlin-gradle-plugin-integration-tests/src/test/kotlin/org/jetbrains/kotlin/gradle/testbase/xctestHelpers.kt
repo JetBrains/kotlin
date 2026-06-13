@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.io.Closeable
 import java.io.File
+import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.io.path.pathString
 
 /** Maximum number of attempts to boot a simulator. */
 private const val BOOT_RETRIES = 3
@@ -47,6 +49,20 @@ internal class XCTestHelpers : Closeable {
             runProcessAndReturnStdoutWithoutTimeout(
                 listOf("/usr/bin/xcrun", "simctl", "install", udid, application.path)
             )
+        }
+
+        fun spawn(executable: Path, environmentOverrides: Map<String, String>, stdout: File, stderr: File): Int {
+            return ProcessBuilder(
+                listOf(
+                    "/usr/bin/xcrun", "simctl", "spawn",
+                    udid, executable.pathString,
+                )
+            ).apply {
+                val env = environment()
+                environmentOverrides.forEach { (key, value) -> env[key] = value }
+                redirectOutput(stdout)
+                redirectError(stderr)
+            }.start().waitFor()
         }
 
         fun launch(bundleId: String, stdout: File, stderr: File): Int {

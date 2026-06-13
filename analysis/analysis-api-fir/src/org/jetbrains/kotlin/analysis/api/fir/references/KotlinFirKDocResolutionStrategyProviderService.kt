@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.api.fir.references
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.registry.RegistryValue
 import com.intellij.openapi.util.registry.RegistryValueListener
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 
+@OptIn(KtImplementationDetail::class)
 internal class KotlinFirKDocResolutionStrategyProviderService : KotlinKDocResolutionStrategyProviderService {
     @Volatile
     private var shouldUseExperimentalResolution: Boolean = true

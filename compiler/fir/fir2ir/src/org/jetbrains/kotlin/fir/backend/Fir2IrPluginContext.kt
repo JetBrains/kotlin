@@ -52,7 +52,7 @@ class Fir2IrPluginContext(
         level = DeprecationLevel.WARNING
     )
     override val messageCollector: MessageCollector,
-    diagnosticReporter: DiagnosticReporter,
+    override val diagnosticReporter: IrDiagnosticReporter,
 ) : IrPluginContext {
     override val afterK2: Boolean = true
 
@@ -205,7 +205,4 @@ class Fir2IrPluginContext(
 
     private val IrFile.fileSource: KtSourceElement?
         get() = (metadata as? FirMetadataSource.File)?.fir?.source
-
-    override val diagnosticReporter: IrDiagnosticReporter =
-        KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 }

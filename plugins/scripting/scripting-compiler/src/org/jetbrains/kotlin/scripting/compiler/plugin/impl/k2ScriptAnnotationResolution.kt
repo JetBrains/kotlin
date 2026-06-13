@@ -181,7 +181,7 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
     val mapping =
         tryCreateCallableMappingFromNamedArgs(
             ctor,
-            evalRes.map { (name, result) ->
+            evalRes.map { [name, result] ->
                 val argName = name.asString()
                 argName to result.toArgument(argName)
             }

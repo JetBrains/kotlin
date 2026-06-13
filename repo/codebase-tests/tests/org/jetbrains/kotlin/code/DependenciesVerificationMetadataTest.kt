@@ -12,8 +12,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import kotlin.test.assertTrue
 import java.io.File
 
 
@@ -61,6 +61,6 @@ class DependenciesVerificationMetadataTest {
             }
         }
 
-        KtUsefulTestCase.assertEmpty(fails)
+        assertTrue(fails.isEmpty(), fails.toString())
     }
 }

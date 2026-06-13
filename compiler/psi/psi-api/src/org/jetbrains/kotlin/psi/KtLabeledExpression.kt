@@ -32,10 +32,8 @@ class KtLabeledExpression(node: ASTNode) : KtExpressionWithLabel(node), PsiNameI
 
     override fun getName() = getLabelName()
 
-    override fun setName(name: String): PsiElement {
-        getTargetLabel()?.replace(KtPsiFactory(project).createLabeledExpression(name).getTargetLabel()!!)
-        return this
-    }
+    @OptIn(KtNonPublicApi::class)
+    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setLabeledExpressionName(this, name)
 
     override fun getNameIdentifier() = getTargetLabel()?.getIdentifier()
 

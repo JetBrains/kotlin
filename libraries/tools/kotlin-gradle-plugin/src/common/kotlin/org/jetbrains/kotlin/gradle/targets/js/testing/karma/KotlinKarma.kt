@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
@@ -102,15 +103,13 @@ class KotlinKarma internal constructor(
 
     override val executable: Provider<String> = nodeJsEnvSpec.executable
 
+    @Deprecated("No longer used. Scheduled for removal in Kotlin 2.7.")
     override fun getPath() = "$basePath:kotlinKarma"
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
-    internal val isWasm: Boolean = compilation.webTargetVariant(
-        jsVariant = false,
-        wasmVariant = true,
-    )
+    internal val isWasm: Boolean = compilation.isWasm
 
     internal val npmToolingDir: DirectoryProperty = project.objects.directoryProperty().fileProvider(
         compilation.webTargetVariant(
@@ -143,7 +142,8 @@ class KotlinKarma internal constructor(
         progressReporter = true,
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait"),
-        resolveLoadersFromKotlinToolingDir = isWasm
+        resolveLoadersFromKotlinToolingDir = isWasm,
+        defineNonBrowserEnvironmentProperties = objects.property<Boolean>().convention(isWasm),
     )
 
     init {

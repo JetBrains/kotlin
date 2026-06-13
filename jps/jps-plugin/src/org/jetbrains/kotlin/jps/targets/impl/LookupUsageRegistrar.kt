@@ -46,7 +46,7 @@ class LookupUsageRegistrar {
     }
 
     private fun registerLookupTrackerImplEntries(lookupTracker: LookupTrackerImpl, callback: Backend) {
-        for ((lookupKey, fileList) in lookupTracker.lookups.entrySet()) {
+        for ([lookupKey, fileList] in lookupTracker.lookups.entrySet()) {
             val symbolOwner = lookupKey.scope.replace('.', '/')
             val symbolName = lookupKey.name
             val usage = LookupNameUsage(symbolOwner, symbolName)

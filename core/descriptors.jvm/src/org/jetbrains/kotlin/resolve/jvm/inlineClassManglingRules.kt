@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
+@K1Deprecation
 fun shouldHideConstructorDueToValueClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
     val constructorDescriptor = descriptor as? ClassConstructorDescriptor ?: return false
     if (DescriptorVisibilities.isPrivate(constructorDescriptor.visibility)) return false
@@ -21,6 +23,7 @@ fun shouldHideConstructorDueToValueClassTypeValueParameters(descriptor: Callable
     return constructorDescriptor.valueParameters.any { it.type.requiresFunctionNameManglingInParameterTypes() }
 }
 
+@K1Deprecation
 fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDescriptor): Boolean {
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type
     return extensionReceiverType != null && extensionReceiverType.requiresFunctionNameManglingInParameterTypes() ||
@@ -28,15 +31,18 @@ fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDesc
 }
 
 // NB functions returning all inline classes (including our special 'kotlin.Result') should be mangled.
+@K1Deprecation
 fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
     if (descriptor.containingDeclaration !is ClassDescriptor) return false
     val returnType = descriptor.returnType ?: return false
     return returnType.isInlineClassType() || returnType.isTypeParameterWithUpperBoundThatRequiresMangling(includeMfvc = false)
 }
 
+@K1Deprecation
 fun DeclarationDescriptor.isValueClassThatRequiresMangling(): Boolean =
     isValueClass() && !isDontMangleClass(this as ClassDescriptor)
 
+@K1Deprecation
 fun KotlinType.isValueClassThatRequiresMangling() =
     constructor.declarationDescriptor?.let { it.isInlineClass() && it.isValueClassThatRequiresMangling() || needsMfvcFlattening() } == true
 

@@ -168,7 +168,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
 
         val callWithAllArgs = expression.shallowCopy() // just a copy of given call, but with all arguments in place
         callWithAllArgs.arguments.assignFrom(actualParameters.map { it?.createGetValue() } )
-        defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs)).wrapWithBlockBody()
+        defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs, environment.irBuiltIns.nothingType)).wrapWithBlockBody()
 
         val callToDefault = environment.setCachedFunction(
             expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall, newFunction = defaultFun.symbol
@@ -177,7 +177,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     } else {
         callStack.pushSimpleInstruction(expression)
 
-        for ((param, arg) in (irFunction.parameters zip expression.arguments).asReversed()) {
+        for ([param, arg] in (irFunction.parameters zip expression.arguments).asReversed()) {
             callStack.pushSimpleInstruction(param)
             callStack.pushCompoundInstruction(arg)
         }
@@ -431,7 +431,7 @@ private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
 
 private fun unfoldCallableReference(reference: IrCallableReference<*>, callStack: CallStack) {
     callStack.pushSimpleInstruction(reference)
-    reference.getArgumentsWithIr().forEach { (parameter, arg) ->
+    reference.getArgumentsWithIr().forEach { [parameter, arg] ->
         callStack.pushSimpleInstruction(parameter)
         callStack.pushCompoundInstruction(arg)
     }

@@ -32,6 +32,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
             useAdditionalService { AnalysisApiIndexingConfiguration(AnalysisApiBinaryLibraryIndexingMode.INDEX_STUBS) }
+            configureFirConsistencyChecks()
         }
     }
 
@@ -51,7 +52,7 @@ object FirLowLevelCompilerBasedTestConfigurator : AnalysisApiTestConfigurator {
             val files = TestModuleStructureFactory.createSourcePsiFiles(testModule, testServices, project)
             val scriptFile = files.singleOrNull() as? KtFile
 
-            val (ktModule, testModuleKind) = if (scriptFile?.isScript() == true) {
+            val [ktModule, testModuleKind] = if (scriptFile?.isScript() == true) {
                 Pair(
                     KaScriptModuleByCompilerConfiguration(project, testModule, scriptFile, testServices),
                     TestModuleKind.ScriptSource,

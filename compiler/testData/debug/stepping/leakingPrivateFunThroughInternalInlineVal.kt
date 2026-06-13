@@ -38,12 +38,12 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:12 box
-// test.kt:8 box$lambda
-// test.kt:1 access$foo$tTestKt
+// test.kt:8 <get-a>$lambda
 // test.kt:4 foo
 
 // EXPECTATIONS WASM
 // test.kt:12 $box (11)
+// test.kt:7 $box (12)
 // test.kt:9 $box (5)
 // test.kt:12 $box (13)
 // test.kt:8 $box$lambda.invoke (8)

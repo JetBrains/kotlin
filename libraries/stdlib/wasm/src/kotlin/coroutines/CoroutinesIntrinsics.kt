@@ -28,9 +28,7 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 @PublishedApi
 internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnImpl(
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
-    this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
-)
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(this, completion)
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -55,7 +53,7 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnImpl(
     receiver: R,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
-    this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, completion
 )
 
 @kotlin.internal.InlineOnly
@@ -64,7 +62,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     param: P,
     completion: Continuation<T>
 ): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
-    this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+    this, receiver, param, completion
 )
 
 /**
@@ -90,11 +88,7 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
  */
 public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
-): Continuation<Unit> {
-    return createCoroutineFromSuspendFunction(completion) {
-        this.startCoroutineUninterceptedOrReturn(completion)
-    }
-}
+): Continuation<Unit> = createCoroutineUninterceptedIntrinsic0(this, completion)
 
 /**
  * Creates unintercepted coroutine with receiver type [R] and result type [T].
@@ -120,11 +114,7 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     receiver: R,
     completion: Continuation<T>
-): Continuation<Unit> {
-    return createCoroutineFromSuspendFunction(completion) {
-        this.startCoroutineUninterceptedOrReturn(receiver, completion)
-    }
-}
+): Continuation<Unit> = createCoroutineUninterceptedIntrinsic1(this, receiver, completion)
 
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
@@ -136,28 +126,4 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
  * If this function is invoked on other [Continuation] instances it returns `this` continuation unchanged.
  */
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =
-    (this as? CoroutineImpl)?.intercepted() ?: this
-
-@Suppress("UNCHECKED_CAST")
-private inline fun <T> createCoroutineFromSuspendFunction(
-    completion: Continuation<T>,
-    crossinline block: () -> Any?
-): Continuation<Unit> {
-    return object : CoroutineImpl(completion as Continuation<Any?>) {
-        override fun doResume(): Any? {
-            exception?.let { throw it }
-            return block()
-        }
-    }
-}
-
-@PublishedApi
-@Suppress("UNCHECKED_CAST")
-internal fun <T> createSimpleCoroutineFromSuspendFunction(
-    completion: Continuation<T>
-): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
-    override fun doResume(): Any? {
-        if (exception != null) throw exception as Throwable
-        return result
-    }
-}
+    (this as? CoroutineImpl<T, *>)?.intercepted() ?: this

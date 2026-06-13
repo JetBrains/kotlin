@@ -1,7 +1,0 @@
-KtNameReferenceExpression(83,88): 'param'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in Foo) private val param: kotlin.String [classPrivateConstructorParameter.kt]

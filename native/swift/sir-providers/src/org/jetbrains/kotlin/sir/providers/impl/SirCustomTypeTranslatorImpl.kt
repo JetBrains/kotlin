@@ -370,7 +370,7 @@ public class SirCustomTypeTranslatorImpl(
             )
 
         private val primitiveTypeToWrapperMap: Map<SirNominalType, SirCustomTypeTranslator.BridgeWrapper> = buildMap {
-            for ((declaration, kctype) in mapOf(
+            for ([declaration, kctype] in mapOf(
                 SirSwiftModule.utf16CodeUnit to Pair(KotlinType.Char, CType.UInt16),
 
                 SirSwiftModule.int8 to Pair(KotlinType.Byte, CType.Int8),

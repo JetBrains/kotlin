@@ -27,3 +27,33 @@ interface MessageCollector {
         }
     }
 }
+
+@JvmDefaultWithCompatibility
+interface MessageCollectorWithDiagnosticId : MessageCollector {
+    /**
+     * Delegates to [report] with `diagnosticId = null` for messages not backed by a diagnostic factory.
+     * Implementors only need to override the four-parameter overload.
+     */
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+        report(severity, message, location, diagnosticId = null)
+    }
+
+    fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation? = null,
+        diagnosticId: String?,
+    )
+}
+
+fun MessageCollector.report(
+    severity: CompilerMessageSeverity,
+    message: String,
+    location: CompilerMessageSourceLocation? = null,
+    diagnosticId: String?,
+) {
+    when (this) {
+        is MessageCollectorWithDiagnosticId -> report(severity, message, location, diagnosticId)
+        else -> report(severity, message, location)
+    }
+}

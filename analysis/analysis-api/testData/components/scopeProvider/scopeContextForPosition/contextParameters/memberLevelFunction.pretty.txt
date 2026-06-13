@@ -5,6 +5,8 @@ implicit values:
     type = kotlin.String
     ownerSymbol = KaNamedFunctionSymbol:
       one/B.foo(<extension receiver>: kotlin.String, <dispatch receiver>: one.B, p: kotlin.Boolean): kotlin.Unit
+    label = foo
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 2
@@ -23,6 +25,8 @@ implicit values:
     type = one.B
     ownerSymbol = KaNamedClassSymbol:
       one/B
+    label = B
+
 
 scopes:
   LocalScope, index = 0

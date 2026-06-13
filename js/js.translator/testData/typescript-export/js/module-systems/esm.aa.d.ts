@@ -1,7 +1,14 @@
 type Nullable<T> = T | null | undefined
 declare function KtSingleton<T>(): T & (abstract new() => any);
-
-
+export declare interface KtList<out E> /* extends Collection<E> */ {
+    asJsReadonlyArrayView(): ReadonlyArray<E>;
+    readonly __doNotUseOrImplementIt: {
+        readonly "kotlin.collections.KtList": unique symbol;
+    };
+}
+export declare namespace KtList {
+    function fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
+}
 export declare const value: {
     get(): number;
 };
@@ -9,9 +16,17 @@ export declare const variable: {
     get(): number;
     set(value: number): void;
 };
+export declare function createInterfaceNested(value: number): InterfaceWithNestedClass.Nested;
+export declare function consumeInterfaceNested(nested: InterfaceWithNestedClass.Nested): number;
+export declare function createGenericInterfaceNested(value: string): InterfaceWithNestedClass.GenericNested<string>;
+export declare function copyInterfaceDataNested(nested: InterfaceWithNestedClass.DataNested): InterfaceWithNestedClass.DataNested;
+export declare function createDeepInterfaceNested(value: string): InterfaceWithNestedClass.Nested.DeepNested;
+export declare function createConcreteInterfaceNested(): InterfaceWithNestedClass.ConcreteNested;
+export declare function createValueInterfaceNested(value: number): InterfaceWithNestedClass.NestedValue;
+export declare function createFunInterfaceNested(value: string): FunInterfaceWithNestedClass.Nested;
 export declare function box(): string;
-export declare function asyncList(): Promise<any/* List<number> */>;
-export declare function arrayOfLists(): Array<any/* List<number> */>;
+export declare function asyncList(): Promise<KtList<number>>;
+export declare function arrayOfLists(): Array<KtList<number>>;
 declare function justSomeDefaultExport(): string;
 export default justSomeDefaultExport;
 export declare class C {
@@ -136,6 +151,142 @@ export declare namespace AnInterfaceWithCompanion {
                 get constValue(): string;
                 private constructor();
             }
+        }
+    }
+}
+export declare interface InterfaceWithNamedCompanion {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithNamedCompanion": unique symbol;
+    };
+}
+export declare namespace InterfaceWithNamedCompanion {
+    const staticValue: string;
+    abstract class Name extends KtSingleton<Name.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace Name {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                get someValue(): string;
+                get constValue(): string;
+                private constructor();
+            }
+        }
+    }
+}
+export declare interface InterfaceWithNestedClass {
+    createNested(value: number): InterfaceWithNestedClass.Nested;
+    consumeNested(nested: InterfaceWithNestedClass.Nested): number;
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithNestedClass": unique symbol;
+    };
+}
+export declare namespace InterfaceWithNestedClass {
+    class Nested {
+        constructor(value: number);
+        get value(): number;
+    }
+    namespace Nested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => Nested;
+        }
+        class DeepNested {
+            constructor(value: string);
+            get value(): string;
+        }
+        namespace DeepNested {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => DeepNested;
+            }
+        }
+    }
+    class GenericNested<T> {
+        constructor(value: T);
+        get value(): T;
+    }
+    namespace GenericNested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new <T>() => GenericNested<T>;
+        }
+    }
+    class DataNested {
+        constructor(value: string);
+        copy(value?: string): InterfaceWithNestedClass.DataNested;
+        equals(other: Nullable<any>): boolean;
+        hashCode(): number;
+        toString(): string;
+        get value(): string;
+    }
+    namespace DataNested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => DataNested;
+        }
+    }
+    abstract class AbstractNested {
+        constructor();
+        abstract box(): string;
+    }
+    namespace AbstractNested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => AbstractNested;
+        }
+    }
+    class ConcreteNested extends InterfaceWithNestedClass.AbstractNested.$metadata$.constructor {
+        constructor();
+        box(): string;
+    }
+    namespace ConcreteNested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => ConcreteNested;
+        }
+    }
+    class ConstructorWithDefaultsAndVarargs {
+        constructor(prefix: string | undefined, parts: Array<string>);
+        get prefix(): string;
+        get parts(): Array<string>;
+    }
+    namespace ConstructorWithDefaultsAndVarargs {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => ConstructorWithDefaultsAndVarargs;
+        }
+    }
+    class NestedValue {
+        constructor(value: number);
+        equals(other: Nullable<any>): boolean;
+        hashCode(): number;
+        toString(): string;
+        get value(): number;
+    }
+    namespace NestedValue {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => NestedValue;
+        }
+    }
+}
+export declare interface FunInterfaceWithNestedClass {
+    run(value: string): string;
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.FunInterfaceWithNestedClass": unique symbol;
+    };
+}
+export declare namespace FunInterfaceWithNestedClass {
+    class Nested {
+        constructor(value: string);
+        get value(): string;
+    }
+    namespace Nested {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            const constructor: abstract new () => Nested;
         }
     }
 }

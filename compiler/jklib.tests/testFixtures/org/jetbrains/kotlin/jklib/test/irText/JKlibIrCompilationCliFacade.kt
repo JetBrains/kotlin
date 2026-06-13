@@ -8,24 +8,18 @@ package org.jetbrains.kotlin.jklib.test.irText
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationArtifact
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationPhase
-import org.jetbrains.kotlin.cli.pipeline.PipelineContext
-import org.jetbrains.kotlin.config.phaser.PhaseConfig
-import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
-import org.jetbrains.kotlin.test.model.DeserializerFacade
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.model.ArtifactKind
+import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.TestArtifactKind
-import org.jetbrains.kotlin.test.model.ArtifactKind
 
 @Suppress("UNCHECKED_CAST")
 class JKlibIrCompilationCliFacade(testServices: TestServices) :
@@ -52,9 +46,6 @@ class JKlibDeserializedIrBackendInput(
 
     override val irBuiltIns: IrBuiltIns
         get() = compilationArtifact.pluginContext.irBuiltIns
-
-    override val descriptorMangler: KotlinMangler.DescriptorMangler?
-        get() = null // JKlib test doesn't necessarily need the descriptor mangler for text verification
 
     // Bypassing full mangler initialization since IR text verification doesn't necessitate linking steps.
     override val irMangler: KotlinMangler.IrMangler

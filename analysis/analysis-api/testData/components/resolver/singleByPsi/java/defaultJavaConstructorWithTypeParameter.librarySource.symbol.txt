@@ -1,0 +1,8 @@
+KtNameReferenceExpression(60,69): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+  PSI class names: ClsClassImpl

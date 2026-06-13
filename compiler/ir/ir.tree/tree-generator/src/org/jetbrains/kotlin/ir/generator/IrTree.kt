@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.model.SimpleField
 import org.jetbrains.kotlin.ir.generator.model.symbol.Symbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -424,6 +423,9 @@ object IrTree : AbstractTreeBuilder() {
     val functionWithLateBinding: Element by declarationWithLateBinding(simpleFunctionSymbol) {
         parent(simpleFunction)
     }
+    val constructorWithLateBinding: Element by declarationWithLateBinding(constructorSymbol) {
+        parent(constructor)
+    }
     val propertyWithLateBinding: Element by declarationWithLateBinding(propertySymbol) {
         parent(property)
     }
@@ -596,6 +598,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isOperator", boolean)
         +field("isInfix", boolean)
         +referencedSymbol("correspondingPropertySymbol", propertySymbol, nullable = true)
+        +referencedSymbol("companionExtensionClass", classSymbol, nullable = true)
     }
     val typeAlias: Element by element(Declaration) {
         parent(declarationBase)
@@ -744,8 +747,11 @@ object IrTree : AbstractTreeBuilder() {
         parent(constructorCall)
         parent(type<AnnotationMarker>())
 
-        +field("classId", type<ClassId>(), nullable = true)
-        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression))
+        +referencedSymbol("classSymbol", classSymbol, mutable = false)
+        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression), nullable = true)
+        +referencedSymbol("symbol", type = constructorSymbol) {
+            optInAnnotation = deprecatedCompilerApi.withArgument("deprecatedSince", "org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20")
+        }
     }
     val getSingletonValue: Element by element(Expression) {
         nameInVisitorMethod = "SingletonReference"

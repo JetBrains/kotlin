@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.decamelize
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -38,15 +41,13 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Comp
 internal fun ObjectFactory.KotlinJsIrTarget(
     project: Project,
     platformType: KotlinPlatformType,
-    isMpp: Boolean,
-): KotlinJsIrTarget = newInstance(project, platformType, isMpp)
+): KotlinJsIrTarget = newInstance(project, platformType)
 
 abstract class KotlinJsIrTarget
 @Inject
-constructor(
+internal constructor(
     project: Project,
     platformType: KotlinPlatformType,
-    internal val isMpp: Boolean,
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -55,6 +56,14 @@ constructor(
     KotlinWasmWasiTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
+
+    @Deprecated("Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.")
+    constructor(
+        project: Project,
+        platformType: KotlinPlatformType,
+        @Suppress("UNUSED_PARAMETER")
+        isMpp: Boolean,
+    ) : this(project, platformType)
 
     private val propertiesProvider = PropertiesProvider(project)
     internal val shouldGenerateTypeScriptDefinitions: Property<Boolean> = project.objects.property<Boolean>(false)
@@ -107,26 +116,6 @@ constructor(
             artifactTargetName = wasmDecamelizedDefaultNameOrNull() ?: componentName
         }
     }
-
-    override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
-        val usageContexts = super.createUsageContexts(producingCompilation)
-
-        if (isMpp) return usageContexts
-
-        return usageContexts +
-                DefaultKotlinUsageContext(
-                    compilation = compilations.getByName(MAIN_COMPILATION_NAME),
-                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
-                    dependencyConfigurationName = commonFakeApiElementsConfigurationName,
-                    overrideConfigurationArtifacts = project.setProperty { emptyList() }
-                )
-    }
-
-    internal val commonFakeApiElementsConfigurationName: String
-        get() = lowerCamelCaseName(
-            disambiguationClassifier,
-            "commonFakeApiElements"
-        )
 
     override val binaries: KotlinJsBinaryContainer
         get() = compilations.withType(KotlinJsIrCompilation::class.java)
@@ -207,7 +196,7 @@ constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
-    //Browser
+    //region Browser
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
@@ -223,8 +212,9 @@ constructor(
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
+    //endregion
 
-    //node.js
+    //region node.js
     private val nodejsLazyDelegate = lazy {
         if (wasmTargetType != KotlinWasmTargetType.WASI) {
             commonLazy
@@ -246,8 +236,9 @@ constructor(
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
         body(nodejs)
     }
+    //endregion
 
-    //d8
+    //region d8
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
         webTargetVariant(
@@ -264,12 +255,13 @@ constructor(
 
     override val d8: KotlinWasmD8Dsl by d8LazyDelegate
 
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
-        configure()
-    }
-
     override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
         body(d8)
+    }
+    //endregion
+
+    private fun KotlinJsIrSubTarget.configureSubTarget() {
+        configure()
     }
 
     override fun useCommonJs() {

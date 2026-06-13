@@ -1,8 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
-
     namespace foo {
         const console: Console;
         const error: CompileError;
@@ -115,7 +113,7 @@ declare namespace JS_TESTS {
         }
         class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, any/* foo.SomeEvent */> {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.Service<any/* foo.SomeService */, any/* foo.SomeEvent */>["__doNotUseOrImplementIt"];
+            readonly __doNotUseOrImplementIt: foo.Service<any, any>["__doNotUseOrImplementIt"];
         }
         namespace SomeServiceRequest {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
@@ -125,3 +123,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

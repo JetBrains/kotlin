@@ -16,21 +16,25 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 
+@K1Deprecation
 interface VariableAsFunctionResolvedCall {
     val functionCall: ResolvedCall<FunctionDescriptor>
     val variableCall: ResolvedCall<VariableDescriptor>
 }
 
+@K1Deprecation
 interface VariableAsFunctionMutableResolvedCall : VariableAsFunctionResolvedCall {
     override val functionCall: MutableResolvedCall<FunctionDescriptor>
     override val variableCall: MutableResolvedCall<VariableDescriptor>
 }
 
+@K1Deprecation
 class VariableAsFunctionResolvedCallImpl(
     override val functionCall: MutableResolvedCall<FunctionDescriptor>,
     override val variableCall: MutableResolvedCall<VariableDescriptor>

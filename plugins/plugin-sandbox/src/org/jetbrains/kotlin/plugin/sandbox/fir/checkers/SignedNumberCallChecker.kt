@@ -22,7 +22,7 @@ object SignedNumberCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
-        for ((argument, parameter) in argumentMapping.entries) {
+        for ([argument, parameter] in argumentMapping.entries) {
             val expectedSign = parameter.returnTypeRef.coneType.attributes.numberSign ?: continue
             val actualSign = argument.resolvedType.attributes.numberSign
             if (expectedSign != actualSign) {

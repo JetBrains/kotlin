@@ -1,5 +1,7 @@
 KtNameReferenceExpression(149,154): 'Local'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): <local>.Local
+      Local
     ]

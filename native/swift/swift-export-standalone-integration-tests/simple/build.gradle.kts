@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
 }
@@ -17,24 +18,26 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testImplementation(project(":native:swift:swift-export-standalone-integration-tests"))
+    testImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
     testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+
+    testFixturesImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 }
 
 sourceSets {
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
     testData(isolated, "testData")
+    testData(rootProject.isolated, "native/native.tests/testData/framework")
 
     nativeTestTask(
         "test",
@@ -46,6 +49,9 @@ projectTests {
             allowFlightRecorder.set(true)
         }
     }
-}
 
-testsJar()
+    testGenerator(
+        "org.jetbrains.kotlin.swiftexport.standalone.test.simple.TestGeneratorKt",
+        generateTestsInBuildDirectory = true,
+    )
+}

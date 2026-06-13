@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
@@ -171,7 +170,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
             val split = line.split(":")
             val opWithTarget = split[0]
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) {
                 ++lineCounter
                 return@loop false
@@ -222,7 +221,7 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
 
             val split = line.split(":")
             val opWithTarget = split[0]
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) return@loop false
 
             when {
@@ -272,7 +271,11 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
     }
 }
 
-class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTarget.ANY) : InfoParser<ModuleInfo>(infoFile) {
+class ModuleInfoParser(
+    infoFile: File,
+    private val target: ModelTarget = ModelTarget.ANY,
+    private val expectedStateDirectives: Collection<String> = emptySet(),
+) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
         val modifications = mutableListOf<ModuleInfo.Modification>()
@@ -285,7 +288,7 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
                 val cmd = matcher3.group(2)
                 when (mop) {
                     MODIFICATION_UPDATE -> {
-                        val (from, to) = cmd.split("->")
+                        val [from, to] = cmd.split("->")
                         modifications.add(ModuleInfo.Modification.Update(from.trim(), to.trim()))
                     }
                     MODIFICATION_DELETE -> modifications.add(ModuleInfo.Modification.Delete(cmd.trim()))
@@ -319,18 +322,17 @@ class ModuleInfoParser(infoFile: File, private val target: ModelTarget = ModelTa
             if (opIndex < 0) throwSyntaxError(line)
             val opWithTarget = line.substring(0, opIndex)
 
-            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            val [op, opTarget] = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
             if (opTarget != ModelTarget.ANY && opTarget != target) {
                 if (op == MODIFICATIONS) parseModifications()
                 return@loop false
             }
 
             fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
-
-            val expectedState = DirtyFileState.entries.find { it.str == op }
+            val expectedState = op.takeIf { it in expectedStateDirectives }
             if (expectedState != null) {
-                val stats = expectedFileStats[expectedState.str]
-                expectedFileStats[expectedState.str] = if (stats == null) {
+                val stats = expectedFileStats[expectedState]
+                expectedFileStats[expectedState] = if (stats == null) {
                     getOpArgs().toSet()
                 } else {
                     stats + getOpArgs()

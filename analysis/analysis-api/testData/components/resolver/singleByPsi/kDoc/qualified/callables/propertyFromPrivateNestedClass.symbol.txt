@@ -1,2 +1,5 @@
-KtNamedFunction(73,115): '/**'
-  null
+KDocName(81,95): 'Foo.Nested.foo'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val foo: kotlin.Int
+    ]

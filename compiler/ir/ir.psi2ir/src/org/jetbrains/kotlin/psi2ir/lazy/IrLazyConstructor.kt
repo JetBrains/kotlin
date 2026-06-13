@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Descriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+@K1Deprecation
 class IrLazyConstructor(
     override var startOffset: Int,
     override var endOffset: Int,

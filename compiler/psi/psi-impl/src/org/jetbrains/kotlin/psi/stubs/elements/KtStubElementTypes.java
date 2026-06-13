@@ -13,6 +13,7 @@ public interface KtStubElementTypes {
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
     KtPropertyAccessorElementType PROPERTY_ACCESSOR = KtPropertyAccessorElementType.INSTANCE;
     KtBackingFieldElementType BACKING_FIELD = new KtBackingFieldElementType("BACKING_FIELD");
+    KtDestructuringDeclarationElementType DESTRUCTURING_DECLARATION = KtDestructuringDeclarationElementType.INSTANCE;
     KtTypeAliasElementType TYPEALIAS = new KtTypeAliasElementType("TYPEALIAS");
 
     KtEnumEntryElementType ENUM_ENTRY = KtEnumEntryElementType.INSTANCE;

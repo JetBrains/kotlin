@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 
-import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
+import org.jetbrains.kotlin.TestWithDisposable
 import java.nio.file.Path
 import java.nio.file.Paths
 

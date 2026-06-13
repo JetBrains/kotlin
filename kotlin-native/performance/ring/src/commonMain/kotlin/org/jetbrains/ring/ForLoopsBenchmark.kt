@@ -1,6 +1,13 @@
 package org.jetbrains.ring
 
-class ForLoopsBenchmark {
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
+private const val BENCHMARK_SIZE = 10000
+
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ForLoops : SkipWhenBaseOnly() {
 
     private val array: Array<Int> = Array(BENCHMARK_SIZE) {
         it
@@ -36,141 +43,173 @@ class ForLoopsBenchmark {
         it.toULong()
     }
 
-    fun arrayLoop(): Long {
+    @Benchmark
+    fun arrayLoop(bh: Blackhole) {
         var sum = 0L
         for (e in array) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun intArrayLoop(): Long {
+    @Benchmark
+    fun intArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (e in intArray) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun charArrayLoop(): Long {
+    @Benchmark
+    fun charArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (e in charArray) {
-            sum += e.toLong()
+            sum += e.code.toLong()
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun stringLoop(): Long {
+    @Benchmark
+    fun stringLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (e in string) {
             sum += e.hashCode()
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun stringArrayLoop(): Long {
+    @Benchmark
+    fun stringArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (e in stringArray) {
             sum += e.length.toLong()
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun floatArrayLoop(): Double {
+    @Benchmark
+    fun floatArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0.0
         for (e in floatArray) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uIntArrayLoop(): ULong {
+    @Benchmark
+    fun uIntArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (e in uIntArray) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uShortArrayLoop(): ULong {
+    @Benchmark
+    fun uShortArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (e in uShortArray) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uLongArrayLoop(): ULong {
+    @Benchmark
+    fun uLongArrayLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (e in uLongArray) {
             sum += e
         }
-        return sum
+        bh.consume(sum)
     }
 
     // Iterations over .indices
 
-    fun arrayIndicesLoop(): Long {
+    @Benchmark
+    fun arrayIndicesLoop(bh: Blackhole) {
         var sum = 0L
         for (i in array.indices) {
             sum += array[i]
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun intArrayIndicesLoop(): Long {
+    @Benchmark
+    fun intArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (i in intArray.indices) {
             sum += intArray[i]
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun charArrayIndicesLoop(): Long {
+    @Benchmark
+    fun charArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (i in charArray.indices) {
-            sum += charArray[i].toLong()
+            sum += charArray[i].code.toLong()
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun stringIndicesLoop(): Long {
+    @Benchmark
+    fun stringIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0L
         for (i in string.indices) {
             sum += string[i].hashCode()
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun floatArrayIndicesLoop(): Double {
+    @Benchmark
+    fun floatArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0.0
         for (i in floatArray.indices) {
             sum += floatArray[i]
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uIntArrayIndicesLoop(): ULong {
+    @Benchmark
+    fun uIntArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (i in uIntArray.indices) {
             sum += uIntArray[i]
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uShortArrayIndicesLoop(): ULong {
+    @Benchmark
+    fun uShortArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (i in uShortArray.indices) {
             sum += uShortArray[i]
         }
-        return sum
+        bh.consume(sum)
     }
 
-    fun uLongArrayIndicesLoop(): ULong {
+    @Benchmark
+    fun uLongArrayIndicesLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum: ULong = 0u
         for (i in uLongArray.indices) {
             sum += uLongArray[i]
         }
-        return sum
+        bh.consume(sum)
     }
 }

@@ -1,7 +1,6 @@
 KaPropertyGetterSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -32,5 +31,5 @@ KaPropertyGetterSymbol:
   getContainingFileSymbol: KaFileSymbol(typeAnnotationsOnPropertyGetterReturnType.kt)
   getContainingJvmClassName: TypeAnnotationsOnPropertyGetterReturnTypeKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

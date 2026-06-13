@@ -53,6 +53,10 @@ public final class A {
      *   // nested class: A
      *
      *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
      * }
      */
     @kotlin.Metadata()
@@ -351,6 +355,10 @@ public final class Test {
      * public abstract interface Test.NestedInterface : kotlin/Any {
      *
      *   // module name: main
+     *
+     *   // has method bodies in interface
+     *
+     *   // is compiled in compatibility mode
      * }
      */
     @kotlin.Metadata()

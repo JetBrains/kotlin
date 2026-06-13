@@ -29,6 +29,7 @@ plugins {
     id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
     id("binaryen-configuration")
+    id("nodejs-configuration")
 }
 
 description = "Kotlin Standard Library"
@@ -56,6 +57,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
+    freeCompilerArgs.add("-Xname-based-destructuring=complete")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
@@ -631,6 +633,7 @@ kotlin {
                     commonTestOptIns.forEach { optIn(it) }
                 }
             }
+            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
         }
     }
 }
@@ -808,12 +811,14 @@ tasks {
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
         val distJsKlib = configurations.create("distJsKlib")
         val distWasmJsKlib = configurations.create("distWasmJsKlib")
+        val distWasmWasiKlib = configurations.create("distWasmWasiKlib")
         val commonMainMetadataElements by configurations.creating
         val webMainMetadataElements by configurations.creating
 
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
         add(distWasmJsKlib.name, wasmJsJar)
+        add(distWasmWasiKlib.name, wasmWasiJar)
         add(webMainMetadataElements.name, webMetadataJar)
         add(commonMainMetadataElements.name, commonMetadataJar)
     }

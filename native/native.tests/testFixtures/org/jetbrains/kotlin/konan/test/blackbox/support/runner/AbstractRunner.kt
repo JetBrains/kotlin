@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.opentest4j.MultipleFailuresError
 import org.opentest4j.TestAbortedException
 
@@ -22,7 +23,7 @@ abstract class AbstractRunner<R> : Runner<R> {
         resultHandler.handle()
     } catch (t: Throwable) {
         when (t) {
-            is AssertionError, is TestAbortedException -> throw t
+            is AssertionError, is TestAbortedException, is TestInfrastructureException -> throw t
             else -> {
                 // An unexpected failure.
                 handleUnexpectedFailure(t)

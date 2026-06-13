@@ -27,12 +27,12 @@ object FirDiagnosticToKaDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         val diagnosticGroups = diagnosticList.diagnostics.groupByTo(TreeMap()) { abs(it.className.hashCode()) % 200 }.entries
         val functionNameTemplate = "addConversions"
         printBlock("internal val KT_DIAGNOSTIC_CONVERTER: KaDiagnosticConverter = KaDiagnosticConverterBuilder.buildConverter") {
-            for ((index, _) in diagnosticGroups) {
+            for ([index, _] in diagnosticGroups) {
                 println("$functionNameTemplate$index()")
             }
         }
 
-        for ((index, diagnostics) in diagnosticGroups) {
+        for ([index, diagnostics] in diagnosticGroups) {
             println()
             printBlock("private fun KaDiagnosticConverterBuilder.$functionNameTemplate$index()") {
                 for (diagnostic in diagnostics) {

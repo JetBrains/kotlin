@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.checkers.diagnostics
 
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 
+@K1Deprecation
 class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val platform: String?, withNewInference: Boolean) :
     AbstractTestDiagnostic {
     override var inferenceCompatibility = if (withNewInference)

@@ -178,7 +178,7 @@ KtNameReferenceExpression(304,312): 'settings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(313,315): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -357,7 +357,7 @@ KtNameReferenceExpression(354,367): 'basicSettings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(368,370): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -536,7 +536,7 @@ KtNameReferenceExpression(414,427): 'basicSettings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(428,430): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -722,7 +722,22 @@ KtUserType(540,552): 'OpenSettings'
   null
 
 KtNameReferenceExpression(540,552): 'OpenSettings'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenSettings
+        symbol = <constructor>(): OpenSettings
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(552,554): '()'
   null
@@ -779,7 +794,22 @@ KtUserType(594,606): 'OpenSettings'
   null
 
 KtNameReferenceExpression(594,606): 'OpenSettings'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenSettings
+        symbol = <constructor>(): OpenSettings
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(606,608): '()'
   null
@@ -883,7 +913,7 @@ KtNameReferenceExpression(707,715): 'settings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(716,718): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1062,7 +1092,7 @@ KtNameReferenceExpression(761,774): 'basicSettings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(775,777): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1243,7 +1273,7 @@ KtNameReferenceExpression(825,838): 'basicSettings'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(839,841): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

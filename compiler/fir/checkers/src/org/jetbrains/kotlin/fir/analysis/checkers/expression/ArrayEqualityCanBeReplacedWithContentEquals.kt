@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.forEachClassId
 import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.types.ConeIntersectionType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -33,11 +36,28 @@ object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(M
         val left = arguments.getOrNull(0) ?: return
         val right = arguments.getOrNull(1) ?: return
 
-        val leftClassId = ARRAY_CLASS_IDS.indexOf(left.resolvedType.fullyExpandedClassId(context.session)).takeIf { it != -1 }
-        val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
+        val leftClassId = left.resolvedType.arrayClassId().takeIf { it != -1 }
+        val rightClassId = right.resolvedType.arrayClassId()
 
         if (leftClassId == rightClassId) {
-            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS)
+            reporter.reportOn(
+                expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS,
+                expression.operation.operator,
+                if (expression.operation == FirOperation.NOT_EQ) "!" else "",
+            )
         }
     }
+
+    context(context: CheckerContext)
+    private fun ConeKotlinType.arrayClassId(): Int {
+        var result = -1
+
+        forEachClassId {
+            val index = ARRAY_CLASS_IDS.indexOf(it)
+            if (index != -1) result = index
+        }
+
+        return result
+    }
 }
+

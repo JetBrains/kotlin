@@ -297,6 +297,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     @DisplayName("KT-34340: origins in classpath")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")
     fun testIsolatingWithOriginsInClasspath(
         gradleVersion: GradleVersion,
@@ -491,7 +492,7 @@ fun TestProject.generateProcessor(
     val processorPath = projectPath.resolve("incrementalProcessor.jar").toFile()
 
     ZipOutputStream(processorPath.outputStream()).use {
-        for ((_, procClass) in processors) {
+        for ([_, procClass] in processors) {
             val path = procClass.name.replace(".", "/") + ".class"
             procClass.classLoader.getResourceAsStream(path).use { inputStream ->
                 it.putNextEntry(ZipEntry(path))
@@ -500,12 +501,12 @@ fun TestProject.generateProcessor(
             }
         }
         it.putNextEntry(ZipEntry("META-INF/gradle/incremental.annotation.processors"))
-        it.write(processors.joinToString("\n") { (procType, procClass) ->
+        it.write(processors.joinToString("\n") { [procType, procClass] ->
             "${procClass.name},$procType"
         }.toByteArray())
         it.closeEntry()
         it.putNextEntry(ZipEntry("META-INF/services/javax.annotation.processing.Processor"))
-        it.write(processors.joinToString("\n") { (_, procClass) ->
+        it.write(processors.joinToString("\n") { [_, procClass] ->
             procClass.name
         }.toByteArray())
         it.closeEntry()

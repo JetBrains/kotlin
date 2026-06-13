@@ -1,4 +1,6 @@
 KClass: class KotlinInternal : Any
+  constructors:
+    public final fun `<init>`(): KotlinInternal
   members:
     public open operator fun KotlinInternal.equals(kotlin.Any?): kotlin.Boolean
     internal open fun KotlinInternal.foo(): kotlin.Unit
@@ -9,6 +11,8 @@ KClass: class KotlinInternal : Any
     internal open fun KotlinInternal.foo(): kotlin.Unit
     internal open val KotlinInternal.a: kotlin.Int
 KClass: class A : Java1
+  constructors:
+    public final fun `<init>`(): A
   members:
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
     internal open fun A.foo(): kotlin.Unit
@@ -17,6 +21,8 @@ KClass: class A : Java1
     internal open val A.a: kotlin.Int
   declaredMembers:
 KClass: class B : Java2
+  constructors:
+    public final fun `<init>`(): B
   members:
     public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
     internal open fun B.foo(): kotlin.Unit
@@ -27,6 +33,8 @@ KClass: class B : Java2
     public final var B.a: kotlin.Int
   declaredMembers:
 KClass: class C : Java2
+  constructors:
+    public final fun `<init>`(): C
   members:
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
     public open fun C.foo(): kotlin.Unit
@@ -38,6 +46,8 @@ KClass: class C : Java2
     public open fun C.foo(): kotlin.Unit
     public final val C.a: kotlin.Int
 KClass: class D : Java3
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     internal open fun D.foo(): kotlin.Unit
@@ -48,6 +58,8 @@ KClass: class D : Java3
     final var D.a: kotlin.Int
   declaredMembers:
 KClass: class E : Java3
+  constructors:
+    public final fun `<init>`(): E
   members:
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
     public open fun E.foo(): kotlin.Unit
@@ -59,6 +71,8 @@ KClass: class E : Java3
     public open fun E.foo(): kotlin.Unit
     public final val E.a: kotlin.Int
 KClass: class F : Java4
+  constructors:
+    public final fun `<init>`(): F
   members:
     public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
     internal open fun F.foo(): kotlin.Unit
@@ -67,6 +81,8 @@ KClass: class F : Java4
     internal open val F.a: kotlin.Int
   declaredMembers:
 KClass: class G : Java5
+  constructors:
+    public final fun `<init>`(): G
   members:
     public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
     internal open fun G.foo(): kotlin.Unit
@@ -77,6 +93,8 @@ KClass: class G : Java5
     final var G.a: kotlin.Int
   declaredMembers:
 KClass: class H : Java5
+  constructors:
+    public final fun `<init>`(): H
   members:
     public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
     public open fun H.foo(): kotlin.Unit
@@ -88,6 +106,8 @@ KClass: class H : Java5
     public open fun H.foo(): kotlin.Unit
     public final val H.a: kotlin.Int
 KClass: abstract class I : JavaPublic, KotlinInternal
+  constructors:
+    public final fun `<init>`(): I
   members:
     public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
     internal open fun I.foo(): kotlin.Unit
@@ -97,6 +117,8 @@ KClass: abstract class I : JavaPublic, KotlinInternal
     internal open val I.a: kotlin.Int
   declaredMembers:
 KClass: class J : JavaPublic, KotlinInternal
+  constructors:
+    public final fun `<init>`(): J
   members:
     public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
     public open fun J.foo(): kotlin.Unit
@@ -107,6 +129,8 @@ KClass: class J : JavaPublic, KotlinInternal
     public open fun J.foo(): kotlin.Unit
     public final val J.a: kotlin.Int
 KClass: class Java1 : KotlinInternal
+  constructors:
+    public final fun `<init>`(): Java1
   members:
     public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java1.foo(): kotlin.Unit
@@ -115,6 +139,8 @@ KClass: class Java1 : KotlinInternal
     internal open val Java1.a: kotlin.Int
   declaredMembers:
 KClass: class Java2 : KotlinInternal
+  constructors:
+    public final fun `<init>`(): Java2
   members:
     public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java2.foo(): kotlin.Unit
@@ -127,6 +153,8 @@ KClass: class Java2 : KotlinInternal
     public open fun Java2.foo(): kotlin.Unit
     public final var Java2.a: kotlin.Int
 KClass: class Java3 : KotlinInternal
+  constructors:
+    public final fun `<init>`(): Java3
   members:
     public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java3.foo(): kotlin.Unit
@@ -139,6 +167,8 @@ KClass: class Java3 : KotlinInternal
     open fun Java3.foo(): kotlin.Unit
     final var Java3.a: kotlin.Int
 KClass: class Java4 : KotlinInternal
+  constructors:
+    public final fun `<init>`(): Java4
   members:
     public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java4.foo(): kotlin.Unit
@@ -151,6 +181,8 @@ KClass: class Java4 : KotlinInternal
     private open fun Java4.foo(): kotlin.Unit
     private final var Java4.a: kotlin.Int
 KClass: class Java5 : KotlinInternal
+  constructors:
+    public final fun `<init>`(): Java5
   members:
     public open operator fun Java5.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java5.foo(): kotlin.Unit
@@ -187,6 +219,8 @@ KClass: abstract interface JavaPublic : Any
   staticMembers:
     public final val a: kotlin.Int
 KClass: class K : JavaDefault, KotlinInternal
+  constructors:
+    public final fun `<init>`(): K
   members:
     public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
     public open fun K.foo(): kotlin.Unit
@@ -197,6 +231,8 @@ KClass: class K : JavaDefault, KotlinInternal
     public open fun K.foo(): kotlin.Unit
     public final val K.a: kotlin.Int
 KClass: class KotlinInternal : Any
+  constructors:
+    public final fun `<init>`(): KotlinInternal
   members:
     public open operator fun KotlinInternal.equals(kotlin.Any?): kotlin.Boolean
     internal open fun KotlinInternal.foo(): kotlin.Unit

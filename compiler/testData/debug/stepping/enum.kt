@@ -41,16 +41,12 @@ fun box() {
 // EXPECTATIONS NATIVE
 // test.kt:23 box
 // test.kt:4 $getEnumAt
-// test.kt:1 $getEnumAt
-// test.kt:4 $getEnumAt
 // test.kt:13 $getEnumAt
 // test.kt:23 box
 // test.kt:8 foo
 // test.kt:10 foo
 // test.kt:23 box
 // test.kt:24 box
-// test.kt:15 $getEnumAt
-// test.kt:1 $getEnumAt
 // test.kt:15 $getEnumAt
 // test.kt:20 $getEnumAt
 // test.kt:25 box
@@ -65,7 +61,6 @@ fun box() {
 // test.kt:4 <init>
 // test.kt:23 box
 // test.kt:10 foo
-// test.kt:8 E$foo$lambda
 // test.kt:24 box
 // test.kt:16 E2_initEntries
 // test.kt:15 <init>

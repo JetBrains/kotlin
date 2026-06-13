@@ -273,7 +273,24 @@ KtUserType(388,403): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(388,400): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(400,403): '<T>'
   null
@@ -392,7 +409,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(487,489): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -572,7 +589,24 @@ KtUserType(615,630): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(615,627): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(627,630): '<T>'
   null
@@ -691,7 +725,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(714,716): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -823,7 +857,24 @@ KtUserType(784,799): 'ItemCallback<T>'
   null
 
 KtNameReferenceExpression(784,796): 'ItemCallback'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = ItemCallback<T>
+        symbol = <constructor>(): ItemCallback<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(796,799): '<T>'
   null
@@ -942,7 +993,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(883,885): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1081,7 +1132,7 @@ KtNameReferenceExpression(956,957): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(958,960): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1187,7 +1238,7 @@ KtNameReferenceExpression(967,968): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(969,971): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1293,7 +1344,7 @@ KtNameReferenceExpression(979,980): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(981,983): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1399,7 +1450,7 @@ KtNameReferenceExpression(990,991): 'm'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(992,994): '!='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

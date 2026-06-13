@@ -478,6 +478,14 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
+        // The following two also contain stuff from swift-export
+        generationState.bindClassToObjCNameClassAdapters.forEach { [name, ptr] ->
+            placedClassAdapters.putIfAbsent(name, ptr)
+        }
+        generationState.bindClassToObjCNameInterfaceAdapters.forEach { [name, ptr] ->
+            placedInterfaceAdapters.putIfAbsent(name, ptr)
+        }
+
         fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
             val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {
                 it.second
@@ -551,7 +559,7 @@ internal class ObjCExportCodeGenerator(
             unreachable()
         }
 
-        val methods = selectorsToDefine.map { (selector, bridge) ->
+        val methods = selectorsToDefine.map { [selector, bridge] ->
             ObjCDataGenerator.Method(selector, getEncoding(bridge), imp.toConstPointer())
         }
 
@@ -1053,7 +1061,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         val objCReferenceArgsToRelease = mutableListOf<LLVMValueRef>()
 
-        val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
+        val objCArgs = methodBridge.parametersAssociated(irFunction).map { [bridge, parameter] ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
                     parameter!!
@@ -1512,7 +1520,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
         null
     }
 
-    val (itable, itableSize) = when {
+    val [itable, itableSize] = when {
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
         irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
         else -> Pair(emptyList(), -1)
@@ -1596,7 +1604,7 @@ private fun ObjCExportCodeGenerator.createReverseAdapters(
 
             val allOverriddenMethods = method.allOverriddenFunctions
 
-            val (inherited, uninherited) = allOverriddenMethods.partition {
+            val [inherited, uninherited] = allOverriddenMethods.partition {
                 it in methodsCoveredByInheritedAdapters
             }
 

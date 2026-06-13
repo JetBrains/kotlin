@@ -122,7 +122,7 @@ class TransformerForAddingAnnotations(val context: IrPluginContext) : IrVisitorV
                 it.arguments[10] = IrClassReferenceImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    context.irBuiltIns.kClassClass.defaultType,
+                    context.irBuiltIns.kClassClass.typeWith(context.irBuiltIns.stringType),
                     context.irBuiltIns.stringClass,
                     context.irBuiltIns.stringType,
                 )

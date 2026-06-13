@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -91,7 +92,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         for (parameter in expression.invokeFunction.parameters) {
             // this origin affects how name in bytecode would be generated. We need this change only for inline lambdas,
             // so let's drop it for everything else.
-            if (parameter.origin == LAMBDA_EXTENSION_RECEIVER) {
+            if (parameter.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER) {
                 parameter.origin = IrDeclarationOrigin.DEFINED
             }
         }
@@ -494,7 +495,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 val builder = context.createIrBuilder(symbol).applyIf(isLambda) { at(invokeFunction.body!!) }
                 body = builder.irBlockBody {
                     val variablesMapping = buildMap {
-                        for ((index, capturedValue) in boundValues.withIndex()) {
+                        for ([index, capturedValue] in boundValues.withIndex()) {
                             val invokeParameter = invokeFunction.parameters[index]
                             val capturedValueLocal = when (capturedValue) {
                                 is BoundValue.StoredInVariable -> capturedValue.symbol
@@ -510,7 +511,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                             }
                             put(invokeParameter, capturedValueLocal)
                         }
-                        for ((index, parameter) in nonDispatchParameters.withIndex()) {
+                        for ([index, parameter] in nonDispatchParameters.withIndex()) {
                             val invokeParameter = invokeFunction.parameters[index + boundValues.size]
                             if (parameter.type != invokeParameter.type) {
                                 put(invokeParameter, irTemporary(irGet(parameter).implicitCastTo(invokeParameter.type)))

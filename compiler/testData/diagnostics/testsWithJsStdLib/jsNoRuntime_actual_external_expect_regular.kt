@@ -22,6 +22,11 @@ expect interface AndOneMore
 
 expect interface RegularExpect : NoRuntimeExpect
 
+expect interface RegularTypealiasExpect
+
+@JsNoRuntime
+expect interface NoRuntimeTypealiasExpect
+
 fun commonIsCheck(a: Any) {
     if (<!JS_NO_RUNTIME_FORBIDDEN_IS_CHECK!>a is NoRuntimeExpect<!>) {}
     if (<!JS_NO_RUNTIME_FORBIDDEN_IS_CHECK!>a !is NoRuntimeExpect<!>) {}
@@ -68,6 +73,14 @@ actual interface <!JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnotherNoR
 
 @JsNoRuntime
 actual interface AndOneMore
+
+external interface ExternalTypealiasActual
+
+interface RegularTypealiasActual
+
+actual typealias <!JS_ACTUAL_EXTERNAL_INTERFACE_WHILE_EXPECT_WITHOUT_JS_NO_RUNTIME!>RegularTypealiasExpect<!> = ExternalTypealiasActual
+
+actual typealias <!JS_NO_RUNTIME_ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>NoRuntimeTypealiasExpect<!> = RegularTypealiasActual
 
 fun jsPlatformIsCheck(a: Any) {
     if (<!CANNOT_CHECK_FOR_EXTERNAL_INTERFACE!>a is NoRuntimeExpect<!>) {}

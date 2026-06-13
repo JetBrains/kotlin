@@ -15,7 +15,7 @@ The test data is stored under [`testData`](../swift-export-standalone-integratio
 When adding a new test case, don't forget to update the generated unit tests by running
 
 ```bash
-gradle :generators:sir-tests-generator:generateTests
+gradle :native:swift:swift-export-standalone-integration-tests:simple:generateTests
 ```
 
 ### How to run the tests

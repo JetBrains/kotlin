@@ -22,6 +22,7 @@ import com.google.common.collect.Lists
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.analyzer.unwrapPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -57,6 +58,7 @@ import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 
+@K1Deprecation
 object Renderers {
 
     private val LOG = Logger.getInstance(Renderers::class.java)
@@ -756,4 +758,5 @@ object Renderers {
         }
 }
 
+@K1Deprecation
 fun DescriptorRenderer.asRenderer() = SmartDescriptorRenderer(this)

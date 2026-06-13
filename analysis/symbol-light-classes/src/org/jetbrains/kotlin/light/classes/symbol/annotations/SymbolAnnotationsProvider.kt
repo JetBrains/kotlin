@@ -25,12 +25,17 @@ internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
         annotatedSymbol.annotations.map { annotation ->
             // to preserve the initial annotations order
             val index = indices.merge(annotation.classId, 0) { old, _ -> old + 1 }!!
-            annotation.toDumbLightClassAnnotationApplication(index)
+            annotation.toDumbLightClassAnnotationApplication(index, ktModule)
         }
     }
 
     override fun get(classId: ClassId): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotations[classId].mapIndexed { index, annotation -> annotation.toLightClassAnnotationApplication(index) }
+        annotatedSymbol.annotations[classId].mapIndexed { index, annotation ->
+            annotation.toLightClassAnnotationApplication(
+                index,
+                ktModule
+            )
+        }
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->

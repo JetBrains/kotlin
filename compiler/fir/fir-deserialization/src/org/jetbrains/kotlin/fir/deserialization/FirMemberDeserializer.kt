@@ -564,6 +564,10 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isDeserializedPropertyFromAnnotation = true
             }
 
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+            }
+
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Property::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)
@@ -732,6 +736,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             applyKDoc(c.kdocDeserializer.loadFunctionKDoc(proto))
         }.apply {
+            if (isStatic && classSymbol != null) {
+                containingClassForStaticMemberAttr = classSymbol.toLookupTag()
+            }
             this.versionRequirements = versionRequirements
             setLazyPublishedVisibility(c.session)
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Function::getCompilerPluginDataList)

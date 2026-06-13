@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.resolve.deprecation.getSinceVersion
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.source.getPsi
 
+@K1Deprecation
 object DeprecatedSinceKotlinAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val deprecatedSinceAnnotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin) ?: return

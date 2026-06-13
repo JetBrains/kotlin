@@ -46,7 +46,7 @@ import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 import kotlin.lazy
 
 private val obj = SirParameter(
-    "", "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
+    null, "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
 )
 
 internal sealed class SirInitFromKtSymbol(
@@ -106,6 +106,11 @@ internal sealed class SirInitFromKtSymbol(
             (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.let {
                 !it.modality.isAbstract() && !it.defaultType.isArrayOrPrimitiveArray && !it.hasFBoundedTypeParameters()
             } ?: false
+        }
+
+    protected val isAbstractClass: Boolean
+        get() = withSessions {
+            (parent as? SirClass)?.kaSymbolOrNull<KaClassSymbol>()?.modality?.isAbstract() ?: false
         }
 
 }
@@ -196,8 +201,10 @@ internal class SirRegularInitFromKtSymbol(
             val allocDescriptor = bridgeAllocProxy ?: return@withSessions null
 
             return@withSessions SirFunctionBody(buildList {
-                (parent as? SirScopeDefiningDeclaration)?.let {
-                    add("if Self.self != ${it.swiftFqName}.self { fatalError(\"Inheritance from exported Kotlin classes is not supported yet: \\(String(reflecting: Self.self)) inherits from ${it.swiftFqName} \") }")
+                if (isAbstractClass) {
+                    (parent as? SirScopeDefiningDeclaration)?.let {
+                        add("if Self.self == ${it.swiftFqName}.self { fatalError(\"Abstract class ${it.swiftFqName} cannot be instantiated directly\") }")
+                    }
                 }
 
                 addAll(allocDescriptor.createSwiftInvocation {
@@ -255,7 +262,7 @@ internal class SirRegularInitFromKtSymbol(
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "__error", it)
+                SirParameter(null, "__error", it)
             },
             isAsync = false,
         )

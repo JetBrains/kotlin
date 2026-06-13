@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-30054
-// LANGUAGE: +KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE_FEATURE_TOGGLED: KeepNullabilityWhenApproximatingLocalType
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 interface I {
     fun foo(): String
 }

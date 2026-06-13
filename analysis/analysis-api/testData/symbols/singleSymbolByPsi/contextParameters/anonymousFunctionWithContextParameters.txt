@@ -1,15 +1,14 @@
 KaAnonymousFunctionSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -30,15 +29,15 @@ KaAnonymousFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -64,7 +63,7 @@ KaAnonymousFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -110,7 +109,6 @@ KaAnonymousFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -118,6 +116,7 @@ KaAnonymousFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -138,12 +137,12 @@ KaAnonymousFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(anonymousFunctionWithContextParameters.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

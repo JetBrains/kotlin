@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
 import kotlin.io.path.absolute
+import kotlin.io.path.writeText
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -37,7 +38,11 @@ class GradleMetadataTest {
                         if (kotlinVersion.contains("SNAPSHOT")) {
                             actualObject.setOrgGradleStatusAttributeToRelease()
                         }
-                        assertEqualsToFile(expectedGradleMetadataPath, prettyJson.encodeToString(actualObject))
+                        if(System.getenv("UPDATE_TEST_DATA") == "true") {
+                            expectedGradleMetadataPath.writeText(prettyJson.encodeToString(actualObject))
+                        } else {
+                            assertEqualsToFile(expectedGradleMetadataPath, prettyJson.encodeToString(actualObject))
+                        }
                     }
                 } else {
                     if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")

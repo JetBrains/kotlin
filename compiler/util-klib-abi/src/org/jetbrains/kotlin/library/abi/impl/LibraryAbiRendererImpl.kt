@@ -56,7 +56,7 @@ internal class AbiRendererImpl(
                     compilerVersion?.let { "Compiler version" to it },
                     abiVersion?.let { "ABI version" to it },
                     irProviderName?.let { "IR provider" to it }
-                ).forEach { (name, value) ->
+                ).forEach { [name, value] ->
                     output.append("// ").append(name).append(": ").appendLine(value)
                 }
             }
@@ -319,6 +319,7 @@ internal class AbiRendererImpl(
         declaration = declaration,
         text = buildString {
             appendModalityOf(declaration)
+            if (declaration.getter?.companionExtensionsClass != null) append("companion ")
             appendPropertyKind(declaration.kind)
             appendNameOf(declaration)
         }
@@ -363,9 +364,11 @@ internal class AbiRendererImpl(
             if (!declaration.isConstructor || declaration.modality != AbiModality.FINAL) appendModalityOf(declaration)
             if (declaration.isSuspend) append("suspend ")
             if (declaration.isInline) append("inline ")
+            if (declaration.companionExtensionsClass != null) append("companion ")
             append(if (declaration.isConstructor) "constructor " else "fun ")
             appendTypeParametersOf(declaration)
             appendIrregularValueParametersOf(declaration)
+            appendCompanionExtensionClass(declaration)
             appendNameOf(declaration)
             appendRegularValueParametersOf(declaration)
             appendReturnTypeOf(declaration)
@@ -398,6 +401,15 @@ internal class AbiRendererImpl(
         override fun print(printer: Printer) = printer.printDeclaration(this)
 
         companion object {
+            private fun StringBuilder.appendCompanionExtensionClass(function: AbiFunction) {
+                val companionExtensionClass = function.companionExtensionsClass
+                if (companionExtensionClass != null) {
+                    append("(")
+                    append(companionExtensionClass.className)
+                    append(").")
+                }
+            }
+
             private fun StringBuilder.appendIrregularValueParametersOf(function: AbiFunction) {
                 val contextParameters = function.valueParameters.filter { it.kind == AbiValueParameterKind.CONTEXT }
                 val extensionReceiver = function.valueParameters.firstOrNull { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }

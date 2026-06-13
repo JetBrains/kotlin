@@ -175,7 +175,7 @@ KtConstantExpression(126,127): '1'
   null
 
 KtOperationReferenceExpression(128,130): 'in'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -451,7 +451,7 @@ KtConstantExpression(171,172): '2'
   null
 
 KtOperationReferenceExpression(173,176): '!in'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -573,7 +573,7 @@ KtWhenConditionInRange(211,223): 'in MyClass()'
       }
 
 KtOperationReferenceExpression(211,213): 'in'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -701,7 +701,7 @@ KtWhenConditionInRange(270,283): '!in MyClass()'
       }
 
 KtOperationReferenceExpression(270,273): '!in'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

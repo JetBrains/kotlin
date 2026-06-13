@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinJavaIoSerializableExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.serialize.TestIdeaKotlinSerializationContext
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
-import org.junit.Test
 import java.io.Serializable
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

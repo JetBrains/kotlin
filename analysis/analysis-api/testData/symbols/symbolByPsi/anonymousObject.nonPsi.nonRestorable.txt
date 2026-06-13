@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -26,8 +25,8 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -58,8 +56,8 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -67,7 +65,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: OBJECT
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -90,8 +87,8 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -99,7 +96,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: INTERFACE
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -122,8 +118,8 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null
 
 KaNamedClassSymbol:
@@ -131,7 +127,6 @@ KaNamedClassSymbol:
   classId: null
   classKind: ANNOTATION_CLASS
   companionObject: null
-  compilerVisibility: Local
   contextReceivers: []
   isActual: false
   isData: false
@@ -154,14 +149,13 @@ KaNamedClassSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
-  deprecationStatus: null
+  applicableAnnotationTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER]
+  deprecation: null
   importableFqName: null
 
 KaTypeAliasSymbol:
   annotations: []
   classId: null
-  compilerVisibility: Local
   expandedType: KaUsualClassType:
     annotations: []
     typeArguments: []
@@ -177,5 +171,5 @@ KaTypeAliasSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(anonymousObject.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

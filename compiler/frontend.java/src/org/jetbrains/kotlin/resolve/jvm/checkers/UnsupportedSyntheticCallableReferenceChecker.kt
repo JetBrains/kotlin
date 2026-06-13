@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
  * This is K1 implementation.
  * For K2 implementation see: [org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirUnsupportedSyntheticCallableReferenceChecker]
  */
+@K1Deprecation
 class UnsupportedSyntheticCallableReferenceChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         // TODO: support references to synthetic Java extension properties (KT-8575)

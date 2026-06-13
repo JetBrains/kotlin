@@ -2,7 +2,6 @@ KaAnonymousObjectSymbol:
   annotations: []
   classId: null
   classKind: ANONYMOUS_OBJECT
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -19,6 +18,6 @@ KaAnonymousObjectSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(objectWithTypeArgsAsExpression.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: null

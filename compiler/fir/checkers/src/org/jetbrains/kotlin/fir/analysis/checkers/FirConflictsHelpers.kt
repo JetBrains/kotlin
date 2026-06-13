@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -85,7 +86,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
 }
 
 private val FirNamedFunctionSymbol.isCollectableAccordingToSource: Boolean
-    get() = source?.kind !is KtFakeSourceElementKind || source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers
+    get() = source?.kind !is KtFakeSourceElementKind || source?.kind is KtFakeSourceElementKind.DataClassGeneratedMembers
 
 internal val FirBasedSymbol<*>.resolvedStatus
     get() = when (this) {
@@ -98,7 +99,7 @@ private fun isAtLeastOneExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<
     first.resolvedStatus?.isExpect == true || second.resolvedStatus?.isExpect == true
 
 private class DeclarationBuckets {
-    val simpleFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
+    val namedFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
     val constructors = mutableListOf<Pair<FirConstructorSymbol, String>>()
     val classLikes = mutableListOf<Pair<FirClassLikeSymbol<*>, String>>()
     val properties = mutableListOf<Pair<FirPropertySymbol, String>>()
@@ -113,7 +114,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
 
         when (declaration) {
             is FirNamedFunction ->
-                groups.getOrPut(declaration.name, ::DeclarationBuckets).simpleFunctions +=
+                groups.getOrPut(declaration.name, ::DeclarationBuckets).namedFunctions +=
                     declaration.symbol to FirRedeclarationPresenter.represent(declaration.symbol)
             is FirProperty -> {
                 val group = groups.getOrPut(declaration.name, ::DeclarationBuckets)
@@ -129,7 +130,7 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
                 val group = groups.getOrPut(declaration.nameOrSpecialName, ::DeclarationBuckets)
                 group.classLikes += declaration.symbol to representation
 
-                declaration.symbol.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
+                declaration.symbol.expandedClassWithConstructorsScope()?.let { [expandedClass, scopeWithConstructors] ->
                     if (expandedClass.classKind == ClassKind.OBJECT) {
                         return@let
                     }
@@ -219,7 +220,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirCla
             return
         }
 
-        it.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
+        it.expandedClassWithConstructorsScope()?.let { [expandedClass, scopeWithConstructors] ->
             // Objects have implicit FirPrimaryConstructors
             if (expandedClass.classKind == ClassKind.OBJECT) {
                 return@let
@@ -275,7 +276,7 @@ fun collectConflictingLocalFunctionsFrom(
             is FirNamedFunction ->
                 inspector.collect(collectable.symbol, FirRedeclarationPresenter.represent(collectable.symbol), functionDeclarations)
             is FirClassLikeDeclaration -> {
-                collectable.symbol.expandedClassWithConstructorsScope()?.let { (_, scopeWithConstructors) ->
+                collectable.symbol.expandedClassWithConstructorsScope()?.let { [_, scopeWithConstructors] ->
                     scopeWithConstructors.processDeclaredConstructors {
                         inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable.symbol), functionDeclarations)
                     }
@@ -332,7 +333,7 @@ private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
  *
  * #### Matrix of possible conflicts between "sources" and "buckets"
  *
- * |                         | simpleFunctions | constructors | classLikes | Properties | extensionProperties |
+ * |                         |  namedFunctions | constructors | classLikes | Properties | extensionProperties |
  * |-------------------------|-----------------|--------------|------------|------------|---------------------|
  * | functions               | X               | X            |            |            |                     |
  * | classifiers             |                 |              | X          | X          |                     |
@@ -344,9 +345,9 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
     file: FirFile, packageMemberScope: FirPackageMemberScope
 ): Unit = with(context) {
     @OptIn(DirectDeclarationsAccess::class)
-    for ((declarationName, group) in groupTopLevelByName(file.declarations)) {
+    for ([declarationName, group] in groupTopLevelByName(file.declarations)) {
         val groupHasClassLikesOrProperties = group.classLikes.isNotEmpty() || group.properties.isNotEmpty()
-        val groupHasSimpleFunctions = group.simpleFunctions.isNotEmpty()
+        val groupHasNamedFunctions = group.namedFunctions.isNotEmpty()
 
         fun collect(
             declarations: List<Pair<FirBasedSymbol<*>, String>>,
@@ -354,7 +355,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
             conflictingPresentation: String? = null,
             conflictingFile: FirFile? = null,
         ) {
-            for ((declaration, declarationPresentation) in declarations) {
+            for ([declaration, declarationPresentation] in declarations) {
                 collectTopLevelConflict(
                     declaration,
                     declarationPresentation,
@@ -376,19 +377,19 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
             collect(group.classLikes, conflictingSymbol, conflictingPresentation, conflictingFile)
             collect(group.properties, conflictingSymbol, conflictingPresentation, conflictingFile)
 
-            if (groupHasSimpleFunctions) {
+            if (groupHasNamedFunctions) {
                 if (conflictingSymbol !is FirClassLikeSymbol<*>) {
                     return
                 }
 
-                conflictingSymbol.expandedClassWithConstructorsScope()?.let { (expandedClass, scopeWithConstructors) ->
+                conflictingSymbol.expandedClassWithConstructorsScope()?.let { [expandedClass, scopeWithConstructors] ->
                     if (expandedClass.classKind == ClassKind.OBJECT || expandedClass.classKind == ClassKind.ENUM_ENTRY) {
                         return
                     }
 
                     scopeWithConstructors.processDeclaredConstructors { constructor ->
                         val ctorRepresentation = FirRedeclarationPresenter.represent(constructor, conflictingSymbol)
-                        collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
+                        collect(group.namedFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
                     }
                 }
             }
@@ -397,15 +398,15 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
         // Check sources in the order from the table above. Skip the check if all relevant buckets are empty.
 
         // Function source
-        if (groupHasSimpleFunctions || group.constructors.isNotEmpty()) {
+        if (groupHasNamedFunctions || group.constructors.isNotEmpty()) {
             packageMemberScope.processFunctionsByName(declarationName) {
-                collect(group.simpleFunctions, it)
+                collect(group.namedFunctions, it)
                 collect(group.constructors, it)
             }
         }
 
         // Classifier sources, collectForClassifierSource will also check constructors.
-        if (groupHasClassLikesOrProperties || groupHasSimpleFunctions) {
+        if (groupHasClassLikesOrProperties || groupHasNamedFunctions) {
             // Scope will only return one classifier per name
             packageMemberScope.processClassifiersByNameWithSubstitution(declarationName) { symbol, _ ->
                 collectFromClassifierSource(conflictingSymbol = symbol)
@@ -423,7 +424,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
 
             // session.nameConflictsTracker doesn't seem to work for LL API for redeclarations in the same file, for this reason
             // we explicitly check classLikes in the same file, too.
-            for ((classLike, representation) in group.classLikes) {
+            for ([classLike, representation] in group.classLikes) {
                 collectFromClassifierSource(classLike, conflictingPresentation = representation, conflictingFile = file)
             }
         }
@@ -548,6 +549,11 @@ private fun FirDeclarationCollector<*>.getConflictState(
         if (conflictingIsHidden) return ConflictState.NoConflict
     }
 
+    if (declaration !is FirEnumEntrySymbol &&
+        conflicting !is FirEnumEntrySymbol &&
+        declaration.isStatic != conflicting.isStatic
+    ) return ConflictState.NoConflict
+
     val overloadabilityHelper = session.declarationOverloadabilityHelper
 
     return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
@@ -578,7 +584,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>) {
     val multimap = ListMultimap<Name, FirBasedSymbol<*>>()
 
     for (element in elements) {
-        val (symbol, name) = when (element) {
+        val [symbol, name] = when (element) {
             is FirProperty -> {
                 // Enable snippet specific handling of the local delegated extension properties
                 if (element.isReplSnippetDeclaration == true && element.delegate != null && element.receiverParameter != null) {

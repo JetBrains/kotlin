@@ -8,11 +8,10 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 
 /**
- * When no OPT mode specified, execution of the current test having `// FILECHECK_STAGE: OptimizeTLSDataLoads` is skipped.
+ * Skip all tests having `// FILECHECK_STAGE:` test directive.
  */
-class FileCheckTestSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
+class FileCheckTestTotalSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {
-        return testServices.testRunSettings.get<OptimizationMode>() != OptimizationMode.OPT &&
-                testServices.moduleStructure.allDirectives[FILECHECK_STAGE].contains("OptimizeTLSDataLoads")
+        return testServices.moduleStructure.allDirectives.contains(FILECHECK_STAGE)
     }
 }

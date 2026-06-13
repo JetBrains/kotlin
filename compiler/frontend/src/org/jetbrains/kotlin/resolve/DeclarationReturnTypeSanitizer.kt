@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.types.KotlinType
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 @DefaultImplementation(impl = DeclarationReturnTypeSanitizer.Default::class)
+@K1Deprecation
 interface DeclarationReturnTypeSanitizer {
     fun sanitizeReturnType(
         inferred: UnwrappedType,

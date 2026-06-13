@@ -51,6 +51,51 @@ class CompilerDiagnosticsProblemsApiIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_8_11,
+        additionalVersions = [TestVersions.Gradle.G_8_13, TestVersions.Gradle.G_9_3],
+    )
+    @DisplayName("Test compiler warning is not duplicated in build output by Problems API renderer")
+    fun testCompilerWarningNotDuplicatedInOutput(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+            }
+
+            kotlinSourcesDir().source("deprecatedUsage.kt") {
+                """
+                @Deprecated("Use newFunction instead")
+                fun oldFunction(): String = "old"
+
+                fun callerOfOldFunction(): String = oldFunction()
+                """.trimIndent()
+            }
+
+            // --warning-mode=all causes Gradle to render Problems API entries as "Problem found:" in console.
+            // With the fix, the standard "w:" log is suppressed to avoid duplication —
+            // the warning should only appear once, via Gradle's Problems API rendering.
+            //
+            // Set warning mode via gradle.properties to avoid the test infra's
+            // GradleWarningsDetectorPlugin assertion that requires Gradle deprecation warnings.
+            gradleProperties.append("\norg.gradle.warning.mode=all\n")
+            build("compileKotlin") {
+                // The warning should appear in console via Problems API rendering
+                assertOutputContainsAny("is deprecated", "Use newFunction instead")
+
+                // The warning should be reported to the Problems API HTML report
+                assertProblemsReportContainsDiagnostic(
+                    "compiler-warning",
+                    "Use newFunction instead",
+                    gradleVersion,
+                )
+
+                // The warning message should appear exactly once — not duplicated
+                assertOutputContainsExactlyTimes("Use newFunction instead", expectedCount = 1)
+            }
+        }
+    }
+
+    @GradleTest
     @DisplayName("Test compiler error appears in build output via Problems API renderer")
     fun testCompilerErrorAppearsInProblemsReport(gradleVersion: GradleVersion) {
         project("empty", gradleVersion) {

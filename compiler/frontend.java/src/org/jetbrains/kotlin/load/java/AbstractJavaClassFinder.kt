@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import javax.inject.Inject
 
+@K1Deprecation
 abstract class AbstractJavaClassFinder : JavaClassFinder {
     protected lateinit var project: Project
     protected lateinit var javaSearchScope: GlobalSearchScope

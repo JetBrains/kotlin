@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan.checkers
 
-import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.NativeBackendDiagnostics
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.annotations.escapes
 import org.jetbrains.kotlin.backend.konan.ir.annotations.pointsTo
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -36,11 +36,19 @@ class EscapeAnalysisChecker(
     private val irFile: IrFile,
 ) : IrVisitorVoid() {
     private fun reportWarning(location: IrElement, message: String) {
-        context.report(CompilerMessageSeverity.STRONG_WARNING, location, irFile, message)
+        context.diagnosticReporter.report(
+            NativeBackendDiagnostics.NATIVE_ESCAPE_ANALYSIS_WARNING,
+            message,
+            location.getCompilerMessageLocation(irFile)
+        )
     }
 
     private fun reportNonFatalError(location: IrElement, message: String) {
-        context.report(CompilerMessageSeverity.ERROR, location, irFile, message)
+        context.diagnosticReporter.report(
+            NativeBackendDiagnostics.NATIVE_BACKEND_ERROR,
+            message,
+            location.getCompilerMessageLocation(irFile)
+        )
     }
 
     private val IntrinsicType.mustBeLowered: Boolean

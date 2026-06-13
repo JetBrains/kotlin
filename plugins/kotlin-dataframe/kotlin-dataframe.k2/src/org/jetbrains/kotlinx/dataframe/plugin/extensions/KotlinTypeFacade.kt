@@ -51,18 +51,10 @@ class ColumnType private constructor(internal val coneType: ConeKotlinType) {
     companion object {
         context(context: SessionHolder)
         operator fun invoke(type: ConeKotlinType): ColumnType {
-            val type = when (type) {
-                is ConeFlexibleType -> {
-                    type.lowerBound
-                }
-
-                is ConeTypeParameterType -> {
-                    type.lookupTag.typeParameterSymbol.resolvedBounds.singleOrNull()?.coneType ?: TODO()
-                }
-
-                else -> {
-                    type
-                }
+            val type = if (type is ConeFlexibleType) {
+                type.lowerBound
+            } else {
+                type
             }
             return ColumnType(type)
         }
@@ -93,6 +85,3 @@ fun ConeKotlinType.wrap(): ColumnType = ColumnType(this)
 
 // The resulting type should not be materialized as a type of a property. Only for testing
 fun ConeKotlinType.wrapUnsafe(): ColumnType = ColumnType.convertUnsafe(type = this)
-
-
-

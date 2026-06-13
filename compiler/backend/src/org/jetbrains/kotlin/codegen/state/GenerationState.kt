@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
@@ -73,10 +70,6 @@ class GenerationState(
         components.getIncrementalCache(targetId)
     }
 
-    val deprecationProvider = DeprecationResolver(
-        LockBasedStorageManager.NO_LOCKS, config.languageVersionSettings, DeprecationSettings.Default
-    )
-
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(BindingContext.EMPTY, "trace in GenerationState")
@@ -100,13 +93,13 @@ class GenerationState(
     lateinit var mapInlineClass: (ClassDescriptor) -> Type
 
     class MultiFieldValueClassUnboxInfo(val unboxedTypesAndMethodNamesAndFieldNames: List<Triple<Type, String, String>>) {
-        val unboxedTypes = unboxedTypesAndMethodNamesAndFieldNames.map { (type, _, _) -> type }
-        val unboxedMethodNames = unboxedTypesAndMethodNamesAndFieldNames.map { (_, methodName, _) -> methodName }
+        val unboxedTypes = unboxedTypesAndMethodNamesAndFieldNames.map { [type, _, _] -> type }
+        val unboxedMethodNames = unboxedTypesAndMethodNamesAndFieldNames.map { [_, methodName, _] -> methodName }
     }
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }
 
-    lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit
+    lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, JvmDeclarationOrigin) -> Unit
 
     val typeApproximator: TypeApproximator = TypeApproximator(module.builtIns, config.languageVersionSettings)
 

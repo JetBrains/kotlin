@@ -2,7 +2,6 @@
 // DIAGNOSTICS: -UNCHECKED_CAST
 // WITH_STDLIB
 // WITH_REFLECT
-// SKIP_TXT
 
 import kotlin.reflect.*
 

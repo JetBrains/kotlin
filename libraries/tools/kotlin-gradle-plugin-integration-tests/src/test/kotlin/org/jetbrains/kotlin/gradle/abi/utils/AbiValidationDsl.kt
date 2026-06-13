@@ -37,15 +37,43 @@ internal fun GradleProject.abiValidation() {
 /**
  * Gets the reference dump file in a Kotlin JVM project or a Kotlin Multiplatform project without any Android target.
  */
-internal fun GradleProject.referenceJvmDumpFile(): File {
-    return projectPath.resolve("api").resolve("$projectName.api").toFile()
+internal fun GradleProject.referenceJvmDumpFile(dir: String? = null, overriddenProjectName: String? = null): File {
+    return projectPath.resolve(dir ?: "api").resolve("${overriddenProjectName ?: projectName}.api").toFile()
 }
+
+/**
+ * Creates the reference dump file in a Kotlin JVM project or a Kotlin Multiplatform project without any Android target.
+ */
+internal fun GradleProject.createReferenceJvmDumpFile(
+    content: String = "",
+    dir: String? = null,
+    overriddenProjectName: String? = null,
+): File {
+    val file = referenceJvmDumpFile(dir, overriddenProjectName)
+    file.parentFile.mkdirs()
+    file.createNewFile()
+    file.writeText(content)
+    return file
+}
+
+
 
 /**
  * Gets the reference dump file for all Klib targets in a Kotlin Multiplatform project.
  */
 internal fun GradleProject.referenceKlibDumpFile(): File {
     return projectPath.resolve("api").resolve("$projectName.klib.api").toFile()
+}
+
+/**
+ * Creates the reference dump file for all Klib targets in a Kotlin Multiplatform project.
+ */
+internal fun GradleProject.createReferenceKlibDumpFile(content: String = ""): File {
+    val file = referenceKlibDumpFile()
+    file.parentFile.mkdirs()
+    file.createNewFile()
+    file.writeText(content)
+    return file
 }
 
 /**

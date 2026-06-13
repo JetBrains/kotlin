@@ -32,7 +32,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
         get() = listOf(irDeepCopyBaseType)
 
-    override val optIns: List<ClassRef<*>> = listOf(irImplementationDetailType)
+    override val optIns: List<PrintableAnnotation> = listOf(irImplementationDetailType, deprecatedCompilerApi)
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.OpenClass

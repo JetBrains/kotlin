@@ -1,7 +1,6 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
-
     function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): string;
     class C3 {
         constructor(value: string);
@@ -52,3 +51,5 @@ declare namespace JS_TESTS {
         }
     }
 }
+
+

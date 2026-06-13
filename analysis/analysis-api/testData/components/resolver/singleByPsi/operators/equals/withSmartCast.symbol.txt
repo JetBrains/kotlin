@@ -1,4 +1,6 @@
 KtOperationReferenceExpression(184,186): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean

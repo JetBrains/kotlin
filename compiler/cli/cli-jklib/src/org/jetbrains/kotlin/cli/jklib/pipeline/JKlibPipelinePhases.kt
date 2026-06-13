@@ -6,32 +6,43 @@
 package org.jetbrains.kotlin.cli.jklib.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.backend.common.serialization.serializeModuleIntoKlib
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.CliDiagnostics.CLASSPATH_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
+import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.convertToIrAndActualizeForJvm
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
 import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.jvm.FirDirectJavaActualDeclarationExtractor
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibModuleSerializer
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -51,14 +62,6 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 
-val JKLIB_OUTPUT_DESTINATION = CompilerConfigurationKey.create<String>("jklib output destination")
-
-var CompilerConfiguration.jklibOutputDestination: String?
-    get() = get(JKLIB_OUTPUT_DESTINATION)
-    set(value) {
-        putIfNotNull(JKLIB_OUTPUT_DESTINATION, value)
-    }
-
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
     name = "JKlibConfigurationPhase",
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
@@ -74,6 +77,11 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         input: ArgumentsPipelineArtifact<K2JKlibCompilerArguments>,
         configuration: CompilerConfiguration,
     ) {
+        configuration.diagnosticFactoriesStorage?.registerDiagnosticContainers(
+            PartialLinkageDiagnostics,
+            JvmBackendErrors,
+        )
+
         val arguments = input.arguments
 
         val commonSources = arguments.commonSources.toSet()
@@ -144,9 +152,8 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 if (parsedValue != null) {
                     put(JVMConfigurationKeys.SAM_CONVERSIONS, parsedValue)
                 } else {
-                    val messageCollector = getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                    messageCollector.report(
-                        ERROR,
+                    configuration.report(
+                        COMPILER_ARGUMENTS_ERROR,
                         "Unknown `-Xsam-conversions` argument: ${it}\n." +
                                 "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { scheme -> scheme.description }}"
                     )
@@ -174,7 +181,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         val rootDisposable = input.rootDisposable
         val diagnosticsReporter = configuration.diagnosticsCollector
 
-        val projectEnvironment = createProjectEnvironment(
+        val projectEnvironment = JvmFrontendPipelinePhase.createProjectEnvironment(
             configuration,
             rootDisposable,
             EnvironmentConfigFiles.JVM_CONFIG_FILES,
@@ -256,7 +263,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
 
-        val fir2IrResult = firResult.convertToIrAndActualizeForJvm(
+        val fir2IrResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             configuration,
             diagnosticsReporter,
@@ -271,6 +278,32 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
             input.rootDisposable,
         )
     }
+}
+
+private fun AllModulesFrontendOutput.convertToIrAndActualize(
+    fir2IrExtensions: Fir2IrExtensions,
+    configuration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    irGeneratorExtensions: Collection<IrGenerationExtension>,
+): Fir2IrActualizedResult {
+    val fir2IrConfiguration = Fir2IrConfiguration.forJKlibCompilation(configuration, diagnosticsReporter)
+
+    return convertToIrAndActualize(
+        fir2IrExtensions,
+        fir2IrConfiguration,
+        irGeneratorExtensions,
+        // TODO(KT-86203): Check if JKlibIrMangler should not be used here.
+        JvmIrMangler,
+        FirJvmVisibilityConverter,
+        DefaultBuiltIns.Instance,
+        ::JvmIrTypeSystemContext,
+        JvmIrSpecialAnnotationSymbolProvider,
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            { emptyList() }
+        } else {
+            { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
+        },
+    )
 }
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
@@ -294,7 +327,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             cleanFiles = emptyList(),
             dependencies = emptyList(),
             createModuleSerializer = { irDiagnosticReporter: IrDiagnosticReporter ->
-                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter)
+                JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter, fir2IrResult.irBuiltIns)
             },
             metadataSerializer = Fir2KlibMetadataSerializer(
                 configuration,

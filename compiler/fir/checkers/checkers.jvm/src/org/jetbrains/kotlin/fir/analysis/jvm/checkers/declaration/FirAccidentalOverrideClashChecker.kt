@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
 
-object FirAccidentalOverrideClashChecker : FirSimpleFunctionChecker(MppCheckerKind.Platform) {
+object FirAccidentalOverrideClashChecker : FirNamedFunctionChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         if (!declaration.isOverride) return

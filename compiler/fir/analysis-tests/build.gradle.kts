@@ -10,6 +10,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("require-explicit-types")
 }
 
 dependencies {
@@ -28,6 +29,8 @@ dependencies {
     testFixturesApi(project(":compiler:fir:fir-serialization"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:frontend"))
+    testFixturesImplementation(project(":js:js.frontend"))
+    testFixturesImplementation(project(":wasm:wasm.frontend"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-spec")))
 
@@ -60,6 +63,7 @@ sourceSets {
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
@@ -72,7 +76,6 @@ projectTests {
 
     testGenerator("org.jetbrains.kotlin.test.TestGeneratorForFirAnalysisTestsKt", generateTestsInBuildDirectory = true)
 
-    testData(project(":compiler:fir:analysis-tests").isolated, "testData")
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":compiler").isolated, "testData/loadJava")
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")

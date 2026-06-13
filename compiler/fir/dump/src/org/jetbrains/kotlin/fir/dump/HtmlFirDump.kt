@@ -92,13 +92,13 @@ private class ModuleInfo(val name: String, outputRoot: File) {
         it.mkdirs()
     }
     val errors: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.errors.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.errors.values.sum() }.withDefault { 0 }
     }
     val implicits: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.implicits.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.implicits.values.sum() }.withDefault { 0 }
     }
     val unresolved: Map<FqName, Int> by lazy {
-        packages.mapValues { (_, packageInfo) -> packageInfo.unresolved.values.sum() }.withDefault { 0 }
+        packages.mapValues { [_, packageInfo] -> packageInfo.unresolved.values.sum() }.withDefault { 0 }
     }
 }
 
@@ -1217,7 +1217,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.symbolRef(symbol: FirBasedSymbol<*>?, body: FlowContent.() -> Unit) {
-        val (link, classes) = when (symbol) {
+        val [link, classes] = when (symbol) {
             null -> null to setOf()
             is FirClassLikeSymbol<*> -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
             else -> linkResolver.nearSymbolLocation(symbol) to setOf("symbol")

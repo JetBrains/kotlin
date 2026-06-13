@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIs
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.scripting.compiler.test.dependenciesResolver
 import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -28,6 +29,7 @@ import kotlin.test.junit5.JUnit5Asserter.fail
  */
 
 
+@SmokeTest
 class ScriptEvaluationTest {
 
     private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
@@ -78,10 +80,10 @@ class ScriptEvaluationTest {
                 }
 
                 User.property
-            """.trimIndent().toScriptSource()
+            """.trimIndent().toScriptSource("script.kts")
         )
         assertTrue(res is ResultWithDiagnostics.Failure)
-        if (!res.reports.any { it.message == "Object User captures the script class instance. Try to use class or anonymous object instead" }) {
+        if (!res.reports.any { it.message == "Object 'User' captures the script class instance. Try to use class or anonymous object instead." }) {
             fail("expecting error about object capturing script instance, got:\n  ${res.reports.joinToString("\n  ") { it.message }}")
         }
     }

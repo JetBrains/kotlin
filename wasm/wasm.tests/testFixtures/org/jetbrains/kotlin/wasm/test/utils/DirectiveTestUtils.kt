@@ -5,15 +5,21 @@
 
 package org.jetbrains.kotlin.wasm.test.utils
 
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmCompilationMode.Companion.wasmCompilationMode
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved
-import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.model.TestFailureSuppressorBySingleDirective
-import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.impl.testConfiguration
+import org.jetbrains.kotlin.test.model.TestFailureSuppressor
+import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.utils.WasmIgnoreForConfig
 import org.jetbrains.kotlin.wasm.ir.WasmModule
 import org.jetbrains.kotlin.wasm.ir.WasmOp
+import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
+import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
+import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.junit.Assert.*
 import org.junit.runners.model.MultipleFailureException
 
@@ -100,12 +106,13 @@ object DirectiveTestUtils {
 
         // add locals of any (nested) lambdas
         // there will be quite a bit of unnecessary ones in here, but we only need to get the real ones as well.
-        // TODO(review): would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
-        module.definedFunctions.filter { it.name.contains(Regex("$scopeFunctionName(\\\$lambda)+\\.invoke")) }.forEach { lambda -> locals += lambda.locals }
+        // TODO: would be nicer to have a more robust solution here than text search. Somehow getting from the name of the local that holds the lambda, to the lambda's invoke function, that has the actual locals we're searching for
+        module.definedFunctions.filter { it.name.contains(Regex("${scopeFunctionName}(\\\$lambda)+\\.invoke")) }
+            .forEach { lambda -> locals += lambda.locals }
 
         val local = locals.find { it.name == localName }
 
-        if(expectExists)
+        if (expectExists)
             assertNotNull("Local variable `$localName` *not* found in function `${scopeFunction.name}`", local)
         else
             assertNull("Local variable `$localName` found in function `${scopeFunction.name}`", local)
@@ -305,17 +312,181 @@ object DirectiveTestUtils {
     }
 }
 
-private class WasmIgnoredTestSuppressor(
+private class WasmIgnoredTestSuppressorGroup(
     testServices: TestServices,
-    directive: SimpleDirective,
-) : TestFailureSuppressorBySingleDirective(
-    suppressDirective = directive,
-    directivesContainer = WasmEnvironmentConfigurationDirectives,
-    testServices,
-)
+) : TestFailureSuppressor(testServices) {
+    private class WasmIgnoredTestSuppressor(
+        private val testServices: TestServices,
+        private val ignoreForConfig: WasmIgnoreForConfig,
+    ) {
 
-fun TestConfigurationBuilder.configureIgnoredTestSuppressor(directive: SimpleDirective) {
-    useFailureSuppressors(
-        { WasmIgnoredTestSuppressor(it, directive) },
-    )
+        private val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(
+            testServices.moduleStructure.modules.first(),
+            CompilationStage.SECOND
+        )
+
+        private val inDebugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode") >= DebugMode.DEBUG
+
+        fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> =
+            failedAssertions.filter { failedAssertion ->
+                // will return "true", i.e., keep this assertion, if any of the specified conditions are NOT met
+
+                if (hasModeMismatch())
+                    return@filter true
+
+                if (hasOsMismatch())
+                    return@filter true
+
+                if (hasVmMismatchInConcreteFailure(failedAssertion))
+                    return@filter true
+
+                // we know that all conditions that were specified are met
+                if (inDebugMode)
+                    println("------ Suppressing test failure because the test is running with $ignoreForConfig (matches current environment)")
+
+                false
+            }
+
+        // With any of the following "has...Mismatch" functions, if the corresponding option is null (meaning it is not specified), then there's no mismatch: null means "any"
+
+        private fun hasVmMismatchInConcreteFailure(
+            failedAssertion: WrappedException,
+        ): Boolean {
+            val expectedVm = ignoreForConfig.vmName
+                ?: return false
+
+            // there's at most one exception in here, because the outer suppressor expands groups of exceptions
+            // if its not a vm exception, but we do expect a vm to fail, then it's a mismatch, i.e., we keep this failure
+            val vmException = failedAssertion.cause as? WasmVMException ?: return true
+
+            return expectedVm != vmException.vmName
+        }
+
+        private fun hasOsMismatch(): Boolean {
+            val os = ignoreForConfig.os
+                ?: return false
+
+            assert(os.lowercase() in listOf("linux", "windows", "mac")) {
+                "This is checked in WasmEnvironmentConfigurationDirectives.kt, and should never change from the sanitizing there"
+            }
+
+            return !System.getProperty("os.name").startsWith(os, ignoreCase = true)
+        }
+
+        private fun hasModeMismatch(): Boolean {
+            val mode = ignoreForConfig.mode
+                ?: return false
+
+            return compilerConfiguration.wasmCompilationMode() != mode
+        }
+
+        fun checkIfTestShouldBeUnmuted() {
+            // This function is only called if the whole test succeeded
+
+            // If anything specified to fail *doesn't* match the current environment, then the test succeeding means
+            // we can't conclude anything, as the directive may still be needed in other environments.
+            // -> check for mismatches with the current environment
+
+            if (hasModeMismatch()) return
+            if (hasOsMismatch()) return
+            if (hasMismatchInVMsRun()) return
+
+            // All specified conditions match the current environment
+            throw AssertionError(
+                "Test is expected to fail ($ignoreForConfig), but it passed. Consider unmuting the test, or narrowing the WASM_IGNORE_FOR directive."
+            )
+        }
+
+        @OptIn(TestInfrastructureInternals::class)
+        private val executedVMs: List<WasmVM>
+            get() {
+                val handlers = testServices.testConfiguration.steps
+                    .filterIsInstance<TestStep.HandlersStep<*>>()
+                    .flatMap { it.handlers }
+
+                val wasiRunner = handlers.filterIsInstance<WasiBoxRunner>()
+                    .singleOrNull()
+
+                val wasmRunner = handlers.filterIsInstance<WasmBoxRunnerBase>()
+                    .singleOrNull()
+
+                // not executed in vms
+                if (wasiRunner == null && wasmRunner == null)
+                    return listOf()
+
+                if (wasiRunner != null)
+                    return wasiRunner.vmsToCheck
+
+                if (wasmRunner != null)
+                    return wasmRunner.wasmEngines
+
+                throw RuntimeException("Unexpected test runner configuration: neither WASI nor WASM runner found")
+            }
+
+        /**
+         * Unlike [hasVmMismatchInConcreteFailure], which inspects the VM that produced a [WasmVMException],
+         * this variant is used when the test passed (no exception to inspect). If the directive's target VM
+         * isn't among the VMs that the test runner actually executes (e.g. `vm=WasmEdge` on a WASM_JS test,
+         * which attow only runs V8/SpiderMonkey/JavaScriptCore), we cannot conclude the directive is stale,
+         * as the test simply never tried that VM.
+         */
+        private fun hasMismatchInVMsRun(): Boolean {
+            val expectedVm = ignoreForConfig.vmName ?: return false
+            return expectedVm !in this.executedVMs.map { it.vmName }
+        }
+    }
+
+
+    /**
+     * Create one suppressor per WASM_IGNORE_FOR directive.
+     * (lazily, because moduleStructure isn't available at construction time)
+     */
+    private val suppressors: List<WasmIgnoredTestSuppressor> by lazy {
+        testServices.moduleStructure
+            .allDirectives[WasmEnvironmentConfigurationDirectives.WASM_IGNORE_FOR]
+            .map { config ->
+                WasmIgnoredTestSuppressor(testServices, config)
+            }
+    }
+
+    /**
+     * As exceptions thrown by the VMs run in WasiBoxRunner/WasmBoxRunner are consolidated into a single exception,
+     * we need to expand them back into individual assertions, so they can be properly suppressed individually,
+     * and the entire list of exceptions is not accidentally suppressed all at once.
+     */
+    private fun expandFailedAssertions(failedAssertions: List<WrappedException>): List<WrappedException> {
+        return failedAssertions.flatMap { exception ->
+            // processed exception causes are either a list of suppressed exceptions, or just the cause itself
+            if (exception.cause.suppressedExceptions.isNotEmpty())
+                exception.cause.suppressedExceptions.map { exception.withReplacedCause(it) }
+            else
+                listOf(exception)
+        }
+    }
+
+    /**
+     * Apply suppressors one by one.
+     */
+    override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> =
+        suppressors.fold(
+            expandFailedAssertions(failedAssertions)
+        ) { remaining, suppressor ->
+            suppressor.suppressIfNeeded(remaining)
+        }
+
+    override fun checkIfTestShouldBeUnmuted() {
+        val errors = mutableListOf<Throwable>()
+        for (suppressor in suppressors) {
+            try {
+                suppressor.checkIfTestShouldBeUnmuted()
+            } catch (e: AssertionError) {
+                errors.add(e)
+            }
+        }
+        testServices.assertions.failAll(errors)
+    }
+}
+
+fun TestConfigurationBuilder.configureIgnoredTestSuppressor() {
+    useFailureSuppressors(::WasmIgnoredTestSuppressorGroup)
 }

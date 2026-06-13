@@ -1,8 +1,8 @@
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// WASM_FAILS_IN_MULTI_MODULE_MODE
+// WASM_IGNORE_FOR: mode=multi-module
 // WITH_COROUTINES
 // WITH_STDLIB
-// MODULE: lib(support)
+// MODULE: lib
 // FILE: lib.kt
 
 import helpers.*

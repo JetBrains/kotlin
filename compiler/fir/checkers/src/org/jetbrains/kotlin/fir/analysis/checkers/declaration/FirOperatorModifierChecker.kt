@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.OperatorDiagnostic
 import org.jetbrains.kotlin.fir.declarations.OperatorFunctionChecks
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -46,14 +47,13 @@ object FirOperatorModifierChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun OperatorDiagnostic.mapOperatorDiagnostic(declaration: FirFunction, modifierSource: KtSourceElement) {
         when (this) {
-            is OperatorDiagnostic.DeprecatedOperatorDiagnostic -> {
-                val factory =
-                    if (feature.isEnabled()) FirErrors.INAPPLICABLE_OPERATOR_MODIFIER
-                    else FirErrors.INAPPLICABLE_OPERATOR_MODIFIER_WARNING
-                reporter.reportOn(declaration.source, factory, message)
-            }
             is OperatorDiagnostic.IllegalOperatorDiagnostic -> {
-                reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, message)
+                val feature = deprecatingFeature
+                if (feature?.isDisabled() == true) {
+                    reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER_WARNING, message, feature)
+                } else {
+                    reporter.reportOn(declaration.source, FirErrors.INAPPLICABLE_OPERATOR_MODIFIER, message)
+                }
             }
             is OperatorDiagnostic.Unsupported -> {
                 reporter.reportOn(

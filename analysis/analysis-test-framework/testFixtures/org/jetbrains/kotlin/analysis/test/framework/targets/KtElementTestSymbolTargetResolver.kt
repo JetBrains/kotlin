@@ -11,13 +11,18 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarations
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.psi.allConstructors
 
 /**
  * A [KtElement] [TestSymbolTargetResolver] which resolves *all* possible [KtElement]s for a [TestSymbolTarget]. The resolver may return
@@ -60,11 +65,37 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
             .toList()
 
     override fun resolveCallableTarget(target: CallableTarget): List<KtElement> {
-        val callableId = target.callableId
+        return findCallables(target.callableId).ifEmpty { error("Cannot find a callable `${target.callableId}`.") }
+    }
+
+    override fun resolvePropertyTarget(target: PropertyTarget): List<KtElement> {
+        return findCallables(target.callableId)
+            .filterIsInstance<KtProperty>()
+            .ifEmpty { error("Cannot find a property `${target.callableId}`.") }
+    }
+
+    override fun resolveFunctionTarget(target: FunctionTarget): List<KtElement> {
+        var functions = findCallables(target.callableId).filterIsInstance<KtNamedFunction>()
+        if (target.parameterNames != null) {
+            functions = functions.filter { it.matchesParameterNames(target.parameterNames) }
+        }
+        return functions.ifEmpty { error("Cannot find a function $target.") }
+    }
+
+    override fun resolveConstructorTarget(target: ConstructorTarget): List<KtElement> {
+        val classes = resolveClasses(target.classId)
+        var constructors = classes.flatMap { it.allConstructors }
+        if (target.parameterNames != null) {
+            constructors = constructors.filter { it.matchesParameterNames(target.parameterNames) }
+        }
+        return constructors.ifEmpty { error("Cannot find a constructor $target.") }
+    }
+
+    private fun findCallables(callableId: CallableId): List<KtElement> {
         val classId = callableId.classId
 
-        val callables = if (classId == null) {
-            buildList<KtElement> {
+        return if (classId == null) {
+            buildList {
                 addAll(declarationProvider.getTopLevelFunctions(callableId))
                 addAll(declarationProvider.getTopLevelProperties(callableId))
             }
@@ -84,8 +115,14 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
                 }
             }
         }
+    }
 
-        return callables.ifEmpty { error("Cannot find a callable `$callableId`.") }
+    private fun KtCallableDeclaration.matchesParameterNames(expected: List<Name>): Boolean {
+        return valueParameters.map { it.nameAsName } == expected
+    }
+
+    private fun KtConstructor<*>.matchesParameterNames(expected: List<Name>): Boolean {
+        return valueParameters.map { it.nameAsName } == expected
     }
 
     override fun resolveTypeParameterTarget(target: TypeParameterTarget, owner: KtElement): KtElement? {
@@ -98,6 +135,12 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
         requireSpecificOwner<KtCallableDeclaration>(target, owner)
 
         return owner.valueParameters.find { it.name == target.name.asString() }
+    }
+
+    override fun resolveContextParameterTarget(target: ContextParameterTarget, owner: KtElement): KtElement? {
+        requireSpecificOwner<KtCallableDeclaration>(target, owner)
+
+        return owner.contextParameters.find { it.name == target.name.asString() }
     }
 
     override fun resolveGetterTarget(target: GetterTarget, owner: KtElement): KtElement? {

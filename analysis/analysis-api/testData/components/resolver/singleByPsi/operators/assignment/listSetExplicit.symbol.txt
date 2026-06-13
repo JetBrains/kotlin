@@ -1,4 +1,6 @@
 KtNameReferenceExpression(54,57): 'set'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/MutableList.set(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int, element: E): E

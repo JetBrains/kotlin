@@ -65,7 +65,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             private fun checkFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
                 val reference = functionCall.calleeReference
                 val diagnostic = if (reference.isError()) reference.diagnostic else return false
-                if (reference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
+                if (reference.source?.kind !is KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.resolvedType.renderReadable() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
@@ -111,7 +111,8 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                         delegateDescription
                     )
                     is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
-                    is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+                    is ConeConstraintSystemHasContradiction if !diagnostic.candidate.isSuccessful ->
+                        reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
 
                     else -> {
                         errorReported = false

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -25,12 +24,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -58,7 +55,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.safeSubstitute
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirSyntheticCallGenerator(
     private val components: BodyResolveComponents
@@ -406,10 +402,7 @@ class FirSyntheticCallGenerator(
             }
             is FirFunctionCall -> {
                 // completed collection literal
-                check(
-                    session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
-                            && calleeReference.source?.kind == KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall
-                ) {
+                check(calleeReference.source?.kind == KtFakeSourceElementKind.CalleeReferenceForOperatorOfCall) {
                     "Expected ${FirFunctionCall::class.simpleName} originating from ${FirCollectionLiteral::class.simpleName}"
                 }
             }
@@ -661,7 +654,7 @@ class FirSyntheticCallGenerator(
         //   fun <K> select(vararg values: K): K
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
 
-        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, returnType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val typeArgument = buildTypeProjectionWithVariance {
             typeRef = returnType.toFirResolvedTypeRef()
@@ -678,7 +671,7 @@ class FirSyntheticCallGenerator(
         // Synthetic function signature:
         //   fun <K> checkNotNull(arg: K?): K & Any
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, typeParameterType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, typeParameterType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         return generateMemberFunction(
             functionSymbol,
@@ -704,7 +697,7 @@ class FirSyntheticCallGenerator(
         //   fun <X> test(a: X, b: X) = a ?: b
         // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.ELVIS)
-        val (typeParameter, rightArgumentType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val [typeParameter, rightArgumentType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val returnType = rightArgumentType
             .withAttributes(ConeAttributes.create(listOf(CompilerConeAttributes.Exact)))

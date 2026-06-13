@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
  * [IrLinkerFakeOverrideProvider.provideFakeOverrides] is made leaving no chance for proper linkage of fake overrides.
  * This stub generator should be applied only after the fake overrides generation.
  */
-internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns) {
+internal class MissingDeclarationStubGenerator(
+    private val irFactory: IrFactory,
+    private val nothingType: IrType,
+) {
     private val commonParent by lazy {
         createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
     }
@@ -59,7 +62,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateClass(symbol: IrClassSymbol): IrClass {
-        return builtIns.irFactory.createClass(
+        return irFactory.createClass(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -75,7 +78,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunction {
-        return builtIns.irFactory.createSimpleFunction(
+        return irFactory.createSimpleFunction(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -83,7 +86,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
             isInline = false,
             isExpect = false,
-            returnType = builtIns.nothingType,
+            returnType = nothingType,
             modality = Modality.FINAL,
             symbol = symbol,
             isTailrec = false,
@@ -95,7 +98,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateConstructor(symbol: IrConstructorSymbol): IrConstructor {
-        return builtIns.irFactory.createConstructor(
+        return irFactory.createConstructor(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -103,7 +106,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
             isInline = false,
             isExpect = false,
-            returnType = builtIns.nothingType,
+            returnType = nothingType,
             symbol = symbol,
             isPrimary = false,
             isExternal = false,
@@ -111,7 +114,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateProperty(symbol: IrPropertySymbol): IrProperty {
-        return builtIns.irFactory.createProperty(
+        return irFactory.createProperty(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -129,7 +132,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntry {
-        return builtIns.irFactory.createEnumEntry(
+        return irFactory.createEnumEntry(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -139,7 +142,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAlias {
-        return builtIns.irFactory.createTypeAlias(
+        return irFactory.createTypeAlias(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -147,12 +150,12 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
             symbol = symbol,
             isActual = true,
-            expandedType = builtIns.nothingType,
+            expandedType = nothingType,
         ).setCommonParent()
     }
 
     private fun generateTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {
-        return builtIns.irFactory.createTypeParameter(
+        return irFactory.createTypeParameter(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
@@ -165,14 +168,14 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
     }
 
     private fun generateIrField(symbol: IrFieldSymbol): IrField {
-        return builtIns.irFactory.createField(
+        return irFactory.createField(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             name = symbol.guessName(),
             visibility = DescriptorVisibilities.PRIVATE,
             symbol = symbol,
-            type = builtIns.nothingType,
+            type = nothingType,
             isFinal = false,
             isStatic = false,
             isExternal = false

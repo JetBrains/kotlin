@@ -139,9 +139,10 @@ fun SourceFileProvider.getKtFilesForSourceFiles(
     testFiles: Collection<TestFile>,
     project: Project,
     findViaVfs: Boolean = false,
+    keepNonKtFiles: Boolean = false,
 ): Map<TestFile, KtFile> {
     return testFiles.mapNotNull {
-        if (!it.isKtFile) return@mapNotNull null
+        if (!keepNonKtFiles && !it.isKtFile) return@mapNotNull null
         it to getKtFileForSourceFile(it, project, findViaVfs)
     }.toMap()
 }
@@ -150,9 +151,10 @@ fun TestFile.toLightTreeShortName() = name.substringAfterLast('/').substringAfte
 
 fun SourceFileProvider.getKtSourceFilesForSourceFiles(
     testFiles: Collection<TestFile>,
+    keepNonKtFiles: Boolean,
 ): Map<TestFile, KtSourceFile> {
     return testFiles.mapNotNull {
-        if (!it.isKtFile) return@mapNotNull null
+        if (!keepNonKtFiles && !it.isKtFile) return@mapNotNull null
         val shortName = it.toLightTreeShortName()
         val ktSourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(it))
         it to ktSourceFile

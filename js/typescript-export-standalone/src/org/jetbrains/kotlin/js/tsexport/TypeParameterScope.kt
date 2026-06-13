@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.tsexport
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
@@ -58,6 +59,7 @@ context(_: KaSession)
 internal fun TypeParameterScope(
     container: KaDeclarationSymbol,
     config: TypeScriptExportConfig,
+    transitivelyExportedClasses: MutableSet<KaClassLikeSymbol>,
     outerScope: TypeParameterScope = emptyMap(),
     renameOuterTypeParameters: Boolean = false,
 ): TypeParameterScope {
@@ -65,7 +67,7 @@ internal fun TypeParameterScope(
     if (!renameOuterTypeParameters && newTypeParameters.isEmpty()) return outerScope
     val nameTable = NameTable<KaTypeParameterSymbol>()
     if (!renameOuterTypeParameters) {
-        for ((tp, exported) in outerScope) {
+        for ([tp, exported] in outerScope) {
             nameTable.declareStableName(tp, exported.name)
         }
     }
@@ -78,7 +80,7 @@ internal fun TypeParameterScope(
 
         var shouldRecomputeOuterConstraints = false
         if (renameOuterTypeParameters) {
-            for ((tp, exported) in outerScope) {
+            for ([tp, exported] in outerScope) {
                 shouldRecomputeOuterConstraints = true
                 val disambiguatedName = tp.parentDeclarationsWithSelf.filterIsInstance<KaNamedSymbol>().joinToString(separator = "\$") {
                     it.getExportedIdentifier()
@@ -91,7 +93,7 @@ internal fun TypeParameterScope(
 
         // Then compute the constraints
         var i = 0
-        for ((tp, exported) in this) {
+        for ([tp, exported] in this) {
             if (!shouldRecomputeOuterConstraints && i == newTypeParameters.size) {
                 // Don't compute constraints for type parameters from the `outerScope` map, they should already be computed at this point.
                 // Unless we've renamed those type parameters, in which case we have to compute the constraints for them again.
@@ -100,7 +102,7 @@ internal fun TypeParameterScope(
             i += 1
             val constraints = tp.upperBounds
                 .mapNotNull {
-                    val exportedType = TypeExporter(config, this).exportType(it)
+                    val exportedType = TypeExporter(config, this, transitivelyExportedClasses).exportType(it)
                     if (exportedType is ExportedType.ErrorType) return@mapNotNull null
                     if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == Primitive.Any) {
                         exportedType.copy(exportedSupertype = Primitive.Unknown)

@@ -135,7 +135,7 @@ fun box(): String {
     LogExample.log.info("Call from public log")
     LogExample().test()
     LogExampleWithExistingCompanion().test()
-    if (LogExampleWithExistingCompanionAndLogField().test() != "No log") return "FAIL"
+    assertEquals("No log", LogExampleWithExistingCompanionAndLogField().test())
     LogExampleWithTopic().test()
     LogOnCompanion.test()
     LogOnNestedClass.Nested().test()
@@ -158,6 +158,6 @@ fun box(): String {
         "INFO: Check LogWhenNonConflictingExtensionProperty",
         "INFO: Check LogWhenNonConflictingContextualProperty",
     )
-    if (logMessages != expected) return "FAIL: expected $expected but got $logMessages"
+    assertEquals(expected, logMessages)
     return "OK"
 }

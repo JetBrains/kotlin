@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -34,6 +35,8 @@ abstract class IrSimpleFunction : IrFunction(), IrOverridableDeclaration<IrSimpl
     abstract var isInfix: Boolean
 
     abstract var correspondingPropertySymbol: IrPropertySymbol?
+
+    abstract var companionExtensionClass: IrClassSymbol?
 
     override fun <R, D> accept(visitor: IrVisitor<R, D>, data: D): R =
         visitor.visitSimpleFunction(this, data)

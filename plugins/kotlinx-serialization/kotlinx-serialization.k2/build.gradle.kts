@@ -17,6 +17,9 @@ dependencies {
     compileOnly(project(":native:native.config"))
 
     implementation(project(":kotlinx-serialization-compiler-plugin.common"))
+    implementation(project(":compiler:frontend.common-psi"))
+    implementation(project(":compiler:psi:psi-api"))
+    implementation(project(":core:compiler.common.jvm"))
 
     compileOnly(intellijCore())
 }

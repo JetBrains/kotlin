@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverloadChecker
 
 
+@K1Deprecation
 abstract class AbstractLocalRedeclarationChecker(val overloadChecker: OverloadChecker) : LocalRedeclarationChecker {
     override fun checkBeforeAddingToScope(scope: LexicalScope, newDescriptor: DeclarationDescriptor) {
         val name = newDescriptor.name
@@ -65,6 +67,7 @@ abstract class AbstractLocalRedeclarationChecker(val overloadChecker: OverloadCh
     protected abstract fun handleConflictingOverloads(first: CallableMemberDescriptor, second: CallableMemberDescriptor)
 }
 
+@K1Deprecation
 class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {
         throw IllegalStateException(
@@ -87,6 +90,7 @@ class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : Abst
     }
 }
 
+@K1Deprecation
 class TraceBasedLocalRedeclarationChecker(val trace: BindingTrace, overloadChecker: OverloadChecker) :
     AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {

@@ -7,20 +7,25 @@ public abstract class CSet2 /* test.CSet2*/<Elem>  implements test.ISet<Elem> {
   @kotlin.SinceKotlin(version = @kotlin.SinceKotlin)
   @kotlin.js.ExperimentalJsCollectionsApi()
   @kotlin.js.ExperimentalJsExport()
+  @kotlin.js.JsDontExportDefaultImplementation()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() kotlin.js.collections.JsReadonlySet<Elem> asJsReadonlySetView();//  asJsReadonlySetView()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<Elem> iterator();//  iterator()
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean contains(Elem);//  contains(Elem)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean containsAll(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>);//  containsAll(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends Elem>)
 
   @java.lang.Override()
+  @kotlin.js.JsExport.Ignore()
   public boolean isEmpty();//  isEmpty()
 
   @java.lang.Override()

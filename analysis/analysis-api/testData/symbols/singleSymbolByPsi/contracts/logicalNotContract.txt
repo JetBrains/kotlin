@@ -4,7 +4,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /logicalNotContract
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: [
@@ -21,7 +20,6 @@ KaNamedFunctionSymbol:
                     KaValueParameterSymbol:
                       annotations: []
                       callableId: null
-                      compilerVisibility: Public
                       contextReceivers: []
                       generatedPrimaryConstructorProperty: null
                       hasDeclaredDefaultValue: false
@@ -29,6 +27,7 @@ KaNamedFunctionSymbol:
                       isActual: false
                       isCompanion: false
                       isCrossinline: false
+                      isDelegated: false
                       isExpect: false
                       isExtension: false
                       isExternal: false
@@ -49,7 +48,7 @@ KaNamedFunctionSymbol:
                       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
                       getContainingJvmClassName: LogicalNotContractKt
                       getContainingModule: KaSourceModule "Sources of main"
-                      deprecationStatus: null
+                      deprecation: null
                       importableFqName: null
   ]
   hasStableParameterNames: true
@@ -80,7 +79,6 @@ KaNamedFunctionSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -88,6 +86,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -108,7 +107,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(logicalNotContract.kt)
       getContainingJvmClassName: LogicalNotContractKt
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -116,6 +115,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: LogicalNotContractKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: logicalNotContract

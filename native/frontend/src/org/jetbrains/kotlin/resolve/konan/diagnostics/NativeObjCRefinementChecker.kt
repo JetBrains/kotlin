@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementOverridesChecker.check
 
+@K1Deprecation
 object NativeObjCRefinementChecker : DeclarationChecker {
 
     val hidesFromObjCFqName = FqName("kotlin.native.HidesFromObjC")
@@ -23,7 +25,7 @@ object NativeObjCRefinementChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is CallableMemberDescriptor) return
         if (descriptor !is FunctionDescriptor && descriptor !is PropertyDescriptor) return
-        val (objCAnnotations, swiftAnnotations) = descriptor.findRefinedAnnotations()
+        val [objCAnnotations, swiftAnnotations] = descriptor.findRefinedAnnotations()
         if (objCAnnotations.isNotEmpty() && swiftAnnotations.isNotEmpty()) {
             swiftAnnotations.forEach {
                 val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration

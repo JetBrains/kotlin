@@ -1,0 +1,426 @@
+KtFile: 'primaryConstructorVsCompanionInvoke.kt'
+  null
+
+KtPackageDirective(0,19): 'package com.example'
+  null
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  null
+
+KtNameReferenceExpression(8,11): 'com'
+  null
+
+KtNameReferenceExpression(12,19): 'example'
+  null
+
+KtImportList(19,19): ''
+  null
+
+KtClass(21,126): 'class Foo {'
+  null
+
+KtClassBody(31,126): '{'
+  null
+
+KtObjectDeclaration(37,124): 'companion object {'
+  null
+
+KtDeclarationModifierList(37,46): 'companion'
+  null
+
+KtClassBody(54,124): '{'
+  null
+
+KtNamedFunction(64,118): 'operator fun invoke(param: Int) = Foo() // constructor'
+  null
+
+KtDeclarationModifierList(64,72): 'operator'
+  null
+
+KtParameterList(83,95): '(param: Int)'
+  null
+
+KtParameter(84,94): 'param: Int'
+  null
+
+KtTypeReference(91,94): 'Int'
+  null
+
+KtUserType(91,94): 'Int'
+  null
+
+KtNameReferenceExpression(91,94): 'Int'
+  null
+
+KtCallExpression(98,103): 'Foo()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(98,101): 'Foo'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = <constructor>(): com.example.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(101,103): '()'
+  null
+
+KtNamedFunction(128,231): 'fun main() {'
+  null
+
+KtParameterList(136,138): '()'
+  null
+
+KtBlockExpression(139,231): '{'
+  null
+
+KtCallExpression(145,151): 'Foo(1)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(145,148): 'Foo'
+  null
+
+KtValueArgumentList(148,151): '(1)'
+  null
+
+KtValueArgument(149,150): '1'
+  null
+
+KtConstantExpression(149,150): '1'
+  null
+
+KtDotQualifiedExpression(156,174): 'com.example.Foo(2)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtDotQualifiedExpression(156,167): 'com.example'
+  null
+
+KtNameReferenceExpression(156,159): 'com'
+  null
+
+KtNameReferenceExpression(160,167): 'example'
+  null
+
+KtCallExpression(168,174): 'Foo(2)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        2 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(168,171): 'Foo'
+  null
+
+KtValueArgumentList(171,174): '(2)'
+  null
+
+KtValueArgument(172,173): '2'
+  null
+
+KtConstantExpression(172,173): '2'
+  null
+
+KtDotQualifiedExpression(180,196): 'Foo.Companion(3)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(180,183): 'Foo'
+  null
+
+KtCallExpression(184,196): 'Companion(3)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        3 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(184,193): 'Companion'
+  null
+
+KtValueArgumentList(193,196): '(3)'
+  null
+
+KtValueArgument(194,195): '3'
+  null
+
+KtConstantExpression(194,195): '3'
+  null
+
+KtDotQualifiedExpression(201,229): 'com.example.Foo.Companion(4)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtDotQualifiedExpression(201,216): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(201,212): 'com.example'
+  null
+
+KtNameReferenceExpression(201,204): 'com'
+  null
+
+KtNameReferenceExpression(205,212): 'example'
+  null
+
+KtNameReferenceExpression(213,216): 'Foo'
+  null
+
+KtCallExpression(217,229): 'Companion(4)'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Companion
+        isSafeNavigation = false
+        type = com.example.Foo.Companion
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = com.example.Foo
+        symbol = com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+        valueParameters = [
+          KaVariableSignature:
+            name = param
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = com/example/Foo.Companion.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        4 -> (KaVariableSignature:
+          name = param
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = param: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(217,226): 'Companion'
+  null
+
+KtValueArgumentList(226,229): '(4)'
+  null
+
+KtValueArgument(227,228): '4'
+  null
+
+KtConstantExpression(227,228): '4'
+  null

@@ -40,6 +40,7 @@ const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
+const val KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION = "new_companion_initialization"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -167,6 +168,9 @@ val BaseKotlinLibrary.commonizerTarget: String?
 
 val BaseKotlinLibrary.builtInsPlatform: BuiltInsPlatform?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM)?.let(BuiltInsPlatform::parseFromString)
+
+val BaseKotlinLibrary.newCompanionInitializationEnabled: Boolean
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION)?.toBoolean() == true
 
 val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
     get() = if (manifestProperties.containsKey(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS))

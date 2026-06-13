@@ -17,38 +17,38 @@ import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.idea.references.KDocReference
-import org.jetbrains.kotlin.idea.references.KtDefaultAnnotationArgumentReference
-import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolution.KtResolvable
 import org.jetbrains.kotlin.resolution.KtResolvableCall
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 @KaImplementationDetail
 @OptIn(KtExperimentalApi::class)
 abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaResolver {
     protected abstract fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt?
 
-    protected abstract fun performSymbolResolution(reference: KtReference): KaSymbolResolutionAttempt?
-
     final override fun KtResolvable.tryResolveSymbols(): KaSymbolResolutionAttempt? = withValidityAssertion {
         when (this) {
-            is KtResolvableCall -> tryResolveSymbolsForResolvableCall()
             is KtOperationReferenceExpression -> tryResolveSymbolsForOperationReference()
+            is KtResolvableCall -> tryResolveSymbolsForResolvableCall()
             is KtElement -> tryResolveSymbolsForElement()
-            is KtReference -> tryResolveSymbolsForReference()
             else -> null
         }
     }
 
+    override fun KtReference.resolveToSymbols(): Collection<KaSymbol> = withPsiValidityAssertion(element) {
+        with(this as? KaResolvableReferenceBridge) {
+            if (this != null) {
+                analysisSession.resolveToSymbols()
+            } else {
+                emptyList()
+            }
+        }
+    }
 
     /**
      * Technically, symbol resolution can be more efficient than calls,
@@ -57,18 +57,17 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
      * In reality, the reuse of call resolution is actually a benefit because its result is cached and
      * effectively reused at all entry points into the resolver API
      */
-    private fun KtResolvableCall.tryResolveSymbolsForResolvableCall(): KaSymbolResolutionAttempt? {
-        return when (val callAttempt = tryResolveCall()) {
-            is KaSingleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
-            is KaMultiCallResolutionAttempt -> callAttempt.toSymbolResolutionAttempt()
-
-            null -> when (this) {
-                // Name reference expressions are special since they might represent not only calls
-                // but also types
-                is KtNameReferenceExpression -> tryResolveSymbolsForElement()
-                else -> null
-            }
-        }
+    private fun KtResolvableCall.tryResolveSymbolsForResolvableCall(): KaSymbolResolutionAttempt? = when (this) {
+        // Both reference kinds may stand in either type or call positions, and in some cases the symbol-based
+        // result is more specific (e.g., it prefers classes to constructors).
+        // For enum entry super-type references this also means the enclosing enum class is returned instead of
+        // the synthetic constructor of the call form.
+        is KtNameReferenceExpression, is KtEnumEntrySuperclassReferenceExpression -> tryResolveSymbolsForElement()
+        else -> null
+    } ?: when (val callAttempt = tryResolveCall()) {
+        is KaSingleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
+        is KaMultiCallResolutionAttempt -> callAttempt.toSymbolResolutionAttempt()
+        null -> null
     }
 
     /**
@@ -77,9 +76,11 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
      * @see tryResolveSymbolsForResolvableCall
      */
     private fun KtOperationReferenceExpression.tryResolveSymbolsForOperationReference(): KaSymbolResolutionAttempt? {
-        val resolvableCall = parent as? KtResolvableCall ?: return null
-        return when (val callAttempt = resolvableCall.tryResolveCall()) {
-            is KaSingleCallResolutionAttempt -> callAttempt.toSingleSymbolResolutionAttempt()
+        return when (val callAttempt = tryResolveCall()) {
+            is KaCallResolutionError -> callAttempt.toSingleSymbolResolutionAttempt()
+
+            // Single variable access is not expected to be a result of the symbol resolve (the assignment use case)
+            is KaCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSingleSymbolResolutionAttempt()
             is KaMultiCallResolutionAttempt -> when (callAttempt) {
                 is KaCompoundArrayAccessCallResolutionAttempt -> mergeSymbolAttempts(
                     listOf(
@@ -101,11 +102,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         return performSymbolResolution(this)
     }
 
-    private fun <T> T.tryResolveSymbolsForReference(): KaSymbolResolutionAttempt? where T : KtResolvable, T : KtReference {
-        element.checkValidity()
-        return performSymbolResolution(this)
-    }
-
     final override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = withValidityAssertion {
         tryResolveSymbols()?.successfulSymbols ?: emptyList()
     }
@@ -124,15 +120,20 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtCallableReferenceExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtArrayAccessExpression.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
     final override fun KtCollectionLiteralExpression.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
-    final override fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
+    final override fun KtEnumEntrySuperclassReferenceExpression.resolveSymbol(): KaNamedClassSymbol? = resolveSymbolSafe()
     final override fun KtLabelReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
     final override fun KtReturnExpression.resolveSymbol(): KaFunctionSymbol? = resolveSymbolSafe()
     final override fun KtWhenConditionInRange.resolveSymbol(): KaNamedFunctionSymbol? = resolveSymbolSafe()
     final override fun KtDestructuringDeclarationEntry.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtQualifiedExpression.resolveSymbol(): KaCallableSymbol? = resolveSymbolSafe()
     final override fun KtConstructorCalleeExpression.resolveSymbol(): KaConstructorSymbol? = resolveSymbolSafe()
-    final override fun KtNameReferenceExpression.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
     final override fun KtInstanceExpressionWithLabel.resolveSymbol(): KaDeclarationSymbol? = resolveSymbolSafe()
+    final override fun KtNullableType.resolveSymbol(): KaClassifierSymbol? = resolveSymbolSafe()
+    final override fun KtFunctionType.resolveSymbol(): KaClassSymbol? = resolveSymbolSafe()
+    final override fun KtTypeReference.resolveSymbol(): KaClassifierSymbol? = resolveSymbolSafe()
+    final override fun KtClassLiteralExpression.resolveSymbol(): KaClassifierSymbol? = resolveSymbolSafe()
+    final override fun KtSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? = resolveSymbolSafe()
+    final override fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? = resolveSymbolSafe()
 
     final override fun KtReference.resolveToSymbol(): KaSymbol? = withPsiValidityAssertion(element) {
         return resolveToSymbols().singleOrNull()
@@ -167,7 +168,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
             withResolvableEntry(this@resolveSingleCallSafe)
         }
 
-        val callableSymbol = call.signature.symbol
+        val callableSymbol = call.symbol
         checkWithAttachment(
             callableSymbol is S,
             { "Expected symbol of type ${S::class.simpleName}, got ${callableSymbol::class.simpleName}" },
@@ -198,7 +199,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtConstructorDelegationCall.resolveCall(): KaDelegatedConstructorCall? = resolveSingleCallSafe()
     final override fun KtConstructorDelegationReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSingleCallSafe()
     final override fun KtCallElement.resolveCall(): KaFunctionCall<*>? = resolveCallSafe()
-    final override fun KtCallableReferenceExpression.resolveCall(): KaSingleCall<*, *>? = resolveCallSafe()
+    final override fun KtCallableReferenceExpression.resolveCall(): KaCallableReferenceCall<*, *>? = resolveCallSafe()
     final override fun KtArrayAccessExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
     final override fun KtCollectionLiteralExpression.resolveCall(): KaFunctionCall<KaNamedFunctionSymbol>? = resolveSingleCallSafe()
     final override fun KtEnumEntrySuperclassReferenceExpression.resolveCall(): KaDelegatedConstructorCall? = resolveSingleCallSafe()
@@ -227,15 +228,34 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 
     /**
-     * All implementations of KaSingleOrMultiCall are also KaCall
-     * */
-    @OptIn(ExperimentalContracts::class)
-    protected fun KaSingleOrMultiCall.asKaCall(): KaCall {
-        contract {
-            returns() implies (this@asKaCall is KaCall)
-        }
+     * Returns the legacy [KaCall] view of [this] [KaSingleOrMultiCall]. Most resolution result types
+     * implement [KaCall] directly. The exception is [KaCallableReferenceCall], which is part of the
+     * new resolution API and intentionally does not extend the deprecated [KaCall] hierarchy. For
+     * that case we emulate a legacy [KaCall] by re-encoding the reference as the corresponding
+     * [KaSimpleFunctionCall] / [KaSimpleVariableAccessCall] view.
+     */
+    protected fun KaSingleOrMultiCall.asKaCall(): KaCall = when (this) {
+        is KaBaseCallableReferenceCall<*, *> -> asLegacyKaCall()
+        else -> this as KaCall
+    }
 
-        return this as KaCall
+    @Suppress("UNCHECKED_CAST")
+    private fun KaBaseCallableReferenceCall<*, *>.asLegacyKaCall(): KaCall {
+        val partiallyAppliedSymbol = backingPartiallyAppliedSymbol
+        return when (partiallyAppliedSymbol.symbol) {
+            is KaFunctionSymbol -> KaBaseSimpleFunctionCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
+                backingArgumentMapping = emptyMap(),
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+            )
+
+            is KaVariableSymbol -> KaBaseSimpleVariableAccessCall(
+                backingPartiallyAppliedSymbol = partiallyAppliedSymbol as KaPartiallyAppliedVariableSymbol<KaVariableSymbol>,
+                backingTypeArgumentsMapping = typeArgumentsMapping,
+                backingKind = KaBaseVariableReadAccess,
+                backingIsContextSensitive = false,
+            )
+        }
     }
 
     protected inline val KaCallResolutionSuccess.kaCall: KaCall
@@ -260,50 +280,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     final override fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> = withPsiValidityAssertion {
         collectCallCandidatesImpl().map(KaCallCandidate::asKaCallCandidateInfo)
     }
-
-    protected fun tryResolveSymbolsForReferenceViaElement(reference: KtReference): KaSymbolResolutionAttempt? {
-        return (reference.element as? KtResolvable)?.tryResolveSymbols()
-    }
-
-    protected fun tryResolveSymbolsForInvokeReference(reference: KtInvokeFunctionReference): KaSymbolResolutionAttempt? =
-        when (val callResult = reference.element.tryResolveCall()) {
-            // There is no way to distinguish between the error regular and implicit calls, so by default only relevant errors are shown
-            is KaCallResolutionError -> callResult.candidateCalls.filterIsInstance<KaImplicitInvokeCall>().map { it.signature.symbol }
-                .ifNotEmpty {
-                    KaBaseSymbolResolutionError(
-                        backingDiagnostic = callResult.diagnostic,
-                        backingCandidateSymbols = this,
-                    )
-                }
-
-            is KaCallResolutionSuccess -> when (val call = callResult.call) {
-                is KaImplicitInvokeCall -> KaBaseSymbolResolutionSuccess(backingSymbol = call.signature.symbol)
-                else -> null
-            }
-
-            // Multi-call resolution attempts are never implicit invoke calls
-            is KaMultiCallResolutionAttempt -> null
-            null -> null
-        }
-
-    private fun tryResolveSymbolsViaResolveToSymbols(
-        reference: KtReference,
-    ): KaSymbolResolutionAttempt? = reference.resolveToSymbols().ifNotEmpty {
-        KaBaseSymbolResolutionSuccess(backingSymbols = this.toList())
-    }
-
-    /**
-     * KDocs cannot have diagnostics, so effectively they always successfully resolved.
-     * This means that a special handling is not needed (at least yet) and the references'
-     * result could be reused fully with no contradictions
-     */
-    protected fun tryResolveSymbolsForKDocReference(
-        reference: KDocReference,
-    ): KaSymbolResolutionAttempt? = tryResolveSymbolsViaResolveToSymbols(reference)
-
-    protected fun tryResolveSymbolsForDefaultAnnotationArgumentReference(
-        reference: KtDefaultAnnotationArgumentReference,
-    ): KaSymbolResolutionAttempt? = tryResolveSymbolsViaResolveToSymbols(reference)
 
     protected fun KtBinaryExpression.getCompoundAssignKind(): KaCompoundAssignOperation.Kind = when (operationToken) {
         KtTokens.PLUSEQ -> KaCompoundAssignOperation.Kind.PLUS_ASSIGN
@@ -349,8 +325,6 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 
     private fun KtElement.unwrapResolvableCall(): KtElement? = when (this) {
-        // Most likely we will drop call resolution for operators, and only resolveSymbol will be available for them.
-        // Call resolution API is available on a parent expression (like binary or unary operator)
         is KtOperationReferenceExpression -> parent as? KtElement
         else -> this
     }?.takeIf(::canBeResolvedAsCall)
@@ -369,10 +343,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         mergeSymbolAttempts(attempts.map { it.toSingleSymbolResolutionAttempt() })
 
     private fun KaSingleCallResolutionAttempt.toSingleSymbolResolutionAttempt(): KaSingleSymbolResolutionAttempt = when (this) {
-        is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.signature.symbol)
+        is KaCallResolutionSuccess -> KaBaseSymbolResolutionSuccess(backingSymbol = call.symbol)
         is KaCallResolutionError -> KaBaseSymbolResolutionError(
             backingDiagnostic = diagnostic,
-            backingCandidateSymbols = candidateCalls.map { it.signature.symbol },
+            backingCandidateSymbols = candidateCalls.map { it.symbol },
         )
     }
 
@@ -409,6 +383,24 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
         return KaBaseCompoundSymbolResolutionError(backingAttempts = merged)
     }
 
+    @Deprecated(
+        "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true")
+    )
+    final override val KtReference.usesContextSensitiveResolution: Boolean
+        get() = withPsiValidityAssertion(element) {
+            (this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true
+        }
+
+    @Deprecated(
+        message = "Use `KtSimpleNameExpression` instead",
+        replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion() == true"),
+    )
+    final override fun KtReference.isImplicitReferenceToCompanion(): Boolean = withPsiValidityAssertion(element) {
+        (this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true
+    }
+
+    @KaImplementationDetail
     protected companion object {
         private val nonCallBinaryOperator: TokenSet = TokenSet.create(
             KtTokens.ELVIS,

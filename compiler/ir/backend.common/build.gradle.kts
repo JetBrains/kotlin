@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -9,7 +10,9 @@ dependencies {
     api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.validation"))
+    implementation(project(":compiler:resolution"))
     implementation(project(":core:compiler.common.native"))
+    implementation(project(":core:descriptors"))
     implementation(project(":compiler:frontend.common-psi")) // required for error reporting
     compileOnly(intellijCore())
 
@@ -27,3 +30,4 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture as unCaptureKotlinType
 
+@K1Deprecation
 class ClassicConstraintSystemUtilContext(
     val kotlinTypeRefiner: KotlinTypeRefiner,
     val builtIns: KotlinBuiltIns,

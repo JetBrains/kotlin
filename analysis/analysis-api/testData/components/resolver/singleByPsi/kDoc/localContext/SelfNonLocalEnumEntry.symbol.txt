@@ -1,2 +1,5 @@
-KtEnumEntry(19,50): '/**'
-  null
+KDocName(31,33): 'AA'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /E.AA
+    ]

@@ -125,6 +125,7 @@ public abstract @interface Anno {
 
 @Anno(byteArg = (byte)127, ubyteArg = (byte)-1, shortArg = (short)32767, ushortArg = (short)-1, charArg = '\uffff', intArg = 2147483647, uintArg = -1, longArg = 9223372036854775807L, ulongArg = -1L, byteArrayArg = {(byte)127}, ubyteArrayArg = {(byte)-1}, shortArrayArg = {(short)32767}, ushortArrayArg = {(short)-1}, charArrayArg = {'\uffff'}, intArrayArg = {2147483647}, uintArrayArg = {-1}, longArrayArg = {9223372036854775807L}, ulongArrayArg = {-1L})
 /**
+ * @Anno(byteArg = 127.toByte(), ubyteArg = 255.toUByte(), shortArg = 32767.toShort(), ushortArg = 65535.toUShort(), charArg = '￿', intArg = 2147483647, uintArg = 4294967295u, longArg = 9223372036854775807L, ulongArg = 18446744073709551615uL, byteArrayArg = [127.toByte()], ubyteArrayArg = [255.toUByte()], shortArrayArg = [32767.toShort()], ushortArrayArg = [65535.toUShort()], charArrayArg = ['￿'], intArrayArg = [2147483647], uintArrayArg = [4294967295u], longArrayArg = [9223372036854775807L], ulongArrayArg = [18446744073709551615uL])
  * public final class C : kotlin/Any {
  *
  *   // signature: <init>()V

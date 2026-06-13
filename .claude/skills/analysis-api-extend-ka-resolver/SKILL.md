@@ -232,9 +232,6 @@ Investigate:
 - `KtConstructorDelegationReferenceExpression` → needed to add `FirReference` as a handled case
 - `KtReturnExpression` → `FirReturnExpression` wasn't handled, added a new branch + helper
 
-Similarly, read the FE10 resolver:
-- **File:** `analysis/analysis-api-fe10/src/org/jetbrains/kotlin/analysis/api/descriptors/components/KaFe10Resolver.kt`
-
 Check if the `BindingContext`-based resolution handles the PSI type. Examples of needed changes:
 - `KtCallableReferenceExpression` → redirects to `psi.callableReference`
 - `KtWhenConditionInRange` → redirects to `psi.operationReference`
@@ -262,7 +259,9 @@ Run `get_file_problems` with `errorsOnly=false` on each modified file. Fix any w
 ### Step 2: Update test data
 
 ```bash
-./gradlew manageTestDataGlobally --mode=update --incremental --test-data-path=analysis/analysis-api/testData/components/resolver/
+./gradlew updateTestData \
+    -Porg.jetbrains.kotlin.testDataManager.options.incremental=true \
+    -Porg.jetbrains.kotlin.testDataManager.options.testDataPath=analysis/analysis-api/testData/components/resolver/
 ```
 
 ### Step 3: Validate generated test data

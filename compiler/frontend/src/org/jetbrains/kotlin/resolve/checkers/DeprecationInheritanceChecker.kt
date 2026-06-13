@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature.StopPropagatingDeprecationThroughOverrides
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
+@K1Deprecation
 object DeprecationInheritanceChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtNamedDeclaration) return
@@ -21,7 +23,7 @@ object DeprecationInheritanceChecker : DeclarationChecker {
         }
         val deprecationResolver = context.deprecationResolver
         if (!deprecationResolver.areDeprecationsInheritedFromOverriden(descriptor)) return
-        val (deprecations, message) = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
+        val [deprecations, message] = if (context.languageVersionSettings.supportsFeature(StopPropagatingDeprecationThroughOverrides)) {
             deprecationResolver.getHiddenDeprecationsFromOverriden(descriptor) to ""
         } else {
             deprecationResolver.getDeprecations(descriptor) to "This deprecation won't be inherited in future releases. "

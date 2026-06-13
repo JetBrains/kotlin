@@ -60,7 +60,7 @@ class Grouping {
         val evenFruits = fruits.groupingBy { it.first() }
             .fold({ key, _ -> key to mutableListOf<String>() },
                   { _, accumulator, element ->
-                      accumulator.also { (_, list) -> if (element.length % 2 == 0) list.add(element) }
+                      accumulator.also { [_, list] -> if (element.length % 2 == 0) list.add(element) }
                   })
 
         val sorted = evenFruits.values.sortedBy { it.first }

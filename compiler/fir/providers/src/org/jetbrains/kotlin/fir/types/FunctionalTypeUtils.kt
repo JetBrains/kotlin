@@ -234,11 +234,10 @@ fun ConeClassLikeType.findBaseInvokeSymbol(): FirNamedFunctionSymbol? {
 }
 
 context(c: SessionAndScopeSessionHolder)
-fun ConeKotlinType.findContributedInvokeSymbol(
-    expectedFunctionType: ConeClassLikeType,
+fun ConeClassLikeType.findContributedInvokeSymbol(
     shouldCalculateReturnTypesOfFakeOverrides: Boolean
 ): FirFunctionSymbol<*>? {
-    val baseInvokeSymbol = expectedFunctionType.findBaseInvokeSymbol() ?: return null
+    val baseInvokeSymbol = findBaseInvokeSymbol() ?: return null
 
     val callableCopyTypeCalculator = if (shouldCalculateReturnTypesOfFakeOverrides) {
         CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution
@@ -270,7 +269,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
             } else {
                 val dispatchReceiverType = functionSymbol.originalOrSelf().dispatchReceiverType
                 val dispatchReceiverFunctionKind = (dispatchReceiverType as? ConeClassLikeType)?.functionTypeKind(c.session)
-                val expectedFunctionKind = expectedFunctionType.functionTypeKind(c.session)
+                val expectedFunctionKind = functionTypeKind(c.session)
                 if (dispatchReceiverFunctionKind == null || !dispatchReceiverFunctionKind.isBasicFunctionOrKFunction ||
                     expectedFunctionKind?.isBasicFunctionOrKFunction == true ||
                     expectedFunctionKind?.isReflectType != dispatchReceiverFunctionKind.isReflectType

@@ -1,0 +1,144 @@
+FILE: deprecatedHidden.kt
+    public final class Object : R|kotlin/Any| {
+        public constructor(): R|Object| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CompanionBlock : R|kotlin/Any| {
+        public constructor(): R|CompanionBlock| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CompanionObject : R|kotlin/Any| {
+        public constructor(): R|CompanionObject| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CompanionObject2 : R|kotlin/Any| {
+        public constructor(): R|CompanionObject2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CompanionObjectExtension : R|kotlin/Any| {
+        public constructor(): R|CompanionObjectExtension| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class CompanionObjectExtension2 : R|kotlin/Any| {
+        public constructor(): R|CompanionObjectExtension2| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Deprecated|(message = String(Object) [evaluated = String(Object)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final object Object : R|kotlin/Any| {
+            private constructor(): R|Outer.Object| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String(CompanionBlock) [evaluated = String(CompanionBlock)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final class CompanionBlock : R|kotlin/Any| {
+            private constructor(): R|Outer.CompanionBlock| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final static operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String(CompanionObject) [evaluated = String(CompanionObject)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final class CompanionObject : R|kotlin/Any| {
+            private constructor(): R|Outer.CompanionObject| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.CompanionObject.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final class CompanionObject2 : R|kotlin/Any| {
+            private constructor(): R|Outer.CompanionObject2| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String(CompanionObject2) [evaluated = String(CompanionObject2)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.CompanionObject2.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public open class SuperType : R|kotlin/Any| {
+            public constructor(): R|Outer.SuperType| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String(CompanionObjectExtension) [evaluated = String(CompanionObjectExtension)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final class CompanionObjectExtension : R|kotlin/Any| {
+            private constructor(): R|Outer.CompanionObjectExtension| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|Outer.SuperType| {
+                private constructor(): R|Outer.CompanionObjectExtension.Companion| {
+                    super<R|Outer.SuperType|>()
+                }
+
+            }
+
+        }
+
+        public final class CompanionObjectExtension2 : R|kotlin/Any| {
+            private constructor(): R|Outer.CompanionObjectExtension2| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Deprecated|(message = String(CompanionObjectExtension2) [evaluated = String(CompanionObjectExtension2)], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|Outer.SuperType| {
+                private constructor(): R|Outer.CompanionObjectExtension2.Companion| {
+                    super<R|Outer.SuperType|>()
+                }
+
+            }
+
+        }
+
+        public final operator fun R|Outer.SuperType|.invoke(): R|kotlin/Unit| {
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            R|/Object.Object|()
+            R|/CompanionBlock.CompanionBlock|()
+            R|/CompanionObject.CompanionObject|()
+            R|/CompanionObject2.CompanionObject2|()
+            R|/CompanionObjectExtension.CompanionObjectExtension|()
+            R|/CompanionObjectExtension2.CompanionObjectExtension2|()
+        }
+
+    }

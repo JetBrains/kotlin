@@ -29,7 +29,7 @@ inline fun patchManifestAsMap(
     transform(mutableProperties)
 
     Properties().apply {
-        for ((key, value) in mutableProperties) {
+        for ([key, value] in mutableProperties) {
             this[key] = value
         }
         manifestFile.outputStream().use { store(it, null) }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
+@K1Deprecation
 class EffectSystem(
     val languageVersionSettings: LanguageVersionSettings,
     val dataFlowValueFactory: DataFlowValueFactory,

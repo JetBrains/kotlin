@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver.ge
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.possibleGetMethodNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -67,11 +66,11 @@ internal object KDocReferenceResolver {
 
     context(_: KaSession)
     private fun <T : KaSymbol> Iterable<T>.getNonHiddenDeclarations(): List<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     context(_: KaSession)
     private fun <T : KaSymbol> Sequence<T>.getNonHiddenDeclarations(): Sequence<T> =
-        this.filter { it.deprecationStatus?.deprecationLevel != DeprecationLevelValue.HIDDEN }
+        this.filter { it.deprecation?.level != KaDeprecationLevel.HIDDEN }
 
     /**
      * Resolves the [selectedFqName] of KDoc
@@ -92,6 +91,7 @@ internal object KDocReferenceResolver {
      * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
+    @OptIn(KtImplementationDetail::class)
     internal fun resolveKdocFqName(
         analysisSession: KaSession,
         selectedFqName: FqName,
@@ -228,8 +228,7 @@ internal object KDocReferenceResolver {
      * In every scope, the resolver looks for various declarations in the following order (from higher priority to lower):
      * 1. Classifiers
      * 2. Functions
-     * 3. Synthetic properties
-     * 4. Variables
+     * 3. Variables
      * If any symbols are found during this stage, the algorithm returns a set of symbols of the same declaration kind found in the same scope.
      *
      * Then, if no symbols were found on previous stages, the following symbol categories are searched:
@@ -513,14 +512,9 @@ internal object KDocReferenceResolver {
             // Search for functions
             allCallables.filterIsInstance<KaFunctionSymbol>().ifNotEmpty { return this.toResolveResults() }
 
-            // Search for synthetic properties
-            getSymbolsFromSyntheticProperty(
-                shortName,
-                currentScope
-            ).getNonHiddenDeclarations().ifNotEmpty { return this.toResolveResults() }
-
             // Search for variables
-            allCallables.filterIsInstance<KaVariableSymbol>().ifNotEmpty { return this.toResolveResults() }
+            allCallables.filterIsInstance<KaVariableSymbol>().removeSyntheticPropertiesWithFields()
+                .ifNotEmpty { return this.toResolveResults() }
         }
 
         // Search for extension functions
@@ -554,6 +548,19 @@ internal object KDocReferenceResolver {
         }
 
     /**
+     * Removes [KaSyntheticJavaPropertySymbol]s from [this] that already have a same-named [KaJavaFieldSymbol] in [this].
+     */
+    private fun List<KaVariableSymbol>.removeSyntheticPropertiesWithFields(): List<KaVariableSymbol> {
+        val javaFields = filterIsInstance<KaJavaFieldSymbol>().map { symbol ->
+            symbol.name
+        }.ifEmpty {
+            return this
+        }
+
+        return filter { symbol -> symbol !is KaSyntheticJavaPropertySymbol || symbol.name !in javaFields }
+    }
+
+    /**
      * Calculates the longest existing package name for the given [fqName] and then performs scope reduction algorithm.
      * This is used to retrieve non-imported symbols from other packages by their fully qualified names.
      *
@@ -581,20 +588,6 @@ internal object KDocReferenceResolver {
     }
 
     /**
-     * Generates various possible getter names for the given [name] and searches for symbols in the given [scope].
-     */
-    private fun getSymbolsFromSyntheticProperty(name: Name, scope: KaScope): List<KaSymbol> {
-        val getterNames = possibleGetMethodNames(name)
-        return scope.callables { it in getterNames }.filterIsInstance<KaFunctionSymbol>().filter { symbol ->
-            val symbolLocation = symbol.location
-            val symbolOrigin = symbol.origin
-            val parametersCount = symbol.valueParameters.size
-            parametersCount == 0 && symbolLocation == KaSymbolLocation.CLASS &&
-                    (symbolOrigin == KaSymbolOrigin.JAVA_LIBRARY || symbolOrigin == KaSymbolOrigin.JAVA_SOURCE)
-        }.toList()
-    }
-
-    /**
      * Retrieves all outer declarations for [contextElement] and returns a list of their member scopes.
      */
     private fun KaSession.getOuterClassScopesForPosition(contextElement: KtElement): Collection<KaScope> {
@@ -616,6 +609,9 @@ internal object KDocReferenceResolver {
 
     private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
         listOfNotNull(
+            // Regular `combinedMemberScope` doesn't include any synthetic Java properties.
+            // But these properties are available through the dedicated synthetic type scope
+            (symbol as? KaClassSymbol)?.defaultType?.syntheticJavaPropertiesScope?.declarationScope,
             symbol.combinedMemberScope,
             getCompanionObjectMemberScope(symbol),
         ).asCompositeScope()
@@ -701,18 +697,60 @@ internal object KDocReferenceResolver {
 
         if (possibleExtensionsByScope.flatten().isEmpty() || possibleReceivers.isEmpty()) return emptyList()
 
-        return possibleReceivers.mapNotNull { receiverClassSymbol ->
-            val actualReceiverType = receiverClassSymbol.defaultType
+        return possibleReceivers.mapNotNull { actualReceiverSymbol ->
+            val actualReceiverType = actualReceiverSymbol.defaultType
+
             possibleExtensionsByScope.firstNotNullOfOrNull { extensions ->
                 extensions.filter { callable ->
                     if (!callable.isExtension) return@filter false
                     val expectedReceiverType = callable.receiverType ?: return@filter false
-                    createUnificationSubstitutor(
-                        actualReceiverType,
-                        expectedReceiverType,
-                        KaUnificationSubstitutorPolicy.EXISTENTIAL
-                    ) != null
-                }.toResolveResults(receiverClassReference = receiverClassSymbol).ifEmpty { null }
+                    val expectedReceiverTypeSymbol = expectedReceiverType.symbol
+
+                    when {
+                        (expectedReceiverTypeSymbol as? KaClassSymbol)?.classKind == KaClassKind.COMPANION_OBJECT -> {
+                            /**
+                             * If the extension is defined on a companion object, the actual receiver symbol must be
+                             * either the same companion object or the enclosing class of this companion object.
+                             *
+                             * ```kotlin
+                             * class MyClass {
+                             *     companion object
+                             * }
+                             *
+                             * // Expected receiver type is MyClass.Companion
+                             * fun MyClass.Companion.foo() {}
+                             *
+                             * /**
+                             *  * [MyClass.Companion.foo] - Actual receiver type is MyClass.Companion, must work
+                             *  * [MyClass.foo] - Actual receiver type is MyClass, must work as well
+                             *  */
+                             * fun usage() {
+                             *     MyClass.Companion.foo() // Resolved
+                             *     MyClass.foo() // Resolved
+                             * }
+                             * ```
+                             */
+                            actualReceiverSymbol == expectedReceiverTypeSymbol ||
+                                    actualReceiverSymbol == expectedReceiverTypeSymbol.containingSymbol
+                        }
+                        callable.isCompanion -> {
+                            /**
+                             * If the extension is a companion one, the actual receiver symbol must
+                             * match the expected receiver symbol.
+                             * The actual receiver type cannot be a subtype of the expected one
+                             * because companion callables / extensions are static.
+                             */
+                            actualReceiverSymbol == expectedReceiverTypeSymbol
+                        }
+                        else -> {
+                            createUnificationSubstitutor(
+                                actualReceiverType,
+                                expectedReceiverType,
+                                KaUnificationSubstitutorPolicy.EXISTENTIAL
+                            ) != null
+                        }
+                    }
+                }.toResolveResults(receiverClassReference = actualReceiverSymbol).ifEmpty { null }
             }
         }.flatten()
     }

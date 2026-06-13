@@ -12,3 +12,5 @@ class SimpleClass {
         @IntroducedAt("2") c: Boolean = true,
     ) = "$this/$a/$b/$c"
 }
+
+// LIGHT_ELEMENTS_NO_DECLARATION: SimpleClass.class[bar;bar;foo;foo]

@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.*
 
+@K1Deprecation
 object JvmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
     override val defaultImportsProvider: DefaultImportsProvider = JvmDefaultImportsProvider

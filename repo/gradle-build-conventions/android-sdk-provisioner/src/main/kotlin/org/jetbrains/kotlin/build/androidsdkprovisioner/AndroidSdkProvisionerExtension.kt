@@ -31,17 +31,6 @@ abstract class AndroidSdkProvisionerExtension {
         }
     }
 
-    fun JavaExec.provideToThisTaskAsSystemProperty(
-        provisioningType: ProvisioningType,
-        propertyName: String = provisioningType.defaultSystemPropertyName,
-    ) {
-        val pathProvider = getSdkPath(provisioningType)
-        jvmArgumentProviders.add {
-            // there's not yet a way to pass Provider to `systemProperty`: https://github.com/gradle/gradle/issues/12247
-            listOf("-D$propertyName=${pathProvider.get()}")
-        }
-    }
-
     fun JavaExec.provideToThisTaskAsEnvironmentVariable(provisioningType: ProvisioningType, envVariableName: String = "ANDROID_HOME") {
         val pathProvider = getSdkPath(provisioningType)
         doFirst {
@@ -60,7 +49,7 @@ abstract class AndroidSdkProvisionerExtension {
         val sdkProvider = project.provider { sdkConfiguration.singleFile }
         when (provisioningType.type) {
             ProvisionedFileType.FILE -> inputs.file(sdkProvider)
-            ProvisionedFileType.DIRECTORY -> inputs.dir(sdkProvider)
+            ProvisionedFileType.DIRECTORY -> inputs.files(sdkConfiguration)
         }
         return sdkProvider.map { it.canonicalPath }
     }

@@ -711,6 +711,15 @@ public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructur
 	public fun getTransitiveDependsOnDependencies ()Ljava/util/List;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter : org/jetbrains/kotlin/analysis/api/platform/KotlinOptionalPlatformComponent {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter$Companion;
+	public abstract fun asOpenApiModule (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lcom/intellij/openapi/module/Module;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter$Companion {
+	public final fun getInstance ()Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModuleConverter;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind : java/lang/Enum {
 	public static final field JS Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
 	public static final field JVM Lorg/jetbrains/kotlin/analysis/api/platform/projectStructure/KaModulePlatformKind;
@@ -952,5 +961,9 @@ public final class org/jetbrains/kotlin/analysis/api/platform/utils/SublistMerge
 public final class org/jetbrains/kotlin/analysis/api/platform/utils/UtilsKt {
 	public static final field KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME Ljava/lang/String;
 	public static final fun forEachNonKotlinPsiElementFinder (Lcom/intellij/openapi/project/Project;Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaResolvableReferenceBridge {
+	public abstract fun resolveToSymbols (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Ljava/util/Collection;
 }
 

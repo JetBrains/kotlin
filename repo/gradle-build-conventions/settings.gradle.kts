@@ -26,6 +26,7 @@ dependencyResolutionManagement {
 }
 
 include(":buildsrc-compat")
+include(":analysis-api-artifact")
 include(":generators")
 include(":project-tests-convention")
 include(":android-sdk-provisioner")
@@ -33,6 +34,7 @@ include(":asm-deprecating-transformer")
 include(":binary-compatibility-extended")
 include(":gradle-plugins-documentation")
 include(":gradle-plugins-common")
+include(":kgp-npm-tooling-helper")
 include(":d8-configuration")
 // TODO: uncomment after bootstrap
 // include(":swc-configuration")
@@ -42,3 +44,7 @@ include(":nodejs-configuration")
 include(":test-data-manager-convention")
 include(":utilities")
 include(":test-federation-convention")
+include(":repo-test-fixtures")
+include(":java-flight-recorder")
+include(":test-inputs-check-v2")
+

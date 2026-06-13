@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 internal fun Project.limitLanguageAndApiVersions(version: KotlinVersion) {
-    val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-    val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+    val projectsDependingOnStableStdlib: Array<String> by rootProject.extra
+    val kotlinApiVersionForProjectsDependingOnStableStdlib: String by rootProject.extra
 
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions {
-            if (project.path !in projectsUsedInIntelliJKotlinPlugin ||
-                KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin) > version
+            if (project.path !in projectsDependingOnStableStdlib ||
+                KotlinVersion.fromVersion(kotlinApiVersionForProjectsDependingOnStableStdlib) > version
             ) {
                 // check the `configureKotlinCompilationOptions` in `common-configurations.gradle.kts` out
                 apiVersion.set(version)

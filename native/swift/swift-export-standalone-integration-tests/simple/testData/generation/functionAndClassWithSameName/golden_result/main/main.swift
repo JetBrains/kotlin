@@ -54,20 +54,20 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
     }
 }
 public typealias TCJ = any main.CompletableJob
-public protocol CompletableJob: KotlinRuntime.KotlinBase, main.Job {
+public protocol CompletableJob: KotlinRuntime.KotlinBase, main.Job, main._CompletableJob {
 }
-public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
+public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase, main._InterfaceWithFactory {
 }
-public protocol Job: KotlinRuntime.KotlinBase {
+public protocol Job: KotlinRuntime.KotlinBase, main._Job {
 }
 @objc(_CompletableJob)
-package protocol _CompletableJob: main._Job {
+public protocol _CompletableJob: main._Job {
 }
 @objc(_InterfaceWithFactory)
-package protocol _InterfaceWithFactory {
+public protocol _InterfaceWithFactory {
 }
 @objc(_Job)
-package protocol _Job {
+public protocol _Job {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
@@ -78,7 +78,6 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public init(
         value: Swift.Int32
     ) {
-        if Self.self != main.ClassWithFactoryWithoutParameters.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ClassWithFactoryWithoutParameters ") }
         let __kt = __root___ClassWithFactoryWithoutParameters_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ClassWithFactoryWithoutParameters_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, value); return () }()
@@ -108,7 +107,6 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
 }
 public final class UtcOffset: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.UtcOffset.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.UtcOffset ") }
         let __kt = __root___UtcOffset_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -181,10 +179,15 @@ extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob where Wra
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Job {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._CompletableJob {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
+}
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
         public init() {
-            if Self.self != ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage ") }
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_ClassWithFactoryInAPackage_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -199,7 +202,6 @@ extension ExportedKotlinPackages.test.factory {
     public final class Outer: KotlinRuntime.KotlinBase {
         public final class Nested: KotlinRuntime.KotlinBase {
             public init() {
-                if Self.self != ExportedKotlinPackages.test.factory.Outer.Nested.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer.Nested ") }
                 let __kt = test_factory_Outer_Nested_init_allocate()
                 super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
                 { test_factory_Outer_Nested_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -212,7 +214,6 @@ extension ExportedKotlinPackages.test.factory {
             }
         }
         public init() {
-            if Self.self != ExportedKotlinPackages.test.factory.Outer.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer ") }
             let __kt = test_factory_Outer_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()

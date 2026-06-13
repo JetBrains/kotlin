@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
+import org.jetbrains.kotlin.fir.resolve.requiresCompanionBlockOrExtensionLf
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
@@ -150,8 +150,14 @@ class CandidateFactory private constructor(
                     )
                 }
             }
-        } else if (objectsByName && shouldAddNoCompanionDiagnostic(callInfo, symbol)) {
-            result.addDiagnostic(NoCompanionObject)
+        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(context.session)) {
+            if (!callInfo.isImplicitInvokeReceiver) result.addDiagnostic(NoCompanionObject)
+            else result.addDiagnostic(InvokeReceiverNoCompanionObject)
+        }
+        if (callInfo.candidateForCommonInvokeReceiver?.diagnostics?.contains(InvokeReceiverNoCompanionObject) == true) {
+            if (symbol !is FirCallableSymbol<*> || !symbol.isStatic || !companionBlocksAndExtensionsEnabled) {
+                result.addDiagnostic(InvokeOnHiddenCompanionObject)
+            }
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator) {
             val normalizedSymbol = when (symbol) {
@@ -181,26 +187,6 @@ class CandidateFactory private constructor(
         }
 
         return result
-    }
-
-    private fun shouldAddNoCompanionDiagnostic(
-        callInfo: CallInfo,
-        symbol: FirBasedSymbol<FirDeclaration>,
-    ): Boolean {
-        if (callInfo.isImplicitInvokeReceiver && companionBlocksAndExtensionsEnabled) return false
-        return symbol.isRegularClassWithoutCompanion(callInfo.session)
-    }
-
-    private fun FirBasedSymbol<*>.requiresCompanionBlockOrExtensionLf(): Boolean {
-        if (this !is FirCallableSymbol) return false
-        if (isJavaOrEnhancement) return false
-        if (!isStatic) return false
-        // The only static Kotlin declarations that existed before were enum entries and Enum.entires/values/valueOf
-        if (this is FirEnumEntrySymbol) return false
-        (this.getContainingClassSymbol() as? FirClassSymbol)?.let { containingClassSymbol ->
-            if (this.fir.isGeneratedStaticEnumMember(containingClassSymbol.fir)) return false
-        }
-        return true
     }
 
     @OptIn(FirExtensionApiInternals::class)
@@ -233,7 +219,7 @@ class CandidateFactory private constructor(
                 unwrapIntegerOperatorSymbolIfNeeded(callInfo)
             }
             1 -> {
-                val (result, extension) = variants[0]
+                val [result, extension] = variants[0]
                 process(result, extension)
             }
             else -> {

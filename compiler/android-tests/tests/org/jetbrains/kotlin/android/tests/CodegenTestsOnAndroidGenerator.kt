@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.additionalIrCheckers
+import org.jetbrains.kotlin.config.disableIrCheckers
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -58,7 +60,7 @@ data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKin
 class CodegenTestsOnAndroidGenerator private constructor(private val pathManager: PathManager) {
     private var currentModuleIndex = 1
 
-    private val pathFilter: String? = System.getProperties().getProperty("kotlin.test.android.path.filter")
+    private val pathFilter: String? = System.getProperty("kotlin.test.android.path.filter")
 
     private val pendingUnitTestGenerators = hashMapOf<String, UnitTestFileWriter>()
 
@@ -110,16 +112,19 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun copyGradleWrapperAndPatch() {
+        val gradleWrapper = File(System.getProperty("kotlin.test.android.gradleWrapper"))
+        val gradlew = File(System.getProperty("kotlin.test.android.gradlew"))
+        val gradlewBat = File(System.getProperty("kotlin.test.android.gradlewBat"))
+
         val projectRoot = File(pathManager.tmpFolder)
         val target = File(projectRoot, "gradle/wrapper")
-        File("./gradle/wrapper/").copyRecursively(target)
-        val gradlew = File(projectRoot, "gradlew")
-        File("./gradlew").copyTo(gradlew).also {
+        gradleWrapper.copyRecursively(target)
+        gradlew.copyTo(File(projectRoot, "gradlew")).also {
             if (!SystemInfo.isWindows) {
                 it.setExecutable(true)
             }
         }
-        File("./gradlew.bat").copyTo(File(projectRoot, "gradlew.bat"))
+        gradlewBat.copyTo(File(projectRoot, "gradlew.bat"))
         val file = File(target, "gradle-wrapper.properties")
         file.readLines().map {
             when {
@@ -157,9 +162,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         println("Generating test files...")
 
         val folders = arrayOf(
-            File("compiler/testData/codegen/box"),
-            File("compiler/testData/codegen/boxJvm"),
-            File("compiler/testData/codegen/boxInline")
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/box"),
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxJvm"),
+            ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxInline")
         )
 
         generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
@@ -362,14 +367,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(module.directives)
 
                     keyConfiguration.languageVersionSettings = module.languageVersionSettings
-                    keyConfiguration.put(
-                        CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS.isApplicableTo(module, services),
-                    )
-                    keyConfiguration.put(
-                        CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS,
-                        !CodegenTestDirectives.DISABLE_IR_VARARG_TYPE_CHECKS.isApplicableTo(module, services),
-                    )
+                    keyConfiguration.disableIrCheckers = IrCheckersDisabledByTestDirectives.filter { it.key.isApplicableTo(module, services) }.values.toList()
+                    keyConfiguration.additionalIrCheckers = IrCheckersEnabledByTestDirectives.filter { module.directives.contains(it.key) }.values.toList()
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val compiler = if (kind.withReflection) reflectionFlavor else commonFlavor
@@ -387,13 +386,13 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                         continue
                     }
 
-                    patchFilesAndAddTest(file, module, services, filesHolder)
+                    patchFilesAndAddTest(file, module, services, filesHolder, pathManager)
                 }
             }
         }
     }
 
-    private fun createTestConfiguration(testDataFile: File): NonGroupingPhaseTestConfiguration {
+    private fun createTestConfiguration(testDataFile: File): NonGroupingStageTestConfiguration {
         return TestConfigurationBuilder().apply {
             configure()
             testInfo = KotlinTestInfo(
@@ -402,6 +401,8 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 emptySet()
             )
             startingArtifactFactory = { ResultingArtifact.Source() }
+            @OptIn(TestInfrastructureInternals::class)
+            useCustomCompilerConfigurationProvider(::CompilerConfigurationProviderImpl)
         }.build(testDataFile.path)
     }
 
@@ -472,7 +473,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val tmpFolder = createTempDirectory().toAbsolutePath().toString()
             println("Created temporary folder for android tests: $tmpFolder")
             val rootFolder = Path("").toAbsolutePath().toString()
-            val pathManager = PathManager(rootFolder, tmpFolder)
+            val pathManager = PathManager(tmpFolder)
             generate(pathManager, true)
             println("Android test project is generated into $tmpFolder folder")
         }

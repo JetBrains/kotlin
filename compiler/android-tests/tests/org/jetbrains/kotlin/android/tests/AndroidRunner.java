@@ -42,7 +42,7 @@ public class AndroidRunner {
                             .toFile();
             System.out.println("Created temporary folder for running android tests: " + tmpFolder.getAbsolutePath());
             File rootFolder = new File("");
-            pathManager = new PathManager(rootFolder.getAbsolutePath(), tmpFolder.getAbsolutePath());
+            pathManager = new PathManager(tmpFolder.getAbsolutePath());
         }
         return pathManager;
     }

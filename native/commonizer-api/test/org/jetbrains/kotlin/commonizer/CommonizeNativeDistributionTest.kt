@@ -9,43 +9,43 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommoni
 import org.jetbrains.kotlin.commonizer.utils.konanHome
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.junit.Assume.assumeTrue
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 
-public class CommonizeNativeDistributionTest {
+class CommonizeNativeDistributionTest {
 
-    @get:Rule
-    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    lateinit var temporaryOutputDirectory: File
 
     @Test
-    public fun `commonize - linux platforms`() {
+    fun `commonize - linux platforms`() {
         val linuxTarget1 = CommonizerTarget(LINUX_X64, LINUX_ARM64)
         val linuxTarget2 = CommonizerTarget(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP)
 
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = setOf(linuxTarget1, linuxTarget2),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget1).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, linuxTarget1).isDirectory,
             "Expected directory for $linuxTarget1"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, linuxTarget2).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, linuxTarget2).isDirectory,
             "Expected directory for $linuxTarget2"
         )
     }
 
     @Test
-    public fun `commonize - unix platforms`() {
+    fun `commonize - unix platforms`() {
         val unixTarget = CommonizerTarget(
             LINUX_X64, LINUX_ARM64,
             MACOS_X64, MACOS_ARM64,
@@ -57,19 +57,19 @@ public class CommonizeNativeDistributionTest {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = setOf(unixTarget),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, unixTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, unixTarget).isDirectory,
             "Expected directory for $unixTarget"
         )
     }
 
     @Test
-    public fun `commonize - apple platforms`() {
-        assumeTrue("Test is only supported on macos", HostManager.hostIsMac)
+    fun `commonize - apple platforms`() {
+        assumeTrue(HostManager.hostIsMac, "Test is only supported on macos")
         val iosTarget = CommonizerTarget(IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64)
         val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64)
         val macosTarget = CommonizerTarget(MACOS_X64, MACOS_ARM64)
@@ -78,54 +78,54 @@ public class CommonizeNativeDistributionTest {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = setOf(iosTarget, watchosTarget, macosTarget, appleTarget),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, iosTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, iosTarget).isDirectory,
             "Expected directory for $iosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, watchosTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, watchosTarget).isDirectory,
             "Expected directory for $watchosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, macosTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, macosTarget).isDirectory,
             "Expected directory for $macosTarget"
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, appleTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, appleTarget).isDirectory,
             "Expected directory for $appleTarget"
         )
     }
 
     @Test
-    public fun `commonize - linux macos - linux macos mingw`() {
+    fun `commonize - linux macos - linux macos mingw`() {
         val unixTarget = CommonizerTarget(LINUX_X64, MACOS_X64)
         val nativeTarget = CommonizerTarget(MINGW_X64, LINUX_X64, MACOS_X64)
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = setOf(unixTarget, nativeTarget),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
 
         assertTrue(
-            resolveCommonizedDirectory(temporaryOutputDirectory.root, nativeTarget).isDirectory,
+            resolveCommonizedDirectory(temporaryOutputDirectory, nativeTarget).isDirectory,
             "Expected directory for $nativeTarget"
         )
     }
 
     @Test
-    public fun `commonize - no outputTargets specified`() {
+    fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = emptySet(),
-            outputDirectory = temporaryOutputDirectory.root,
+            outputDirectory = temporaryOutputDirectory,
             logLevel = CommonizerLogLevel.Info
         )
     }

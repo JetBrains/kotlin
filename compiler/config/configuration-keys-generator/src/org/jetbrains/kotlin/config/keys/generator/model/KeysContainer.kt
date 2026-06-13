@@ -26,6 +26,7 @@ sealed class Key {
     abstract val types: List<KType>
 
     abstract val optIns: List<Annotation>
+    abstract val annotations: List<Annotation>
 
     val capitalizedAccessorName: String
         get() = accessorName.capitalizeAsciiOnly()
@@ -41,6 +42,7 @@ class SimpleKey(
     override val comment: String?,
     val throwOnNull: Boolean,
     override val optIns: List<Annotation>,
+    override val annotations: List<Annotation>,
 ) : Key() {
     init {
         require(lazyDefaultValue == null || defaultValue == null) {
@@ -64,6 +66,7 @@ class ListKey(
     override val accessorName: String,
     override val comment: String?,
     override val optIns: List<Annotation>,
+    override val annotations: List<Annotation>,
 ) : CollectionKey() {
     override val typeString: String
         get() = "List<${elementType.name}>"
@@ -80,6 +83,7 @@ class MapKey(
     override val accessorName: String,
     override val comment: String?,
     override val optIns: List<Annotation>,
+    override val annotations: List<Annotation>,
 ) : CollectionKey() {
     override val typeString: String
         get() = "Map<${keyType.name}, ${valueType.name}>"
@@ -95,6 +99,7 @@ class SetKey(
     override val accessorName: String,
     override val comment: String?,
     override val optIns: List<Annotation>,
+    override val annotations: List<Annotation>,
 ) : CollectionKey() {
     override val typeString: String
         get() = "Set<${elementType.name}>"
@@ -111,6 +116,7 @@ class DeprecatedKey(
     val deprecation: Deprecated,
     val initializer: String,
     override val optIns: List<Annotation>,
+    override val annotations: List<Annotation>,
 ) : Key() {
     override val accessorName: String
         get() = shouldNotBeCalled()
@@ -138,6 +144,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
         accessorName: String? = null,
         throwOnNull: Boolean = true,
         optIns: List<Annotation> = emptyList(),
+        annotations: List<Annotation> = emptyList(),
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -150,6 +157,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                     accessorName ?: name.toCamelCase(),
                     comment,
                     optIns,
+                    annotations,
                 )
                 "kotlin.collections.Map" -> {
                     MapKey(
@@ -160,6 +168,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                         accessorName ?: name.toCamelCase(),
                         comment,
                         optIns,
+                        annotations,
                     )
                 }
                 "kotlin.collections.Set" -> SetKey(
@@ -169,6 +178,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                     accessorName ?: name.toCamelCase(),
                     comment,
                     optIns,
+                    annotations,
                 )
                 else -> SimpleKey(
                     name,
@@ -179,7 +189,8 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                     accessorName ?: name.toCamelCase(),
                     comment,
                     throwOnNull,
-                    optIns
+                    optIns,
+                    annotations,
                 )
             }
             _keys += key
@@ -194,6 +205,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
         importsToAdd: List<String> = emptyList(),
         comment: String? = null,
         optIns: List<Annotation> = emptyList(),
+        annotations: List<Annotation> = emptyList(),
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -206,6 +218,7 @@ abstract class KeysContainer(val packageName: String, val className: String) {
                 deprecation,
                 initializer,
                 optIns,
+                annotations,
             )
             _keys += key
             ReadOnlyProperty<Any?, Key> { _, _ -> key }

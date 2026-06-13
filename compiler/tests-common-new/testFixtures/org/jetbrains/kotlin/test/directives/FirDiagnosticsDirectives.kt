@@ -159,6 +159,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     val DISABLE_WITH_PARSER by enumDirective<FirParser>(
         description = "Disables the test if it's analyzed with specified parser"
     )
+
+    val HAS_CUSTOM_EXTENSION_FILES by directive(
+        description = "Some module files have custom extensions and shouldn't be filtered out by kt/kts check"
+    )
 }
 
 object DumpCfgOption {

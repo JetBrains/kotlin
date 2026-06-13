@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionSto
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -28,7 +27,6 @@ class ComposeExtensionRegistrarConfigurator(testServices: TestServices) : Enviro
             ComposeIrGenerationExtension(
                 useK2 = true,
                 featureFlags = FeatureFlags(configuration.get(ComposeConfiguration.FEATURE_FLAGS, emptyList())),
-                messageCollector = configuration.messageCollector
             )
         )
     }

@@ -16,9 +16,14 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+
 private const val RUNS = 1_000_000
 
-open class CallsBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Calls : SkipWhenBaseOnly() {
 
     interface I {
         fun foo(): Int
@@ -161,35 +166,41 @@ open class CallsBenchmark {
     val i5: I = Y()
     val i6: I = Z()
 
-    fun finalMethodCall(): Int {
+    @Benchmark
+    fun finalMethod(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val d = d
         for (i in 0 until RUNS)
             x += d.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_MonomorphicCallsite(): Int {
+    @Benchmark
+    fun openMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
         for (i in 0 until RUNS)
             x += a1.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_BimorphicCallsite(): Int {
+    @Benchmark
+    fun openMethodBimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
         val a2 = a2
         for (i in 0 until RUNS)
             x += (if (i and 1 == 0) a1 else a2).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_TrimorphicCallsite(): Int {
+    @Benchmark
+    fun openMethodTrimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
@@ -201,29 +212,34 @@ open class CallsBenchmark {
                 2 -> a2
                 else -> a3
             }).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_MonomorphicCallsite(): Int {
+    @Benchmark
+    fun interfaceMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
         for (i in 0 until RUNS)
             x += i1.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_BimorphicCallsite(): Int {
+    @Benchmark
+    fun interfaceMethodBimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
         val i2 = i2
         for (i in 0 until RUNS)
             x += (if (i and 1 == 0) i1 else i2).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_TrimorphicCallsite(): Int {
+    @Benchmark
+    fun interfaceMethodTrimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -235,10 +251,12 @@ open class CallsBenchmark {
                 2 -> i2
                 else -> i3
             }).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_HexamorphicCallsite(): Int {
+    @Benchmark
+    fun interfaceMethodHexamorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -256,7 +274,7 @@ open class CallsBenchmark {
                 5 -> i5
                 else -> i6
             }).foo()
-        return x
+        bh.consume(x)
     }
 
     abstract class E {
@@ -269,13 +287,14 @@ open class CallsBenchmark {
 
     val e: E = F()
 
-    fun returnBoxUnboxFolding(): Int {
+    @Benchmark
+    fun returnBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val e = e
         for (i in 0 until RUNS)
             x += e.foo() as Int
-        return x
+        bh.consume(x)
     }
 
     abstract class G<in T> {
@@ -288,14 +307,16 @@ open class CallsBenchmark {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     val g: G<Any> = H() as G<Any>
 
-    fun parameterBoxUnboxFolding(): Int {
+    @Benchmark
+    fun parameterBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val g = g
         for (i in 0 until RUNS)
             x += g.foo(i)
-        return x
+        bh.consume(x)
     }
 }

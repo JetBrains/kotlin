@@ -1,0 +1,2 @@
+expected symbols:
+expect fun <T : kotlin.Any> some(): T

@@ -1,2 +1,2 @@
-KtClass(26,72): '/**'
+KDocName(34,42): 'Base.foo'
   null

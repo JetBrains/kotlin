@@ -22,10 +22,12 @@ dependencies {
     testFixturesApi(project(":native:binary-options"))
 
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(project(":compiler:container"))
     testFixturesImplementation(project(":compiler:ir.serialization.native"))
     testFixturesImplementation(project(":compiler:fir:fir-native"))
     testFixturesImplementation(project(":core:compiler.common.native"))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":kotlin-util-klib-metadata"))
     testFixturesImplementation(project(":native:swift:swift-export-standalone"))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesImplementation(libs.junit.jupiter.api)
@@ -47,20 +49,41 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar {}
-
 projectTests {
     testData(isolated, "testData")
     testData(project(":compiler").isolated, "testData")
     testData(project(":kotlin-test").isolated, "common/src/test/kotlin")
 
     // From StdlibTest
-    testData(project(":kotlin-stdlib").isolated, "test")
-    testData(project(":kotlin-stdlib").isolated, "common/test")
-    testData(project(":kotlin-stdlib").isolated, "native-wasm/test")
-    // :kotlin-native:runtime project availability depends on kotlin.native.enabled=true
-    testData(rootProject.isolated, "kotlin-native/runtime/test")
-
+    val stdlibPath = project(":kotlin-stdlib").isolated.projectDirectory
+    tasks.withType<Test>().configureEach {
+        jvmArgumentProviders.add(
+            objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                property = "kotlin.test.stdlib.tests.path"
+                classpath.from(stdlibPath.dir("test"))
+            }
+        )
+        jvmArgumentProviders.add(
+            objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                property = "kotlin.test.stdlib.common-tests.path"
+                classpath.from(stdlibPath.dir("common/test"))
+            }
+        )
+        jvmArgumentProviders.add(
+            objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                property = "kotlin.test.stdlib.wasm-tests.path"
+                classpath.from(stdlibPath.dir("native-wasm/test"))
+            }
+        )
+        if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+            jvmArgumentProviders.add(
+                objects.newInstance<SystemPropertyClasspathProvider>().apply {
+                    property = "kotlin.test.native.runtime.tests.path"
+                    classpath.from(project(":kotlin-native:runtime").isolated.projectDirectory.dir("test"))
+                }
+            )
+        }
+    }
     // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
     nativeTestTask("infrastructureTest", "infrastructure")
     nativeTestTask("stdlibTest", "stdlib")

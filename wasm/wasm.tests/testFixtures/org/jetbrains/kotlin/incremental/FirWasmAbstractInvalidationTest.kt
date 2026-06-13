@@ -24,6 +24,7 @@ abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: St
     private val ignoredTests = setOf(
         "classFunctionsAndFields", //Invalid signature //KT-84599
         "multiModuleEagerInitialization", //Eager initializer KT-83579
+        "eagerInitializationMoveBetweenModules", //Eager initializer KT-83579
     )
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
@@ -45,6 +46,17 @@ abstract class AbstractFirWasmInvalidationSingleModuleTest :
 
     private val ignoredTests = setOf(
         "mainFunctionSelect", //KT-85577 Single module mode execute all main functions in dependencies
+        "mainFunctionSelectPlainAndArgs", //Investigate KT-86906
+        "mainFunctionSelectSameFileDualShape", //Investigate KT-86906
+        "mainFunctionSelectSamePackage", //Investigate KT-86906
+        "mainFunctionSelectSingleAddWrapperLater", //Investigate KT-86906
+        "mainFunctionSelectCrossedFilePackagePlainAndArgsFail", //Investigate KT-86906
+        "mainFunctionSelectCrossedFilePackageTwoPlainFail", //Investigate KT-86906
+        "mainFunctionSelectDoubleWrapper", //Investigate KT-86906
+        "mainFunctionSelectSamePackageMixedShape", //Investigate KT-86906
+        "mainFunctionSelectSingleAddPlainEarlier", //Investigate KT-86906
+        "mainFunctionSelectSingleAddPlainLater", //Investigate KT-86906
+        "mainFunctionSelectSingleAddWrapperEarlier", //Investigate KT-86906
     )
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =

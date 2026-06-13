@@ -78,7 +78,24 @@ KtUserType(119,128): 'A<String>'
   null
 
 KtNameReferenceExpression(119,120): 'A'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(120,128): '<String>'
   null
@@ -209,7 +226,24 @@ KtUserType(191,200): 'A<String>'
   null
 
 KtNameReferenceExpression(191,192): 'A'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.String>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(192,200): '<String>'
   null
@@ -337,7 +371,24 @@ KtUserType(255,261): 'A<Int>'
   null
 
 KtNameReferenceExpression(255,256): 'A'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = A<kotlin.Int>
+        symbol = <constructor>(): A<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      valueArgumentMapping = {}
 
 KtTypeArgumentList(256,261): '<Int>'
   null
@@ -597,9 +648,7 @@ KtUserType(409,411): 'B1'
   null
 
 KtNameReferenceExpression(409,411): 'B1'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B1'.>
+  null
 
 KtBlockExpression(415,417): '{}'
   null
@@ -640,9 +689,7 @@ KtUserType(431,433): 'B2'
   null
 
 KtNameReferenceExpression(431,433): 'B2'
-  KaCallResolutionError:
-    candidateCalls = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'B2'.>
+  null
 
 KtBlockExpression(437,439): '{}'
   null

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -278,6 +279,7 @@ class GradleProjectBuildScriptInjectionContext(
     val kotlinJvm get() = project.extensions.getByName("kotlin") as KotlinJvmProjectExtension
     val cocoapods get() = kotlinMultiplatform.extensions.getByName("cocoapods") as CocoapodsExtension
     val swiftExport get() = kotlinMultiplatform.extensions.getByName("swiftExport") as SwiftExportExtension
+    val swiftImport get() = kotlinMultiplatform.extensions.getByName(SwiftPMImportExtension.EXTENSION_NAME) as SwiftPMImportExtension
     val androidLibrary get() = project.extensions.getByName("android") as LibraryExtension
     val androidApp get() = project.extensions.getByName("android") as AppExtension
     val androidBase get() = project.extensions.getByName("android") as CommonExtension<*, *, *, *, *, *>
@@ -565,6 +567,7 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
                 !it.id.startsWith("org.gradle")
             }
             .supportGradleBuiltInPlugins()
+            .supportLombokGradlePlugin()
             .forEach {
                 val pluginPointer = buildscript.dependencies.create(
                     "${it.id}:${it.id}.gradle.plugin:${it.version}"
@@ -585,6 +588,14 @@ fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
 private fun List<TestPluginDependencySpec>.supportGradleBuiltInPlugins() = map { spec ->
     if (spec.id == "kotlin-dsl") {
         TestPluginDependencySpec("org.gradle.kotlin.kotlin-dsl")
+    } else spec
+}
+
+private fun List<TestPluginDependencySpec>.supportLombokGradlePlugin() = map { spec ->
+    if (spec.id == "io.freefair.lombok") {
+        TestPluginDependencySpec("io.freefair.lombok").apply {
+            version("9.2.0")
+        }
     } else spec
 }
 

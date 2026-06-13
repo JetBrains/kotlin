@@ -1356,7 +1356,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)
@@ -1452,7 +1456,7 @@ class UklibConsumptionIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, maxVersion = TestVersions.AGP.AGP_813)
     fun `uklib consumption - KMP androidLibrary with stub JVM variant - KT-81434`(
         version: GradleVersion,
         androidVersion: String,
@@ -1468,6 +1472,7 @@ class UklibConsumptionIT : KGPBaseTest() {
         val producer = project(
             "empty",
             version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
         ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
@@ -1483,7 +1488,11 @@ class UklibConsumptionIT : KGPBaseTest() {
             }
         }.publish(publisherConfiguration = PublisherConfiguration(group = "producer"))
 
-        val consumer = project("empty", version) {
+        val consumer = project(
+            "empty",
+            version,
+            buildOptions = defaultBuildOptions.copy(enableLegacyAgpDsl = false),
+        ) {
             addKgpToBuildScriptCompilationClasspath()
             addAgpToBuildScriptCompilationClasspath(androidVersion)
             addPublishedProjectToRepositories(producer)

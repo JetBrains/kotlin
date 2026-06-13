@@ -92,58 +92,47 @@ public class ReturnType2 {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     // Check Builder on a static method
     val userBuilder: User.UserBuilder = User.builder()
     val user: User = userBuilder.name("John").age(42).build()
-    if (user.name != "John" || user.age != 42) {
-        return "Error: $user"
-    }
+    assertEquals("John", user.name)
+    assertEquals(42, user.age)
 
     // Check Builder on an nonstatic method
     val user2 = User2()
     // Default builder name for nonstatic methods differs from static ones and it's inferred from the return type of the corresponding method
     val user2Builder: User2.VoidBuilder = user2.builder()
     user2Builder.age(24).name("Alex").build()
-    if (user2.name != "Alex" || user2.age != 24) {
-        return "Error: $user2"
-    }
+    assertEquals("Alex", user2.name)
+    assertEquals(24, user2.age)
 
     // Check Builder on an nonstatic method with a specified names
     val myBuilder: User2.MyBuilder = user2.myBuilder()
     myBuilder.age(0).name("Yulia").myBuild()
-    if (user2.name != "MyYulia" || user2.age != 20) {
-        return "Error: $user2"
-    }
+    assertEquals("MyYulia", user2.name)
+    assertEquals(20, user2.age)
 
     // Check Builder on nonstatic and nonvoid methods
     val returnType = ReturnType()
 
     val intBuilder: ReturnType.IntBuilder = returnType.intBuilder()
-    if (42 != intBuilder.i(42).build()) {
-        return "FAIL (intBuilder)"
-    }
+    assertEquals(42, intBuilder.i(42).build())
 
     val integerBuilder: ReturnType.IntegerBuilder = returnType.integerBuilder()
-    if (100 != integerBuilder.i(100).build()) {
-        return "FAIL (integerBuilder)"
-    }
+    assertEquals(100, integerBuilder.i(100).build())
 
     val stringBuilder: ReturnType.StringBuilder  = returnType.stringBuilder()
-    if ("OK" != stringBuilder.s("OK").build()) {
-        return "FAIL (stringBuilder)"
-    }
+    assertEquals("OK", stringBuilder.s("OK").build())
 
     val klassBuilder: ReturnType.camelCaseKlassBuilder = returnType.klassBuilder()
-    if ("OK" != klassBuilder.klass(ReturnType.camelCaseKlass()).build().value) {
-        return "FAIL (klassBuilder)"
-    }
+    assertEquals("OK", klassBuilder.klass(ReturnType.camelCaseKlass()).build().value)
 
     val builderOnStaticMethodWithCustomReturnType: ReturnType2.camelCaseKlassBuilder =
         ReturnType2.builderOnStaticMethodWithCustomReturnType()
-    if ("OK" != builderOnStaticMethodWithCustomReturnType.klass(ReturnType2.camelCaseKlass()).build().value) {
-        return "FAIL (builder on static method with custom return type)"
-    }
+    assertEquals("OK", builderOnStaticMethodWithCustomReturnType.klass(ReturnType2.camelCaseKlass()).build().value)
 
     return "OK"
 }

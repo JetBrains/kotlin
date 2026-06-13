@@ -1,4 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
+// DUMP_KLIB_ABI: DEFAULT
 class C {
     companion {
         operator fun invoke(s: String) = s

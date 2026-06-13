@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.util.isInfixCall
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 
+@K1Deprecation
 object LambdaWithSuspendModifierCallChecker : CallChecker {
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {

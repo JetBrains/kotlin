@@ -124,7 +124,7 @@ open class CommonCompilerArgumentsConfigurator {
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
-        for ((feature, state) in arguments.internalArguments) {
+        for ((val feature = languageFeature, val state) in arguments.internalArguments) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled(languageVersion)) {
                 featuresThatForcePreReleaseBinaries += feature
@@ -201,7 +201,7 @@ open class CommonCompilerArgumentsConfigurator {
                     )
                     continue
                 }
-                val (name, rawLevel) = split
+                val [name, rawLevel] = split
                 val level = WarningLevel.fromString(rawLevel) ?: run {
                     reporter.reportError(
                         "Incorrect value for warning level: $rawLevel. Available values are: ${WarningLevel.entries.joinToString { it.cliOption }}"
@@ -295,7 +295,7 @@ private fun CommonCompilerArguments.checkOutdatedVersions(
     api: ApiVersion,
     reporter: CommonCompilerArgumentsConfigurator.Reporter,
 ) {
-    val (version, supportedVersion, versionKind) = findOutdatedVersion(language, api) ?: return
+    val [version, supportedVersion, versionKind] = findOutdatedVersion(language, api) ?: return
     val firstNonDeprecated by lazy {
         when (versionKind) {
             VersionKind.LANGUAGE -> LanguageVersion.FIRST_NON_DEPRECATED

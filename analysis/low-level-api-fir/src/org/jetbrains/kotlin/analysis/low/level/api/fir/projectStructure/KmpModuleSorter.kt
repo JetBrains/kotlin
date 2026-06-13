@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure
 
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.utils.topologicalSort
 
 /**
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.utils.topologicalSort
  * For KMP dependencies, the IDE gives false positive errors when a project is correctly configured (expect-actual), which is worse.
  * - Dependencies from a single KMP project/library normally imported as a single sequential block anyway
  */
+@LLFirInternals
 class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     private val groupsByModules = mutableMapOf<KaModule, KmpGroup>()
     private val originalPositions = mutableMapOf<KaModule, Int>()
@@ -37,7 +39,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
     }
 
     private fun groupModules() {
-        for ((index, module) in modules.withIndex()) {
+        for ([index, module] in modules.withIndex()) {
             originalPositions[module] = index
             val group = findOrCreateRootKmpGroup(module)
             group.addModule(module)
@@ -112,11 +114,12 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
         // N.B.: evaluating debug text before all modules are registered will corrupt the group
         @Suppress("unused")
         fun debugText(): String =
-            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { (sorted, replaced) ->
+            oldReplacedModulesBySortedModules.entries.joinToString(separator = "; ", prefix = "[", postfix = "]") { [sorted, replaced] ->
                 "$sorted -> $replaced (ix -> ix': ${originalPositions[sorted]} -> ${originalPositions[replaced]})"
             }
     }
 
+    @LLFirInternals
     companion object {
         fun order(modules: List<KaModule>): List<KaModule> {
             if (modules.size < 2) return modules

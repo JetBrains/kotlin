@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm.operations
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import java.nio.file.Path
 
@@ -68,7 +69,10 @@ public interface DiscoverScriptExtensionsOperation : BuildOperation<Collection<S
      * @see get
      * @see set
      */
-    public class Option<V> internal constructor(id: String) : BaseOption<V>(id)
+    public class Option<V> internal constructor(
+        id: String,
+        public val availableSinceVersion: KotlinReleaseVersion,
+    ) : BaseOption<V>(id)
 
     /**
      * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
@@ -90,8 +94,10 @@ public interface DiscoverScriptExtensionsOperation : BuildOperation<Collection<S
          * file:///path/to/File.kt:10:5 Unresolved reference: foo
          *
          * @see CompilerMessageRenderer
+         * @since 2.4.0
          */
         @JvmField
-        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> = Option("COMPILER_MESSAGE_RENDERER")
+        public val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =
+            Option("COMPILER_MESSAGE_RENDERER", KotlinReleaseVersion(2, 4, 0))
     }
 }

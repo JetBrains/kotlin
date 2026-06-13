@@ -360,7 +360,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                         val currentBlock = worklist.removeAt(0)
                         val currentLocals = currentBlock.localsAtEntry.toMutableMap()
                         // Check consistency with the local table.
-                        for ((index, type) in currentBlock.localsTable) {
+                        for ([index, type] in currentBlock.localsTable) {
                             currentLocals[index]?.let {
                                 checkCompatible(index, type, it)
                             } ?: throw Exception("Uninitialized local in locals table: index: $index type: $type")
@@ -383,7 +383,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                         // blocks for reprocessing if the type of the locals at entry changed.
                         for (succ in currentBlock.successors) {
                             if (!succ.localsAtEntry.equals(currentLocals)) {
-                                for ((index, type) in currentLocals) {
+                                for ([index, type] in currentLocals) {
                                     succ.localsAtEntry[index]?.let {
                                         // If conflicting types flow to the same block for a local
                                         // slot that is OK as long as the type is never used. Such

@@ -8,6 +8,7 @@ repositories {
 }
 
 kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
         outputModuleName.set("redefined-wasm-module-name")
         <JsEngine> {

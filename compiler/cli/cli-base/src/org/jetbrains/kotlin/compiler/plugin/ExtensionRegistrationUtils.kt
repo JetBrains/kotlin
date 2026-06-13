@@ -16,7 +16,7 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
     project: Project,
     errorMessage: (Any) -> String = { "Error while registering ${it.javaClass.name} "}
 ) {
-    for ((extensionPoint, extensions) in registeredExtensions) {
+    for ([extensionPoint, extensions] in registeredExtensions) {
         for (extension in extensions) {
             @Suppress("UNCHECKED_CAST")
             try {

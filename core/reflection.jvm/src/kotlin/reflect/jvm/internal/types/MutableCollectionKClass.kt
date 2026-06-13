@@ -6,7 +6,8 @@
 package kotlin.reflect.jvm.internal.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.*
@@ -23,14 +24,14 @@ import kotlin.reflect.jvm.internal.StandardKTypes
  * Currently, this class is only used in the type checker implementation for kotlin-reflect,
  * but one day it should probably be used to implement KT-11754.
  *
- * @param klass the read-only collection class (i.e. `kotlin.collections.List`)
+ * @param readonlyClass the read-only collection class (i.e. `kotlin.collections.List`)
  */
 internal class MutableCollectionKClass<T : Any>(
-    val klass: KClass<T>,
+    val readonlyClass: KClass<T>,
     override val qualifiedName: String,
     createTypeParameters: (MutableCollectionKClass<T>) -> List<KTypeParameter>,
     createSupertypes: (MutableCollectionKClass<T>) -> List<KType>,
-) : KClass<T> by klass, TypeConstructorMarker, KTypeParameterOwnerImpl {
+) : KClass<T> by readonlyClass, TypeConstructorMarker, KTypeParameterOwnerImpl {
     override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
         createTypeParameters(this)
     }
@@ -43,13 +44,13 @@ internal class MutableCollectionKClass<T : Any>(
         get() = qualifiedName.substringAfterLast(".")
 
     override fun equals(other: Any?): Boolean =
-        other is MutableCollectionKClass<*> && klass == other.klass
+        other is MutableCollectionKClass<*> && readonlyClass == other.readonlyClass
 
     override fun hashCode(): Int =
-        klass.hashCode()
+        readonlyClass.hashCode()
 
     override fun toString(): String =
-        "MutableCollectionKClass($klass)"
+        "MutableCollectionKClass($readonlyClass)"
 }
 
 /**
@@ -71,12 +72,13 @@ internal class MutableCollectionKClass<T : Any>(
  *     MutableMap<K, V> : Map<K, V>
  *     MutableEntry<K, V> : Map.Entry<K, V>
  */
-internal fun getMutableCollectionKClass(mutableFqName: FqName, readonlyKClass: KClass<*>): MutableCollectionKClass<*> {
+internal fun getMutableCollectionKClass(readonlyClass: KClass<*>): MutableCollectionKClass<*>? {
+    val mutableFqName = JavaToKotlinClassMap.readOnlyToMutable(readonlyClass.qualifiedName?.let(::FqNameUnsafe)) ?: return null
     val klass = MutableCollectionKClass(
-        readonlyKClass,
+        readonlyClass,
         mutableFqName.asString(),
         createTypeParameters = { klass ->
-            readonlyKClass.typeParameters.map { readonlyTypeParameter ->
+            readonlyClass.typeParameters.map { readonlyTypeParameter ->
                 KTypeParameterImpl(
                     klass,
                     readonlyTypeParameter.name,
@@ -98,7 +100,7 @@ internal fun getMutableCollectionKClass(mutableFqName: FqName, readonlyKClass: K
                 else -> null
             }
             val typeArguments = klass.typeParameters.map { KTypeProjection.invariant(it.createType()) }
-            listOfNotNull(readonlyKClass, mutableSuperInterface).map { it.createTypeImpl(typeArguments) }
+            listOfNotNull(readonlyClass, mutableSuperInterface).map { it.createTypeImpl(typeArguments) }
         },
     )
     return klass

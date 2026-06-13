@@ -56,7 +56,7 @@ val jsonNativeRuntimeForTests by configurations.creating {
 
 val serializationPluginForTests by configurations.creating
 
-fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
+fun DependencyHandlerScope.implicitKotlinApiDependency(notation: String) {
     implicitDependencies(notation) {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
@@ -167,7 +167,11 @@ artifacts {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
         useJUnitPlatform {
             // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
             excludeTags("serialization-native")
@@ -185,9 +189,7 @@ projectTests {
         requirePlatformLibs = false,
         customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
         compilerPluginDependencies = listOf(serializationPluginForTests)
-    ) {
-        workingDir = projectDir
-    }
+    )
 
     testGenerator("org.jetbrains.kotlinx.serialization.GenerateSerializationTestsKt")
 

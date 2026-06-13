@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
@@ -23,13 +24,14 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.getEnhancementDeeply
 
 // TODO: remove this checker after removing support LV < 1.6
+@K1Deprecation
 class WarningAwareUpperBoundChecker(
     typeChecker: KotlinTypeChecker,
 ) : UpperBoundChecker(typeChecker) {
     override fun checkBoundsOfExpandedTypeAlias(type: KotlinType, expression: KtExpression, trace: BindingTrace) {
         val typeParameters = type.constructor.parameters
 
-        for ((index, arg) in type.arguments.withIndex()) {
+        for ([index, arg] in type.arguments.withIndex()) {
             checkBounds(
                 null, arg.type, typeParameters[index], TypeSubstitutor.create(type), trace, expression,
                 withOnlyCheckForWarning = true

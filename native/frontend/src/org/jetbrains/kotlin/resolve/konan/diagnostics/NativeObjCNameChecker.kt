@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
+@K1Deprecation
 object NativeObjCNameChecker : DeclarationChecker {
 
     private val objCNameFqName = FqName("kotlin.native.ObjCName")

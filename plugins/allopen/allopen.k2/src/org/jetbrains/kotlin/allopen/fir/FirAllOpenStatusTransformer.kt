@@ -11,21 +11,28 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
     override fun needTransformStatus(declaration: FirDeclaration): Boolean {
         if (declaration.isJavaOrEnhancement) return false
         return when (declaration) {
-            is FirRegularClass -> declaration.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(declaration.symbol)
+            is FirRegularClass -> {
+                declaration.classKind == ClassKind.CLASS &&
+                        session.allOpenPredicateMatcher.isAnnotated(declaration.symbol) &&
+                        !declaration.hasAnnotationSafe(JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID, session)
+            }
             is FirCallableDeclaration -> {
                 val parentClassSymbol = declaration.symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
                 if (parentClassSymbol.isLocal) return false
+                if (declaration.isStatic) return false
                 parentClassSymbol.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(parentClassSymbol)
             }
             else -> false

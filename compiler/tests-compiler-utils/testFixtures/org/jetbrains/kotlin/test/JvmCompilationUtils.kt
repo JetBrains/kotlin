@@ -103,12 +103,14 @@ private fun errorsToString(diagnosticCollector: DiagnosticCollector<JavaFileObje
     for (diagnostic in diagnosticCollector.diagnostics) {
         if (diagnostic.kind != Diagnostic.Kind.ERROR) continue
         if (humanReadable) {
-            builder.append(diagnostic).append("\n")
+            builder.append(diagnostic).append('\n')
         } else {
-            builder.append(File(diagnostic.source.toUri()).name).append(":")
-                .append(diagnostic.lineNumber).append(":")
-                .append(diagnostic.columnNumber).append(":")
-                .append(diagnostic.code).append("\n")
+            if (diagnostic.source != null) {
+                builder.append(File(diagnostic.source.toUri()).name).append(':')
+                    .append(diagnostic.lineNumber).append(':')
+                    .append(diagnostic.columnNumber).append(':')
+            }
+            builder.append(diagnostic.code).append('\n')
         }
     }
     return builder.toString()

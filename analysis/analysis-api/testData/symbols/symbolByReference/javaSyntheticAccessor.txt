@@ -2,12 +2,10 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.foo
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: /JavaClass.getFoo
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -35,7 +33,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -43,7 +41,7 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -72,7 +70,7 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getFoo
   javaSetterName: null
   importableFqName: null

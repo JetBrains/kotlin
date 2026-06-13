@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisAp
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AnalysisApiFirTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureFirConsistencyChecks
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.*
 import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiBinaryLibraryIndexingMode
@@ -39,6 +40,7 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
             configurePlatformEnvironmentConfigurators()
             configureLibraryCompilationSupport()
             configureOptionalTestCompilerPlugin()
+            configureFirConsistencyChecks()
         }
     }
 

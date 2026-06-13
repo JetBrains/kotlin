@@ -14,17 +14,18 @@
 
 /**
  * There are two ways, how compiler can define variables for runtime usage. This one, and the other one with details in source file.
+ * On Kotlin code, those variables are defined within [NativeRuntimeConstants.kt].
  *
- * This is one is variables defined by generateRuntimeConstantsModule in IrToBitcode.kt. They are eligible for runtime optimizations,
- * and fixed at the point of compiling caches. So use this way for variables, which are heavily used on performance-critical passes or
- * will significantly increase code size, if not eliminated.
+ * These variables are eligible for runtime optimizations, and fixed at the point of compiling caches.
+ * So use this way for variables, which are heavily used on performance-critical passes or will significantly increase code size,
+ * if not eliminated.
  *
- * Don't forget to adjust cache disabling rules and add value to CompilerGenerated.cpp for tests, when adding a new variable.
+ * When adding a new variable, please remember to adjust cache-disabling rules and add value to `CompilerGenerated.cpp` for tests.
  */
 extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
-extern "C" const int32_t Kotlin_runtimeLogs[];
+extern "C" const int32_t Kotlin_runtimeLogsEnabled;
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
@@ -64,8 +65,8 @@ ALWAYS_INLINE inline bool disableMmap() noexcept {
     return Kotlin_disableMmap != 0;
 }
 
-ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
-    return Kotlin_runtimeLogs;
+ALWAYS_INLINE inline bool runtimeLogsEnabled() noexcept {
+    return Kotlin_runtimeLogsEnabled != 0;
 }
 
 ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
@@ -100,6 +101,7 @@ bool latin1Strings() noexcept;
 uint8_t mmapTag() noexcept;
 const char* minidumpLocation() noexcept;
 bool minidumpOnSIGTERM() noexcept;
+const int32_t* runtimeLogs() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

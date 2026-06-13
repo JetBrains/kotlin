@@ -11,11 +11,7 @@ import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA
 import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION_COMPONENT
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 /**
@@ -46,29 +42,6 @@ abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalys
             }
 
         return sessionComponent
-    }
-
-    /**
-     * Adds a new annotation to the given declaration with the given text
-     * and returns the resulting file text.
-     */
-    protected fun fileTextWithNewAnnotation(declaration: KtDeclaration, newAnnotationText: String): String {
-        val fileText = declaration.containingKtFile.text
-        val elementBeforeModifiers = declaration.annotationEntries.lastOrNull() ?: declaration.docComment
-        val positionForNewAnnotation = elementBeforeModifiers
-            ?.nextLeaf() // the next leaf is used to find the new line after the last element
-            ?.endOffset
-            ?: declaration.startOffset
-
-        return buildString {
-            append(fileText.take(positionForNewAnnotation))
-            appendLine(newAnnotationText)
-            append(fileText.drop(positionForNewAnnotation))
-        }
-    }
-
-    protected fun KtAnnotated.hasAnnotation(annotationName: String): Boolean = annotationEntries.any { annotation ->
-        annotation.shortName.toString() == annotationName
     }
 
     protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(DEPRECATED)

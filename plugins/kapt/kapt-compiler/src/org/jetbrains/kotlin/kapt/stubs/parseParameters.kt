@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.kapt.util.isAbstract
 import org.jetbrains.kotlin.kapt.util.isEnum
 import org.jetbrains.kotlin.kapt.util.isJvmOverloadsGenerated
@@ -37,12 +38,13 @@ internal class ParameterInfo(
 internal fun MethodNode.getParametersInfo(
     containingClass: ClassNode,
     isInnerClassMember: Boolean,
-    originalDescriptor: CallableDescriptor
+    originalDeclaration: IrFunction,
 ): List<ParameterInfo> {
     val localVariables = this.localVariables ?: emptyList()
     val parameters = this.parameters ?: emptyList()
     val isStatic = isStatic(access)
     val isJvmOverloads = this.isJvmOverloadsGenerated()
+    val irValueParameters = originalDeclaration.parameters.filterNot { it.kind == IrParameterKind.DispatchReceiver }
 
     // First and second parameters in enum constructors are synthetic, we should ignore them
     val isEnumConstructor = (name == "<init>") && containingClass.isEnum()
@@ -70,7 +72,7 @@ internal fun MethodNode.getParametersInfo(
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
         name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
+                ?: irValueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
         if (name == null || name.startsWith("<") && name.endsWith(">")) {
             name = "p${index - startParameterIndex}"
         }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
+@K1Deprecation
 class KotlinToResolvedCallTransformer(
     private val callCheckers: Iterable<CallChecker>,
     private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
@@ -296,7 +298,7 @@ class KotlinToResolvedCallTransformer(
         for (valueArgument in resolvedCall.call.valueArguments) {
             val argumentMapping = resolvedCall.getArgumentMapping(valueArgument!!)
             val parameter: ValueParameterDescriptor?
-            val (expectedType, callPosition) = when (argumentMapping) {
+            val [expectedType, callPosition] = when (argumentMapping) {
                 is ArgumentMatch -> {
                     parameter = argumentMapping.valueParameter
 

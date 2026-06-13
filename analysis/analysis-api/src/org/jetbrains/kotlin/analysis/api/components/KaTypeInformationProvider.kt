@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -38,21 +40,34 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
      */
     @KaExperimentalApi
+    @Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
+    @KaNoContextParameterBridgeRequired
     public val KaType.functionTypeKind: FunctionTypeKind?
+
+    /**
+     * The [function type family][KaFunctionTypeFamily] of the given [KaType], or `null` if the type is not a function type.
+     *
+     * For example, `(Int) -> String` belongs to the [Function][KaBuiltinFunctionTypeFamilies.function] family,
+     * while `suspend () -> Unit` belongs to the [SuspendFunction][KaBuiltinFunctionTypeFamilies.suspendFunction] family.
+     *
+     * @see KaBuiltinFunctionTypeFamilies
+     */
+    @KaExperimentalApi
+    public val KaType.functionTypeFamily: KaFunctionTypeFamily?
 
     /**
      * Whether the [KaType] is a [kotlin.Function] type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.Function }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.function }
 
     /**
      * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.kFunction }
 
     /**
      * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
@@ -60,14 +75,14 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.SuspendFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.suspendFunction }
 
     /**
      * Whether the [KaType] is a `KSuspendFunction` type.
      */
     @OptIn(KaExperimentalApi::class)
     public val KaType.isKSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionTypeKind == FunctionTypeKind.KSuspendFunction }
+        get() = withValidityAssertion { functionTypeFamily == builtinFunctionTypeFamilies.kSuspendFunction }
 
     /**
      * Whether a public value of the [KaType] can potentially be `null`.
@@ -299,6 +314,104 @@ public interface KaTypeInformationProvider : KaSessionComponent {
                 else -> null
             }
         }
+
+    /**
+     * Provides access to the built-in [function type families][KaFunctionTypeFamily].
+     */
+    @KaExperimentalApi
+    public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
+}
+
+/**
+ * Describes a family of numbered function types such as `Function0`, `Function1`, ..., `FunctionN`.
+ *
+ * Kotlin has the following built-in function type families:
+ * - `Function` — regular function types, e.g., `(Int) -> String`
+ * - `SuspendFunction` — suspend function types, e.g., `suspend () -> Unit`
+ * - `KFunction` — reflection types for regular functions
+ * - `KSuspendFunction` — reflection types for suspend functions
+ *
+ * Compiler plugins may introduce additional custom function type families.
+ *
+ * @see KaTypeInformationProvider.functionTypeFamily
+ * @see KaBuiltinFunctionTypeFamilies
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaFunctionTypeFamily {
+    /**
+     * Whether this family represents reflection function types (`KFunction`, `KSuspendFunction`).
+     */
+    public val isReflect: Boolean
+
+    /**
+     * Whether this family represents suspend function types (`SuspendFunction`, `KSuspendFunction`).
+     */
+    public val isSuspend: Boolean
+
+    /**
+     * Whether function types in this family can be inlined by the compiler.
+     *
+     * For built-in families, `Function` and `SuspendFunction` are inlinable, while `KFunction` and `KSuspendFunction` are not.
+     */
+    public val isInlinable: Boolean
+
+    /**
+     * The maximum number of parameters supported by function types in this family.
+     */
+    public val maxArity: Int
+
+    /**
+     * Whether function references with a simple function type (e.g., `Function0`, `KFunction0`) can be converted to this family.
+     */
+    public val supportsConversionFromSimpleFunctionType: Boolean
+
+    /**
+     * The class name prefix shared by all types in this family.
+     *
+     * For example, `"Function"` for the `Function` family, `"SuspendFunction"` for the `SuspendFunction` family.
+     */
+    public val nameBase: String
+
+    /**
+     * Returns the [ClassId] of the function type interface for the given [arity].
+     *
+     * For example, `classId(2)` on the `Function` family returns the [ClassId] for `kotlin.Function2`.
+     */
+    public fun classId(arity: Int): ClassId
+}
+
+/**
+ * Provides access to the four built-in [function type families][KaFunctionTypeFamily].
+ *
+ * @see KaTypeInformationProvider.builtinFunctionTypeFamilies
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaBuiltinFunctionTypeFamilies {
+    /**
+     * The `Function` family representing regular function types
+     * (e.g., `Function0`, `Function1`, ..., `FunctionN`).
+     */
+    public val function: KaFunctionTypeFamily
+
+    /**
+     * The `SuspendFunction` family representing suspend function types
+     * (e.g., `SuspendFunction0`, `SuspendFunction1`, ..., `SuspendFunctionN`).
+     */
+    public val suspendFunction: KaFunctionTypeFamily
+
+    /**
+     * The `KFunction` family representing reflection types for regular functions
+     * (e.g., `KFunction0`, `KFunction1`, ..., `KFunctionN`).
+     */
+    public val kFunction: KaFunctionTypeFamily
+
+    /**
+     * The `KSuspendFunction` family representing reflection types for suspend functions
+     * (e.g., `KSuspendFunction0`, `KSuspendFunction1`, ..., `KSuspendFunctionN`).
+     */
+    public val kSuspendFunction: KaFunctionTypeFamily
 }
 
 /**
@@ -394,6 +507,21 @@ public object DefaultTypeClassIds {
 }
 
 /**
+ * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
+ */
+@Deprecated("Use 'functionTypeFamily' instead", level = DeprecationLevel.HIDDEN)
+@KaExperimentalApi
+@KaContextParameterApi
+@KaCustomContextParameterBridge
+context(session: KaSession)
+public val KaType.functionTypeKind: FunctionTypeKind?
+    get() {
+        @OptIn(KaSessionComponentImplementationDetail::class)
+        return KaTypeInformationProvider::class.java.getDeclaredMethod("getFunctionTypeKind", KaType::class.java)
+            .invoke(session, this) as FunctionTypeKind?
+    }
+
+/**
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
  * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).
  */
@@ -414,14 +542,19 @@ public val KaType.isFunctionalInterface: Boolean
     get() = with(session) { isFunctionalInterface }
 
 /**
- * The [FunctionTypeKind] of the given [KaType], or `null` if the type is not a function type.
+ * The [function type family][KaFunctionTypeFamily] of the given [KaType], or `null` if the type is not a function type.
+ *
+ * For example, `(Int) -> String` belongs to the [Function][KaBuiltinFunctionTypeFamilies.function] family,
+ * while `suspend () -> Unit` belongs to the [SuspendFunction][KaBuiltinFunctionTypeFamilies.suspendFunction] family.
+ *
+ * @see KaBuiltinFunctionTypeFamilies
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public val KaType.functionTypeKind: FunctionTypeKind?
-    get() = with(session) { functionTypeKind }
+public val KaType.functionTypeFamily: KaFunctionTypeFamily?
+    get() = with(session) { functionTypeFamily }
 
 /**
  * Whether the [KaType] is a [kotlin.Function] type.
@@ -758,3 +891,13 @@ public val KaType.isPrimitive: Boolean
 context(session: KaSession)
 public val KaType.defaultInitializer: String?
     get() = with(session) { defaultInitializer }
+
+/**
+ * Provides access to the built-in [function type families][KaFunctionTypeFamily].
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
+    get() = with(session) { builtinFunctionTypeFamilies }

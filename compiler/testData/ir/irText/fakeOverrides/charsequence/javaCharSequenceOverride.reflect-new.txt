@@ -1,0 +1,251 @@
+KClass: abstract interface A : CharSequence, Any
+  members:
+    public abstract fun A.charAt(kotlin.Int): kotlin.Char
+    public open fun A.chars(): java.util.stream.IntStream!
+    public open fun A.codePoints(): java.util.stream.IntStream!
+    public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
+    public open fun A.hashCode(): kotlin.Int
+    public abstract fun A.length(): kotlin.Int
+    public abstract fun A.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    public open fun A.toString(): kotlin.String
+  declaredMembers:
+KClass: class B : A, Any
+  constructors:
+    public final fun `<init>`(): B
+  members:
+    public open fun B.charAt(kotlin.Int): kotlin.Char
+    public open fun B.chars(): java.util.stream.IntStream!
+    public open fun B.codePoints(): java.util.stream.IntStream!
+    public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
+    public open fun B.hashCode(): kotlin.Int
+    public open fun B.length(): kotlin.Int
+    public open fun B.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun B.toString(): kotlin.String
+  declaredMembers:
+    public open fun B.charAt(kotlin.Int): kotlin.Char
+    public open fun B.length(): kotlin.Int
+    public open fun B.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+KClass: class C : Java1
+  constructors:
+    public final fun `<init>`(): C
+  members:
+    public open fun C.chars(): java.util.stream.IntStream!
+    public open fun C.codePoints(): java.util.stream.IntStream!
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun C.get(kotlin.Int): kotlin.Char
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun C.toString(): kotlin.String
+    public open val C.length: kotlin.Int
+  declaredMembers:
+KClass: class D : Java1
+  constructors:
+    public final fun `<init>`(): D
+  members:
+    public open fun D.chars(): java.util.stream.IntStream!
+    public open fun D.codePoints(): java.util.stream.IntStream!
+    public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun D.get(kotlin.Int): kotlin.Char
+    public open fun D.hashCode(): kotlin.Int
+    public open fun D.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun D.toString(): kotlin.String
+    public open val D.length: kotlin.Int
+  declaredMembers:
+    public open operator fun D.get(kotlin.Int): kotlin.Char
+    public open val D.length: kotlin.Int
+KClass: class E : Java1, Java2
+  constructors:
+    public final fun `<init>`(): E
+  members:
+    public open fun E.chars(): java.util.stream.IntStream!
+    public open fun E.codePoints(): java.util.stream.IntStream
+    public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun E.get(kotlin.Int): kotlin.Char
+    public open fun E.hashCode(): kotlin.Int
+    public open fun E.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun E.toString(): kotlin.String
+    public open val E.length: kotlin.Int
+  declaredMembers:
+    public open fun E.codePoints(): java.util.stream.IntStream
+KClass: class F : Java1, KotlinInterface
+  constructors:
+    public final fun `<init>`(): F
+  members:
+    public open fun F.chars(): java.util.stream.IntStream!
+    public open fun F.codePoints(): java.util.stream.IntStream!
+    public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun F.get(kotlin.Int): kotlin.Char
+    public open operator fun F.get(kotlin.Number): kotlin.Char
+    public open fun F.hashCode(): kotlin.Int
+    public open fun F.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun F.toString(): kotlin.String
+    public open val F.length: kotlin.Int
+  declaredMembers:
+    public open operator fun F.get(kotlin.Number): kotlin.Char
+KClass: class G : Java1, KotlinInterface
+  constructors:
+    public final fun `<init>`(): G
+  members:
+    public open fun G.chars(): java.util.stream.IntStream!
+    public open fun G.codePoints(): java.util.stream.IntStream!
+    public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun G.get(kotlin.Int): kotlin.Char
+    public open operator fun G.get(kotlin.Number): kotlin.Char
+    public open fun G.hashCode(): kotlin.Int
+    public open fun G.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun G.toString(): kotlin.String
+    public open val G.length: kotlin.Int
+  declaredMembers:
+    public open operator fun G.get(kotlin.Int): kotlin.Char
+    public open operator fun G.get(kotlin.Number): kotlin.Char
+KClass: class H : Java1, Java2, KotlinInterface
+  constructors:
+    public final fun `<init>`(): H
+  members:
+    public open fun H.chars(): java.util.stream.IntStream!
+    public open fun H.codePoints(): java.util.stream.IntStream
+    public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun H.get(kotlin.Int): kotlin.Char
+    public open operator fun H.get(kotlin.Number): kotlin.Char
+    public open fun H.hashCode(): kotlin.Int
+    public open fun H.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun H.toString(): kotlin.String
+    public open val H.length: kotlin.Int
+  declaredMembers:
+    public open fun H.codePoints(): java.util.stream.IntStream
+    public open operator fun H.get(kotlin.Number): kotlin.Char
+KClass: class I : Java1, Java2, Java3
+  constructors:
+    public final fun `<init>`(): I
+  members:
+    public open fun I.chars(): java.util.stream.IntStream!
+    public open fun I.codePoints(): java.util.stream.IntStream
+    public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun I.get(kotlin.Int): kotlin.Char
+    public open fun I.hashCode(): kotlin.Int
+    public open fun I.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun I.toString(): kotlin.String
+    public open val I.length: kotlin.Int
+  declaredMembers:
+    public open fun I.codePoints(): java.util.stream.IntStream
+KClass: abstract class J : Java4
+  constructors:
+    public final fun `<init>`(): J
+  members:
+    public abstract fun J.charAt(kotlin.Int): kotlin.Char
+    public open fun J.chars(): java.util.stream.IntStream!
+    public open fun J.codePoints(): java.util.stream.IntStream!
+    public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.hashCode(): kotlin.Int
+    public abstract fun J.length(): kotlin.Int
+    public abstract fun J.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    public open fun J.toString(): kotlin.String
+  declaredMembers:
+KClass: class Java1 : CharSequence, Any
+  constructors:
+    public final fun `<init>`(): Java1
+  members:
+    public open fun Java1.chars(): java.util.stream.IntStream!
+    public open fun Java1.codePoints(): java.util.stream.IntStream!
+    public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun Java1.get(kotlin.Int): kotlin.Char
+    public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun Java1.toString(): kotlin.String
+    public open val Java1.length: kotlin.Int
+  declaredMembers:
+    public open operator fun Java1.get(kotlin.Int): kotlin.Char
+    public open fun Java1.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open val Java1.length: kotlin.Int
+KClass: abstract interface Java2 : Any
+  members:
+    public abstract fun Java2.codePoints(): java.util.stream.IntStream!
+    public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java2.hashCode(): kotlin.Int
+    public open fun Java2.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Java2.codePoints(): java.util.stream.IntStream!
+KClass: abstract interface Java3 : Any
+  members:
+    public abstract fun Java3.codePoints(): java.util.stream.IntStream!
+    public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java3.hashCode(): kotlin.Int
+    public abstract fun Java3.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun Java3.codePoints(): java.util.stream.IntStream!
+    public abstract fun Java3.toString(): kotlin.String
+KClass: abstract class Java4 : A, Any
+  constructors:
+    public final fun `<init>`(): Java4
+  members:
+    public abstract fun Java4.charAt(kotlin.Int): kotlin.Char
+    public open fun Java4.chars(): java.util.stream.IntStream!
+    public open fun Java4.codePoints(): java.util.stream.IntStream!
+    public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Java4.hashCode(): kotlin.Int
+    public abstract fun Java4.length(): kotlin.Int
+    public abstract fun Java4.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
+    public open fun Java4.toString(): kotlin.String
+  declaredMembers:
+KClass: class K : Java4
+  constructors:
+    public final fun `<init>`(): K
+  members:
+    public open fun K.charAt(kotlin.Int): kotlin.Char
+    public open fun K.chars(): java.util.stream.IntStream!
+    public open fun K.codePoints(): java.util.stream.IntStream!
+    public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
+    public open fun K.hashCode(): kotlin.Int
+    public open fun K.length(): kotlin.Int
+    public open fun K.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun K.toString(): kotlin.String
+  declaredMembers:
+    public open fun K.charAt(kotlin.Int): kotlin.Char
+    public open fun K.length(): kotlin.Int
+    public open fun K.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+KClass: abstract interface KotlinInterface : Any
+  members:
+    public open operator fun KotlinInterface.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun KotlinInterface.get(kotlin.Number): kotlin.Char
+    public open fun KotlinInterface.hashCode(): kotlin.Int
+    public open fun KotlinInterface.toString(): kotlin.String
+    public abstract val KotlinInterface.length: kotlin.Number
+  declaredMembers:
+    public abstract fun KotlinInterface.get(kotlin.Number): kotlin.Char
+    public abstract val KotlinInterface.length: kotlin.Number
+KClass: abstract class L : Java1, A
+  constructors:
+    public final fun `<init>`(): L
+  members:
+    public abstract fun L.charAt(kotlin.Int): kotlin.Char
+    public open fun L.chars(): java.util.stream.IntStream
+    public open fun L.codePoints(): java.util.stream.IntStream
+    public open operator fun L.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun L.get(kotlin.Int): kotlin.Char
+    public open fun L.hashCode(): kotlin.Int
+    public abstract fun L.length(): kotlin.Int
+    public open fun L.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun L.toString(): kotlin.String
+    public open val L.length: kotlin.Int
+  declaredMembers:
+    public open fun L.chars(): java.util.stream.IntStream
+    public open fun L.codePoints(): java.util.stream.IntStream
+KClass: abstract class M : Java1, CharSequence
+  constructors:
+    public final fun `<init>`(): M
+  members:
+    public abstract fun M.charAt(kotlin.Int): kotlin.Char
+    public open fun M.chars(): java.util.stream.IntStream
+    public open fun M.codePoints(): java.util.stream.IntStream
+    public open operator fun M.equals(kotlin.Any?): kotlin.Boolean
+    public open operator fun M.get(kotlin.Int): kotlin.Char
+    public open fun M.hashCode(): kotlin.Int
+    public abstract fun M.length(): kotlin.Int
+    public open fun M.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
+    public open fun M.toString(): kotlin.String
+    public open val M.length: kotlin.Int
+  declaredMembers:
+    public open fun M.chars(): java.util.stream.IntStream
+    public open fun M.codePoints(): java.util.stream.IntStream
+KPackage: _1Kt
+  public final fun test(A, B, C, D, E, F, G, H, I, J, K, L, M): kotlin.Unit

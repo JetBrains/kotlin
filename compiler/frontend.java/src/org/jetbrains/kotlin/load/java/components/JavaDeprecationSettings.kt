@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 
+@K1Deprecation
 object JavaDeprecationSettings : DeprecationSettings {
     override fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean {
         if (deprecationAnnotation is JavaDeprecatedAnnotationDescriptor) return false

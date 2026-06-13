@@ -1,2 +1,2 @@
-KtNamedFunction(60,95): '/**'
+KDocName(68,75): 'Foo.foo'
   NO_CANDIDATES

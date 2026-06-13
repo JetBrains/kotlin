@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
+@K1Deprecation
 class JavacBasedClassFinder : AbstractJavaClassFinder() {
     private lateinit var javac: JavacWrapper
 

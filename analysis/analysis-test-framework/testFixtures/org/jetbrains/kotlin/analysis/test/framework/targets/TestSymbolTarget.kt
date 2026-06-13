@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.test.framework.targets
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ContextParameterTarget
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.TypeParameterTarget
 import org.jetbrains.kotlin.analysis.test.framework.targets.TestSymbolTarget.ValueParameterTarget
 import org.jetbrains.kotlin.name.CallableId
@@ -50,7 +51,30 @@ sealed interface TestSymbolTarget {
      */
     data class ClassLikeTarget(val classId: ClassId) : TestSymbolTarget
 
+    /**
+     * Describes a property or a function with the specified [callableId].
+     */
     data class CallableTarget(val callableId: CallableId) : TestSymbolTarget
+
+    /**
+     * Describes a property with the specified [callableId].
+     */
+    data class PropertyTarget(val callableId: CallableId) : TestSymbolTarget
+
+    /**
+     * Describes a function with the specified [callableId] and an optional list of [parameterNames]:
+     *
+     * - `parameterNames == null` matches any function with [callableId];
+     * - `parameterNames == emptyList()` matches only the no-arg overload;
+     * - a non-empty list matches a function whose value parameter names equal to the given list.
+     */
+    data class FunctionTarget(val callableId: CallableId, val parameterNames: List<Name>?) : TestSymbolTarget
+
+    /**
+     * Describes a constructor of the class with the specified [classId] and an optional list of [parameterNames].
+     * See [FunctionTarget] for the [parameterNames] semantics.
+     */
+    data class ConstructorTarget(val classId: ClassId, val parameterNames: List<Name>?) : TestSymbolTarget
 
     data class EnumEntryInitializerTarget(val enumEntryId: CallableId) : TestSymbolTarget
 
@@ -64,6 +88,8 @@ sealed interface TestSymbolTarget {
 
     data class ValueParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
+    data class ContextParameterTarget(val name: Name, override val ownerTarget: TestSymbolTarget) : TargetWithOwner
+
     data class GetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
 
     data class SetterTarget(override val ownerTarget: TestSymbolTarget) : TargetWithOwner
@@ -74,6 +100,9 @@ sealed interface TestSymbolTarget {
         private val identifiers = arrayOf(
             "package:",
             "callable:",
+            "property:",
+            "function:",
+            "constructor:",
             "class:",
             "typealias:",
             "class_like:",
@@ -82,6 +111,7 @@ sealed interface TestSymbolTarget {
             "sam_constructor:",
             "type_parameter:",
             "value_parameter:",
+            "context_parameter:",
             "getter:",
             "setter:",
             "field:"
@@ -92,7 +122,7 @@ sealed interface TestSymbolTarget {
          *
          * @see create
          */
-        fun parse(testDataPath: Path, contextFile: KtFile): TestSymbolTarget {
+        fun parse(testDataPath: Path, contextFile: KtFile?): TestSymbolTarget {
             val testFileText = FileUtil.loadFile(testDataPath.toFile())
             val identifier = testFileText.lineSequence().first(::isIdentifier).removePrefix("// ")
             return create(identifier, contextFile)
@@ -110,20 +140,24 @@ sealed interface TestSymbolTarget {
          *  have any kind of identifier, but rather points to the [KtScript][org.jetbrains.kotlin.psi.KtScript] declaration of its context
          *  [KtFile].
          */
-        fun create(content: String, contextFile: KtFile): TestSymbolTarget {
+        fun create(content: String, contextFile: KtFile?): TestSymbolTarget {
             val key = content.substringBefore(":")
             val value = content.substringAfter(":").trim()
             return when (key) {
-                "script" -> ScriptTarget(contextFile)
+                "script" -> ScriptTarget(contextFile ?: error("Context file must be provided for a script target"))
                 "package" -> PackageTarget(extractPackageFqName(value))
                 "class" -> ClassTarget(ClassId.fromString(value))
                 "typealias" -> TypeAliasTarget(ClassId.fromString(value))
                 "class_like" -> ClassLikeTarget(ClassId.fromString(value))
                 "callable" -> CallableTarget(extractCallableId(value))
+                "property" -> PropertyTarget(extractCallableId(value))
+                "function" -> createFunctionTarget(value)
+                "constructor" -> createConstructorTarget(value)
                 "enum_entry_initializer" -> EnumEntryInitializerTarget(extractCallableId(value))
                 "sam_constructor" -> SamConstructorTarget(ClassId.fromString(value))
                 "type_parameter" -> createTypeParameterTarget(value, contextFile)
                 "value_parameter" -> createValueParameterTarget(value, contextFile)
+                "context_parameter" -> createContextParameterTarget(value, contextFile)
                 "getter" -> GetterTarget(create(value, contextFile))
                 "setter" -> SetterTarget(create(value, contextFile))
                 "field" -> FieldTarget(extractCallableId(value))
@@ -137,7 +171,7 @@ private fun extractPackageFqName(content: String): FqName = FqName.fromSegments(
 
 private fun extractCallableId(fullName: String): CallableId {
     val name = if ('.' in fullName) fullName.substringAfterLast(".") else fullName.substringAfterLast('/')
-    val (packageName, className) = run {
+    val [packageName, className] = run {
         val packageNameWithClassName = fullName.dropLast(name.length + 1)
         when {
             '.' in fullName ->
@@ -148,18 +182,53 @@ private fun extractCallableId(fullName: String): CallableId {
     return CallableId(FqName(packageName.replace('/', '.')), className?.let { FqName(it) }, Name.identifier(name))
 }
 
+private fun createFunctionTarget(content: String): TestSymbolTarget.FunctionTarget {
+    val [callableIdText, parameterNames] = extractCallableHeadAndParameters(content)
+    return TestSymbolTarget.FunctionTarget(extractCallableId(callableIdText), parameterNames)
+}
 
-private fun createTypeParameterTarget(content: String, contextFile: KtFile): TypeParameterTarget {
-    val (typeParameterName, ownerTarget) = extractOwnerTarget(content, contextFile)
+private fun createConstructorTarget(content: String): TestSymbolTarget.ConstructorTarget {
+    val [callableIdText, parameterNames] = extractCallableHeadAndParameters(content)
+    require(callableIdText.endsWith(".init")) {
+        "Constructor target must end with `.init`, got `$callableIdText`."
+    }
+    val classIdPart = callableIdText.removeSuffix(".init")
+    return TestSymbolTarget.ConstructorTarget(ClassId.fromString(classIdPart), parameterNames)
+}
+
+private fun extractCallableHeadAndParameters(content: String): Pair<String, List<Name>?> {
+    val leftParenIndex = content.indexOf('(')
+    if (leftParenIndex < 0) {
+        return content to null
+    }
+
+    require(content.endsWith(')')) { "Expected `)` at the end of `$content`." }
+    val callableIdText = content.substring(0, leftParenIndex)
+    val parameterText = content.substring(leftParenIndex + 1, content.length - 1).trim()
+    val parameterNames = if (parameterText.isEmpty()) {
+        emptyList()
+    } else {
+        parameterText.split(',').map { Name.identifier(it.trim()) }
+    }
+    return callableIdText to parameterNames
+}
+
+private fun createTypeParameterTarget(content: String, contextFile: KtFile?): TypeParameterTarget {
+    val [typeParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return TypeParameterTarget(Name.identifier(typeParameterName), ownerTarget)
 }
 
-private fun createValueParameterTarget(content: String, contextFile: KtFile): ValueParameterTarget {
-    val (valueParameterName, ownerTarget) = extractOwnerTarget(content, contextFile)
+private fun createValueParameterTarget(content: String, contextFile: KtFile?): ValueParameterTarget {
+    val [valueParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
     return ValueParameterTarget(Name.identifier(valueParameterName), ownerTarget)
 }
 
-private fun extractOwnerTarget(content: String, contextFile: KtFile): Pair<String, TestSymbolTarget> {
+private fun createContextParameterTarget(content: String, contextFile: KtFile?): ContextParameterTarget {
+    val [contextParameterName, ownerTarget] = extractOwnerTarget(content, contextFile)
+    return ContextParameterTarget(Name.identifier(contextParameterName), ownerTarget)
+}
+
+private fun extractOwnerTarget(content: String, contextFile: KtFile?): Pair<String, TestSymbolTarget> {
     val customData = content.substringBefore(":")
     val owner = content.substringAfter(":").trim()
     val ownerData = TestSymbolTarget.create(owner, contextFile)

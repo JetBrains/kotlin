@@ -8,3 +8,7 @@ fun test() {
         x = null
     }
 }
+
+fun <R> run(block: () -> R) {
+    block()
+}

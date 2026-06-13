@@ -20,28 +20,27 @@ abstract class AbstractMockedKlibLoaderTest(
         mockKlib(
             uniqueName = stdlibUniqueName,
             klibDir = tmpDir.resolve("stdlib"),
+            withCompanionBlocksAndExtensionsFeature = false,
         ).path
     }
 
     final override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
+        parameters: CompilationParameters
     ) {
-        val klibDir = if (asFile)
-            klibLocation.resolveSibling(klibLocation.name + "-dir")
+        val klibDir = if (parameters.asFile)
+            parameters.klibLocation.resolveSibling(parameters.klibLocation.name + "-dir")
         else
-            tmpDir.resolve(klibLocation.name)
+            tmpDir.resolve(parameters.klibLocation.name)
 
         mockKlib(
-            uniqueName = sourceFile.nameWithoutExtension,
+            uniqueName = parameters.sourceFile.nameWithoutExtension,
             klibDir = klibDir,
-            abiVersion = abiVersion,
+            abiVersion = parameters.abiVersion,
+            withCompanionBlocksAndExtensionsFeature = parameters.withCompanionBlocksAndExtensionsFeature,
         )
 
-        if (asFile) {
-            klibDir.zipDirAs(klibLocation)
+        if (parameters.asFile) {
+            klibDir.zipDirAs(parameters.klibLocation)
         }
     }
 
@@ -49,6 +48,7 @@ abstract class AbstractMockedKlibLoaderTest(
         klibDir: File,
         uniqueName: String,
         abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
+        withCompanionBlocksAndExtensionsFeature: Boolean,
     ): File = mockKlib(klibDir) {
         manifest(
             uniqueName = uniqueName,
@@ -61,6 +61,7 @@ abstract class AbstractMockedKlibLoaderTest(
         ) {
             // This is only needed to simulate that the mock KLIB has some ABI.
             this[KLIB_PROPERTY_IR_PROVIDER] = "simulation_of_some_ir_provider"
+            this[KLIB_PROPERTY_NEW_COMPANION_INITIALIZATION] = withCompanionBlocksAndExtensionsFeature.toString()
         }
     }
 

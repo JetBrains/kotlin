@@ -7,6 +7,8 @@ implicit values:
       type: ERROR_TYPE
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): ERROR CLASS: Unresolved name: e
+    label = with
+
 
 scopes:
   LocalScope, index = 0
@@ -76,7 +78,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /test
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []

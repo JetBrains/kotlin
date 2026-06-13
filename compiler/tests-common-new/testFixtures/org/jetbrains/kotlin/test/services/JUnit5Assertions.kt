@@ -58,7 +58,7 @@ object JUnit5Assertions : AssertionsService() {
     }
 
     override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
-        val (equalsToFile, expected) = doesEqualToFile(
+        val [equalsToFile, expected] = doesEqualToFile(
             expectedFile, actual, sanitizer,
             fileNotFoundMessageTeamCity = { "Expected data file did not exist `$expectedFile`" },
             fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" },

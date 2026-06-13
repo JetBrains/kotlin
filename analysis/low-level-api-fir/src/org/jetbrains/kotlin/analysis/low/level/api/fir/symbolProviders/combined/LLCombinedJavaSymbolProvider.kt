@@ -72,7 +72,7 @@ internal class LLCombinedJavaSymbolProvider private constructor(
         val javaClasses = javaClassFinder.findClasses(classId).filterNot(JavaClass::hasMetadataAnnotation)
         if (javaClasses.isEmpty()) return null
 
-        val (javaClass, provider) = selectFirstElementInClasspathOrder(javaClasses) { javaClass ->
+        val [javaClass, provider] = selectFirstElementInClasspathOrder(javaClasses) { javaClass ->
             // `JavaClass` doesn't know anything about PSI, but we can be sure that `findClasses` returns a `JavaClassImpl` because it's
             // using `KotlinJavaPsiFacade`. The alternative to this hack would be to change the interface of either `JavaClass` (yet the
             // module should hardly depend on PSI), or to have `KotlinJavaPsiFacade` and `JavaClassFinderImpl` return `JavaClassImpl` and to

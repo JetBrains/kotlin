@@ -25,6 +25,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 11
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 Smart Casts:
     FirRegularPropertySymbol public final val x: R|kotlin/Int|
         public get(): R|kotlin/Int|

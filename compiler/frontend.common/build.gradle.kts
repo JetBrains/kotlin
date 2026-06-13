@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:config"))
-    api(project(":compiler:container"))
+    implementation(project(":compiler:container"))
     api(project(":compiler:plugin-api"))
     compileOnly(intellijCore())
     compileOnly(libs.guava)
@@ -15,5 +15,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+optInToK1Deprecation()
 
 generatedConfigurationKeys("FrontendConfigurationKeys")

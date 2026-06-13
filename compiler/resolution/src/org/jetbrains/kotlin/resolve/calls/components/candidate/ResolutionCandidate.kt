@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components.candidate
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import java.util.ArrayList
 
+@K1Deprecation
 sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     abstract val resolvedCall: MutableResolvedCallAtom
     abstract val callComponents: KotlinCallComponents

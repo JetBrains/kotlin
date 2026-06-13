@@ -86,13 +86,13 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         }
 
         // Classes should be created first to populate the cache before possible references
-        classesFromState.forEach { (classSymbol, snippetSymbol) ->
+        classesFromState.forEach { [classSymbol, snippetSymbol] ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
                 createClassFromOtherSnippet(classSymbol, originalSnippet, irSnippet)
             }
         }
 
-        propertiesFromState.forEach { (propertySymbol, snippetSymbol) ->
+        propertiesFromState.forEach { [propertySymbol, snippetSymbol] ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
                 val actualParent = getOrBuildActualParent(propertySymbol, originalSnippet, irSnippet)
 
@@ -117,7 +117,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             }
         }
 
-        functionsFromState.forEach { (functionSymbol, snippetSymbol) ->
+        functionsFromState.forEach { [functionSymbol, snippetSymbol] ->
             classifierStorage.getCachedEarlierSnippetClass(snippetSymbol)?.let { originalSnippet ->
                 val actualParent = getOrBuildActualParent(functionSymbol, originalSnippet, irSnippet)
                 declarationStorage.createAndCacheIrFunction(
@@ -220,7 +220,10 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
                 )
                 classKind = ClassKind.OBJECT
                 symbol = firReplStateSymbol
-                superTypeRefs += hashMapClassSymbol.defaultType().toFirResolvedTypeRef(null)
+                val nullableAnyType = session.builtinTypes.nullableAnyType.coneType
+                superTypeRefs += hashMapClassSymbol.constructType(
+                    Array(hashMapClassSymbol.typeParameterSymbols.size) { nullableAnyType },
+                ).toFirResolvedTypeRef(null)
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 scopeProvider = session.kotlinScopeProvider
                 declarations += constructor

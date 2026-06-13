@@ -401,7 +401,7 @@ private class PackageAnnotationsHolder {
     }
 
     private fun fill(parentPackage: Packages) {
-        parentPackage.subpackages.forEach { (_, childPackage) ->
+        parentPackage.subpackages.forEach { [_, childPackage] ->
             childPackage.annotations.addAll(parentPackage.annotations)
             fill(childPackage)
         }

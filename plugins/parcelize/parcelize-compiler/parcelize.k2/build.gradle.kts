@@ -6,18 +6,19 @@ plugins {
 
 dependencies {
     implementation(project(":plugins:parcelize:parcelize-compiler:parcelize.common"))
+    implementation(project(":compiler:frontend.common-psi"))
 
     compileOnly(intellijCore())
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
-    compileOnly(project(":compiler:fir:checkers"))
-    compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
-    compileOnly(project(":compiler:fir:diagnostic-renderers"))
-    compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.tree"))
-    compileOnly(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:cones"))
+    implementation(project(":compiler:fir:tree"))
+    implementation(project(":compiler:fir:resolve"))
+    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:checkers"))
+    implementation(project(":compiler:fir:checkers:checkers.jvm"))
+    implementation(project(":compiler:fir:diagnostic-renderers"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:fir:entrypoint"))
 }
 
 sourceSets {

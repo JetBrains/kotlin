@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  * Visits a given PSI-tree of call (and nested calls, if any) and extracts information
  * about effects of that call.
  */
+@K1Deprecation
 class EffectsExtractingVisitor(
     private val trace: BindingTrace,
     private val moduleDescriptor: ModuleDescriptor,
@@ -231,7 +233,7 @@ class EffectsExtractingVisitor(
 
     private fun ResolvedCall<*>.getTypeSubstitution(): ESTypeSubstitution {
         val substitution = mutableMapOf<TypeConstructor, UnwrappedType>()
-        for ((typeParameter, typeArgument) in typeArguments) {
+        for ([typeParameter, typeArgument] in typeArguments) {
             substitution[typeParameter.typeConstructor] = typeArgument.unwrap()
         }
         val substitutor = if (substitution.isNotEmpty()) {

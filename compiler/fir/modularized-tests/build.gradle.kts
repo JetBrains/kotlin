@@ -55,7 +55,13 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTests {
-    testTask(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit5) {
+    testTask(
+        minHeapSizeMb = 8192,
+        maxHeapSizeMb = 8192,
+        reservedCodeCacheSizeMb = 512,
+        jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8
+    ) {
         dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
         systemProperties(providers.gradlePropertiesPrefixedBy("fir.").get())
         this.workingDir = rootDir

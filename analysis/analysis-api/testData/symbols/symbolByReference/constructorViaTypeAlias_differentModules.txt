@@ -1,7 +1,6 @@
 KaConstructorSymbol:
   annotations: []
   callableId: null
-  compilerVisibility: Public
   containingClassId: two/SimpleTypeAlias
   contextReceivers: []
   hasStableParameterNames: true
@@ -25,5 +24,5 @@ KaConstructorSymbol:
   getContainingFileSymbol: KaFileSymbol(Dep.kt)
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of dep"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: two.SimpleTypeAlias

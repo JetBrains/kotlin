@@ -29,7 +29,7 @@ class TestGroupSuite(val testInfraRevision: TestInfraRevision, val defaultSkipTe
         testsRoot: String,
         testDataRoot: String,
         testRunnerMethodName: String = MethodGenerator.DEFAULT_RUN_TEST_METHOD_NAME,
-        init: TestGroup.() -> Unit
+        init: TestGroup.() -> Unit,
     ) {
         testGroups += TestGroup(
             testsRoot,
@@ -54,7 +54,7 @@ class TestGroup(
     inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
         annotations: List<AnnotationModel> = emptyList(),
-        noinline init: TestClass.() -> Unit
+        noinline init: TestClass.() -> Unit,
     ) {
         val testKClass = T::class.java
         testClass(testKClass, testKClass.name, suiteTestClassName, annotations, init)
@@ -65,7 +65,7 @@ class TestGroup(
         baseTestClassName: String = testKClass.name,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
         annotations: List<AnnotationModel> = emptyList(),
-        init: TestClass.() -> Unit
+        init: TestClass.() -> Unit,
     ) {
         testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
     }
@@ -130,6 +130,8 @@ class TestGroup(
             excludeDirs: List<String> = listOf(),
             excludeDirsRecursively: List<String> = listOf(),
             skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
+            smokeTest: Boolean = false,
+            smokeTestLimit: Int = 1,
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
@@ -139,12 +141,15 @@ class TestGroup(
             if (testInfraRevision == TestInfraRevision.StandardJUnit5) {
                 require(targetBackend == null) { "TargetBackend shouldn't be defined for JUnit5" }
             }
+
             testModels.add(
                 SimpleTestClassModel(
                     testInfraRevision, File(testDataRoot), rootFile, recursive, excludeParentDirs,
                     compiledPattern, compiledExcludedPattern, testMethod, className,
                     targetBackend, excludeDirs, excludeDirsRecursively, testRunnerMethodName, annotations,
-                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass
+                    extractTagsFromDirectory(rootFile), methodModels, skipTestAllFilesCheck, testKClass,
+                    isSmokeTest = smokeTest,
+                    smokeTestLimit = smokeTestLimit
                 )
             )
         }

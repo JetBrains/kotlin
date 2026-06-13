@@ -1,0 +1,223 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias CA = C
+    public final? [ResolvedTo(RAW_FIR)] class D : CA {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias CA = C
+    public final? [ResolvedTo(RAW_FIR)] class D : CA {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias CA = C
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class D : CA {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(RAW_FIR)] typealias CA = C
+    public final? [ResolvedTo(COMPANION_GENERATION)] class D : CA {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final? [ResolvedTo(SUPER_TYPES)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final? [ResolvedTo(TYPES)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(STATUS)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(CONTRACTS)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(SUPER_TYPES)] class C : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class D : R|{test/CA=} test/C| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|test/D| {
+            LAZY_super<CA>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(STATUS)] class C : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|test/C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(SUPER_TYPES)] typealias CA = R|test/C|
+    public final [ResolvedTo(BODY_RESOLVE)] class D : R|{test/CA=} test/C| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|test/D| {
+            super<R|{test/CA=} test/C|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasAsSupertypeConstructor.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|test/C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias CA = R|test/C|
+    public final [ResolvedTo(BODY_RESOLVE)] class D : R|{test/CA=} test/C| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] constructor(): R|test/D| {
+            super<R|{test/CA=} test/C|>()
+        }
+
+    }

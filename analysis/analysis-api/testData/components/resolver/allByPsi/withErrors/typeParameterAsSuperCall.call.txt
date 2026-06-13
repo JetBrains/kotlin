@@ -1,0 +1,65 @@
+KtFile: 'typeParameterAsSuperCall.kt'
+  null
+
+KtPackageDirective(0,11): 'package bar'
+  null
+
+KtNameReferenceExpression(8,11): 'bar'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtClass(13,69): 'class MyClass<T : Number> {'
+  null
+
+KtTypeParameterList(26,38): '<T : Number>'
+  null
+
+KtTypeParameter(27,37): 'T : Number'
+  null
+
+KtTypeReference(31,37): 'Number'
+  null
+
+KtUserType(31,37): 'Number'
+  null
+
+KtNameReferenceExpression(31,37): 'Number'
+  null
+
+KtClassBody(39,69): '{'
+  null
+
+KtClass(44,67): 'inner class Inner : T()'
+  null
+
+KtDeclarationModifierList(44,49): 'inner'
+  null
+
+KtSuperTypeList(64,67): 'T()'
+  null
+
+KtSuperTypeCallEntry(64,67): 'T()'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
+
+KtConstructorCalleeExpression(64,65): 'T'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
+
+KtTypeReference(64,65): 'T'
+  null
+
+KtUserType(64,65): 'T'
+  null
+
+KtNameReferenceExpression(64,65): 'T'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<OTHER_ERROR: Erroneous delegated constructor call>
+
+KtValueArgumentList(65,67): '()'
+  null

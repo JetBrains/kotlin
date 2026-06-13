@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.applyIf
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.Usage
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File.Companion.userDir
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -24,7 +26,7 @@ import java.io.PrintStream
 object CompilerTestUtil {
     @JvmStatic
     fun executeCompilerAssertSuccessful(compiler: CLICompiler<*>, args: List<String>, messageRenderer: MessageRenderer? = null) {
-        val (output, exitCode) = executeCompiler(compiler, args, messageRenderer)
+        val [output, exitCode] = executeCompiler(compiler, args, messageRenderer)
         KtAssert.assertEquals(output, ExitCode.OK, exitCode)
     }
 
@@ -70,10 +72,14 @@ object CompilerTestUtil {
     @JvmStatic
     fun normalizeCompilerOutput(output: String, tmpdir: String): String {
         val tmpDirAbsoluteDir = File(tmpdir).absolutePath
-        return StringUtil.convertLineSeparators(output)
-            .replace(kotlinPathsForDistDirectory.homePath.absolutePath, "\$PROJECT_DIR$")
-            .replace(kotlinPathsForDistDirectory.homePath.parentFile.absolutePath, "\$DIST_DIR$")
-            .replace(userDir.absolutePath, "\$USER_DIR$")
+        val formattedOutput = StringUtil.convertLineSeparators(output)
+        val allOpenPluginPath = runCatching { ForTestCompileRuntime.allOpenCompilerPluginForTests().path }.getOrNull()
+        val noArgCompilerPluginPath = runCatching { ForTestCompileRuntime.noArgCompilerPluginForTests().path }.getOrNull()
+        val reflectJarPath = runCatching { ForTestCompileRuntime.reflectJarForTests().path }.getOrNull()
+        return formattedOutput
+            .applyIf(allOpenPluginPath != null) { replace(allOpenPluginPath!!, "\$ALLOPEN-COMPILER-PLUGIN-JAR$") }
+            .applyIf(noArgCompilerPluginPath != null) { replace(noArgCompilerPluginPath!!, "\$NOARG-COMPILER-PLUGIN-JAR$") }
+            .applyIf(reflectJarPath != null) { replace(reflectJarPath!!, "\$KOTLIN-REFLECT-JAR$") }
             .replace(tmpDirAbsoluteDir, "\$TMP_DIR$")
             .replace("\\", "/")
             .replace(KtTestUtil.getJdk8Home().absolutePath.replace("\\", "/"), "\$JDK_1_8")
@@ -88,5 +94,8 @@ object CompilerTestUtil {
             .replace(" " + MetadataVersion.INSTANCE_NEXT, " \$ABI_VERSION_NEXT$")
             .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
             .replace("log4j:WARN.*\n".toRegex(), "")
+            .replace(kotlinPathsForDistDirectory.homePath.absolutePath, "\$PROJECT_DIR$")
+            .replace(kotlinPathsForDistDirectory.homePath.parentFile.absolutePath, "\$DIST_DIR$")
+            .replace(userDir.absolutePath, "\$USER_DIR$")
     }
 }

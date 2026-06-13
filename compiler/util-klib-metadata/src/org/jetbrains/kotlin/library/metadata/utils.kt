@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
  * Genuine C-interop library always has two properties in manifest: `interop=true` and the `ir_provider` that
  * points to the known IR provider dedicated specifically for C-interop libraries.
  */
+@K1Deprecation
 fun BaseKotlinLibrary.isCInteropLibrary(): Boolean =
     interopFlag == "true" && irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
@@ -24,6 +26,7 @@ fun BaseKotlinLibrary.isCInteropLibrary(): Boolean =
  * The `ir_provider` is missing for commonized libraries, as no IR was ever supposed to be stored or anyhow provided
  * by such libraries.
  */
+@K1Deprecation
 fun BaseKotlinLibrary.isCommonizedCInteropLibrary(): Boolean =
     interopFlag == "true" && commonizerTarget != null
 
@@ -32,6 +35,7 @@ fun BaseKotlinLibrary.isCommonizedCInteropLibrary(): Boolean =
     ReplaceWith("isCInteropLibrary()", "org.jetbrains.kotlin.library.metadata.isCInteropLibrary"),
     DeprecationLevel.ERROR
 )
+@K1Deprecation
 fun BaseKotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
 @Deprecated(
@@ -39,6 +43,7 @@ fun BaseKotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PRO
     ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
     DeprecationLevel.ERROR
 )
+@K1Deprecation
 fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
     return if (this is ModuleDescriptorImpl) {
         // cinterop libraries are deserialized by Fir2Ir as ModuleDescriptorImpl, not FirModuleDescriptor
@@ -46,6 +51,7 @@ fun ModuleDescriptor.isFromInteropLibrary(): Boolean {
     } else false
 }
 
+@K1Deprecation
 fun KotlinLibrary.getIncompatibility(ownMetadataVersion: MetadataVersion): IncompatibleVersionErrorData<MetadataVersion>? {
     val libraryMetadataVersion = this.metadataVersion ?: MetadataVersion.INVALID_VERSION
     if (libraryMetadataVersion.isCompatible(ownMetadataVersion)) return null

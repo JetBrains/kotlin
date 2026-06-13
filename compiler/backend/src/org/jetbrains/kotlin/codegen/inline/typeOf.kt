@@ -147,10 +147,8 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
     intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>,
     isTypeParameterBound: Boolean,
 ) {
-    // KTypeProjection companion members could be made `@JvmStatic`, see KT-30083 and KT-30084
-    v.getstatic(K_TYPE_PROJECTION.internalName, "Companion", K_TYPE_PROJECTION_COMPANION.descriptor)
     if (projection.isStarProjection()) {
-        v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, "getSTAR", Type.getMethodDescriptor(K_TYPE_PROJECTION), false)
+        v.getstatic(K_TYPE_PROJECTION.internalName, "star", K_TYPE_PROJECTION.descriptor)
         return
     }
 
@@ -161,5 +159,5 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         TypeVariance.IN -> "contravariant"
         TypeVariance.OUT -> "covariant"
     }
-    v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, methodName, Type.getMethodDescriptor(K_TYPE_PROJECTION, K_TYPE), false)
+    v.invokestatic(K_TYPE_PROJECTION.internalName, methodName, Type.getMethodDescriptor(K_TYPE_PROJECTION, K_TYPE), false)
 }

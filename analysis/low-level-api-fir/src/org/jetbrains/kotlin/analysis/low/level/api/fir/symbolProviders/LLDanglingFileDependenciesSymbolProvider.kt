@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-class LLDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbolProvider) : FirSymbolProvider(delegate.session) {
+internal class LLDanglingFileDependenciesSymbolProvider(private val delegate: FirSymbolProvider) : FirSymbolProvider(delegate.session) {
     override val symbolNamesProvider: FirSymbolNamesProvider
         get() = delegate.symbolNamesProvider
 

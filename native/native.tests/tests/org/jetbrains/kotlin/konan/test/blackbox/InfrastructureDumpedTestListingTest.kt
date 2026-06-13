@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox
 import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.testFramework.TestDataFile
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.konan.test.blackbox.InfrastructureDumpedTestListingTest.Companion.TEST_SUITE_PATH
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.Executable
@@ -48,13 +49,13 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
 
     @Suppress("SameParameterValue")
     private fun doTest(@TestDataFile testDataPath: String, fromSources: Boolean) {
-        val rootDir = File(testDataPath)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath(testDataPath)
 
         val fooLibrary = compileToLibrary(rootDir.resolve("foo"))
 
         val barTestCase: TestCase = generateTestCaseWithSingleModule(rootDir.resolve("bar"))
 
-        val (executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>) =
+        val [executableTestCase: TestCase, executableCompilationResult: TestCompilationResult<out Executable>] =
             if (fromSources) {
                 // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
                 // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module

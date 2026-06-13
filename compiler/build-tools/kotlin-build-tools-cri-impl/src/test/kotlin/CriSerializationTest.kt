@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.buildtools.internal.cri.FileIdToPathEntryImpl
 import org.jetbrains.kotlin.buildtools.internal.cri.LookupEntryImpl
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 @OptIn(ExperimentalSerializationApi::class)
 class CriSerializationTest {
@@ -32,7 +34,10 @@ class CriSerializationTest {
                     to listOf(file2, file3),
         )
 
-        val (serializedLookups, serializedFileIdsToPaths) = CriDataSerializerImpl().serializeLookups(lookups, BasicFileToPathConverter)
+        (val serializedLookups = lookups, val serializedFileIdsToPaths = fileIdsToPaths) = CriDataSerializerImpl().serializeLookups(
+            lookups,
+            BasicFileToPathConverter
+        )
 
         val deserializer = CriDataDeserializerImpl()
         val decodedLookups = deserializer.deserializeLookupData(serializedLookups)
@@ -73,8 +78,14 @@ class CriSerializationTest {
                     to listOf(file1, file2),
         )
 
-        val (serializedLookups1, _) = CriDataSerializerImpl().serializeLookups(lookups1, BasicFileToPathConverter)
-        val (serializedLookups2, _) = CriDataSerializerImpl().serializeLookups(lookups2, BasicFileToPathConverter)
+        (val serializedLookups1 = lookups) = CriDataSerializerImpl().serializeLookups(
+            lookups1,
+            BasicFileToPathConverter
+        )
+        (val serializedLookups2 = lookups) = CriDataSerializerImpl().serializeLookups(
+            lookups2,
+            BasicFileToPathConverter
+        )
         val serializedLookups = ByteArrayOutputStream().use { stream ->
             stream.write(serializedLookups1)
             stream.write(serializedLookups2)
@@ -115,5 +126,35 @@ class CriSerializationTest {
             fqName4.hashCode() to listOf(fqName5),
         )
         assertEquals(expected, subtypes)
+    }
+
+    // KT-86117
+    @Test
+    fun testFileIdsAreStableAcrossProjectRoots() {
+        val fqName = FqName("scope.Name")
+        val lookup = LookupSymbol(name = fqName.shortName().asString(), scope = fqName.parent().asString())
+        val relativeFile = "src/main/kotlin/Main.kt"
+
+        fun serializeUnder(root: File): CriDataSerializerImpl.SerializedLookupData {
+            val absolutePath = root.resolve(relativeFile).absolutePath
+            return CriDataSerializerImpl().serializeLookups(
+                mapOf(lookup to listOf(absolutePath)),
+                RelocatableFileToPathConverter(root),
+            )
+        }
+
+        val serializedAtRoot1 = serializeUnder(File("/test1/root1").absoluteFile)
+        val serializedAtRoot2 = serializeUnder(File("/test2/root2").absoluteFile)
+
+        assertEquals(
+            serializedAtRoot1.lookups.toList(),
+            serializedAtRoot2.lookups.toList(),
+            "Serialized lookups must be identical for the same inputs under different project roots",
+        )
+        assertEquals(
+            serializedAtRoot1.fileIdsToPaths.toList(),
+            serializedAtRoot2.fileIdsToPaths.toList(),
+            "Serialized fileIdsToPaths must be identical for the same inputs under different project roots",
+        )
     }
 }

@@ -10,8 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.internal.enterprise.test.FileProperty
-import org.jetbrains.kotlin.tooling.core.withClosure
+import org.jetbrains.kotlin.testFederation.withAffectedDependencies
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.io.File
 import kotlin.io.path.Path
@@ -42,7 +41,8 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
             cachedValue?.let { return it }
             val root = parameters.repositoryRoot.get().toPath()
             val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
-            val affected = inferAffectedDomains(changes)
+            val commitMessages = parameters.diffService.get().messages
+            val affected = inferAffectedDomains(changes, commitMessages)
             cachedValue = affected
             return affected
         }
@@ -53,12 +53,10 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
     }
 }
 
-private fun inferAffectedDomains(changes: List<RepositoryPath>): Set<Domain> {
-    return changes.map { it.domain }.withAffectedDependencies()
-}
-
-internal fun inferAffectedDomains(argumentString: String): Set<Domain>? {
-    return Domain.fromArgumentString(argumentString)?.withAffectedDependencies()
+private fun inferAffectedDomains(changes: List<RepositoryPath>, commitMessages: List<String>): Set<Domain> {
+    return changes.flatMap { it.domains }
+        .plus(resolveAffectedDomainsFromCommitMessages(commitMessages))
+        .withAffectedDependencies()
 }
 
 /**
@@ -80,5 +78,31 @@ private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, Mutabl
 }
 
 internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
-    return withClosure<Domain> { system -> domainDependees[system].orEmpty() }
+    return buildSet {
+        this@withAffectedDependencies.forEach { domain ->
+            add(domain)
+            addAll(domainDependees[domain].orEmpty())
+        }
+    }
+}
+
+internal fun resolveAffectedDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {
+    val commandRegex = Regex("""\^affects:\v*(?<domains>.*)$""")
+    val splitRegex = Regex("""([\h,;])""")
+
+    return buildSet {
+        commitMessages.forEach { message ->
+            message.lines().forEach { line ->
+                val match = commandRegex.matchEntire(line) ?: return@forEach
+                val domains = match.groups["domains"]?.value.orEmpty()
+                domains.split(splitRegex).map { it.trim() }.forEach { domainString ->
+                    runCatching { Domain.fromArgumentString(domainString) }
+                        .onSuccess { domains -> addAll(domains.orEmpty()) }
+                        .onFailure {
+                            throw IllegalArgumentException("Command '$line' contains domain '$domainString', which is not a valid domain")
+                        }
+                }
+            }
+        }
+    }
 }

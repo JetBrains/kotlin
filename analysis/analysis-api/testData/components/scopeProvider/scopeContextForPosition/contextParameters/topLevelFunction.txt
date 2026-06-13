@@ -32,10 +32,10 @@ scopes:
       KaContextParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -53,7 +53,6 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -61,6 +60,7 @@ scopes:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -94,7 +94,6 @@ scopes:
         classId: one/A
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -119,15 +118,14 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: one/foo
-        compilerVisibility: Public
         contextParameters: [
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -145,10 +143,10 @@ scopes:
           KaContextParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -207,7 +205,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -215,6 +212,7 @@ scopes:
             isActual: false
             isCompanion: false
             isCrossinline: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

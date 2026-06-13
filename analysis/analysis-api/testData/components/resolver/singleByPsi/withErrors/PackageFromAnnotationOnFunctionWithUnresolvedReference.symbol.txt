@@ -1,4 +1,7 @@
 KtNameReferenceExpression(36,39): 'jvm'
-  KaSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'JvmName2'.>
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.jvm
+    ]

@@ -26,25 +26,50 @@ KtParameter(34,45): 'other: Any?'
   null
 
 KtTypeReference(41,45): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNullableType(41,45): 'Any?'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtUserType(41,44): 'Any'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtNameReferenceExpression(41,44): 'Any'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Any
+    ]
 
 KtTypeReference(48,55): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtUserType(48,55): 'Boolean'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtNameReferenceExpression(48,55): 'Boolean'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Boolean
+    ]
 
 KtConstantExpression(58,62): 'true'
   null
@@ -68,9 +93,11 @@ KtCallExpression(91,94): 'A()'
     ]
 
 KtNameReferenceExpression(91,92): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(92,94): '()'
@@ -86,9 +113,11 @@ KtCallExpression(107,110): 'A()'
     ]
 
 KtNameReferenceExpression(107,108): 'A'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): A
+      /A
     ]
 
 KtValueArgumentList(108,110): '()'
@@ -101,18 +130,24 @@ KtBinaryExpression(115,121): 'a == b'
     ]
 
 KtNameReferenceExpression(115,116): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(117,119): '=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(120,121): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -125,18 +160,24 @@ KtBinaryExpression(126,132): 'a != b'
     ]
 
 KtNameReferenceExpression(126,127): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(128,130): '!='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A.equals(<dispatch receiver>: A, other: kotlin.Any?): kotlin.Boolean
     ]
 
 KtNameReferenceExpression(131,132): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -146,15 +187,21 @@ KtBinaryExpression(137,144): 'a === b'
   null
 
 KtNameReferenceExpression(137,138): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(139,142): '==='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(143,144): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A
@@ -164,15 +211,21 @@ KtBinaryExpression(149,156): 'a !== b'
   null
 
 KtNameReferenceExpression(149,150): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val a: A
     ]
 
 KtOperationReferenceExpression(151,154): '!=='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtNameReferenceExpression(155,156): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val b: A

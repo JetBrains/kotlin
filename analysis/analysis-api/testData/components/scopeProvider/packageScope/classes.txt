@@ -3,7 +3,6 @@ KaNamedClassSymbol:
   classId: test/A
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/A.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -26,8 +25,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.A
 
 KaNamedClassSymbol:
@@ -35,7 +34,6 @@ KaNamedClassSymbol:
   classId: test/InternalA
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -58,8 +56,8 @@ KaNamedClassSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.InternalA
 
 KaNamedClassSymbol:
@@ -67,7 +65,6 @@ KaNamedClassSymbol:
   classId: test/PrivateA
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -90,8 +87,8 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(A.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.PrivateA
 
 KaNamedClassSymbol:
@@ -99,7 +96,6 @@ KaNamedClassSymbol:
   classId: test/B
   classKind: CLASS
   companionObject: KaNamedClassSymbol(test/B.Companion)
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isData: false
@@ -122,8 +118,8 @@ KaNamedClassSymbol:
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.B
 
 KaNamedClassSymbol:
@@ -131,7 +127,6 @@ KaNamedClassSymbol:
   classId: test/InternalB
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Internal
   contextReceivers: []
   isActual: false
   isData: false
@@ -154,8 +149,8 @@ KaNamedClassSymbol:
   visibility: INTERNAL
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.InternalB
 
 KaNamedClassSymbol:
@@ -163,7 +158,6 @@ KaNamedClassSymbol:
   classId: test/PrivateB
   classKind: CLASS
   companionObject: null
-  compilerVisibility: Private
   contextReceivers: []
   isActual: false
   isData: false
@@ -186,6 +180,6 @@ KaNamedClassSymbol:
   visibility: PRIVATE
   getContainingFileSymbol: KaFileSymbol(B.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  annotationApplicableTargets: null
-  deprecationStatus: null
+  applicableAnnotationTargets: null
+  deprecation: null
   importableFqName: test.PrivateB

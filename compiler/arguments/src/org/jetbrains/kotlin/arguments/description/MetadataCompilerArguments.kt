@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.defaultEmpty
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
-import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
-import org.jetbrains.kotlin.arguments.dsl.types.IntType
-import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.arguments.dsl.types.StringType
+import org.jetbrains.kotlin.arguments.dsl.types.*
 
 val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.metadataArguments) {
     compilerArgument {
@@ -29,12 +28,14 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "classpath"
         shortName = "cp"
         description = "List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = SearchPathType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_0,
@@ -54,22 +55,27 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xfriend-paths"
         description = "Paths to output directories for friend modules (modules whose internals should be visible).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_3_71
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xrefines-paths"
-        description = "Paths to output directories for refined modules (modules whose expects this module can actualize).".asReleaseDependent()
+        description =
+            "Paths to output directories for refined modules (modules whose expects this module can actualize).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
         valueDescription = "<path>".asReleaseDependent()
+        argumentType = PathListType.defaultEmpty
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_4_0,
@@ -87,10 +93,12 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xtarget-platform"
         description = "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = MetadataTargetPlatformType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,

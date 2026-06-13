@@ -124,7 +124,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         var highestVersionUntilNow: MavenComparableVersion? = null
         val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
 
-        for ((i, param) in declaration.valueParameters.withIndex()) {
+        for ([i, param] in declaration.valueParameters.withIndex()) {
             val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt, context.session)
             val version = versionAnnotation?.getStringArgument(versionArgument)?.let(::MavenComparableVersion)
 
@@ -160,7 +160,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                     FirErrors.NON_ASCENDING_VERSION_ANNOTATION,
                     version,
                     highestVersionUntilNow,
-                    paramVersions.firstNotNullOf { (symbol, version) ->
+                    paramVersions.firstNotNullOf { [symbol, version] ->
                         symbol.takeIf { version == highestVersionUntilNow }
                     }
                 )

@@ -1,0 +1,35 @@
+KClass: abstract interface CallableMemberDescriptor : Any
+  members:
+    public open operator fun CallableMemberDescriptor.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun CallableMemberDescriptor.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!
+    public open fun CallableMemberDescriptor.hashCode(): kotlin.Int
+    public abstract fun CallableMemberDescriptor.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
+    public open fun CallableMemberDescriptor.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun CallableMemberDescriptor.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!
+    public abstract fun CallableMemberDescriptor.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
+KClass: abstract interface PropertyDescriptor : CallableMemberDescriptor, Any
+  members:
+    public open operator fun PropertyDescriptor.equals(kotlin.Any?): kotlin.Boolean
+    public abstract fun PropertyDescriptor.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
+    public open fun PropertyDescriptor.hashCode(): kotlin.Int
+    public abstract fun PropertyDescriptor.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
+    public open fun PropertyDescriptor.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun PropertyDescriptor.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
+KClass: class PropertyDescriptorImpl : PropertyDescriptor, Any
+  constructors:
+    public final fun `<init>`(): PropertyDescriptorImpl
+  members:
+    public open operator fun PropertyDescriptorImpl.equals(kotlin.Any?): kotlin.Boolean
+    public open fun PropertyDescriptorImpl.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
+    public open fun PropertyDescriptorImpl.hashCode(): kotlin.Int
+    public open fun PropertyDescriptorImpl.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
+    public open fun PropertyDescriptorImpl.toString(): kotlin.String
+    private final var PropertyDescriptorImpl.overriddenProperties: (kotlin.collections.MutableCollection<out PropertyDescriptor!>..kotlin.collections.Collection<PropertyDescriptor!>?)
+  declaredMembers:
+    public open fun PropertyDescriptorImpl.getOverriddenDescriptors(): kotlin.collections.(Mutable)Collection<out PropertyDescriptor!>!
+    public open fun PropertyDescriptorImpl.setOverriddenDescriptors(kotlin.collections.(Mutable)Collection<out CallableMemberDescriptor!>!): kotlin.Unit
+    private final var PropertyDescriptorImpl.overriddenProperties: (kotlin.collections.MutableCollection<out PropertyDescriptor!>..kotlin.collections.Collection<PropertyDescriptor!>?)
+KPackage: SyntheticSetterTypeKt
+  public final fun foo(PropertyDescriptorImpl): kotlin.Unit

@@ -29,6 +29,8 @@ KClass: abstract interface Inv : Any
     public open fun Inv<T>.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class Java : KotlinInterface, KotlinInterface2
+  constructors:
+    public final fun `<init>`(): Java
   members:
     public abstract fun Java.a00(kotlin.Any?): kotlin.Any?
     public abstract fun Java.a01(kotlin.Any): kotlin.Any
@@ -141,6 +143,8 @@ KClass: abstract class Java : KotlinInterface, KotlinInterface2
     public open fun Java.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class KotlinInterface : Any
+  constructors:
+    public final <A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23> fun `<init>`(): KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23> where A01 : kotlin.Any, A02 : kotlin.Number?, A03 : kotlin.Number?, A03 : kotlin.CharSequence, A04 : kotlin.CharSequence, A04 : kotlin.Number?, A05 : kotlin.CharSequence?, A05 : kotlin.Number, A06 : Inv<A06>, A07 : Inv<*>, A08 : Inv<A08>?, A09 : Inv<*>?, A10 : Inv<A10?>?, A11 : Inv<A11>?, A11 : kotlin.Number, A12 : Inv<A12>, A12 : kotlin.Number?, A13 : Box1<A13>, A13 : kotlin.CharSequence, A13 : kotlin.Number, A14 : Box2<A14>, A14 : kotlin.CharSequence, A14 : kotlin.Number, A15 : Box3<A15>, A15 : kotlin.CharSequence, A15 : kotlin.Number, A16 : Box3<A16>, A16 : kotlin.CharSequence?, A16 : kotlin.Number, A17 : Box3<*>, A18 : Box3<out A18>, A18 : kotlin.CharSequence?, A18 : kotlin.Number, A19 : Box3<in A19>, A19 : kotlin.CharSequence?, A19 : kotlin.Number, A20 : OutBox3<A20>, A20 : kotlin.CharSequence?, A20 : kotlin.Number, A21 : InBox3<A21>, A21 : kotlin.CharSequence?, A21 : kotlin.Number, A22 : A17, A23 : A18
   members:
     public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a00(A00): A00
     public abstract fun KotlinInterface<A00, A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22, A23>.a01(A01): A01

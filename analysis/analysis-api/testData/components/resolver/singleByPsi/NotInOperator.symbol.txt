@@ -1,4 +1,6 @@
 KtOperationReferenceExpression(69,72): '!in'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo.contains(<dispatch receiver>: Foo, v: kotlin.Int): kotlin.Boolean

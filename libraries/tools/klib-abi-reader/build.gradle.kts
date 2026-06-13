@@ -37,8 +37,6 @@ dependencies {
 
 publish()
 
-noDefaultJar()
-
 val relocatedJar by task<ShadowJar> {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

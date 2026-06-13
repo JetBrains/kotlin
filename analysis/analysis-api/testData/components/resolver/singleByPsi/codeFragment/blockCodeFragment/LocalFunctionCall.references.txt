@@ -1,7 +1,0 @@
-KtNameReferenceExpression(132,137): 'local'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in <local>: test) fun local()

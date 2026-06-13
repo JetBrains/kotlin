@@ -76,7 +76,7 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
         val immediateSupertypes = declaration.superConeTypes.mapTo(mutableSetOf()) { it.lookupTag }
         val overriddenFunctionsK1WouldConsider = overriddenFunctions.filter { it.containingClassLookupTag() in immediateSupertypes }
 
-        for ((index, parameter) in function.valueParameterSymbols.withIndex()) {
+        for ([index, parameter] in function.valueParameterSymbols.withIndex()) {
             val basesWithDefaultValues = overriddenFunctions.filter { it.valueParameterSymbols[index].hasDefaultValue }
 
             if (basesWithDefaultValues.size <= 1) {

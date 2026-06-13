@@ -60,4 +60,5 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val EXPRESSION_TO_EVALUATE by key<String>("Expression to evaluate in script mode.", throwOnNull = false)
     val WHEN_GENERATION_SCHEME by key<JvmWhenGenerationScheme>("Specifies generation scheme for type-checking 'when' expressions.")
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by key<List<String>>("Annotations fqNames that shall be skipped while copying the annotations from the target to the bridge functions.")
+    val COMMON_FRAGMENTS_OUTPUT_DIR by key<File>("Path to outputs of common fragments metadata for KMP JVM IC", throwOnNull = false)
 }

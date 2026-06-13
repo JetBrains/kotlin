@@ -12,7 +12,6 @@ dependencies {
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
 tasks.withType<Test>().configureEach {
     val taskName = this.name
-    ignoreFailures = false
     val testInputsCheck = extensions.create<TestInputsCheckExtension>("testInputsCheck")
     val toolchainPath = testInputsCheck.isNative
         .filter { it }
@@ -54,9 +53,16 @@ tasks.withType<Test>().configureEach {
         } else null
 
         @Suppress("UNCHECKED_CAST")
+        val wasmNodeJsExecutable = if (project.extra.has("wasm.javascript.engine.path.NodeJs")) {
+            project.extra["wasm.javascript.engine.path.NodeJs"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
         val binaryenExecutable = if (project.extra.has("binaryen.path")) {
             project.extra["binaryen.path"] as Provider<String>
         } else null
+
+        val testInstrumenterBuildDir = project.project(":test-instrumenter").layout.buildDirectory
 
         doFirst {
             if (!permissionsTemplateFile.exists()) {
@@ -123,14 +129,21 @@ tasks.withType<Test>().configureEach {
             val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet()) { file ->
                 if (file.isDirectory) {
                     addedDirs.add(file)
-                    listOf(
-                        """permission java.io.FilePermission "${file.absolutePath}/", "read";""",
-                        """permission java.io.FilePermission "${file.absolutePath}/-", "read${
+                    buildList {
+                        add("""permission java.io.FilePermission "${file.absolutePath}/", "read";""")
+                        if (file.canonicalPath.contains("/testData")) {
                             // We write to the testData folder from tests...
-                            if (file.canonicalPath.contains("/testData")) ",write,delete"
-                            else ""
-                        }";""",
-                    )
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,write,delete";""")
+                        } else {
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read";""")
+                        }
+                        if (file.canonicalPath.endsWith("dist")) {
+                            add("""permission java.io.FilePermission "${file.resolve("kotlinc").resolve("bin")}/-", "read,execute";""")
+                        }
+                        if (file.canonicalPath.endsWith("/androidSdk")) {
+                            add("""permission java.io.FilePermission "${file.absolutePath}/-", "read,execute,write";""")
+                        }
+                    }
                 } else if (file.extension == "class") {
                     listOfNotNull(
                         """permission java.io.FilePermission "${file.parentFile.absolutePath}/-", "read";""".takeIf {
@@ -238,7 +251,7 @@ tasks.withType<Test>().configureEach {
                             "{{temp_dir}}",
                             listOf(tempDir, System.getProperty("java.io.tmpdir")).flatMap {
                                 parentsReadPermission(File(it)) +
-                                        """permission java.io.FilePermission "$it/-", "read,write,delete";""" +
+                                        """permission java.io.FilePermission "$it/-", "read,write,delete,execute";""" +
                                         """permission java.io.FilePermission "$it", "read";"""
                             }.joinToString("\n    ")
                         )
@@ -260,12 +273,18 @@ tasks.withType<Test>().configureEach {
                         .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
                         .replace(
                             "{{build_dir}}",
-                            """permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";"""
+                            """
+                                permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";
+                            """.trimIndent()
                         )
                         .replace("{{java_library_paths}}", javaLibraryPaths.joinToString("\n    "))
                         .replace(
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
+                        .replace(
+                            "{{test_instrumenter}}",
+                            testInstrumenterBuildDir.get().asFile.absolutePath.let { """permission java.io.FilePermission "$it/-", "read";""" }
+                        )
                         .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
                         .replace(
                             "{{wasm}}",
@@ -274,6 +293,9 @@ tasks.withType<Test>().configureEach {
                                     append("""permission java.io.FilePermission "${it.get()}", "execute";""")
                                 }
                                 nodeJsExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                wasmNodeJsExecutable?.let {
                                     append("""permission java.io.FilePermission "${it.get()}", "execute";""")
                                 }
                                 binaryenExecutable?.let {

@@ -25,7 +25,7 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
     fun debugToString() = ByteArrayOutputStream().also { debug(PrintStream(it)) }.toString()
 
     fun debug(writer: PrintStream = System.out) {
-        for ((index, group) in groups.withIndex()) {
+        for ([index, group] in groups.withIndex()) {
             writer.print("${index + 1}:")
             for (segment in group.segments) {
                 val nameIfPresent = if (segment.name != null) "(${segment.name})" else ""
@@ -38,12 +38,12 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
     fun debugVerbose(writer: PrintStream, generatedJsFile: File) {
         assert(generatedJsFile.exists()) { "$generatedJsFile does not exist!" }
         val generatedLines = generatedJsFile.readLines().toTypedArray()
-        for ((index, group) in groups.withIndex()) {
+        for ([index, group] in groups.withIndex()) {
             writer.print("${index + 1}:")
             val generatedLine = generatedLines[index]
             val segmentsByColumn = group.segments.map { it.generatedColumnNumber to it }.toMap()
             for (i in generatedLine.indices) {
-                segmentsByColumn[i]?.let { (_, sourceFile, sourceLine, sourceColumn, name) ->
+                segmentsByColumn[i]?.let { (val _ = generatedColumnNumber, val sourceFile = sourceFileName, val sourceLine = sourceLineNumber, val sourceColumn = sourceColumnNumber, val name) ->
                     val nameIfPresent = if (name != null) "($name)" else ""
                     writer.print("<$sourceFile:${sourceLine + 1}:${sourceColumn + 1}$nameIfPresent>")
                 }

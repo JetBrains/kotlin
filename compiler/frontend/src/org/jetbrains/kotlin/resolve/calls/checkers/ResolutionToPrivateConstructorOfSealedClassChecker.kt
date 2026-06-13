@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.isSealed
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
+@K1Deprecation
 object ResolutionToPrivateConstructorOfSealedClassChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         // If AllowSealedInheritorsInDifferentFilesOfSamePackage disabled then all sealed constructors are private by default

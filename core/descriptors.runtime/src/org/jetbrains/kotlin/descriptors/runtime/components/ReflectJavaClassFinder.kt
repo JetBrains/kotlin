@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaPackage
 import org.jetbrains.kotlin.name.ClassId
 
+@K1Deprecation
 class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
         val classId = request.classId
@@ -48,6 +50,7 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
     override fun canComputeKnownClassNamesInPackage(): Boolean = false
 }
 
+@K1Deprecation
 fun ClassLoader.tryLoadClass(fqName: String) =
     try {
         Class.forName(fqName, false, this)

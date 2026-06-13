@@ -7,12 +7,13 @@ plugins {
     alias(libs.plugins.gradle.node)
     idea
     id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
 }
 
 description = "Kotlin-test integration tests for JS"
 
 node {
-    version.set(nodejsVersion)
+    version.set(nodejsLtsVersion)
     download.set(true)
 }
 
@@ -81,7 +82,7 @@ fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
         }
         doLast {
             println(tcOutput.get().asFile.readText())
-            if (exitCodeFile.get().asFile.readText() != "0" /* && !rootProject.ignoreTestFailures*/) {
+            if (exitCodeFile.get().asFile.readText() != "0") {
                 throw GradleException("$testName integration test failed")
             }
 

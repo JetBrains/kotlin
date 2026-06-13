@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextMultimodule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextSingleModule
 import org.jetbrains.kotlin.backend.wasm.ic.WasmICContextWholeWorld
-import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -31,11 +31,12 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.IrCompilerICInterface
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragments
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.test.TargetBackend
@@ -48,18 +49,24 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
 import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 @Suppress("OPT_IN_USAGE")
 private fun markExportedDeclarations(dirtyFiles: Collection<IrFile>, context: WasmBackendContext) {
-    val testFile = dirtyFiles.firstOrNull { file ->
-        file.declarations.any { declaration -> declaration is IrFunction && declaration.name.asString() == "box" }
-    } ?: return
-
-    val packageFqName = testFile.packageFqName.asString().takeIf { it.isNotEmpty() }
-    markExportedDeclarations(context, testFile, setOf(FqName.fromSegments(listOfNotNull(packageFqName, "box"))))
+    dirtyFiles.forEach { file ->
+        markFunctionToExport(context, file) {
+            // fun box(): String
+            // fun box(step: Int): String
+            // fun box(stepId: Int, isWasm: Boolean): String
+            name.asString() == "box" &&
+                    parameters.let {
+                        it.isEmpty() || it.size == 1 && it[0].type.isInt() || it.size == 2 && it[0].type.isInt() && it[1].type.isBoolean()
+                    } &&
+                    returnType.isString()
+        }
+    }
 }
-
 
 private class WasmICContextMultimoduleForTesting : WasmICContextMultimodule(
     allowIncompleteImplementations = false,
@@ -143,7 +150,7 @@ abstract class WasmAbstractInvalidationTest(
 
     override val modelTarget: ModelTarget = ModelTarget.WASM
 
-    override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
+    override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("'kotlin.wasm.test.root.out.dir' is not set")
 
     override val stdlibKLib: String =
         File(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)).canonicalPath
@@ -266,7 +273,7 @@ abstract class WasmAbstractInvalidationTest(
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
-                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                    testInfraError("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
                 val testRunnerContent = """

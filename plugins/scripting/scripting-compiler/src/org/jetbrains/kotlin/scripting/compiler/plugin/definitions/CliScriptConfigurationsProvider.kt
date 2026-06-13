@@ -20,7 +20,7 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 
 class CliScriptConfigurationsProvider(
-    project: Project,
+    project: Project?,
     getScriptDefinitionProvider: () -> ScriptDefinitionProvider
 ) : ScriptConfigurationsProvider(project) {
     private val cacheLock = ReentrantReadWriteLock()
@@ -31,6 +31,8 @@ class CliScriptConfigurationsProvider(
     private val scriptDefinitionProvider by lazy(LazyThreadSafetyMode.NONE) {
         getScriptDefinitionProvider()
     }
+
+    var reportSink: ScriptReportSink? = null
 
     @Deprecated("Use getScriptConfigurationResult(KtFileScriptSource(ktFile)) instead")
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = cacheLock.read {
@@ -54,7 +56,8 @@ class CliScriptConfigurationsProvider(
 
     @OptIn(K1SpecificScriptingServiceAccessor::class)
     private fun calculateRefinedConfiguration(
-        source: SourceCode, providedConfiguration: ScriptCompilationConfiguration?
+        source: SourceCode,
+        providedConfiguration: ScriptCompilationConfiguration?
     ): ScriptCompilationConfigurationResult? {
         val path = source.locationId ?: return null
         val cached = cache[path]
@@ -68,7 +71,7 @@ class CliScriptConfigurationsProvider(
                     )
 
                 if (source is VirtualFileScriptSource) {
-                    project.getService(ScriptReportSink::class.java)?.attachReports(source.virtualFile, result.reports)
+                    (reportSink ?: project.getService(ScriptReportSink::class.java))?.attachReports(source.virtualFile, result.reports)
                 }
 
                 cacheLock.write {

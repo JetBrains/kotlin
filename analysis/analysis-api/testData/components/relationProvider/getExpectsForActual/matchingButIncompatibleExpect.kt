@@ -1,13 +1,22 @@
 // LANGUAGE: +MultiPlatformProjects
+// callable: sample/foo
 
-// MODULE: commonMain
+// MODULE: common
+// TARGET_PLATFORM: Common
 // FILE: Common.kt
 
 package sample
+
 expect fun foo()
 
-// MODULE: androidMain()()(commonMain)
-// FILE: JvmAndroid.kt
+// MODULE: jvm()()(common)
+// TARGET_PLATFORM: JVM
+
+// The 'actual' function has an incompatible visibility (internal)
+// COMPILATION_ERRORS
+
+// FILE: Jvm.kt
 
 package sample
-internal actual fun f<caret>oo() {}
+
+<expr>internal actual fun foo() {}</expr>

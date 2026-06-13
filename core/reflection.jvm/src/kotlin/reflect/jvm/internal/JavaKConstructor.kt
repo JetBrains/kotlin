@@ -10,6 +10,8 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
+import kotlin.metadata.Modality
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createDefaultType
 import kotlin.reflect.jvm.internal.calls.Caller
@@ -38,6 +40,8 @@ internal class JavaKConstructor(
     override val isVararg: Boolean
         get() = jConstructor.isVarArgs
 
+    override val isOperator: Boolean get() = false
+
     override val javaTypeParameters: Array<out TypeVariable<*>> by lazy(PUBLICATION) {
         @Suppress("UNCHECKED_CAST")
         val classTypeParameters = jClass.typeParameters as Array<TypeVariable<*>>
@@ -49,9 +53,15 @@ internal class JavaKConstructor(
         (container as KClassImpl<*>).createDefaultType()
     }
 
+    override val modality: Modality get() = Modality.FINAL
+
     override val isPrimaryConstructor: Boolean get() = false
 
     override val overridden: Collection<ReflectKFunction> = emptyList()
+
+    override val allParameters: List<KParameter> by lazy(PUBLICATION) {
+        computeParameters(typeParameters)
+    }
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
         if (isBound) CallerImpl.BoundConstructor(jConstructor, boundReceiver)

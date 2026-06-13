@@ -46,6 +46,7 @@ interface DeclaredSymbolRemapper {
     /**
      * Remaps symbols stored, e.g., in the following properties (not necessarily limited to those properties):
      * - [IrConstructor.symbol]
+     * - [IrConstructorWithLateBinding.symbol]
      */
     fun getDeclaredConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol
 

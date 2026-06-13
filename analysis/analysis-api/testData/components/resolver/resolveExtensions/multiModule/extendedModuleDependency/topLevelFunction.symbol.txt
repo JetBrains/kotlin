@@ -1,0 +1,8 @@
+KtNameReferenceExpression(111,137): 'generatedTopLevelFunction1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      generated/generatedTopLevelFunction1(): generated.GeneratedClass2
+    ]
+  additional: SOURCE

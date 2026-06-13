@@ -179,7 +179,7 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
             }
         }
 
-        val result = overriddenPerSupertype.map { (superType, overridden) ->
+        val result = overriddenPerSupertype.map { [superType, overridden] ->
             val chosenOverridden = when (overridden.size) {
                 0 -> shouldNotBeCalled()
                 1 -> overridden.first()

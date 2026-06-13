@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.utils.KotlinPaths
 
@@ -34,6 +35,7 @@ object CLIConfigurationKeys {
         DeprecationLevel.ERROR,
     )
     @JvmField
+    @MessageCollectorAccess
     val MESSAGE_COLLECTOR_KEY = CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY
 
     // Used by compiler plugins to access delegated message collector in GroupingMessageCollector.

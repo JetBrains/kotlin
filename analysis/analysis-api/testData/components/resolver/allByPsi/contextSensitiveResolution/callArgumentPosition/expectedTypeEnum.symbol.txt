@@ -35,24 +35,48 @@ KtParameter(128,132): 'x: X'
   null
 
 KtTypeReference(131,132): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(131,132): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(131,132): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtTypeReference(135,136): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtUserType(135,136): 'X'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(135,136): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]
 
 KtNameReferenceExpression(139,140): 'x'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       x: X
@@ -74,13 +98,24 @@ KtParameter(157,163): 'arg: T'
   null
 
 KtTypeReference(162,163): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(162,163): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(162,163): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtBlockExpression(165,167): '{}'
   null
@@ -98,13 +133,24 @@ KtProperty(198,229): 'val r1: MyEnum = id(EnumValue1)'
   null
 
 KtTypeReference(206,212): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(206,212): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(206,212): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtCallExpression(215,229): 'id(EnumValue1)'
   KaSymbolResolutionSuccess:
@@ -113,6 +159,8 @@ KtCallExpression(215,229): 'id(EnumValue1)'
     ]
 
 KtNameReferenceExpression(215,217): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -125,6 +173,8 @@ KtValueArgument(218,228): 'EnumValue1'
   null
 
 KtNameReferenceExpression(218,228): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -137,6 +187,8 @@ KtCallExpression(235,266): 'receive<MyEnum>(id(EnumValue1))'
     ]
 
 KtNameReferenceExpression(235,242): 'receive'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /receive(arg: T): kotlin.Unit
@@ -149,13 +201,24 @@ KtTypeProjection(243,249): 'MyEnum'
   null
 
 KtTypeReference(243,249): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(243,249): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(243,249): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtValueArgumentList(250,266): '(id(EnumValue1))'
   null
@@ -170,6 +233,8 @@ KtCallExpression(251,265): 'id(EnumValue1)'
     ]
 
 KtNameReferenceExpression(251,253): 'id'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -182,6 +247,8 @@ KtValueArgument(254,264): 'EnumValue1'
   null
 
 KtNameReferenceExpression(254,264): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1

@@ -2870,6 +2870,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("jvmInlineTypealias.kt")
+    public void testJvmInlineTypealias() {
+      run("jvmInlineTypealias.kt");
+    }
+
+    @Test
     @TestMetadata("jvmRecordTypealias.kt")
     public void testJvmRecordTypealias() {
       run("jvmRecordTypealias.kt");
@@ -3893,6 +3899,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
     @Test
     public void testAllFilesPresentInTypeAliases() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("typeAliasAsSupertypeConstructor.kt")
+    public void testTypeAliasAsSupertypeConstructor() {
+      run("typeAliasAsSupertypeConstructor.kt");
     }
 
     @Test

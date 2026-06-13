@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
@@ -297,7 +298,7 @@ open class IrFileSerializer(
         setGlobalCoordinatesField: (Long) -> Unit, setLocalCoordinatesField: (Long) -> Unit,
         start: Int, end: Int, parent: IrElement?,
     ) {
-        val (coordinatesKind, coordinates) = serializeCoordinates(start, end, parent)
+        val [coordinatesKind, coordinates] = serializeCoordinates(start, end, parent)
         when (coordinatesKind) {
             IrCoordinatesKind.Global -> setGlobalCoordinatesField(coordinates)
             IrCoordinatesKind.Local -> setLocalCoordinatesField(coordinates)
@@ -698,6 +699,7 @@ open class IrFileSerializer(
 
     private fun serializeAnnotation(annotation: IrAnnotation, parent: IrElement?): ProtoAnnotation =
         ProtoAnnotation.newBuilder().apply {
+            @OptIn(DeprecatedCompilerApi::class)
             symbol = serializeIrSymbol(annotation.symbol)
             constructorTypeArgumentsCount = annotation.constructorTypeArgumentsCount
             if (settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4)) {
@@ -708,7 +710,7 @@ open class IrFileSerializer(
             }
             serializeIrStatementOrigin(annotation.origin, ::setOriginName)
 
-            val (coordinatesKind, coordinates) = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
+            val [coordinatesKind, coordinates] = serializeCoordinates(annotation.startOffset, annotation.endOffset, parent)
             if (coordinatesKind == IrCoordinatesKind.Local) {
                 setLocalCoordinates(coordinates)
             }
@@ -1384,6 +1386,11 @@ open class IrFileSerializer(
         }
         isInsideInline = isInsideInlineBefore
 
+        (function as? IrSimpleFunction)?.companionExtensionClass?.let { companionExtensionClass ->
+            requireAbiAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4, { "Companion extension class" }) { function }
+            proto.companionExtensionClass = serializeIrSymbol(companionExtensionClass)
+        }
+
         return proto.build()
     }
 
@@ -1482,10 +1489,10 @@ open class IrFileSerializer(
 
 
         when (val representation = clazz.valueClassRepresentation) {
-            is MultiFieldValueClassRepresentation ->
-                proto.multiFieldValueClassRepresentation = serializeMultiFieldValueClassRepresentation(representation)
+            is JvmInlineMultiFieldValueClassRepresentation ->
+                proto.multiFieldValueClassRepresentation = serializeJvmInlineMultiFieldValueClassRepresentation(representation)
             is InlineClassRepresentation -> proto.inlineClassRepresentation = serializeInlineClassRepresentation(representation)
-            null -> Unit
+            is FullValueClassRepresentation, null -> Unit
         }
 
         clazz.declarations.forEach {
@@ -1516,10 +1523,10 @@ open class IrFileSerializer(
             underlyingPropertyType = serializeIrType(representation.underlyingType)
         }.build()
 
-    private fun serializeMultiFieldValueClassRepresentation(representation: MultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
+    private fun serializeJvmInlineMultiFieldValueClassRepresentation(representation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>): ProtoIrMultiFieldValueClassRepresentation =
         ProtoIrMultiFieldValueClassRepresentation.newBuilder().apply {
-            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { (name, _) -> serializeName(name) })
-            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { (_, irType) -> serializeIrType(irType) })
+            addAllUnderlyingPropertyName(representation.underlyingPropertyNamesToTypes.map { [name, _] -> serializeName(name) })
+            addAllUnderlyingPropertyType(representation.underlyingPropertyNamesToTypes.map { [_, irType] -> serializeIrType(irType) })
         }.build()
 
     private fun serializeIrTypeAlias(typeAlias: IrTypeAlias, parent: IrElement?): ProtoTypeAlias {

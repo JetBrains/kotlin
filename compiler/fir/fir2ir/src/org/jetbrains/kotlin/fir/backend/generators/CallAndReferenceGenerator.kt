@@ -92,7 +92,7 @@ class CallAndReferenceGenerator(
         //   val `x$delegate` = y
         //   val x get() = `x$delegate`.getValue(this, ::x)
         // The reference here (like the rest of the accessor) has DefaultAccessor source kind.
-        val isForDelegate = callableReferenceAccess.source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor
+        val isForDelegate = callableReferenceAccess.source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor
         val origin = if (isForDelegate) IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE else null
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
 
@@ -110,20 +110,35 @@ class CallAndReferenceGenerator(
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
-                val backingFieldSymbol = when {
-                    referencedPropertyGetterSymbol != null -> null
-                    else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+
+                // TODO(KT-86453) drop else branch and always generate rich reference
+                return if (referencedPropertyGetterSymbol != null && propertySymbol.hasContextParameters) {
+                    adapterGenerator.generateRichPropertyReference(
+                        callableReferenceAccess,
+                        type,
+                        explicitReceiverExpression,
+                        irPropertySymbol,
+                        referencedPropertyGetterSymbol,
+                        referencedPropertySetterSymbol,
+                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
+                        isForDelegate,
+                    )
+                } else {
+                    val backingFieldSymbol = when {
+                        referencedPropertyGetterSymbol != null -> null
+                        else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+                    }
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type, irPropertySymbol,
+                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
+                        field = backingFieldSymbol,
+                        getter = referencedPropertyGetterSymbol,
+                        setter = referencedPropertySetterSymbol,
+                        origin = origin
+                    )
+                        .applyTypeArguments(callableReferenceAccess)
+                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                    field = backingFieldSymbol,
-                    getter = referencedPropertyGetterSymbol,
-                    setter = referencedPropertySetterSymbol,
-                    origin = origin
-                )
-                    .applyTypeArguments(callableReferenceAccess)
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -190,11 +205,24 @@ class CallAndReferenceGenerator(
                     // And for IR, we need to use the original constructor as a source of truth
                     function = function.typeAliasConstructorInfo?.originalConstructor ?: function
                 }
-                return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
+
+                // TODO(KT-86453) drop else branches and always generate rich reference
+                return if (callableReferenceAccess.contextArguments.isNotEmpty()) {
+                    adapterGenerator.generateRichFunctionReference(
+                        callableReferenceAccess,
+                        type,
+                        explicitReceiverExpression,
+                        irFunctionSymbol,
+                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
+                    )
+                } else if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
-                    with(adapterGenerator) {
-                        generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, type)
-                    }
+                    adapterGenerator.generateAdaptedCallableReference(
+                        callableReferenceAccess,
+                        explicitReceiverExpression,
+                        irFunctionSymbol,
+                        type
+                    )
                 } else {
                     IrFunctionReferenceImplWithShape(
                         startOffset, endOffset, type, irFunctionSymbol,
@@ -379,10 +407,10 @@ class CallAndReferenceGenerator(
                     else -> error("Unexpected name: ${render()}")
                 }
 
-                kind is KtFakeSourceElementKind.DesugaredPrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
-                kind is KtFakeSourceElementKind.DesugaredPrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
-                kind is KtFakeSourceElementKind.DesugaredPostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
-                kind is KtFakeSourceElementKind.DesugaredPostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
+                kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PrefixInc -> IrDynamicOperator.PREFIX_INCREMENT
+                kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PrefixDec -> IrDynamicOperator.PREFIX_DECREMENT
+                kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PostfixInc -> IrDynamicOperator.POSTFIX_INCREMENT
+                kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement.PostfixDec -> IrDynamicOperator.POSTFIX_DECREMENT
 
                 kind is KtFakeSourceElementKind.DesugaredAugmentedAssign -> when (calleeReference.resolved?.name) {
                     OperatorNameConventions.SET -> IrDynamicOperator.EQ
@@ -644,7 +672,7 @@ class CallAndReferenceGenerator(
                             // that's why we unwrap the intersection override and use the type of the value class property.
                             // See compiler/testData/codegen/box/inlineClasses/kt70461.kt
                             val finalIrType =
-                                if (firSymbol.isInlineClassProperty &&
+                                if (firSymbol.isPotentialInlineClassProperty &&
                                     property.isIntersectionOverride &&
                                     property.dispatchReceiverType is ConeIntersectionType
                                 ) {
@@ -662,7 +690,7 @@ class CallAndReferenceGenerator(
                                 contextParameterCount = property.contextParameters.size,
                                 hasDispatchReceiver = property.dispatchReceiverType != null,
                                 hasExtensionReceiver = property.isInstanceExtension,
-                                origin = incOrDecSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
+                                origin = qualifiedAccess.source?.kind?.incOrDecSourceKindToIrStatementOrigin()
                                     ?: augmentedAssignSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind]
                                     ?: IrStatementOrigin.GET_PROPERTY,
                                 superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
@@ -694,7 +722,7 @@ class CallAndReferenceGenerator(
                         variable.irTypeForPotentiallyComponentCall(predefinedType = irType),
                         irSymbol,
                         origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
-                        else incOrDecSourceKindToIrStatementOrigin[qualifiedAccess.source?.kind] ?: calleeReference.statementOrigin()
+                        else qualifiedAccess.source?.kind?.incOrDecSourceKindToIrStatementOrigin() ?: calleeReference.statementOrigin()
                     )
                 }
 
@@ -886,7 +914,7 @@ class CallAndReferenceGenerator(
             .applyReceiversAndArguments(lValue, firSymbol, explicitReceiverExpression, irAssignmentRhs = irRhsWithCast)
     }
 
-     fun convertToIrSetCall(
+    fun convertToIrSetCall(
         rValue: FirExpression,
         property: FirPropertySymbol,
     ): IrExpression = convertCatching(rValue, conversionScope) {
@@ -1057,7 +1085,7 @@ class CallAndReferenceGenerator(
                 is IrErrorExpression -> true
                 is IrGetClass -> this.argument.type is IrErrorType
                 is IrConstructorCall -> {
-                    for ((i, expression) in this.arguments.withIndex()) {
+                    for ([i, expression] in this.arguments.withIndex()) {
                         if (expression.cleanUp()) {
                             this.arguments[i] = null
                         }
@@ -1192,7 +1220,7 @@ class CallAndReferenceGenerator(
                         elements.forEachIndexed { i, irVarargElement ->
                             if (irVarargElement !is IrExpression) return@forEachIndexed
                             val argumentClassifier = argument.arguments[i].resolvedType.toIrType().classifierOrNull ?: return@forEachIndexed
-                            val (targetFirFun, targetIrFun) = conversionFunctions[argumentClassifier] ?: return@forEachIndexed
+                            val [targetFirFun, targetIrFun] = conversionFunctions[argumentClassifier] ?: return@forEachIndexed
                             elements[i] = irVarargElement.applyToElement(argument.arguments[i], targetFirFun, targetIrFun)
                         }
                     }
@@ -1207,7 +1235,7 @@ class CallAndReferenceGenerator(
                     )
                     val sourceTypeClassifier = argument.resolvedType.toIrType().classifierOrNull ?: return this
 
-                    val (firConversionFunction, irConversionFunction) = conversionFunctions[sourceTypeClassifier] ?: return this
+                    val [firConversionFunction, irConversionFunction] = conversionFunctions[sourceTypeClassifier] ?: return this
 
                     this.applyToElement(argument, firConversionFunction, irConversionFunction)
                 }
@@ -1338,7 +1366,7 @@ class CallAndReferenceGenerator(
         }
 
         return buildList {
-            for ((index, typeArgument) in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
+            for ([index, typeArgument] in typeAliasSymbol.resolvedExpandedTypeRef.coneType.typeArguments.withIndex()) {
                 if (ignoredTypeArguments.contains(typeArgument)) continue
 
                 val typeProjection = parametersSubstitutor.substituteArgument(typeArgument, index) ?: typeArgument
@@ -1357,7 +1385,7 @@ class CallAndReferenceGenerator(
 
         val argumentsCount = typeArguments?.size ?: return this
         if (argumentsCount <= this.typeArguments.size) {
-            for ((index, argumentType) in typeArguments.withIndex()) {
+            for ([index, argumentType] in typeArguments.withIndex()) {
                 val typeParameter = typeParameters?.get(index)
                 val argumentIrType = if (typeParameter?.isReified == true) {
                     argumentType.approximateDeclarationType(
@@ -1409,7 +1437,7 @@ class CallAndReferenceGenerator(
 
         @OptIn(PrivateConstantEvaluatorAPI::class)
         val evaluated = FirExpressionEvaluator.evaluateExpression(firArg, session)
-        val evaluatedLiteral = evaluated?.unwrapOr<FirLiteralExpression> { return } ?: return
+        val evaluatedLiteral = evaluated?.resultOrNull<FirLiteralExpression>() ?: return
         if (evaluatedLiteral.kind != ConstantValueKind.String) return
         val irConst = evaluatedLiteral.toIrConst(evaluatedLiteral.resolvedType.toIrType()).apply {
             startOffset = irArg.startOffset
@@ -1621,7 +1649,7 @@ class CallAndReferenceGenerator(
                 add(ArgumentInfo(parameter, irExpression, parameterIndex))
             }
 
-            argumentList.mappingIncludingContextArguments.entries.forEach { (argument, parameter) ->
+            argumentList.mappingIncludingContextArguments.entries.forEach { [argument, parameter] ->
                 if (!visitor.isGetClassOfUnresolvedTypeInAnnotation(argument)) {
                     val parameterIndex = if (parameter.valueParameterKind == FirValueParameterKind.Regular) {
                         receiverInfo.valueArgumentOffset(contextArgumentCount) + valueParameters.indexOf(parameter)
@@ -1644,13 +1672,13 @@ class CallAndReferenceGenerator(
 
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
+        if (!visitor.annotationMode && !converted.all { (val _ = parameter, val irArgument = expression) -> irArgument.hasNoSideEffects() } &&
             needArgumentReordering(argumentList.mappingIncludingContextArguments.values, contextParameters + valueParameters)
         ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 fun IrExpression.freeze(nameHint: String): IrExpression {
                     if (isUnchanging()) return this
-                    val (variable, symbol) = conversionScope.createTemporaryVariable(this, nameHint)
+                    val [variable, symbol] = conversionScope.createTemporaryVariable(this, nameHint)
                     statements.add(variable)
                     return IrGetValueImpl(startOffset, endOffset, symbol, null)
                 }
@@ -1666,18 +1694,18 @@ class CallAndReferenceGenerator(
                 }
 
                 // Add and freeze context and value arguments in source order
-                for ((parameter, irArgument, parameterIndex) in converted) {
+                for ((val parameter, val irArgument = expression, val parameterIndex) in converted) {
                     arguments[parameterIndex] = irArgument.freeze(parameter.name.asString())
                 }
                 statements.add(this@applyArgumentsWithReorderingIfNeeded)
             }
         } else {
-            for ((_, irArgument, parameterIndex) in converted) {
+            for ((val _ = parameter, val irArgument = expression, val parameterIndex) in converted) {
                 arguments[parameterIndex] = irArgument
             }
             if (visitor.annotationMode) {
                 val function = call.toReference(session)?.toResolvedCallableSymbol()?.fir as? FirFunction
-                for ((index, parameter) in valueParameters.withIndex()) {
+                for ([index, parameter] in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentList.mapping.containsValue(parameter)) {
                         val value = if (function?.itOrExpectHasDefaultParameterValue(index) == true) {
                             null

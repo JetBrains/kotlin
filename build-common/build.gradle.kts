@@ -8,6 +8,15 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":compiler:arguments.common"))
+    implementation(project(":compiler:config.jvm"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:frontend.java"))
+    implementation(project(":compiler:resolution"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:deserialization"))
     compileOnly(project(":core:util.runtime"))
     compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
@@ -26,6 +35,7 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(protobufFull())
     testFixturesCompileOnly(project(":compiler:cli-base"))
+    testFixturesCompileOnly(project(":js:js.parser"))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(libs.junit.jupiter.params)
     testFixturesImplementation(libs.junit4)
@@ -50,6 +60,8 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 // test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
 testsJarToBeUsedAlongWithFixtures()

@@ -227,7 +227,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
     withEntry("Candidates count", candidates.size.toString())
-    for ((index, candidate) in candidates.withIndex()) {
+    for ([index, candidate] in candidates.withIndex()) {
         val ktModule = candidate.llFirModuleData.ktModule
         withEntryGroup(index.toString()) {
             withClassEntry("candidateClass", candidate)

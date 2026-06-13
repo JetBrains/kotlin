@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
  * make extra moves for slices that should be definitely recorded into parent
  * (like storing them in the local map, later re-committing into parent's, etc.)
  */
+@K1Deprecation
 abstract class AbstractFilteringTrace(
     private val parentTrace: BindingTrace,
     name: String

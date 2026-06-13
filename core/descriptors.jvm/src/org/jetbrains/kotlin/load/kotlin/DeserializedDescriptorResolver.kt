@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import javax.inject.Inject
 
+@K1Deprecation
 class DeserializedDescriptorResolver {
     lateinit var components: DeserializationComponents
 
@@ -42,7 +44,7 @@ class DeserializedDescriptorResolver {
     internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassData? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = parseProto(kotlinClass) {
+        val [nameResolver, classProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(
@@ -57,7 +59,7 @@ class DeserializedDescriptorResolver {
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
         val data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, packageProto) = parseProto(kotlinClass) {
+        val [nameResolver, packageProto] = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
         val source = JvmPackagePartSource(

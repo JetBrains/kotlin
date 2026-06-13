@@ -213,7 +213,7 @@ private fun demangleUsr(rawUsr: String, workingDir: File): String {
         require(parts.size == 2) {
             "Malformed SYNTHESIZED USR (expected 2 parts, got ${parts.size}): $rawUsr"
         }
-        val (left, right) = parts
+        val [left, right] = parts
         return "${demangleSingleUsr(left, workingDir)} [SYNTHESIZED for ${demangleSingleUsr(right, workingDir)}]"
     }
     return demangleSingleUsr(rawUsr, workingDir)

@@ -41,7 +41,7 @@ fun TestConfigurationBuilder.setupDefaultDirectivesForIrTextTest() {
     }
 }
 
-fun TestStepBuilder.HandlersStepBuilder.NonGroupingPhase<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
+fun TestStepBuilder.HandlersStepBuilder.NonGroupingStage<IrBackendInput, BackendKinds.IrBackend>.setupIrTextDumpHandlers() {
     useHandlers(
         ::IrTextDumpHandler,
         ::IrTreeVerifierHandler,

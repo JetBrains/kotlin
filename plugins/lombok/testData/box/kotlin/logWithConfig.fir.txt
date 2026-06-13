@@ -8,7 +8,7 @@ FILE: test.kt
             this@R|/LogExample|.R|/LogExample.myLog|.R|java/util/logging/Logger.info|(String(Test nonstatic logger with custom name))
         }
 
-        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExample|).R|kotlin/reflect/KClass.qualifiedName|)
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogExample|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             private get(): R|java/util/logging/Logger|
 
     }
@@ -30,7 +30,7 @@ FILE: test.kt
             this@R|/Derived|.R|/Derived.myLog|.R|java/util/logging/Logger.info|(String(test Derived))
         }
 
-        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|Derived|).R|kotlin/reflect/KClass.qualifiedName|)
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|Derived|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             private get(): R|java/util/logging/Logger|
 
     }
@@ -48,7 +48,7 @@ FILE: test.kt
                 this@R|/LogOnNestedClass.Nested|.R|/LogOnNestedClass.Nested.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on nested class))
             }
 
-            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnNestedClass.Nested|).R|kotlin/reflect/KClass.qualifiedName|)
+            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnNestedClass.Nested|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }
@@ -68,7 +68,7 @@ FILE: test.kt
                 this@R|/LogOnInnerClass.Inner|.R|/LogOnInnerClass.Inner.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on inner class))
             }
 
-            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnInnerClass.Inner|).R|kotlin/reflect/KClass.qualifiedName|)
+            private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnInnerClass.Inner|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
                 private get(): R|java/util/logging/Logger|
 
         }
@@ -83,7 +83,7 @@ FILE: test.kt
             this@R|/LogOnObject|.R|/LogOnObject.myLog|.R|java/util/logging/Logger.info|(String(Check @Log on object))
         }
 
-        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnObject|).R|kotlin/reflect/KClass.qualifiedName|)
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnObject|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             private get(): R|java/util/logging/Logger|
 
     }
@@ -106,7 +106,7 @@ FILE: test.kt
         public final static val entries: R|kotlin/enums/EnumEntries<LogOnEnum>|
             public static get(): R|kotlin/enums/EnumEntries<LogOnEnum>|
 
-        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnEnum|).R|kotlin/reflect/KClass.qualifiedName|)
+        private final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogOnEnum|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             private get(): R|java/util/logging/Logger|
 
     }
@@ -126,7 +126,7 @@ FILE: test.kt
                 ^ R|<local>/p|
             }
 
-        public final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingExtensionAndContextualProperty|).R|kotlin/reflect/KClass.qualifiedName|)
+        public final val myLog: R|java/util/logging/Logger| = Q|java/util/logging/Logger|.R|java/util/logging/Logger.getLogger*s|(<getClass>(Q|LogWhenNonConflictingExtensionAndContextualProperty|).R|kotlin/jvm/java|.R|java/lang/Class.getName|())
             public get(): R|java/util/logging/Logger|
 
     }

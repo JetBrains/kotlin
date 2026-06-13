@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -169,10 +170,14 @@ open class SourceSet(
     fun implicitTasks(): Array<TaskProvider<*>> {
         initialSourceSet?.implicitTasks()
         return resolvePatterns().map {
-            sourceSets.project.tasks.register<ToolExecutionTask>(it.second, ToolExecutionTask::class.java) {
-                val toolConfiguration = it.first
-                toolConfiguration.configure(this, initialSourceSet!!.rule != null)
-                dependsOn(initialSourceSet.collection)
+            try {
+                sourceSets.project.tasks.register<ToolExecutionTask>(it.second, ToolExecutionTask::class.java) {
+                    val toolConfiguration = it.first
+                    toolConfiguration.configure(this, initialSourceSet!!.rule != null)
+                    dependsOn(initialSourceSet.collection)
+                }
+            } catch (_: InvalidUserDataException) {
+                sourceSets.project.tasks.named(it.second)
             }
         }.toTypedArray()
     }
@@ -223,17 +228,16 @@ open class NativeToolsExtension(val project: Project) {
     val llvmDir by nativeDependenciesExtension::llvmPath
     val hostPlatform by nativeDependenciesExtension::hostPlatform
 
-    // This is copied from `ClangArgs`
-    private val jdkDir: File
-        get() = File(System.getProperty("java.home")).canonicalFile.let { home ->
-            if (home.resolve("include").exists()) {
-                home
-            } else {
-                home.parentFile.also {
-                    check(it.resolve("include").exists())
-                }
-            }
-        }
+    // Keep in sync with ClangArgs.kt
+    private val jdkDir by lazy {
+        val home = File(System.getProperty("java.home")).canonicalFile
+        val parent = home.parentFile
+        val javaHome = System.getenv("JAVA_HOME")?.let(::File)
+
+        listOfNotNull(home, parent, javaHome)
+                .firstOrNull { it.resolve("include").exists() }
+                ?: error("JNI headers not found")
+    }
 
     private val reproducibilityRootsMap: Map<File, String>
         get() = reproducibilityRootsMap(project, nativeDependenciesExtension, jdkDir)

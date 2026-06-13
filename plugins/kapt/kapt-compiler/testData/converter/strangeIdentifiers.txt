@@ -86,7 +86,7 @@ public enum StrangeEnum {
  *   // setter: setId(Ljava/lang/String;)V
  *   public final var id: kotlin/String
  *     public final get
- *     public final (* non-default *) set(<anonymous parameter 0>: kotlin/String)
+ *     public final (* non-default *) set(_: kotlin/String)
  *
  *   // module name: main
  * }
@@ -119,6 +119,7 @@ public final class StrangeIdentifiersKt {
  *   public final fun simpleFun(): kotlin/Unit
  *
  *   // signature: simpleFun2(Ljava/lang/String;Ljava/lang/String;)V
+ *   @Anno(name = "Woofwoof", size = StrangeEnum.60x60, A B = "S")
  *   public final fun simpleFun2(a: kotlin/String, b: kotlin/String): kotlin/Unit
  *
  *   // signature: strange!Fun()V

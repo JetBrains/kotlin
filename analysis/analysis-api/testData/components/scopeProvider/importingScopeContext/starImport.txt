@@ -20,7 +20,6 @@ scopes:
         classId: other/A
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -45,7 +44,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: other/b
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []

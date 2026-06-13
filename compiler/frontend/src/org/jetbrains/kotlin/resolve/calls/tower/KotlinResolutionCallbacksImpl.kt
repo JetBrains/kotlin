@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
+@K1Deprecation
 data class LambdaContextInfo(
     var typeInfo: KotlinTypeInfo? = null,
     var dataFlowInfoAfter: DataFlowInfo? = null,
@@ -61,6 +63,7 @@ data class LambdaContextInfo(
     var trace: BindingTrace? = null
 )
 
+@K1Deprecation
 class KotlinResolutionCallbacksImpl(
     val trace: BindingTrace,
     private val expressionTypingServices: ExpressionTypingServices,
@@ -242,7 +245,7 @@ class KotlinResolutionCallbacksImpl(
 
         var hasReturnWithoutExpression = false
         var returnArgumentFound = false
-        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { (expression, contextInfo) ->
+        val returnArguments = lambdaInfo.returnStatements.mapNotNullTo(ArrayList()) { [expression, contextInfo] ->
             returnArgumentFound = true
             val returnedExpression = expression.returnedExpression
             if (returnedExpression != null) {
@@ -259,7 +262,7 @@ class KotlinResolutionCallbacksImpl(
         }
 
         val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-            if (lambdaInfo.returnStatements.any { (expression, _) -> expression == lastExpression }) {
+            if (lambdaInfo.returnStatements.any { [expression, _] -> expression == lastExpression }) {
                 return@let null
             }
 
@@ -355,7 +358,7 @@ class KotlinResolutionCallbacksImpl(
     override fun recordInlinabilityOfLambda(atom: Set<Map.Entry<SimpleResolutionCandidate, ResolvedLambdaAtom>>) {
         val call = atom.first().value.atom.psiCallArgument.valueArgument as? KtLambdaArgument ?: return
         val literal = call.getLambdaExpression()?.functionLiteral ?: return
-        val isLambdaInline = atom.all { (candidate, atom) ->
+        val isLambdaInline = atom.all { [candidate, atom] ->
             if (!InlineUtil.isInline(candidate.resolvedCall.candidateDescriptor)) return
             val valueParameterDescriptor = candidate.resolvedCall.argumentToCandidateParameter[atom.atom] ?: return
             InlineUtil.isInlineParameter(valueParameterDescriptor)
@@ -366,7 +369,7 @@ class KotlinResolutionCallbacksImpl(
     override fun getLhsResult(call: KotlinCall): LHSResult {
         val callableReferenceExpression = call.extractCallableReferenceExpression()
             ?: throw IllegalStateException("Not a callable reference")
-        val (_, lhsResult) = psiCallResolver.getLhsResult(topLevelCallContext, callableReferenceExpression)
+        val [_, lhsResult] = psiCallResolver.getLhsResult(topLevelCallContext, callableReferenceExpression)
         return lhsResult
     }
 

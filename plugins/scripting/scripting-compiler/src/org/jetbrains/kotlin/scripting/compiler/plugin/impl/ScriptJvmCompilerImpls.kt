@@ -11,19 +11,18 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -82,6 +82,7 @@ class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguratio
 
 class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
 
+    @OptIn(MessageCollectorAccess::class) // write access
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -137,11 +138,12 @@ private fun compileImpl(
     initialConfiguration: ScriptCompilationConfiguration,
     messageCollector: ScriptDiagnosticsMessageCollector
 ): ResultWithDiagnostics<CompiledScript> {
+    val project = context.environment.project
     val mainKtFile =
         getScriptKtFile(
             script,
             context.baseScriptCompilationConfiguration,
-            context.environment.project,
+            project,
             messageCollector
         )
             .valueOr { return it }
@@ -149,9 +151,12 @@ private fun compileImpl(
     if (messageCollector.hasErrors()) return failure(messageCollector)
 
     val mainKtSource = KtFileScriptSource(mainKtFile)
-    val (sourceFiles, sourceDependencies) =
-        collectRefinedSourcesAndUpdateEnvironment(context, mainKtSource, messageCollector) {
-            context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(it, initialConfiguration)
+    val [sourceFiles, sourceDependencies] =
+        collectRefinedSourcesAndUpdateEnvironment(context, mainKtSource, messageCollector) { source ->
+            context.scriptConfigurationsProvider?.let {
+                it.project = project
+                it.getScriptCompilationConfiguration(source, initialConfiguration)
+            }
         }
 
     if (messageCollector.hasErrors() || sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) {
@@ -160,13 +165,16 @@ private fun compileImpl(
 
     // TODO(KT-84516): cleanup
     val compilerConfiguration = context.environment.configuration.copy().apply {
+        @OptIn(MessageCollectorAccess::class) // write access
         this.messageCollector = messageCollector
         diagnosticsCollector = DiagnosticsCollectorImpl()
     }
     val getScriptConfiguration = { sourceCode: SourceCode ->
-        val refinedConfiguration =
-            context.scriptConfigurationsProvider?.getScriptCompilationConfiguration(sourceCode, context.baseScriptCompilationConfiguration)
-                ?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration
+        val refinedConfiguration = context.scriptConfigurationsProvider?.let {
+            it.project = project
+            it.getScriptCompilationConfiguration(sourceCode, context.baseScriptCompilationConfiguration)
+                ?.valueOrNull()?.configuration
+        } ?: context.baseScriptCompilationConfiguration
         refinedConfiguration.with {
             _languageVersion(compilerConfiguration.languageVersionSettings.languageVersion.versionString)
             // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
@@ -199,7 +207,7 @@ private fun compileImpl(
             context.baseScriptCompilationConfiguration,
             null
         )
-    val ktFiles = sourceFiles.map { it.getKtFile(definition, context.environment.project) }
+    val ktFiles = sourceFiles.map { it.getKtFile(definition, project) }
 
     checkKotlinPackageUsageForPsi(compilerConfiguration, ktFiles)
 
@@ -342,12 +350,12 @@ private fun doCompileWithK2(
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val incrementalCompilationScope = createIncrementalCompilationScope(
+    val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
         configuration,
         projectEnvironment,
+        previousStepsSymbolProviders = emptyList(),
         incrementalExcludesScope = null
-    )?.also { librariesScope -= it }
+    )
 
     val session = prepareJvmSessionsForScripting(
         projectEnvironment,
@@ -357,15 +365,7 @@ private fun doCompileWithK2(
         friendPaths = emptyList(),
         librariesScope,
         isScript = { false },
-        createProviderAndScopeForIncrementalCompilation = { files ->
-            createContextForIncrementalCompilation(
-                configuration,
-                projectEnvironment,
-                compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(files.map { KtPsiSourceFile(it) }),
-                emptyList(),
-                incrementalCompilationScope
-            )
-        }
+        incrementalCompilationContext,
     ).single().session
 
     (configuration.scriptingHostConfiguration as? ScriptingHostConfiguration)?.get(ScriptingHostConfiguration.configureFirSession)?.also {
@@ -377,8 +377,8 @@ private fun doCompileWithK2(
 
     @Suppress("DEPRECATION")
     scriptDefinitionProviderService?.run {
-        definitionProvider = ScriptDefinitionProvider.getInstance(context.environment.project)
-        configurationProvider = ScriptConfigurationsProvider.getInstance(context.environment.project)
+        definitionProvider = context.environment.configuration.getCompilerExtensions(ScriptDefinitionProvider).firstOrNull()
+        configurationProvider = context.environment.configuration.getCompilerExtensions(ScriptConfigurationsProvider).firstOrNull()
     }
 
     val rawFir = session.buildFirFromKtFiles(ktFiles) //.reversed()
@@ -389,7 +389,10 @@ private fun doCompileWithK2(
             val rawFirDeps = rawFir.associateWith { firFile ->
                 ((firFile.sourceFile as? KtPsiSourceFile)?.psiFile as? KtFile)?.let { ktFile ->
                     @Suppress("DEPRECATION") val scriptCompilationConfiguration =
-                        scriptDefinitionProviderService.configurationProvider?.getScriptConfiguration(ktFile)?.configuration
+                        scriptDefinitionProviderService.configurationProvider?.let {
+                            it.project = projectEnvironment.project
+                            it.getScriptConfiguration(ktFile)?.configuration
+                        }
                     scriptCompilationConfiguration?.get(ScriptCompilationConfiguration.resolvedImportScripts)?.mapNotNull { depSource ->
                         (depSource as? VirtualFileScriptSource)?.virtualFile?.let { depVFile ->
                             rawFir.find { ((it.sourceFile as? KtPsiSourceFile)?.psiFile as? KtFile)?.virtualFile == depVFile }
@@ -417,7 +420,7 @@ private fun doCompileWithK2(
             }
         }
 
-    val (scopeSession, fir) = session.runResolution(orderedRawFir)
+    val [scopeSession, fir] = session.runResolution(orderedRawFir)
     // checkers
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
@@ -464,7 +467,6 @@ internal fun extractResultFields(irModule: IrModuleFragment): MutableMap<FqName,
     return resultFields
 }
 
-@LegacyK2CliPipeline
 private fun prepareJvmSessionsForScripting(
     projectEnvironment: VfsBasedProjectEnvironment,
     configuration: CompilerConfiguration,
@@ -473,11 +475,20 @@ private fun prepareJvmSessionsForScripting(
     friendPaths: List<String>,
     librariesScope: AbstractProjectFileSearchScope,
     isScript: (KtFile) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<KtFile>) -> IncrementalCompilationContext?,
+    incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
-    val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-    return MinimizedFrontendContext(projectEnvironment, MessageCollector.NONE, extensionRegistrars, configuration).prepareJvmSessions(
-        files, rootModuleNameAsString, friendPaths, librariesScope, isCommonSourceForPsi, isScript,
-        fileBelongsToModuleForPsi, createProviderAndScopeForIncrementalCompilation
+    val libraryList = createLibraryListForJvm(rootModuleNameAsString, configuration, friendPaths)
+    val rootModuleName = special("<$rootModuleNameAsString>")
+    return JvmFrontendPipelinePhase.prepareJvmSessions(
+        files,
+        rootModuleName,
+        configuration,
+        projectEnvironment,
+        librariesScope,
+        libraryList,
+        isCommonSourceForPsi,
+        isScript,
+        fileBelongsToModuleForPsi,
+        incrementalCompilationContext,
     )
 }

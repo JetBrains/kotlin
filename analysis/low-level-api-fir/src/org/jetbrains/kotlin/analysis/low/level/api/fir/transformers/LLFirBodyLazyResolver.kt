@@ -1027,7 +1027,7 @@ private fun <T : FirDeclaration> StateKeeperScope<T, FirDesignation>.preservePar
         // NOTE: parameters might have `evaluatedInitializer` that is not stored in the partial context,
         // but it is not a problem as long as annotation constructors are not partially resolvable
         val newParameters = parameterSupplier(declaration)
-        for ((index, newParameter) in newParameters.withIndex()) {
+        for ([index, newParameter] in newParameters.withIndex()) {
             if (newParameter.defaultValue != null) {
                 newParameter.replaceDefaultValue(oldDefaultValues[index])
             }

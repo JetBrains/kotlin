@@ -77,7 +77,22 @@ KtUserType(166,173): 'MyClass'
   null
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(173,175): '()'
   null
@@ -220,7 +235,7 @@ KtNameReferenceExpression(339,340): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(341,342): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -329,7 +344,7 @@ KtNameReferenceExpression(358,359): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(360,361): '+'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -423,7 +438,7 @@ KtNameReferenceExpression(382,383): 'i'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(384,385): '-'
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

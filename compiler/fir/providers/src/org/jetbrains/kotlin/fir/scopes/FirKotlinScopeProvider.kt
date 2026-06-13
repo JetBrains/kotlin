@@ -71,7 +71,11 @@ class FirKotlinScopeProvider(
             }
             val declaredMemberScopeWithPossiblySynthesizedMembers =
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
-                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue) && klass.origin != FirDeclarationOrigin.Library) {
+                if (
+                    klass is FirRegularClass && !klass.isExpect &&
+                    (klass.isData || klass.isBasicValueClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
+                    klass.origin != FirDeclarationOrigin.Library
+                ) {
                     // See also KT-58926 (we apply delegation first, and data/value classes after it)
                     FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
                 } else {
@@ -287,6 +291,27 @@ fun FirTypeAlias.scopeForTypeAlias(
     scopeSession: ScopeSession,
 ): FirScope {
     return scopeProvider.getTypealiasConstructorScope(this, useSiteSession, scopeSession)
+}
+
+context(c: SessionAndScopeSessionHolder)
+fun FirClassLikeDeclaration.scopeForConstructors(
+    substitutor: ConeSubstitutor,
+    memberOwnerClass: FirClassSymbol<*>?,
+): FirScope? {
+    val scope = when (this) {
+        is FirTypeAlias -> scopeForTypeAlias(c.session, c.scopeSession)
+        is FirClass -> when (classKind) {
+            // Interfaces aren't expected to have constructors, so we skip them explicitly
+            ClassKind.INTERFACE -> null
+            else -> scopeForClass(
+                substitutor,
+                memberOwnerClass = memberOwnerClass ?: symbol,
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
+        }
+    }
+
+    return scope
 }
 
 fun ConeKotlinType.scopeForSupertype(

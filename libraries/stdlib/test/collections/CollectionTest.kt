@@ -1151,18 +1151,18 @@ class CollectionTest {
     }
 
     @Test fun decomposeFirst() {
-        val (first) = listOf(1, 2)
+        val [first] = listOf(1, 2)
         assertEquals(first, 1)
     }
 
     @Test fun decomposeSplit() {
-        val (key, value) = "key = value".split("=").map { it.trim() }
+        val [key, value] = "key = value".split("=").map { it.trim() }
         assertEquals(key, "key")
         assertEquals(value, "value")
     }
 
     @Test fun decomposeList() {
-        val (a, b, c, d, e) = listOf(1, 2, 3, 4, 5)
+        val [a, b, c, d, e] = listOf(1, 2, 3, 4, 5)
         assertEquals(a, 1)
         assertEquals(b, 2)
         assertEquals(c, 3)
@@ -1171,7 +1171,7 @@ class CollectionTest {
     }
 
     @Test fun decomposeArray() {
-        val (a, b, c, d, e) = arrayOf(1, 2, 3, 4, 5)
+        val [a, b, c, d, e] = arrayOf(1, 2, 3, 4, 5)
         assertEquals(a, 1)
         assertEquals(b, 2)
         assertEquals(c, 3)
@@ -1180,7 +1180,7 @@ class CollectionTest {
     }
 
     @Test fun decomposeIntArray() {
-        val (a, b, c, d, e) = intArrayOf(1, 2, 3, 4, 5)
+        val [a, b, c, d, e] = intArrayOf(1, 2, 3, 4, 5)
         assertEquals(a, 1)
         assertEquals(b, 2)
         assertEquals(c, 3)
@@ -1190,14 +1190,14 @@ class CollectionTest {
 
     @Test fun unzipList() {
         val list = listOf(1 to 'a', 2 to 'b', 3 to 'c')
-        val (ints, chars) = list.unzip()
+        val [ints, chars] = list.unzip()
         assertEquals(listOf(1, 2, 3), ints)
         assertEquals(listOf('a', 'b', 'c'), chars)
     }
 
     @Test fun unzipArray() {
         val array = arrayOf(1 to 'a', 2 to 'b', 3 to 'c')
-        val (ints, chars) = array.unzip()
+        val [ints, chars] = array.unzip()
         assertEquals(listOf(1, 2, 3), ints)
         assertEquals(listOf('a', 'b', 'c'), chars)
     }

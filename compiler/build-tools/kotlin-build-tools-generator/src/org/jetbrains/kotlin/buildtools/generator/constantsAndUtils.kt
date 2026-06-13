@@ -91,7 +91,8 @@ internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.wasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonJsAndWasmArguments to KDOC_SINCE_2_4_20,
     CompilerArgumentsLevelNames.commonKlibBasedArguments to KDOC_SINCE_2_4_20,
-)
+    CompilerArgumentsLevelNames.metadataArguments to KDOC_SINCE_2_4_20,
+) + syntheticArgumentInterfaces.associate { it.name to KDOC_SINCE_2_4_20 }
 
 internal fun BtaCompilerArgument<*>.extractName(): String = name.uppercase().replace("-", "_").let {
     when {
@@ -139,4 +140,4 @@ internal val btaEnumVersionMap: Map<ClassName, KotlinReleaseVersion> =
         StringConcatMode::class to KotlinReleaseVersion.v2_4_0,
         VerifyIrMode::class to KotlinReleaseVersion.v2_4_0,
         WhenExpressionsMode::class to KotlinReleaseVersion.v2_4_0
-    ).mapKeys { (clazz, _) -> clazz.toBtaEnumClassName() }
+    ).mapKeys { [clazz, _] -> clazz.toBtaEnumClassName() }

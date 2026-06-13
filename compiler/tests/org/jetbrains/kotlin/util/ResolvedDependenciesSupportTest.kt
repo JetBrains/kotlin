@@ -30,9 +30,12 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
         assertEquals(originalText, restoredText)
@@ -49,9 +52,12 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
         assertEquals(originalText, restoredText)
@@ -84,9 +90,12 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
         assertEquals(originalText, restoredText)
@@ -103,9 +112,12 @@ class ResolvedDependenciesSupportTest {
         |
         """.trimMargin()
 
-        val (deserializedModules, sourceCodeModuleId) = ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
-            fail("Unexpected failure at line $lineNo: $line")
-        }
+        (
+            val deserializedModules = modules, val sourceCodeModuleId
+        ) =
+            ResolvedDependenciesSupport.deserialize(originalText) { lineNo, line ->
+                fail("Unexpected failure at line $lineNo: $line")
+            }
         val restoredText = ResolvedDependenciesSupport.serialize(ResolvedDependencies(deserializedModules, sourceCodeModuleId))
 
         assertEquals(originalText, restoredText)

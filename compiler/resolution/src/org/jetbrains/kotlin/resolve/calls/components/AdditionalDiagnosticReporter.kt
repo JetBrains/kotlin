@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.types.typeUtil.expandIntersectionTypeIfNecessary
 // very initial state of component
 // todo: handle all diagnostic inside DiagnosticReporterByTrackingStrategy
 // move it to frontend module
+@K1Deprecation
 class AdditionalDiagnosticReporter(private val languageVersionSettings: LanguageVersionSettings) {
 
     fun reportAdditionalDiagnostics(

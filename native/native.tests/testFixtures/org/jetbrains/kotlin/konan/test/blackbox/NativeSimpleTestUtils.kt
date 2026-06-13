@@ -145,31 +145,20 @@ fun AbstractNativeSimpleTest.compileToLibrary(
 fun AbstractNativeSimpleTest.cinteropToLibrary(
     defFile: File,
     outputDir: File,
-    freeCompilerArgs: TestCompilerArgs
+    freeCompilerArgs: TestCompilerArgs,
+    noDefaultLibs: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
-    val args = freeCompilerArgs + cinteropModulesCachePathArguments(freeCompilerArgs.cinteropArgs, outputDir)
-    val testCase: TestCase = generateCInteropTestCaseFromSingleDefFile(defFile, args)
+    val testCase: TestCase = generateCInteropTestCaseFromSingleDefFile(defFile, freeCompilerArgs)
+    val packed = "-nopack" !in freeCompilerArgs.cinteropArgs
     return CInteropCompilation(
         settings = testRunSettings,
-        freeCompilerArgs = args,
+        freeCompilerArgs = freeCompilerArgs,
         defFile = testCase.modules.single().files.single().location,
         dependencies = emptyList(),
-        expectedArtifact = getLibraryArtifact(testCase, outputDir)
+        expectedArtifact = getLibraryArtifact(testCase, outputDir, packed),
+        noDefaultLibs = noDefaultLibs,
     ).result
 }
-
-private fun cinteropModulesCachePathArguments(
-    cinteropArgs: List<String>,
-    outputDir: File,
-) = if (cinteropArgs.contains("-fmodules") && cinteropArgs.none { it.startsWith(FMODULES_CACHE_PATH_EQ) }) {
-    // Don't reuse the system-wide module cache to make the test run more predictably.
-    // See e.g. https://youtrack.jetbrains.com/issue/KT-68254.
-    TestCInteropArgs("-compiler-option", "$FMODULES_CACHE_PATH_EQ$outputDir/modulesCachePath")
-} else {
-    TestCompilerArgs.EMPTY
-}
-
-private const val FMODULES_CACHE_PATH_EQ = "-fmodules-cache-path="
 
 internal class CompiledExecutable(
     val testCase: TestCase,

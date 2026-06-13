@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 
+@K1Deprecation
 object UnderscoreChecker : DeclarationChecker {
     @JvmOverloads
     fun checkIdentifier(

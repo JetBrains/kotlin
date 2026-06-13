@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.wasm.ir
  */
 fun WasmModule.calculateIds() {
     fun List<WasmNamedModuleField>.calculateIds(startIndex: Int = 0) {
-        for ((index, field) in this.withIndex()) {
+        for ([index, field] in this.withIndex()) {
             field.id = index + startIndex
         }
     }

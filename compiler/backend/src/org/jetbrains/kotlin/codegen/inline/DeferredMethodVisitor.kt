@@ -20,10 +20,17 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
+data class MethodKey(val name: String, val desc: String) {
+    constructor(methodNode: MethodNode) : this(methodNode.name, methodNode.desc)
+}
+
 class DeferredMethodVisitor(
     val intermediate: MethodNode,
     private val resultNode: () -> MethodVisitor
 ) : MethodVisitor(Opcodes.API_VERSION, intermediate) {
+
+    val key: MethodKey
+        get() = MethodKey(intermediate)
 
     override fun visitEnd() {
         super.visitEnd()

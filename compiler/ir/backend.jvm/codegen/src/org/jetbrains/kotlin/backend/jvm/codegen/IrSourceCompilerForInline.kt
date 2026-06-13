@@ -38,6 +38,9 @@ class IrSourceCompilerForInline(
     private val data: BlockInfo,
     private val evaluatorData: JvmEvaluatorData?,
 ) : SourceCompilerForInline {
+    private val anonymousObjectCapturedFieldsMatcher =
+        IrAnonymousObjectCapturedFieldsMatcher(codegen, codegen.irFunction.fileParentOrNull, callee.fileParentOrNull)
+
     override val callElementText: String
         get() = ir2string(callElement)
 
@@ -151,6 +154,9 @@ class IrSourceCompilerForInline(
     override val isFinallyMarkerRequired: Boolean
         get() = codegen.isFinallyMarkerRequired
 
+    override fun resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName: String): List<String?>? =
+        anonymousObjectCapturedFieldsMatcher.resolveAnonymousObjectCapturedFieldsByConstructorArgument(ownerInternalName)
+
     override fun isSuspendLambdaCapturedByOuterObjectOrLambda(name: String): Boolean =
         false // IR does not capture variables through outer this
 
@@ -167,7 +173,7 @@ class IrSourceCompilerForInline(
 
     // TODO: Find a way to avoid using PSI here
     override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
-        codegen.context.ktDiagnosticReporter
+        codegen.context.diagnosticReporter
             .at(callElement.symbol.owner as IrDeclaration)
             .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }

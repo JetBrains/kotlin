@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
+@K1Deprecation
 class JvmBuiltInClassDescriptorFactory(
     storageManager: StorageManager,
     private val moduleDescriptor: ModuleDescriptor,

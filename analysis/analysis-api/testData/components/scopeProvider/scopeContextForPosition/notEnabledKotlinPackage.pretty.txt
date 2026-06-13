@@ -5,6 +5,8 @@ implicit values:
     type = kotlin.myPackage.SomeClass
     ownerSymbol = KaNamedClassSymbol:
       kotlin/myPackage/SomeClass
+    label = SomeClass
+
 
 scopes:
   LocalScope, index = 0

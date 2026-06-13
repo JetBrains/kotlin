@@ -87,8 +87,8 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
     }
 
     private fun TargetDependent(modules: Iterable<Pair<String, CirTreeModule>>): TargetDependent<CirTreeRoot> {
-        return modules.toMap().mapKeys { (targetName, _) -> LeafCommonizerTarget(targetName) }
-            .mapValues { (_, module) -> CirTreeRoot(listOf(module)) }
+        return modules.toMap().mapKeys { [targetName, _] -> LeafCommonizerTarget(targetName) }
+            .mapValues { [_, module] -> CirTreeRoot(listOf(module)) }
             .toTargetDependent()
     }
 

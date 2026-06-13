@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
@@ -29,6 +30,7 @@ private val KotlinType.immanentNullability: Nullability
  * This class describes an arbitrary object which has some value in data flow analysis.
  * In general case it's some r-value.
  */
+@K1Deprecation
 class DataFlowValue(
     val identifierInfo: IdentifierInfo,
     val type: KotlinType,

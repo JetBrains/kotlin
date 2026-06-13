@@ -181,8 +181,8 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         }
 
         var someClash: Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>? = null
-        val compatible = withTypes.any { (m1, type1) ->
-            withTypes.all { (m2, type2) ->
+        val compatible = withTypes.any { [m1, type1] ->
+            withTypes.all { [m2, type2] ->
                 val result = canOverride(m1, type1, m2, type2)
                 if (!result && someClash == null && !canOverride(m2, type2, m1, type1)) {
                     someClash = m1 to m2
@@ -190,7 +190,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
                 result
             }
         }
-        someClash?.takeIf { !compatible }?.let { (m1, m2) ->
+        someClash?.takeIf { !compatible }?.let { [m1, m2] ->
             reportTypeMismatch(m1, m2, false)
             return@checkInheritanceClash
         }
@@ -199,7 +199,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
             //if there are more than one implementation we report nothing because it will be reported differently
             val implementationMember = delegation ?: implementations.singleOrNull() ?: return
             val implementationType = context.returnTypeCalculator.tryCalculateReturnType(implementationMember).coneType
-            val (conflict, _) = withTypes.find { (baseMember, baseType) ->
+            val [conflict, _] = withTypes.find { [baseMember, baseType] ->
                 !canOverride(implementationMember, implementationType, baseMember, baseType)
             } ?: return
 
@@ -310,7 +310,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         }.values
 
         val clashes = sameArgumentGroups.mapNotNull { fs ->
-            fs.zipWithNext().find { (m1, m2) ->
+            fs.zipWithNext().find { [m1, m2] ->
                 m1.typeParameterSymbols.size != m2.typeParameterSymbols.size
             }
         }

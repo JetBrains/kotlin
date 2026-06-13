@@ -116,6 +116,16 @@ class FunctionCallTransformer(
         }
     }
 
+    /**
+     * The DataFrame plugin generates local classes into existing source files. To ensure distinct source elements in these source files, we
+     * have to use [custom][KtFakeSourceElementKind.PluginGenerated.Custom] source element kinds.
+     */
+    private sealed class DataFrameSourceElementKind {
+        data class SchemaClass(val name: String) : DataFrameSourceElementKind()
+        data class TypeClass(val name: String) : DataFrameSourceElementKind()
+        data class PropertiesScopeClass(val name: String) : DataFrameSourceElementKind()
+    }
+
     private interface CallTransformer {
         fun interceptOrNull(callInfo: CallInfo, symbol: FirNamedFunctionSymbol, hash: String): CallReturnType?
 
@@ -205,7 +215,7 @@ class FunctionCallTransformer(
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
             val callResult =
                 analyzeRefinedCallShape<PluginDataFrameSchema>(call, dataSchemaLikeClassId, InterpretationErrorReporter.DEFAULT)
-            val (tokens, dataFrameSchema) = callResult ?: return null
+            (val tokens = markers, val dataFrameSchema = result) = callResult ?: return null
             val token = tokens[0]
             val rootSchemaSymbol = token.toClassSymbol()?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol()!!
             val firstSchema = rootSchemaSymbol.fir
@@ -247,12 +257,12 @@ class FunctionCallTransformer(
         @OptIn(SymbolInternals::class)
         override fun transformOrNull(call: FirFunctionCall, originalSymbol: FirNamedFunctionSymbol): FirFunctionCall? {
             val callResult = analyzeRefinedCallShape<GroupBy>(call, Names.GROUP_BY_CLASS_ID, InterpretationErrorReporter.DEFAULT)
-            val (rootMarkers, groupBy) = callResult ?: return null
+            (val rootMarkers = markers, val groupBy = result) = callResult ?: return null
 
             val keyMarker = rootMarkers[0]
             val groupMarker = rootMarkers[1]
 
-            val (keySchema, groupSchema) = if (groupBy != null) {
+            val [keySchema, groupSchema] = if (groupBy != null) {
                 val keySchema = groupBy.keys
                 val groupSchema = groupBy.groups
                 keySchema to groupSchema
@@ -303,12 +313,16 @@ class FunctionCallTransformer(
             }
         }
         val tokenId = nextName("${suggestedName}I")
-        val token = buildSchema(tokenId)
+        val token = buildSchema(tokenId, callSite)
 
         val dataFrameTypeId = nextName(suggestedName)
         val dataFrameType = buildRegularClass {
             moduleData = session.moduleData
-            source = callSite.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+            source = callSite.source?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(
+                    DataFrameSourceElementKind.TypeClass(dataFrameTypeId.relativeClassName.asString()),
+                ),
+            )
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
@@ -380,7 +394,12 @@ class FunctionCallTransformer(
             val fSymbol = FirAnonymousFunctionSymbol()
             val target = FirFunctionTarget(null, isLambda = true)
             anonymousFunction = buildAnonymousFunction {
-                source = call.arguments.firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }?.anonymousFunction?.source
+                source = call.arguments
+                    .firstNotNullOfOrNull { it as? FirAnonymousFunctionExpression }
+                    ?.anonymousFunction
+                    ?.source
+                    ?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 moduleData = session.moduleData
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
@@ -508,13 +527,17 @@ class FunctionCallTransformer(
                 requireNotNull(suggestedName)
                 val uniqueSuffix = usedNames.compute(suggestedName) { _, i -> (i ?: 0) + 1 }
                 val name = nextName(suggestedName + uniqueSuffix)
-                buildSchema(name)
+                buildSchema(name, call)
             }
 
             val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("DataFramePropertiesScope${i++}"), true)
             val scope = buildRegularClass {
                 moduleData = session.moduleData
-                source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+                source = call.source?.fakeElement(
+                    KtFakeSourceElementKind.PluginGenerated.Custom(
+                        DataFrameSourceElementKind.PropertiesScopeClass(scopeId.relativeClassName.asString()),
+                    ),
+                )
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                 status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
@@ -585,9 +608,14 @@ class FunctionCallTransformer(
 
     data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
 
-    private fun buildSchema(tokenId: ClassId): FirRegularClass {
+    private fun buildSchema(tokenId: ClassId, anchorElement: FirElement): FirRegularClass {
         val token = buildRegularClass {
             moduleData = session.moduleData
+            source = anchorElement.source?.fakeElement(
+                KtFakeSourceElementKind.PluginGenerated.Custom(
+                    DataFrameSourceElementKind.SchemaClass(tokenId.relativeClassName.asString()),
+                ),
+            )
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)

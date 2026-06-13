@@ -33,7 +33,7 @@ object SubstitutionParser {
 
         with(analysisSession) {
             return buildSubstitutor {
-                substitutorAsMap.forEach { (typeParameterName, typeString) ->
+                substitutorAsMap.forEach { [typeParameterName, typeString] ->
                     val typeParameterSymbol = getSymbolByNameSafe<KaTypeParameterSymbol>(scopeForTypeParameters, typeParameterName)
                         ?: error("Type parameter with name $typeParameterName was not found")
                     val type = parseTypeFromString(typeString, scopeForTypeParameters, scopeForTypeParameters)

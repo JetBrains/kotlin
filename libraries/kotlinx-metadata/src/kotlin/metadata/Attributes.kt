@@ -297,6 +297,17 @@ public var KmFunction.returnValueStatus: ReturnValueStatus by returnValueStatusD
     ProtoFlags.RETURN_VALUE_STATUS_FUNCTION
 )
 
+/**
+ * Indicates whether the function is compiled as static on the JVM.
+ * It is true for functions declared in the companion blocks or as companion extensions.
+ *
+ * Note that there are some other functions that are also compiled as static, such as `Enum.valueOf`
+ * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
+ * and thus this flag is not related to them.
+ */
+@ExperimentalCompanionBlocksAndExtensions
+public var KmFunction.isStatic: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_FUNCTION))
+
 // --- PROPERTY ---
 
 /**
@@ -398,6 +409,18 @@ public var KmProperty.returnValueStatus: ReturnValueStatus by returnValueStatusD
     KmProperty::flags,
     ProtoFlags.RETURN_VALUE_STATUS_PROPERTY
 )
+
+/**
+ * Indicates whether the property is compiled as static on the JVM.
+ * It is true for properties declared in the companion blocks or as companion extensions.
+ * Property accessor in this case is also static, and there is no separate attribute for it.
+ *
+ * Note that there are some other properties that are also compiled as static, such as `Enum.entries`
+ * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
+ * and thus this flag is not related to them.
+ */
+@ExperimentalCompanionBlocksAndExtensions
+public var KmProperty.isStatic: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_PROPERTY))
 
 // --- PROPERTY ACCESSOR ---
 

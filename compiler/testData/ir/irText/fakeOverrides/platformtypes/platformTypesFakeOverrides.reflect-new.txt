@@ -1,0 +1,84 @@
+KClass: class Base : Any
+  constructors:
+    public final fun `<init>`(): Base
+  members:
+    public open fun Base.character(kotlin.Char): kotlin.Unit
+    public open operator fun Base.equals(kotlin.Any?): kotlin.Boolean
+    public open <T> fun Base.eraseGenericInJava(T): kotlin.Unit
+    public open fun Base.hashCode(): kotlin.Int
+    public open fun Base.integer(kotlin.Int): kotlin.Unit
+    public open fun Base.nullableInteger(kotlin.Int): kotlin.Unit
+    public open fun Base.toString(): kotlin.String
+    public open <T> val Base.(T.)propertyEraseGenericInJava: kotlin.Any
+    public open var Base.propertyGetterCovariantOverrideInJava: kotlin.Number
+  declaredMembers:
+    public open fun Base.character(kotlin.Char): kotlin.Unit
+    public open <T> fun Base.eraseGenericInJava(T): kotlin.Unit
+    public open fun Base.integer(kotlin.Int): kotlin.Unit
+    public open fun Base.nullableInteger(kotlin.Int): kotlin.Unit
+    public open <T> val Base.(T.)propertyEraseGenericInJava: kotlin.Any
+    public open var Base.propertyGetterCovariantOverrideInJava: kotlin.Number
+KClass: class Final : Base
+  constructors:
+    public final fun `<init>`(): Final
+  members:
+    public open fun Final.character(kotlin.Char): kotlin.Unit
+    public open operator fun Final.equals(kotlin.Any?): kotlin.Boolean
+    public open <T> fun Final.eraseGenericInJava(T): kotlin.Unit
+    public open fun Final.hashCode(): kotlin.Int
+    public open fun Final.integer(kotlin.Int): kotlin.Unit
+    public open fun Final.nullableInteger(kotlin.Int): kotlin.Unit
+    public open fun Final.toString(): kotlin.String
+    public open <T> val Final.(T.)propertyEraseGenericInJava: kotlin.Any
+    public open var Final.propertyGetterCovariantOverrideInJava: kotlin.Number
+  declaredMembers:
+KClass: class FinalWithOverride : Middle
+  constructors:
+    public final fun `<init>`(): FinalWithOverride
+  members:
+    public open fun FinalWithOverride.character(kotlin.Char): kotlin.Unit
+    public open operator fun FinalWithOverride.equals(kotlin.Any?): kotlin.Boolean
+    public open fun FinalWithOverride.eraseGenericInJava(kotlin.Any): kotlin.Unit
+    public open fun FinalWithOverride.getPropertyEraseGenericInJava(kotlin.Any!): kotlin.Any!
+    public open fun FinalWithOverride.getPropertyGetterCovariantOverrideInJava(): kotlin.Int?
+    public open fun FinalWithOverride.hashCode(): kotlin.Int
+    public open fun FinalWithOverride.integer(kotlin.Int): kotlin.Unit
+    public open fun FinalWithOverride.nullableInteger(kotlin.Int): kotlin.Unit
+    public open fun FinalWithOverride.nullableInteger(kotlin.Int?): kotlin.Unit
+    public open fun FinalWithOverride.toString(): kotlin.String
+    public open <T> val FinalWithOverride.(T.)propertyEraseGenericInJava: kotlin.Any
+    public open val FinalWithOverride.(kotlin.Any.)propertyEraseGenericInJava: kotlin.Any
+    public open var FinalWithOverride.propertyGetterCovariantOverrideInJava: kotlin.Number
+  declaredMembers:
+    public open fun FinalWithOverride.character(kotlin.Char): kotlin.Unit
+    public open fun FinalWithOverride.eraseGenericInJava(kotlin.Any): kotlin.Unit
+    public open fun FinalWithOverride.getPropertyGetterCovariantOverrideInJava(): kotlin.Int?
+    public open fun FinalWithOverride.integer(kotlin.Int): kotlin.Unit
+    public open fun FinalWithOverride.nullableInteger(kotlin.Int?): kotlin.Unit
+    public open val FinalWithOverride.(kotlin.Any.)propertyEraseGenericInJava: kotlin.Any
+    public open var FinalWithOverride.propertyGetterCovariantOverrideInJava: kotlin.Number
+KClass: class Middle : Base
+  constructors:
+    public final fun `<init>`(): Middle
+  members:
+    public open fun Middle.character(kotlin.Char): kotlin.Unit
+    public open fun Middle.character(kotlin.Char): kotlin.Unit
+    public open operator fun Middle.equals(kotlin.Any?): kotlin.Boolean
+    public open fun Middle.eraseGenericInJava(kotlin.Any!): kotlin.Unit
+    public open fun Middle.getPropertyEraseGenericInJava(kotlin.Any!): kotlin.Any!
+    public open fun Middle.getPropertyGetterCovariantOverrideInJava(): kotlin.Int!
+    public open fun Middle.hashCode(): kotlin.Int
+    public open fun Middle.integer(kotlin.Int): kotlin.Unit
+    public open fun Middle.integer(kotlin.Int): kotlin.Unit
+    public open fun Middle.nullableInteger(kotlin.Int): kotlin.Unit
+    public open fun Middle.nullableInteger(kotlin.Int): kotlin.Unit
+    public open fun Middle.toString(): kotlin.String
+    public open <T> val Middle.(T.)propertyEraseGenericInJava: kotlin.Any
+    public open var Middle.propertyGetterCovariantOverrideInJava: kotlin.Number
+  declaredMembers:
+    public open fun Middle.character(kotlin.Char): kotlin.Unit
+    public open fun Middle.eraseGenericInJava(kotlin.Any!): kotlin.Unit
+    public open fun Middle.getPropertyEraseGenericInJava(kotlin.Any!): kotlin.Any!
+    public open fun Middle.getPropertyGetterCovariantOverrideInJava(): kotlin.Int!
+    public open fun Middle.integer(kotlin.Int): kotlin.Unit
+    public open fun Middle.nullableInteger(kotlin.Int): kotlin.Unit

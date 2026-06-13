@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
@@ -64,7 +65,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         return DiagnosticContextWithSuppressionImpl(sourceElement, irElement, containingFile)
     }
 
-    override fun report(factory: KtSourcelessDiagnosticFactory, message: String) {
+    override fun report(factory: KtSourcelessDiagnosticFactory, message: String, location: CompilerMessageSourceLocation?) {
         val context = object : DiagnosticContext {
             override val containingFile: KtSourceFile?
                 get() = null
@@ -73,7 +74,7 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
             override val languageVersionSettings: LanguageVersionSettings
                 get() = this@KtDiagnosticReporterWithImplicitIrBasedContext.languageVersionSettings
         }
-        val diagnostic = factory.create(message, location = null, context) ?: return
+        val diagnostic = factory.create(message, location, context) ?: return
         report(diagnostic, context)
     }
 

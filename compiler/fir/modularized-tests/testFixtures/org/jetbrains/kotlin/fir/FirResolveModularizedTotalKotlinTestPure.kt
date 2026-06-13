@@ -73,9 +73,9 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         val projectEnvironment = environment.toVfsBasedProjectEnvironment()
         val project = environment.project
 
-        val (sourceFiles: Collection<KtSourceFile>, scope) =
+        val [sourceFiles: Collection<KtSourceFile>, scope] =
             if (USE_LIGHT_TREE) {
-                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment)
+                (val platformSources, val _ = commonSources) = collectSources(environment.configuration, projectEnvironment)
                 platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
             } else {
                 val ktFiles = environment.getSourceFiles()

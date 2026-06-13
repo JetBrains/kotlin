@@ -87,7 +87,7 @@ internal class KaFirExpressionTypeProvider(
                 null -> fir.resolvedType.asKaType()
                 0 -> analysisSession.builtinTypes.any
                 1 -> superTypes.single().asKaType()
-                else -> ConeIntersectionType(superTypes).asKaType()
+                else -> @OptIn(DelicateIntersectionConstructor::class) ConeIntersectionType(superTypes, null).asKaType()
             }
         }
         is FirPropertyAccessExpression -> fir.resolvedType.asKaType()
@@ -189,7 +189,7 @@ internal class KaFirExpressionTypeProvider(
             ?.createConeSubstitutorFromTypeArguments(rootModuleSession, discardErrorTypes = !substituteWithErrorTypes)
             ?: ConeSubstitutor.Empty
 
-        return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { (_, parameter) ->
+        return resolvedArgumentMapping?.mapValuesTo(LinkedHashMap()) { [_, parameter] ->
             SubstitutedValueParameter(parameter, substitutor.substituteOrSelf(parameter.returnTypeRef.coneType))
         }
     }
@@ -275,6 +275,7 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeOfFunctionParameter(unwrapped)
                 ?: getExpectedTypeOfIndexingParameter(unwrapped)
                 ?: getExpectedTypeOfInfixFunctionParameter(unwrapped)
+                ?: getExpectedTypeOfCollectionLiteralElement(unwrapped)
                 ?: getExpectedTypeByVariableAssignment(unwrapped)
                 ?: getExpectedTypeByPropertyDeclaration(unwrapped)
                 ?: getExpectedTypeByCallableExpressionBody(unwrapped)
@@ -289,6 +290,22 @@ internal class KaFirExpressionTypeProvider(
                 ?: getExpectedTypeByThrowExpression(unwrapped)
             return expectedType
         }
+
+    /**
+     * Returns the expected type of expression nested inside a collection literal,
+     * e.g., the `FOO` in `@Anno(arg = [ FOO ])` where `arg` has an array-like type.
+     *
+     * The expected type of the nested expression is the element type of the array
+     * type that the collection literal itself is expected to produce.
+     */
+    private fun getExpectedTypeOfCollectionLiteralElement(expression: PsiElement): KaType? {
+        val collectionLiteral = expression.unwrapQualified<KtCollectionLiteralExpression> { collectionLiteral, currentExpression ->
+            currentExpression in collectionLiteral.getInnerExpressions()
+        } ?: return null
+
+        val collectionLiteralType = collectionLiteral.expectedType ?: return null
+        return with(analysisSession) { collectionLiteralType.arrayElementType }
+    }
 
     private fun getExpectedTypeByDelegatedSuperType(expression: PsiElement): KaType? {
         val entry =
@@ -313,7 +330,7 @@ internal class KaFirExpressionTypeProvider(
     }
 
     private fun getExpectedTypeOfFunctionParameter(expression: PsiElement): KaType? {
-        val (ktCallElement, argumentExpression) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
+        (val ktCallElement = call, val argumentExpression = argument) = expression.getFunctionCallAsWithThisAsParameter() ?: return null
         val firCall = ktCallElement.getOrBuildFir(resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return null
 
         val callee = (firCall.toReference(resolutionFacade.useSiteFirSession) as? FirResolvedNamedReference)?.resolvedSymbol
@@ -325,8 +342,8 @@ internal class KaFirExpressionTypeProvider(
         }
 
         val argumentsToParameters = firCall.argumentsToSubstitutedValueParameters(substituteWithErrorTypes = false) ?: return null
-        val (substitutedType, shouldUnwrapVararg) =
-            argumentsToParameters.entries.firstNotNullOfOrNull { (arg, parameter) ->
+        val [substitutedType, shouldUnwrapVararg] =
+            argumentsToParameters.entries.firstNotNullOfOrNull { [arg, parameter] ->
                 val substitutedParameterType = parameter.substitutedType
                 when {
                     arg is FirVarargArgumentsExpression -> arg.arguments.firstNotNullOfOrNull { varargArgument ->

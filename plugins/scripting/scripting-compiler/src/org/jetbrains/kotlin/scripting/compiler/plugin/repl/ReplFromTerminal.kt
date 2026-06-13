@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.IdeReplConfiguration
@@ -38,7 +40,8 @@ class ReplFromTerminal(
 
     private val writer get() = replConfiguration.writer
 
-    private val messageCollector = compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    @OptIn(MessageCollectorAccess::class)  // TODO(KT-84516)
+    private val messageCollector = compilerConfiguration.messageCollector
 
     private fun doRun() {
         try {

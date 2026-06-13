@@ -5,24 +5,24 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.toResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeCandidateCollector.TypeCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.toResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.scopeForClass
-import org.jetbrains.kotlin.fir.scopes.scopeForTypeAlias
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.scopes.scopeForConstructors
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
@@ -46,7 +46,7 @@ private fun FirScope.processConstructorsByName(
     constructorFilter: ConstructorFilter,
     processor: (FirCallableSymbol<*>) -> Unit,
 ) {
-    val (matchedClassifierSymbol, substitutor) = getFirstClassifierOrNull(callInfo, constructorFilter, bodyResolveComponents.session, bodyResolveComponents)
+    val [matchedClassifierSymbol, substitutor] = getFirstClassifierOrNull(callInfo, constructorFilter, bodyResolveComponents.session, bodyResolveComponents)
         ?: return
     val matchedClassSymbol = matchedClassifierSymbol as? FirClassLikeSymbol<*> ?: return
 
@@ -127,23 +127,7 @@ private fun processConstructors(
     processor: (FirFunctionSymbol<*>) -> Unit,
 ) {
     whileAnalysing(c.session, matchedSymbol.fir) {
-        val scope = when (matchedSymbol) {
-            is FirTypeAliasSymbol -> {
-                matchedSymbol.fir.scopeForTypeAlias(c.session, c.scopeSession)
-            }
-            is FirClassSymbol -> {
-                val firClass = matchedSymbol.fir
-                when (firClass.classKind) {
-                    ClassKind.INTERFACE -> null
-                    else -> firClass.scopeForClass(
-                        substitutor,
-                        memberOwnerClass = firClass.symbol,
-                        memberRequiredPhase = FirResolvePhase.STATUS,
-                    )
-                }
-            }
-        }
-
+        val scope = matchedSymbol.fir.scopeForConstructors(substitutor, null)
         scope?.processDeclaredConstructors {
             processor(it)
         }

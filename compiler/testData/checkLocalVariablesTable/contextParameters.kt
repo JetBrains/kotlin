@@ -8,6 +8,9 @@ class ClassTest(val a: Boolean) {
 }
 
 // METHOD : ClassTest.foo(IIJIIJI)V
+// VARIABLE : NAME=$context-Int$1 TYPE=I
+// VARIABLE : NAME=$context-Int$2 TYPE=I
+// VARIABLE : NAME=$context-Long TYPE=J
 // VARIABLE : NAME=arg0 TYPE=I
 // VARIABLE : NAME=c1 TYPE=I
 // VARIABLE : NAME=c2 TYPE=I

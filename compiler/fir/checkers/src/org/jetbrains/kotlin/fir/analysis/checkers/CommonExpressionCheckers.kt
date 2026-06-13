@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.ArrayLiteralResolution
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
@@ -36,7 +37,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
-        FirCallableReferenceChecker,
         FirSuperReferenceChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
         FirAbstractSuperCallChecker,
@@ -56,7 +56,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirIncompatibleClassExpressionChecker,
         FirMissingDependencyClassChecker,
         FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker,
-        FirArrayOfNothingQualifierChecker,
+        FirArrayOfNothingQualifiedChecker,
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
         FirInlineExposedLessVisibleTypeQualifiedAccessChecker,
@@ -86,6 +86,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         PlatformClassMappedToKotlinConstructorCallChecker,
         RedundantCallOfConversionMethodChecker,
         FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker,
+        FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
@@ -148,6 +149,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
         FirClassLiteralChecker,
+        FirArrayOfNothingClassLiteralChecker,
     )
 
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker> = setOf(
@@ -182,8 +184,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirContextSensitiveResolutionAmbiguityCheckerForEqualities,
     )
 
-    override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = setOf(
-        FirUnsupportedArrayLiteralChecker
+    override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = @OptIn(ArrayLiteralResolution::class) setOf(
+        FirUnsupportedCollectionLiteralWithArrayLiteralResolutionChecker,
     )
 
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker> = setOf(
@@ -191,8 +193,9 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
+        FirCallableReferenceChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.CallableReference,
-        FirTypeArgumentsOfQualifierOfCallableReferenceChecker,
+        FirTypeInLhsOfCallableReferenceChecker,
         FirCustomEnumEntriesMigrationReferenceChecker,
     )
 

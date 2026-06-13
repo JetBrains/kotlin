@@ -237,7 +237,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
             val delegatedConstructor = firConstructor.delegatedConstructor
             if (delegatedConstructor is FirMultiDelegatedConstructorCall) {
-                for ((oldExcessiveDelegate, newExcessiveDelegate) in delegatedConstructor.delegatedConstructorCalls
+                for ([oldExcessiveDelegate, newExcessiveDelegate] in delegatedConstructor.delegatedConstructorCalls
                     .zip((newConstructor.delegatedConstructor as FirMultiDelegatedConstructorCall).delegatedConstructorCalls)) {
                     val calleeReferenceForExessiveDelegate = oldExcessiveDelegate.calleeReference
                     if (calleeReferenceForExessiveDelegate is FirSuperReference) {

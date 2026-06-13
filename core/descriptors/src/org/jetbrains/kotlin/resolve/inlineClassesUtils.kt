@@ -25,7 +25,7 @@ val JVM_NAME_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmName")
 fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
 
 fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
-    this is ClassDescriptor && this.valueClassRepresentation is MultiFieldValueClassRepresentation
+    this is ClassDescriptor && this.valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
 
 fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
 

@@ -33,7 +33,7 @@ interface ReceiverExpressionFactory {
 }
 
 fun LexicalScope.getFactoryForImplicitReceiverWithSubtypeOf(receiverType: KotlinType): ReceiverExpressionFactory? =
-    getImplicitReceiversWithInstanceToExpression().entries.firstOrNull { (receiverDescriptor, _) ->
+    getImplicitReceiversWithInstanceToExpression().entries.firstOrNull { [receiverDescriptor, _] ->
         receiverDescriptor.type.isSubtypeOf(receiverType)
     }?.value
 
@@ -65,14 +65,14 @@ fun LexicalScope.getImplicitReceiversWithInstanceToExpression(
     }
 
     val result = LinkedHashMap<ReceiverParameterDescriptor, ReceiverExpressionFactory?>()
-    for ((index, receiver) in receivers.withIndex()) {
+    for ([index, receiver] in receivers.withIndex()) {
         val owner = receiver.containingDeclaration
         if (owner is ScriptDescriptor) {
             result[receiver] = null
             outerDeclarationsWithInstance.addAll(owner.implicitReceivers)
             continue
         }
-        val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
+        val [expressionText, isImmediateThis] = if (owner in outerDeclarationsWithInstance) {
             val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.render()}" }
             if (index == 0)
                 (thisWithLabel ?: "this") to true

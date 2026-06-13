@@ -1,0 +1,134 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(6,105): '// FILE: main.kt'
+  null
+
+KtParameterList(31,33): '()'
+  null
+
+KtBlockExpression(34,105): '{'
+  null
+
+KtProperty(39,67): 'val p = JavaClass<Int>.field'
+  null
+
+KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var field: kotlin.Int!
+    ]
+
+KtCallExpression(47,61): 'JavaClass<Int>'
+  null
+
+KtNameReferenceExpression(47,56): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(56,61): '<Int>'
+  null
+
+KtTypeProjection(57,60): 'Int'
+  null
+
+KtTypeReference(57,60): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(57,60): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(57,60): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(62,67): 'field'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      var field: kotlin.Int!
+    ]
+
+KtProperty(71,103): 'val m = JavaClass<Long>.method()'
+  null
+
+KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.method(): kotlin.String!
+    ]
+
+KtCallExpression(79,94): 'JavaClass<Long>'
+  null
+
+KtNameReferenceExpression(79,88): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass
+    ]
+
+KtTypeArgumentList(88,94): '<Long>'
+  null
+
+KtTypeProjection(89,93): 'Long'
+  null
+
+KtTypeReference(89,93): 'Long'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtUserType(89,93): 'Long'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtNameReferenceExpression(89,93): 'Long'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Long
+    ]
+
+KtCallExpression(95,103): 'method()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.method(): kotlin.String!
+    ]
+
+KtNameReferenceExpression(95,101): 'method'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /JavaClass.method(): kotlin.String!
+    ]
+
+KtValueArgumentList(101,103): '()'
+  null

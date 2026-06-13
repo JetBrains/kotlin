@@ -315,6 +315,7 @@ private class ConeIntersectionTypePointer(
         val intersectedTypes = intersectedTypePointers.restore(session, guard) ?: return null
         val upperBoundForApproximation = upperBoundForApproximationPointer?.let { guard.restorePointer(it, session) ?: return null }
 
+        @OptIn(DelicateIntersectionConstructor::class)
         return ConeIntersectionType(intersectedTypes, upperBoundForApproximation)
     }
 }

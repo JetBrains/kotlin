@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
@@ -205,6 +206,15 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, poisoningFeature.name, null)
     }
 
+    @Test
+    @TestMetadata("metadata_compilation_with_companion_blocks")
+    fun testWithEnabledCompanionBlockFeature(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xcompanion-blocks-and-extensions",
+        )
+    }
+
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
         val compilationResult = compileLibrary(
             testRunSettings,
@@ -214,7 +224,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         ).assertSuccess()
 
         val testName = testInfo.testMethod.get().annotations.firstIsInstance<TestMetadata>().value
-        val rootDir = File(TEST_DATA_ROOT, testName)
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_DATA_ROOT/$testName")
         require(rootDir.exists()) { "File doesn't exist: ${rootDir.absolutePath}" }
 
         val expectedOutput = rootDir.resolve("output.txt")
@@ -257,7 +267,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
             expectedNegativeValue: String?,
         ) {
             val propertyValues = properties.propertyList(propertyName)
-            val (positiveValues, negativeValues) = propertyValues.partition { it.startsWith("+") }
+            val [positiveValues, negativeValues] = propertyValues.partition { it.startsWith("+") }
             JUnit5Assertions.assertEquals(
                 setOfNotNull(expectedPositiveValue),
                 positiveValues.map { it.trimStart('+') }.toSet()
@@ -269,7 +279,7 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         }
 
         private val stubSourceFile: File
-            get() = File("$TEST_DATA_ROOT/stub.kt").also {
+            get() = ForTestCompileRuntime.transformTestDataPath("$TEST_DATA_ROOT/stub.kt").also {
                 require(it.exists()) { "Missing stub.kt-file, looked at: ${it.absolutePath}" }
             }
     }

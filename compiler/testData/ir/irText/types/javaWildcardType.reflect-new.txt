@@ -1,0 +1,52 @@
+KClass: class C : J, K, Any
+  constructors:
+    public final fun `<init>`(J, K): C
+  members:
+    public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
+    public open fun C.hashCode(): kotlin.Int
+    public open fun C.jf1(): kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!
+    public open fun C.jf2(): kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+    public open fun C.jg1(kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!): kotlin.Unit
+    public open fun C.jg2(kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!): kotlin.Unit
+    public open fun C.kf1(): kotlin.collections.Collection<out kotlin.CharSequence>
+    public open fun C.kf2(): kotlin.collections.Collection<kotlin.CharSequence>
+    public open fun C.kg1(kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit
+    public open fun C.kg2(kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit
+    public open fun C.toString(): kotlin.String
+  declaredMembers:
+    public open fun C.jf1(): kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!
+    public open fun C.jf2(): kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+    public open fun C.jg1(kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!): kotlin.Unit
+    public open fun C.jg2(kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!): kotlin.Unit
+    public open fun C.kf1(): kotlin.collections.Collection<out kotlin.CharSequence>
+    public open fun C.kf2(): kotlin.collections.Collection<kotlin.CharSequence>
+    public open fun C.kg1(kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit
+    public open fun C.kg2(kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit
+KClass: abstract interface J : Any
+  members:
+    public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
+    public open fun J.hashCode(): kotlin.Int
+    public abstract fun J.jf1(): kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!
+    public abstract fun J.jf2(): kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+    public abstract fun J.jg1(kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!): kotlin.Unit
+    public abstract fun J.jg2(kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!): kotlin.Unit
+    public open fun J.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun J.jf1(): kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!
+    public abstract fun J.jf2(): kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+    public abstract fun J.jg1(kotlin.collections.(Mutable)Collection<out kotlin.CharSequence!>!): kotlin.Unit
+    public abstract fun J.jg2(kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!): kotlin.Unit
+KClass: abstract interface K : Any
+  members:
+    public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
+    public open fun K.hashCode(): kotlin.Int
+    public abstract fun K.kf1(): kotlin.collections.Collection<out kotlin.CharSequence>
+    public abstract fun K.kf2(): kotlin.collections.Collection<kotlin.CharSequence>
+    public abstract fun K.kg1(kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit
+    public abstract fun K.kg2(kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit
+    public open fun K.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun K.kf1(): kotlin.collections.Collection<out kotlin.CharSequence>
+    public abstract fun K.kf2(): kotlin.collections.Collection<kotlin.CharSequence>
+    public abstract fun K.kg1(kotlin.collections.Collection<out kotlin.CharSequence>): kotlin.Unit
+    public abstract fun K.kg2(kotlin.collections.Collection<kotlin.CharSequence>): kotlin.Unit

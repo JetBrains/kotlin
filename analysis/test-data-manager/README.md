@@ -127,22 +127,24 @@ Run across all modules with the test-data-manager plugin:
 # Check mode (default) - fails if test data doesn't match
 ./gradlew manageTestDataGlobally
 
-# Update mode - updates test data files
-./gradlew manageTestDataGlobally --mode=update
+# Update mode — use the dedicated updateTestData task (CC-friendly, preserves configuration cache across -P option changes)
+./gradlew updateTestData
 
 # Run only golden tests (skip all variant-specific tests)
-./gradlew manageTestDataGlobally --mode=update --golden-only
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.goldenOnly=true
 
 # Incremental update — skip variant tests for unchanged golden paths
-./gradlew manageTestDataGlobally --mode=update --incremental
+./gradlew updateTestData -Porg.jetbrains.kotlin.testDataManager.options.incremental=true
 ```
+
+`updateTestData` is preferred over `manageTestDataGlobally --mode=update` for any iterative workflow: its options are passed via `-P` properties read at execution time, so the configuration cache stays valid when option values change between runs (~1 s reuse vs. ~1–2 min reconfiguration).
 
 ### Per-Module Execution
 
 Run on a single module:
 
 ```bash
-./gradlew :analysis:analysis-api-fir:manageTestData --mode=update
+./gradlew :analysis:analysis-api-fir:updateTestData
 ```
 
 For full CLI options, see `repo/gradle-build-conventions/test-data-manager-convention/README.md`.

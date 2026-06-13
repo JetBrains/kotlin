@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
+@K1Deprecation
 class SimpleConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
     builtIns: KotlinBuiltIns,

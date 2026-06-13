@@ -103,8 +103,7 @@ internal val jvmCallbacksDisposeHelper = ThreadSafeDisposableHelper(
         }
 )
 
-@PublishedApi
-internal val callbacksLibName = listOf("kotlinx", "cinterop", "jvmcallbacks").joinToString("")
+val callbacksLibName = listOf("kotlinx", "cinterop", "jvmcallbacks").joinToString("")
 
 inline fun <R> usingJvmCInteropCallbacks(konanHome: String? = null, block: () -> R): R {
     loadKonanLibrary(callbacksLibName, konanHome)

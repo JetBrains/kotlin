@@ -42,7 +42,7 @@ suspend fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:10 doResume
-// test.kt:10 box$slambda
+// test.kt:10 box$slambda_0
 // test.kt:10 doResume
 // test.kt:6 foo
 // test.kt:6 foo
@@ -53,12 +53,15 @@ suspend fun box() {
 // test.kt:13 $box (1)
 // coroutineHelpers.kt:9 $EmptyContinuation.<get-context> (37)
 // test.kt:13 $box (1)
-// test.kt:10 $$boxCOROUTINE$.doResume (4)
+// test.kt:10 $$boxCOROUTINE$.doResume (8, 4)
 // test.kt:6 $foo (14, 11, 14)
+// test.kt:10 $SuspendFunction1.invoke (8)
+// test.kt:10 $box$slambda.invoke (8)
 // test.kt:11 $box$slambda.invoke (8, 12)
+// test.kt:10 $SuspendFunction1.invoke (8)
 // test.kt:6 $foo (4)
 // test.kt:10 $$boxCOROUTINE$.doResume (4)
 // test.kt:13 $$boxCOROUTINE$.doResume (1)
-// test.kt:10 $$boxCOROUTINE$.doResume (4)
+// test.kt:10 $$boxCOROUTINE$.doResume (8, 4)
 // test.kt:13 $$boxCOROUTINE$.doResume (0)
 // test.kt:13 $box (1)

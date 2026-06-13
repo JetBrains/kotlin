@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
+@K1Deprecation
 object ValueClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
@@ -91,7 +93,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
         var baseParametersOk = true
         val baseParameterTypes = descriptor.defaultType.substitutedUnderlyingTypes()
 
-        for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
+        for ([baseParameter, baseParameterType] in primaryConstructor.valueParameters zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {
                 trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
                 baseParametersOk = false
@@ -196,6 +198,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class PropertiesWithBackingFieldsInsideValueClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtProperty) return
@@ -213,6 +216,7 @@ class PropertiesWithBackingFieldsInsideValueClass : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class InnerClassInsideValueClass : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
@@ -225,6 +229,7 @@ class InnerClassInsideValueClass : DeclarationChecker {
     }
 }
 
+@K1Deprecation
 class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
 
     companion object {

@@ -159,6 +159,12 @@ private class TestGeneratorForJUnit4Instance(
 
                 override val testKClass: Class<*>
                     get() = testClassModels.first().testKClass
+
+                override val isSmokeTest: Boolean
+                    get() = false
+
+                override val smokeTestLimit: Int
+                    get() = -1
             }
         }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
 
+@K1Deprecation
 class JvmPlatformOverloadsSpecificityComparator(
     val languageVersionSettings: LanguageVersionSettings
 ) : PlatformOverloadsSpecificityComparator {

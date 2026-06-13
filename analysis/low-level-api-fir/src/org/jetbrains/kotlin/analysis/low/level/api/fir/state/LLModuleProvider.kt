@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 
+@KaImplementationDetail
 class LLModuleProvider(val useSiteModule: KaModule) {
     /**
      * Returns a [KaModule] for a given [element] in context of the current session.

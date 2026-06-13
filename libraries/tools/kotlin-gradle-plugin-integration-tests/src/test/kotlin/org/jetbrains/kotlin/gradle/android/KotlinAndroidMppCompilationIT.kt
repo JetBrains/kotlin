@@ -15,6 +15,7 @@ import kotlin.io.path.*
 
 @DisplayName("KMP/Android: project compilation")
 @AndroidGradlePluginTests
+@AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
 class KotlinAndroidMppCompilationIT : KGPBaseTest() {
 
     @DisplayName("android app can depend on mpp lib")
@@ -48,7 +49,7 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
                                     else -> null
                                 }
                             }
-                            .associate { (sourceSetName, compileTask) ->
+                            .associate { [sourceSetName, compileTask] ->
                                 val args = compileTask
                                     .pluginOptions
                                     .get()
@@ -59,7 +60,7 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
                             }
                     }
                     task.doFirst {
-                        compilations.get().forEach { sourceSetName, (args, cp) ->
+                        compilations.get().forEach { sourceSetName, [args, cp] ->
                             println("$sourceSetName=args=>$args")
                             println("$sourceSetName=cp=>$cp")
                         }

@@ -29,13 +29,24 @@ KtParameter(16,20): 'i: T'
   null
 
 KtTypeReference(19,20): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(19,20): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(19,20): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtClassBody(22,130): '{'
   null
@@ -50,25 +61,47 @@ KtParameter(40,44): 'i: T'
   null
 
 KtTypeReference(43,44): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(43,44): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(43,44): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(46,57): 'str: String'
   null
 
 KtTypeReference(51,57): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(51,57): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(51,57): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(61,74): 'this((((i))))'
   KaSymbolResolutionSuccess:
@@ -98,6 +131,8 @@ KtParenthesizedExpression(68,71): '(i)'
   null
 
 KtNameReferenceExpression(69,70): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -113,25 +148,47 @@ KtParameter(91,95): 'i: T'
   null
 
 KtTypeReference(94,95): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtUserType(94,95): 'T'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtNameReferenceExpression(94,95): 'T'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
 
 KtParameter(97,107): 'value: Int'
   null
 
 KtTypeReference(104,107): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(104,107): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(104,107): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(111,128): 'this(i = (((i))))'
   KaSymbolResolutionSuccess:
@@ -155,7 +212,12 @@ KtValueArgumentName(116,117): 'i'
   null
 
 KtNameReferenceExpression(116,117): 'i'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtParenthesizedExpression(120,127): '(((i)))'
   null
@@ -167,6 +229,8 @@ KtParenthesizedExpression(122,125): '(i)'
   null
 
 KtNameReferenceExpression(123,124): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: T
@@ -179,16 +243,30 @@ KtSuperTypeList(142,154): 'A<(((Int)))>'
   null
 
 KtSuperTypeEntry(142,154): 'A<(((Int)))>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeReference(142,154): 'A<(((Int)))>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtUserType(142,154): 'A<(((Int)))>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtNameReferenceExpression(142,143): 'A'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A
+    ]
 
 KtTypeArgumentList(143,154): '<(((Int)))>'
   null
@@ -197,13 +275,24 @@ KtTypeProjection(144,153): '(((Int)))'
   null
 
 KtTypeReference(144,153): '(((Int)))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(147,150): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(147,150): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtClassBody(155,301): '{'
   null
@@ -251,13 +340,24 @@ KtParameter(207,217): 'value: Int'
   null
 
 KtTypeReference(214,217): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(214,217): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(214,217): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstructorDelegationCall(221,241): 'super(i = ((value)))'
   KaSymbolResolutionSuccess:
@@ -281,7 +381,12 @@ KtValueArgumentName(227,228): 'i'
   null
 
 KtNameReferenceExpression(227,228): 'i'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtParenthesizedExpression(231,240): '((value))'
   null
@@ -290,6 +395,8 @@ KtParenthesizedExpression(232,239): '(value)'
   null
 
 KtNameReferenceExpression(233,238): 'value'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       value: kotlin.Int
@@ -305,13 +412,24 @@ KtParameter(259,272): 'value: String'
   null
 
 KtTypeReference(266,272): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(266,272): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(266,272): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtConstructorDelegationCall(276,299): 'super(i = ((5)) as Int)'
   KaSymbolResolutionSuccess:
@@ -335,7 +453,12 @@ KtValueArgumentName(282,283): 'i'
   null
 
 KtNameReferenceExpression(282,283): 'i'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      i: T
+    ]
 
 KtBinaryExpressionWithTypeRHS(286,298): '((5)) as Int'
   null
@@ -350,13 +473,26 @@ KtConstantExpression(288,289): '5'
   null
 
 KtOperationReferenceExpression(292,294): 'as'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(295,298): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(295,298): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(295,298): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]

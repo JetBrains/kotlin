@@ -50,9 +50,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
-import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.typeUtil.getEffectiveVariance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.zipWithNulls
 import org.jetbrains.org.objectweb.asm.Type
@@ -627,7 +627,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         @JvmStatic
         fun mapUnderlyingTypeOfInlineClassType(kotlinType: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase): Type {
             val underlyingType = with(typeMapper.typeSystem) {
-                kotlinType.getUnsubstitutedUnderlyingType()
+                kotlinType.getUnsubstitutedUnderlyingTypeInJvm()
             } ?: throw IllegalStateException("There should be underlying type for inline class type: $kotlinType")
             return typeMapper.mapTypeCommon(underlyingType, TypeMappingMode.DEFAULT)
         }
@@ -727,8 +727,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
             processUnboundedWildcard: () -> Unit,
             processTypeArgument: (index: Int, type: KotlinTypeMarker, projectionKind: Variance, parameterVariance: Variance, mode: TypeMappingMode) -> Unit,
         ) {
-            for ((index, pair) in parameters.zipWithNulls(arguments).withIndex()) {
-                val (parameter, argument) = pair
+            for ([index, pair] in parameters.zipWithNulls(arguments).withIndex()) {
+                val [parameter, argument] = pair
                 if (argument == null) break
                 val type = argument.getType()
                 if (type == null ||

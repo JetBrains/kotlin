@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// SKIP_TXT
 // FILE: Foo.java
 public abstract class Foo<K extends Bar<? extends Foo<K>>> {
     abstract String getTest();

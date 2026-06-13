@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
@@ -29,6 +30,8 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
 
         val dump = testServices.moduleStructure.modules.map { module ->
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
+
+            @OptIn(MessageCollectorAccess::class)
             val messageCollector = configuration.messageCollector as MessageCollectorForCompilerTests
             messageCollector.nonSourceMessages.joinToString("\n")
         }.filter { it.isNotEmpty() }.joinToString("\n")

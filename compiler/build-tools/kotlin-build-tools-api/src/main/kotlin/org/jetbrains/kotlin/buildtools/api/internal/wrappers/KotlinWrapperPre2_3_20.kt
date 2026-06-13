@@ -299,7 +299,7 @@ internal class KotlinWrapperPre2_3_20(
             }
 
             override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
-                val oldOption = JvmCompilationOperation.Option<V>(key.id)
+                val oldOption = JvmCompilationOperation.Option<V>(key.id, key.availableSinceVersion)
                 this[oldOption] = value
             }
 

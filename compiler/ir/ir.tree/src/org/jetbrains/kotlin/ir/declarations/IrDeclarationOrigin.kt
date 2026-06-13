@@ -53,6 +53,7 @@ interface IrDeclarationOrigin {
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
+        val GENERATED_FULL_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl.Regular
         val CATCH_PARAMETER by IrDeclarationOriginImpl.Regular
@@ -123,6 +124,8 @@ interface IrDeclarationOrigin {
         val STUB_FOR_TYPE_SWITCH by IrDeclarationOriginImpl.Synthetic
 
         val VERSION_OVERLOAD_WRAPPER by IrDeclarationOriginImpl.Regular
+
+        val LAMBDA_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
     }
 
     /**

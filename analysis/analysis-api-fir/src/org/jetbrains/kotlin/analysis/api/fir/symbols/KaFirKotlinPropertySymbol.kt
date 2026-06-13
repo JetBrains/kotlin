@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.*
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaUnsupportedSymbolLocation
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableIdForName
@@ -84,6 +85,10 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
             backingPsi?.psiBasedVisibility(::isOverride)
         }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { (compilerVisibilityByPsi ?: firSymbol.visibility).asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { compilerVisibilityByPsi ?: firSymbol.visibility }
 
@@ -241,7 +246,7 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             }
         }
 
-    override val isDelegatedProperty: Boolean
+    override val isDelegated: Boolean
         get() = withValidityAssertion {
             backingPsi?.hasDelegate() ?: firSymbol.isDelegatedProperty
         }
@@ -439,7 +444,7 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val location: KaSymbolLocation
         get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
-    override val isDelegatedProperty: Boolean
+    override val isDelegated: Boolean
         get() = withValidityAssertion { false }
 
     override val receiverParameter: KaReceiverParameterSymbol?
@@ -544,7 +549,7 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
     override val name: Name
         get() = withValidityAssertion { backingPsi?.entryName ?: firSymbol.name }
 
-    override val isDelegatedProperty: Boolean
+    override val isDelegated: Boolean
         get() = withValidityAssertion { false }
 
     override val receiverParameter: KaReceiverParameterSymbol?

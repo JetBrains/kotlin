@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
 // TODO: this component is actually only needed by CLI, see CliLightClassGenerationSupport
+@K1Deprecation
 class FilesByFacadeFqNameIndexer(private val trace: BindingTrace) : FilePreprocessorExtension {
     override fun preprocessFile(file: KtFile) {
         if (!file.hasTopLevelCallables()) return

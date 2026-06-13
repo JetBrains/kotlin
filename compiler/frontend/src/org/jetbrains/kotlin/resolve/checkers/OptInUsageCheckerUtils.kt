@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.resolve.constants.*
 
+@K1Deprecation
 fun getOptInAnnotationArgs(annotation: AnnotationDescriptor): List<ConstantValue<*>> =
     when (val arguments = annotation.allValueArguments[OptInNames.OPT_IN_ANNOTATION_CLASS]) {
         // @SubclassOptInRequired from stdlib versions 2.1 and above

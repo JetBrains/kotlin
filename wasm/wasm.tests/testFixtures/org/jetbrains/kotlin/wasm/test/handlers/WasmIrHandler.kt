@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.wasm.test.handlers
 import org.jetbrains.kotlin.test.backend.handlers.WasmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.isKtFile
@@ -17,7 +18,7 @@ class WasmIrHandler(testServices: TestServices) : WasmBinaryArtifactHandler(test
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Wasm) {
-        require(info is BinaryArtifacts.Wasm.CompilationSets)
+        require(info is WasmCompilationSetsBinaryArtifact)
         val ktFiles = module.files.filter { it.isKtFile }.associate { it.originalFile to it.originalContent }
 
         ktFiles.forEach {

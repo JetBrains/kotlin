@@ -100,8 +100,9 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler EXPECT_GENERATED_JS = new DirectiveHandler("EXPECT_GENERATED_JS") {
         @Override
-        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
-            List<String> functionNames = StringUtil.split(arguments.getNamedArgument("function"), ";");
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) {
+            List<String> functionNames = arguments.findNamedListArgument("function");
+            List<String> classesNames = arguments.findNamedListArgument("class");
             String expected = arguments.getNamedArgument("expect");
             File expectedFile = new File(arguments.sourceFile.getParentFile(), expected);
             StringBuilder code = new StringBuilder();
@@ -109,7 +110,11 @@ public class DirectiveTestUtils {
                 code.append(AstSearchUtil.getFunction(ast, functionName));
                 code.append("\n");
             }
-            String msg = "Functions " + StringUtil.join(functionNames, ", ") + " got different generated JS code";
+            for (String className : classesNames) {
+                code.append(AstSearchUtil.getClass(ast, className));
+                code.append("\n");
+            }
+            String msg = "Functions " + StringUtil.join(functionNames, ", ") + " or classes " + StringUtil.join(classesNames, ", ") + " got different generated JS code";
             TestDataAssertions.assertEqualsToFile(msg, expectedFile, code.toString());
         }
     };
@@ -751,6 +756,13 @@ public class DirectiveTestUtils {
         @Nullable
         String findNamedArgument(@NotNull String name) {
             return namedArguments.get(name);
+        }
+
+        @NotNull
+        List<String> findNamedListArgument(@NotNull String name) {
+            String value = findNamedArgument(name);
+            if (value == null) return Collections.emptyList();
+            return StringUtil.split(value, ";");
         }
     }
 }

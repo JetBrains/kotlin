@@ -47,7 +47,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         val versionParamRawIndexes = if (targetIsCopy) {
             // adjust the information from the primary constructor into that of 'copy'
             getVersionParameterRawIndexes(irParent.primaryConstructor!!).also {
-                it.forEach { (_, params) -> params.indices.forEach { ix -> params[ix] += 1 } }
+                it.forEach { [_, params] -> params.indices.forEach { ix -> params[ix] += 1 } }
                 it[null]?.add(0)
             }
         } else getVersionParameterRawIndexes(target)
@@ -60,7 +60,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     private fun getVersionParameterRawIndexes(function: IrFunction): Map<String?, MutableList<Int>> =
         buildMap {
             put(null, mutableListOf()) // we always have the 'no annotation' case
-            for ((index, parameter) in function.parameters.withIndex()) {
+            for ([index, parameter] in function.parameters.withIndex()) {
                 val version = when {
                     parameter.kind != IrParameterKind.Regular -> null
                     parameter.defaultValue == null -> null
@@ -78,14 +78,14 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         versionParamRawIndexes: Map<String?, MutableList<Int>>
     ) = irFactory.stageController.restrictTo(this) {
         val versionParamIndexes = buildSortedMap {
-            for ((version, indexes) in versionParamRawIndexes) {
+            for ([version, indexes] in versionParamRawIndexes) {
                 getOrPut(version?.let(::MavenComparableVersion)) { mutableListOf() }.addAll(indexes)
             }
         }
 
         val lastIncludedParameters = BooleanArray(parameters.size) { true }
         var first = true
-        for ((version, params) in versionParamIndexes) {
+        for ([version, params] in versionParamIndexes) {
             if (!first) {
                 val newWrapper = generateWrapper(this, version, lastIncludedParameters)
                 container.declarations.add(newWrapper)
@@ -104,7 +104,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
             body = when (original) {
                 is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(wrapperCall))
                 else -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
-                    statements += IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, wrapperCall)
+                    statements += IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.nothingType, symbol, wrapperCall)
                 }
             }
         }
@@ -142,7 +142,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
     ) {
         val oldToNewParameterMap = mutableMapOf<IrValueParameterSymbol, IrValueParameter>()
 
-        for ((i, originalParam) in original.parameters.withIndex()) {
+        for ([i, originalParam] in original.parameters.withIndex()) {
             if (!includedParams[i]) continue
 
             val newParam = originalParam.copyTo(this, defaultValue = null, remapTypeMap = typeParameterSubstitution)
@@ -171,10 +171,10 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         }
     }
 
-    private val deprecationLevelHiddenSymbol: IrEnumEntrySymbol by lazy {
+    private val deprecationLevelErrorSymbol: IrEnumEntrySymbol by lazy {
         irBuiltIns.deprecationLevelSymbol.owner.declarations
             .filterIsInstance<IrEnumEntry>()
-            .single { it.name.toString() == "HIDDEN" }.symbol
+            .single { it.name.toString() == "ERROR" }.symbol
     }
 
     fun buildDeprecationCall(version: MavenComparableVersion?): IrAnnotation = IrAnnotationImpl.fromSymbolOwner(
@@ -196,7 +196,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 irBuiltIns.deprecationLevelSymbol.defaultType,
-                deprecationLevelHiddenSymbol
+                deprecationLevelErrorSymbol
             )
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,17 +9,15 @@ import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPhaseSuspensionEventCompleter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPhaseSuspensionEventCompleter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import java.util.concurrent.locks.ReentrantLock
 
 /**
  * This class is responsible for the locking strategy in the lazy resolution mode.
@@ -32,14 +30,6 @@ import java.util.concurrent.locks.ReentrantLock
  * @see withJumpingLock
  */
 internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
-    private val globalLock = ReentrantLock()
-
-    inline fun <R> withGlobalLock(action: () -> R): R {
-        if (!globalLockEnabled) return action()
-
-        return globalLock.lockWithPCECheck(action)
-    }
-
     /**
      * Locks an a [FirElementWithResolveState] to resolve from `phase - 1` to [phase] and
      * then updates the [FirElementWithResolveState.resolveState] to a [phase].
@@ -408,10 +398,6 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
     FirResolveState::class.java,
     "resolveState"
 )
-
-private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-    Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
-}
 
 /**
  * @see FirInProcessOfResolvingToJumpingPhaseState

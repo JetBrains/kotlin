@@ -1,0 +1,8 @@
+KtNameReferenceExpression(70,74): 'name'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val name: kotlin.String
+    ]
+  additional: [privateProperty.kt]

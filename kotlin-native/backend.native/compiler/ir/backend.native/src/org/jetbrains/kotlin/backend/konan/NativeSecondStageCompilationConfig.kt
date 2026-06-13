@@ -7,55 +7,26 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.legacyKlibReverseTopoSort
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.CliDiagnostics
+import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
-import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
-import org.jetbrains.kotlin.konan.config.allocationMode
-import org.jetbrains.kotlin.konan.config.autoCacheDir
-import org.jetbrains.kotlin.konan.config.checkDependencies
-import org.jetbrains.kotlin.konan.config.compileFromBitcode
-import org.jetbrains.kotlin.konan.config.debug
-import org.jetbrains.kotlin.konan.config.enableAssertions
-import org.jetbrains.kotlin.konan.config.externalDependencies
-import org.jetbrains.kotlin.konan.config.fullExportedNamePrefix
-import org.jetbrains.kotlin.konan.config.generateDebugTrampoline
-import org.jetbrains.kotlin.konan.config.incrementalCacheDir
-import org.jetbrains.kotlin.konan.config.konanDataDir
-import org.jetbrains.kotlin.konan.config.konanHome
-import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
-import org.jetbrains.kotlin.konan.config.konanManifestAddend
-import org.jetbrains.kotlin.konan.config.konanPurgeUserLibs
-import org.jetbrains.kotlin.konan.config.konanTarget
-import org.jetbrains.kotlin.konan.config.llvmLtoPasses
-import org.jetbrains.kotlin.konan.config.llvmModulePasses
-import org.jetbrains.kotlin.konan.config.llvmVariant
-import org.jetbrains.kotlin.konan.config.makePerFileCache
-import org.jetbrains.kotlin.konan.config.omitFrameworkBinary
-import org.jetbrains.kotlin.konan.config.optimization
-import org.jetbrains.kotlin.konan.config.runtimeFile
-import org.jetbrains.kotlin.konan.config.runtimeLogs
-import org.jetbrains.kotlin.konan.config.saveDependenciesPath
-import org.jetbrains.kotlin.konan.config.saveLlvmIrDirectory
-import org.jetbrains.kotlin.konan.config.serializedDependencies
-import org.jetbrains.kotlin.konan.config.staticFramework
-import org.jetbrains.kotlin.konan.config.testDumpOutputPath
+import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
+import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.hasDeclarationsAccessedDuringFrontendResolve
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
@@ -74,7 +45,7 @@ class NativeSecondStageCompilationConfig(
         // We can't access `target` property due to circular dependency.
         val target = configuration.konanTarget
         if (macabi && target !in setOf("ios_simulator_arm64", "ios_x64")) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "macabi is only supported for iosArm64 target")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "macabi is only supported for iosArm64 target")
             false
         } else macabi
     }
@@ -99,7 +70,7 @@ class NativeSecondStageCompilationConfig(
                 }
             }
             configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let(this::putAll)
-            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { (key, value) ->
+            configuration.llvmVariant?.getKonanPropertiesEntry()?.let { [key, value] ->
                 put(key, value)
             }
         }
@@ -132,7 +103,7 @@ class NativeSecondStageCompilationConfig(
         val explicit = configuration.get(BinaryOptions.smallBinary)
         if (debug) {
             if (explicit == true) {
-                configuration.report(CompilerMessageSeverity.WARNING, "smallBinary is not compatible with debug, and will be ignored")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "smallBinary is not compatible with debug, and will be ignored")
             }
             return@run false
         }
@@ -150,7 +121,7 @@ class NativeSecondStageCompilationConfig(
             it.toObsoleteKind() !in target.supportedSanitizers() -> "${it.name} sanitizer is unsupported on ${target.name}"
             else -> null
         }?.let { message ->
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, message)
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
             return@takeIf false
         }
         return@takeIf true
@@ -168,7 +139,7 @@ class NativeSecondStageCompilationConfig(
             true -> true
             false -> {
                 if (target.family == Family.MINGW) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "MinGW target does not support mmap/munmap")
+                    configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "MinGW target does not support mmap/munmap")
                     true
                 } else {
                     false
@@ -179,7 +150,7 @@ class NativeSecondStageCompilationConfig(
     val mmapTag: UByte by lazy {
         configuration.get(BinaryOptions.mmapTag)?.let {
             if (it > 255U) {
-                configuration.report(CompilerMessageSeverity.ERROR, "mmap tag must be between 1 and 255")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_ERROR, "mmap tag must be between 1 and 255")
             }
             it.toUByte()
         } ?: 246U // doesn't seem to be used in the wild.
@@ -198,7 +169,7 @@ class NativeSecondStageCompilationConfig(
         val cfgString = configuration.runtimeLogs ?: return@lazy default
 
         fun <T> error(message: String): T? {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "$message. No logging will be performed.")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "$message. No logging will be performed.")
             return null
         }
 
@@ -248,7 +219,7 @@ class NativeSecondStageCompilationConfig(
     val gcSchedulerType: GCSchedulerType by lazy {
         val arg = configuration.get(BinaryOptions.gcSchedulerType) ?: defaultGCSchedulerType
         arg.deprecatedWithReplacement?.let { replacement ->
-            configuration.report(CompilerMessageSeverity.WARNING, "Binary option gcSchedulerType=$arg is deprecated. Use gcSchedulerType=$replacement instead")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "Binary option gcSchedulerType=$arg is deprecated. Use gcSchedulerType=$replacement instead")
             replacement
         } ?: arg
     }
@@ -274,13 +245,13 @@ class NativeSecondStageCompilationConfig(
         val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
         if (gcMarkSingleThreaded) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Mutators cooperation is not supported during single threaded mark")
             }
             false
         } else if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
             if (mutatorsCooperate == true) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Mutators cooperation is not yet supported in CMS GC")
             }
             false
@@ -293,7 +264,7 @@ class NativeSecondStageCompilationConfig(
         val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
         if (gcMarkSingleThreaded) {
             if (auxGCThreads != null && auxGCThreads != 0U) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Auxiliary GC workers are not supported during single threaded mark")
             }
             0U
@@ -334,7 +305,7 @@ class NativeSecondStageCompilationConfig(
 
     val enableSafepointSignposts: Boolean = configuration.get(BinaryOptions.enableSafepointSignposts)?.also {
         if (it && !target.supportsSignposts) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Signposts are not available on $target. The setting will have no effect.")
         }
     } ?: false // Disabled by default because of KT-68928
 
@@ -350,7 +321,7 @@ class NativeSecondStageCompilationConfig(
     val globalDataLazyInit: Boolean
         get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
             if (!it) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager Global Data initialization is deprecated")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager Global Data initialization is deprecated")
             }
         } ?: true
 
@@ -385,8 +356,13 @@ class NativeSecondStageCompilationConfig(
     val enableDebugTransparentStepping: Boolean
         get() = target.family.isAppleFamily && (configuration.get(BinaryOptions.enableDebugTransparentStepping) ?: true)
 
+    private val defaultLatin1Strings = false
     val latin1Strings: Boolean
-        get() = configuration.get(BinaryOptions.latin1Strings) ?: false
+        get() = configuration.get(BinaryOptions.latin1Strings) ?: defaultLatin1Strings
+
+    private val defaultPerFileCacheForStdlib = true
+    val perFileCacheForStdlib: Boolean
+        get() = configuration.get(BinaryOptions.perFileCacheForStdlib) ?: defaultPerFileCacheForStdlib
 
     init {
         // NB: producing LIBRARY is enabled on any combination of hosts/targets
@@ -423,8 +399,22 @@ class NativeSecondStageCompilationConfig(
     val exportedLibraries: List<KotlinLibrary>
         get() = getExportedLibraries(configuration, resolve.resolvedLibraries, resolve.resolver.searchPathResolver, report = true)
 
+    /**
+     * Returns the list of libraries in reverse topological order.
+     */
     fun librariesWithDependencies(): List<KotlinLibrary> {
-        return resolvedLibraries.filterRoots { (!it.library.isFromKotlinNativeDistribution && !purgeUserLibs) || it.library.hasDeclarationsAccessedDuringFrontendResolve }.getFullList().legacyKlibReverseTopoSort()
+        return resolvedLibraries.filterRoots {
+            // Let's leave only those dependencies (roots) that have been explicitly specified by the used in compiler's CLI.
+            //
+            // The implicit dependencies (those that are loaded from the Kotlin/Native distribution: stdlib & platform libraries)
+            // should be skipped. There might be 100+ platform libraries per a target, and we don't want ALL of them to participate
+            // in the expensive IR-linkage process.
+            //
+            // Later upon the subsequent `getFullList()` call, some of the implicit dependencies will be added. But only if they
+            // are mentioned in `depends=` manifest property in root libraries. Which means only a small really required subset
+            // of them will be added.
+            it.library.isExplicitlySpecifiedByUserInCLIArgument && !purgeUserLibs
+        }.getFullList()
     }
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
@@ -441,7 +431,7 @@ class NativeSecondStageCompilationConfig(
     val allocationMode by lazy {
         (configuration.allocationMode ?: defaultAllocationMode).also {
             if (it == AllocationMode.CUSTOM && sanitizer != null && pagedAllocator) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
             }
         }
     }
@@ -453,7 +443,7 @@ class NativeSecondStageCompilationConfig(
     val minidumpOnSIGTERM by lazy {
         configuration.get(BinaryOptions.minidumpOnSIGTERM)?.let {
             if (it && minidumpLocation == null) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Minidump location is not defined")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Minidump location is not defined")
                 false
             } else it
         } ?: false
@@ -462,10 +452,28 @@ class NativeSecondStageCompilationConfig(
     val swiftExport by lazy {
         configuration.get(BinaryOptions.swiftExport)?.let {
             if (it && !target.supportsObjcInterop()) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Swift Export cannot be enabled on $target that does not have objc interop")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Swift Export cannot be enabled on $target that does not have objc interop")
                 false
             } else it
         } ?: false
+    }
+
+    // Escape analysis can mark certain objects as non-escaping even if they can't e allocated on stack.
+    // When this flag is set to `true`, such objects lifetime will be forced into "global", making them proper escaping heap objects.
+    // When set to `false`, the objects will still be allocated on heap, but considered "local" othervise,
+    // possibly creating heap->stack references.
+    // Currently, disabling this safeguard is not compatible with CMS GC.
+    // Moreover, it may lead to crashes in memory dumper due to similar reasons.
+    // See:
+    // KT-75317 Kotlin/Native: segfault in kotlin::gc::Mark
+    // KT-85811 K/N: FirNativeGCTestGenerated.testMemoryDump fails
+    // KT-69731 Kotlin/Native: handle heap-allocated non-escaping objects with CMS
+    val escapeAnalysisPropagateExiledToHeapObjects by lazy {
+        configuration.get(BinaryOptions.escapeAnalysisPropagateExiledToHeapObjects)?.also {
+            if (it && gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "CMS GC requires escapeAnalysisPropagateExiledToHeapObjects=true")
+            }
+        } ?: true
     }
 
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
@@ -482,7 +490,7 @@ class NativeSecondStageCompilationConfig(
     internal val propertyLazyInitialization: Boolean
         get() = configuration[NativeConfigurationKeys.PROPERTY_LAZY_INITIALIZATION]?.also {
             if (!it) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager property initialization is deprecated")
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "Eager property initialization is deprecated")
             }
         } ?: defaultPropertyLazyInitialization
 
@@ -510,16 +518,21 @@ class NativeSecondStageCompilationConfig(
 
     val stackProtectorMode = configuration.get(BinaryOptions.stackProtector)?.let {
         if (it != StackProtectorMode.NO && target.family == Family.MINGW) {
-            configuration.reportCompilationError("Stack protector is not supported on MinGW targets")
+            configuration.reportCompilationErrorAndThrow("Stack protector is not supported on MinGW targets")
             null
         } else it
     } ?: StackProtectorMode.NO
+
+    // By default use the new C++ passes.
+    val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
         append("STATIC")
 
+        if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
+            append("-stdlib_cache${if (perFileCacheForStdlib) "PERFILE" else "MONOLITHIC"}")
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
         if (sanitizer != null)
@@ -536,9 +549,14 @@ class NativeSecondStageCompilationConfig(
         }
         if (cCallMode != defaultCCallMode)
             append("-ccall_mode${cCallMode.name}")
+        if (latin1Strings != defaultLatin1Strings)
+            append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {
+        // Note: when appending a new flavor into the cache, be sure to update
+        // [CompilerConfiguration.setupCommonOptionsForCaches] if needed.
+
         appendCommonCacheFlavor()
         append("-system")
 
@@ -562,6 +580,8 @@ class NativeSecondStageCompilationConfig(
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
         if (minidumpLocation != null)
             append("-with_crash_dumps")
+        if (runtimeLogsEnabled)
+            append("-runtime_logs_enabled")
     }
 
     private val userCacheFlavorString = buildString {
@@ -570,23 +590,23 @@ class NativeSecondStageCompilationConfig(
         append("-pl")
     }
 
-    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString).also { it.mkdirs() }
+    internal val systemCacheDirectory = File(distribution.systemCacheRootDirectory.absolutePath).child(systemCacheFlavorString)
+
     private val autoCacheRootDirectory = configuration.autoCacheDir?.let {
         File(it).apply {
-            if (!isDirectory) configuration.reportCompilationError("auto cache directory $this is not found or is not a directory")
+            if (!isDirectory) configuration.reportCompilationErrorAndThrow("auto cache directory $this is not found or is not a directory")
         }
     } ?: File(distribution.systemCacheRootDirectory.absolutePath)
-    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString).also { it.mkdirs() }
+    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString)
     private val incrementalCacheRootDirectory = configuration.incrementalCacheDir?.let {
         File(it).apply {
-            if (!isDirectory) configuration.reportCompilationError("incremental cache directory $this is not found or is not a directory")
+            if (!isDirectory) configuration.reportCompilationErrorAndThrow("incremental cache directory $this is not found or is not a directory")
         }
     }
-    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)?.also { it.mkdirs() }
+    internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
-        runtimeLogsEnabled -> "with runtime logs"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
@@ -627,7 +647,7 @@ class NativeSecondStageCompilationConfig(
     internal val omitFrameworkBinary: Boolean by lazy {
         configuration.omitFrameworkBinary.also {
             if (it && produce != CompilerOutputKind.FRAMEWORK) {
-                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
                         "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
             }
         }
@@ -663,7 +683,7 @@ class NativeSecondStageCompilationConfig(
         val path = configuration.saveLlvmIrDirectory
         if (path == null) {
             val tempDir = Files.createTempDirectory(Paths.get(StandardSystemProperty.JAVA_IO_TMPDIR.value()!!), /* prefix= */ null).toFile()
-            configuration.report(CompilerMessageSeverity.WARNING,
+            configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING,
                     "Temporary directory for LLVM IR is ${tempDir.canonicalPath}")
             tempDir
         } else {
@@ -699,7 +719,7 @@ class NativeSecondStageCompilationConfig(
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.
     val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
-    val (_, _, _, metaString, build) = versionPattern.matchEntire(this)?.destructured
+    val [_, _, _, metaString, build] = versionPattern.matchEntire(this)?.destructured
             ?: throw IllegalStateException("Cannot parse Kotlin/Native version: $this")
 
     return metaString.isEmpty() && build.isEmpty()

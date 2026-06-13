@@ -35,8 +35,7 @@ class JsPowerAssertTest {
                 unknown persons: [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 require(Person.UNKNOWN.size == 1) { "unknown persons: ${"$"}{Person.UNKNOWN}" }
                                |       |    |
-                               |       |    false
-                               |       2
+                               |       2    false
                                [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
                 
             """.trimIndent(),

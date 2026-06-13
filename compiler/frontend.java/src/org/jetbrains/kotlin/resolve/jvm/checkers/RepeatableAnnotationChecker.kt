@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmTarget
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPlatformAnnotationFeaturesSupport
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.TypeUtils
 
+@K1Deprecation
 class RepeatableAnnotationChecker(
     private val languageVersionSettings: LanguageVersionSettings,
     private val jvmTarget: JvmTarget,

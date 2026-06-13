@@ -110,7 +110,7 @@ internal abstract class KotlinKFunction(
     }
 
     private fun KDeclarationContainerImpl.isInlineClass(): Boolean =
-        this is KClassImpl<*> && isValue
+        this is KClassImpl<*> && isJvmInlineValue
 
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
@@ -143,6 +143,7 @@ internal abstract class KotlinKFunction(
 
     private fun shouldHideConstructorDueToValueClassTypeValueParameters(constructor: KotlinKConstructor): Boolean =
         constructor.visibility != KVisibility.PRIVATE &&
+                !(constructor.container as KClass<*>).isSealed &&
                 constructor.parameters.any { it.type.jvmErasure.isValueClassThatRequiresMangling() }
 
     private fun KClass<*>.isValueClassThatRequiresMangling(): Boolean =

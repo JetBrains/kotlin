@@ -2,6 +2,12 @@ plugins {
     kotlin("jvm")
 }
 
-val firCompilerCoreModules: Array<String> by rootProject.extra
+val firCompilerModules: Array<String> by rootProject.extra
 
-publishJarsForIde(firCompilerCoreModules.asList())
+val excludedFirModules = listOf(
+    ":compiler:fir:raw-fir:light-tree2fir",
+)
+
+val projects = firCompilerModules.asList() - excludedFirModules
+
+publishJarsForIde(projects)

@@ -29,6 +29,8 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 publish()
 
 val core = "$rootDir/core"
@@ -61,6 +63,7 @@ dependencies {
     embedded(project(":core:descriptors.jvm")) { isTransitive = false }
     embedded(project(":core:deserialization")) { isTransitive = false }
     embedded(project(":core:descriptors.runtime")) { isTransitive = false }
+    embedded(project(":core:reflection.common.jvm")) { isTransitive = false }
     embedded(project(":core:util.runtime")) { isTransitive = false }
     embedded("javax.inject:javax.inject:1") { isTransitive = false }
     embedded(protobufLite()) { isTransitive = false }
@@ -240,6 +243,7 @@ val relocateCoreSources by task<Copy> {
     from("$core/descriptors.common/src")
     from("$core/descriptors.jvm/src")
     from("$core/descriptors.runtime/src")
+    from("$core/reflection.common.jvm/src")
     from("$core/deserialization/src")
     from("$core/deserialization/deserialization.common/src")
     from("$core/util.runtime/src")
@@ -315,6 +319,9 @@ dexMethodCount {
 }
 
 tasks.named("assemble").configure { dependsOn(result) }
+
+val shadowConfig = configurations.consumable("shadowJar")
 artifacts {
     add("runtimeElements", result.map { it.outputs.files.singleFile })
+    add(shadowConfig.name, reflectShadowJar.map { it.outputs.files.singleFile })
 }

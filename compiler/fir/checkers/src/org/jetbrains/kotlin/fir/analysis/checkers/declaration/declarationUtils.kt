@@ -137,10 +137,10 @@ val FirDeclaration.isLocalDeclaredInBlock: Boolean
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
+fun FirTypeRef.needsJvmInlineMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsJvmInlineMultiFieldValueClassFlattening(session)
 
-fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = with(session.typeContext) {
-    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType(session).isMarkedNullable
+fun ConeKotlinType.needsJvmInlineMultiFieldValueClassFlattening(session: FirSession): Boolean = with(session.typeContext) {
+    typeConstructor().isJvmInlineMultiFieldValueClass() && !fullyExpandedType().isMarkedNullable
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
@@ -164,8 +164,8 @@ private fun checkValueParameterNamesWith(
     reportAction: (FirValueParameterSymbol, FirValueParameterSymbol, Int) -> Unit,
 ) {
     val valueParameterPairs = symbols.zip(otherSymbols)
-    for ((index, valueParameterPair) in valueParameterPairs.withIndex()) {
-        val (currentValueParameter, otherValueParameter) = valueParameterPair
+    for ([index, valueParameterPair] in valueParameterPairs.withIndex()) {
+        val [currentValueParameter, otherValueParameter] = valueParameterPair
         if (currentValueParameter.fir.isLegacyContextReceiver() || otherValueParameter.fir.isLegacyContextReceiver()) continue
         if (currentValueParameter.name != otherValueParameter.name) {
             reportAction(currentValueParameter, otherValueParameter, index)

@@ -23,6 +23,7 @@ import com.sun.source.tree.Tree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeInfo
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class TreeBasedClass(
         tree: JCTree.JCClassDecl,
         compilationUnit: CompilationUnitTree,

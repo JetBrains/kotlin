@@ -5,37 +5,62 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageDiagnostics
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.toIdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
-    val messageCollector: MessageCollector,
-    val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
+    val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
+    constructor(
+        currentModule: ModuleDescriptor?,
+        configuration: CompilerConfiguration,
+        symbolTable: SymbolTable,
+        exportedDependencies: List<ModuleDescriptor>,
+        deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
+    ) : this(
+        currentModule,
+        symbolTable,
+        exportedDependencies,
+        errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
+        deserializedSymbolPostProcessor
+    )
+
+    val anyClass = symbolTable.referenceClass(StandardClassIds.Any.toIdSignature())
+    val unitClass = symbolTable.referenceClass(StandardClassIds.Unit.toIdSignature())
+    val nothingClass = symbolTable.referenceClass(StandardClassIds.Nothing.toIdSignature())
+
     val irInterner = IrInterningService()
     val fileEntryDeserializer = FileEntryDeserializer(irInterner)
 
@@ -57,6 +82,10 @@ abstract class KotlinIrLinker(
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
     protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
+    private val moduleDeserializersByPackageName = mutableMapOf<FqName, MutableList<IrModuleDeserializer>>()
+    private val moduleDeserializersWithUnknownPackageNames = mutableListOf<IrModuleDeserializer>()
+
+    abstract val irMangler: KotlinMangler.IrMangler
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider
 
@@ -69,22 +98,25 @@ abstract class KotlinIrLinker(
 
     open val moduleDependencyTracker: IrModuleDependencyTracker get() = IrModuleDependencyTracker.DISABLED
 
+    // Represents the fact that the linkage process was finished.
+    // In case if a symbol was asked after deserialization, we would like to make sure that it is correctly and fully linked.
+    private var finished = false
+
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,
-        moduleDeserializer: IrModuleDeserializer
+        moduleDeserializer: IrModuleDeserializer,
     ): IrSymbol {
         val topLevelSignature: IdSignature = idSignature.topLevelSignature()
 
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
-        //
-        // TODO (KT-84837): The lookup for a IrModuleDeserializer should work through an index.
         val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
             moduleDeserializer
         } else {
-            deserializersForModules.values.firstOrNull { topLevelSignature in it }
+            val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
+            candidateModules.firstOrNull { it != moduleDeserializer && topLevelSignature in it }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
@@ -105,17 +137,25 @@ abstract class KotlinIrLinker(
             SignatureIdNotFoundInModuleWithDependencies(
                 idSignature = idSignature,
                 problemModuleDeserializer = moduleDeserializer,
-            ).raiseIssue(messageCollector)
+            ).raiseIssue(errorCallback)
     }
 
     private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
-        return deserializersForModules.values.firstOrNull { moduleDeserializer ->
+        val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
+        return candidateModules.firstOrNull { moduleDeserializer ->
             moduleDeserializer.fileDeserializers().any { it.file == irFile }
         }
     }
 
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
-        return deserializersForModules.values.firstOrNull() { idSignature in it }
+        val candidateModules = getModulesDefiningPackage(idSignature.packageFqName())
+        return candidateModules.firstOrNull { idSignature in it }
+    }
+
+    private fun getModulesDefiningPackage(packageFqName: FqName): List<IrModuleDeserializer> {
+        val indexedModules = moduleDeserializersByPackageName[packageFqName].orEmpty()
+        return if (moduleDeserializersWithUnknownPackageNames.isEmpty()) indexedModules
+        else indexedModules + moduleDeserializersWithUnknownPackageNames
     }
 
     protected abstract fun createModuleDeserializer(
@@ -151,6 +191,7 @@ abstract class KotlinIrLinker(
         return symbol.isBound
     }
 
+    protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
     protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
@@ -165,7 +206,7 @@ abstract class KotlinIrLinker(
             try {
                 if (!findDeserializedDeclarationForSymbol(symbol)) return null
             } catch (e: IrSymbolTypeMismatchException) {
-                SymbolTypeMismatch(e).raiseIssue(messageCollector)
+                SymbolTypeMismatch(e).raiseIssue(errorCallback)
             }
         }
 
@@ -182,14 +223,22 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
-    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol? {
-        if (idSignature.isPubliclyVisible) return null
+    override fun tryReferencingSimpleFunctionByLocalSignature(file: IrFile?, idSignature: IdSignature): IrSimpleFunctionSymbol? {
+        if (idSignature.isPubliclyVisible || file == null) return null
         return resolveModuleDeserializer(file)?.referenceSimpleFunctionByLocalSignature(file, idSignature)
     }
 
-    override fun tryReferencingPropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol? {
-        if (idSignature.isPubliclyVisible) return null
+    override fun tryReferencingPropertyByLocalSignature(file: IrFile?, idSignature: IdSignature): IrPropertySymbol? {
+        if (idSignature.isPubliclyVisible || file == null) return null
         return resolveModuleDeserializer(file)?.referencePropertyByLocalSignature(file, idSignature)
+    }
+
+    override fun getSymbolAndPutIntoQueue(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind): IrSymbol? {
+        return deserializersForModules.values.firstNotNullOfOrNull {
+            it.tryDeserializeIrSymbol(signature, topLevelKindToSymbolKind(kind))
+        }.also {
+            if (finished) deserializeAllReachableTopLevels()
+        }
     }
 
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment): IrModuleDeserializer =
@@ -198,17 +247,16 @@ abstract class KotlinIrLinker(
     override fun init(moduleFragment: IrModuleFragment?) {
         if (moduleFragment != null) {
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
-            deserializersForModules[moduleFragment.name.asString()] =
-                maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
+            registerModuleDeserializer(moduleFragment.name.asString(), moduleFragment.descriptor, currentModuleDeserializer)
         }
-        deserializersForModules.values.forEach { it.init() }
     }
 
     fun clear() {
         irInterner.reset()
     }
 
-    override fun postProcess(inOrAfterLinkageStep: Boolean) {
+    override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
+        finished = finished || inOrAfterLinkageStep
         if (inOrAfterLinkageStep) {
             // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
             // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
@@ -217,13 +265,13 @@ abstract class KotlinIrLinker(
         }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
-        fakeOverrideBuilder.provideFakeOverrides()
+        fakeOverrideBuilder.provideFakeOverrides(createTypeSystemContext(irBuiltIns))
         triedToDeserializeDeclarationForSymbol.clear()
 
         if (inOrAfterLinkageStep) {
             // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable)
-            deserializersForModules.values.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(builtIns) }
+            partialLinkageSupport.generateStubsAndPatchUsages(irBuiltIns, symbolTable)
+            deserializersForModules.values.forEach { if (it is IrModuleDeserializerWithBuiltIns) it.finish(irBuiltIns) }
         }
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
@@ -238,15 +286,32 @@ abstract class KotlinIrLinker(
         }
     }
 
-    override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
-        val moduleDeserializer =
-            deserializersForModules.entries.find { it.key == moduleName.asString() }?.value
-                ?: error("No module for name '$moduleName' found")
-        assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
-        if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
-        return moduleDeserializer.deserializeIrSymbolOrFail(signature, topLevelKindToSymbolKind(kind)).also {
-            deserializeAllReachableTopLevels()
+    fun getOrCreateDeserializerForModule(
+        moduleDescriptor: ModuleDescriptor,
+        kotlinLibrary: KotlinLibrary?,
+        deserializationStrategy: (String) -> DeserializationStrategy,
+        _moduleName: String? = null
+    ): IrModuleDeserializer {
+        assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided $moduleDescriptor" }
+        val moduleName = kotlinLibrary?.uniqueName?.let { "<$it>" } ?: _moduleName!!
+        assert(moduleDescriptor.name.asString() == moduleName) {
+            "${moduleDescriptor.name.asString()} != $moduleName"
         }
+
+        val deserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
+            moduleName = moduleName,
+            moduleDescriptor = moduleDescriptor,
+            moduleDeserializer = createModuleDeserializer(
+                moduleDescriptor = moduleDescriptor,
+                klib = kotlinLibrary,
+                strategyResolver = deserializationStrategy
+            )
+        )
+
+        val moduleFragment = deserializer.moduleFragment
+        moduleFragment.kotlinLibrary = kotlinLibrary
+        moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
+        return deserializer
     }
 
     fun deserializeIrModuleHeader(
@@ -255,39 +320,39 @@ abstract class KotlinIrLinker(
         deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
         _moduleName: String? = null
     ): IrModuleFragment {
-        assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided $moduleDescriptor" }
-        val moduleName = kotlinLibrary?.uniqueName?.let { "<$it>" } ?: _moduleName!!
-        assert(moduleDescriptor.name.asString() == moduleName) {
-            "${moduleDescriptor.name.asString()} != $moduleName"
-        }
-
-        val moduleFragment = deserializersForModules.getOrPut(moduleName) {
-            maybeWrapWithBuiltInAndInit(
-                moduleDescriptor = moduleDescriptor,
-                moduleDeserializer = createModuleDeserializer(
-                    moduleDescriptor = moduleDescriptor,
-                    klib = kotlinLibrary,
-                    strategyResolver = deserializationStrategy
-                )
-            )
-        }.moduleFragment
-
-        moduleFragment.kotlinLibrary = kotlinLibrary
-        moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
-
+        val deserializer = getOrCreateDeserializerForModule(moduleDescriptor, kotlinLibrary, deserializationStrategy, _moduleName)
         // The IrModule and its IrFiles have been created during module initialization.
-        return moduleFragment
+        return deserializer.moduleFragment
     }
 
-    protected fun maybeWrapWithBuiltInAndInit(
+    private fun registerModuleDeserializer(
+        moduleName: String,
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
+    ): IrModuleDeserializer {
+        val deserializer = maybeWrapWithBuiltIn(moduleDescriptor, moduleDeserializer)
+        deserializersForModules[moduleName] = deserializer
+
+        val definedPackageNames = deserializer.getDefinedPackageNames()
+        if (definedPackageNames == null) {
+            moduleDeserializersWithUnknownPackageNames += deserializer
+        } else {
+            for (packageName in definedPackageNames) {
+                moduleDeserializersByPackageName.putToMultiMap(packageName, deserializer)
+            }
+        }
+
+        return deserializer
+    }
+
+    private fun maybeWrapWithBuiltIn(
+        moduleDescriptor: ModuleDescriptor,
+        moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
         if (isBuiltInModule(moduleDescriptor)) {
             IrModuleDeserializerWithBuiltIns(
-                builtIns,
                 symbolTable,
-                fakeOverrideBuilder.mangler,
+                irMangler,
                 { clazz, signature -> fakeOverrideBuilder.enqueueClass(clazz, signature, moduleDeserializer.compatibilityMode) },
                 moduleDeserializer
             )
@@ -319,6 +384,12 @@ abstract class KotlinIrLinker(
             if (it in dirtyFiles) DeserializationStrategy.ALL
             else DeserializationStrategy.WITH_INLINE_BODIES
         })
+    }
+
+    fun getAllMatchingSignatures(callableId: CallableId, signatureKind: IrDeserializer.TopLevelSymbolKind): List<IdSignature> {
+        return deserializersForModules.flatMap { [_, moduleDeserializer] ->
+            moduleDeserializer.getAllMatchingSignatures(callableId, signatureKind)
+        }
     }
 }
 

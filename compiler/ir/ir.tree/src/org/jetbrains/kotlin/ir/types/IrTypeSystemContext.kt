@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -450,7 +451,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
-            annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
+            annotation.isAnnotationWithEqualFqName(fqName)
         }?.run {
             (arguments.getOrNull(0) as? IrConst)?.value
         }
@@ -458,11 +459,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? =
         this as? IrTypeParameterSymbol
 
-    override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass == true
+    val treatFullValueClassesWithOneFieldAsBasic: Boolean get() = true
 
-    override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isMultiFieldValueClass == true
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    override fun TypeConstructorMarker.isInlineClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic) == true
+
+    override fun TypeConstructorMarker.isJvmInlineMultiFieldValueClass(): Boolean =
+        (this as? IrClassSymbol)?.owner?.isJvmInlineMultiFieldValueClass == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
         (this as? IrClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
@@ -476,8 +480,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
         } ?: owner.superTypes.first()
 
-    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as IrType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    override fun KotlinTypeMarker.getUnsubstitutedUnderlyingTypeInJvm(): KotlinTypeMarker? =
+        (this as IrType).classOrNull?.owner?.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic)?.underlyingType
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
         getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)

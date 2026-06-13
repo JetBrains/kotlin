@@ -741,7 +741,7 @@ KtNameReferenceExpression(899,902): 'doo'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(903,904): '='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:

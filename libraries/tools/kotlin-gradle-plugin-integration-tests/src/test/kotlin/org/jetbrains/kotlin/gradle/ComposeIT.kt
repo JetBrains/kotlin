@@ -335,7 +335,7 @@ class ComposeIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
@@ -381,17 +381,21 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Run test against older versions of open @Composable function")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Kotlin 1.9.2x is not compatible with Gradle 9+
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC],
+        enabledOnCI = [OS.LINUX],
+    )
     fun testComposeDefaultParamsInOpenFunctionK1ToK2(
         gradleVersion: GradleVersion,
         agpVersion: String,
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "composeMultiModule/dep",
             gradleVersion = gradleVersion,
@@ -436,6 +440,7 @@ class ComposeIT : KGPBaseTest() {
                 assertTasksExecuted(":compileReleaseKotlin")
             }
         }
+        val runtimeTestUtilsClasspath = System.getProperty("composeCompilerRuntimeTestUtilsClasspath")
         project(
             projectName = "composeMultiModule",
             gradleVersion = gradleVersion,
@@ -451,7 +456,8 @@ class ComposeIT : KGPBaseTest() {
                 |
                 |dependencies {
                 |    implementation("androidx.compose.runtime:runtime:$composeSnapshotVersion")
-                |    implementation("androidx.compose.runtime:runtime-test-utils:$composeSnapshotVersion")
+                |    implementation(files("$runtimeTestUtilsClasspath"))
+                |    implementation(kotlin("test-junit"))
                 |    
                 |    implementation("com.example:dep:1.0")
                 |}
@@ -513,7 +519,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Run source information test with older versions of Compose runtime")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
     fun testComposeSourceInformationOldRuntime(
@@ -843,7 +849,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.MAX_SUPPORTED)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @GradleTestVersions(minVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST, maxVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
@@ -853,7 +859,7 @@ class ComposeIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk,
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "composeMultiModule/dep",
             gradleVersion = gradleVersion,

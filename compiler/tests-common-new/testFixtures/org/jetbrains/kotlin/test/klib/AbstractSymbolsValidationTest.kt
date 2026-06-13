@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrPreSerializationSymbolValidationHandler
-import org.jetbrains.kotlin.test.backend.ir.IrSecondPhaseSymbolValidationHandler
+import org.jetbrains.kotlin.test.backend.ir.IrSecondStageSymbolValidationHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -32,7 +32,7 @@ abstract class AbstractSymbolsValidationTest(
     private val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     private val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
     private val firstStageHandler: Constructor<IrPreSerializationSymbolValidationHandler>,
-    private val secondStageHandler: Constructor<IrSecondPhaseSymbolValidationHandler>? = null, // TODO KT-79801 make not nullable after all backends are supported
+    private val secondStageHandler: Constructor<IrSecondStageSymbolValidationHandler>? = null, // TODO KT-79801 make not nullable after all backends are supported
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     open fun TestConfigurationBuilder.applyConfigurators() {}
 

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.test.fail
 
 
@@ -70,6 +72,47 @@ class AssociateCompilationsTest {
             listOf(jvm.compilations.main.output.classesDirs, project.files("bar.jar")).flatten(),
             foo.compileDependencyFiles.files.toList(),
             "Expected 'main classesDirs' to be listed before file dependency 'bar.jar'"
+        )
+    }
+
+    @Test
+    fun `test - KT-86015 associated K-N compilation inherits main cinterop klibs in compile dependency files`() {
+        val project = buildProjectWithMPP {
+            configureRepositoriesForTests()
+        }
+        val kotlin = project.multiplatformExtension
+
+        val linux = kotlin.linuxX64()
+        val main = linux.compilations.main
+        // Create a custom compilation and associate it with main (mirrors the swiftExportMain case).
+        val foo = linux.compilations.create("foo")
+        foo.associateWith(main)
+        // Declare a cinterop on main; the interop task is registered lazily and never executed here.
+        main.cinterops.create("dummy")
+
+        project.evaluate()
+
+        // Resolve the expected cinterop output file from the configured task (no task execution).
+        val cinteropTask = project.tasks.named("cinteropDummyLinuxX64", CInteropProcess::class.java).get()
+        val expectedCinteropOutput = cinteropTask.outputFileProvider.get()
+
+        // The custom 'foo' compilation must see main's cinterop klib via the associator.
+        val fooDeps = foo.compileDependencyFiles.files
+        assertTrue(
+            fooDeps.contains(expectedCinteropOutput),
+            "Expected foo.compileDependencyFiles to contain main's cinterop output via associateWith.\n" +
+                    "Expected: $expectedCinteropOutput\n" +
+                    "Actual deps: $fooDeps"
+        )
+
+        // Regression coverage for the deleted hardcoded test-compilation forwarding:
+        // the default 'test' compilation must still see main's cinterop klib via the associator.
+        val testDeps = linux.compilations.test.compileDependencyFiles.files
+        assertTrue(
+            testDeps.contains(expectedCinteropOutput),
+            "Expected test.compileDependencyFiles to contain main's cinterop output via associateWith.\n" +
+                    "Expected: $expectedCinteropOutput\n" +
+                    "Actual deps: $testDeps"
         )
     }
 

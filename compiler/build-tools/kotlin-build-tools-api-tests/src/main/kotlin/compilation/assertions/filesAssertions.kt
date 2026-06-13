@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.Module
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ModuleContext
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.nio.file.Path
+import kotlin.io.path.exists
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 import kotlin.io.path.relativeTo
 import kotlin.io.path.walk
 
@@ -58,7 +61,7 @@ fun CompilationOutcome.assertCompilationSteps(vararg steps: Set<String>) {
     assertEquals(expectedSteps.size, actualSteps.size) {
         "Expected ${expectedSteps.size} compilation steps but got ${actualSteps.size}.\nActual steps: $actualSteps"
     }
-    expectedSteps.zip(actualSteps).forEachIndexed { index, (expected, actual) ->
+    expectedSteps.zip(actualSteps).forEachIndexed { index, [expected, actual] ->
         assertEquals(expected, actual) {
             """
                 Compilation step ${index + 1} does not match.
@@ -96,12 +99,17 @@ fun CompilationOutcome.assertOutputs(vararg expectedOutputs: String) {
     assertOutputs(expectedOutputs.toSet())
 }
 
+context(module: ModuleContext)
+fun CompilationOutcome.assertOutputsContains(vararg expectedOutputs: String) {
+    assertOutputs(expectedOutputs.toSet(), doNotFailOnExtraFiles = true)
+}
+
 /**
  * Asserts that the compiler produces all files declared as expected outputs.
  * Unless there's explicit expected output for the module's Kotlin module files, the default matching [Module.moduleName] will be added automatically.
  */
 context(module: ModuleContext)
-fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
+fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>, doNotFailOnExtraFiles: Boolean = false) {
     val filesLeft = expectedOutputs.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
         .toMutableSet()
         .apply {
@@ -117,7 +125,7 @@ fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
             if (!wasPreviously) notDeclaredFiles.add(currentFile)
         }
     }
-    assert(filesLeft.isEmpty() && notDeclaredFiles.isEmpty()) {
+    assert(filesLeft.isEmpty() && (doNotFailOnExtraFiles || notDeclaredFiles.isEmpty())) {
         val errors = mutableListOf<String>()
         if (filesLeft.isNotEmpty()) {
             errors.add("The following files were declared as expected, but not actually produced: $filesLeft")
@@ -127,4 +135,16 @@ fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>) {
         }
         errors.joinToString(separator = "\n")
     }
+}
+
+context(module: ModuleContext)
+fun assertOutputFileContains(fileName: String, expectedContent: String) {
+    val file = module.outputDirectory.resolve(fileName)
+    assert(file.exists()) {
+        "File $file does not exist.\nOther files in the directory:\n${
+            module.outputDirectory.listDirectoryEntries().joinToString("\n")
+        }"
+    }
+    val fileContents = file.readText()
+    assert(expectedContent in fileContents) { "File $file does not contain expected content.\n\nFile contents:\n$fileContents" }
 }

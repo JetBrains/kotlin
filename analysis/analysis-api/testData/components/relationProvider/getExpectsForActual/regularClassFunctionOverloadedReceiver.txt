@@ -1,0 +1,3 @@
+expected symbols:
+receiver parameter kotlin.String
+expect fun kotlin.String.some(): kotlin.Int

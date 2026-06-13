@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
@@ -21,16 +22,21 @@ internal abstract class KotlinKProperty<out V>(
 ) : KotlinKCallable<V>(overriddenStorage), ReflectKProperty<V> {
     override val name: String get() = kmProperty.name
 
+    private val extensionReceiverType: KmType? by lazy(PUBLICATION) {
+        @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+        kmProperty.receiverParameterType.takeUnless { kmProperty.isStatic }
+    }
+
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(
-            kmProperty.contextParameters, kmProperty.receiverParameterType, valueParameters = emptyList(), typeParameterTable.value,
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
             includeReceivers = true,
         )
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         if (isBound) computeParameters(
-            kmProperty.contextParameters, kmProperty.receiverParameterType, valueParameters = emptyList(), typeParameterTable.value,
+            kmProperty.contextParameters, extensionReceiverType, valueParameters = emptyList(), typeParameterTable.value,
             includeReceivers = false,
         )
         else allParameters
@@ -38,14 +44,14 @@ internal abstract class KotlinKProperty<out V>(
 
     override val returnType: KType by lazy(PUBLICATION) {
         kmProperty.returnType.toKType(
-            container.jClass.classLoader, typeParameterTable.value,
+            container.jClass.safeClassLoader, typeParameterTable.value,
             computeJavaType = if (isLocalDelegated) null else fun(): Type = caller.returnType,
         )
     }
 
     val typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
         val parent = (container as? KClassImpl<*>)?.typeParameterTable
-        TypeParameterTable.create(kmProperty.typeParameters, parent, this, container.jClass.classLoader)
+        TypeParameterTable.create(kmProperty.typeParameters, parent, this, container.jClass.safeClassLoader)
     }
 
     override val typeParameters: List<KTypeParameter> get() = typeParameterTable.value.ownTypeParameters
@@ -87,7 +93,7 @@ internal abstract class KotlinKProperty<out V>(
         get() {
             if (isLocalDelegated || container.jClass.isAnnotation) {
                 // Annotations on local delegated properties and annotation constructor properties are present only in the metadata.
-                return kmProperty.annotations.map { it.toAnnotation(container.jClass.classLoader) }
+                return kmProperty.annotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
             }
 
             // For annotations in classes, we should also support $annotations methods in DefaultImpls, and properties in companion objects.

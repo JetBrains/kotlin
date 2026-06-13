@@ -88,10 +88,10 @@ projectTests {
     testTask(
         taskName = "testJdk25",
         jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_25_0,
         skipInLocalBuild = false,
     ) {
         systemProperty("kotlin.unsafe.mem.test.mode", "jdk25")
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_25_0))
 
         // `UnsafeBasedMemoryAccess` is also tested in this task, so this flag is needed to suppress warnings.
         // See also https://openjdk.org/jeps/498.

@@ -1,5 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
-import org.jetbrains.kotlin.testFederation.isSmokeTest
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
 
 plugins {
     kotlin("jvm")
@@ -56,17 +57,17 @@ projectTests {
         testTask(
             taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
             jUnitMode = JUnitMode.JUnit5,
+            javaLauncher = jdk,
             maxMetaspaceSizeMb = 1024,
             skipInLocalBuild = false,
             defineJDKEnvVariables = listOf(jdk, JdkMajorVersion.JDK_11_0)
         ) {
             val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
             filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
-            javaLauncher.set(project.getToolchainLauncherFor(jdk))
 
             /* No smoke tests are defined here, yet, and the 'CustomJvmTargetOnJvmBaseTest' is defined to fail if no tests are executed */
             @OptIn(TemporaryTestFederationApi::class)
-            isSmokeTest = false
+            smokeTestConfig = SmokeTestConfig.Disabled
 
             systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
             if (jdk.majorVersion >= 17 && kotlinBuildProperties.isTeamcityBuild.get()) {

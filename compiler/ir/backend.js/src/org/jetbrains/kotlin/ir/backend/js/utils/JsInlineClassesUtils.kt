@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.JsCommonInlineClassesUtils
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.util.isInterface
 
 class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClassesUtils {
@@ -62,3 +66,13 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 
     fun getRuntimeClassFor(type: IrType): IrClass? = type.erasedUpperBound.takeIf { !it.isInterface }
 }
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
+    getInlineClassUnderlyingType(irClass, treatFullValueClassesWithOneFieldAsBasic = true)

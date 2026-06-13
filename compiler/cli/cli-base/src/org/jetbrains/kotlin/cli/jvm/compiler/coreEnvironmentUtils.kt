@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.report
+import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -49,8 +49,8 @@ fun List<KotlinSourceRoot>.forAllFiles(
     var pluginsConfigured = false
     fun ensurePluginsConfigured() {
         if (!pluginsConfigured) {
-            for (extension in CompilerConfigurationExtension.getInstances(project)) {
-                extension.updateFileRegistry()
+            for (extension in configuration.getCompilerExtensions(CompilerConfigurationExtension)) {
+                extension.updateFileRegistry(project)
             }
             pluginsConfigured = true
         }
@@ -90,7 +90,7 @@ fun <VirtualFile, Source> List<KotlinSourceRoot>.allSourceFilesSequence(
 ) : Sequence<SourceFileWithModule<Source>> = sequence {
     val processedFiles = hashSetOf<VirtualFile>()
 
-    for ((sourceRootPath, isCommon, hmppModuleName) in this@allSourceFilesSequence) {
+    for ((val sourceRootPath = path, val isCommon, val hmppModuleName) in this@allSourceFilesSequence) {
         val sourceRoot = File(sourceRootPath)
         val vFile = findVirtualFile(sourceRoot)
         if (vFile == null) {
@@ -141,9 +141,6 @@ fun createSourceFilesFromSourceRoots(
     }
     return result
 }
-
-val KotlinCoreEnvironment.messageCollector: MessageCollector
-    get() = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
 fun CompilerConfiguration.createConfigurationForModule(module: Module, buildFile: File?): CompilerConfiguration {
     return copy().apply {

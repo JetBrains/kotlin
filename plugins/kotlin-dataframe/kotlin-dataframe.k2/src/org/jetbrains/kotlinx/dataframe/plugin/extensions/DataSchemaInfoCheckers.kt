@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNamedFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirPropertyAccessExpressionChecker
@@ -63,7 +63,7 @@ class DataSchemaInfoCheckers(
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(
             PropertySchemaReporter,
         )
-        override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker> =
+        override val namedFunctionCheckers: Set<FirNamedFunctionChecker> =
             setOf(
                 FunctionDeclarationSchemaReporter,
             )
@@ -127,7 +127,7 @@ private data object PropertySchemaReporter : FirPropertyChecker(mppKind = MppChe
     }
 }
 
-private data object FunctionDeclarationSchemaReporter : FirSimpleFunctionChecker(mppKind = MppCheckerKind.Common) {
+private data object FunctionDeclarationSchemaReporter : FirNamedFunctionChecker(mppKind = MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
         val type = declaration.returnTypeRef.coneType

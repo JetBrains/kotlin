@@ -24,6 +24,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
 
     @DisplayName("Resolve resources with consumption API using variant reselection")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testWithVariantReselection(
         gradleVersion: GradleVersion,
         androidVersion: String,

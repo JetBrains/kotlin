@@ -66,7 +66,7 @@ FILE: parenthesesWithAssignmentOrSetVarCornerCases.kt
         R|<local>/b|?.{ $subj$.R|/B.p| }.<Ambiguity: plusAssign, [/plusAssign, /plusAssign]>#(Int(10))
         R|<local>/b|?.{ $subj$.R|/B.pa|.R|/PlusAssign.plusAssign|(Int(10)) }
         R|<local>/b|?.{ $subj$.R|/B.pa| }.R|/PlusAssign.plusAssign<Inapplicable(UNSAFE_CALL): /PlusAssign.plusAssign>#|(Int(10))
-        R|<local>/b|?.{ ERROR_EXPR(Operator overload ambiguity. Compatible candidates: [/PlusAndPlusAssign.plus, /PlusAndPlusAssign.plusAssign]) }
+        R|<local>/b|?.{ $subj$.R|/B.ppa|.<Operator overload ambiguity. Compatible candidates: [/PlusAndPlusAssign.plus, /PlusAndPlusAssign.plusAssign]>#(Int(10)) }
         R|<local>/b|?.{ $subj$.R|/B.ppa| }.R|/PlusAndPlusAssign.plusAssign<Inapplicable(UNSAFE_CALL): /PlusAndPlusAssign.plusAssign>#|(Int(10))
     }
     public final object PlusExt : R|kotlin/Any| {

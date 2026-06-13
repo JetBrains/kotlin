@@ -25,7 +25,7 @@ fun checkInconsistentTypeParameters(
     isValues: Boolean,
 ) {
     val result = buildDeepSubstitutionMultimap(firTypeRefClasses)
-    for ((typeParameterSymbol, typeAndProjections) in result) {
+    for ([typeParameterSymbol, typeAndProjections] in result) {
         val projections = typeAndProjections.projections
         if (projections.size > 1) {
             val diagnosticFactory =
@@ -100,7 +100,7 @@ private fun buildDeepSubstitutionMultimap(
         }
     }
 
-    for ((typeRef, regularClassSymbol) in firTypeRefClasses) {
+    for ([typeRef, regularClassSymbol] in firTypeRefClasses) {
         fillInDeepSubstitutor(typeRef?.coneType?.fullyExpandedType()?.typeArguments, regularClassSymbol)
     }
     return result

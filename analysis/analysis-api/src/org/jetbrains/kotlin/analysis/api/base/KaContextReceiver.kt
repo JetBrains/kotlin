@@ -33,7 +33,7 @@ public abstract class KaContextReceiver : KaLifetimeOwner {
     public abstract val type: KaType
 
     /**
-     * Additional label for the context receivers in the format `label@Type`, if label is not present, return `null`
+     * Additional label for the context receivers in the format `label@Type`, or `null` if the label is not present.
      *
      * @see KaContextReceiver
      */

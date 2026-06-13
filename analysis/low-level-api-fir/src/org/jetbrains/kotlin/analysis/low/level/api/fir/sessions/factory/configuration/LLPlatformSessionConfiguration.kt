@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.toModulePlatformKind
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -32,6 +33,13 @@ internal interface LLPlatformSessionConfiguration {
     fun createSourceScopeProvider(): FirKotlinScopeProvider = FirKotlinScopeProvider()
 
     /**
+     * Create the [FirKotlinScopeProvider] for built-in sessions.
+     *
+     * The behavior is similar to the [createSourceScopeProvider].
+     */
+    fun createBuiltinsScopeProvider(): FirKotlinScopeProvider = FirKotlinScopeProvider()
+
+    /**
      * Creates additional, platform-specific symbol providers to include in the session's composite [FirSymbolProvider].
      *
      * For dangling file sessions, [createPlatformSpecificSymbolProvidersForDanglingFileSession] is called instead.
@@ -52,6 +60,17 @@ internal interface LLPlatformSessionConfiguration {
     fun createPlatformSpecificSymbolProvidersForDanglingFileSession(
         session: LLFirDanglingFileSession,
         contextSession: LLFirSession,
+    ): List<FirSymbolProvider> = emptyList()
+
+    /**
+     * Creates additional, platform-specific symbol providers to include in the built-in sessions.
+     *
+     * Note that unlike source and library sessions, sessions for built-in modules are cached more aggressively on a project level.
+     *
+     * @see org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.LLFirBuiltinsSessionFactory
+     */
+    fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
+        session: LLFirBuiltinsAndCloneableSession
     ): List<FirSymbolProvider> = emptyList()
 
     /**

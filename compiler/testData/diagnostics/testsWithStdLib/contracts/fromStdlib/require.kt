@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -INVISIBLE_REFERENCE, -INVISIBLE_MEMBER, -DEBUG_INFO_SMARTCAST
-// SKIP_TXT
 
 fun testRequireSmartcast(x: Any?) {
     require(x is String)

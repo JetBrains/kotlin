@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.packageFqName
@@ -101,6 +105,51 @@ class WasmTypeTransformer(
                 "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                 "i31ref" -> WasmI31Ref
                 "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                "typedfuncref" -> {
+                    val functionType = (this as IrSimpleType).arguments[0].typeOrNull
+                        ?: error("typedfuncref must have a Function type parameter")
+
+                    val functionTypeArguments = (functionType as IrSimpleType).arguments
+                    val parameterTypes = functionTypeArguments.dropLast(1).map { arg ->
+                        arg.typeOrNull?.toWasmValueType() ?: error("Function parameter type cannot be null")
+                    }
+                    val returnType = functionTypeArguments.last().typeOrNull?.let {
+                        if (it.isUnit()) emptyList() else listOf(it.toWasmValueType())
+                    } ?: error("Function return type cannot be null")
+
+                    val wasmFunctionType = WasmFunctionType(parameterTypes, returnType)
+                    WasmRefNullType(typeCodegenContext.referenceWasmFunctionHeapType(wasmFunctionType))
+                }
+                "typedcontref" -> {
+
+                    check(backendContext.wasmUseStackSwitching) {
+                        "typedcontref type used without wasmUseStackSwitching enabled"
+                    }
+
+                    // typedcontref describes the wasm continuation type explicitly
+                    //
+                    // For now, supports only the following payload tag for wasm resume:
+                    // typedcontref<(Any?) -> Unit> (which is translated to wasm, [ref null kotlin.Any] -> [])
+                    val functionType = (this as IrSimpleType).arguments[0].typeOrNull
+                        ?: error("typedcontref must have a Function type parameter")
+
+                    val functionTypeArguments = (functionType as IrSimpleType).arguments
+                    val returnType = functionTypeArguments.last().typeOrNull
+                        ?: error("typedcontref return type cannot be null")
+                    check(returnType.isUnit()) {
+                        "typedcontref return type must be Unit, got: $returnType"
+                    }
+
+                    functionTypeArguments.dropLast(1).forEach { arg ->
+                        val argType = arg.typeOrNull ?: error("typedcontref type argument cannot be null")
+                        check(argType.isNullableAny()) {
+                            "typedcontref type arguments must all be nullable Any, got: $argType"
+                        }
+                    }
+
+                    val arity = functionTypeArguments.size - 2
+                    WasmRefNullType(typeCodegenContext.referenceHeapContType(arity))
+                }
                 else -> error("Unknown reference type $name")
             }
         } else {

@@ -1,0 +1,46 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirLocalPropertySymbol lvar x: R|kotlin/Int?|
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+Smart Casts:
+    FirLocalPropertySymbol lvar x: R|kotlin/Int?|
+    Stability: STABLE_VALUE
+    Types:
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] nestedSink.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int?| = Int(42)
+        R|<local>/x| = <Unresolved name: getNullableInt>#()
+        R|/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            when () {
+                !=(R|<local>/x|, Null(null)) ->  {
+                    R|<local>/x|.R|kotlin/Int.inc|()
+                }
+            }
+
+        }
+        )
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] R> run([ResolvedTo(RAW_FIR)] block: ( () -> R )): R|kotlin/Unit| { LAZY_BLOCK }

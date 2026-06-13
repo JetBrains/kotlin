@@ -5,11 +5,11 @@
 annotation class Foo(val arr: Array<Bar> = [])
 annotation class Bar(val arr: Array<Foo>)
 annotation class Baz(val bar: Bar = Bar([]))
-annotation class Bad(val bar: Bar = Bar(<!ARGUMENT_TYPE_MISMATCH!>[[]]<!>))
+annotation class Bad(val bar: Bar = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>Bar([<!UNRESOLVED_REFERENCE!>[]<!>])<!>)
 
 @Foo
 @Bar([])
-@Baz(Bar(<!ARGUMENT_TYPE_MISMATCH!>[[]]<!>))
+@Baz(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Bar([<!UNRESOLVED_REFERENCE!>[]<!>])<!>)
 fun target() = Unit
 
 @Foo([Bar([])])

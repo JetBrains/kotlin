@@ -1,0 +1,77 @@
+KtFile: 'classLiterals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtTypeAlias(0,26): 'typealias MyAlias = String'
+  null
+
+KtTypeReference(20,26): 'String'
+  null
+
+KtUserType(20,26): 'String'
+  null
+
+KtNameReferenceExpression(20,26): 'String'
+  null
+
+KtNamedFunction(28,139): 'inline fun <reified T> main() {'
+  null
+
+KtDeclarationModifierList(28,34): 'inline'
+  null
+
+KtTypeParameterList(39,50): '<reified T>'
+  null
+
+KtTypeParameter(40,49): 'reified T'
+  null
+
+KtDeclarationModifierList(40,47): 'reified'
+  null
+
+KtParameterList(55,57): '()'
+  null
+
+KtBlockExpression(58,139): '{'
+  null
+
+KtClassLiteralExpression(63,71): 'T::class'
+  null
+
+KtNameReferenceExpression(63,64): 'T'
+  null
+
+KtClassLiteralExpression(75,89): 'MyAlias::class'
+  null
+
+KtNameReferenceExpression(75,82): 'MyAlias'
+  null
+
+KtClassLiteralExpression(93,106): 'String::class'
+  null
+
+KtNameReferenceExpression(93,99): 'String'
+  null
+
+KtClassLiteralExpression(110,137): 'kotlin.Int.Companion::class'
+  null
+
+KtDotQualifiedExpression(110,130): 'kotlin.Int.Companion'
+  null
+
+KtDotQualifiedExpression(110,120): 'kotlin.Int'
+  null
+
+KtNameReferenceExpression(110,116): 'kotlin'
+  null
+
+KtNameReferenceExpression(117,120): 'Int'
+  null
+
+KtNameReferenceExpression(121,130): 'Companion'
+  null

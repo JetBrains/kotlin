@@ -1,0 +1,66 @@
+KtFile: kt86184.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    KDoc
+      PsiElement(KDOC_START)('/**')
+      PsiWhiteSpace('\n ')
+      KDOC_SECTION
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' `` foo bar ')
+        KDOC_MARKDOWN_LINK
+          PsiElement(LBRACKET)('[')
+          KDOC_NAME
+            PsiElement(IDENTIFIER)('Foo')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@param')
+          PsiWhiteSpace(' ')
+          KDOC_MARKDOWN_LINK
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('p')
+          PsiWhiteSpace('  ')
+          PsiElement(KDOC_TEXT)('`')
+          PsiElement(KDOC_CODE_SPAN_TEXT)('int')
+          PsiElement(KDOC_TEXT)('` param')
+        PsiWhiteSpace('\n ')
+        PsiElement(KDOC_LEADING_ASTERISK)('*')
+        PsiElement(KDOC_TEXT)(' ')
+        KDOC_TAG
+          PsiElement(KDOC_TAG_NAME)('@return')
+          PsiWhiteSpace(' ')
+          PsiElement(KDOC_TEXT)('something ')
+          KDOC_MARKDOWN_LINK
+            PsiElement(LBRACKET)('[')
+            KDOC_NAME
+              PsiElement(IDENTIFIER)('Int')
+            PsiElement(RBRACKET)(']')
+      PsiWhiteSpace('\n ')
+      PsiElement(KDOC_END)('*/')
+    PsiWhiteSpace('\n')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('p')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

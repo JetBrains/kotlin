@@ -11,3 +11,5 @@ class InlineReified {
         inline get() = toString()
         inline set(value) {}
 }
+
+// DECLARATIONS_NO_LIGHT_ELEMENTS: InlineReified.class[bar;foo;x]

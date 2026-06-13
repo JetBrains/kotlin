@@ -1,4 +1,6 @@
 KClass: class A : Java1, Java2
+  constructors:
+    public final fun `<init>`(): A
   members:
     public open <T> fun A.bar(): T
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
@@ -7,6 +9,8 @@ KClass: class A : Java1, Java2
     public open fun A.toString(): kotlin.String
   declaredMembers:
 KClass: class B : Java1, Java2
+  constructors:
+    public final fun `<init>`(): B
   members:
     public open <T> fun B.bar(): T
     public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
@@ -17,6 +21,8 @@ KClass: class B : Java1, Java2
     public open <T> fun B.bar(): T
     public open <T> fun B.foo(T): kotlin.Unit
 KClass: abstract class C : Java2, KotlinInterface2, Any
+  constructors:
+    public final fun `<init>`(): C
   members:
     public abstract <T> fun C.bar(): T
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
@@ -26,6 +32,8 @@ KClass: abstract class C : Java2, KotlinInterface2, Any
     public open fun C.toString(): kotlin.String
   declaredMembers:
 KClass: abstract class D : Java2, KotlinInterface2, Any
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open <T> fun D.bar(): T
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
@@ -38,6 +46,8 @@ KClass: abstract class D : Java2, KotlinInterface2, Any
     public open <T> fun D.foo(T): kotlin.Unit
     public open <T> fun D.foo(T): kotlin.Unit where T : kotlin.Number
 KClass: class E : D
+  constructors:
+    public final fun `<init>`(): E
   members:
     public open <T> fun E.bar(): T where T : kotlin.Number
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
@@ -48,6 +58,8 @@ KClass: class E : D
   declaredMembers:
     public open <T> fun E.bar(): T where T : kotlin.Number
 KClass: class F : KotlinClass, Java2
+  constructors:
+    public final fun `<init>`(): F
   members:
     public open <T> fun F.bar(): T
     public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
@@ -56,6 +68,8 @@ KClass: class F : KotlinClass, Java2
     public open fun F.toString(): kotlin.String
   declaredMembers:
 KClass: class G : KotlinClass, Java2
+  constructors:
+    public final fun `<init>`(): G
   members:
     public open <T> fun G.bar(): T
     public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
@@ -65,6 +79,8 @@ KClass: class G : KotlinClass, Java2
   declaredMembers:
     public open <T> fun G.bar(): T
 KClass: class H : Java3, Java2
+  constructors:
+    public final fun `<init>`(): H
   members:
     public open <T> fun H.bar(): T
     public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
@@ -73,6 +89,8 @@ KClass: class H : Java3, Java2
     public open fun H.toString(): kotlin.String
   declaredMembers:
 KClass: class I : Java3, Java2
+  constructors:
+    public final fun `<init>`(): I
   members:
     public open <T> fun I.bar(): T
     public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
@@ -82,6 +100,8 @@ KClass: class I : Java3, Java2
   declaredMembers:
     public open <T> fun I.foo(T): kotlin.Unit
 KClass: class J : Java4
+  constructors:
+    public final fun `<init>`(): J
   members:
     public open <T> fun J.bar(): T! where T : kotlin.Any!
     public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
@@ -90,6 +110,8 @@ KClass: class J : Java4
     public open fun J.toString(): kotlin.String
   declaredMembers:
 KClass: class Java1 : Any
+  constructors:
+    public final fun `<init>`(): Java1
   members:
     public open <T> fun Java1.bar(): T! where T : kotlin.Any!
     public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
@@ -108,6 +130,8 @@ KClass: abstract interface Java2 : KotlinInterface, Any
     public open fun Java2.toString(): kotlin.String
   declaredMembers:
 KClass: class Java3 : Java1
+  constructors:
+    public final fun `<init>`(): Java3
   members:
     public open <T> fun Java3.bar(): T! where T : kotlin.Any!
     public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
@@ -118,6 +142,8 @@ KClass: class Java3 : Java1
     public open <T> fun Java3.bar(): T! where T : kotlin.Any!
     public open <T> fun Java3.foo(T!): kotlin.Unit where T : kotlin.Any!
 KClass: class Java4 : KotlinClass
+  constructors:
+    public final fun `<init>`(): Java4
   members:
     public open <T> fun Java4.bar(): T! where T : kotlin.Any!
     public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
@@ -126,6 +152,8 @@ KClass: class Java4 : KotlinClass
     public open fun Java4.toString(): kotlin.String
   declaredMembers:
 KClass: class KotlinClass : Java1
+  constructors:
+    public final fun `<init>`(): KotlinClass
   members:
     public open <T> fun KotlinClass.bar(): T! where T : kotlin.Any!
     public open operator fun KotlinClass.equals(kotlin.Any?): kotlin.Boolean
@@ -154,6 +182,8 @@ KClass: abstract interface KotlinInterface2 : Any
     public abstract <T> fun KotlinInterface2.bar(): T where T : kotlin.Number
     public abstract <T> fun KotlinInterface2.foo(T): kotlin.Unit where T : kotlin.Number
 KClass: class L : Java4
+  constructors:
+    public final fun `<init>`(): L
   members:
     public open <T> fun L.bar(): T! where T : kotlin.Any!
     public open operator fun L.equals(kotlin.Any?): kotlin.Boolean

@@ -15,6 +15,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:fir:tree"))
+    testFixturesImplementation(project(":analysis:light-classes-base"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(platform(libs.junit.bom))
@@ -51,17 +52,18 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
 
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5) {
-        dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
         workingDir = rootDir
-        val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-        doFirst {
-            systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.scripting.test.TestGeneratorKt")
+    testData(isolated, "testData")
 
     withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+    withScriptingPlugin()
+    withTestScriptDefinition()
 }
 
 testsJar()

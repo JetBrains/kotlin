@@ -110,7 +110,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             return false
         }
 
-        val (overriddenMember, overriddenThrows) = inherited.firstOrNull()
+        val [overriddenMember, overriddenThrows] = inherited.firstOrNull()
             ?: return true // Should not happen though.
 
         if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {

@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.util.metadataVersion
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
-        val (firResult, configuration, _) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
@@ -67,7 +67,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         val fragmentNames = mutableListOf<String>()
         val fragmentParts = mutableListOf<List<ByteArray>>()
 
-        for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
+        for ([fqName, fragment] in fragments.entries.sortedBy { it.key }) {
             fragmentNames += fqName
             fragmentParts += fragment
             header.addPackageFragmentName(fqName)
@@ -81,21 +81,25 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 
 object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
     name = "MetadataKlibFileWriterPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
+    preActions = setOf(),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!
-        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
-
-        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
-            input.configuration.perfManager?.registerKlibElementStats(stats)
-        }
+        writeToDisc(input, destDir)
 
         return MetadataSerializationArtifact(
             outputInfo = null,
             input.configuration,
             destDir.canonicalPath,
         )
+    }
+
+    fun writeToDisc(input: MetadataInMemorySerializationArtifact, destDir: java.io.File) {
+        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
+
+        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
+            input.configuration.perfManager?.registerKlibElementStats(stats)
+        }
     }
 }

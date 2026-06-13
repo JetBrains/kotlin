@@ -34,8 +34,11 @@ fun generateTestGroupSuiteWithJUnit4(
 ) {
     val suite = TestGroupSuite(TestInfraRevision.LegacyJUnit4, defaultSkipTestAllFilesCheck = false).apply(init)
     suite.forEachTestClassParallel { testClass ->
-        val (changed, testSourceFilePath) = TestGeneratorForJUnit4
-            .generateAndSave(testClass, dryRun, allowGenerationOnTeamCity, mainClassName)
+        (
+            val changed = newFileGenerated, val testSourceFilePath
+        ) =
+            TestGeneratorForJUnit4
+                .generateAndSave(testClass, dryRun, allowGenerationOnTeamCity, mainClassName)
         if (changed) {
             inconsistencyChecker(dryRun).add(testSourceFilePath)
         }

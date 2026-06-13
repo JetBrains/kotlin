@@ -1,17 +1,14 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.engine.ExternalTool
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.ResultingArtifact
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
@@ -20,8 +17,7 @@ import java.io.File
  */
 class TypeScriptCompilation<A : ResultingArtifact.Binary<A>>(
     private val testServices: TestServices,
-    private val modulesToArtifact: Map<TestModule, A>,
-    private val dtsFileByArtifact: (A) -> File?,
+    private val dtsFiles: List<File>,
     private val mainTsFile: File,
     private val outputFile: File,
     private val rootOutputDir: File,
@@ -35,8 +31,6 @@ class TypeScriptCompilation<A : ResultingArtifact.Binary<A>>(
     fun processAfterAllModules() {
         val moduleStructure = testServices.moduleStructure
         val allDirectives = moduleStructure.allDirectives
-
-        val dtsFiles = modulesToArtifact.values.mapNotNull(dtsFileByArtifact)
 
         val customizedTarget = allDirectives[JsEnvironmentConfigurationDirectives.TSC_TARGET].firstOrNull()
         val defaultTarget = if (JsEnvironmentConfigurationDirectives.ES6_MODE in allDirectives) "es6" else "es5"

@@ -28,10 +28,10 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.foo <!ARGUMENT_TYPE_MISMATCH!>{ (a, b): B ->
+    aList.foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(a, b): B<!> ->
         b checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Int>() }
         a checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
-    }<!>
+    }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, data, funWithExtensionReceiver, functionDeclaration, functionalType, infix,

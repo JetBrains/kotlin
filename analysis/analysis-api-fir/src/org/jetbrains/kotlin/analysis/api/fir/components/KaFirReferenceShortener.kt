@@ -927,7 +927,7 @@ private class ElementsToShortenCollector(
         val allClassIds = wholeQualifierClassId.outerClassesWithSelf
         val allQualifiedElements = wholeQualifierElement.qualifiedElementsWithSelf
 
-        for ((classId, element) in allClassIds.zip(allQualifiedElements)) {
+        for ([classId, element] in allClassIds.zip(allQualifiedElements)) {
             if (!element.inSelection) continue
 
             val isWholeQualifier = element === wholeQualifierElement
@@ -1302,7 +1302,7 @@ private class ElementsToShortenCollector(
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
 
-        val (matchedCallables, otherCallables) = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
+        val [matchedCallables, otherCallables] = availableCallables.partition { it.symbol.callableId == calledSymbol.callableId }
 
         val importKindFromOption = ImportKind.fromShortenOption(option)
         val importKind = matchedCallables.minOfOrNull { it.importKind } ?: importKindFromOption ?: return null

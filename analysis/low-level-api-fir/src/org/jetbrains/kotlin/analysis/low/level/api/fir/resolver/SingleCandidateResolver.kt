@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
+@KaImplementationDetail
 class SingleCandidateResolver(
     private val firSession: FirSession,
     private val firFile: FirFile,
@@ -119,6 +121,7 @@ class SingleCandidateResolver(
  * @param allowUnsafeCall if true, then candidate is resolved even if receiver's nullability doesn't match
  * @param allowUnstableSmartCast if true, then candidate is resolved even if it requires unstable smart cast
  */
+@KaImplementationDetail
 class ResolutionParameters(
     val singleCandidateResolutionMode: SingleCandidateResolutionMode,
     val callableSymbol: FirCallableSymbol<*>,
@@ -132,6 +135,7 @@ class ResolutionParameters(
     val allowUnstableSmartCast: Boolean = false,
 )
 
+@KaImplementationDetail
 enum class SingleCandidateResolutionMode {
     /**
      * Run resolution stages necessary to type check extension receiver (explicit/implicit) for candidate function.

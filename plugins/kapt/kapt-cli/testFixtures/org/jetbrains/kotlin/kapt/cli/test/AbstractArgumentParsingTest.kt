@@ -5,13 +5,13 @@
 package org.jetbrains.kotlin.kapt.cli.test
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.kapt.cli.transformArgs
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
-import java.io.File
 
 abstract class AbstractArgumentParsingTest {
     fun runTest(filePath: String) {
-        val testFile = File(filePath)
+        val testFile = ForTestCompileRuntime.transformTestDataPath(filePath)
 
         val sections = Section.parse(testFile)
         val before = sections.single { it.name == "before" }

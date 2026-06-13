@@ -58,6 +58,7 @@ public final class Kt79133_typeAliasClassLiteralKt {
 
 @Anno(value = A.class)
 /**
+ * @Anno(value = A::class)
  * public final object O : kotlin/Any {
  *
  *   // signature: <init>()V

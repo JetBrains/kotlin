@@ -8,7 +8,6 @@ package kotlin.reflect.jvm.internal.types
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import kotlin.reflect.*
-import kotlin.reflect.full.createType
 import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.isFlexible
 import kotlin.reflect.jvm.internal.types.ReflectTypeSystemContext.withNullability as withNullabilityFromTypeSystem
@@ -80,12 +79,14 @@ internal class KTypeSubstitutor(
         return result
     }
 
+    // This method is needed for the K1-based implementation because we're not substituting types inside descriptors.
+    // Once the K1-based implementation is removed, this method can be removed as well (and call sites can use the passed argument instead).
     fun chainedWith(other: KTypeSubstitutor): KTypeSubstitutor {
         // Once erased, all future type parameter substitutions must be noop
         if (this.eraseToUpperBoundsAfterSubstitution) return this
 
         // Optimizations
-        if (this.substitution.isEmpty()) return EMPTY.copy(other.eraseToUpperBoundsAfterSubstitution)
+        if (this.substitution.isEmpty()) return other
         if (other.substitution.isEmpty()) return this.copy(other.eraseToUpperBoundsAfterSubstitution)
 
         val map = substitution.mapValues { (_, typeProjection) ->
@@ -96,7 +97,13 @@ internal class KTypeSubstitutor(
                 else -> typeProjection
             }
         }
-        return KTypeSubstitutor(map, other.eraseToUpperBoundsAfterSubstitution)
+        return KTypeSubstitutor(assertUniqueKeysAndCombine(map, other.substitution), other.eraseToUpperBoundsAfterSubstitution)
+    }
+
+    private fun <K, V> assertUniqueKeysAndCombine(map1: Map<K, V>, map2: Map<K, V>): Map<K, V> {
+        val intersection = map1.keys.intersect(map2.keys)
+        check(intersection.isEmpty()) { "Substitutors must not have intersecting keys: $intersection" }
+        return map1 + map2
     }
 
     fun disjointSumWith(other: KTypeSubstitutor, memberNameForDebug: String): KTypeSubstitutor {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 
+@K1Deprecation
 class OptionalExpectationUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
         if (!OptionalAnnotationUtil.isOptionalAnnotationClass(targetDescriptor)) return

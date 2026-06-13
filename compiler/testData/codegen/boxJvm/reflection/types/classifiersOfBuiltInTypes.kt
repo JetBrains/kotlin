@@ -1,10 +1,31 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
+// FILE: J.java
+public class J {
+    public static void primitives(
+        boolean p01, byte p02, char p03, double p04,
+        float p05, int p06, long p07, short p08
+    ) {}
+    
+    public static void wrappers(
+        Boolean p01, Byte p02, Character p03, Double p04,
+        Float p05, Integer p06, Long p07, Short p08
+    ) {}
+    
+    public static void primitiveArrays(
+        boolean[] p01, byte[] p02, char[] p03, double[] p04,
+        float[] p05, int[] p06, long[] p07, short[] p08
+    ) {}
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
+    public static void wrapperArrays(
+        Boolean[] p01, Byte[] p02, Character[] p03, Double[] p04,
+        Float[] p05, Integer[] p06, Long[] p07, Short[] p08
+    ) {}
+}
+
+// FILE: test.kt
+import kotlin.reflect.*
 import kotlin.test.assertEquals
 
 fun primitives(
@@ -18,7 +39,7 @@ fun primitives(
         p08: Short
 ) {}
 
-fun nullablePrimitives(
+fun wrappers(
         p01: Boolean?,
         p02: Byte?,
         p03: Char?,
@@ -40,6 +61,17 @@ fun primitiveArrays(
         p08: ShortArray
 ) {}
 
+fun wrapperArrays(
+        p01: Array<Boolean>,
+        p02: Array<Byte>,
+        p03: Array<Char>,
+        p04: Array<Double>,
+        p05: Array<Float>,
+        p06: Array<Int>,
+        p07: Array<Long>,
+        p08: Array<Short>
+) {}
+
 fun others(
         p01: Array<*>,
         p02: Array<String>,
@@ -56,51 +88,80 @@ fun others(
 
 inline fun <reified T : Any> wrapper(): KClass<T> = T::class
 
-fun check(f: KFunction<*>, vararg expected: KClass<*>) {
+fun checkClassifiers(f: KFunction<*>, vararg expected: KClass<*>) {
     val actual = f.parameters.map { it.type.classifier as KClass<*> }
     for ([e, a] in expected.toList().zip(actual)) {
         assertEquals(e, a, "$e (${e.java}) != $a (${a.java})")
     }
 }
 
+fun checkArguments(f: KFunction<*>) {
+    val expected = List(f.parameters.size) { emptyList<KTypeProjection>() }
+    val actual = f.parameters.map { it.type.arguments }
+    assertEquals(expected, actual, "Non-empty arguments for some types in $f")
+}
+
 fun box(): String {
-    check(
-            ::primitives,
-            Boolean::class,
-            Byte::class,
-            Char::class,
-            Double::class,
-            Float::class,
-            Int::class,
-            Long::class,
-            Short::class
-    )
+    for (f in listOf(::primitives, J::primitives)) {
+        checkClassifiers(
+                f,
+                Boolean::class,
+                Byte::class,
+                Char::class,
+                Double::class,
+                Float::class,
+                Int::class,
+                Long::class,
+                Short::class
+        )
+        checkArguments(f)
+    }
 
-    check(
-            ::nullablePrimitives,
-            wrapper<Boolean>(),
-            wrapper<Byte>(),
-            wrapper<Char>(),
-            wrapper<Double>(),
-            wrapper<Float>(),
-            wrapper<Int>(),
-            wrapper<Long>(),
-            wrapper<Short>()
-    )
+    for (f in listOf(::wrappers, J::wrappers)) {
+        checkClassifiers(
+                f,
+                wrapper<Boolean>(),
+                wrapper<Byte>(),
+                wrapper<Char>(),
+                wrapper<Double>(),
+                wrapper<Float>(),
+                wrapper<Int>(),
+                wrapper<Long>(),
+                wrapper<Short>()
+        )
+        checkArguments(f)
+    }
 
-    check(
-            ::primitiveArrays,
-            BooleanArray::class,
-            ByteArray::class,
-            CharArray::class,
-            DoubleArray::class,
-            FloatArray::class,
-            IntArray::class,
-            LongArray::class,
-            ShortArray::class
-    )
+    for (f in listOf(::primitiveArrays, J::primitiveArrays)) {
+        checkClassifiers(
+                f,
+                BooleanArray::class,
+                ByteArray::class,
+                CharArray::class,
+                DoubleArray::class,
+                FloatArray::class,
+                IntArray::class,
+                LongArray::class,
+                ShortArray::class
+        )
+        checkArguments(f)
+    }
 
-    check(
+    for (f in listOf(::wrapperArrays, J::wrapperArrays)) {
+        checkClassifiers(
+                f,
+                Array<Boolean>::class,
+                Array<Byte>::class,
+                Array<Char>::class,
+                Array<Double>::class,
+                Array<Float>::class,
+                Array<Int>::class,
+                Array<Long>::class,
+                Array<Short>::class
+        )
+    }
+
+    checkClassifiers(
             ::others,
             Array<Any>::class,
             Array<String>::class,

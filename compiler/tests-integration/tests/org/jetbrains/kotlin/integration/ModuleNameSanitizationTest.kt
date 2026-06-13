@@ -92,7 +92,7 @@ class ModuleNameSanitizationTest : KotlinIntegrationTestBase() {
         val outputDir = File(tmpdir, "out").also { it.mkdirs() }
         val moduleName = "com.example:X<>:\"/\\|?*%"
 
-        val (stdout, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+        val [stdout, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
             listOf(
                 sourceFile.path,

@@ -49,7 +49,7 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */ /* constant value A	B
   C
-D'E"F\G$H */;
+  D'E"F\G$H */;
 
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;

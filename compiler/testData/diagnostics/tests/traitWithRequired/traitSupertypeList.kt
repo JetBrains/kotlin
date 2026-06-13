@@ -7,7 +7,7 @@ interface Foo<!CONSTRUCTOR_IN_INTERFACE!>()<!> : <!INTERFACE_WITH_SUPERCLASS, SU
 interface Foo2 : <!INTERFACE_WITH_SUPERCLASS!>bar<!>, Foo {
 }
 
-open class Foo1() : bar(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_APPEARS_TWICE!>bar<!>, Foo, <!SUPERTYPE_APPEARS_TWICE!>Foo<!>() {}
+open class Foo1() : bar(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_APPEARS_TWICE!>bar<!>, Foo, <!SUPERTYPE_APPEARS_TWICE!>Foo<!><!NO_CONSTRUCTOR!>()<!> {}
 open class Foo12 : bar(), <!MANY_CLASSES_IN_SUPERTYPE_LIST, SUPERTYPE_APPEARS_TWICE!>bar<!> {}
 
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, primaryConstructor */

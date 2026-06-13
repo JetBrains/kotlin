@@ -185,13 +185,20 @@
                 </executions>
                 <configuration>
                     <jvm>${kotlinTestBuildJdk}/bin/java</jvm>
+                    <forkCount>4</forkCount>
+                    <reuseForks>true</reuseForks>
                     <systemPropertyVariables>
                         <!-- Properties required for integration tests run -->
                         <!-- Path to maven repo with kotlin artifacts (i.e. kotlin-maven-plugin)
                         Can be provisioned with ./gradlew install publish -->
                         <kotlin.build.repo>${settings.localRepository}</kotlin.build.repo>
                         <kotlin.version>${project.version}</kotlin.version>
-                        <kotlin.it.localRepo>${project.basedir}/local-repo</kotlin.it.localRepo>
+                        <!-- Required to isolate forks from forkCount so every fork has a writable repo -->
+                        <kotlin.it.localRepo>${project.basedir}/local-repo-${surefire.forkNumber}</kotlin.it.localRepo>
+                        <!-- Required to isolate forks: MAVEN_USER_HOME see https://maven.apache.org/tools/wrapper/  -->
+                        <kotlin.it.mavenUserHome>${project.basedir}/maven-user-home-${surefire.forkNumber}</kotlin.it.mavenUserHome>
+                        <!-- Required to isolate forks: TMP_DIR for mvnw.cmd on Windows -->
+                        <kotlin.it.mavenTempDir>${project.basedir}/maven-temp-${surefire.forkNumber}</kotlin.it.mavenTempDir>
                         <kotlin.it.testDirs>${project.basedir}/src/it</kotlin.it.testDirs>
 
                         <!-- JDK configuration must follow this rule jdk\d+Home -->

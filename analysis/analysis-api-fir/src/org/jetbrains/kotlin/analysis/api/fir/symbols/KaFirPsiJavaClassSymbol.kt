@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolModality
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.asKaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.toKtClassKind
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -75,6 +76,10 @@ internal class KaFirPsiJavaClassSymbol(
     override val modality: KaSymbolModality
         get() = withValidityAssertion { javaClass.modality.asKaSymbolModality }
 
+    override val visibility: KaSymbolVisibility
+        get() = withValidityAssertion { javaClass.visibility.asKaSymbolVisibility }
+
+    @Deprecated("Use 'visibility' instead", level = DeprecationLevel.HIDDEN)
     override val compilerVisibility: Visibility
         get() = withValidityAssertion { javaClass.visibility }
 
@@ -101,10 +106,23 @@ internal class KaFirPsiJavaClassSymbol(
         }
 
     val annotationSimpleNames: List<String?>
-        get() = withValidityAssertion { backingPsi.annotations.map { it.nameReferenceElement?.referenceName } }
+        get() = withValidityAssertion {
+            val simpleNames = backingPsi.annotations.map { it.nameReferenceElement?.referenceName }
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            if (javaClass.isDeprecatedInJavaDoc && "Deprecated" !in simpleNames) {
+                simpleNames + "Deprecated"
+            } else {
+                simpleNames
+            }
+        }
 
     val hasAnnotations: Boolean
-        get() = withValidityAssertion { backingPsi.annotations.isNotEmpty() }
+        get() = withValidityAssertion {
+            // Javadoc `@deprecated` tag is not part of the PSI annotation list, but `FirJavaClass` adds a synthetic
+            // `kotlin.Deprecated` annotation for it, so we must keep it in sync.
+            backingPsi.annotations.isNotEmpty() || javaClass.isDeprecatedInJavaDoc
+        }
 
     override val isData: Boolean get() = withValidityAssertion { false }
     override val isInline: Boolean get() = withValidityAssertion { false }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.testFederation
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * This test is a 'PseudoTest'.
@@ -15,7 +16,9 @@ import kotlin.test.assertEquals
 class PseudoTest {
     @Test
     fun `domain test`() {
-        assertEquals(TestFederationMode.Full, testFederationMode)
+        if (autoSmokeTestPercentage == 0) {
+            assertEquals(TestFederationMode.Full, testFederationMode)
+        }
     }
 
     @SmokeTest
@@ -29,7 +32,7 @@ class PseudoTest {
     fun `js contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
         val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Js !in affected) error("Expected 'Js' in affected domains, but was: $affected")
+        if (Domain.Js !in affected && autoSmokeTestPercentage == 0) error("Expected 'Js' in affected domains, but was: $affected")
     }
 
     @AffectedByWasm
@@ -37,7 +40,7 @@ class PseudoTest {
     fun `wasm contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
         val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Wasm !in affected) error("Expected 'Wasm' in affected domains, but was: $affected")
+        if (Domain.Wasm !in affected && autoSmokeTestPercentage == 0) error("Expected 'Wasm' in affected domains, but was: $affected")
     }
 
     @AffectedByGradle
@@ -45,6 +48,12 @@ class PseudoTest {
     fun `gradle contract test`() {
         if (testFederationMode == TestFederationMode.Full) return
         val affected = testFederationAffectedDomains ?: error("Missing 'testFederationAffectedDomains'")
-        if (Domain.Gradle !in affected) error("Expected 'Gradle' in affected domains, but was: $affected")
+        if (Domain.Gradle !in affected && autoSmokeTestPercentage == 0) error("Expected 'Gradle' in affected domains, but was: $affected")
+    }
+
+    @NightlyTest
+    @Test
+    fun `nightly test`() {
+        assertTrue(testFederationNightly)
     }
 }

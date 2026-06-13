@@ -31,9 +31,6 @@ public interface KaReferenceShortener : KaSessionComponent {
      * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
      * for the default shortening logic.
      *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
-     *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
     @KaIdeApi
@@ -50,9 +47,6 @@ public interface KaReferenceShortener : KaSessionComponent {
      *
      * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
      * for the default shortening logic.
-     *
-     * N.B. This API is not implemented for the FE10 implementation!
-     * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
      *
      * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
      */
@@ -239,9 +233,6 @@ public interface ShortenCommand {
  * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
  * for the default shortening logic.
  *
- * N.B. This API is not implemented for the FE10 implementation!
- * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
- *
  * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
@@ -271,9 +262,6 @@ public fun collectPossibleReferenceShortenings(
  *
  * See [defaultClassShortenStrategy] and [defaultCallableShortenStrategy]
  * for the default shortening logic.
- *
- * N.B. This API is not implemented for the FE10 implementation!
- * For a K1- and K2-compatible API, use `org.jetbrains.kotlin.idea.base.codeInsight.ShortenReferencesFacility`.
  *
  * Also see `org.jetbrains.kotlin.idea.base.analysis.api.utils.shortenReferences` and functions around it.
  */

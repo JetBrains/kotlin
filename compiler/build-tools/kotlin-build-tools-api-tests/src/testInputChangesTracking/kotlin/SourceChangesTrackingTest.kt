@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -41,6 +45,108 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 assertCompiledSources("bar.kt")
                 assertRemovedOutputs("SecretKt.class")
             }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output when an externally-tracked source file is deleted")
+    @TestMetadata("source-file-modification")
+    fun testSourceFileDeletedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            // the internally-tracked deletion path is already covered by `testConsequentBuilds`.
+            val module = module("source-file-modification")
+
+            module.deleteFile("Dummy.kt")
+
+            module.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("Dummy.class")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output and produces a new one when an internally-tracked class is renamed")
+    @TestMetadata("source-file-modification")
+    fun testClassRenamedInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("source-file-modification").renameClassAndAssertOutputs()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output and produces a new one when an externally-tracked class is renamed")
+    @TestMetadata("source-file-modification")
+    fun testClassRenamedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("source-file-modification").renameClassAndAssertOutputs()
+        }
+    }
+
+    private fun ScenarioModule.renameClassAndAssertOutputs() {
+        changeFile("Dummy.kt") { it.replace("Dummy", "ForDummies") }
+
+        compile {
+            assertCompiledSources("Dummy.kt")
+            // `Dummy.class` is intentionally absent: IC must drop the stale output of the renamed class while
+            // producing `ForDummies.class` and leaving the untouched `Stay.class` in place.
+            assertOutputs("Stay.class", "ForDummies.class")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (externally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-13204: IC resolves typealias correctly after visibility change (internally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    private fun ScenarioModule.changeClassVisibilityAndAssertDirtySet() {
+        // KT-13204: flip `Curry` to `internal`; `UseCurry.kt` references it via typealias FN2, `Dummy.kt` does not.
+        replaceFileWithVersion("Curry.kt", "internal")
+
+        compile {
+            // `Dummy.kt` is intentionally absent: only the changed class and its direct user recompile.
+            assertCompiledSources("Curry.kt", "UseCurry.kt")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (externally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (internally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    private fun ScenarioModule.changeJavaConstantAndAssertUsageRecompiled() {
+        replaceFileWithVersion("JavaConstants.java", "new-value")
+
+        compile {
+            // Regression test for KT-69042: under K2 a changed Java constant must recompile the Kotlin
+            // file that reads it, otherwise the stale value stays inlined in the usage.
+            assertCompiledSources("usage.kt")
         }
     }
 
@@ -74,6 +180,23 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
                 assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
                 assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-49023: Renaming a file with a case-only change should not cause redeclaration errors")
+    @TestMetadata("ic-scenarios/kt-49023")
+    fun testCaseOnlyFileRenameDoesNotCauseRedeclarationErrors(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            val mod = module("ic-scenarios/kt-49023")
+
+            mod.deleteFile("Foo.kt")
+            mod.createPredefinedFile("foo.kt", "different-case")
+
+            mod.compile {
+                assertCompiledSources("foo.kt")
+                assertNoOutputSetChanges()
             }
         }
     }

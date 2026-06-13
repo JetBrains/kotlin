@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
+@K1Deprecation
 object OptionalAnnotationUtil {
     val OPTIONAL_EXPECTATION_FQ_NAME = StandardClassIds.Annotations.OptionalExpectation.asSingleFqName()
 

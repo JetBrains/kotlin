@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 
+@K1Deprecation
 class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallResolver) : CallCheckerWithAdditionalResolve {
     override fun check(
         overloadResolutionResults: OverloadResolutionResults<*>,
@@ -160,7 +162,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         context: BasicCallResolutionContext,
         substitutionMap: Map<TypeConstructor, UnwrappedType>
     ): Set<NewTypeVariableConstructor> = buildSet {
-        for ((i, valueArgument) in valueArguments.withIndex()) {
+        for ([i, valueArgument] in valueArguments.withIndex()) {
             if (valueArgument !is SimpleKotlinCallArgument) continue
 
             val substitutedValueArgument = newArguments[i] as? SimpleKotlinCallArgument ?: continue

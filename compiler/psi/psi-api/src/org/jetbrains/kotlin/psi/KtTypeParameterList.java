@@ -39,9 +39,14 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_PARAMETER);
     }
 
+    /**
+     * @deprecated Use {@code org.jetbrains.kotlin.idea.base.psi.KotlinPsiModificationUtils.appendTypeParameter(this, typeParameter)}
+     * instead.
+     */
     @NotNull
+    @Deprecated
     public KtTypeParameter addParameter(@NotNull KtTypeParameter typeParameter) {
-        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getParameters(), typeParameter, KtTokens.LT);
+        return KtPsiMutationService.getInstance().appendTypeParameter(this, typeParameter);
     }
 
     @Override

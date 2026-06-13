@@ -38,7 +38,7 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
 
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        return KtExpressionImpl.Companion.replaceExpression(this, newElement, true, super::replace);
+        return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, super::replace);
     }
 
     @Override
@@ -76,9 +76,7 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
 
     @Override
     public PsiLanguageInjectionHost updateText(@NotNull String text) {
-        KtExpression newExpression = new KtPsiFactory(getProject()).createExpressionIfPossible(text);
-        if (newExpression instanceof KtStringTemplateExpression) return (KtStringTemplateExpression) replace(newExpression);
-        return ElementManipulators.handleContentChange(this, text);
+        return KtPsiMutationService.getInstance().updateStringTemplateText(this, text);
     }
 
     @NotNull

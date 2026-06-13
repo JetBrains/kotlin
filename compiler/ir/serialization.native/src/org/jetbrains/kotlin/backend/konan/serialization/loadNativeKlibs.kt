@@ -70,7 +70,7 @@ fun loadNativeKlibs(
 
     if (!configuration.skipLibrarySpecialCompatibilityChecks) {
         KonanLibrarySpecialCompatibilityChecker.check(
-            result.librariesStdlibFirst, configuration.messageCollector, configuration.klibAbiCompatibilityLevel
+            result.librariesStdlibFirst, configuration
         )
     }
 

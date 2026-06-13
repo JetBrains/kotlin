@@ -5,7 +5,12 @@ KtPackageDirective(22,34): 'package main'
   null
 
 KtNameReferenceExpression(30,34): 'main'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      main
+    ]
 
 KtImportList(36,133): 'import one.two.Color'
   null
@@ -20,13 +25,28 @@ KtDotQualifiedExpression(43,50): 'one.two'
   null
 
 KtNameReferenceExpression(43,46): 'one'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(47,50): 'two'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(51,56): 'Color'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color
+    ]
 
 KtImportDirective(57,83): 'import one.two.Color.Black'
   null
@@ -41,16 +61,36 @@ KtDotQualifiedExpression(64,71): 'one.two'
   null
 
 KtNameReferenceExpression(64,67): 'one'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(68,71): 'two'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(72,77): 'Color'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color
+    ]
 
 KtNameReferenceExpression(78,83): 'Black'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color.Black
+    ]
 
 KtImportDirective(84,110): 'import one.two.Color.Green'
   null
@@ -65,16 +105,36 @@ KtDotQualifiedExpression(91,98): 'one.two'
   null
 
 KtNameReferenceExpression(91,94): 'one'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(95,98): 'two'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(99,104): 'Color'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color
+    ]
 
 KtNameReferenceExpression(105,110): 'Green'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color.Green
+    ]
 
 KtImportDirective(111,133): 'import one.two.Color.*'
   null
@@ -86,10 +146,25 @@ KtDotQualifiedExpression(118,125): 'one.two'
   null
 
 KtNameReferenceExpression(118,121): 'one'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one
+    ]
 
 KtNameReferenceExpression(122,125): 'two'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one.two
+    ]
 
 KtNameReferenceExpression(126,131): 'Color'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/two/Color
+    ]

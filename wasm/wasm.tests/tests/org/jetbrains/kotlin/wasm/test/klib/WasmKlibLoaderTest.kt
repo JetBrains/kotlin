@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
@@ -46,24 +47,22 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
         )
 
     override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
+        parameters: CompilationParameters
     ) {
         val args = KotlinWasmCompilerArguments().apply {
-            if (asFile) {
-                outputDir = klibLocation.parent
+            if (parameters.asFile) {
+                outputDir = parameters.klibLocation.parent
             } else {
                 nopack = true
-                outputDir = klibLocation.path
+                outputDir = parameters.klibLocation.path
             }
             wasmTarget = this@AbstractWasmKlibLoaderTest.target.alias
             libraries = stdlib
-            moduleName = sourceFile.nameWithoutExtension
-            irModuleName = sourceFile.nameWithoutExtension
-            customKlibAbiVersion = abiVersion.toString()
-            freeArgs = listOf(sourceFile.absolutePath)
+            moduleName = parameters.sourceFile.nameWithoutExtension
+            irModuleName = parameters.sourceFile.nameWithoutExtension
+            customKlibAbiVersion = parameters.abiVersion.toString()
+            freeArgs = listOf(parameters.sourceFile.absolutePath)
+            if (parameters.withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
         }
 
         val messageCollector = MessageCollectorImpl()

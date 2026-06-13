@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
+@K1Deprecation
 class StubJavaResolverCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
     override fun recordMethod(member: JavaMember, descriptor: SimpleFunctionDescriptor) {}

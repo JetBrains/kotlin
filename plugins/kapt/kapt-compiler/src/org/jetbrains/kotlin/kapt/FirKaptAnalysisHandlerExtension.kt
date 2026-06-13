@@ -9,14 +9,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
@@ -39,7 +36,8 @@ import org.jetbrains.kotlin.kapt.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt.base.util.info
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
-import org.jetbrains.kotlin.kapt.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.kapt.stubs.OriginCollectingClassBuilderFactory
+import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.util.PhaseType
@@ -50,11 +48,10 @@ import java.io.File
  * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
  * in-memory class files to Java sources, correcting error types.
  */
-@OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
-    private val kaptLogger: MessageCollectorBackedKaptLogger? = null,
+    private val kaptLogger: CompilerConfigurationBackedKaptLogger? = null,
 ) : FirAnalysisHandlerExtension() {
-    lateinit var logger: MessageCollectorBackedKaptLogger
+    lateinit var logger: CompilerConfigurationBackedKaptLogger
     lateinit var options: KaptOptions
 
     override fun isApplicable(configuration: CompilerConfiguration): Boolean {
@@ -63,13 +60,11 @@ open class FirKaptAnalysisHandlerExtension(
 
     override fun doAnalysis(project: Project, configuration: CompilerConfiguration): Boolean {
         val optionsBuilder = configuration[KAPT_OPTIONS]!!
-        logger = kaptLogger
-            ?: MessageCollectorBackedKaptLogger(
-                KaptFlag.VERBOSE in optionsBuilder.flags,
-                KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
-                configuration.messageCollector,
-            )
-        val messageCollector = logger.messageCollector
+        logger = kaptLogger ?: CompilerConfigurationBackedKaptLogger(
+            KaptFlag.VERBOSE in optionsBuilder.flags,
+            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+            configuration,
+        )
 
         if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
             logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
@@ -93,7 +88,6 @@ open class FirKaptAnalysisHandlerExtension(
 
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
-                this.messageCollector = messageCollector
                 skipBodies = true
                 useLightTree = false
 
@@ -159,7 +153,7 @@ open class FirKaptAnalysisHandlerExtension(
         val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
         logger.info { "Java source files: " + javaSourceFiles.joinToString { it.normalize().absolutePath } }
 
-        val (annotationProcessingTime) = measureTimeMillis {
+        val [annotationProcessingTime] = measureTimeMillis {
             kaptContext.doAnnotationProcessing(javaSourceFiles, processors.processors)
         }
 
@@ -169,7 +163,7 @@ open class FirKaptAnalysisHandlerExtension(
             MemoryLeakDetector.add(processors.classLoader)
 
             val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
-            val (leakDetectionTime, leaks) = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
+            val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
             logger.info { "Leak detection took $leakDetectionTime ms" }
 
             for (leak in leaks) {
@@ -221,7 +215,7 @@ open class FirKaptAnalysisHandlerExtension(
         // so we need to create an empty diagnostics collector once again
         val configurationForBackend = configuration.copy().apply {
             diagnosticsCollector = DiagnosticsCollectorImpl()
-            put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
+            put(JvmBackendPipelinePhase.customClassBuilderFactory, builderFactory)
         }
         val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput.withCompilerConfiguration(configurationForBackend))
         val generationState = backendOutput.outputs.singleOrNull() ?: return null
@@ -229,6 +223,7 @@ open class FirKaptAnalysisHandlerExtension(
         return KaptContextForStubGeneration(
             options, false, logger, builderFactory.compiledClasses, builderFactory.origins, generationState,
             frontendOutput.frontendOutput.outputs.flatMap { it.fir },
+            fir2IrOutput.result.irBuiltIns,
         )
     }
 
@@ -236,11 +231,8 @@ open class FirKaptAnalysisHandlerExtension(
         var reported = false
         FirDiagnosticsCompilerResultsReporter.reportByFile(frontendOutput.configuration.diagnosticsCollector) { diagnostic, location ->
             if (diagnostic.factory == FirSyntaxErrors.SYNTAX) {
-                FirDiagnosticsCompilerResultsReporter.reportDiagnosticToMessageCollector(
-                    diagnostic,
-                    location,
-                    logger.messageCollector,
-                    frontendOutput.configuration.renderDiagnosticInternalName
+                FirDiagnosticsCompilerResultsReporter.reportDiagnosticToConfiguration(
+                    diagnostic, location, logger.configuration, frontendOutput.configuration.renderDiagnosticInternalName
                 )
                 reported = true
             }
@@ -251,21 +243,20 @@ open class FirKaptAnalysisHandlerExtension(
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
         val converter = KaptStubConverter(kaptContext, generateNonExistentClass = true)
 
-        val (stubGenerationTime, kaptStubs) = measureTimeMillis {
+        val [stubGenerationTime, kaptStubs] = measureTimeMillis {
             converter.convert()
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
 
-        saveStubs(kaptContext, kaptStubs, logger.messageCollector)
-        saveIncrementalData(kaptContext, logger.messageCollector, converter)
+        saveStubs(kaptContext, kaptStubs)
+        saveIncrementalData(kaptContext, converter)
     }
 
     protected open fun saveStubs(
         kaptContext: KaptContextForStubGeneration,
         stubs: List<KaptStub>,
-        messageCollector: MessageCollector,
     ) {
         val reportOutputFiles = kaptContext.generationState.configuration.reportOutputFiles
         val outputFiles = if (reportOutputFiles) kaptContext.generationState.factory.asList().associateBy {
@@ -301,7 +292,7 @@ open class FirKaptAnalysisHandlerExtension(
                     sourceFiles,
                     generatedFile
                 )
-                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
+                logger.configuration.reportOutput(OutputMessageUtil.formatOutputMessage(sourceFiles, generatedFile))
             }
 
             reportStubsOutputForIC(sourceFile)
@@ -315,7 +306,6 @@ open class FirKaptAnalysisHandlerExtension(
 
     protected open fun saveIncrementalData(
         kaptContext: KaptContextForStubGeneration,
-        messageCollector: MessageCollector,
         converter: KaptStubConverter,
     ) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
@@ -333,7 +323,7 @@ open class FirKaptAnalysisHandlerExtension(
                 }
             }
             if (reportOutputFiles) {
-                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
+                logger.configuration.reportOutput(OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
             }
         }
     }

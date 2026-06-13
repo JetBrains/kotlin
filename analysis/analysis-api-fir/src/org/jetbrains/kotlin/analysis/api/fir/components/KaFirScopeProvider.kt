@@ -304,14 +304,19 @@ internal class KaFirScopeProvider(
 
         val firSymbolBuilder = analysisSession.firSymbolBuilder
 
-        val implicitValues = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+        val labelsForShadowing = mutableSetOf<String>()
+        val implicitValues = towerDataElementsIndexed.flatMap { [index, towerDataElement] ->
             buildList {
                 val receiver = towerDataElement.implicitReceiver
                 if (receiver != null) {
+                    val label = with(towerDataContext.implicitValueStorage) { receiver.label() }
+                        ?.asString()
+                        ?.takeIf(labelsForShadowing::add)
                     val receiverValue = KaBaseScopeImplicitReceiverValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
                         ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),
                         scopeIndexInTower = index,
+                        label = label,
                     )
 
                     add(receiverValue)
@@ -330,7 +335,7 @@ internal class KaFirScopeProvider(
             }
         }
 
-        val firScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+        val firScopes = towerDataElementsIndexed.flatMap { [index, towerDataElement] ->
             val availableScopes = towerDataElement
                 .getAvailableScopesForPosition(position) { coneType -> withSyntheticPropertiesScopeOrSelf(coneType) }
                 .flatMap { flattenFirScope(it) }
@@ -342,7 +347,7 @@ internal class KaFirScopeProvider(
     }
 
     private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KaScopeWithKind> {
-        return firScopes.map { (index, firScope) ->
+        return firScopes.map { [index, firScope] ->
             KaScopeWithKindImpl(convertToKtScope(firScope), getScopeKind(firScope, index))
         }
     }

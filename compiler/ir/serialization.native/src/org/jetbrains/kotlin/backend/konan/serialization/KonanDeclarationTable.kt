@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 class KonanGlobalDeclarationTable(
-    builtIns: IrBuiltIns
+    builtIns: IrBuiltIns?
 ) : GlobalDeclarationTable(KonanManglerIr) {
     init {
-        loadKnownBuiltins(builtIns)
+        if (builtIns != null) {
+            loadKnownBuiltins(builtIns)
+        }
     }
 }
 

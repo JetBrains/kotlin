@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.inline
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 
+@K1Deprecation
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
     private val languageVersionSettings: LanguageVersionSettings
@@ -170,7 +172,7 @@ class InlineAnalyzerExtension(
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
         var hasInlineArgs = false
-        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { (parameter, descriptor) ->
+        function.valueParameters.zip(functionDescriptor.valueParameters).forEach { [parameter, descriptor] ->
             hasInlineArgs = hasInlineArgs or checkInlinableParameter(descriptor, parameter, functionDescriptor, trace)
         }
         if (hasInlineArgs) return

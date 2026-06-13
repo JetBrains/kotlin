@@ -37,6 +37,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getTypeReference() = null
 
+    @Suppress("OVERRIDE_DEPRECATION")
     @Throws(IncorrectOperationException::class)
     override fun setTypeReference(typeRef: KtTypeReference?) = throw IncorrectOperationException("setTypeReference to constructor")
 

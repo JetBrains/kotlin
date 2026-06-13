@@ -1,4 +1,6 @@
 KClass: class A : Java1
+  constructors:
+    public final fun `<init>`(): A
   members:
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
     public open fun A.foo(): kotlin.Unit
@@ -7,6 +9,8 @@ KClass: class A : Java1
     public open val A.a: kotlin.Int
   declaredMembers:
 KClass: class AA : Java15
+  constructors:
+    public final fun `<init>`(): AA
   members:
     public open operator fun AA.equals(kotlin.Any?): kotlin.Boolean
     protected open fun AA.foo(): kotlin.Unit
@@ -16,6 +20,8 @@ KClass: class AA : Java15
   declaredMembers:
     protected open fun AA.foo(): kotlin.Unit
 KClass: class B : Java1
+  constructors:
+    public final fun `<init>`(): B
   members:
     public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
     public open fun B.foo(): kotlin.Unit
@@ -25,6 +31,8 @@ KClass: class B : Java1
   declaredMembers:
     public open fun B.foo(): kotlin.Unit
 KClass: class BB : Java16
+  constructors:
+    public final fun `<init>`(): BB
   members:
     public open operator fun BB.equals(kotlin.Any?): kotlin.Boolean
     internal open fun BB.foo(): kotlin.Unit
@@ -33,12 +41,16 @@ KClass: class BB : Java16
     internal open val BB.a: kotlin.Int
   declaredMembers:
 KClass: class C : Java2
+  constructors:
+    public final fun `<init>`(): C
   members:
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
     public open fun C.hashCode(): kotlin.Int
     public open fun C.toString(): kotlin.String
   declaredMembers:
 KClass: class CC : Java17
+  constructors:
+    public final fun `<init>`(): CC
   members:
     public open operator fun CC.equals(kotlin.Any?): kotlin.Boolean
     internal open fun CC.foo(): kotlin.Unit
@@ -49,6 +61,8 @@ KClass: class CC : Java17
     final var CC.a: kotlin.Int
   declaredMembers:
 KClass: class D : Java2
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     public final fun D.foo(): kotlin.Unit
@@ -59,6 +73,8 @@ KClass: class D : Java2
     public final fun D.foo(): kotlin.Unit
     public final val D.a: kotlin.Int
 KClass: class DD : Java17
+  constructors:
+    public final fun `<init>`(): DD
   members:
     public open operator fun DD.equals(kotlin.Any?): kotlin.Boolean
     internal open fun DD.foo(): kotlin.Unit
@@ -69,6 +85,8 @@ KClass: class DD : Java17
   declaredMembers:
     internal open fun DD.foo(): kotlin.Unit
 KClass: class DefaultVisibility : Any
+  constructors:
+    public final fun `<init>`(): DefaultVisibility
   members:
     public open operator fun DefaultVisibility.equals(kotlin.Any?): kotlin.Boolean
     public open fun DefaultVisibility.foo(): kotlin.Unit
@@ -79,6 +97,8 @@ KClass: class DefaultVisibility : Any
     public open fun DefaultVisibility.foo(): kotlin.Unit
     public open val DefaultVisibility.a: kotlin.Int
 KClass: class E : Java3
+  constructors:
+    public final fun `<init>`(): E
   members:
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
     protected open fun E.foo(): kotlin.Unit
@@ -87,6 +107,8 @@ KClass: class E : Java3
     protected open val E.a: kotlin.Int
   declaredMembers:
 KClass: class F : Java3
+  constructors:
+    public final fun `<init>`(): F
   members:
     public open operator fun F.equals(kotlin.Any?): kotlin.Boolean
     public open fun F.foo(): kotlin.Unit
@@ -97,6 +119,8 @@ KClass: class F : Java3
     public open fun F.foo(): kotlin.Unit
     public open val F.a: kotlin.Int
 KClass: class G : Java4
+  constructors:
+    public final fun `<init>`(): G
   members:
     public open operator fun G.equals(kotlin.Any?): kotlin.Boolean
     public open fun G.foo(): kotlin.Unit
@@ -105,6 +129,8 @@ KClass: class G : Java4
     public open val G.a: kotlin.Int
   declaredMembers:
 KClass: class H : Java4
+  constructors:
+    public final fun `<init>`(): H
   members:
     public open operator fun H.equals(kotlin.Any?): kotlin.Boolean
     public open fun H.foo(): kotlin.Unit
@@ -115,6 +141,8 @@ KClass: class H : Java4
     public open fun H.foo(): kotlin.Unit
     public open val H.a: kotlin.Int
 KClass: class I : Java5
+  constructors:
+    public final fun `<init>`(): I
   members:
     public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
     internal open fun I.foo(): kotlin.Unit
@@ -123,6 +151,8 @@ KClass: class I : Java5
     internal open val I.a: kotlin.Int
   declaredMembers:
 KClass: class InternalVisibility : Any
+  constructors:
+    public final fun `<init>`(): InternalVisibility
   members:
     public open operator fun InternalVisibility.equals(kotlin.Any?): kotlin.Boolean
     internal open fun InternalVisibility.foo(): kotlin.Unit
@@ -133,6 +163,8 @@ KClass: class InternalVisibility : Any
     internal open fun InternalVisibility.foo(): kotlin.Unit
     internal open val InternalVisibility.a: kotlin.Int
 KClass: class J : Java6
+  constructors:
+    public final fun `<init>`(): J
   members:
     public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
     public open fun J.foo(): kotlin.Unit
@@ -142,6 +174,8 @@ KClass: class J : Java6
     public final var J.a: kotlin.Int
   declaredMembers:
 KClass: class Java1 : PublicVisibility
+  constructors:
+    public final fun `<init>`(): Java1
   members:
     public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java1.foo(): kotlin.Unit
@@ -150,6 +184,8 @@ KClass: class Java1 : PublicVisibility
     public open val Java1.a: kotlin.Int
   declaredMembers:
 KClass: class Java10 : DefaultVisibility
+  constructors:
+    public final fun `<init>`(): Java10
   members:
     public open operator fun Java10.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java10.foo(): kotlin.Unit
@@ -161,6 +197,8 @@ KClass: class Java10 : DefaultVisibility
     public open fun Java10.foo(): kotlin.Unit
     public final var Java10.a: kotlin.Int
 KClass: class Java11 : ProtectedVisibility
+  constructors:
+    public final fun `<init>`(): Java11
   members:
     public open operator fun Java11.equals(kotlin.Any?): kotlin.Boolean
     open fun Java11.foo(): kotlin.Unit
@@ -172,6 +210,8 @@ KClass: class Java11 : ProtectedVisibility
     open fun Java11.foo(): kotlin.Unit
     final var Java11.a: kotlin.Int
 KClass: class Java12 : InternalVisibility
+  constructors:
+    public final fun `<init>`(): Java12
   members:
     public open operator fun Java12.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java12.foo(): kotlin.Unit
@@ -184,6 +224,8 @@ KClass: class Java12 : InternalVisibility
     open fun Java12.foo(): kotlin.Unit
     final var Java12.a: kotlin.Int
 KClass: class Java13 : PrivateVisibility
+  constructors:
+    public final fun `<init>`(): Java13
   members:
     public open operator fun Java13.equals(kotlin.Any?): kotlin.Boolean
     open fun Java13.foo(): kotlin.Unit
@@ -194,6 +236,8 @@ KClass: class Java13 : PrivateVisibility
     open fun Java13.foo(): kotlin.Unit
     final var Java13.a: kotlin.Int
 KClass: class Java14 : PrivateVisibility
+  constructors:
+    public final fun `<init>`(): Java14
   members:
     public open operator fun Java14.equals(kotlin.Any?): kotlin.Boolean
     private open fun Java14.foo(): kotlin.Unit
@@ -204,6 +248,8 @@ KClass: class Java14 : PrivateVisibility
     private open fun Java14.foo(): kotlin.Unit
     private final var Java14.a: kotlin.Int
 KClass: class Java15 : PrivateVisibility
+  constructors:
+    public final fun `<init>`(): Java15
   members:
     public open operator fun Java15.equals(kotlin.Any?): kotlin.Boolean
     open fun Java15.foo(): kotlin.Unit
@@ -214,6 +260,8 @@ KClass: class Java15 : PrivateVisibility
     open fun Java15.foo(): kotlin.Unit
     final var Java15.a: kotlin.Int
 KClass: class Java16 : InternalVisibility
+  constructors:
+    public final fun `<init>`(): Java16
   members:
     public open operator fun Java16.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java16.foo(): kotlin.Unit
@@ -226,6 +274,8 @@ KClass: class Java16 : InternalVisibility
     private open fun Java16.foo(): kotlin.Unit
     private final var Java16.a: kotlin.Int
 KClass: class Java17 : InternalVisibility
+  constructors:
+    public final fun `<init>`(): Java17
   members:
     public open operator fun Java17.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java17.foo(): kotlin.Unit
@@ -238,12 +288,16 @@ KClass: class Java17 : InternalVisibility
     open fun Java17.foo(): kotlin.Unit
     final var Java17.a: kotlin.Int
 KClass: class Java2 : PrivateVisibility
+  constructors:
+    public final fun `<init>`(): Java2
   members:
     public open operator fun Java2.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java2.hashCode(): kotlin.Int
     public open fun Java2.toString(): kotlin.String
   declaredMembers:
 KClass: class Java3 : ProtectedVisibility
+  constructors:
+    public final fun `<init>`(): Java3
   members:
     public open operator fun Java3.equals(kotlin.Any?): kotlin.Boolean
     protected open fun Java3.foo(): kotlin.Unit
@@ -252,6 +306,8 @@ KClass: class Java3 : ProtectedVisibility
     protected open val Java3.a: kotlin.Int
   declaredMembers:
 KClass: class Java4 : DefaultVisibility
+  constructors:
+    public final fun `<init>`(): Java4
   members:
     public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java4.foo(): kotlin.Unit
@@ -260,6 +316,8 @@ KClass: class Java4 : DefaultVisibility
     public open val Java4.a: kotlin.Int
   declaredMembers:
 KClass: class Java5 : InternalVisibility
+  constructors:
+    public final fun `<init>`(): Java5
   members:
     public open operator fun Java5.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java5.foo(): kotlin.Unit
@@ -268,6 +326,8 @@ KClass: class Java5 : InternalVisibility
     internal open val Java5.a: kotlin.Int
   declaredMembers:
 KClass: class Java6 : PublicVisibility
+  constructors:
+    public final fun `<init>`(): Java6
   members:
     public open operator fun Java6.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java6.foo(): kotlin.Unit
@@ -279,6 +339,8 @@ KClass: class Java6 : PublicVisibility
     public open fun Java6.foo(): kotlin.Unit
     public final var Java6.a: kotlin.Int
 KClass: class Java7 : InternalVisibility
+  constructors:
+    public final fun `<init>`(): Java7
   members:
     public open operator fun Java7.equals(kotlin.Any?): kotlin.Boolean
     internal open fun Java7.foo(): kotlin.Unit
@@ -291,6 +353,8 @@ KClass: class Java7 : InternalVisibility
     public open fun Java7.foo(): kotlin.Unit
     public final var Java7.a: kotlin.Int
 KClass: class Java8 : ProtectedVisibility
+  constructors:
+    public final fun `<init>`(): Java8
   members:
     public open operator fun Java8.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java8.foo(): kotlin.Unit
@@ -302,6 +366,8 @@ KClass: class Java8 : ProtectedVisibility
     public open fun Java8.foo(): kotlin.Unit
     public final var Java8.a: kotlin.Int
 KClass: class Java9 : PrivateVisibility
+  constructors:
+    public final fun `<init>`(): Java9
   members:
     public open operator fun Java9.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java9.foo(): kotlin.Unit
@@ -312,6 +378,8 @@ KClass: class Java9 : PrivateVisibility
     public open fun Java9.foo(): kotlin.Unit
     public final var Java9.a: kotlin.Int
 KClass: class K : Java6
+  constructors:
+    public final fun `<init>`(): K
   members:
     public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
     public open fun K.foo(): kotlin.Unit
@@ -323,6 +391,8 @@ KClass: class K : Java6
     public open fun K.foo(): kotlin.Unit
     public open val K.a: kotlin.Int
 KClass: class L : Java7
+  constructors:
+    public final fun `<init>`(): L
   members:
     public open operator fun L.equals(kotlin.Any?): kotlin.Boolean
     internal open fun L.foo(): kotlin.Unit
@@ -333,6 +403,8 @@ KClass: class L : Java7
     public final var L.a: kotlin.Int
   declaredMembers:
 KClass: class M : Java8
+  constructors:
+    public final fun `<init>`(): M
   members:
     public open operator fun M.equals(kotlin.Any?): kotlin.Boolean
     public open fun M.foo(): kotlin.Unit
@@ -342,6 +414,8 @@ KClass: class M : Java8
     public final var M.a: kotlin.Int
   declaredMembers:
 KClass: class N : Java8
+  constructors:
+    public final fun `<init>`(): N
   members:
     public open operator fun N.equals(kotlin.Any?): kotlin.Boolean
     public open fun N.foo(): kotlin.Unit
@@ -353,6 +427,8 @@ KClass: class N : Java8
     public open fun N.foo(): kotlin.Unit
     protected open val N.a: kotlin.Int
 KClass: class O : Java9
+  constructors:
+    public final fun `<init>`(): O
   members:
     public open operator fun O.equals(kotlin.Any?): kotlin.Boolean
     public open fun O.foo(): kotlin.Unit
@@ -361,6 +437,8 @@ KClass: class O : Java9
     public final var O.a: kotlin.Int
   declaredMembers:
 KClass: class P : Java9
+  constructors:
+    public final fun `<init>`(): P
   members:
     public open operator fun P.equals(kotlin.Any?): kotlin.Boolean
     public open fun P.foo(): kotlin.Unit
@@ -370,6 +448,8 @@ KClass: class P : Java9
   declaredMembers:
     public open fun P.foo(): kotlin.Unit
 KClass: class PrivateVisibility : Any
+  constructors:
+    public final fun `<init>`(): PrivateVisibility
   members:
     public open operator fun PrivateVisibility.equals(kotlin.Any?): kotlin.Boolean
     private final fun PrivateVisibility.foo(): kotlin.Unit
@@ -380,6 +460,8 @@ KClass: class PrivateVisibility : Any
     private final fun PrivateVisibility.foo(): kotlin.Unit
     private final val PrivateVisibility.a: kotlin.Int
 KClass: class ProtectedVisibility : Any
+  constructors:
+    public final fun `<init>`(): ProtectedVisibility
   members:
     public open operator fun ProtectedVisibility.equals(kotlin.Any?): kotlin.Boolean
     protected open fun ProtectedVisibility.foo(): kotlin.Unit
@@ -390,6 +472,8 @@ KClass: class ProtectedVisibility : Any
     protected open fun ProtectedVisibility.foo(): kotlin.Unit
     protected open val ProtectedVisibility.a: kotlin.Int
 KClass: class PublicVisibility : Any
+  constructors:
+    public final fun `<init>`(): PublicVisibility
   members:
     public open operator fun PublicVisibility.equals(kotlin.Any?): kotlin.Boolean
     public open fun PublicVisibility.foo(): kotlin.Unit
@@ -400,6 +484,8 @@ KClass: class PublicVisibility : Any
     public open fun PublicVisibility.foo(): kotlin.Unit
     public open val PublicVisibility.a: kotlin.Int
 KClass: class Q : Java10
+  constructors:
+    public final fun `<init>`(): Q
   members:
     public open operator fun Q.equals(kotlin.Any?): kotlin.Boolean
     public open fun Q.foo(): kotlin.Unit
@@ -409,6 +495,8 @@ KClass: class Q : Java10
     public final var Q.a: kotlin.Int
   declaredMembers:
 KClass: class R : Java10
+  constructors:
+    public final fun `<init>`(): R
   members:
     public open operator fun R.equals(kotlin.Any?): kotlin.Boolean
     public open fun R.foo(): kotlin.Unit
@@ -420,6 +508,8 @@ KClass: class R : Java10
     public open fun R.foo(): kotlin.Unit
     public open val R.a: kotlin.Int
 KClass: class S : Java11
+  constructors:
+    public final fun `<init>`(): S
   members:
     public open operator fun S.equals(kotlin.Any?): kotlin.Boolean
     open fun S.foo(): kotlin.Unit
@@ -429,6 +519,8 @@ KClass: class S : Java11
     final var S.a: kotlin.Int
   declaredMembers:
 KClass: class T : Java11
+  constructors:
+    public final fun `<init>`(): T
   members:
     public open operator fun T.equals(kotlin.Any?): kotlin.Boolean
     public open fun T.foo(): kotlin.Unit
@@ -442,6 +534,8 @@ KClass: class T : Java11
 KPackage: TestKt
   public final fun test(A, B, D, F, G, H, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, AA, CC, DD): kotlin.Unit
 KClass: class U : Java12
+  constructors:
+    public final fun `<init>`(): U
   members:
     public open operator fun U.equals(kotlin.Any?): kotlin.Boolean
     internal open fun U.foo(): kotlin.Unit
@@ -452,6 +546,8 @@ KClass: class U : Java12
     final var U.a: kotlin.Int
   declaredMembers:
 KClass: class V : Java12
+  constructors:
+    public final fun `<init>`(): V
   members:
     public open operator fun V.equals(kotlin.Any?): kotlin.Boolean
     public open fun V.foo(): kotlin.Unit
@@ -462,6 +558,8 @@ KClass: class V : Java12
   declaredMembers:
     public open fun V.foo(): kotlin.Unit
 KClass: class W : Java13
+  constructors:
+    public final fun `<init>`(): W
   members:
     public open operator fun W.equals(kotlin.Any?): kotlin.Boolean
     open fun W.foo(): kotlin.Unit
@@ -470,6 +568,8 @@ KClass: class W : Java13
     final var W.a: kotlin.Int
   declaredMembers:
 KClass: class X : Java13
+  constructors:
+    public final fun `<init>`(): X
   members:
     public open operator fun X.equals(kotlin.Any?): kotlin.Boolean
     public open fun X.foo(): kotlin.Unit
@@ -479,12 +579,16 @@ KClass: class X : Java13
   declaredMembers:
     public open fun X.foo(): kotlin.Unit
 KClass: class Y : Java14
+  constructors:
+    public final fun `<init>`(): Y
   members:
     public open operator fun Y.equals(kotlin.Any?): kotlin.Boolean
     public open fun Y.hashCode(): kotlin.Int
     public open fun Y.toString(): kotlin.String
   declaredMembers:
 KClass: class Z : Java15
+  constructors:
+    public final fun `<init>`(): Z
   members:
     public open operator fun Z.equals(kotlin.Any?): kotlin.Boolean
     open fun Z.foo(): kotlin.Unit

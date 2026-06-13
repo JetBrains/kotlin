@@ -25,8 +25,9 @@ public abstract @interface Anno {
 
 import kotlin.reflect.KClass;
 
-@Anno(value = T.class)
+@Anno(value = Unresolved.class)
 /**
+ * @Anno
  * public final class C : kotlin/Any {
  *
  *   // signature: <init>()V

@@ -5,7 +5,12 @@ KtPackageDirective(29,43): 'package second'
   null
 
 KtNameReferenceExpression(37,43): 'second'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second
+    ]
 
 KtImportList(45,82): 'import first.First'
   null
@@ -17,10 +22,20 @@ KtDotQualifiedExpression(52,63): 'first.First'
   null
 
 KtNameReferenceExpression(52,57): 'first'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first
+    ]
 
 KtNameReferenceExpression(58,63): 'First'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtImportDirective(64,82): 'import first.THREE'
   null
@@ -29,10 +44,20 @@ KtDotQualifiedExpression(71,82): 'first.THREE'
   null
 
 KtNameReferenceExpression(71,76): 'first'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first
+    ]
 
 KtNameReferenceExpression(77,82): 'THREE'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val THREE: first.First
+    ]
 
 KtClass(84,122): 'enum class Second {'
   null
@@ -59,12 +84,16 @@ KtDotQualifiedExpression(134,146): 'Second.THREE'
     ]
 
 KtNameReferenceExpression(134,140): 'Second'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Second
     ]
 
 KtNameReferenceExpression(141,146): 'THREE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       second/Second.THREE
@@ -80,18 +109,31 @@ KtParameter(156,164): 'f: First'
   null
 
 KtTypeReference(159,164): 'First'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtUserType(159,164): 'First'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtNameReferenceExpression(159,164): 'First'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      first/First
+    ]
 
 KtWhenExpression(168,206): 'when (f) {'
   null
 
 KtNameReferenceExpression(174,175): 'f'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       f: first.First
@@ -104,6 +146,8 @@ KtWhenConditionWithExpression(183,186): 'ONE'
   null
 
 KtNameReferenceExpression(183,186): 'ONE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val ONE: second.Second
@@ -119,6 +163,8 @@ KtWhenConditionWithExpression(196,199): 'TWO'
   null
 
 KtNameReferenceExpression(196,199): 'TWO'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       first/First.TWO
@@ -137,18 +183,31 @@ KtParameter(216,225): 's: Second'
   null
 
 KtTypeReference(219,225): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtUserType(219,225): 'Second'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtNameReferenceExpression(219,225): 'Second'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      second/Second
+    ]
 
 KtWhenExpression(229,270): 'when (s) {'
   null
 
 KtNameReferenceExpression(235,236): 's'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       s: second.Second
@@ -161,6 +220,8 @@ KtWhenConditionWithExpression(244,249): 'THREE'
   null
 
 KtNameReferenceExpression(244,249): 'THREE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val THREE: first.First
@@ -176,6 +237,8 @@ KtWhenConditionWithExpression(259,263): 'FOUR'
   null
 
 KtNameReferenceExpression(259,263): 'FOUR'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       second/Second.FOUR

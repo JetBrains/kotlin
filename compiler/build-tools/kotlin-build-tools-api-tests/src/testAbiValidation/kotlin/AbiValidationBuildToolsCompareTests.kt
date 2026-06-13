@@ -33,7 +33,6 @@ class AbiValidationBuildToolsCompareTests {
             D()
         """.trimIndent()
         )
-
         actual.writeText(
             """
             A()
@@ -43,13 +42,12 @@ class AbiValidationBuildToolsCompareTests {
             D()
         """.trimIndent()
         )
-        val operation = toolchain.abiValidation.compareAbiTextFilesOperation(appendable, expected, actual)
 
+        val operation = toolchain.abiValidation.compareAbiTextFilesOperation(appendable, expected, actual)
         toolchain.createBuildSession().use { it.executeOperation(operation) }
 
         // skip the first two lines with file names
         val actualDiff = "@@" + appendable.toString().substringAfter("@@")
-
         val expectedDiff = """
             @@ -1,4 +1,5 @@
              A()
@@ -61,5 +59,28 @@ class AbiValidationBuildToolsCompareTests {
         """.trimIndent()
 
         assertEquals(expectedDiff, actualDiff)
+    }
+
+    @Test
+    @DisplayName("Test that compare operation produces no diff when files are equal")
+    fun testNoChanges() {
+        val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
+
+        val appendable = StringBuilder()
+        val content = """
+            A()
+            B()
+            C()
+        """.trimIndent()
+        val expected = createTempFile().also { it.toFile().deleteOnExit() }
+        val actual = createTempFile().also { it.toFile().deleteOnExit() }
+        expected.writeText(content)
+        actual.writeText(content)
+
+        val operation = toolchain.abiValidation.compareAbiTextFilesOperation(appendable, expected, actual)
+        toolchain.createBuildSession().use { it.executeOperation(operation) }
+
+        assertEquals("", appendable.toString())
+
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.Lists
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //TODO: check for 'operator' modifier!
+@K1Deprecation
 class DelegatedPropertyResolver(
     private val builtIns: KotlinBuiltIns,
     private val fakeCallResolver: FakeCallResolver,
@@ -467,7 +469,7 @@ class DelegatedPropertyResolver(
         val functionName = OperatorNameConventions.PROVIDE_DELEGATE
         val receiver = ExpressionReceiver.create(delegateExpression, delegateExpressionType, context.trace.bindingContext)
 
-        val (provideDelegateCall, provideDelegateResults) =
+        val [provideDelegateCall, provideDelegateResults] =
             fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression)
 
         if (provideDelegateResults.isSingleResult) {
@@ -635,7 +637,7 @@ class DelegatedPropertyResolver(
         if (substitutionMap == null) return type.unwrap()
 
         val invertedMap = hashMapOf<TypeConstructor, UnwrappedType>()
-        for ((variable, stubType) in substitutionMap) {
+        for ([variable, stubType] in substitutionMap) {
             invertedMap[stubType.constructor] = variable
         }
 
@@ -721,7 +723,7 @@ class DelegatedPropertyResolver(
         val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, newInferenceSession, resolutionContext)
         val resolutionResults = newInferenceSession.resolveCandidates(resolutionCallbacks)
 
-        for ((name, isGet) in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
+        for ([name, isGet] in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
             val result = resolutionResults.firstOrNull {
                 it.resolutionResult.resultCallAtom()?.atom?.name == name
             }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -271,6 +273,16 @@ val IrClass.isObject get() = kind == ClassKind.OBJECT
 val IrClass.isAnonymousObject get() = isClass && name == SpecialNames.NO_NAME_PROVIDED
 val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 
+val IrSymbol.fqNameWhenAvailable: FqName?
+    get() = if (isBound) (owner as IrDeclarationWithName?)?.fqNameWhenAvailable
+    else (signature as? IdSignature.CommonSignature)?.let { FqName("${it.packageFqName}.${it.declarationFqName}") }
+
+val IrClassSymbol.classIdWhenAvailable: ClassId?
+    get() = if (isBound) owner.classId
+    else (signature as? IdSignature.CommonSignature)?.let {
+        ClassId(FqName(it.packageFqName), FqName(it.declarationFqName), isLocal = false)
+    }
+
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() {
         val sb = StringBuilder()
@@ -345,23 +357,27 @@ fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
-        it.symbol.owner.parentAsClass.symbol == symbol
+        it.classSymbol == symbol
     }
 
 fun IrAnnotation.getAnnotationStringValue() = (arguments[0] as? IrConst)?.value as String?
 
-fun IrAnnotation.getAnnotationStringValue(name: String): String {
-    val parameter = symbol.owner.parameters.single { it.name.asString() == name }
-    return (arguments[parameter.indexInParameters] as IrConst).value as String
-}
+fun IrAnnotation.getAnnotationStringValue(name: String): String =
+    getAnnotationValueOrNull<String>(name)!!
 
 inline fun <reified T> IrAnnotation.getAnnotationValueOrNull(name: String): T? =
     getAnnotationValueOrNullImpl(name) as T?
 
 @PublishedApi
 internal fun IrAnnotation.getAnnotationValueOrNullImpl(name: String): Any? {
-    val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
-    val argument = parameter?.let { arguments[it.indexInParameters] }
+    val argument = when (val argumentMapping = argumentMapping) {
+        null -> {
+            @OptIn(DeprecatedCompilerApi::class)
+            val parameter = symbol.owner.parameters.atMostOne { it.name.asString() == name }
+            parameter?.let { arguments[it.indexInParameters] }
+        }
+        else -> argumentMapping[Name.identifier(name)]
+    }
     return (argument as IrConst?)?.value
 }
 
@@ -371,13 +387,7 @@ inline fun <reified T> IrAnnotationContainer.getAnnotationArgumentValue(fqName: 
 @PublishedApi
 internal fun IrAnnotationContainer.getAnnotationArgumentValueImpl(fqName: FqName, argumentName: String): Any? {
     val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (parameter in annotation.symbol.owner.parameters) {
-        if (parameter.name.asString() == argumentName) {
-            val actual = annotation.arguments[parameter.indexInParameters] as? IrConst
-            return actual?.value
-        }
-    }
-    return null
+    return annotation.getAnnotationValueOrNull(argumentName)
 }
 
 fun IrClass.getAnnotationRetention(): KotlinRetention? {
@@ -579,7 +589,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
                     extractTypeParameters(irFunction.parentClassOrNull!!)
                 }
             }
-        for ((index, typeParam) in parentTypeParameters.withIndex()) {
+        for ([index, typeParam] in parentTypeParameters.withIndex()) {
             dispatchReceiverTypeArguments[index].typeOrNull?.let {
                 result[typeParam.symbol] = it
             }
@@ -819,7 +829,7 @@ fun IrValueParameter.copyTo(
             endOffset = originalDefault.endOffset,
             expression = originalDefault.expression.run {
                 val symbolRemapper = object : DeepCopySymbolRemapper() {
-                    val remapTypeSymbolMap = remapTypeMap.map { (key, value) -> key.symbol to value.symbol }.toMap()
+                    val remapTypeSymbolMap = remapTypeMap.map { [key, value] -> key.symbol to value.symbol }.toMap()
                     override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrClassifierSymbol =
                         remapTypeSymbolMap[symbol] ?: super.getReferencedTypeParameter(symbol)
 
@@ -909,7 +919,7 @@ fun IrTypeParametersContainer.copyTypeParameters(
         }
     }
     typeParameters = typeParameters memoryOptimizedPlus newTypeParameters
-    srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
+    srcTypeParameters.zip(newTypeParameters).forEach { [srcParameter, dstParameter] ->
         dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
     return newTypeParameters
@@ -1311,6 +1321,35 @@ fun IrFactory.createStaticFunctionWithReceivers(
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
 
+// SAM class used as a superclass can sometimes have type projections.
+// But that's not suitable for super-types, so we erase them
+fun IrType.removeProjections(): IrType {
+    if (this !is IrSimpleType) return this
+    val arguments = arguments.mapIndexed { index, argument ->
+        val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]
+        fun erasedUpperBound() = typeParameter.erasedUpperBound.defaultType
+
+        // Star projections are not allowed in supertype clause
+        if (argument !is IrTypeProjection) return@mapIndexed erasedUpperBound()
+
+        // `in` and `out` projections are not allowed either
+        if (argument.variance != Variance.INVARIANT) return@mapIndexed erasedUpperBound()
+
+        // In case a lambda parameter's type is inferred by the frontend to an intersection type, in IR
+        // it will be approximated to `Nothing` (because intersection types are not representable in IR at all).
+        // Since function parameters are contravariant, `Nothing` is the only type we can approximate an intersection type to.
+        // We cannot use `Nothing` as a parameter type, though —
+        // semantically it would mean that such a function reference can never be invoked, which is not true.
+        // Some targets like Wasm can break because of this.
+        // That's why we treat such type arguments similarly to type projections.
+        // For a concrete example, see this test: compiler/testData/codegen/box/callableReference/kt49526_sam.kt
+        if (typeParameter.variance == Variance.IN_VARIANCE && argument.type.isNothing()) return@mapIndexed erasedUpperBound()
+
+        argument.type
+    }
+    return classifier.typeWith(arguments)
+}
+
 fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 
 /**
@@ -1352,7 +1391,7 @@ private fun IrFunction.copyAndRenameConflictingTypeParametersFrom(
 
     val zipped = contextParameters.zip(newParameters)
     val parameterMap = zipped.toMap()
-    for ((oldParameter, newParameter) in zipped) {
+    for ([oldParameter, newParameter] in zipped) {
         newParameter.copySuperTypesFrom(oldParameter, parameterMap)
     }
 
@@ -1423,7 +1462,7 @@ fun IrFunction.hasShape(
     if (actualShape.contextParameterCount != contextParameters) return false
     if (actualShape.regularParameterCount != regularParameters) return false
 
-    for ((param, expectedType) in parameters zip parameterTypes) {
+    for ([param, expectedType] in parameters zip parameterTypes) {
         if (expectedType != null && param.type != expectedType) return false
     }
 

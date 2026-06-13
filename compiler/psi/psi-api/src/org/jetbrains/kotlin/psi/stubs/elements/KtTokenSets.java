@@ -12,7 +12,10 @@ import static org.jetbrains.kotlin.KtNodeTypes.*;
 
 public interface KtTokenSets {
     TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, FUN, PROPERTY, TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
+            TokenSet.create(
+                    CLASS, OBJECT_DECLARATION, FUN, PROPERTY, DESTRUCTURING_DECLARATION,
+                    TYPEALIAS, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY
+            );
 
     TokenSet DECLARATION_AND_COMPANION_BLOCK_TYPES =
             TokenSet.orSet(DECLARATION_TYPES, TokenSet.create(COMPANION_BLOCK));

@@ -18,8 +18,8 @@ repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
     composeGoogleMaven(libs.versions.compose.stable.get())
+    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
 kotlin {
@@ -51,7 +51,7 @@ kotlin {
 
                 // external deps
                 implementation(composeRuntime()) { isTransitive = false }
-                implementation(composeRuntimeTestUtils()) { isTransitive = false }
+                implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
                 implementation(libs.androidx.collections)
             }
         }

@@ -54,9 +54,11 @@ The following list of general recommendations (that can also be used as a review
 3. Please ensure that the commit message is self-descriptive and detailed, explaining not only what’s being done but also how and why it is done this way
     * Rule of thumb: if the MR required a nontrivial discussion, hundreds of lines of production code changed, but the final commit message looks like: “use X instead of Y in Z”, chances that something is wrong with the message are high.
     * This is also a subject of the code review
-4. Even for non-functional changes, it is strongly encouraged to explain *the reasoning* behind the change. Otherwise, it will be lost in time in a few months
+4. If a commit mentions a YT ticket, it serves as an additional context. It is therefore allowed to omit the commit message parts that are already covered by the issue summary or description if the connection is clear.
+    * In other words, after reading the commit message and the issue summary and description, the reader should be able to understand "what", "how" and "why this way".
+5. Even for non-functional changes, it is strongly encouraged to explain *the reasoning* behind the change. Otherwise, it will be lost in time in a few months
     * Rule of thumb: prefer `Make X lazy: \n it’s a non-trivial computation that is frequently unused in the context of X` over `Make X lazy` or `Add X.toString(), used for a debugging purpose` over `Add X.toString()`
-5. Avoid “fixup!” commits in the main branch: either squash such commits manually or ensure it is properly [autosquashable](https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt---autosquash)
+6. Avoid “fixup!” commits in the main branch: either squash such commits manually or ensure it is properly [autosquashable](https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt---autosquash)
 
 
 ### Git

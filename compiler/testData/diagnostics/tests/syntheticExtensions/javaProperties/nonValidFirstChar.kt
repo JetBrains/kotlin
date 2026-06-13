@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// SKIP_TXT
 // FILE: A.java
 public class A {
     public String get1() {

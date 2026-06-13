@@ -1441,7 +1441,7 @@ KtNameReferenceExpression(1311,1312): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1313,1315): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1560,7 +1560,7 @@ KtNameReferenceExpression(1360,1361): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1362,1364): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1685,7 +1685,7 @@ KtNameReferenceExpression(1418,1419): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1420,1422): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1810,7 +1810,7 @@ KtNameReferenceExpression(1468,1469): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1470,1472): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1935,7 +1935,7 @@ KtNameReferenceExpression(1524,1525): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1526,1528): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2054,7 +2054,7 @@ KtNameReferenceExpression(1582,1583): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1584,1586): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2213,7 +2213,7 @@ KtNameReferenceExpression(1649,1650): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1651,1653): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2338,7 +2338,7 @@ KtNameReferenceExpression(1708,1709): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1710,1712): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2457,7 +2457,7 @@ KtNameReferenceExpression(1757,1758): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1759,1761): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -2582,7 +2582,7 @@ KtNameReferenceExpression(1815,1816): 's'
       typeArgumentsMapping = {}
 
 KtOperationReferenceExpression(1817,1819): '=='
-  KaSuccessCallInfo:
+  KaCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []

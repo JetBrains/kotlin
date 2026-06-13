@@ -22,3 +22,14 @@ import org.junit.jupiter.api.Tag
  */
 @Tag("smoke")
 annotation class SmokeTest
+
+/**
+ * Will mark a given test as 'Nightly':
+ * - This test will not run in remote runs (rr)
+ * - This test will not run in safe-merge (and safe-merge dry runs)
+ * - This test will only be executed nightly.
+ *
+ * Marking a test as 'Nightly' will still execute this test locally.
+ */
+@Tag("nightly")
+annotation class NightlyTest

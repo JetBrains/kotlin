@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.getExpectsForActual
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -127,7 +130,7 @@ internal fun KaSession.createMethods(
     suppressStatic: Boolean = false,
     staticsFromCompanion: Boolean = false,
 ) {
-    val (ctorProperties, regularMembers) = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+    val [ctorProperties, regularMembers] = declarations.partition { it is KaPropertySymbol && it.isFromPrimaryConstructor }
 
     fun KaSession.handleDeclaration(declaration: KaCallableSymbol) {
         when (declaration) {
@@ -227,9 +230,9 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
 
     val parameterMaskFilter = valueParameterMaskFilter(valueParameters, parameterCount)
 
+    val defaultValueMask = defaultParameterValueMask(declaration)
     for (index in parameterCount - 1 downTo 0) {
-        val valueParameter = valueParameters[index]
-        if (!valueParameter.hasDeclaredDefaultValue || !pickMask[index]) continue
+        if (!defaultValueMask[index] || !pickMask[index]) continue
         pickMask.clear(index)
 
         if (parameterMaskFilter.accepts(pickMask)) {
@@ -240,6 +243,43 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
             )
         }
     }
+}
+
+/**
+ * For each value parameter of the [declaration] (a function or a constructor), tells whether it has a default value
+ * that the compiler takes into account when generating `@JvmOverloads` variants (or the synthetic no-arg constructor)
+ * *on this very declaration*.
+ *
+ * - A default value declared on the parameter itself always counts;
+ * - For an `actual` declaration, a default value declared on the corresponding `expect` parameter counts, because the
+ *   overloads are emitted on the `actual` declaration (the `expect` one has no body);
+ * - A default value inherited from an *overridden* function is intentionally ignored: `@JvmOverloads` has no effect on
+ *   an override, the overloads belong to the base declaration.
+ */
+@OptIn(KaContextParameterApi::class)
+context(_: KaSession)
+internal fun defaultParameterValueMask(declaration: KaFunctionSymbol): BitSet {
+    val valueParameters = declaration.valueParameters
+    val mask = BitSet(valueParameters.size)
+
+    valueParameters.forEachIndexed { index, valueParameter ->
+        if (valueParameter.hasDeclaredDefaultValue) {
+            mask.set(index)
+        }
+    }
+
+    if (declaration.isActual) {
+        for (expectSymbol in declaration.getExpectsForActual()) {
+            val expectParameters = (expectSymbol as? KaFunctionSymbol)?.valueParameters ?: continue
+            for (index in valueParameters.indices) {
+                if (!mask[index] && expectParameters.getOrNull(index)?.hasDeclaredDefaultValue == true) {
+                    mask.set(index)
+                }
+            }
+        }
+    }
+
+    return mask
 }
 
 private sealed class ValueParameterMaskFilter {
@@ -458,7 +498,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     )
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegatedProperty || property.isFromPrimaryConstructor) return true
+    if (property.isLateInit || property.isDelegated || property.isFromPrimaryConstructor) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
         return hasBackingFieldByPsi
@@ -654,9 +694,11 @@ internal fun KaSession.addPropertyBackingFields(
             filter { lightClass.containingClass?.isInterface == true && !it.isJvmField }
         }
 
-    val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
-    val isStatic = forceIsStaticTo ?: (containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject)
+    val [ctorProperties, memberProperties] = propertySymbols.partition { it.isFromPrimaryConstructor }
+    val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
+        @OptIn(KaExperimentalApi::class)
+        val isStatic = forceIsStaticTo ?: (containerIsObject || propertySymbol.isCompanion)
         createAndAddField(
             lightClass = lightClass,
             declaration = propertySymbol,
@@ -693,7 +735,7 @@ internal fun KaSession.hasValueClassInSignature(
     if (callableSymbol.receiverType?.let { typeForValueClass(it) } == true) return true
     if (callableSymbol.contextParameters.any { typeForValueClass(it.returnType) }) return true
     if (!skipValueParametersCheck && callableSymbol is KaFunctionSymbol) {
-        return callableSymbol.valueParameters.withIndex().any { (index, valueParameter) ->
+        return callableSymbol.valueParameters.withIndex().any { [index, valueParameter] ->
             valueParameterPickMask?.get(index) != false && typeForValueClass(valueParameter.returnType)
         }
     }

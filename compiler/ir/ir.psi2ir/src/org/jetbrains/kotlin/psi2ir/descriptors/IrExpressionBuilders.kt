@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -49,6 +51,7 @@ fun IrCallImpl.Companion.fromSymbolDescriptor(
 }
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrAnnotationImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -75,6 +78,7 @@ fun IrAnnotationImpl.Companion.fromSymbolDescriptor(
 }
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrConstructorCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -101,6 +105,7 @@ fun IrConstructorCallImpl.Companion.fromSymbolDescriptor(
 }
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -120,6 +125,7 @@ fun IrEnumConstructorCallImpl.Companion.fromSymbolDescriptor(
 }
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,
@@ -138,6 +144,7 @@ fun IrDelegatingConstructorCallImpl.Companion.fromSymbolDescriptor(
 }
 
 @ObsoleteDescriptorBasedAPI
+@K1Deprecation
 fun IrFunctionReferenceImpl.Companion.fromSymbolDescriptor(
     startOffset: Int,
     endOffset: Int,

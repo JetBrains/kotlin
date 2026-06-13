@@ -5,5 +5,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=MultiVariableDeclarationsKt]
   IMPORT_LIST
   FUN[fqName=a, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=a]
     VALUE_PARAMETER_LIST
+  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
   CLASS[classId=/X, fqName=X, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=X, superNames=[]]
     CLASS_BODY
+      DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]

@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-50092
-// SKIP_TXT
 
 fun test1() {
     var x: String? = "..."

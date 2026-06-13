@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -31,6 +34,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
+@SmokeTest
 class ScriptTest {
     @Test
     fun testStandardScriptWithParams() {
@@ -120,6 +124,7 @@ class ScriptTest {
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.updateWithBaseCompilerArguments()
+            @OptIn(MessageCollectorAccess::class) // write access
             configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
@@ -135,7 +140,7 @@ class ScriptTest {
 
             try {
                 return compileScript(
-                    File("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
+                    ForTestCompileRuntime.transformTestDataPath("plugins/scripting/scripting-compiler/testData/compiler/$scriptPath").toScriptSource(),
                     environment,
                 ).first?.java
             } catch (e: CompilationException) {

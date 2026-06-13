@@ -19,10 +19,12 @@ public class SomeClass {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun foo(value: SomeClass) = value.num
 
 fun box(): String {
     val result = foo(SomeClass(-42))
-    if (result != 42) return "FAIL: $result"
+    assertEquals(42, result)
     return "OK"
 }

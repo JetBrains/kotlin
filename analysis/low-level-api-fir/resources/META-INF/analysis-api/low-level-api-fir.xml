@@ -9,13 +9,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <registryKey
-        defaultValue="false"
-        description="Run resolve under a global lock."
-        key="kotlin.parallel.resolve.under.global.lock"
-        restartRequired="true"
-    />
-
-    <registryKey
         defaultValue="100"
         description="A frequency in milliseconds for re-acquiring a phase lock during parallel resolve to perform `checkCanceled()`."
         key="kotlin.analysis.ll.locking.interval"

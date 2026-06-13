@@ -25,6 +25,7 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform resources consumption from self, published and project dependencies for Android target")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testConsumption(
         gradleVersion: GradleVersion,
         androidVersion: String,

@@ -16,6 +16,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.OutputStream
+import java.io.PipedInputStream
+import java.io.PipedOutputStream
 import kotlin.concurrent.thread
 
 open class TCServiceMessagesTestExecutionSpec(
@@ -118,27 +120,47 @@ class TCServiceMessagesTestExecutor(
                     // Test processes don't read from stdin.
                     proc.outputStream.close()
 
-                    val readerThread = thread(name = "$description-stdout-reader", isDaemon = true) {
+                    // Decouple the OS pipe reader from TC message parsing using a piped buffer.
+                    // TCServiceMessageOutputStreamHandler.write() does per-byte processing
+                    // (scanning for newlines and "##teamcity[" boundaries), which is slower than
+                    // raw pipe draining. For test runners that produce large volumes of TC service
+                    // messages (e.g. Karma with 30K+ WASM browser tests), synchronous processing
+                    // in the pipe reader thread can cause backpressure: the OS pipe buffer fills,
+                    // the child process blocks on stdout write, and browser-based test runners may
+                    // crash (e.g. Chrome SIGABRT). See KT-86107.
+                    //
+                    // The drainThread reads from the process pipe as fast as possible into a
+                    // PipedOutputStream. The parserThread reads from the corresponding
+                    // PipedInputStream (with a 1MB buffer to absorb bursts) and feeds the handler.
+                    val pipedIn = PipedInputStream(PIPE_BUFFER_SIZE)
+                    val pipedOut = PipedOutputStream(pipedIn)
+
+                    val drainThread = thread(name = "$description-stdout-drain", isDaemon = true) {
                         try {
-                            proc.inputStream.use { input ->
-                                // Wrap in BufferedInputStream to reduce native read syscalls and help
-                                // drain the OS pipe buffer promptly. Per Process docs, limited pipe
-                                // buffer sizes on some platforms can cause the child process to block
-                                // or deadlock if the stream is not read promptly.
-                                // The default 8KB BufferedInputStream buffer is sufficient — copyTo
-                                // also uses an 8KB internal buffer, so reads are already batched.
-                                input.buffered().use { buffered ->
-                                    buffered.copyTo(handler)
+                            pipedOut.use {
+                                proc.inputStream.use { input ->
+                                    input.copyTo(pipedOut)
                                 }
                             }
                         } catch (_: IOException) {
                             // Process was destroyed, stream closed — expected during stopNow()
+                        }
+                    }
+
+                    val parserThread = thread(name = "$description-stdout-parser", isDaemon = true) {
+                        try {
+                            pipedIn.use { input ->
+                                input.copyTo(handler)
+                            }
+                        } catch (_: IOException) {
+                            // Drain thread closed the pipe — expected when process exits
                         } finally {
                             handler.close()
                         }
                     }
 
-                    readerThread.join()
+                    drainThread.join()
+                    parserThread.join()
                     proc.waitFor()
                 }
 
@@ -198,6 +220,13 @@ class TCServiceMessagesTestExecutor(
         destroyProcessIfNeeded()
     }
 }
+
+/**
+ * Buffer size for the intermediate pipe between the OS process pipe and the TC message parser.
+ * A 1MB buffer absorbs output bursts from high-throughput test runners (e.g. Karma with WASM tests)
+ * and prevents backpressure from reaching the child process. See KT-86107.
+ */
+private val PIPE_BUFFER_SIZE = TCServiceMessageOutputStreamHandler.MESSAGE_LIMIT_BYTES
 
 /**
  * Returns a new [OutputStream] which discards all bytes.

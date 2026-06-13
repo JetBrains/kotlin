@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.fileName
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.maxFileNameLength
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-public class CommonizerTargetFileNameTest {
+class CommonizerTargetFileNameTest {
 
     private val longCommonizerTarget = parseCommonizerTarget(
         buildString {
@@ -31,18 +31,18 @@ public class CommonizerTargetFileNameTest {
         }
     )
 
-    @get:Rule
-    public val temporaryFolder: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    lateinit var temporaryFolder: File
 
     @Test
-    public fun `small targets will use identityString`() {
+    fun `small targets will use identityString`() {
         val target = parseCommonizerTarget("((a, b), c)")
         assertEquals(target.identityString, target.fileName)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     @Test
-    public fun `longCommonizerTarget respect maximum fileName length`() {
+    fun `longCommonizerTarget respect maximum fileName length`() {
         assertTrue(
             longCommonizerTarget.identityString.length > maxFileNameLength,
             "Expected test target's identityString to exceed maxFileNameLength"
@@ -55,8 +55,8 @@ public class CommonizerTargetFileNameTest {
     }
 
     @Test
-    public fun `longCommonizerTarget fileName can create new file`() {
-        val longCommonizerTargetFile = temporaryFolder.root.resolve(longCommonizerTarget.fileName)
+    fun `longCommonizerTarget fileName can create new file`() {
+        val longCommonizerTargetFile = temporaryFolder.resolve(longCommonizerTarget.fileName)
         assertTrue(longCommonizerTargetFile.createNewFile(), "Expected being able to create file $longCommonizerTargetFile")
         longCommonizerTargetFile.writeText(longCommonizerTarget.identityString)
         assertEquals(

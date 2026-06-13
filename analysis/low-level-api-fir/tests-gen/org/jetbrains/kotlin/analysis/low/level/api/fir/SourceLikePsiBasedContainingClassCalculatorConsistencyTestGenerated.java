@@ -65,6 +65,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("danglingModifierInsideCompanionBlock.kt")
+  public void testDanglingModifierInsideCompanionBlock() {
+    run("danglingModifierInsideCompanionBlock.kt");
+  }
+
+  @Test
   @TestMetadata("danglingModifierLists.kt")
   public void testDanglingModifierLists() {
     run("danglingModifierLists.kt");

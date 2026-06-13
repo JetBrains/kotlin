@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.psi.*
 
+@K1Deprecation
 class VariableDeclarationInstruction(
     element: KtDeclaration,
     blockScope: BlockScope

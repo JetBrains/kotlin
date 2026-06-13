@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isArrayLambdaConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -107,7 +107,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 // and the associated anonymous function parameter allows non-local returns. Everything
                 // else changes locality, and must not be allowed.
                 val anonymousFunction = declaration as? FirAnonymousFunctionSymbol ?: return false
-                val (call, parameter) = extractCallAndParameter(anonymousFunction) ?: return false
+                val [call, parameter] = extractCallAndParameter(anonymousFunction) ?: return false
                 val callable = call.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
                 if (!callable.isInline && !callable.isArrayLambdaConstructor()) return false
                 if (parameter.isNoinline || parameter.isCrossinline) return false
@@ -121,7 +121,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             for (call in context.callsOrAssignments) {
                 if (call is FirFunctionCall) {
                     val mapping = call.resolvedArgumentMapping ?: continue
-                    for ((argument, parameter) in mapping) {
+                    for ([argument, parameter] in mapping) {
                         if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol === anonymousFunction) {
                             return call to parameter
                         }
@@ -129,19 +129,6 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 }
             }
             return null
-        }
-
-        /**
-         * @return true if the symbol is the constructor of one of 9 array classes (`Array<T>`,
-         * `IntArray`, `FloatArray`, ...) which takes the size and an initializer lambda as parameters.
-         * Such constructors are marked as `inline` but they are not loaded as such because the `inline`
-         * flag is not stored for constructors in the binary metadata. Therefore, we pretend that they
-         * are inline.
-         */
-        private fun FirFunctionSymbol<*>.isArrayLambdaConstructor(): Boolean {
-            return this is FirConstructorSymbol &&
-                    valueParameterSymbols.size == 2 &&
-                    resolvedReturnType.isArrayOrPrimitiveArray
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -152,7 +139,7 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
             if (context.isContractBody) return
             val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
-            for ((wrappedArgument, valueParameter) in argumentMapping) {
+            for ([wrappedArgument, valueParameter] in argumentMapping) {
                 val argument = wrappedArgument.unwrapToPotentialParameterUsage()
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
 

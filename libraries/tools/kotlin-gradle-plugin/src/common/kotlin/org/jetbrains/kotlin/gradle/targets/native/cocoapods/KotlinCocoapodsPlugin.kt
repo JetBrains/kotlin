@@ -808,6 +808,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             registerPodImportTask(project, kotlinExtension, podInstallTaskProvider)
             registerPodPublishTasks(project, cocoapodsExtension)
 
+            if (!kotlinPropertiesProvider.cocoapodsSwiftPMMigrationNowarn) {
+                reportDiagnosticOncePerProject(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested())
+            }
+
             if (!HostManager.hostIsMac) {
                 reportDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs())
             }

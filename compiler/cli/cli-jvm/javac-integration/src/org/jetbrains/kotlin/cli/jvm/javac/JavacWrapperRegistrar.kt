@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,15 +10,15 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.javaSourceRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -34,10 +34,10 @@ object JavacWrapperRegistrar {
         arguments: Array<String>?,
         bootClasspath: List<File>?,
         sourcePath: List<File>?,
-        lightClassGenerationSupport: LightClassGenerationSupport,
         packagePartsProviders: List<JvmPackagePartProvider>
     ): Boolean {
-        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        @OptIn(MessageCollectorAccess::class)
+        val messageCollector = configuration.messageCollector
 
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)
@@ -52,7 +52,7 @@ object JavacWrapperRegistrar {
         val jvmClasspathRoots = configuration.jvmClasspathRoots
         val outputDirectory = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
         val compileJava = configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)
-        val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl(lightClassGenerationSupport)
+        val kotlinSupertypesResolver = JavacWrapperKotlinResolverImpl()
 
         val javacWrapper = JavacWrapper(
             javaFiles, kotlinFiles, arguments, jvmClasspathRoots, bootClasspath, sourcePath,
@@ -90,7 +90,13 @@ fun KotlinCoreEnvironment.registerJavac(
     sourcePath: List<File>? = null
 ): Boolean {
     return JavacWrapperRegistrar.registerJavac(
-        projectEnvironment.project, configuration, javaFiles, kotlinFiles, arguments, bootClasspath, sourcePath,
-        LightClassGenerationSupport.getInstance(project), packagePartProviders
+        project = projectEnvironment.project,
+        configuration = configuration,
+        javaFiles = javaFiles,
+        kotlinFiles = kotlinFiles,
+        arguments = arguments,
+        bootClasspath = bootClasspath,
+        sourcePath = sourcePath,
+        packagePartsProviders = packagePartProviders,
     )
 }

@@ -1,5 +1,8 @@
 KtNameReferenceExpression(60,69): 'JavaClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      <constructor>(): JavaClass<TT>
+      /JavaClass
     ]
+  PSI class names: PsiClassImpl

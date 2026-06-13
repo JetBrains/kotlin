@@ -131,7 +131,58 @@ KtUserType(34,40): 'Target'
   null
 
 KtNameReferenceExpression(34,40): 'Target'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.annotation.Target
+        symbol = <constructor>(vararg allowedTargets: kotlin.annotation.AnnotationTarget): kotlin.annotation.Target
+        valueParameters = [
+          KaVariableSignature:
+            name = allowedTargets
+            receiverType = null
+            returnType = kotlin.annotation.AnnotationTarget
+            symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        AnnotationTarget.TYPE_PARAMETER -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        AnnotationTarget.FUNCTION -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        AnnotationTarget.VALUE_PARAMETER -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null),
+        AnnotationTarget.TYPE -> (KaVariableSignature:
+          name = allowedTargets
+          receiverType = null
+          returnType = kotlin.annotation.AnnotationTarget
+          symbol = vararg allowedTargets: kotlin.annotation.AnnotationTarget
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(40,176): '('
   null
@@ -432,7 +483,37 @@ KtUserType(260,264): 'Anno'
   null
 
 KtNameReferenceExpression(260,264): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "function $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(264,282): '("function $prop")'
   null
@@ -548,7 +629,37 @@ KtUserType(289,293): 'Anno'
   null
 
 KtNameReferenceExpression(289,293): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "type parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(293,317): '("type parameter $prop")'
   null
@@ -661,7 +772,37 @@ KtUserType(323,327): 'Anno'
   null
 
 KtNameReferenceExpression(323,327): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(327,347): '("bound type $prop")'
   null
@@ -786,7 +927,37 @@ KtUserType(354,358): 'Anno'
   null
 
 KtNameReferenceExpression(354,358): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested bound type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(358,385): '("nested bound type $prop")'
   null
@@ -908,7 +1079,37 @@ KtUserType(405,409): 'Anno'
   null
 
 KtNameReferenceExpression(405,409): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(409,427): '("receiver $prop")'
   null
@@ -1015,7 +1216,37 @@ KtUserType(429,433): 'Anno'
   null
 
 KtNameReferenceExpression(429,433): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(433,456): '("receiver type $prop")'
   null
@@ -1140,7 +1371,37 @@ KtUserType(463,467): 'Anno'
   null
 
 KtNameReferenceExpression(463,467): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(467,497): '("nested receiver type $prop")'
   null
@@ -1265,7 +1526,37 @@ KtUserType(504,508): 'Anno'
   null
 
 KtNameReferenceExpression(504,508): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested receiver type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(508,545): '("nested nested receiver type $prop")'
   null
@@ -1387,7 +1678,37 @@ KtUserType(562,566): 'Anno'
   null
 
 KtNameReferenceExpression(562,566): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(566,585): '("parameter $prop")'
   null
@@ -1500,7 +1821,37 @@ KtUserType(594,598): 'Anno'
   null
 
 KtNameReferenceExpression(594,598): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(598,622): '("parameter type $prop")'
   null
@@ -1625,7 +1976,37 @@ KtUserType(635,639): 'Anno'
   null
 
 KtNameReferenceExpression(635,639): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(639,670): '("nested parameter type $prop")'
   null
@@ -1750,7 +2131,37 @@ KtUserType(677,681): 'Anno'
   null
 
 KtNameReferenceExpression(677,681): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested parameter type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(681,719): '("nested nested parameter type $prop")'
   null
@@ -1872,7 +2283,37 @@ KtUserType(736,740): 'Anno'
   null
 
 KtNameReferenceExpression(736,740): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(740,761): '("return type $prop")'
   null
@@ -1997,7 +2438,37 @@ KtUserType(768,772): 'Anno'
   null
 
 KtNameReferenceExpression(768,772): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(772,800): '("nested return type $prop")'
   null
@@ -2122,7 +2593,37 @@ KtUserType(807,811): 'Anno'
   null
 
 KtNameReferenceExpression(807,811): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested nested return type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(811,846): '("nested nested return type $prop")'
   null
@@ -2250,7 +2751,37 @@ KtUserType(872,876): 'Anno'
   null
 
 KtNameReferenceExpression(872,876): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(876,901): '("constraint type $prop")'
   null
@@ -2378,7 +2909,37 @@ KtUserType(914,918): 'Anno'
   null
 
 KtNameReferenceExpression(914,918): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = lowlevel.Anno
+        symbol = <constructor>(position: kotlin.String): lowlevel.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = position
+            receiverType = null
+            returnType = kotlin.String
+            symbol = position: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "nested constraint type $prop" -> (KaVariableSignature:
+          name = position
+          receiverType = null
+          returnType = kotlin.String
+          symbol = position: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
 
 KtValueArgumentList(918,950): '("nested constraint type $prop")'
   null

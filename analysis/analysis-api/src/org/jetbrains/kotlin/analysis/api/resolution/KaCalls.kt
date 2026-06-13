@@ -160,6 +160,21 @@ public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
 @KaExperimentalApi
 public val KaSingleOrMultiCall.symbols: List<KaSymbol>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(signature.symbol)
+        is KaSingleCall<*, *> -> listOf(symbol)
         is KaMultiCall -> calls.map { it.signature.symbol }
     }
+
+/**
+ * The resolved [KaCallableSymbol] of the [KaSingleCall].
+ *
+ * This is a short-cut for [KaCallableSignature.symbol].
+ */
+@OptIn(KaExperimentalApi::class)
+@KaExperimentalApi
+// A workaround to provide the helper utility but don't break the use site
+// since in most cases it conflicts with `KaCallableMemberCall.symbol`.
+// The workaround could be moved to the `KaCallableMemberCall.symbol` side once the API is stabilized.
+@Suppress("INVISIBLE_REFERENCE")
+@kotlin.internal.LowPriorityInOverloadResolution
+public val <S : KaCallableSymbol, C : KaCallableSignature<S>> KaSingleCall<S, C>.symbol: S
+    get() = signature.symbol

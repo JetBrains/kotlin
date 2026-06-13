@@ -55,9 +55,7 @@ fun box() {
 
 // EXPECTATIONS JS_IR
 // test.kt:6 box
-// test.kt:6 box$lambda
 // test.kt:6 box
-// test.kt:6 box$lambda$lambda
 // test.kt:6 box$lambda$lambda
 // test.kt:6 box$lambda$lambda
 // test.kt:6 box$lambda$lambda$lambda

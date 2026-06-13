@@ -7,10 +7,10 @@ import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.createSymbolicLinkPointingTo
+import kotlin.io.path.deleteIfExists
 
 @DisableCachingByDefault
 abstract class NodeJsSetupTask @Inject constructor(
@@ -34,47 +34,46 @@ abstract class NodeJsSetupTask @Inject constructor(
     private val executable = env.map { it.executable }
 
     override fun extract(archive: File) {
-        var fixBrokenSymLinks = false
 
         val destination = destinationProvider.getFile()
         fs.copy {
             it.from(
                 when {
                     archive.name.endsWith("zip") -> archiveOperations.zipTree(archive)
-                    else -> {
-                        fixBrokenSymLinks = true
-                        archiveOperations.tarTree(archive)
-                    }
+                    else -> archiveOperations.tarTree(archive)
                 }
             )
             it.into(destination.parentFile)
         }
 
-        fixBrokenSymlinks(destination, isWindows.get(), fixBrokenSymLinks)
+        if (!archive.name.endsWith("zip")) {
+            fixBrokenSymlinks(destination.toPath(), isWindows.get())
+        }
 
         if (!isWindows.get()) {
             File(executable.get()).setExecutable(true)
         }
     }
 
-    private fun fixBrokenSymlinks(destinationDir: File, isWindows: Boolean, necessaryToFix: Boolean) {
-        if (necessaryToFix) {
-            val nodeBinDir = computeNodeBinDir(destinationDir, isWindows).toPath()
-            fixBrokenSymlink("npm", nodeBinDir, destinationDir, isWindows)
-            fixBrokenSymlink("npx", nodeBinDir, destinationDir, isWindows)
-        }
+    private fun fixBrokenSymlinks(destinationDir: Path, isWindows: Boolean) {
+        val nodeBinDir = computeNodeBinDir(destinationDir, isWindows)
+        fixBrokenSymlink("npm", nodeBinDir, destinationDir, isWindows)
+        fixBrokenSymlink("npx", nodeBinDir, destinationDir, isWindows)
     }
 
     private fun fixBrokenSymlink(
         name: String,
         nodeBinDirPath: Path,
-        nodeDirProvider: File,
+        nodeDir: Path,
         isWindows: Boolean,
     ) {
         val script = nodeBinDirPath.resolve(name)
-        val scriptFile = computeNpmScriptFile(nodeDirProvider, name, isWindows)
-        if (Files.deleteIfExists(script)) {
-            Files.createSymbolicLink(script, nodeBinDirPath.relativize(Paths.get(scriptFile)))
+        val scriptFile = computeNpmScriptFile(nodeDir, name, isWindows)
+        val target = nodeBinDirPath.relativize(scriptFile)
+
+        if (script.deleteIfExists()) {
+            script.createSymbolicLinkPointingTo(target)
+            logger.info("Created symlink for $name. $script -> $target")
         }
     }
 

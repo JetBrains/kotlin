@@ -46,7 +46,7 @@ object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
             if (valueParameterSizeDiff != 0) {
                 return valueParameterSizeDiff
             }
-            for ((aValueParameter, bValueParameter) in a.valueParameters.zip(b.valueParameters)) {
+            for ([aValueParameter, bValueParameter] in a.valueParameters.zip(b.valueParameters)) {
                 val valueParameterDiff = FirValueParameterComparator.compare(aValueParameter, bValueParameter)
                 if (valueParameterDiff != 0) {
                     return valueParameterDiff
@@ -59,7 +59,7 @@ object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
         if (typeParameterSizeDiff != 0) {
             return typeParameterSizeDiff
         }
-        for ((aTypeParameter, bTypeParameter) in a.typeParameters.zip(b.typeParameters)) {
+        for ([aTypeParameter, bTypeParameter] in a.typeParameters.zip(b.typeParameters)) {
             val typeParameterDiff = FirTypeParameterRefComparator.compare(aTypeParameter, bTypeParameter)
             if (typeParameterDiff != 0) {
                 return typeParameterDiff

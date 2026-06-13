@@ -1,0 +1,347 @@
+KtFile: 'companionExtensionInvalidReceivers.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(43,55): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'test'
+  NO_CANDIDATES
+
+KtImportList(55,55): ''
+  NO_CANDIDATES
+
+KtClass(57,64): 'class C'
+  NO_CANDIDATES
+
+KtClass(65,75): 'class G<T>'
+  NO_CANDIDATES
+
+KtTypeParameterList(72,75): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(73,74): 'T'
+  NO_CANDIDATES
+
+KtObjectDeclaration(76,84): 'object O'
+  NO_CANDIDATES
+
+KtNamedFunction(86,124): 'companion fun C?.nullableReceiver() {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(86,95): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(100,102): 'C?'
+  NO_CANDIDATES
+
+KtNullableType(100,102): 'C?'
+  NO_CANDIDATES
+
+KtUserType(100,101): 'C'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(100,101): 'C'
+  NO_CANDIDATES
+
+KtParameterList(119,121): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(122,124): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(125,160): 'companion fun O.objectReceiver() {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(125,134): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(139,140): 'O'
+  NO_CANDIDATES
+
+KtUserType(139,140): 'O'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(139,140): 'O'
+  NO_CANDIDATES
+
+KtParameterList(155,157): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(158,160): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(161,222): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(161,177): 'companion inline'
+  NO_CANDIDATES
+
+KtTypeParameterList(182,193): '<reified T>'
+  NO_CANDIDATES
+
+KtTypeParameter(183,192): 'reified T'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(183,190): 'reified'
+  NO_CANDIDATES
+
+KtTypeReference(194,195): 'T'
+  NO_CANDIDATES
+
+KtUserType(194,195): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(194,195): 'T'
+  NO_CANDIDATES
+
+KtParameterList(217,219): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(220,222): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(223,273): 'companion fun G<String>.typeArgumentsReceiver() {}'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(223,232): 'companion'
+  NO_CANDIDATES
+
+KtTypeReference(237,246): 'G<String>'
+  NO_CANDIDATES
+
+KtUserType(237,246): 'G<String>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(237,238): 'G'
+  NO_CANDIDATES
+
+KtTypeArgumentList(238,246): '<String>'
+  NO_CANDIDATES
+
+KtTypeProjection(239,245): 'String'
+  NO_CANDIDATES
+
+KtTypeReference(239,245): 'String'
+  NO_CANDIDATES
+
+KtUserType(239,245): 'String'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(239,245): 'String'
+  NO_CANDIDATES
+
+KtParameterList(268,270): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(271,273): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(275,368): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(284,286): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(287,368): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(293,294): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(295,313): 'nullableReceiver()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(295,311): 'nullableReceiver'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(311,313): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(318,336): 'O.objectReceiver()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(318,319): 'O'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.O
+        symbol = <constructor>(): test.O
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(320,336): 'objectReceiver()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(320,334): 'objectReceiver'
+  NO_CANDIDATES
+
+KtValueArgumentList(334,336): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(341,342): 'G'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.G<T>
+        symbol = <constructor>(): test.G<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(343,366): 'typeArgumentsReceiver()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(364,366): '()'
+  NO_CANDIDATES

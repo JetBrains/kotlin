@@ -1,0 +1,8 @@
+Type:
+KaUsualClassType:
+  annotations: []
+  typeArguments: []
+  type: kotlin/String
+
+mapToJvmTypeDescriptor:
+Ljava/lang/String;

@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
@@ -78,4 +82,28 @@ internal fun initializeOptions(klazz: KClass<*>, options: Options) {
         }
         jClass = jClass.superclass
     }
+}
+
+@TestOnly
+@Suppress("unused")
+internal fun overrideVersionForOptionsCheck(version: String) {
+    versionForOptionsCheck = version
+}
+
+private var versionForOptionsCheck: String = KotlinCompilerVersion.VERSION
+
+internal fun checkOptionIsAvailableForVersion(key: BaseOption<*>) {
+    val getAvailableSinceVersionMethod = key::class.java.methods.find { it.name == "getAvailableSinceVersion" } ?: return
+    val availableSinceVersion = getAvailableSinceVersionMethod.invoke(key) as KotlinReleaseVersion
+    if (availableSinceVersion.toKotlinToolingVersion() > KotlinToolingVersion(versionForOptionsCheck).clearClassifier()) {
+        throw IllegalStateException("${key.id} is available only since $availableSinceVersion")
+    }
+}
+
+internal fun KotlinReleaseVersion.toKotlinToolingVersion(): KotlinToolingVersion {
+    return KotlinToolingVersion(major, minor, patch, null)
+}
+
+private fun KotlinToolingVersion.clearClassifier(): KotlinToolingVersion {
+    return KotlinToolingVersion(major, minor, patch, null)
 }

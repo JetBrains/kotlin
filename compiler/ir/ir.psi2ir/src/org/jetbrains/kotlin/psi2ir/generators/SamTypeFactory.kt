@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithNothing
 
+@K1Deprecation
 class SamTypeApproximator(builtIns: KotlinBuiltIns, languageVersionSettings: LanguageVersionSettings) {
     private val typeApproximator = TypeApproximator(builtIns, languageVersionSettings)
 

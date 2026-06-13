@@ -46,7 +46,8 @@ class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
             }
             is ConeIntersectionType -> {
                 val intersectedTypes = intersectedTypes.map { it.dropEnhancedNullability() }
-                if (intersectedTypes.zip(this.intersectedTypes).all { (a, b) -> a === b }) return this
+                if (intersectedTypes.zip(this.intersectedTypes).all { [a, b] -> a === b }) return this
+                @OptIn(DelicateIntersectionConstructor::class)
                 return ConeIntersectionType(
                     intersectedTypes,
                     upperBoundForApproximation?.dropEnhancedNullability()

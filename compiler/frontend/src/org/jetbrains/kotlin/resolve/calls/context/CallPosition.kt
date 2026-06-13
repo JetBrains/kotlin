@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.context
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
 
+@K1Deprecation
 sealed class CallPosition {
     object Unknown : CallPosition()
 

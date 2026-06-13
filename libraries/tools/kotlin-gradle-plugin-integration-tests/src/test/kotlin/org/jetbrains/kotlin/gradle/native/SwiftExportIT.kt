@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.apple.createLocalSwiftPackage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -727,6 +730,70 @@ class SwiftExportIT : KGPBaseTest() {
                     )
                 )
             )
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+    @DisplayName("KT-86015: swiftPMDependencies cinterop klib is visible to Swift Export binary link task")
+    @GradleTest
+    fun testMainCinteropKlibIsLinkedInSwiftExportBinary(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        // Use emptyxcode so that swiftPMDependencies can resolve the local Swift package
+        // via xcodebuild (the same project template used by SwiftPMImport tests).
+        project("emptyxcode", gradleVersion) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    sourceSets.appleMain.get().compileSource(
+                        """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+                            package producer
+                            fun localGreeting(): String {
+                                return swiftPMImport.shared.LocalHelper.greeting()
+                            }
+                        """.trimIndent()
+                    )
+
+                    with(swiftExport) {
+                        configure {
+                            freeCompilerArgs.add("-Xpartial-linkage-loglevel=error")
+                        }
+                    }
+
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                // The swiftPMImport cinterop task must have run.
+                assertTasksExecuted(":cinteropSwiftPMImportIosArm64")
+                // The Swift Export compilation and binary link must succeed end-to-end.
+                assertTasksExecuted(":compileSwiftExportMainKotlinIosArm64")
+                assertTasksExecuted(":linkSwiftExportBinaryDebugStaticIosArm64")
+                assertTasksExecuted(":copyDebugSPMIntermediates")
+            }
         }
     }
 }

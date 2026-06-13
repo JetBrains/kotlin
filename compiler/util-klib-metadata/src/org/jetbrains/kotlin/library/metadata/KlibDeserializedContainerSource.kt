@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 
+@K1Deprecation
 class KlibDeserializedContainerSource(
     override val preReleaseInfo: PreReleaseInfo,
     override val presentableString: String,

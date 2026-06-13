@@ -1,0 +1,4 @@
+import org.jetbrains.kotlin.nativeDistribution.PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY
+import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
+
+project.extra[PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY] = registerNativeBootstrapDistribution()

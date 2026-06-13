@@ -40,4 +40,10 @@ object TestCompilePaths {
     const val KOTLIN_THIRDPARTY_JAVA9_ANNOTATIONS_PATH = "third-party/java9-annotations"
     const val KOTLIN_THIRDPARTY_JSR305_PATH = "third-party/jsr305"
     const val KOTLIN_TESTDATA_ROOTS = "kotlin.testData.roots"
+
+    const val LOMBOK_COMPILER_PLUGIN_JAR_PATH: String = "lombok.compiler.plugin.jar.path"
+    const val ALLOPEN_COMPILER_PLUGIN_JAR_PATH: String = "allopen.compiler.plugin.jar.path"
+    const val NOARG_COMPILER_PLUGIN_JAR_PATH: String = "noarg.compiler.plugin.jar.path"
+    const val MAIN_KTS_JAR_PATH: String = "main-kts.jar.path"
+    const val KOTLIN_REFLECT_SHADOW_JAR_PATH: String = "kotlin.reflect.shadow.jar.path"
 }

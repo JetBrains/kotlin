@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.testInfraError
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
@@ -51,6 +52,21 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
        """.trimIndent()
     )
 
+    val LANGUAGE_FEATURE_TOGGLED_IDENTICAL by directive(
+        description = "Diagnostics are the same with the given language feature enabled/disabled."
+    )
+
+    val LANGUAGE_FEATURE_TOGGLED by enumDirective<LanguageFeature>(
+        description = """
+            If diagnostics differ when the given LanguageFeature is enabled/disabled,
+            a separate file with the extension `disabled.kt` is created.
+            Otherwise, $LANGUAGE_FEATURE_TOGGLED_IDENTICAL must be declared.
+            """.trimIndent()
+    )
+
+    val TESTED_LANGUAGE_FEATURE_DISABLED by directive(
+        description = "The LF specified by $LANGUAGE_FEATURE_TOGGLED is disabled."
+    )
 
     // --------------------- Analysis Flags ---------------------
 
@@ -155,11 +171,11 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     fun parseApiVersion(versionString: String): ApiVersion = when (versionString) {
         "LATEST" -> ApiVersion.LATEST
         "LATEST_STABLE" -> ApiVersion.LATEST_STABLE
-        else -> ApiVersion.parse(versionString) ?: error("Unknown API version: $versionString")
+        else -> ApiVersion.parse(versionString) ?: testInfraError("Unknown API version: $versionString")
     }
 
     fun parseLanguageVersion(versionString: String): LanguageVersion = when (versionString) {
         "LATEST_STABLE" -> LanguageVersion.LATEST_STABLE
-        else -> LanguageVersion.fromVersionString(versionString) ?: error("Unknown language version: $versionString")
+        else -> LanguageVersion.fromVersionString(versionString) ?: testInfraError("Unknown language version: $versionString")
     }
 }

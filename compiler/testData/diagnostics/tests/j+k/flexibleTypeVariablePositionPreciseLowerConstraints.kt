@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138
-// SKIP_TXT
 // FILE: JavaClass.java
 public class JavaClass {
     public static <K> K simpleId(K k) { // fun <K> simpleId(k: K & Any..K?): K & Any..K? =

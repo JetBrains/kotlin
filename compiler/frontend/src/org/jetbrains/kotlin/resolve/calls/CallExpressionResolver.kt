@@ -10,6 +10,7 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.AstLoadingFilter
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -58,6 +59,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import javax.inject.Inject
 
+@K1Deprecation
 class CallExpressionResolver(
     private val callResolver: CallResolver,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -141,7 +143,7 @@ class CallExpressionResolver(
         val temporaryForVariable = TemporaryTraceAndCache.create(
             context, "trace to resolve as variable", nameExpression
         )
-        val (notNothing, type) = getVariableType(
+        val [notNothing, type] = getVariableType(
             nameExpression, receiver, callOperationNode,
             context.replaceTraceAndCache(temporaryForVariable)
         )
@@ -156,7 +158,7 @@ class CallExpressionResolver(
             context, "trace to resolve as function", nameExpression
         )
         val newContext = context.replaceTraceAndCache(temporaryForFunction)
-        val (resolveResult, resolvedCall) = getResolvedCallForFunction(
+        val [resolveResult, resolvedCall] = getResolvedCallForFunction(
             call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, initialDataFlowInfoForArguments
         )
         if (resolveResult) {
@@ -205,7 +207,7 @@ class CallExpressionResolver(
         val temporaryForFunction = TemporaryTraceAndCache.create(
             context, "trace to resolve as function call", callExpression
         )
-        val (resolveResult, resolvedCall) = getResolvedCallForFunction(
+        val [resolveResult, resolvedCall] = getResolvedCallForFunction(
             call,
             context.replaceTraceAndCache(temporaryForFunction),
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
@@ -258,7 +260,7 @@ class CallExpressionResolver(
             val temporaryForVariable = TemporaryTraceAndCache.create(
                 context, "trace to resolve as variable with 'invoke' call", callExpression
             )
-            val (notNothing, type) = getVariableType(
+            val [notNothing, type] = getVariableType(
                 calleeExpression, receiver, callOperationNode,
                 context.replaceTraceAndCache(temporaryForVariable)
             )

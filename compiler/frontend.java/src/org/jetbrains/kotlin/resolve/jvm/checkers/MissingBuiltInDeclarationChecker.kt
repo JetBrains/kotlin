@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
+@K1Deprecation
 object MissingBuiltInDeclarationChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (context.languageVersionSettings.getFlag(JvmAnalysisFlags.suppressMissingBuiltinsError)) return

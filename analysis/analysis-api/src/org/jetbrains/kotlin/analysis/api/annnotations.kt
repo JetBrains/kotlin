@@ -96,6 +96,7 @@ public annotation class KaContextParameterApi
  * Marks an API as only available in the K2 implementation of the Analysis API.
  * In the K1 implementation, the behavior is undefined.
  */
+@Deprecated("The annotation is obsolete since K1 doesn't provide any implementations anymore")
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.PROPERTY,

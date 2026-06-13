@@ -4,7 +4,6 @@ import KotlinRuntimeSupport
 
 public final class Bar: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
         let __kt = __root___Bar_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -18,7 +17,6 @@ public final class Bar: KotlinRuntime.KotlinBase {
 }
 public final class Context: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.Context.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Context ") }
         let __kt = __root___Context_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Context_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -32,7 +30,6 @@ public final class Context: KotlinRuntime.KotlinBase {
 }
 public final class ContextA: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ContextA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ContextA ") }
         let __kt = __root___ContextA_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ContextA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -46,7 +43,6 @@ public final class ContextA: KotlinRuntime.KotlinBase {
 }
 public final class ContextB: KotlinRuntime.KotlinBase {
     public init() {
-        if Self.self != main.ContextB.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ContextB ") }
         let __kt = __root___ContextB_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___ContextB_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
@@ -172,8 +168,8 @@ public func complexContextFunction(
 public func contextBlockA(
     block: @escaping ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___contextBlockA__TypesOfArguments__U28Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__({
-        let originalBlock = block
+    return { __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_ContextBU29_U20Swift_Int32_U20Swift_StringU29202D_U20Swift_Void__({
+        let originalBlock: ((main.ContextA, main.ContextB), Swift.Int32, Swift.String) -> Swift.Void = block
         return { (ctx0: Swift.UnsafeMutableRawPointer, ctx1: Swift.UnsafeMutableRawPointer, arg0: Swift.Int32, arg1: Swift.String) in return { originalBlock((main.ContextA.__createClassWrapper(externalRCRef: ctx0),main.ContextB.__createClassWrapper(externalRCRef: ctx1)), arg0, arg1); return true }() }
     }()); return () }()
 }
@@ -186,8 +182,8 @@ public func contextBlockB() -> ((main.ContextB, main.ContextA), Swift.String, Sw
 public func contextBlockC(
     block: @escaping (main.Context, Swift.String) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___contextBlockC__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__({
-        let originalBlock = block
+    return { __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_StringU29202D_U20Swift_Void__({
+        let originalBlock: (main.Context, Swift.String) -> Swift.Void = block
         return { (ctx0: Swift.UnsafeMutableRawPointer, arg0: Swift.String) in return { originalBlock((main.Context.__createClassWrapper(externalRCRef: ctx0)), arg0); return true }() }
     }()); return () }()
 }

@@ -120,7 +120,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
         testServices: TestServices,
     ) {
         testServices.assertions.assertEquals(fromSymbol.size, fromSignature.size)
-        for ((unsubstituted, substituted) in fromSymbol.zip(fromSignature)) {
+        for ([unsubstituted, substituted] in fromSymbol.zip(fromSignature)) {
             testServices.assertions.assertEquals(substituted.returnType, unsubstituted.returnType.let(substitutor::substitute))
         }
     }

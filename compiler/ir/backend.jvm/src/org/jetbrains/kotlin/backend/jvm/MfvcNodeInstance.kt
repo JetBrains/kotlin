@@ -99,7 +99,7 @@ class ValueDeclarationMfvcNodeInstance(
     }
 
     override fun get(name: Name): ValueDeclarationMfvcNodeInstance? {
-        val (newNode, indices) = node.getSubnodeAndIndices(name) ?: return null
+        val [newNode, indices] = node.getSubnodeAndIndices(name) ?: return null
         return ValueDeclarationMfvcNodeInstance(newNode, typeArguments, valueDeclarations.slice(indices))
     }
 
@@ -257,7 +257,7 @@ class ReceiverBasedMfvcNodeInstance(
     }
 
     override fun get(name: Name): ReceiverBasedMfvcNodeInstance? {
-        val (newNode, _) = node.getSubnodeAndIndices(name) ?: return null
+        val [newNode, _] = node.getSubnodeAndIndices(name) ?: return null
         return newNode.createInstanceFromBox(scope, typeArguments, makeReceiverCopy(), accessType, saveVariable)
     }
 

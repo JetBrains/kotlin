@@ -23,10 +23,10 @@ scopes:
       KaContextParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -44,7 +44,6 @@ scopes:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -52,6 +51,7 @@ scopes:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -120,7 +120,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /usage
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []

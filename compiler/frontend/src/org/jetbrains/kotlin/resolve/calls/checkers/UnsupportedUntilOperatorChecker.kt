@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
+@K1Deprecation
 object UnsupportedUntilOperatorChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val calleeExpression = resolvedCall.call.calleeExpression as? KtOperationReferenceExpression ?: return

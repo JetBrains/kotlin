@@ -16,14 +16,17 @@ class Klass {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val innerBuilder: Klass.Inner.InnerBuilder = Klass.Inner.builder()
     val inner: Klass.Inner = innerBuilder.integer(42).build()
 
-    if (inner.integer != 42) return "Error: $inner"
+    assertEquals(42, inner.integer)
 
     val klassBuilder: Klass.KlassBuilder = Klass.builder()
     val klass: Klass = klassBuilder.str("hello").build()
 
-    return if (klass.str == "hello") "OK" else "Error: $klass"
+    assertEquals("hello", klass.str)
+    return "OK"
 }

@@ -222,7 +222,7 @@ private fun AnnotationDescriptor.toAnnotationInstance(): Annotation? {
     return createAnnotationInstance(
         annotationClass,
         allValueArguments.entries
-            .mapNotNull { (name, value) -> value.toRuntimeValue(annotationClass.classLoader)?.let(name.asString()::to) }
+            .mapNotNull { (name, value) -> value.toRuntimeValue(annotationClass.safeClassLoader)?.let(name.asString()::to) }
             .toMap()
     )
 }
@@ -356,7 +356,7 @@ internal class LocalDelegatedPropertyFakeContainerSource(val container: KDeclara
 }
 
 internal val KType.isInlineClassType: Boolean
-    get() = (classifier as? KClassImpl<*>)?.isValue == true
+    get() = (classifier as? KClassImpl<*>)?.isJvmInlineValue == true
 
 internal fun defaultPrimitiveValue(type: Type): Any? =
     if (type is Class<*> && type.isPrimitive) {

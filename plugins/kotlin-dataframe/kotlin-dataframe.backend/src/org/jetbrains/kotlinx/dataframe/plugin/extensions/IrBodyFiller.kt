@@ -68,23 +68,13 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         }
         val getter = declaration.getter ?: return declaration
 
-        val finder = context.finderForBuiltins()
-        val constructors = finder.findConstructors(ClassId(FqName("kotlin.jvm"), Name.identifier("JvmName")))
-        val jvmName = constructors.single { it.owner.parameters.size == 1 }
         val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
-        val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
-        getter.annotations = listOf(
-            IrAnnotationImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
-                .also {
-                    it.arguments[0] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg)
-                }
-        )
         val returnType = getter.returnType
         val typeOp = generateColumnAccessCall(
             receiver = IrGetValueImpl(-1, -1, getterExtensionReceiver.symbol), declaration, returnType, marker
         )
-        val returnExpression = IrReturnImpl(-1, -1, returnType, getter.symbol, typeOp)
+        val returnExpression = IrReturnImpl(-1, -1, context.irBuiltIns.nothingType, getter.symbol, typeOp)
         getter.apply {
             body = factory.createBlockBody(-1, -1, listOf(returnExpression))
         }
@@ -137,24 +127,10 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return IrTypeOperatorCallImpl(-1, -1, returnType, IrTypeOperator.CAST, returnType, call)
     }
 
-    private fun IrDeclarationWithName.nestedName() = buildString { computeNestedName(this@nestedName, this) }
-
-    private fun computeNestedName(declaration: IrDeclarationWithName, result: StringBuilder): Boolean {
-        when (val parent = declaration.parent) {
-            is IrClass -> {
-                if (!computeNestedName(parent, result)) return false
-            }
-            is IrPackageFragment -> {}
-            else -> return false
-        }
-        if (result.isNotEmpty()) result.append('_')
-        result.append(declaration.name.asString())
-        return true
-    }
-
     // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
     // don't "exist": they are used for resolve, but there's no value on the stack.
     // We need to find all calls that use them as arguments and generate valid code
+    // region injected receivers lowering
     override fun visitCall(expression: IrCall): IrExpression {
         val origin = expression.symbol.owner.origin
         if (expression.origin == IrStatementOrigin.GET_PROPERTY && origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin) {
@@ -193,6 +169,30 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val scopeReference = classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
         return fromPlugin || scopeReference
     }
+
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
+        if (expression.type.isScope()) {
+            return expression.replaceWithConstructorCall()
+        }
+        return super.visitErrorCallExpression(expression)
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        if (expression.type.isScope() &&
+            expression.operator == IrTypeOperator.IMPLICIT_CAST &&
+            expression.argument is IrGetValue
+        ) {
+            return expression.replaceWithConstructorCall()
+        }
+        return super.visitTypeOperator(expression)
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrExpression.replaceWithConstructorCall(): IrConstructorCallImpl {
+        val constructor = type.getClass()!!.constructors.toList().single()
+        return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0)
+    }
+    // endregion
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)

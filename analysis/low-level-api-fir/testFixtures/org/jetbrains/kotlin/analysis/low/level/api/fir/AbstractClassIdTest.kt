@@ -28,10 +28,8 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-@SmokeTest
 abstract class AbstractClassIdTest : AbstractAnalysisApiBasedTest() {
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_CONSISTENCY_CHECK by stringDirective("Temporary disable test until the issue is fixed")

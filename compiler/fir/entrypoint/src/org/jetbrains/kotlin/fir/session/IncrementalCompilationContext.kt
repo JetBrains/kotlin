@@ -14,6 +14,6 @@ data class IncrementalCompilationContext(
     // (maybe easiest way to achieve is to delete libraries
     // TODO: consider passing something more abstract instead of precompiler component, in order to avoid file ops here
     val previousFirSessionsSymbolProviders: Collection<FirSymbolProvider>,
-    val precompiledBinariesPackagePartProvider: PackagePartProvider?,
+    val precompiledBinariesPackagePartProvider: PackagePartProvider,
     val precompiledBinariesFileScope: AbstractProjectFileSearchScope?
 )

@@ -1,0 +1,8 @@
+KtNameReferenceExpression(103,108): 'Local'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      Local
+    ]
+  additional: [fake.kt]

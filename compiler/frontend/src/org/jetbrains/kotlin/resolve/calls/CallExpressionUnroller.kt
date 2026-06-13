@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import java.util.*
 
+@K1Deprecation
 fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List<KtQualifiedExpression> {
     val unrolled = arrayListOf<KtQualifiedExpression>()
 
@@ -38,6 +40,7 @@ fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List
     return unrolled.asReversed()
 }
 
+@K1Deprecation
 data class CallExpressionElement internal constructor(val qualified: KtQualifiedExpression) {
 
     val receiver: KtExpression

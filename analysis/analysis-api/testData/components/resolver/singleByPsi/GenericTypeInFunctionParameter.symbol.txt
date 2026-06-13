@@ -1,2 +1,7 @@
 KtNameReferenceExpression(28,29): 'X'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      X
+    ]

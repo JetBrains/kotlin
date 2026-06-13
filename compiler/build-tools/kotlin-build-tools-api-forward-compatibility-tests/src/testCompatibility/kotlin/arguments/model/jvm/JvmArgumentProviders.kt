@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.jvm
 
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_STRING_CONCAT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
+import org.jetbrains.kotlin.buildtools.tests.toolchain
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -54,6 +56,28 @@ internal class InvalidArgumentValueJvmCompilerArgumentsArgumentProvider : Argume
 internal class InvalidRawValueJvmCompilerArgumentsArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedArgumentConfiguration { it.runsInvalidRawValueTest }.map { Arguments.of(it) }.stream()
+    }
+}
+
+internal class InvalidRawValueJvmCompilerArgumentsStrategyAgnosticArgumentProvider : ArgumentsProvider {
+    override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
+        return namedInvalidRawValueStrategicArgumentConfigurations().map { Arguments.of(it) }.stream()
+    }
+}
+
+private fun namedInvalidRawValueStrategicArgumentConfigurations(): List<Named<Pair<JvmArgumentConfiguration<*>, ExecutionPolicy>>> {
+    val strategies: List<Named<ExecutionPolicy>> = listOf(
+        named("[in-process]", toolchain.createInProcessExecutionPolicy()),
+        named("[daemon]", toolchain.daemonExecutionPolicyBuilder().build()),
+    )
+    val compilerArguments = namedArgumentConfiguration { it.runsInvalidRawValueTest }
+    return strategies.flatMap { namedStrategy ->
+        compilerArguments.map { namedArgConfig ->
+            named(
+                namedArgConfig.name + namedStrategy.name,
+                namedArgConfig.payload to namedStrategy.payload
+            )
+        }
     }
 }
 
@@ -304,8 +328,14 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
     JvmArgumentTestDescriptor(
         argumentName = "Xscript-resolver-environment",
         argument = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(arrayOf("key1=value1", "key2=value2")),
-        argumentRawValues = listOf(arrayOf("key1=value1", "key2=value2").joinToString(",")),
+        argumentValues = listOf(
+            arrayOf("key1=value1", "key2=value2"),
+            arrayOf("optional="),
+        ),
+        argumentRawValues = listOf(
+            arrayOf("key1=value1", "key2=value2").joinToString(","),
+            "optional=",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") },
     ),
@@ -314,6 +344,16 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argument = X_JSR305,
         argumentValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore")),
         argumentRawValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")),
+        invalidArgumentValues = listOf(
+            arrayOf("stict"),
+            arrayOf("@javax.annotation.Nullable:strct"),
+            arrayOf("foo:bar:baz"),
+        ),
+        invalidRawValues = listOf(
+            "stict",
+            "@javax.annotation.Nullable:strct",
+            "foo:bar:baz",
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xjsr305=$value") },
     ),
@@ -322,6 +362,16 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
         argument = X_NULLABILITY_ANNOTATIONS,
         argumentValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn")),
         argumentRawValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn").joinToString(",")),
+        invalidArgumentValues = listOf(
+            arrayOf("@javax.annotation.Nullable:bogus"),
+            arrayOf("@javax.annotation.Nullable"),
+            arrayOf("@javax.annotation.Nullable=ignore")
+        ),
+        invalidRawValues = listOf(
+            "@javax.annotation.Nullable:bogus",
+            "@javax.annotation.Nullable",
+            "@javax.annotation.Nullable=ignore"
+        ),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") },
     ),
@@ -338,6 +388,8 @@ private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = lis
                     File.pathSeparator + "event=cpu,interval=1ms,threads,start" +
                     File.pathSeparator + testBaseDir.resolve("path/to/snapshots").toFile().absolutePath
         ),
+        invalidArgumentValues = listOf("path/to/libasyncProfiler.so"),
+        invalidRawValues = listOf("path/to/libasyncProfiler.so"),
         valueString = { value -> value },
         expectedArgumentStringsFor = { value -> listOf("-Xprofile=$value") },
     ),

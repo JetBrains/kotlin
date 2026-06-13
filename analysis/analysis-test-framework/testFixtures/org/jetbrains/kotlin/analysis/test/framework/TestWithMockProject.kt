@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.TestWithDisposable
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 

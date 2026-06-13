@@ -1,7 +1,6 @@
 KaSamConstructorSymbol:
   annotations: []
   callableId: java/lang/Runnable
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -23,7 +22,6 @@ KaSamConstructorSymbol:
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -31,6 +29,7 @@ KaSamConstructorSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -56,12 +55,12 @@ KaSamConstructorSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: null
   getContainingJvmClassName: null
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: java.lang.Runnable

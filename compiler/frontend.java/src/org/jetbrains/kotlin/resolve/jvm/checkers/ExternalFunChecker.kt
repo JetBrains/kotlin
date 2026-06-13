@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
+@K1Deprecation
 class ExternalFunChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is MemberDescriptor || !descriptor.isExternal) return

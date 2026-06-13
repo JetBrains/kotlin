@@ -38,13 +38,24 @@ KtParameter(135,152): 'val value: MyEnum'
   null
 
 KtTypeReference(146,152): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(146,152): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(146,152): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(157,177): '@A1(X)'
   null
@@ -65,12 +76,20 @@ KtConstructorCalleeExpression(158,160): 'A1'
     ]
 
 KtTypeReference(158,160): 'A1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A1
+    ]
 
 KtUserType(158,160): 'A1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A1
+    ]
 
 KtNameReferenceExpression(158,160): 'A1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A1
@@ -83,6 +102,8 @@ KtValueArgument(161,162): 'X'
   null
 
 KtNameReferenceExpression(161,162): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -113,13 +134,24 @@ KtDeclarationModifierList(204,210): 'vararg'
   null
 
 KtTypeReference(222,228): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(222,228): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(222,228): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(233,257): '@A2(X, Y)'
   null
@@ -140,12 +172,20 @@ KtConstructorCalleeExpression(234,236): 'A2'
     ]
 
 KtTypeReference(234,236): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtUserType(234,236): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtNameReferenceExpression(234,236): 'A2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A2
@@ -158,6 +198,8 @@ KtValueArgument(237,238): 'X'
   null
 
 KtNameReferenceExpression(237,238): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -167,6 +209,8 @@ KtValueArgument(240,241): 'Y'
   null
 
 KtNameReferenceExpression(240,241): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Y
@@ -197,12 +241,20 @@ KtConstructorCalleeExpression(260,262): 'A2'
     ]
 
 KtTypeReference(260,262): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtUserType(260,262): 'A2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A2
+    ]
 
 KtNameReferenceExpression(260,262): 'A2'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A2
@@ -221,12 +273,16 @@ KtCollectionLiteralExpression(264,270): '[X, Y]'
     ]
 
 KtNameReferenceExpression(265,266): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
     ]
 
 KtNameReferenceExpression(268,269): 'Y'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.Y
@@ -254,13 +310,24 @@ KtParameter(313,337): 'val value: Array<MyEnum>'
   null
 
 KtTypeReference(324,337): 'Array<MyEnum>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtUserType(324,337): 'Array<MyEnum>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtNameReferenceExpression(324,329): 'Array'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Array
+    ]
 
 KtTypeArgumentList(329,337): '<MyEnum>'
   null
@@ -269,13 +336,24 @@ KtTypeProjection(330,336): 'MyEnum'
   null
 
 KtTypeReference(330,336): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(330,336): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(330,336): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNamedFunction(342,365): '@A3([X])'
   null
@@ -296,12 +374,20 @@ KtConstructorCalleeExpression(343,345): 'A3'
     ]
 
 KtTypeReference(343,345): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtUserType(343,345): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtNameReferenceExpression(343,345): 'A3'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A3
@@ -320,6 +406,8 @@ KtCollectionLiteralExpression(346,349): '[X]'
     ]
 
 KtNameReferenceExpression(347,348): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -350,12 +438,20 @@ KtConstructorCalleeExpression(368,370): 'A3'
     ]
 
 KtTypeReference(368,370): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtUserType(368,370): 'A3'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A3
+    ]
 
 KtNameReferenceExpression(368,370): 'A3'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A3
@@ -374,6 +470,8 @@ KtCallExpression(371,381): 'arrayOf(X)'
     ]
 
 KtNameReferenceExpression(371,378): 'arrayOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
@@ -386,6 +484,8 @@ KtValueArgument(379,380): 'X'
   null
 
 KtNameReferenceExpression(379,380): 'X'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.X
@@ -413,13 +513,24 @@ KtParameter(424,438): 'val value: Int'
   null
 
 KtTypeReference(435,438): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(435,438): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(435,438): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNamedFunction(443,471): '@A4(MAX_VALUE)'
   null
@@ -440,12 +551,20 @@ KtConstructorCalleeExpression(444,446): 'A4'
     ]
 
 KtTypeReference(444,446): 'A4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A4
+    ]
 
 KtUserType(444,446): 'A4'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /A4
+    ]
 
 KtNameReferenceExpression(444,446): 'A4'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /A4
@@ -458,6 +577,8 @@ KtValueArgument(447,456): 'MAX_VALUE'
   null
 
 KtNameReferenceExpression(447,456): 'MAX_VALUE'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       val MAX_VALUE: kotlin.Int
@@ -488,12 +609,20 @@ KtConstructorCalleeExpression(474,483): 'Retention'
     ]
 
 KtTypeReference(474,483): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtUserType(474,483): 'Retention'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Retention
+    ]
 
 KtNameReferenceExpression(474,483): 'Retention'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Retention
@@ -506,6 +635,8 @@ KtValueArgument(484,491): 'RUNTIME'
   null
 
 KtNameReferenceExpression(484,491): 'RUNTIME'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationRetention.RUNTIME
@@ -524,12 +655,20 @@ KtConstructorCalleeExpression(494,500): 'Target'
     ]
 
 KtTypeReference(494,500): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtUserType(494,500): 'Target'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/annotation/Target
+    ]
 
 KtNameReferenceExpression(494,500): 'Target'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/Target
@@ -542,6 +681,8 @@ KtValueArgument(501,506): 'CLASS'
   null
 
 KtNameReferenceExpression(501,506): 'CLASS'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.CLASS
@@ -551,6 +692,8 @@ KtValueArgument(508,516): 'PROPERTY'
   null
 
 KtNameReferenceExpression(508,516): 'PROPERTY'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/annotation/AnnotationTarget.PROPERTY
@@ -575,25 +718,44 @@ KtConstructorCalleeExpression(550,562): 'MyAnnotation'
     ]
 
 KtTypeReference(550,562): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtUserType(550,562): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtNameReferenceExpression(550,562): 'MyAnnotation'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnotation
     ]
 
 KtTypeReference(570,573): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(570,573): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(570,573): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtConstantExpression(576,577): '1'
   null
@@ -617,12 +779,20 @@ KtConstructorCalleeExpression(580,592): 'MyAnnotation'
     ]
 
 KtTypeReference(580,592): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtUserType(580,592): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtNameReferenceExpression(580,592): 'MyAnnotation'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnotation
@@ -647,12 +817,20 @@ KtConstructorCalleeExpression(609,621): 'MyAnnotation'
     ]
 
 KtTypeReference(609,621): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtUserType(609,621): 'MyAnnotation'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnotation
+    ]
 
 KtNameReferenceExpression(609,621): 'MyAnnotation'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnotation

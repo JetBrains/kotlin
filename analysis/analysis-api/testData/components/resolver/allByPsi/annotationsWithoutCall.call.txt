@@ -63,7 +63,21 @@ KtUserType(37,41): 'Anno'
   null
 
 KtNameReferenceExpression(37,41): 'Anno'
-  null
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.Anno
+        symbol = <constructor>(): one.Anno
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtParameterList(49,51): '()'
   null

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
@@ -30,7 +31,9 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
@@ -365,6 +368,10 @@ object FirDiagnosticRenderers {
         if (!it.isNullOrBlank()) " for operator '$it'" else ""
     }
 
+    val FOR_OPTIONAL_RECEIVER = ContextDependentRenderer { type: ConeKotlinType?, ctx ->
+        if (type?.hasError() == false) " on receiver of type '${RENDER_TYPE.render(type, ctx)}'" else ""
+    }
+
     val OF_OPTIONAL_NAME = Renderer { name: Name? ->
         name?.asString()?.takeIf { it.isNotBlank() }?.let { " of '$it'" } ?: ""
     }
@@ -429,7 +436,7 @@ object FirDiagnosticRenderers {
 
     val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
         buildString {
-            for ((symbol, diagnostics) in list) {
+            for ([symbol, diagnostics] in list) {
                 append(SYMBOL.render(symbol))
 
                 if (diagnostics.isNotEmpty()) {
@@ -444,6 +451,12 @@ object FirDiagnosticRenderers {
                 appendLine()
             }
         }.trim()
+    }
+
+    val DEPRECATING_FEATURE = Renderer { feature: LanguageFeature ->
+        buildString {
+            appendDeprecationWarningSuffix(feature)
+        }
     }
 }
 

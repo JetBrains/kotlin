@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.deprecation
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.utils.SmartList
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+@K1Deprecation
 class DeprecationResolver(
     storageManager: StorageManager,
     private val languageVersionSettings: LanguageVersionSettings,

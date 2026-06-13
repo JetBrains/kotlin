@@ -1,0 +1,8 @@
+KtNameReferenceExpression(97,100): 'Bar'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Foo.Bar
+    ]
+  additional: [fake.kt]

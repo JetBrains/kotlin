@@ -68,7 +68,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
 
         if (declaredTypeParameters.size < baseType.typeArguments.size) return false
 
-        for ((argumentsIndex, argument) in baseType.typeArguments.withIndex()) {
+        for ([argumentsIndex, argument] in baseType.typeArguments.withIndex()) {
             val argumentType = argument.type ?: continue
             if (argumentType.isMarkedNullable) continue
 
@@ -120,7 +120,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
             return false
         }
 
-        return dependentTypeParameters.any { (typeParameter, _) ->
+        return dependentTypeParameters.any { [typeParameter, _] ->
             returnType.contains {
                 it.typeConstructor(this) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable()
             }
@@ -132,7 +132,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = listOf()
     ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> {
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
-            .flatMap { (typeConstructor, constraints) ->
+            .flatMap { [typeConstructor, constraints] ->
                 require(typeConstructor is ConeTypeVariableTypeConstructor)
                 val upperBounds = constraints.constraints.filter {
                     it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
@@ -149,7 +149,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
                 }
             }.filter { it !in dependentTypeParametersSeen && it.first != variable }.toList()
 
-        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { (typeConstructor, _) ->
+        return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { [typeConstructor, _] ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
             } else emptyList()
@@ -163,7 +163,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
     ): Boolean {
         var currentTypeParameterConstructor = checkingType
 
-        return dependentTypeParameters.any { (typeConstructor, upperBound) ->
+        return dependentTypeParameters.any { [typeConstructor, upperBound] ->
             val isContainedOrNoUpperBound =
                 upperBound == null || isContainedInInvariantOrContravariantPositions(session, currentTypeParameterConstructor, upperBound)
             currentTypeParameterConstructor = typeConstructor

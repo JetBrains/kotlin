@@ -31,7 +31,6 @@ public interface KaCompletionCandidateChecker : KaSessionComponent {
      * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
      */
     @KaIdeApi
-    @KaK1Unsupported
     public fun createExtensionCandidateChecker(
         originalFile: KtFile,
         nameExpression: KtSimpleNameExpression,
@@ -114,7 +113,6 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public fun createExtensionCandidateChecker(

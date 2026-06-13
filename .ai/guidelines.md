@@ -134,6 +134,8 @@ If there are many options for the JetBrains IDE MCP server, ask the user what MC
 
 Use JetBrains MCP `get_file_problems` with errorsOnly=false to check files for warnings. FIX any warnings related to the code changes made. You may ignore unrelated warnings.
 
+Run the relevant tests after making changes. Slowness is never a reason to skip. Fix failures before declaring done.
+
 ## Working with YouTrack
 
 "KT-XXXXX", where XXXXX is the issue number, is an issue in https://youtrack.jetbrains.com/.

@@ -91,7 +91,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
             separator = ",\n  ",
             prefix = "{\n  ",
             postfix = "\n}"
-        ) { (k, v) -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
+        ) { [k, v] -> "${k?.let { stringRepresentation(it).indented() }} -> (${v?.let { stringRepresentation(it).indented() }})" }
         is Collection<*> -> if (isEmpty()) "[]" else joinToString(
             separator = ",\n  ",
             prefix = "[\n  ",
@@ -103,7 +103,7 @@ internal fun stringRepresentation(any: Any?): String = with(any) {
         is KaSubstitutor.Empty -> "<empty substitutor>"
         is KaMapBackedSubstitutor -> {
             val mappingText = getAsMap().entries
-                .joinToString(prefix = "{", postfix = "}") { (k, v) -> stringRepresentation(k) + " = " + v }
+                .joinToString(prefix = "{", postfix = "}") { [k, v] -> stringRepresentation(k) + " = " + v }
             "<map substitutor: $mappingText>"
         }
         is KaChainedSubstitutor -> "${stringRepresentation(first)} then ${stringRepresentation(second)}"
@@ -295,7 +295,7 @@ internal fun assertStableSymbolResult(
     val assertions = testServices.assertions
     assertions.assertEquals(firstCandidates.size, secondCandidates.size)
 
-    for ((firstCandidate, secondCandidate) in firstCandidates.zip(secondCandidates)) {
+    for ([firstCandidate, secondCandidate] in firstCandidates.zip(secondCandidates)) {
         assertions.assertEquals(firstCandidate::class, secondCandidate::class)
         assertStableResult(testServices, firstCandidate.candidate, secondCandidate.candidate)
         assertions.assertEquals(firstCandidate.isInBestCandidates, secondCandidate.isInBestCandidates)
@@ -348,13 +348,14 @@ internal fun assertStableResult(
     val secondSymbols = sortedSymbols(secondAttempt.symbols)
     assertions.assertEquals(firstSymbols.size, secondSymbols.size)
 
-    for ((firstSymbol, secondSymbol) in firstSymbols.zip(secondSymbols)) {
+    for ([firstSymbol, secondSymbol] in firstSymbols.zip(secondSymbols)) {
         assertions.assertEquals(firstSymbol, secondSymbol)
     }
 }
 
 context(_: KaSession)
 internal fun assertStableResult(
+    mainElement: KtElement,
     testServices: TestServices,
     symbolResolutionAttempt: KaSymbolResolutionAttempt?,
     callResolutionAttempt: KaCallResolutionAttempt?,
@@ -364,6 +365,9 @@ internal fun assertStableResult(
     when (callResolutionAttempt) {
         // Symbol resolution supports more cases than call resolution, so we check some guaranties only against it
         null -> return
+
+        // Cannot check name reference expressions since they might have different result
+        is KaCallResolutionError if mainElement is KtNameReferenceExpression -> {}
 
         is KaCallResolutionError -> {
             if (symbolResolutionAttempt !is KaSymbolResolutionError) {
@@ -386,7 +390,7 @@ internal fun assertStableResult(
                 "Number of error attempts differs between call and symbol resolution"
             }
 
-            for ((callError, symbolError) in callErrors.zip(symbolErrors)) {
+            for ([callError, symbolError] in callErrors.zip(symbolErrors)) {
                 assertStableResult(
                     testServices = testServices,
                     firstDiagnostic = callError.diagnostic,
@@ -398,13 +402,22 @@ internal fun assertStableResult(
         else -> {}
     }
 
+    val symbols = symbolResolutionAttempt?.symbols?.let { sortedSymbols(it) }.orEmpty()
+    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
+    if (mainElement is KtOperationReferenceExpression) {
+        assertions.assertContainsElements(symbolsFromCall, symbols)
+        return
+    }
+
     assertions.assertNotNull(symbolResolutionAttempt) {
         "Inconsistency: ${callResolutionAttempt::class.simpleName} found, but ${KaSymbolResolutionAttempt::class.simpleName} is null"
     }
 
-    val symbols = sortedSymbols(symbolResolutionAttempt!!.symbols)
-    val symbolsFromCall = sortedSymbols(callResolutionAttempt.calls.flatMap(KaSingleOrMultiCall::symbols))
-    assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
+    // Cannot check name reference expressions or enum entry super-type references:
+    // their symbol-resolution prefers the class while call-resolution maps to the constructor.
+    if (mainElement !is KtNameReferenceExpression && mainElement !is KtEnumEntrySuperclassReferenceExpression) {
+        assertions.assertEquals(expected = symbolsFromCall, actual = symbols)
+    }
 }
 
 /**
@@ -468,7 +481,7 @@ internal fun assertStableResult(
         val secondCalls = sortedCalls(secondAttempt.calls)
         assertions.assertEquals(firstCalls.size, secondCalls.size)
 
-        for ((firstCall, secondCall) in firstCalls.zip(secondCalls)) {
+        for ([firstCall, secondCall] in firstCalls.zip(secondCalls)) {
             assertStableResult(testServices, firstCall, secondCall)
         }
     }
@@ -563,7 +576,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (call is KaFunctionCall<*>) {
         val combinedArgumentMapping = call.combinedArgumentMapping.toMutableMap()
-        for ((expression, parameterFromSpecificMap) in call.valueArgumentMapping + call.contextArgumentMapping) {
+        for ([expression, parameterFromSpecificMap] in call.valueArgumentMapping + call.contextArgumentMapping) {
             val parameterFromCombinedMap = combinedArgumentMapping.remove(expression)
             assertions.assertNotNull(parameterFromCombinedMap) {
                 "Value argument for $parameterFromSpecificMap is not found in ${call::combinedArgumentMapping.name}: $combinedArgumentMapping"
@@ -579,7 +592,7 @@ internal fun assertConsistency(testServices: TestServices, call: KaSingleOrMulti
 
     if (checkTypeArgumentsMapping) {
         val typeArgumentsMapping = call.typeArgumentsMapping
-        val typeParameters = call.signature.symbol.typeParameters
+        val typeParameters = call.symbol.typeParameters
         for (parameterSymbol in typeParameters) {
             val mappedType = typeArgumentsMapping[parameterSymbol]
             assertions.assertNotNull(mappedType) {

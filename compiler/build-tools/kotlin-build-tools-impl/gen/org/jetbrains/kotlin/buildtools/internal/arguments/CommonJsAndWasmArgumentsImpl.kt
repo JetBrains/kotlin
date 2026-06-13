@@ -15,7 +15,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
@@ -52,6 +54,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgum
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerKlibArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsIrDiagnosticMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsMainCallMode
@@ -63,11 +67,25 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonJsAndWasmArgumentsImpl(
   private val adapter: CommonJsAndWasmArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonKlibBasedArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonKlibBasedArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     CommonJsAndWasmArguments,
-    CommonJsAndWasmArguments.Builder {
+    CommonJsAndWasmArguments.Builder,
+    CommonJsAndWasmCompilerKlibArguments,
+    CommonJsAndWasmCompilerKlibArguments.Builder,
+    CommonJsAndWasmCompilerLinkingArguments,
+    CommonJsAndWasmCompilerLinkingArguments.Builder {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
@@ -85,13 +103,36 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   }
 
   @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: CommonJsAndWasmArgument<V>): V = optionsMap[key.id] as V
-
-  private operator fun <V> `set`(key: CommonJsAndWasmArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
   }
 
-  public operator fun contains(key: CommonJsAndWasmArgument<*>): Boolean = key.id in optionsMap
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonJsAndWasmCompilerKlibArguments.CommonJsAndWasmCompilerKlibArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  @UseFromImplModuleRestricted
+  override operator fun <V> `get`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>): V {
+    check(key.id in optionsMap) { "Argument ${key.id} is not set and has no default value" }
+    return adapter?.mapFrom(optionsMap[key.id], key) ?: optionsMap[key.id] as V
+  }
+
+  @UseFromImplModuleRestricted
+  override operator fun <V> `set`(key: CommonJsAndWasmCompilerLinkingArguments.CommonJsAndWasmCompilerLinkingArgument<V>, `value`: V) {
+    if (key.availableSinceVersion > KotlinReleaseVersion(2, 4, 20)) {
+      throw IllegalStateException("${key.id} is available only since ${key.availableSinceVersion}")
+    }
+    optionsMap[key.id] = adapter?.mapTo(`value`, key) ?: `value`
+  }
+
+  abstract override fun build(): CommonJsAndWasmArgumentsImpl
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonJsAndWasmCompilerArguments): CommonJsAndWasmCompilerArguments {
@@ -130,7 +171,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
+  protected fun applyCompilerArguments(arguments: CommonJsAndWasmCompilerArguments) {
     super.applyCompilerArguments(arguments)
     try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectory?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.fakeOverrideValidator } catch (_: NoSuchMethodError) {  }
@@ -140,7 +181,7 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
-    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_MODULE_NAME] = arguments.irModuleName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PER_MODULE_OUTPUT_NAME] = arguments.irPerModuleOutputName } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_PRODUCE_JS] = arguments.irProduceJs } catch (_: NoSuchMethodError) {  }
@@ -151,12 +192,12 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[IR_OUTPUT_DIR] = arguments.outputDir } catch (_: NoSuchMethodError) {  }
     try { this[IR_OUTPUT_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[LIBRARIES] = arguments.libraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[MAIN] = arguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[MAIN] = arguments.main?.let { JsMainCallMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::main, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -main value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP] = arguments.sourceMap } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources?.let { SourceMapEmbedSources.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapEmbedSources, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-embed-sources value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy?.let { SourceMapNamesPolicy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::sourceMapNamesPolicy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -source-map-names-policy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }

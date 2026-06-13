@@ -1,16 +1,15 @@
 KtCallableReferenceExpression(230,238): 'Bar::foo'
   KaApplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
+    candidate = KaCallableReferenceCall:
       contextArguments = []
       dispatchReceiver = KaImplicitReceiverValue:
         symbol = KaReceiverParameterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -44,5 +43,4 @@ KtCallableReferenceExpression(230,238): 'Bar::foo'
         contextParameters = []
         callableId = /Foo.foo
       typeArgumentsMapping = {}
-      valueArgumentMapping = {}
     isInBestCandidates = true

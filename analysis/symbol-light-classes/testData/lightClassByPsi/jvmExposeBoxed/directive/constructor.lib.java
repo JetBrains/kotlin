@@ -44,5 +44,5 @@ public final class Test /* Test*/ {
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String ok();//  ok()
 
-  private  Test(java.lang.String);//  .ctor(java.lang.String)
+  private  Test(java.lang.String, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(java.lang.String, kotlin.jvm.internal.BoxingConstructorMarker)
 }

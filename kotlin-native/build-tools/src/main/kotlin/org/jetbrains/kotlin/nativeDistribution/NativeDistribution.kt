@@ -13,10 +13,11 @@ import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.konan.util.ArchiveType
 import org.jetbrains.kotlin.konan.util.ArchiveType.TAR_GZ
 import org.jetbrains.kotlin.konan.util.ArchiveType.ZIP
 import org.jetbrains.kotlin.kotlinNativeDist
+import java.security.MessageDigest
+import kotlin.io.path.inputStream
 
 /**
  * Describes distribution of Native compiler rooted at [root].
@@ -53,6 +54,12 @@ class NativeDistribution(val root: Directory) {
      */
     val cachesRoot: Directory
         get() = root.dir("klib/cache")
+
+    /**
+     * Root directory for compiler acaches for the specific [target].
+     */
+    fun cachesRoot(target: String): Directory =
+            cachesRoot.dir("${target}-gSTATIC-system")
 
     /**
      * Directory with distribution sources.
@@ -138,7 +145,8 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of library [name] for a specific [target].
      */
-    fun cache(name: String, target: String): Directory = cachesRoot.dir("${target}-gSTATIC-system/${name}-cache")
+    fun cache(name: String, target: String, perFile: Boolean): Directory =
+            cachesRoot(target).dir(cacheDirectoryName(name, perFile))
 
     /**
      * Archive with stdlib sources.
@@ -155,7 +163,7 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of standard library for a specific [target].
      */
-    fun stdlibCache(target: String): Directory = cache(name = "stdlib", target)
+    fun stdlibCache(target: String): Directory = cache("stdlib", target, perFile = true)
 
     /**
      * Fingerprint of the contents of [compilerJars] and [nativeLibs].
@@ -164,9 +172,20 @@ class NativeDistribution(val root: Directory) {
         get() = root.file("konan/compiler.fingerprint")
 
     /**
+     * Fingerprint of the contents of the entire distribution.
+     */
+    val distributionFingerprint: RegularFile
+        get() = root.file("distribution.fingerprint")
+
+    /**
      * Fingerprint of [runtime] contents for [target].
      */
     fun runtimeFingerprint(target: String) = root.file("konan/targets/$target/runtime.fingerprint")
+
+    companion object {
+        fun cacheDirectoryName(name: String, perFile: Boolean) =
+                "${name}-${if (perFile) "per-file-cache" else "cache"}"
+    }
 }
 
 fun DirectoryProperty.asNativeDistribution(): Provider<NativeDistribution> = this.map(::NativeDistribution)
@@ -189,6 +208,7 @@ val Project.nativeDistribution: Provider<NativeDistribution>
 fun Project.registerNativeReleasedDistribution(version: String): Provider<NativeDistribution> {
     val configuration = releasedNativeDistributionConfiguration(version)
     val distributionFiles = configuration.incoming.files
+    val targetDirectory = layout.buildDirectory.dir("nativeDistributionV$version")
 
     /*
     Setup a 'sync' task to unpack the native distribution archive.
@@ -212,7 +232,27 @@ fun Project.registerNativeReleasedDistribution(version: String): Provider<Native
             }
             includeEmptyDirs = false
         }
-        into(layout.buildDirectory.dir("nativeDistributionV$version"))
+        into(targetDirectory)
+
+        /*
+        Create distribution hash
+        */
+        doLast {
+            val digest = MessageDigest.getInstance("SHA-256")
+            val buffer = ByteArray(1024 * 8)
+            distributionFiles.sorted().forEach { file ->
+                digest.update(file.name.encodeToByteArray())
+                file.toPath().inputStream().buffered().use { inputStream ->
+                    while (true) {
+                        val read = inputStream.read(buffer)
+                        if (read < 0) break
+                        digest.update(buffer, 0, read)
+                    }
+                }
+            }
+            val distributionHash = digest.digest().toHexString()
+            NativeDistribution(targetDirectory.get()).distributionFingerprint.asFile.writeText(distributionHash)
+        }
     } else tasks.named<Sync>(syncTaskName)
 
     return syncTask.map { NativeDistribution(project.layout.buildDirectory.dir("nativeDistributionV$version").get()) }

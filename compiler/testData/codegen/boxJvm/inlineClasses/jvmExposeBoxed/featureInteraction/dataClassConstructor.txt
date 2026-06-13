@@ -49,8 +49,8 @@ public final class Test {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.NotNull field s: java.lang.String
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: StringWrapper): void
-    private method <init>(p0: java.lang.String): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method component1(): StringWrapper
     public final @org.jetbrains.annotations.NotNull method component1-K4fyztM(): java.lang.String
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: StringWrapper): Test
@@ -69,8 +69,8 @@ public final class TestNullable {
     // source: 'IC.kt'
     private final @org.jetbrains.annotations.Nullable field s: java.lang.String
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.Nullable p0: StringWrapper): void
-    private method <init>(p0: java.lang.String): void
-    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.Nullable method component1(): StringWrapper
     public final @org.jetbrains.annotations.Nullable method component1-DSQDras(): java.lang.String
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.Nullable p0: StringWrapper): TestNullable

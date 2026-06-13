@@ -39,7 +39,7 @@ internal fun FirCallableDeclaration.setUnnamedContextParameterNames() {
 
     val nameGroups = contextParameterNames.entries.groupBy({ it.value }, { it.key })
 
-    for ((contextParameter, baseName) in contextParameterNames) {
+    for ([contextParameter, baseName] in contextParameterNames) {
         val currentNameGroup = nameGroups[baseName]!!
         val suffix = if (currentNameGroup.size == 1) "" else "$" + (currentNameGroup.indexOf(contextParameter) + 1)
         contextParameter.generatedContextParameterName = Name.identifier($$"$context-$$baseName$$suffix")

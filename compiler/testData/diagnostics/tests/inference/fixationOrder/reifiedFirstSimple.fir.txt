@@ -1,0 +1,28 @@
+FILE: main.kt
+    public final inline fun <reified T1 : R|kotlin/Any|> decode(): R|T1?| {
+        ^decode Null(null)
+    }
+    public final fun <T2 : R|kotlin/Any|> decodeNonReified(): R|T2?| {
+        ^decodeNonReified Null(null)
+    }
+    public final fun <R> myRun(x: R|() -> R|): R|R| {
+        ^myRun R|kotlin/TODO|()
+    }
+    public sealed interface Base : R|kotlin/Any| {
+    }
+    public sealed interface Derived : R|Base| {
+    }
+    public final val d: R|Derived| = R|kotlin/TODO|()
+        public get(): R|Derived|
+    public final fun main(): R|kotlin/Unit| {
+        lval x1: R|Base| = R|/decode|<R|Base|>() ?: R|/d|
+        lval x2: R|Base| = R|/decodeNonReified|<R|Base|>() ?: R|/d|
+        lval x3: R|Base| = R|/myRun|<R|Base|>(<L> = myRun@fun <anonymous>(): R|Base| <inline=NoInline>  {
+            ^ R|/decode|<R|Base|>() ?: R|/d|
+        }
+        )
+        lval x4: R|Base| = R|/myRun|<R|Derived|>(<L> = myRun@fun <anonymous>(): R|Derived| <inline=NoInline>  {
+            ^ R|/decodeNonReified|<R|Derived|>() ?: R|/d|
+        }
+        )
+    }

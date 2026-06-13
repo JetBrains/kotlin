@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-37115
-// LANGUAGE: +InferMoreImplicationsFromBooleanExpressions
+// LANGUAGE_FEATURE_TOGGLED: InferMoreImplicationsFromBooleanExpressions
 
 fun test1(foo: String?) {
     foo != null || throw IllegalArgumentException()

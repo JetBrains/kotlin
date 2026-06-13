@@ -2,12 +2,10 @@ KaSyntheticJavaPropertySymbol:
   annotations: []
   backingFieldSymbol: null
   callableId: /JavaClass.count
-  compilerVisibility: Public
   contextReceivers: []
   getter: KaPropertyGetterSymbol:
     annotations: []
     callableId: /JavaClass.getCount
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: true
     isActual: false
@@ -35,7 +33,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   hasBackingField: true
   hasGetter: true
@@ -43,7 +41,7 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
-  isDelegatedProperty: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: true
@@ -65,7 +63,6 @@ KaSyntheticJavaPropertySymbol:
   setter: KaPropertySetterSymbol:
     annotations: []
     callableId: /JavaClass.setCount
-    compilerVisibility: Public
     contextReceivers: []
     hasStableParameterNames: false
     isActual: false
@@ -82,7 +79,6 @@ KaSyntheticJavaPropertySymbol:
     parameter: KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -90,6 +86,7 @@ KaSyntheticJavaPropertySymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -110,7 +107,7 @@ KaSyntheticJavaPropertySymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: JavaClass
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     receiverParameter: null
     returnType: KaUsualClassType:
@@ -121,7 +118,6 @@ KaSyntheticJavaPropertySymbol:
       KaValueParameterSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         contextReceivers: []
         generatedPrimaryConstructorProperty: null
         hasDeclaredDefaultValue: false
@@ -129,6 +125,7 @@ KaSyntheticJavaPropertySymbol:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -149,7 +146,7 @@ KaSyntheticJavaPropertySymbol:
         getContainingFileSymbol: null
         getContainingJvmClassName: JavaClass
         getContainingModule: KaSourceModule "Sources of main"
-        deprecationStatus: null
+        deprecation: null
         importableFqName: null
     ]
     visibility: PUBLIC
@@ -160,7 +157,7 @@ KaSyntheticJavaPropertySymbol:
     getContainingFileSymbol: null
     getContainingJvmClassName: JavaClass
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   typeParameters: []
   visibility: PUBLIC
@@ -171,7 +168,7 @@ KaSyntheticJavaPropertySymbol:
   getContainingFileSymbol: null
   getContainingJvmClassName: JavaClass
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   javaGetterName: getCount
   javaSetterName: setCount
   importableFqName: null

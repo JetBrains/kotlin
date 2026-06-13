@@ -47,7 +47,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
 
         val allKtFiles = testServices.ktTestModuleStructure.allMainKtFiles
         withResolutionFacade(mainFile) { resolutionFacade ->
-            val (declaration, resolver) = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
+            val [declaration, resolver] = findFirDeclarationToResolve(mainFile, testServices, resolutionFacade)
             resolver.invoke(FirResolvePhase.TYPES)
 
             if (declaration is FirCallableDeclaration) {

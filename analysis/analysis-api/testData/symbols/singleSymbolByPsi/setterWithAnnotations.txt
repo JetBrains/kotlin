@@ -6,7 +6,6 @@ KaPropertySetterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   hasStableParameterNames: true
   isActual: false
@@ -28,7 +27,6 @@ KaPropertySetterSymbol:
         psi: KtAnnotationEntry
     ]
     callableId: null
-    compilerVisibility: Public
     contextReceivers: []
     generatedPrimaryConstructorProperty: null
     hasDeclaredDefaultValue: false
@@ -36,6 +34,7 @@ KaPropertySetterSymbol:
     isActual: false
     isCompanion: false
     isCrossinline: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -56,7 +55,7 @@ KaPropertySetterSymbol:
     getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
     getContainingJvmClassName: null
     getContainingModule: KaSourceModule "Sources of main"
-    deprecationStatus: null
+    deprecation: null
     importableFqName: null
   receiverParameter: null
   returnType: KaUsualClassType:
@@ -72,7 +71,6 @@ KaPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -80,6 +78,7 @@ KaPropertySetterSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -100,12 +99,12 @@ KaPropertySetterSymbol:
       getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
       getContainingJvmClassName: null
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
   getContainingFileSymbol: KaFileSymbol(setterWithAnnotations.kt)
   getContainingJvmClassName: SetterWithAnnotationsKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

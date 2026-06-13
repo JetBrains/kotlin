@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -48,25 +46,29 @@ import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
-private val allowedFakeElementKinds = setOf(
-    KtFakeSourceElementKind.FromUseSiteTarget,
-    KtFakeSourceElementKind.PropertyFromParameter,
-    KtFakeSourceElementKind.ItLambdaParameter,
-    KtFakeSourceElementKind.EnumGeneratedDeclaration,
-    KtFakeSourceElementKind.DataClassGeneratedMembers,
-    KtFakeSourceElementKind.ImplicitConstructor,
-    KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
-    KtFakeSourceElementKind.SamConstructor,
-    KtFakeSourceElementKind.JavaRecordComponentFunction,
-)
+private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
+    setOf(
+        KtFakeSourceElementKind.FromUseSiteTarget,
+        KtFakeSourceElementKind.PropertyFromParameter,
+        KtFakeSourceElementKind.ItLambdaParameter,
+        KtFakeSourceElementKind.ImplicitConstructor,
+        KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
+        KtFakeSourceElementKind.SamConstructor,
+        KtFakeSourceElementKind.JavaRecordComponentFunction,
+    )
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 internal fun FirElement.getAllowedPsi() = when (val source = source) {
     null -> null
     is KtRealPsiSourceElement -> source.psi
-    is KtFakePsiSourceElement -> if (source.kind in allowedFakeElementKinds) psi else null
+    is KtFakePsiSourceElement -> if (isAllowedFakeElementKind(source.kind)) psi else null
     else -> null
 }
+
+private fun isAllowedFakeElementKind(kind: KtFakeSourceElementKind): Boolean =
+    kind is KtFakeSourceElementKind.EnumGeneratedDeclaration
+            || kind is KtFakeSourceElementKind.DataClassGeneratedMembers
+            || kind in allowedFakeElementKinds
 
 internal fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
@@ -86,22 +88,6 @@ fun FirBasedSymbol<*>.findPsi(scope: GlobalSearchScope): PsiElement? {
     } else {
         fir.findPsi()
     } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(fir, scope)
-}
-
-/**
- * Finds [PsiElement] which will be used as go-to referenced element for [KtPsiReference]
- * For data classes & enums generated members like `copy` `componentN`, `values` it will return corresponding enum/data class
- * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
- */
-internal fun FirDeclaration.findReferencePsi(scope: GlobalSearchScope): PsiElement? {
-    return if (
-        this is FirCallableDeclaration &&
-        !this.symbol.isTypeAliasedConstructor // typealiased constructors should not be unwrapped
-    ) {
-        unwrapFakeOverridesOrDelegated().psi
-    } else {
-        psi
-    } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this, scope)
 }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name

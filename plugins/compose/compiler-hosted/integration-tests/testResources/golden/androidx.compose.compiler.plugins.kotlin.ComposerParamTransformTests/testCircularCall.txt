@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable
+@Composable fun Example() {
+    Example()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+@FunctionKeyMeta(key = -866191870, startOffset = 300, endOffset = 331)
+fun Example(%composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<Exampl...>:Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Example(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

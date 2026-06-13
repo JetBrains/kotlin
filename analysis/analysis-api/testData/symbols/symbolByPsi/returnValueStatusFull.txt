@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /mustUse
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,7 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: MustUse
   importableFqName: mustUse
 
@@ -45,7 +44,6 @@ KaNamedFunctionSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: /ignorable
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -79,6 +77,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: ReturnValueStatusFullKt
   canBeOperator: false
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: ExplicitlyIgnorable
   importableFqName: ignorable

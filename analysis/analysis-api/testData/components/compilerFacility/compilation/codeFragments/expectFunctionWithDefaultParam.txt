@@ -1,5 +1,32 @@
+// class version 52.0 (52)
+// access flags 0x31
 public final class CodeFragment {
-    // source: 'fragment.kt'
-    public method <init>(): void
-    public final static method run(): int
+
+  // compiled from: fragment.kt
+  @Lkotlin/Metadata;
+
+  // access flags 0x1
+  public <init>()V
+   L0
+    ALOAD 0
+    INVOKESPECIAL java/lang/Object.<init> ()V
+    RETURN
+   L1
+    LOCALVARIABLE this LCodeFragment; L0 L1 0
+    MAXSTACK = 1
+    MAXLOCALS = 1
+
+  // access flags 0x19
+  public final static run()I
+   L0
+    LINENUMBER 29 L0
+    ICONST_0
+    ICONST_1
+    ACONST_NULL
+    INVOKESTATIC JvmKt.foo$default (IILjava/lang/Object;)I
+    INVOKESTATIC JvmKt.bar ()I
+    IADD
+    IRETURN
+    MAXSTACK = 3
+    MAXLOCALS = 0
 }

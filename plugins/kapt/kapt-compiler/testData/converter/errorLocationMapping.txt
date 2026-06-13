@@ -27,6 +27,7 @@ import kotlin.reflect.KClass;
 
 @Anno(a = ABC.class)
 /**
+ * @Anno
  * public final class ErrorInAnnotation : kotlin/Any {
  *
  *   // signature: <init>()V
@@ -122,12 +123,13 @@ import kotlin.reflect.KClass;
  *   public final fun <T#0 (* T *) : kotlin/String> f2(): kotlin/Unit
  *
  *   // signature: f3()V
- *   public final fun <T#0 (* T *)> f3(): kotlin/Unit
+ *   public final fun <T#0 (* T *) : error/NonExistentClass> f3(): kotlin/Unit
  *
  *   // signature: f4()Lerror/NonExistentClass;
  *   public final fun f4(): error/NonExistentClass
  *
  *   // signature: f5(Lerror/NonExistentClass;Ljava/lang/String;)V
+ *   @kotlin/jvm/JvmOverloads
  *   public final fun f5(a: error/NonExistentClass, b: kotlin/String (* = ... *)): kotlin/Unit
  *
  *   // signature: overloads(Lerror/NonExistentClass;)V
@@ -219,7 +221,7 @@ public final class ErrorInDeclarations {
     public final <T extends java.lang.String>void f2() {
     }
 
-    public final <T extends java.lang.Object>void f3() {
+    public final <T extends error.NonExistentClass>void f3() {
     }
 
     @org.jetbrains.annotations.Nullable()
@@ -250,6 +252,7 @@ public final class ErrorInDeclarations {
      *   private constructor()
      *
      *   // signature: f6(Lerror/NonExistentClass;)V
+     *   @kotlin/jvm/JvmStatic
      *   public final fun f6(a: error/NonExistentClass): kotlin/Unit
      *
      *   // module name: main

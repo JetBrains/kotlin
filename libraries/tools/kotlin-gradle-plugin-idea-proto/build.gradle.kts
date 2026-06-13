@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget.*
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -27,8 +29,7 @@ dependencies {
     embedded(libs.protobuf.java)
     embedded(libs.protobuf.kotlin)
     val coreDepsVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()
-    testImplementation(libs.junit4)
-    testRuntimeOnly(kotlin("test-junit", coreDepsVersion))
+    testRuntimeOnly(kotlin("test-junit5", coreDepsVersion))
     testImplementation(kotlin("test", coreDepsVersion))
     testImplementation(kotlin("stdlib", coreDepsVersion))
     testImplementation(kotlin("reflect", coreDepsVersion))
@@ -51,6 +52,10 @@ runtimeJar(tasks.register<ShadowJar>("embeddable")) {
     from(mainSourceSet.output)
     exclude("**/*.proto")
     relocate("com.google.protobuf", "org.jetbrains.kotlin.gradle.idea.proto.com.google.protobuf")
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 /* Setup configuration for binary compatibility tests */
@@ -160,10 +165,8 @@ run {
 
     tasks.test {
         val capturedCompatibilityTestClasspath: FileCollection = compatibilityTestClasspath
-        dependsOn(capturedCompatibilityTestClasspath)
-        inputs.files(capturedCompatibilityTestClasspath)
-        doFirst {
-            systemProperty("compatibilityTestClasspath", capturedCompatibilityTestClasspath.files.joinToString(";") { it.absolutePath })
+        addClasspathProperty("compatibilityTestClasspath"){
+            from(capturedCompatibilityTestClasspath)
         }
     }
 }

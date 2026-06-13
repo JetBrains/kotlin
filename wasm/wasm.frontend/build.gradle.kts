@@ -4,16 +4,17 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:frontend"))
-    api(project(":js:js.frontend"))
+    api(project(":compiler:config"))
     api(project(":wasm:wasm.config"))
-    compileOnly(intellijCore())
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":core:names"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+optInToK1Deprecation()
 
 generatedConfigurationKeys("WasmConfigurationKeys")

@@ -1,0 +1,74 @@
+KClass: class GenericIn : Any
+  constructors:
+    public final <in T> fun `<init>`(): GenericIn<T> where T : kotlin.Number
+  members:
+    public open operator fun GenericIn<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun GenericIn<T>.hashCode(): kotlin.Int
+    public open fun GenericIn<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: class GenericInv : Any
+  constructors:
+    public final <T> fun `<init>`(): GenericInv<T> where T : kotlin.Number
+  members:
+    public open operator fun GenericInv<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun GenericInv<T>.hashCode(): kotlin.Int
+    public open fun GenericInv<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: class GenericOut : Any
+  constructors:
+    public final <out T> fun `<init>`(): GenericOut<T> where T : kotlin.Number
+  members:
+    public open operator fun GenericOut<T>.equals(kotlin.Any?): kotlin.Boolean
+    public open fun GenericOut<T>.hashCode(): kotlin.Int
+    public open fun GenericOut<T>.toString(): kotlin.String
+  declaredMembers:
+KClass: abstract interface JRaw : Any
+  members:
+    public open operator fun JRaw.equals(kotlin.Any?): kotlin.Boolean
+    public open fun JRaw.hashCode(): kotlin.Int
+    public abstract fun JRaw.returnsRawGenericIn(): GenericIn<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawGenericInv(): GenericInv<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawGenericOut(): GenericOut<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawList(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public abstract fun JRaw.takesRawGenericIn(GenericIn<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawGenericInv(GenericInv<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawGenericOut(GenericOut<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawList(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun JRaw.toString(): kotlin.String
+  declaredMembers:
+    public abstract fun JRaw.returnsRawGenericIn(): GenericIn<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawGenericInv(): GenericInv<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawGenericOut(): GenericOut<(raw) kotlin.Number>
+    public abstract fun JRaw.returnsRawList(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public abstract fun JRaw.takesRawGenericIn(GenericIn<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawGenericInv(GenericInv<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawGenericOut(GenericOut<(raw) kotlin.Number>): kotlin.Unit
+    public abstract fun JRaw.takesRawList(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+KClass: class KRaw : JRaw, Any
+  constructors:
+    public final fun `<init>`(JRaw): KRaw
+  members:
+    public open operator fun KRaw.equals(kotlin.Any?): kotlin.Boolean
+    public open fun KRaw.hashCode(): kotlin.Int
+    public open fun KRaw.returnsRawGenericIn(): GenericIn<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawGenericInv(): GenericInv<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawGenericOut(): GenericOut<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawList(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun KRaw.takesRawGenericIn(GenericIn<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawGenericInv(GenericInv<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawGenericOut(GenericOut<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawList(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+    public open fun KRaw.toString(): kotlin.String
+  declaredMembers:
+    public open fun KRaw.returnsRawGenericIn(): GenericIn<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawGenericInv(): GenericInv<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawGenericOut(): GenericOut<(raw) kotlin.Number>
+    public open fun KRaw.returnsRawList(): kotlin.collections.MutableList<(raw) kotlin.Any?>
+    public open fun KRaw.takesRawGenericIn(GenericIn<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawGenericInv(GenericInv<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawGenericOut(GenericOut<(raw) kotlin.Number>): kotlin.Unit
+    public open fun KRaw.takesRawList(kotlin.collections.MutableList<(raw) kotlin.Any?>): kotlin.Unit
+KPackage: RawTypeInSignatureKt
+  public final fun testReturnsRawGenericIn(JRaw): GenericIn<(raw) kotlin.Number>
+  public final fun testReturnsRawGenericInv(JRaw): GenericInv<(raw) kotlin.Number>
+  public final fun testReturnsRawGenericOut(JRaw): GenericOut<(raw) kotlin.Number>

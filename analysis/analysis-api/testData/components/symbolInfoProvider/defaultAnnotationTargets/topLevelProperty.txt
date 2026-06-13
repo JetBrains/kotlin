@@ -1,0 +1,4 @@
+Symbol:
+  KaKotlinPropertySymbol
+Default annotation targets:
+  PROPERTY

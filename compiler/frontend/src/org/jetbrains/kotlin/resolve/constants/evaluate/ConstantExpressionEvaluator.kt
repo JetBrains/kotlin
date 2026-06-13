@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.math.BigInteger
 
+@K1Deprecation
 class ConstantExpressionEvaluator(
     internal val module: ModuleDescriptor,
     internal val languageVersionSettings: LanguageVersionSettings,
@@ -85,7 +87,7 @@ class ConstantExpressionEvaluator(
         trace: BindingTrace
     ): Map<Name, ConstantValue<*>> {
         val arguments = HashMap<Name, ConstantValue<*>>()
-        for ((parameterDescriptor, resolvedArgument) in resolvedCall.valueArguments.entries) {
+        for ([parameterDescriptor, resolvedArgument] in resolvedCall.valueArguments.entries) {
             val value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument)
             if (value != null) {
                 arguments[parameterDescriptor.name] = value
@@ -228,7 +230,7 @@ class ConstantExpressionEvaluator(
         }
 
         val result = arrayListOf<KtExpression>()
-        for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
+        for ([_, resolvedValueArgument] in resolvedCall.valueArguments) {
             for (valueArgument in resolvedValueArgument.arguments) {
                 val valueArgumentExpression = valueArgument.getArgumentExpression()
                 if (valueArgumentExpression != null) {
@@ -709,7 +711,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 )
             )
         } else if (argumentsEntrySet.size == 1) {
-            val (parameter, argument) = argumentsEntrySet.first()
+            val [parameter, argument] = argumentsEntrySet.first()
             val argumentForParameter = createOperationArgumentForFirstParameter(argument, parameter) ?: return null
             if (isStandaloneOnlyConstant(argumentForParameter.expression)) {
                 return null
@@ -1201,6 +1203,7 @@ private fun createCompileTimeConstantForCompareTo(result: Any?, operationReferen
     return null
 }
 
+@K1Deprecation
 fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long
 
 private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType? {
@@ -1212,10 +1215,12 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
     }
 }
 
+@K1Deprecation
 fun ConstantValue<*>.isStandaloneOnlyConstant(): Boolean {
     return this is KClassValue || this is EnumValue || this is AnnotationValue || this is ArrayValue
 }
 
+@K1Deprecation
 fun CompileTimeConstant<*>.isStandaloneOnlyConstant(): Boolean {
     return when (this) {
         is TypedCompileTimeConstant -> this.constantValue.isStandaloneOnlyConstant()

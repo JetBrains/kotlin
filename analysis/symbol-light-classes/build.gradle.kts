@@ -16,10 +16,10 @@ dependencies {
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
-    implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(intellijCore())
     implementation(kotlinxCollectionsImmutable())
+    implementation(libs.caffeine)
 
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
@@ -42,7 +42,11 @@ sourceSets {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)) {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        javaLauncher = JdkMajorVersion.JDK_1_8,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+    ) {
         testInputsCheck {
             allowFlightRecorder = true
         }

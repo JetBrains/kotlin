@@ -47,13 +47,24 @@ KtConstructorCalleeExpression(166,173): 'MyClass'
     ]
 
 KtTypeReference(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(166,173): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(166,173): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtValueArgumentList(173,175): '()'
   null
@@ -86,13 +97,24 @@ KtParameter(234,249): 'enumArg: MyEnum'
   null
 
 KtTypeReference(243,249): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtUserType(243,249): 'MyEnum'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtNameReferenceExpression(243,249): 'MyEnum'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyEnum
+    ]
 
 KtBlockExpression(251,253): '{}'
   null
@@ -110,13 +132,24 @@ KtParameter(277,289): 'arg: MyClass'
   null
 
 KtTypeReference(282,289): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtUserType(282,289): 'MyClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtNameReferenceExpression(282,289): 'MyClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyClass
+    ]
 
 KtBlockExpression(291,293): '{}'
   null
@@ -131,13 +164,24 @@ KtParameter(314,331): 'i: OperatorHolder'
   null
 
 KtTypeReference(317,331): 'OperatorHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder
+    ]
 
 KtUserType(317,331): 'OperatorHolder'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder
+    ]
 
 KtNameReferenceExpression(317,331): 'OperatorHolder'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /OperatorHolder
+    ]
 
 KtBlockExpression(333,403): '{'
   null
@@ -149,18 +193,24 @@ KtBinaryExpression(339,353): 'i + EnumValue1'
     ]
 
 KtNameReferenceExpression(339,340): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
     ]
 
 KtOperationReferenceExpression(341,342): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
     ]
 
 KtNameReferenceExpression(343,353): 'EnumValue1'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -173,18 +223,24 @@ KtBinaryExpression(358,377): 'i + InheritorObject'
     ]
 
 KtNameReferenceExpression(358,359): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
     ]
 
 KtOperationReferenceExpression(360,361): '+'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
     ]
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -196,18 +252,24 @@ KtBinaryExpression(382,401): 'i - InheritorObject'
     ]
 
 KtNameReferenceExpression(382,383): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: OperatorHolder
     ]
 
 KtOperationReferenceExpression(384,385): '-'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /OperatorHolder.minus(<dispatch receiver>: OperatorHolder, arg: MyClass): kotlin.Unit
     ]
 
 KtNameReferenceExpression(386,401): 'InheritorObject'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: true
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject

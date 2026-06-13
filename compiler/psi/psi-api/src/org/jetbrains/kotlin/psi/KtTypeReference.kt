@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
+import org.jetbrains.kotlin.resolution.KtResolvable
 
 /**
  * Represents a type reference.
@@ -22,8 +23,9 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
  * //     ^____^
  * ```
  */
+@OptIn(KtExperimentalApi::class)
 class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeReference>>,
-    KtAnnotated, KtAnnotationsContainer {
+    KtAnnotated, KtAnnotationsContainer, KtResolvable {
 
     constructor(node: ASTNode) : super(node)
 

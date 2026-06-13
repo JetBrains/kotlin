@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.modules.Module
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeAliasDescriptor
 import java.io.File
 
+@K1Deprecation
 interface ModuleVisibilityManager {
     val chunk: Collection<Module>
     val friendPaths: Collection<String>
@@ -41,6 +43,7 @@ interface ModuleVisibilityManager {
     }
 }
 
+@K1Deprecation
 fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, friendPath: File?): Boolean {
     if (friendPath == null) return false
 
@@ -80,6 +83,7 @@ fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, frie
     return false
 }
 
+@K1Deprecation
 fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
         when {
             descriptor is CallableMemberDescriptor && descriptor.source === SourceElement.NO_SOURCE ->
@@ -90,5 +94,6 @@ fun getSourceElement(descriptor: DeclarationDescriptor): SourceElement =
                 descriptor.toSourceElement
         }
 
+@K1Deprecation
 val DeclarationDescriptor.toSourceElement: SourceElement
     get() = if (this is DeclarationDescriptorWithSource) source else SourceElement.NO_SOURCE

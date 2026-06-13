@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.ECMA426BasedSourceMapParser
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
 import org.jetbrains.kotlin.js.test.utils.getModeOutputFilePath
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
@@ -27,7 +27,7 @@ class JsSourceMapValidator(testServices: TestServices) : AbstractJsArtifactsColl
 
         val allMapFilesPerTranslationMode = collectAllTheGeneratedMapFiles()
 
-        for ((mode, mapFiles) in allMapFilesPerTranslationMode) {
+        for ([mode, mapFiles] in allMapFilesPerTranslationMode) {
             for (mapFilePath in mapFiles) {
                 val mapFile = File(mapFilePath)
                 // TODO: Discuss if we accept empty source map file, since technically it's invalid .map file
@@ -47,11 +47,11 @@ class JsSourceMapValidator(testServices: TestServices) : AbstractJsArtifactsColl
 
     private fun collectAllTheGeneratedMapFiles(): Map<TranslationMode, List<String>> {
         val result = mutableMapOf<TranslationMode, List<String>>()
-        val (module, compilerResult) = modulesToArtifact.entries
-            .mapNotNull { (m, c) -> (c as? BinaryArtifacts.Js.JsIrArtifact)?.let { m to c.compilerResult } }
+        val [module, compilerResult] = modulesToArtifact.entries
+            .mapNotNull { [m, c] -> (c as? JsIrArtifact)?.let { m to c.compilerResult } }
             .single()
 
-        compilerResult.entries.forEach { (mode, outputs) ->
+        compilerResult.entries.forEach { [mode, outputs] ->
             val outputFile = getModeOutputFilePath(testServices, module, mode)
 
             result[mode] = outputs.dependencies.mapTo(mutableListOf("${outputFile}.map")) {

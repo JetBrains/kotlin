@@ -5,25 +5,37 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.*
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
 import org.jetbrains.kotlin.cli.common.buildFile
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.moduleChunk
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.toBackendInput
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
-import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationUpdater.getBuildFilePaths
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.codegen.JvmBackendClassResolver
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.useLightTree
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import java.io.File
 
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBackendPipelineArtifact>(
     name = "JvmBackendPipelineStep",
@@ -32,7 +44,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
     )
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
-        val (fir2IrResult, configuration, environment, allSourceFiles, mainClassFqName) = input
+        (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input
         val moduleDescriptor = fir2IrResult.irModuleFragment.descriptor
         val diagnosticsCollector = configuration.diagnosticsCollector
         val project = environment.project
@@ -41,7 +53,12 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
             fir2IrResult.components,
             fir2IrResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
         )
-        val baseBackendInput = fir2IrResult.toBackendInput(configuration, jvmBackendExtension)
+        val baseBackendInput = with(fir2IrResult) {
+            BackendInput(
+                irModuleFragment, irBuiltIns, symbolTable, components.irProviders,
+                JvmGeneratorExtensionsImpl(configuration), jvmBackendExtension, pluginContext
+            )
+        }
         val codegenFactory = JvmIrCodegenFactory(configuration)
 
         val chunk = configuration.moduleChunk!!.modules
@@ -78,7 +95,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
                 }
             }
 
-            codegenInputs += KotlinToJVMBytecodeCompiler.runLowerings(
+            codegenInputs += runLowerings(
                 project, configurationForModule, moduleDescriptor, module,
                 codegenFactory, backendInput, diagnosticsCollector, classResolver,
             )
@@ -88,7 +105,7 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
 
         for (input in codegenInputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            outputs += KotlinToJVMBytecodeCompiler.runCodegen(
+            outputs += runCodegen(
                 input,
                 input.state,
                 codegenFactory,
@@ -99,5 +116,82 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
         }
 
         return JvmBackendPipelineArtifact(configuration, environment, mainClassFqName, outputs)
+    }
+
+    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
+
+    fun runLowerings(
+        project: Project,
+        configuration: CompilerConfiguration,
+        moduleDescriptor: ModuleDescriptor,
+        module: Module?,
+        codegenFactory: JvmIrCodegenFactory,
+        backendInput: BackendInput,
+        diagnosticsReporter: BaseDiagnosticsCollector,
+        backendClassResolver: JvmBackendClassResolver,
+    ) : JvmIrCodegenFactory.CodegenInput {
+        val state = GenerationState(
+            project,
+            moduleDescriptor,
+            configuration,
+            builderFactory = configuration.get(customClassBuilderFactory, ClassBuilderFactories.BINARIES),
+            targetId = module?.let(::TargetId),
+            moduleName = module?.getModuleName() ?: configuration.moduleName,
+            diagnosticReporter = diagnosticsReporter,
+            jvmBackendClassResolver = backendClassResolver,
+        )
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        return configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
+            codegenFactory.invokeLowerings(state, backendInput)
+        }
+    }
+
+    fun runCodegen(
+        codegenInput: JvmIrCodegenFactory.CodegenInput,
+        state: GenerationState,
+        codegenFactory: JvmIrCodegenFactory,
+        diagnosticsReporter: BaseDiagnosticsCollector,
+        configuration: CompilerConfiguration,
+        reportDiagnosticsToMessageCollector: Boolean,
+    ): GenerationState {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        codegenFactory.invokeCodegen(codegenInput)
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        if (reportDiagnosticsToMessageCollector) {
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
+        }
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        return state
+    }
+
+    fun Module.getSourceFiles(
+        allSourceFiles: List<KtFile>,
+        localFileSystem: VirtualFileSystem?,
+        multiModuleChunk: Boolean,
+        buildFile: File?
+    ): List<KtFile> {
+        return if (multiModuleChunk) {
+            // filter out source files from other modules
+            assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
+            val [moduleSourceDirs, moduleSourceFiles] =
+                getBuildFilePaths(buildFile, getSourceFiles())
+                    .mapNotNull(localFileSystem!!::findFileByPath)
+                    .partition(VirtualFile::isDirectory)
+
+            allSourceFiles.filter { file ->
+                val virtualFile = file.virtualFile
+                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                    VfsUtilCore.isAncestor(dir, virtualFile, true)
+                }
+            }
+        } else {
+            allSourceFiles
+        }
     }
 }

@@ -1,19 +1,20 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.gradle.kotlin.dsl.implementation
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
+    id("project-tests-convention")
 }
 
 repositories {
     if (!kotlinBuildProperties.isTeamcityBuild.get()) {
         androidXMavenLocal(androidXMavenLocalPath)
     }
-    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
     composeGoogleMaven(libs.versions.compose.stable.get())
+    androidxSnapshotRepo(composeRuntimeSnapshot.versions.snapshot.id.get())
 }
 
-fun KotlinDependencyHandler.implementationArtifactOnly(dependency: String) {
-    implementation(dependency) {
+fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
+    testImplementation(dependency) {
         isTransitive = false
     }
 }
@@ -22,86 +23,98 @@ optInToObsoleteDescriptorBasedAPI()
 
 kotlin {
     jvmToolchain(11)
-
-    jvm()
-
-    sourceSets {
-        commonTest.dependencies {
-            implementation(project(":kotlin-stdlib-common"))
-            implementation(kotlinTest("junit"))
-        }
-
-        jvmTest.configure {
-            dependsOn(commonTest.get())
-
-            dependencies {
-                // junit
-                implementation(libs.junit4)
-                implementation(project.dependencies.platform(libs.junit.bom))
-                implementation(libs.junit.jupiter.api)
-                runtimeOnly(libs.junit.jupiter.engine)
-
-
-                runtimeOnly(libs.intellij.fastutil)
-                runtimeOnly(jpsModelImpl())
-                implementation(project(":compiler:ir.backend.common"))
-                implementation(project(":compiler:cli"))
-                implementation(project(":compiler:cli-jvm"))
-                implementation(project(":compiler:backend.jvm"))
-                implementation(project(":compiler:fir:fir2ir:jvm-backend"))
-                implementation(project(":compiler:backend.jvm.entrypoint"))
-                implementation(intellijCore())
-
-                // kotlin deps
-                implementation(project(":kotlin-stdlib"))
-                implementation(project(":kotlin-reflect"))
-                implementation(project(":kotlin-metadata-jvm"))
-
-                // Compose compiler deps
-                implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
-                implementation(project(":plugins:compose-compiler-plugin:group-mapping"))
-
-                // protobuf dependencies for tests
-                implementation(libs.protobuf.java.lite)
-                implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
-
-                // coroutines for runtime tests
-                implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
-
-                // runtime tests
-                implementationArtifactOnly(composeRuntime())
-                implementationArtifactOnly(composeRuntimeAnnotations())
-                implementationArtifactOnly(composeRuntimeTestUtils())
-                implementation(libs.androidx.collections)
-
-                // other compose
-                implementationArtifactOnly(compose("foundation", "foundation"))
-                implementationArtifactOnly(compose("foundation", "foundation-layout"))
-                implementationArtifactOnly(compose("animation", "animation"))
-                implementationArtifactOnly(compose("ui", "ui"))
-                implementationArtifactOnly(compose("ui", "ui-graphics"))
-                implementationArtifactOnly(compose("ui", "ui-text"))
-                implementationArtifactOnly(compose("ui", "ui-unit"))
-
-                // external
-                implementationArtifactOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
-                implementationArtifactOnly("com.google.dagger:dagger:2.40.1")
-                implementation(libs.intellij.asm)
-            }
-        }
-    }
 }
 
-tasks.withType(Test::class.java).configureEach {
-    this.workingDir = rootDir
-    this.maxHeapSize = "1024m"
-    this.jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
-    // ensure that debugger tests don't launch a separate window
-    this.systemProperty("java.awt.headless", "true")
-    this.environment("CI", kotlinBuildProperties.isTeamcityBuild.get())
-    if (project.providers.gradleProperty("generate.golden").orElse("false").get().toBooleanStrict()) {
-        this.environment("GENERATE_GOLDEN", "true")
-    }
-    // runtime tests are executed in this module with compiler built from source (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
-    this.inputs.dir(File(rootDir, "plugins/compose/compiler-hosted/runtime-tests/src")).withPathSensitivity(PathSensitivity.RELATIVE)
+sourceSets {
+    "main" { none() }
+    "test" { projectDefault() }
 }
+
+optInToK1Deprecation()
+
+dependencies {
+    // junit
+    testImplementation(libs.junit4)
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.vintage.engine)
+    testRuntimeOnly(libs.intellij.fastutil)
+    testRuntimeOnly(jpsModelImpl())
+
+    // kotlin deps
+    testImplementation(project(":kotlin-stdlib"))
+    testImplementation(project(":kotlin-stdlib-common"))
+    testImplementation(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-metadata-jvm"))
+    testImplementation(kotlinTest("junit"))
+    testImplementation(project(":compiler:ir.backend.common"))
+    testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:cli-base"))
+    testImplementation(project(":compiler:cli-jvm"))
+    testImplementation(project(":compiler:backend.jvm"))
+    testImplementation(project(":compiler:fir:fir2ir:jvm-backend"))
+    testImplementation(project(":compiler:backend.jvm.entrypoint"))
+    testImplementation(project(":compiler:config.jvm"))
+    testImplementation(project(":compiler:frontend"))
+    testImplementation(project(":core:descriptors"))
+    testImplementation(project(":core:descriptors.jvm"))
+    testImplementation(project(":core:deserialization.common.jvm"))
+    testImplementation(project(":core:language.targets.jvm"))
+    testImplementation(intellijCore())
+    testImplementation(libs.guava)
+
+    // Compose compiler deps
+    testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
+    testImplementation(project(":plugins:compose-compiler-plugin:group-mapping"))
+    testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
+
+    // protobuf dependencies for tests
+    testImplementation(libs.protobuf.java.lite)
+    testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
+
+    // coroutines for runtime tests
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-test-jvm"))
+
+    // runtime tests
+    testImplementationArtifactOnly(composeRuntime())
+    testImplementationArtifactOnly(composeRuntimeAnnotations())
+    testImplementation(libs.androidx.collections)
+
+    // other compose
+    testImplementationArtifactOnly(compose("foundation", "foundation"))
+    testImplementationArtifactOnly(compose("foundation", "foundation-layout"))
+    testImplementationArtifactOnly(compose("animation", "animation"))
+    testImplementationArtifactOnly(compose("ui", "ui"))
+    testImplementationArtifactOnly(compose("ui", "ui-graphics"))
+    testImplementationArtifactOnly(compose("ui", "ui-text"))
+    testImplementationArtifactOnly(compose("ui", "ui-unit"))
+
+    // external
+    testImplementationArtifactOnly(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm"))
+    testImplementationArtifactOnly("com.google.dagger:dagger:2.40.1")
+    testImplementation(libs.intellij.asm)
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 1024) {
+        workingDir = rootDir
+        jvmArgs("--add-opens=jdk.jdi/com.sun.tools.jdi=ALL-UNNAMED")
+        environment("CI", kotlinBuildProperties.isTeamcityBuild.get())
+        if (project.providers.gradleProperty("generate.golden").orElse("false").get().toBooleanStrict()) {
+            environment("GENERATE_GOLDEN", "true")
+        }
+        // runtime tests are executed in this module with compiler built from source (see androidx.compose.compiler.plugins.kotlin.RuntimeTests)
+        inputs.dir(File(rootDir, "plugins/compose/compiler-hosted/runtime-tests/src")).withPathSensitivity(PathSensitivity.RELATIVE)
+    }
+
+    withJvmStdlibAndReflect()
+    withScriptRuntime()
+    withTestJar()
+    withMockJdkAnnotationsJar()
+}
+
+// This task exists only for compatibility with TeamCity config
+// For the period when the build was migrated from KMP setup but not merged to master yet
+tasks.register("jvmTest")

@@ -1,15 +1,14 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: lib/myContext
-  compilerVisibility: Public
   contextParameters: [
     KaContextParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -26,7 +25,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   contextReceivers: [
@@ -62,7 +61,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -76,11 +74,10 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -94,11 +91,10 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -112,14 +108,13 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: null
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -127,6 +122,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -168,12 +164,11 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -181,6 +176,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -225,12 +221,11 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -238,6 +233,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -279,12 +275,11 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -292,6 +287,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -333,12 +329,11 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -346,6 +341,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -373,7 +369,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: null
       getContainingJvmClassName: lib.LibKt
       getContainingModule: KaLibraryModule "Library lib"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -381,6 +377,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: lib.LibKt
   canBeOperator: false
   getContainingModule: KaLibraryModule "Library lib"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: lib.myContext

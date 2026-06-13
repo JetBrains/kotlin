@@ -80,7 +80,7 @@ abstract class AbstractCreateUnificationSubstitutorTest : AbstractAnalysisApiBas
                     appendLine("Substitutor: ${stringRepresentation(substitutor)}")
                     if (substitutor != null) {
                         appendLine("Substituted pairs:")
-                        candidateToTargetPairs.forEach { (candidateType, targetType) ->
+                        candidateToTargetPairs.forEach { [candidateType, targetType] ->
                             val substitutedCandidateType = substitutor.substitute(candidateType)
                             val substitutedTargetType = substitutor.substitute(targetType)
                             appendLine("$substitutedCandidateType <: $substitutedTargetType (Original: $candidateType <: $targetType)")

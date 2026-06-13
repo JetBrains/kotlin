@@ -170,7 +170,7 @@ class JvmIrCodegenFactory(
         val enableIdSignatures =
             configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
                     configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
-        val (mangler, symbolTable) =
+        val [mangler, symbolTable] =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
@@ -183,11 +183,10 @@ class JvmIrCodegenFactory(
                 }
                 mangler to symbolTable
             }
-        val messageCollector = configuration.messageCollector
         val psi2ir = Psi2IrTranslator(
             languageVersionSettings,
             Psi2IrConfiguration(ignoreErrors, skipBodies),
-            messageCollector::checkNoUnboundSymbols
+            configuration::checkNoUnboundSymbols
         )
         val psi2irContext = psi2ir.createGeneratorContext(
             module,
@@ -214,7 +213,7 @@ class JvmIrCodegenFactory(
         val irProvider = if (enableIdSignatures) {
             JvmIrLinker(
                 psi2irContext.moduleDescriptor,
-                messageCollector,
+                configuration,
                 JvmIrTypeSystemContext(psi2irContext.irBuiltIns),
                 symbolTable,
                 stubGenerator,
@@ -234,7 +233,8 @@ class JvmIrCodegenFactory(
             symbolTable,
             psi2irContext.irBuiltIns,
             irProvider,
-            messageCollector,
+            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
+            configuration.messageCollector,
             diagnosticReporter
         )
         for (extension in configuration.filteredExtensions) {
@@ -276,7 +276,7 @@ class JvmIrCodegenFactory(
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, evaluatorFragmentInfoForPsi2Ir)
 
         if (irProvider is KotlinIrLinker) {
-            irProvider.postProcess(inOrAfterLinkageStep = true)
+            irProvider.postProcess(psi2irContext.irBuiltIns, inOrAfterLinkageStep = true)
             irProvider.clear()
         }
 
@@ -289,7 +289,7 @@ class JvmIrCodegenFactory(
             irModuleFragment.stubOrphanedExpectSymbols(stubGenerator)
         }
 
-        if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT)) {
+        if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && files.none { it.isScript() }) {
             if (bindingContext !is CleanableBindingContext) {
                 error("BindingContext should be cleanable in JVM IR to avoid leaking memory: $bindingContext")
             }
@@ -335,8 +335,7 @@ class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        val (irModuleFragment, irBuiltIns, symbolTable, irProviders, extensions, backendExtension, irPluginContext) =
-            input
+        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val extensions, val backendExtension, val irPluginContext = pluginContext) = input
 
         val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
         val context = JvmBackendContext(
@@ -472,7 +471,7 @@ class JvmIrCodegenFactory(
         val serializer = context.backendExtension.createBuiltinsSerializer()
         val serializedPackages = serializer.serialize(allBuiltins.map { it.metadata as MetadataSource.File })
         require(serializedPackages.map { it.first }.toSet() == BUILT_INS_PACKAGE_FQ_NAMES) { "Unexpected set of builtin packages" }
-        for ((packageName, serialized) in serializedPackages) {
+        for ([packageName, serialized] in serializedPackages) {
             context.state.factory.addSerializedBuiltinsPackageMetadata(
                 BuiltInSerializerProtocol.getBuiltInsFilePath(packageName),
                 serialized
@@ -514,7 +513,7 @@ class JvmIrCodegenFactory(
             builder.addOptionalAnnotationClass(serializer.serializeOptionalAnnotationClass(metadata, stringTable))
         }
 
-        val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
+        val [stringTableProto, qualifiedNameTableProto] = stringTable.buildProto()
         builder.setStringTable(stringTableProto)
         builder.setQualifiedNameTable(qualifiedNameTableProto)
 

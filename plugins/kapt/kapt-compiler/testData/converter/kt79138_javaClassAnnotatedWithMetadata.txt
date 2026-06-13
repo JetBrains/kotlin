@@ -37,6 +37,7 @@ package test;
 
 @Anno(value = test.E.ENTRY)
 /**
+ * @test/Anno(value = test/E.ENTRY)
  * public final object test/O : kotlin/Any {
  *
  *   // signature: <init>()V

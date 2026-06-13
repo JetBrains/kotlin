@@ -1,0 +1,121 @@
+FILE: typealias.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|TObj|.R|/Obj.invoke|()
+            Q|TCompanionObj|.R|/CompanionObj.Companion.invoke|()
+            Q|TInterface|.R|/Interface.Companion.invoke|()
+            <Resolution to classifier>#()
+            <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
+            R|/TIH3|()
+            R|/TIH4|()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final typealias TIH1 = R|Outer.IH1|
+
+        public abstract interface IH1 : R|kotlin/Any| {
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH1.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public final typealias TIH2 = R|Outer.IH2|
+
+        public abstract interface IH2 : R|kotlin/Any| {
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH2.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final typealias TIH3 = R|Outer.IH3|
+
+        public abstract interface IH3 : R|kotlin/Any| {
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH3.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final typealias TIH4 = R|Outer.IH4|
+
+        public abstract interface IH4 : R|kotlin/Any| {
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH4.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+    }
+    public final object Obj : R|kotlin/Any| {
+        private constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final typealias TObj = R|Obj|
+    public final class CompanionObj : R|kotlin/Any| {
+        public constructor(param: R|kotlin/String|): R|CompanionObj| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|CompanionObj.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING|]) public final typealias TCompanionObj = R|CompanionObj|
+    public abstract interface Interface : R|kotlin/Any| {
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Interface.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final typealias TInterface = R|Interface|
+    public final fun TIH3(): R|kotlin/Unit| {
+    }
+    public final fun TIH4(): R|kotlin/Unit| {
+    }

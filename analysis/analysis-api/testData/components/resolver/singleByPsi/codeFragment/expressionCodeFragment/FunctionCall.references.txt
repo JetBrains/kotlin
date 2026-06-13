@@ -1,7 +1,0 @@
-KtNameReferenceExpression(138,141): 'foo'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      (in ROOT) fun foo()

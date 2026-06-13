@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
+import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
+import org.jetbrains.kotlin.backend.jvm.ir.isNonExposedConstructorOfOrdinaryClass
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
@@ -66,7 +70,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
     override fun addBindingsFor(original: IrFunction, replacement: IrFunction) {
-        for ((param, newParam) in original.parameters.zip(replacement.parameters)) {
+        for ([param, newParam] in original.parameters.zip(replacement.parameters)) {
             valueMap[param.symbol] = newParam
         }
     }
@@ -242,15 +246,38 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
-        val replacement = context.inlineClassReplacements.getReplacementFunction(function)
+        val replacement = context.inlineClassReplacements.getReplacementFunction(function) ?: return super.visitFunctionAccess(expression)
 
-        if (replacement == null) {
-            if (function.isNonExposedConstructorWithBoxingMarker() && expression.arguments.size < function.parameters.size) {
-                expression.arguments.add(
-                    IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType)
-                )
+        if (replacement is IrConstructor) {
+            checkNonExposedConstructor(replacement)
+
+            return when (expression) {
+                is IrDelegatingConstructorCall ->
+                    IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
+                    ).apply {
+                        buildReplacement(expression)
+                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                    }
+                is IrEnumConstructorCall ->
+                    IrEnumConstructorCallImpl(
+                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.typeArguments.size
+                    ).apply {
+                        buildReplacement(expression)
+                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                    }
+                else ->
+                    IrConstructorCallImpl.fromSymbolOwner(
+                        expression.startOffset, expression.endOffset, expression.type, replacement.symbol, expression.origin
+                    ).apply {
+                        buildReplacement(expression)
+                        arguments.add(IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.nothingNType))
+                    }
             }
-            return super.visitFunctionAccess(expression)
+        }
+
+        require(replacement is IrSimpleFunction) {
+            "Expected ${function.render()} to be replaced by simple function, but got ${replacement.render()}"
         }
 
         return IrCallImpl(
@@ -265,9 +292,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             buildReplacement(expression)
         }
     }
-
-    private fun IrFunction.isNonExposedConstructorWithBoxingMarker(): Boolean =
-        parameters.lastOrNull()?.origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType, skipCast: Boolean = false): IrExpression {
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.symbols.unsafeCoerceIntrinsic).apply {
@@ -286,65 +310,68 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         }
     }
 
-    override fun IrConstructor.withAddedMarkerParameterToNonExposedConstructor(): IrConstructor {
-        addValueParameter {
-            name = Name.identifier("\$boxingMarker")
-            origin = JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
-            type = context.symbols.boxingConstructorMarkerClass.defaultType.makeNullable()
-        }
-        return this
-    }
+    override fun createExposedConstructor(constructor: IrConstructor, original: IrConstructor): IrConstructor {
+        checkNonExposedConstructor(constructor)
 
-    override fun createExposedConstructor(constructor: IrConstructor): IrConstructor =
-        constructor.parentAsClass.factory.buildConstructor {
+        return constructor.parentAsClass.factory.buildConstructor {
             updateFrom(constructor)
             isPrimary = false
         }.apply {
-            copyFunctionSignatureFrom(constructor)
+            copyFunctionSignatureFrom(original)
             parameters.forEach { it.defaultValue = null }
-            val addedSyntheticParameter =
-                parameters.last().origin == JvmLoweredDeclarationOrigin.NON_EXPOSED_CONSTRUCTOR_SYNTHETIC_PARAMETER
-            if (addedSyntheticParameter) {
-                parameters = parameters.dropLast(1)
-            }
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
-            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, context)
-            constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
+            annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ((index, param) in parameters.withIndex()) {
+                    for ([index, param] in parameters.withIndex()) {
                         arguments[index] = irGet(param)
                     }
-                    if (addedSyntheticParameter) {
-                        arguments[parameters.size] = irNull()
-                    }
+                    arguments[constructor.parameters.size - 1] = irNull()
                 }
             }
         }
+    }
 
-    override fun createExposedNoArgConstructor(constructor: IrConstructor): IrConstructor? {
+    // The constructor should be already lowered, which means that it has BoxingMarker as the last parameter.
+    private fun checkNonExposedConstructor(constructor: IrConstructor) {
+        require(constructor.isNonExposedConstructorOfOrdinaryClass()) {
+            "Expected lowered non-exposed constructor, but got ${constructor.render()}"
+        }
+    }
+
+    override fun createExposedNoArgConstructor(constructor: IrConstructor, original: IrConstructor): IrConstructor? {
         // No inline class - nothing to expose
-        if (constructor.parameters.none { it.type.isInlineClassType() }) return null
+        if (original.parameters.none { it.type.isInlineClassType() }) return null
+        checkNonExposedConstructor(constructor)
+
         // We generate no-arg constructor if all parameters have default value
         // Unless one of the parameters is an inline class
         // @JvmExposeBoxed bridges the gap, so, we need to generate no-arg constuctor of all parameter have default value.
-        if (constructor.parameters.any { it.defaultValue == null }) return null
+        if (original.parameters.any { it.defaultValue == null }) return null
+
         // If there is @JvmOverloads, it covers no-arg constructor for us.
-        if (constructor.hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)) return null
+        if (original.hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)) return null
+
+        // As well as @IntroducedAt
+        if (original.parameters.all { it.annotations.hasAnnotation(StandardNames.FqNames.introducedAt) })
+            return null
+
         return constructor.parentAsClass.factory.buildConstructor {
             updateFrom(constructor)
             isPrimary = false
         }.apply noArg@{
-            copyFunctionSignatureFrom(constructor)
+            copyFunctionSignatureFrom(original)
             parameters = emptyList()
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
-            annotations = constructor.annotations.withJvmExposeBoxedAnnotation(constructor, context)
-            constructor.annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
+            annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
-                    for ((index, param) in constructor.parameters.withIndex()) {
-                        arguments[index] = param.defaultValue!!.deepCopyWithSymbols(this@noArg).expression
+                    for (index in original.parameters.indices) {
+                        // Copy already lowered default values
+                        arguments[index] = constructor.parameters[index].defaultValue!!
+                            .deepCopyWithSymbols(this@noArg).expression
                     }
+                    arguments[constructor.parameters.size - 1] = irNull()
                 }
             }
         }
@@ -528,7 +555,11 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         // Add a static bridge method to the primary constructor. This contains
         // null-checks, default arguments, and anonymous initializers.
-        val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
+        val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)
+
+        require(function is IrSimpleFunction) {
+            "Expected ${irConstructor.render()} to be replaced by simple function, but got ${function?.render()}"
+        }
 
         val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
             .filterNot { it.isStatic }
@@ -613,7 +644,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     private fun List<IrAnnotation>.withoutJvmNameAnnotation(): List<IrAnnotation> =
         this.toMutableList().apply {
             removeAll {
-                it.symbol.owner.returnType.classOrNull?.owner?.hasEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME) == true
+                it.isAnnotationWithEqualFqName(JVM_NAME_ANNOTATION_FQ_NAME)
             }
         }
 
@@ -649,7 +680,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(valueClass, context.irBuiltIns)
         // Return if we have already built specialized equals as static replacement of typed equals
         if (function.body != null) return
-        val (left, right) = function.parameters
+        val [left, right] = function.parameters
         val type = left.type.unboxInlineClass()
 
         val untypedEquals = valueClass.functions.single { it.isEquals() }

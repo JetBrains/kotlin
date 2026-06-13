@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 import org.jetbrains.kotlin.config.LanguageFeature
 
 internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonLanguageFeatures(arguments: CommonCompilerArguments) {
-    if (arguments.allowAnyScriptsInSourceRoots) {
-        put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
-    }
-
     if (arguments.allowConditionImpliesReturnsContracts) {
         put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
     }
@@ -27,6 +23,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.allowReifiedTypeInCatch) {
         put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowReturnsResultOf) {
+        put(LanguageFeature.AllowReturnsResultOfContract, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.annotationDefaultTarget == "first-only-warn") {
@@ -77,6 +77,13 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.eagerLambdaAnalysis) {
+        put(LanguageFeature.EagerLambdaAnalysis, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.UnitConversionsOnArbitraryExpressions, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.InferThrowableTypeParameterToUpperBound, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.CallCompletionRefinementsFor25, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.explicitBackingFields) {
         put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
     }
@@ -87,6 +94,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.inlineClasses) {
         put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.intrinsicConstEvaluation) {
+        put(LanguageFeature.IntrinsicConstEvaluation, LanguageFeature.State.ENABLED)
     }
 
     if (arguments.localTypeAliases) {
@@ -103,10 +114,13 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
 
     if (arguments.nameBasedDestructuring == "only-syntax") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.DISABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.DISABLED)
     }
     if (arguments.nameBasedDestructuring == "name-mismatch") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
         put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.DISABLED)
     }
     if (arguments.nameBasedDestructuring == "complete") {
         put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)

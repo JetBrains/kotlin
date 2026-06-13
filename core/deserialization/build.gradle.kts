@@ -8,7 +8,7 @@ dependencies {
     api(project(":core:metadata"))
     api(project(":core:deserialization.common"))
     api(project(":core:util.runtime"))
-    api(project(":core:descriptors"))
+    implementation(project(":core:descriptors"))
     api(commonDependency("javax.inject"))
 }
 

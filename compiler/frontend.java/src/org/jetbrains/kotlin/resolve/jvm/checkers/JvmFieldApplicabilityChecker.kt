@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.isValueClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
+@K1Deprecation
 class JvmFieldApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is PropertyDescriptor || (declaration !is KtProperty && declaration !is KtParameter)) return

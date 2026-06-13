@@ -8,6 +8,8 @@ implicit values:
       type: Base
     ownerSymbol = KaNamedClassSymbol:
       /Base
+    label = Base
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 4
@@ -17,6 +19,8 @@ implicit values:
       type: Base.Companion
     ownerSymbol = KaNamedClassSymbol:
       /Base.Companion
+    label = null
+
 
 scopes:
   LocalScope, index = 0
@@ -33,7 +37,6 @@ scopes:
         classId: Base.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -60,10 +63,10 @@ scopes:
         backingFieldSymbol: KaBackingFieldSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Private
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -80,13 +83,11 @@ scopes:
             type: ERROR_TYPE
           visibility: PRIVATE
         callableId: /Base.foo
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         getter: KaPropertyGetterSymbol:
           annotations: []
           callableId: null
-          compilerVisibility: Public
           contextReceivers: []
           hasStableParameterNames: true
           isActual: false
@@ -113,7 +114,7 @@ scopes:
         isActual: false
         isCompanion: false
         isConst: false
-        isDelegatedProperty: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -136,7 +137,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -168,7 +168,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -176,6 +175,7 @@ scopes:
             isActual: false
             isCompanion: false
             isCrossinline: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -198,7 +198,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -231,7 +230,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -265,7 +263,6 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Public
         containingClassId: Base
         contextReceivers: []
         hasStableParameterNames: true
@@ -295,7 +292,6 @@ scopes:
         classId: Base.Companion
         classKind: COMPANION_OBJECT
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -327,7 +323,6 @@ scopes:
         classId: Base.Companion.Nested
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -359,7 +354,6 @@ scopes:
         classId: Base.Companion.Nested
         classKind: CLASS
         companionObject: null
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false
@@ -384,7 +378,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: /Base.Companion.bar
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -417,7 +410,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.equals
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -449,7 +441,6 @@ scopes:
           KaValueParameterSymbol:
             annotations: []
             callableId: null
-            compilerVisibility: Public
             contextReceivers: []
             generatedPrimaryConstructorProperty: null
             hasDeclaredDefaultValue: false
@@ -457,6 +448,7 @@ scopes:
             isActual: false
             isCompanion: false
             isCrossinline: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -479,7 +471,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.hashCode
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -512,7 +503,6 @@ scopes:
       KaNamedFunctionSymbol:
         annotations: []
         callableId: kotlin/Any.toString
-        compilerVisibility: Public
         contextParameters: []
         contextReceivers: []
         contractEffects: []
@@ -546,7 +536,6 @@ scopes:
       KaConstructorSymbol:
         annotations: []
         callableId: null
-        compilerVisibility: Private
         containingClassId: Base.Companion
         contextReceivers: []
         hasStableParameterNames: true
@@ -606,7 +595,6 @@ scopes:
         classId: Base
         classKind: CLASS
         companionObject: KaNamedClassSymbol(Base.Companion)
-        compilerVisibility: Public
         contextReceivers: []
         isActual: false
         isData: false

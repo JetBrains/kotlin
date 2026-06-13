@@ -3,7 +3,6 @@ KaTypeParameterSymbol:
     A()
       psi: KtAnnotationEntry
   ]
-  compilerVisibility: Local
   isActual: false
   isExpect: false
   isExternal: false
@@ -17,5 +16,5 @@ KaTypeParameterSymbol:
   visibility: LOCAL
   getContainingFileSymbol: KaFileSymbol(typeParameter.kt)
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

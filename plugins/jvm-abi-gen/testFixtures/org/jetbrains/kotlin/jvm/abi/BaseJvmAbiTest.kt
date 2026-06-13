@@ -31,7 +31,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         super.tearDown()
     }
 
-    private val abiPluginJar = File("dist/kotlinc/lib/jvm-abi-gen.jar")
+    private val abiPluginJar = ForTestCompileRuntime.getFileFromProperty("kotlin.jvm.abi.jar.path")
     private fun abiOption(option: String, value: String): String =
         "plugin:${JvmAbiCommandLineProcessor.COMPILER_PLUGIN_ID}:$option=$value"
 
@@ -73,6 +73,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         val messageCollector = MessageCollectorImpl()
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
+            noStdlib = true
             freeArgs = listOf(compilation.srcDir.canonicalPath)
             classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
@@ -118,7 +119,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             val javacOptions = listOf(
                 "-classpath",
                 (abiDependencies + compilation.destinationDir).joinToString(File.pathSeparator) { it.canonicalPath }
-                        + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
+                        + File.pathSeparator + kotlinJvmStdlib,
                 "-d",
                 compilation.javaDestinationDir.canonicalPath
             )
@@ -128,7 +129,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         }
     }
 
-    protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
+    protected val kotlinJvmStdlib = ForTestCompileRuntime.runtimeJarForTests().also {
         check(it.exists()) { "Stdlib file '$it' does not exist" }
     }
 }

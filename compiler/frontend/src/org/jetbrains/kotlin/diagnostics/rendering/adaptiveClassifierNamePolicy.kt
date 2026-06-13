@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticBaseContext
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.types.typeUtil.contains
 import java.util.*
 
+@K1Deprecation
 val RenderingContext.adaptiveClassifierPolicy: ClassifierNamePolicy
     get() = this[ADAPTIVE_CLASSIFIER_POLICY_KEY]
 

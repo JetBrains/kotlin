@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.utils.alwaysTrue
 import java.util.*
 
+@K1Deprecation
 class LazyJavaPackageScope(
     c: LazyJavaResolverContext,
     private val jPackage: JavaPackage,

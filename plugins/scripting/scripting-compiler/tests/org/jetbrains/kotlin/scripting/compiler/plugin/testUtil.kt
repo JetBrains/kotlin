@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -58,7 +59,7 @@ fun runWithKotlinLauncherScript(
 ) {
     val executableFileName =
         if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$launcherScriptName.bat" else launcherScriptName
-    val launcherFile = File("dist/kotlinc/bin/$executableFileName")
+    val launcherFile = ForTestCompileRuntime.distKotlincForTests().resolve("bin/$executableFileName")
     assertTrue(launcherFile.exists(), "Launcher script not found, run dist task: ${launcherFile.absolutePath}")
 
     val args = arrayListOf(launcherFile.absolutePath).apply {
@@ -127,8 +128,8 @@ fun runAndCheckResults(
         return Triple(thread, exceptionContainer, out)
     }
 
-    val (stdoutThread, stdoutException, processOut) = process.inputStream.captureStream()
-    val (stderrThread, stderrException, processErr) = process.errorStream.captureStream()
+    val [stdoutThread, stdoutException, processOut] = process.inputStream.captureStream()
+    val [stderrThread, stderrException, processErr] = process.errorStream.captureStream()
 
     process.waitFor(3000000, TimeUnit.MILLISECONDS)
 
@@ -146,7 +147,7 @@ fun runAndCheckResults(
 
         fun checkExpectedOutputPatterns(expectedPatterns: List<String>, actualOut: List<String>) {
             assertEquals(expectedPatterns.size, actualOut.size)
-            for ((expectedPattern, actualLine) in expectedPatterns.zip(actualOut)) {
+            for ([expectedPattern, actualLine] in expectedPatterns.zip(actualOut)) {
                 assertTrue(
                     Regex(expectedPattern).matches(actualLine),
                     "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\""
@@ -174,7 +175,7 @@ fun runWithK2JVMCompiler(
     skipScriptArgument: Boolean = false,
     disableScriptCompilationCache: Boolean = true,
 ) {
-    val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, "dist/kotlinc").apply {
+    val args = arrayListOf(K2JVMCompilerArguments::kotlinHome.cliArgument, ForTestCompileRuntime.distKotlincForTests().path).apply {
         if (classpath.isNotEmpty()) {
             add(K2JVMCompilerArguments::classpath.cliArgument)
             add(classpath.joinToString(File.pathSeparator))
@@ -200,7 +201,7 @@ fun runWithK2JVMCompiler(
     expectedSomeErrPatterns: List<String>? = null
 ) {
     val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
-    val (out, err, ret) = captureOutErrRet {
+    val [out, err, ret] = captureOutErrRet {
         CLICompiler.doMainNoExit(
             K2JVMCompiler(),
             argsWithBasefromProp
@@ -213,7 +214,7 @@ fun runWithK2JVMCompiler(
             expectedAllOutPatterns.size, outLines.size,
             "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}"
         )
-        for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
+        for ([expectedPattern, actualLine] in expectedAllOutPatterns.zip(outLines)) {
             assertTrue(
                 Regex(expectedPattern).matches(actualLine),
                 "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\""

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.ContractsDslNames.CALLS_IN_PLACE
@@ -34,26 +35,36 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 
 
+@K1Deprecation
 fun DeclarationDescriptor.isFromContractDsl(): Boolean = this.annotations.hasAnnotation(CONTRACTS_DSL_ANNOTATION_FQN)
 
+@K1Deprecation
 fun DeclarationDescriptor.isContractCallDescriptor(): Boolean = equalsDslDescriptor(CONTRACT.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isImpliesCallDescriptor(): Boolean = equalsDslDescriptor(IMPLIES.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isReturnsEffectDescriptor(): Boolean = equalsDslDescriptor(RETURNS.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isReturnsNotNullDescriptor(): Boolean = equalsDslDescriptor(RETURNS_NOT_NULL.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isReturnsWildcardDescriptor(): Boolean = equalsDslDescriptor(RETURNS.callableName) &&
         this is FunctionDescriptor &&
         valueParameters.isEmpty()
 
+@K1Deprecation
 fun DeclarationDescriptor.isEffectDescriptor(): Boolean = equalsDslDescriptor(EFFECT.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isCallsInPlaceEffectDescriptor(): Boolean = equalsDslDescriptor(CALLS_IN_PLACE.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isInvocationKindEnum(): Boolean = equalsDslDescriptor(INVOCATION_KIND_ENUM.callableName)
 
+@K1Deprecation
 fun DeclarationDescriptor.isEqualsDescriptor(): Boolean =
     this is FunctionDescriptor && this.name == Name.identifier("equals") && dispatchReceiverParameter != null && // fast checks
             this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches

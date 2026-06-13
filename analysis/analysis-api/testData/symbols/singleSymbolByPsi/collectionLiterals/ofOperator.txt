@@ -1,7 +1,6 @@
 KaNamedFunctionSymbol:
   annotations: []
   callableId: /MyList.Companion.of
-  compilerVisibility: Public
   contextParameters: []
   contextReceivers: []
   contractEffects: []
@@ -35,7 +34,6 @@ KaNamedFunctionSymbol:
   typeParameters: [
     KaTypeParameterSymbol:
       annotations: []
-      compilerVisibility: Local
       isActual: false
       isExpect: false
       isExternal: false
@@ -49,14 +47,13 @@ KaNamedFunctionSymbol:
       visibility: LOCAL
       getContainingFileSymbol: KaFileSymbol(ofOperator.kt)
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   valueParameters: [
     KaValueParameterSymbol:
       annotations: []
       callableId: null
-      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDeclaredDefaultValue: false
@@ -64,6 +61,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -83,7 +81,7 @@ KaNamedFunctionSymbol:
       getContainingFileSymbol: KaFileSymbol(ofOperator.kt)
       getContainingJvmClassName: MyList.Companion
       getContainingModule: KaSourceModule "Sources of main"
-      deprecationStatus: null
+      deprecation: null
       importableFqName: null
   ]
   visibility: PUBLIC
@@ -95,6 +93,6 @@ KaNamedFunctionSymbol:
   getContainingJvmClassName: MyList.Companion
   canBeOperator: true
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   returnValueStatus: Unspecified
   importableFqName: MyList.Companion.of

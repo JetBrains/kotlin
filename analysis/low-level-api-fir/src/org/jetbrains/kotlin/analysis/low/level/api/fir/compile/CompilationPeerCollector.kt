@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  */
 @KaImplementationDetail
 class CompilationPeerCollector private constructor(private val actualizer: LLPlatformActualizer?) {
+    @KaImplementationDetail
     companion object {
         fun process(files: Collection<FirFile>, actualizer: LLPlatformActualizer?): CompilationPeerData {
             val collector = CompilationPeerCollector(actualizer)

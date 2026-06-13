@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 /**
  * This class contains Java-related overridability conditions that may force incompatibility
  */
+@K1Deprecation
 class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(
         superDescriptor: CallableDescriptor,
@@ -131,7 +133,7 @@ class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCo
                 "External overridability condition with CONFLICTS_ONLY should not be run with different value parameters size"
             }
 
-            for ((subParameter, superParameter) in subDescriptor.original.valueParameters.zip(superDescriptor.original.valueParameters)) {
+            for ([subParameter, superParameter] in subDescriptor.original.valueParameters.zip(superDescriptor.original.valueParameters)) {
                 val isSubPrimitive = mapValueParameterType(subDescriptor, subParameter) is JvmType.Primitive
                 val isSuperPrimitive = mapValueParameterType(superDescriptor, superParameter) is JvmType.Primitive
 

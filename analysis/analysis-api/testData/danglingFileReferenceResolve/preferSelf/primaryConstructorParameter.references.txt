@@ -1,7 +1,0 @@
-KtNameReferenceExpression(90,94): 'name'
-  KtSimpleNameReference:
-    isImplicitReferenceToCompanion: false
-    usesContextSensitiveResolution: false
-    attempt: KaSymbolResolutionSuccess
-    symbols:
-      name: kotlin.String [fake.kt]

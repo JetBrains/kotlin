@@ -1,5 +1,8 @@
 KtNameReferenceExpression(137,152): 'MyRestrictedApi'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyRestrictedApi
     ]
+  PSI class names: ClsClassImpl

@@ -25,6 +25,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testMppAndroidLibFlavorsPublication(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -249,6 +250,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("Sources publication can be disabled")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testDisableSourcesPublication(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -288,6 +290,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("android mpp lib dependencies are properly rewritten")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testMppAndroidLibDependenciesRewriting(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -403,6 +406,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     @DisplayName("KT-69585: kmp + android depends on another kmp + android project via included build should not fail on pom rewrite action")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kt69585PublishWithDependencyOnIncludedBuildsDoesntFail(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -447,6 +451,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
      */
     @DisplayName("KT-49798: com.android.build.api.attributes.AgpVersionAttr is not published")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKT49798AgpVersionAttrNotPublished(
         gradleVersion: GradleVersion,
         agpVersion: String,

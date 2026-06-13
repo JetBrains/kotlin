@@ -5,6 +5,8 @@ implicit values:
     type = C
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+    label = action
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 2
@@ -17,6 +19,8 @@ implicit values:
     type = D
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+    label = with
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 10
@@ -142,4 +146,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 18
-

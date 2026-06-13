@@ -28,7 +28,7 @@ class CustomKlibCompiler(
 ) {
     private var isolatedClassLoaderSoftRef: SoftReference<URLClassLoader>? = null
 
-    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
+    fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaderSoftRef?.get() ?: synchronized(this) {
         isolatedClassLoaderSoftRef?.get() ?: run {
             val isolatedClassLoader = URLClassLoader(compilerClassPath.toTypedArray(), null)
             isolatedClassLoader.setDefaultAssertionStatus(true)
@@ -45,7 +45,7 @@ class CustomKlibCompiler(
     fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
         val isolatedClassLoader = getIsolatedClassLoader()
 
-        val (compilerClass, fixedArgs) = try {
+        val [compilerClass, fixedArgs] = try {
             Class.forName(className, true, isolatedClassLoader) to args
         } catch (e: ClassNotFoundException) {
             // older compiler versions didn't have KotlinWasmCompiler and used JS compiler for Wasm

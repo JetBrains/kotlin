@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -141,13 +141,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Skips the check that New kotlin-reflect dumps are the same to those of K1"
     )
 
-    val DUMP_SIGNATURES by directive(
-        description = """
-        Like $DUMP_KT_IR, but does not dump function bodies, and prints a rendered binary signature and a mangled name for each declaration
-        (enables ${IrMangledNameAndSignatureDumpHandler::class})
-        """.trimIndent()
-    )
-
     // Besides a list of phases, also supports values `ALL_BEFORE`, `ALL_AFTER` and `ALL` for dumping
     // before all lowerings, after all lowerings and both before and after all lowerings, correspondingly.
     val DUMP_IR_FOR_GIVEN_PHASES by stringDirective(
@@ -221,7 +214,7 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     // TODO: Drop this directive and make the offset validation enabled by default when KT-81475 is fixed.
-    val ENABLE_IR_NESTED_OFFSETS_CHECKS by stringDirective(
+    val ENABLE_IR_NESTED_OFFSETS_CHECKS by directive(
         description = "Enables validation of the nested IR elements offsets"
     )
 
@@ -231,6 +224,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val DISABLE_IR_VISIBILITY_CHECKS by enumDirective<TargetBackend>(
         description = "Don't check for visibility violations when validating IR on the target backend"
+    )
+
+    val DISABLE_IR_FIELD_VISIBILITY_CHECK by enumDirective<TargetBackend>(
+        description = "Don't check for fields having non-private visibility when validating IR on the target backend"
     )
 
     val DISABLE_IR_VARARG_TYPE_CHECKS by enumDirective<TargetBackend>(

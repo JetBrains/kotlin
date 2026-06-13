@@ -23,13 +23,24 @@ KtParameter(24,41): 'val value: String'
   null
 
 KtTypeReference(35,41): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(35,41): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(35,41): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtClass(43,98): 'annotation class MyAnnoVararg(vararg val value: String)'
   null
@@ -50,13 +61,24 @@ KtDeclarationModifierList(73,79): 'vararg'
   null
 
 KtTypeReference(91,97): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(91,97): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(91,97): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtClass(99,165): 'annotation class MyAnnoKClass(val value: kotlin.reflect.KClass<*>)'
   null
@@ -74,25 +96,52 @@ KtParameter(129,164): 'val value: kotlin.reflect.KClass<*>'
   null
 
 KtTypeReference(140,164): 'kotlin.reflect.KClass<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtUserType(140,164): 'kotlin.reflect.KClass<*>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtUserType(140,154): 'kotlin.reflect'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.reflect
+    ]
 
 KtUserType(140,146): 'kotlin'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(140,146): 'kotlin'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin
+    ]
 
 KtNameReferenceExpression(147,154): 'reflect'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin.reflect
+    ]
 
 KtNameReferenceExpression(155,161): 'KClass'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/reflect/KClass
+    ]
 
 KtTypeArgumentList(161,164): '<*>'
   null
@@ -119,12 +168,20 @@ KtConstructorCalleeExpression(168,174): 'MyAnno'
     ]
 
 KtTypeReference(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtUserType(168,174): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtNameReferenceExpression(168,174): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -173,12 +230,20 @@ KtConstructorCalleeExpression(200,206): 'MyAnno'
     ]
 
 KtTypeReference(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtUserType(200,206): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtNameReferenceExpression(200,206): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -194,7 +259,12 @@ KtValueArgumentName(207,212): 'value'
   null
 
 KtNameReferenceExpression(207,212): 'value'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      value: kotlin.String
+    ]
 
 KtParenthesizedExpression(215,222): '(("A"))'
   null
@@ -233,12 +303,20 @@ KtConstructorCalleeExpression(240,246): 'MyAnno'
     ]
 
 KtTypeReference(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtUserType(240,246): 'MyAnno'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnno
+    ]
 
 KtNameReferenceExpression(240,246): 'MyAnno'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnno
@@ -272,16 +350,29 @@ KtLiteralStringTemplateEntry(252,253): 'A'
   null
 
 KtOperationReferenceExpression(257,259): 'as'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   null
 
 KtTypeReference(260,266): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtUserType(260,266): 'String'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(260,266): 'String'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtParameterList(278,280): '()'
   null
@@ -308,12 +399,20 @@ KtConstructorCalleeExpression(286,298): 'MyAnnoVararg'
     ]
 
 KtTypeReference(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtUserType(286,298): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtNameReferenceExpression(286,298): 'MyAnnoVararg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoVararg
@@ -362,6 +461,8 @@ KtCallExpression(316,338): 'arrayOf("A", "B", "C")'
     ]
 
 KtNameReferenceExpression(316,323): 'arrayOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
@@ -422,12 +523,20 @@ KtConstructorCalleeExpression(358,370): 'MyAnnoVararg'
     ]
 
 KtTypeReference(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtUserType(358,370): 'MyAnnoVararg'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoVararg
+    ]
 
 KtNameReferenceExpression(358,370): 'MyAnnoVararg'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoVararg
@@ -443,7 +552,12 @@ KtValueArgumentName(371,376): 'value'
   null
 
 KtNameReferenceExpression(371,376): 'value'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      vararg value: kotlin.String
+    ]
 
 KtParenthesizedExpression(379,402): '((arrayOf(("A"), "B")))'
   null
@@ -458,6 +572,8 @@ KtCallExpression(381,400): 'arrayOf(("A"), "B")'
     ]
 
 KtNameReferenceExpression(381,388): 'arrayOf'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/arrayOf(vararg elements: T): kotlin.Array<T>
@@ -512,12 +628,20 @@ KtConstructorCalleeExpression(420,432): 'MyAnnoKClass'
     ]
 
 KtTypeReference(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoKClass
+    ]
 
 KtUserType(420,432): 'MyAnnoKClass'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /MyAnnoKClass
+    ]
 
 KtNameReferenceExpression(420,432): 'MyAnnoKClass'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAnnoKClass
@@ -539,9 +663,14 @@ KtParenthesizedExpression(435,450): '(String::class)'
   null
 
 KtClassLiteralExpression(436,449): 'String::class'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
 
 KtNameReferenceExpression(436,442): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String

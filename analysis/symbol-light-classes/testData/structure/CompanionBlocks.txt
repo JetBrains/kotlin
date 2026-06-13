@@ -1,0 +1,47 @@
+KtClass:
+  line: 5
+  name: WithCompanionBlock
+  qualifier: cba.WithCompanionBlock
+  light: SymbolLightClassForClassOrObject
+    name: WithCompanionBlock
+    qualifier: cba.WithCompanionBlock
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 12
+  name: WithCompanionBlockAndObject
+  qualifier: cba.WithCompanionBlockAndObject
+  light: SymbolLightClassForClassOrObject
+    name: WithCompanionBlockAndObject
+    qualifier: cba.WithCompanionBlockAndObject
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtObjectDeclaration:
+  line: 17
+  name: Companion
+  qualifier: cba.WithCompanionBlockAndObject.Companion
+  light: SymbolLightClassForClassOrObject
+    name: Companion
+    qualifier: cba.WithCompanionBlockAndObject.Companion
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]

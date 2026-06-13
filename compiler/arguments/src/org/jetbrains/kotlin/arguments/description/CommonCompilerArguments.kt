@@ -543,27 +543,30 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-
     compilerArgument {
-        name = "Xverify-ir-visibility"
-        description =
-            "Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        name = "Xdisable-ir-checkers"
+        description = ("A list of IR checkers to disable, specified by a simple name of the checker class. " +
+                "A name of an annotation can also be used to match all tagged checkers.\n" +
+                "Only has effect if '-Xverify-ir' is not 'none'.").asReleaseDependent()
+        valueDescription = "<checker1>,<checker2>".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_0_20,
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
-
     compilerArgument {
-        name = "Xverify-ir-nested-offsets"
-        description =
-            "Check that offsets of nested IR elements conform to offsets of their containers. Only has effect if '-Xverify-ir' is not 'none'.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        name = "Xenable-additional-ir-checkers"
+        description = ("A list of IR checkers to enable, specified by a simple name of the checker class.\n" +
+                "It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. " +
+                "Only has effect if '-Xverify-ir' is not 'none'."
+                ).asReleaseDependent()
+        valueDescription = "<checker1>,<checker2>".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_3_20,
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -618,7 +621,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
     }
 
-
     compilerArgument {
         name = "Xuse-fir-lt"
         compilerName = "useFirLT"
@@ -628,6 +630,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
 
@@ -696,6 +699,21 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xallow-returns-result-of"
+        description = ("Allows to use `returnsResultOf()` in `contract {}` block of function body. " +
+                "This contract provides additional information for return value checker. " +
+                "Enabling this feature will force compiler to produce pre-release binaries, " +
+                "because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.AllowReturnsResultOfContract))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
 
@@ -830,6 +848,25 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xeager-lambda-analysis"
+        description =
+            "Enable eager analysis of lambda bodies to improve overload resolution by the lambda's return type.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.EagerLambdaAnalysis),
+            Enables(LanguageFeature.UnitConversionsOnArbitraryExpressions),
+            Enables(LanguageFeature.InferThrowableTypeParameterToUpperBound),
+            Enables(LanguageFeature.CallCompletionRefinementsFor25),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xdata-flow-based-exhaustiveness"
         description = "Enable `when` exhaustiveness improvements that rely on data-flow analysis.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
@@ -922,10 +959,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Allow compiling scripts along with regular Kotlin sources.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_20,
         )
@@ -983,10 +1016,21 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         name = "Xfragment-dependency"
         compilerName = "fragmentDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib dependencies for the specific fragment.
+
+
+
+        description =ReleaseDependent(
+            current = """
+                Declare common klib dependencies for the specific fragment.
+                This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
+
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -999,15 +1043,40 @@ The argument should be used only if the new compilation scheme is enabled with -
         name = "Xfragment-friend-dependency"
         compilerName = "fragmentFriendDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib friend dependencies for the specific fragment.
+        description = ReleaseDependent(
+            current = """
+                Declare common klib friend dependencies for the specific fragment.
+                This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xfragment-incremental-classpath"
+        compilerName = "fragmentIncrementalClasspath"
+        valueDescription = "<fragment name>:<path>".asReleaseDependent()
+        description = """
+            Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
+            This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
+              dependencies from the platform specific incremental service.
+            The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+        """.trimIndent().asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 
@@ -1032,6 +1101,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
 
@@ -1125,11 +1195,19 @@ The argument should be used only if the new compilation scheme is enabled with -
     @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xannotation-default-target"
-        description = """Change the default annotation targets for constructor properties:
+        description = ReleaseDependent(
+            current = """Change the default annotation targets for constructor properties:
 -Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
 -Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
-default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""".asReleaseDependent()
+default: 'param-property' in language version 2.4+, 'first-only-warn' in language versions 2.2 & 2.3, 'first-only' in version 2.1 and before.""",
+            (KotlinReleaseVersion.v2_1_20 .. KotlinReleaseVersion.v2_3_20) to
+                    """Change the default annotation targets for constructor properties:
+-Xannotation-default-target=first-only:      use the first of the following allowed targets: '@param:', '@property:', '@field:';
+-Xannotation-default-target=first-only-warn: same as first-only, and raise warnings when both '@param:' and either '@property:' or '@field:' are allowed;
+-Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
+default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before."""
+        )
         valueDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         valueType = StringType.defaultNull
         additionalAnnotations(
@@ -1249,8 +1327,13 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             Enables(LanguageFeature.NameBasedDestructuring, "only-syntax"),
             Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch"),
             Enables(LanguageFeature.NameBasedDestructuring, "complete"),
+
+            Disables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "only-syntax"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch"),
             Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete"),
+
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "only-syntax"),
+            Disables(LanguageFeature.EnableNameBasedDestructuringShortForm, "name-mismatch"),
             Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete"),
         )
 
@@ -1344,6 +1427,21 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xintrinsic-const-evaluation"
+        description = """
+            Enables `IntrinsicConstEvaluation` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.IntrinsicConstEvaluation),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_0
         )
     }
 }

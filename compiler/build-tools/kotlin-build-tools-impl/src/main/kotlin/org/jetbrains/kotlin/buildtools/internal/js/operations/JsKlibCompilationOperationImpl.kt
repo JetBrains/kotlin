@@ -52,7 +52,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     override val sources: List<Path>,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     private val compilerVersion: String,
 ) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
@@ -101,6 +101,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsKlibCompilationOperation.Option<V>, value: V) {
+        checkOptionIsAvailableForVersion(key)
         options[key] = value
     }
 
@@ -112,10 +113,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
         options[key] = value
     }
 
-    class Option<V> : BaseOptionWithDefault<V> {
-        constructor(id: String) : super(id)
-        constructor(id: String, default: V) : super(id, default = default)
-    }
+    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
 
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
@@ -318,7 +316,7 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
         rootProjectBuildDir?.toFile(),
         map.mapKeys { it.key.output.toFile() },
         buildMap {
-            map.forEach { (_, it) -> (getOrPut(it.name) { mutableSetOf() } as MutableSet<IncrementalModuleEntry>).add(it) }
+            map.forEach { [_, it] -> (getOrPut(it.name) { mutableSetOf() } as MutableSet<IncrementalModuleEntry>).add(it) }
         },
         emptyMap(),
         map.mapKeys { it.key.output.toFile() }.toMap(),

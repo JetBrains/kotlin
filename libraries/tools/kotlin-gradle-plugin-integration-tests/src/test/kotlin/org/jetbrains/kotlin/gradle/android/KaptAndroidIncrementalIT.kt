@@ -21,6 +21,7 @@ import kotlin.io.path.writeText
 open class KaptAndroidIncrementalIT : KaptBaseIT() {
     @DisplayName("stubs generation is incremental on changes in android variant java sources")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources(
         gradleVersion: GradleVersion,
         agpVersion: String,

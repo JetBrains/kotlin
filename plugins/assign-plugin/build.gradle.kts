@@ -29,7 +29,10 @@ optInToExperimentalCompilerApi()
 sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
+    "test" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 publish()
 

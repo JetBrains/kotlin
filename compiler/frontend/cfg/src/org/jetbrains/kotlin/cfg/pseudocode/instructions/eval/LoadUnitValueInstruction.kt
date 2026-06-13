@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
+@K1Deprecation
 class LoadUnitValueInstruction(
     expression: KtExpression,
     blockScope: BlockScope

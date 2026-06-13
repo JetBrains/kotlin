@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode.PARTIAL
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogRecord
 import org.jetbrains.kotlin.resolve.calls.inference.components.InferenceLogger.FixationLogVariableInfo
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 /**
  * For the K1's DI to properly instantiate it with [LegacyVariableReadinessCalculator], this class must be `abstract`.
@@ -125,7 +122,13 @@ abstract class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            c.notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, c,
+            c.notFixedTypeVariables, postponedArguments,
+            // We only prevent from fixation type variables related to return types for PARTIAL-like modes
+            when {
+                completionMode.preventFixingTypeVariablesRelatedToReturnType -> topLevelType
+                else -> null
+            },
+            typeSystemContext = c,
             languageVersionSettings,
         )
 
@@ -175,9 +178,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
     protected fun TypeConstructorMarker.hasUnprocessedConstraintsInForks(): Boolean {
         if (c.constraintsFromAllForkPoints.isEmpty()) return false
 
-        for ((_, forkPointData) in c.constraintsFromAllForkPoints) {
+        for ([_, forkPointData] in c.constraintsFromAllForkPoints) {
             for (constraints in forkPointData) {
-                for ((typeVariableFromConstraint, constraint) in constraints) {
+                for ([typeVariableFromConstraint, constraint] in constraints) {
                     if (typeVariableFromConstraint.freshTypeConstructor() == this) return true
                     if (constraint.type.containsTypeVariable(this)) return true
                 }
@@ -220,9 +223,9 @@ abstract class AbstractVariableReadinessCalculator<Readiness : Comparable<Readin
                 c.notFixedTypeVariables[it]?.constraints.orEmpty()
             )
         }
-        val chosen = readinessPerVariable.entries.maxByOrNull { (_, value) -> value.readiness }?.key
+        val chosen = readinessPerVariable.entries.maxByOrNull { [_, value] -> value.readiness }?.key
         val newRecord = FixationLogRecord(
-            readinessPerVariable.mapKeys { (key, _) -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
+            readinessPerVariable.mapKeys { [key, _] -> c.allTypeVariables[key]!! }, c.allTypeVariables[chosen]
         )
 
         inferenceLogger.logReadiness(newRecord, c)

@@ -16,10 +16,10 @@ import java.nio.ByteBuffer
 /******************************************************************************/
 
 /** Read directly from a byte array. */
-fun IrArrayReader(bytes: ByteArray): IrArrayReader = IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
+fun IrArrayReader(bytes: ByteArray): IrArrayReader = IrArrayReader(ReadByteBufferProvider.MemoryBuffer(bytes))
 
 /** On-demand read from a byte array that will be loaded on the first access. */
-fun IrArrayReader(loadBytes: () -> ByteArray): IrArrayReader = IrArrayReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+fun IrArrayReader(loadBytes: () -> ByteArray): IrArrayReader = IrArrayReader(ReadByteBufferProvider.OnDemandMemoryBuffer(loadBytes))
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrArrayReader(
@@ -27,18 +27,18 @@ inline fun <KCL : KlibComponentLayout> IrArrayReader(
     crossinline getFile: KCL.() -> File,
 ): IrArrayReader = IrArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
-class IrArrayReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
+class IrArrayReader(private val buffer: ReadByteBufferProvider) {
+    private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
 
     fun entryCount() = indexToOffset.size - 1
-    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
+    fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
 }
 
 /** Read directly from a byte array. */
-fun IrMultiArrayReader(bytes: ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
+fun IrMultiArrayReader(bytes: ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadByteBufferProvider.MemoryBuffer(bytes))
 
 /** On-demand read from a byte array that will be loaded on the first access. */
-fun IrMultiArrayReader(loadBytes: () -> ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+fun IrMultiArrayReader(loadBytes: () -> ByteArray): IrMultiArrayReader = IrMultiArrayReader(ReadByteBufferProvider.OnDemandMemoryBuffer(loadBytes))
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
@@ -46,13 +46,13 @@ inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
     crossinline getFile: KCL.() -> File,
 ): IrMultiArrayReader = IrMultiArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
-class IrMultiArrayReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
+class IrMultiArrayReader(private val buffer: ReadByteBufferProvider) {
+    private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
     private val indexToIndexToOffset: IndexToIndexToOffset = mutableMapOf()
 
-    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
+    fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
     fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray =
-        buffer.readTableItemBytes(indexToOffset, indexToIndexToOffset, rowIndex, columnIndex)
+        buffer.use { it.readTableItemBytes(indexToOffset, indexToIndexToOffset, rowIndex, columnIndex) }
 }
 
 
@@ -64,26 +64,27 @@ data class DeclarationId(val id: Int)
 
 /** Read directly from a byte array. */
 fun DeclarationIdTableReader(bytes: ByteArray): DeclarationIdTableReader =
-    DeclarationIdTableReader(ReadBuffer.MemoryBuffer(bytes))
+    DeclarationIdTableReader(ReadByteBufferProvider.MemoryBuffer(bytes))
 
 /** On-demand read from a byte array that will be loaded on the first access. */
 fun DeclarationIdTableReader(loadBytes: () -> ByteArray): DeclarationIdTableReader =
-    DeclarationIdTableReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+    DeclarationIdTableReader(ReadByteBufferProvider.OnDemandMemoryBuffer(loadBytes))
 
-class DeclarationIdTableReader(private val buffer: ReadBuffer) {
-    private val declarationIdToCoordinates: DeclarationIdToCoordinates = buffer.readDeclarationIdToCoordinates(0)
+class DeclarationIdTableReader(private val buffer: ReadByteBufferProvider) {
+    private val declarationIdToCoordinates: DeclarationIdToCoordinates = buffer.use { it.readDeclarationIdToCoordinates(0) }
 
     fun entryCount() = declarationIdToCoordinates.size
-    fun tableItemBytes(declarationId: DeclarationId): ByteArray = buffer.readTableItemBytes(declarationIdToCoordinates, declarationId)
+    fun tableItemBytes(declarationId: DeclarationId): ByteArray =
+        buffer.use { it.readTableItemBytes(declarationIdToCoordinates, declarationId) }
 }
 
 /** Read directly from a byte array. */
 fun DeclarationIdMultiTableReader(bytes: ByteArray): DeclarationIdMultiTableReader =
-    DeclarationIdMultiTableReader(ReadBuffer.MemoryBuffer(bytes))
+    DeclarationIdMultiTableReader(ReadByteBufferProvider.MemoryBuffer(bytes))
 
 /** On-demand read from a byte array that will be loaded on the first access. */
 fun DeclarationIdMultiTableReader(loadBytes: () -> ByteArray): DeclarationIdMultiTableReader =
-    DeclarationIdMultiTableReader(ReadBuffer.OnDemandMemoryBuffer(loadBytes))
+    DeclarationIdMultiTableReader(ReadByteBufferProvider.OnDemandMemoryBuffer(loadBytes))
 
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> DeclarationIdMultiTableReader(
@@ -91,13 +92,13 @@ inline fun <KCL : KlibComponentLayout> DeclarationIdMultiTableReader(
     crossinline getFile: KCL.() -> File,
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
-class DeclarationIdMultiTableReader(private val buffer: ReadBuffer) {
-    private val indexToOffset: IndexToOffset = buffer.readIndexToOffset(0)
+class DeclarationIdMultiTableReader(private val buffer: ReadByteBufferProvider) {
+    private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
     private val indexToDeclarationIdToCoordinates: IndexToDeclarationIdToCoordinates = mutableMapOf()
 
-    fun tableItemBytes(index: Int): ByteArray = buffer.readTableItemBytes(indexToOffset, index)
+    fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
     fun tableItemBytes(rowIndex: Int, declarationId: DeclarationId): ByteArray =
-        buffer.readTableItemBytes(indexToOffset, indexToDeclarationIdToCoordinates, rowIndex, declarationId)
+        buffer.use { it.readTableItemBytes(indexToOffset, indexToDeclarationIdToCoordinates, rowIndex, declarationId) }
 }
 
 
@@ -123,8 +124,8 @@ private typealias IndexToIndexToOffset = MutableMap<Int, IndexToOffset>
 private typealias DeclarationIdToCoordinates = MutableMap<DeclarationId, DeclarationCoordinates>
 private typealias IndexToDeclarationIdToCoordinates = MutableMap<Int, DeclarationIdToCoordinates>
 
-private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
-    this.position = position
+private fun ByteBuffer.readIndexToOffset(position: Int): IndexToOffset {
+    this.position(position)
 
     var count = this.int
     var usesVarInt = false
@@ -135,12 +136,12 @@ private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     }
 
     val elementSizes = IntArray(count) {
-        if (usesVarInt) readUnsignedLeb128(this::byte).toInt() else this.int
+        if (usesVarInt) readUnsignedLeb128(this::get).toInt() else this.int
     }
 
     val indexToOffset = IndexToOffset(count + 1)
     // After reading all element sizes, we know at which position the element values start.
-    indexToOffset[0] = this.position - position
+    indexToOffset[0] = this.position() - position
     for (i in 0 until count) {
         indexToOffset[i + 1] = indexToOffset[i] + elementSizes[i]
     }
@@ -148,8 +149,8 @@ private fun ReadBuffer.readIndexToOffset(position: Int): IndexToOffset {
     return indexToOffset
 }
 
-private fun ReadBuffer.readDeclarationIdToCoordinates(position: Int): DeclarationIdToCoordinates {
-    this.position = position
+private fun ByteBuffer.readDeclarationIdToCoordinates(position: Int): DeclarationIdToCoordinates {
+    this.position(position)
 
     val count = this.int
     val declarationIdToCoordinates: DeclarationIdToCoordinates = mutableMapOf()
@@ -164,18 +165,18 @@ private fun ReadBuffer.readDeclarationIdToCoordinates(position: Int): Declaratio
     return declarationIdToCoordinates
 }
 
-private fun ReadBuffer.readTableItemBytes(indexToOffset: IndexToOffset, index: Int): ByteArray {
+private fun ByteBuffer.readTableItemBytes(indexToOffset: IndexToOffset, index: Int): ByteArray {
     val offset = indexToOffset[index]
     val size = indexToOffset[index + 1] - offset
     return readTableItemBytes(offset, size)
 }
 
-private fun ReadBuffer.readTableItemBytes(declarationIdToCoordinates: DeclarationIdToCoordinates, declarationId: DeclarationId): ByteArray {
+private fun ByteBuffer.readTableItemBytes(declarationIdToCoordinates: DeclarationIdToCoordinates, declarationId: DeclarationId): ByteArray {
     val (offset, size) = declarationIdToCoordinates[declarationId] ?: error("No coordinates found for $declarationId")
     return readTableItemBytes(offset, size)
 }
 
-private fun ReadBuffer.readTableItemBytes(
+private fun ByteBuffer.readTableItemBytes(
     indexToOffset: IndexToOffset,
     indexToIndexToOffset: IndexToIndexToOffset,
     rowIndex: Int,
@@ -190,7 +191,7 @@ private fun ReadBuffer.readTableItemBytes(
     return readTableItemBytes(rowOffset + offset, size)
 }
 
-private fun ReadBuffer.readTableItemBytes(
+private fun ByteBuffer.readTableItemBytes(
     indexToOffset: IndexToOffset,
     indexToDeclarationIdToCoordinates: IndexToDeclarationIdToCoordinates,
     rowIndex: Int,
@@ -206,9 +207,9 @@ private fun ReadBuffer.readTableItemBytes(
     return readTableItemBytes(rowOffset + offset, size)
 }
 
-private fun ReadBuffer.readTableItemBytes(offset: Int, size: Int): ByteArray {
+private fun ByteBuffer.readTableItemBytes(offset: Int, size: Int): ByteArray {
     val result = ByteArray(size)
-    this.position = offset
+    this.position(offset)
     this.get(result, 0, size)
 
     return result

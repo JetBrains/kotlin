@@ -1,2 +1,2 @@
-KtNamedFunction(61,103): '/**'
+KDocName(69,83): 'Foo.Nested.foo'
   NO_CANDIDATES

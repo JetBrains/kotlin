@@ -1,0 +1,267 @@
+KtFile: 'primaryConstructorVsCompanionInvoke.kt'
+  null
+
+KtPackageDirective(0,19): 'package com.example'
+  null
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  null
+
+KtNameReferenceExpression(8,11): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(12,19): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtImportList(19,19): ''
+  null
+
+KtClass(21,126): 'class Foo {'
+  null
+
+KtClassBody(31,126): '{'
+  null
+
+KtObjectDeclaration(37,124): 'companion object {'
+  null
+
+KtDeclarationModifierList(37,46): 'companion'
+  null
+
+KtClassBody(54,124): '{'
+  null
+
+KtNamedFunction(64,118): 'operator fun invoke(param: Int) = Foo() // constructor'
+  null
+
+KtDeclarationModifierList(64,72): 'operator'
+  null
+
+KtParameterList(83,95): '(param: Int)'
+  null
+
+KtParameter(84,94): 'param: Int'
+  null
+
+KtTypeReference(91,94): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(91,94): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(91,94): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtCallExpression(98,103): 'Foo()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): com.example.Foo
+    ]
+
+KtNameReferenceExpression(98,101): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtValueArgumentList(101,103): '()'
+  null
+
+KtNamedFunction(128,231): 'fun main() {'
+  null
+
+KtParameterList(136,138): '()'
+  null
+
+KtBlockExpression(139,231): '{'
+  null
+
+KtCallExpression(145,151): 'Foo(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtNameReferenceExpression(145,148): 'Foo'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion
+    ]
+
+KtValueArgumentList(148,151): '(1)'
+  null
+
+KtValueArgument(149,150): '1'
+  null
+
+KtConstantExpression(149,150): '1'
+  null
+
+KtDotQualifiedExpression(156,174): 'com.example.Foo(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtDotQualifiedExpression(156,167): 'com.example'
+  null
+
+KtNameReferenceExpression(156,159): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(160,167): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtCallExpression(168,174): 'Foo(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtNameReferenceExpression(168,171): 'Foo'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion
+    ]
+
+KtValueArgumentList(171,174): '(2)'
+  null
+
+KtValueArgument(172,173): '2'
+  null
+
+KtConstantExpression(172,173): '2'
+  null
+
+KtDotQualifiedExpression(180,196): 'Foo.Companion(3)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtNameReferenceExpression(180,183): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtCallExpression(184,196): 'Companion(3)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtNameReferenceExpression(184,193): 'Companion'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion
+    ]
+
+KtValueArgumentList(193,196): '(3)'
+  null
+
+KtValueArgument(194,195): '3'
+  null
+
+KtConstantExpression(194,195): '3'
+  null
+
+KtDotQualifiedExpression(201,229): 'com.example.Foo.Companion(4)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtDotQualifiedExpression(201,216): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(201,212): 'com.example'
+  null
+
+KtNameReferenceExpression(201,204): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(205,212): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtNameReferenceExpression(213,216): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtCallExpression(217,229): 'Companion(4)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion.invoke(<dispatch receiver>: com.example.Foo.Companion, param: kotlin.Int): com.example.Foo
+    ]
+
+KtNameReferenceExpression(217,226): 'Companion'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Companion
+    ]
+
+KtValueArgumentList(226,229): '(4)'
+  null
+
+KtValueArgument(227,228): '4'
+  null
+
+KtConstantExpression(227,228): '4'
+  null

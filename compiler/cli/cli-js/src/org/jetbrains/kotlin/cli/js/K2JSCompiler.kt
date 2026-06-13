@@ -49,7 +49,7 @@ class K2JSCompiler : KotlinWebCompilerBase<K2JSCompilerArguments>() {
         }
     }
 
-    override fun setupPlatformSpecificArgumentsAndServices(
+    fun setupPlatformSpecificArgumentsAndServices(
         configuration: CompilerConfiguration,
         arguments: K2JSCompilerArguments,
         services: Services,

@@ -1087,7 +1087,7 @@ private val knownOps = setOf(
     "kotlin/String.length(STRING)",
     "kotlin/String.toString(STRING)",
     "kotlin/Char(INT)",
-    "kotlin/Char.code(CHAR)",
+    "kotlin/code(CHAR)",
     "kotlin/experimental/inv(SHORT)",
     "kotlin/experimental/inv(BYTE)",
     "kotlin/text/lowercase(STRING)",

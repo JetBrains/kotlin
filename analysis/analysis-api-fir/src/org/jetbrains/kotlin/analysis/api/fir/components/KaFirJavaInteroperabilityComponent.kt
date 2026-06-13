@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -68,7 +69,6 @@ import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
@@ -267,13 +267,13 @@ internal class KaFirJavaInteroperabilityComponent(
                         val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi(analysisSession.analysisScope) == member } as? FirCallableSymbol<*>
                         if (memberSymbol != null) {
                             //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
-                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { (typeParamSymbol, typeParam) ->
+                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { [typeParamSymbol, typeParam] ->
                                 javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParam), typeParamSymbol)
                             }
                         }
                     }
 
-                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { (symbol, typeParameter) ->
+                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { [symbol, typeParameter] ->
                         javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParameter), symbol)
                     }
                 }
@@ -284,6 +284,11 @@ internal class KaFirJavaInteroperabilityComponent(
         return coneKotlinType.asKaType()
     }
 
+    override fun KaType.mapToJvmTypeDescriptor(): String {
+        return jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
+    }
+
+    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
     override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
         return jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
@@ -358,26 +363,9 @@ internal class KaFirJavaInteroperabilityComponent(
      */
     context(_: KaFirSession)
     private fun findJavaAccessorMethodBySyntheticProperty(psiMember: PsiMember, name: Name, scope: KaScope): KaCallableSymbol? {
-        val nameAsString = name.asString()
-        val isGetter = JvmAbi.isGetterName(nameAsString)
-        val isSetter = JvmAbi.isSetterName(nameAsString)
-        if (!isGetter && !isSetter) return null
-
-        val propertyNames = getPropertyNamesCandidatesByAccessorName(name)
-        for (propertyName in propertyNames) {
-            for (callable in scope.callables(propertyName)) {
-                val property = callable as? KaSyntheticJavaPropertySymbol ?: continue
-
-                if (isGetter && property.javaGetterSymbol.psi == psiMember) {
-                    return property.javaGetterSymbol
-                }
-                if (isSetter && property.javaSetterSymbol?.psi == psiMember) {
-                    return property.javaSetterSymbol
-                }
-            }
+        return scope.findSyntheticJavaPropertyAccessor(name) { propertySymbol, accessorKind, _ ->
+            accessorKind.getJavaAccessorSymbol(propertySymbol)?.takeIf { it.psi == psiMember }
         }
-
-        return null
     }
 
     override val KaCallableSymbol.containingJvmClassName: String?

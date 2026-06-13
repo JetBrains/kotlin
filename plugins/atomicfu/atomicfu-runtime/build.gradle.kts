@@ -7,6 +7,7 @@ plugins {
     kotlin("multiplatform")
     `maven-publish`
     id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
 }
 
 group = "org.jetbrains.kotlin"
@@ -28,10 +29,6 @@ kotlin {
             }
         }
     }
-}
-
-dependencies {
-    implicitDependenciesOnJdkVariantsOfBootstrapStdlib(project)
 }
 
 val emptyJavadocJar by tasks.registering(Jar::class) {

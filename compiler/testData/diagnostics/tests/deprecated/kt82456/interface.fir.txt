@@ -1,0 +1,102 @@
+FILE: interface.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|IW|.R|/IW.invoke*s|()
+            Q|IE1|.R|/IE1.Companion.invoke|()
+            Q|IE2|.R|/IE2.Companion.invoke|()
+            <Resolution to classifier>#()
+            <HIDDEN: /Outer.IH2.Companion.invoke is deprecated with DeprecationLevel.HIDDEN>#()
+            R|/IH3|()
+            R|/IH4|()
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public abstract interface IH1 : R|kotlin/Any| {
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH1.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public abstract interface IH2 : R|kotlin/Any| {
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH2.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public abstract interface IH3 : R|kotlin/Any| {
+            public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH3.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public abstract interface IH4 : R|kotlin/Any| {
+            @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|]) public final companion object Companion : R|kotlin/Any| {
+                private constructor(): R|Outer.IH4.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator fun invoke(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+    }
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.WARNING|]) public abstract interface IW : R|kotlin/Any| {
+        public open static operator fun invoke(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public abstract interface IE1 : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|IE1.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public abstract interface IE2 : R|kotlin/Any| {
+        @R|kotlin/Deprecated|(message = String() [evaluated = String()], level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR| [evaluated = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|]) public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|IE2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final operator fun invoke(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final fun IH3(): R|kotlin/Unit| {
+    }
+    public final fun IH4(): R|kotlin/Unit| {
+    }

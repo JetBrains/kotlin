@@ -626,6 +626,7 @@ message IrFunctionBase {
   repeated IrValueParameter regular_parameter = 6;
   optional int32 body = 7;
   //optional int32 context_receiver_parameters_count = 8;
+  optional int64 companionExtensionClass = 10;
 }
 
 message IrFunction {

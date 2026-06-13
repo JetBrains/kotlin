@@ -9,21 +9,28 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 
 internal class KotlinLoggerMessageCollectorAdapter(
     internal val kotlinLogger: KotlinLogger,
     compilerMessageRenderer: CompilerMessageRenderer,
     private val warningsAsErrors: Boolean,
-) : MessageCollector {
+) : MessageCollectorWithDiagnosticId {
 
     private val messageRenderer = compilerMessageRenderer.asMessageRenderer()
 
     override fun clear() {}
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
         val effectiveSeverity = severity.toEffectiveSeverity(warningsAsErrors)
-        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location)
+        val renderedMessage: String = messageRenderer.render(effectiveSeverity, message, location, diagnosticId)
+
+        if (renderedMessage.isBlank()) return
 
         when (effectiveSeverity) {
             CompilerMessageSeverity.EXCEPTION -> kotlinLogger.error(

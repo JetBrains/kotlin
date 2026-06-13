@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// NI_EXPECTED_FILE
 
 interface In<in E>
 open class A : In<A>

@@ -1,4 +1,6 @@
 KClass: class A : Any
+  constructors:
+    public final <T> fun `<init>`(): A<T>
   members:
     public open operator fun A<T>.equals(kotlin.Any?): kotlin.Boolean
     public final external fun A<T>.externalFun(): T
@@ -21,6 +23,8 @@ KClass: class A : Any
     public final operator fun A<T>.minus(kotlin.Any): kotlin.String
     public final operator fun A<T>.plus(kotlin.Any): T
 KClass: class C1 : JavaIntermediate, I
+  constructors:
+    public final fun `<init>`(): C1
   members:
     public open operator fun C1.equals(kotlin.Any?): kotlin.Boolean
     public final fun C1.externalFun(): kotlin.String
@@ -36,6 +40,8 @@ KClass: class C1 : JavaIntermediate, I
     public open fun C1.toString(): kotlin.String
   declaredMembers:
 KClass: class C2 : KotlinIntermediate, I
+  constructors:
+    public final fun `<init>`(): C2
   members:
     public open operator fun C2.equals(kotlin.Any?): kotlin.Boolean
     public final external fun C2.externalFun(): kotlin.String
@@ -50,6 +56,8 @@ KClass: class C2 : KotlinIntermediate, I
     public open fun C2.toString(): kotlin.String
   declaredMembers:
 KClass: class D : A, I
+  constructors:
+    public final fun `<init>`(): D
   members:
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     public final external fun D.externalFun(): kotlin.String
@@ -64,6 +72,8 @@ KClass: class D : A, I
     public open fun D.toString(): kotlin.String
   declaredMembers:
 KClass: class E1 : JavaIntermediate
+  constructors:
+    public final fun `<init>`(): E1
   members:
     public open operator fun E1.equals(kotlin.Any?): kotlin.Boolean
     public final external fun E1.externalFun(): kotlin.String!
@@ -79,6 +89,8 @@ KClass: class E1 : JavaIntermediate
     public open fun E1.toString(): kotlin.String
   declaredMembers:
 KClass: class E2 : KotlinIntermediate
+  constructors:
+    public final fun `<init>`(): E2
   members:
     public open operator fun E2.equals(kotlin.Any?): kotlin.Boolean
     public final external fun E2.externalFun(): kotlin.String
@@ -115,6 +127,8 @@ KClass: abstract interface I : Any
     public abstract operator fun I.minus(kotlin.Any): kotlin.String
     public abstract operator fun I.plus(kotlin.Any): kotlin.String
 KClass: class JavaIntermediate : A
+  constructors:
+    public final fun `<init>`(): JavaIntermediate
   members:
     public open operator fun JavaIntermediate.equals(kotlin.Any?): kotlin.Boolean
     public final external fun JavaIntermediate.externalFun(): kotlin.String!
@@ -131,6 +145,8 @@ KClass: class JavaIntermediate : A
   declaredMembers:
     public open external fun JavaIntermediate.javaNativeMethod(): kotlin.Unit
 KClass: class KotlinIntermediate : A
+  constructors:
+    public final fun `<init>`(): KotlinIntermediate
   members:
     public open operator fun KotlinIntermediate.equals(kotlin.Any?): kotlin.Boolean
     public final external fun KotlinIntermediate.externalFun(): kotlin.String

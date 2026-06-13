@@ -32,6 +32,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol primaryConstructorParameter: R|test/TopLevel.Base.Nested|
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpressionInnerClass.kt
     public final [ResolvedTo(STATUS)] class TopLevel : R|kotlin/Any| {

@@ -5,6 +5,7 @@
 
 plugins {
     kotlin("jvm")
+    id("require-explicit-types")
 }
 
 dependencies {

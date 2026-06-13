@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.getJvmAnnotationRetention
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.isOptionalAnnotationClass
 import org.jetbrains.kotlin.backend.jvm.ir.isWithFlexibleNullability
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.isCompilerInternalSyntheticAnnotation
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -67,10 +68,11 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 if (annotation.source == SourceElement.NO_SOURCE && KotlinTarget.EXPRESSION !in applicableTargets) {
                     // Leniency: Behavior before -Xindy-allow-annotated-lambdas allowed such annotations when added by plugins
                     // This leniency can be faced out in Kotlin 2.3
-                    context.report(
-                        CompilerMessageSeverity.WARNING, annotated, annotated.fileOrNull,
+                    context.diagnosticReporter.report(
+                        JvmBackendErrors.INCONSISTENT_TARGET_LIST_FOR_LAMBDA_ANNOTATION,
                         "Inconsistent target list for lambda annotation: +" +
-                                "${annotation.annotationClass.kotlinFqName} $applicableTargets on ${annotated.kotlinFqName}"
+                                "${annotation.annotationClass.kotlinFqName} $applicableTargets on ${annotated.kotlinFqName}",
+                        annotated.fileOrNull?.getCompilerMessageLocation(annotation)
                     )
                 } else {
                     assert(KotlinTarget.EXPRESSION in applicableTargets) {
@@ -167,9 +169,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         // Annotations in the internal IR package do not have real class files.
         // `EnhancedNullability` is in a real package `kotlin.jvm.internal`, but the annotation itself is fake.
         val fqName = annotationClass.fqNameWhenAvailable
-        if (fqName?.parent() == StandardClassIds.BASE_INTERNAL_IR_PACKAGE ||
-            fqName == JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-        ) return null
+        if (fqName?.isCompilerInternalSyntheticAnnotation == true) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
@@ -272,7 +272,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
             boundType: Int,
             visitor: (typeRef: Int, typePath: TypePath?, descriptor: String, visible: Boolean) -> AnnotationVisitor,
         ) {
-            for ((index, typeParameter) in typeParameterContainer.typeParameters.withIndex()) {
+            for ([index, typeParameter] in typeParameterContainer.typeParameters.withIndex()) {
                 object : AnnotationCodegen(classCodegen) {
                     override fun visitAnnotation(descr: String, visible: Boolean): AnnotationVisitor {
                         val typeReference = TypeReference.newTypeParameterReference(referenceType, index)

@@ -1,4 +1,6 @@
 KtNameReferenceExpression(69,78): 'Cloneable'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Cloneable'.>

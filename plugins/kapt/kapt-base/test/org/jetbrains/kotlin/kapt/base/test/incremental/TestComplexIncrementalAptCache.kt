@@ -27,7 +27,7 @@ class TestComplexIncrementalAptCache {
         @JvmStatic
         @BeforeAll
         fun setUp(@TempDir tmp: File) {
-            cache = JavaClassCacheManager(tmp.newCacheFolder())
+            cache = JavaClassCacheManager(tmp.newCacheFolder(), null)
             generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()

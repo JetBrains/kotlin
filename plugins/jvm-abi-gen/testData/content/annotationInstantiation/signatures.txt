@@ -9,9 +9,9 @@ public synthetic final class test/Test$annotationImpl$test_A$0 {
     enclosing class test/Test
     inner (anonymous) class test/Test$annotationImpl$test_A$0
     public method <init>(): void
-    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method equals(p0: java.lang.Object): boolean
     public final method hashCode(): int
-    public final @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public final method toString(): java.lang.String
     public synthetic final method annotationType(): java.lang.Class
 }
 @kotlin.Metadata

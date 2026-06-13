@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.library.metadataVersion
 import org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
+@K1Deprecation
 class KlibMetadataClassDataFinder(
     private val fragment: PackageFragment,
     private val nameResolver: NameResolver,

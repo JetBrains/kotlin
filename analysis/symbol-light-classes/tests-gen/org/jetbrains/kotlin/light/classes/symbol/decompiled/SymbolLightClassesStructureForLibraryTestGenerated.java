@@ -40,6 +40,12 @@ public class SymbolLightClassesStructureForLibraryTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("CompanionBlocks.kt")
+  public void testCompanionBlocks() {
+    run("CompanionBlocks.kt");
+  }
+
+  @Test
   @TestMetadata("EnumEntries.kt")
   public void testEnumEntries() {
     run("EnumEntries.kt");

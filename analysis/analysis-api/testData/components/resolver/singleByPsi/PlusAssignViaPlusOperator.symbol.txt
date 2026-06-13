@@ -1,4 +1,6 @@
 KtOperationReferenceExpression(195,197): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       test/WithOperator.plus(<dispatch receiver>: test.WithOperator, f: test.Foo): test.WithOperator

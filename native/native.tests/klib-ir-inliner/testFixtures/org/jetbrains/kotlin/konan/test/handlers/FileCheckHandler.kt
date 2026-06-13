@@ -10,84 +10,89 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.needSmallBinary
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.konan.test.klib.fileCheckDump
 import org.jetbrains.kotlin.konan.test.klib.fileCheckStage
 import org.jetbrains.kotlin.native.executors.runProcess
-import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
+import org.jetbrains.kotlin.test.TestInfrastructureException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.groupingStageInputs
+import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.GroupingStageHandler
+import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 
-class FileCheckHandler(testServices: TestServices) : NativeBinaryArtifactHandler(testServices) {
-    private var artifact: BinaryArtifacts.Native? = null
-    private var fileCheckStage: String? = null
-    private var testDataFile: File? = null
-
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
-        if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            if (artifact != null)
-                error(
-                    "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
-                            "Only one module may have no incoming dependencies"
-                )
-            artifact = info
-            fileCheckStage = module.fileCheckStage()
-            testDataFile = module.files.first().originalFile
-        }
-    }
+class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<BinaryArtifacts.Native>(
+    testServices,
+    failureDisablesNextSteps = false,
+    doNotRunIfThereWerePreviousFailures = false
+) {
+    override val artifactKind: TestArtifactKind<BinaryArtifacts.Native>
+        get() = ArtifactKinds.Native
 
     /**
      * Mimics [org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.FileCheckMatcher]
      */
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        fileCheckStage?.let { fileCheckStage ->
-            val executable = artifact?.executable ?: error("One main module is expected to be in the test.")
-            val fileCheckDump = executable.fileCheckDump(fileCheckStage)
-            val testDataFile = testDataFile ?: error("Test data file is not initialized.")
+    override fun processArtifact(artifact: BinaryArtifacts.Native) {
+        val originalModuleStructures = testServices.groupingStageInputs.map { it.testServices.moduleStructure }
+        if (originalModuleStructures.first().allDirectives[TestDirectives.FILECHECK_STAGE].isEmpty())
+            return
+        // Test-infrastructure invariant violations (not failures of the code under test): throw
+        // TestInfrastructureException so they are never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(originalModuleStructures.size == 1) {
+            "Test having FILECHECK_STAGE must be standalone: ${originalModuleStructures.first().originalTestDataFiles}"
+        }
+        val module = originalModuleStructures.single().modules.first()
+        val fileCheckStage = module.fileCheckStage()
+            ?: testInfraError("FILECHECK_STAGE directive is missing in module ${module.name}")
+        val testDataFile = module.files.first().originalFile
+        val fileCheckDump = artifact.executable.fileCheckDump(fileCheckStage)
 
-            val settings = testServices.testRunSettings
-            val prefixes = getPrefixes(settings)
-            val fileCheckExecutable = settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
-                    if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
-            require(File(fileCheckExecutable).exists()) {
-                "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
-                        "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
-            }
+        val settings = testServices.testRunSettings
+        val prefixes = getPrefixes(settings)
+        val fileCheckExecutable = settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
+                if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
+        // Test-infrastructure/environment invariant violation (not a failure of the code under test): throw
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(File(fileCheckExecutable).exists()) {
+            "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
+                    "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
+        }
 
-            val result = try {
-                runProcess(
-                    fileCheckExecutable,
-                    testDataFile.absolutePath,
-                    "--input-file",
-                    fileCheckDump.absolutePath,
-                    "--check-prefixes", prefixes,
-                    "--allow-unused-prefixes",
-                    "--allow-deprecated-dag-overlap"
-                )
-            } catch (t: Throwable) {
-                testServices.assertions.fail { "FileCheck utility failed: $t" }
-            }
+        val result = try {
+            runProcess(
+                fileCheckExecutable,
+                testDataFile.absolutePath,
+                "--input-file",
+                fileCheckDump.absolutePath,
+                "--check-prefixes", prefixes,
+                "--allow-unused-prefixes",
+                "--allow-deprecated-dag-overlap"
+            )
+        } catch (t: Throwable) {
+            testServices.assertions.fail { "FileCheck utility failed: $t" }
+        }
 
-            if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
-                val shortOutText = result.stdout.lines().take(100)
-                val shortErrText = result.stderr.lines().take(100)
+        if (!(result.stdout.isEmpty() && result.stderr.isEmpty())) {
+            val shortOutText = result.stdout.lines().take(100)
+            val shortErrText = result.stderr.lines().take(100)
 
-                testServices.assertions.fail {
-                    """
-                    FileCheck matching of ${fileCheckDump.absolutePath}
-                    with '--check-prefixes $prefixes'
-                    failed with result=$result:
-                    ${shortOutText.joinToString("\n")}
-                    ${shortErrText.joinToString("\n")}
-                    """.trimIndent()
-                }
+            testServices.assertions.fail {
+                """
+                FileCheck matching of ${fileCheckDump.absolutePath}
+                with '--check-prefixes $prefixes'
+                failed with result=$result:
+                ${shortOutText.joinToString("\n")}
+                ${shortErrText.joinToString("\n")}
+                """.trimIndent()
             }
         }
     }

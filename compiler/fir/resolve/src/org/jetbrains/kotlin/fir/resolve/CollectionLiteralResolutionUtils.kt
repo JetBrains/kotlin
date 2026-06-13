@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeCollectionLiteralAmbiguity
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.CollectionNames
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -105,6 +108,14 @@ fun CollectionLiteralBounds?.toConeDiagnostic(): ConeDiagnostic {
     }
 }
 
+context(context: ResolutionContext)
+fun buildCollectionLiteralCallForFallback(collectionLiteral: FirCollectionLiteral): FirFunctionCall {
+    val packageName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+    val functionName = CollectionNames.Factories.LIST_OF
+
+    return context.bodyResolveComponents.buildCollectionLiteralCallForStdlibType(packageName, functionName, collectionLiteral)
+}
+
 fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
     packageName: FqName,
     functionName: Name,
@@ -125,6 +136,7 @@ fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
             name = functionName
         }
         argumentList = collectionLiteral.argumentList
+        origin = FirFunctionCallOrigin.StdlibCollectionLiteral
     }
 }
 

@@ -4,10 +4,10 @@ KaReceiverParameterSymbol:
       psi: KtAnnotationEntry
   ]
   callableId: null
-  compilerVisibility: Public
   contextReceivers: []
   isActual: false
   isCompanion: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -29,5 +29,5 @@ KaReceiverParameterSymbol:
   getContainingFileSymbol: KaFileSymbol(functionReceiverParameter.kt)
   getContainingJvmClassName: FunctionReceiverParameterKt
   getContainingModule: KaSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecation: null
   importableFqName: null

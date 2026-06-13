@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
 @KaImplementationDetail
-class KaBaseEmptyScope(override val token: KaLifetimeToken) : KaScope {
+class KaBaseEmptyScope(override val token: KaLifetimeToken) : KaBaseScope() {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         return emptySet()
     }
@@ -28,6 +27,14 @@ class KaBaseEmptyScope(override val token: KaLifetimeToken) : KaScope {
 
     override val declarations: Sequence<KaDeclarationSymbol>
         get() = withValidityAssertion { emptySequence() }
+
+    override fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        return emptySequence()
+    }
+
+    override fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
+        return emptySequence()
+    }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
         return emptySequence()

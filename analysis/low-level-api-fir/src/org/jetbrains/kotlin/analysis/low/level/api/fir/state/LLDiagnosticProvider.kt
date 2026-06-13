@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
+@KaImplementationDetail
 interface LLDiagnosticProvider {
     /**
      * Returns all compiler diagnostics for the [file], matching the [filter].

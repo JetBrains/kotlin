@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 const val DYNAMIC_TYPE_DESERIALIZER_ID = "kotlin.DynamicType"

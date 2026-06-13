@@ -47,6 +47,7 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 14
         Scope: FirLocalScope
+Expression Stability: STABLE_VALUE
 
 FILE: [ResolvedTo(IMPORTS)] insideClassMember.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-insideClassMember.kts>

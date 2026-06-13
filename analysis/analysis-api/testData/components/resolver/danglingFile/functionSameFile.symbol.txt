@@ -1,0 +1,8 @@
+KtNameReferenceExpression(31,34): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /foo(): kotlin.Unit
+    ]
+  additional: [fake.kt]

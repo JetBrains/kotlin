@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtVirtualFileSourceFile
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -76,7 +75,6 @@ open class VfsBasedProjectEnvironment(
     @OptIn(SessionConfiguration::class)
     override fun registerAsJavaElementFinder(firSession: FirSession) {
         val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
-        psiFinderExtensionPoint.unregisterFinders<JavaElementFinder>()
         psiFinderExtensionPoint.unregisterFinders<FirJavaElementFinder>()
 
         val firJavaElementFinder = FirJavaElementFinder(firSession, project)

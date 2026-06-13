@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.CheckContextArguments
@@ -88,7 +89,9 @@ class Candidate(
     }
 
     override val errors: List<ConstraintSystemError>
-        get() = system.errors
+        // In delegate inference, errors are collected into a separate `parentConstraintSystem` and are
+        // then written into the `candidate.diagnostics`, not the original CS.
+        get() = system.errors + diagnostics.filterIsInstance<InferenceError>().map { it.constraintError }
 
     /**
      * Substitutor from declared type parameters to type variables created for that candidate
@@ -211,7 +214,7 @@ class Candidate(
         val remainingArguments = arguments.subList(newArgumentPrefix.size, arguments.size)
 
         val newArgumentMapping = LinkedHashMap<ConeResolutionAtom, FirValueParameter>()
-        for ((oldArgument, newArgument) in arguments.zip(newArgumentPrefix)) {
+        for ([oldArgument, newArgument] in arguments.zip(newArgumentPrefix)) {
             newArgumentMapping[newArgument] = argumentMapping.getValue(oldArgument)
         }
 
@@ -305,7 +308,7 @@ class Candidate(
      * as it contains conditions that rely on subtle differences between the implementation of this property and
      * [org.jetbrains.kotlin.resolve.calls.tower.isSuccess].
      */
-    val isSuccessful: Boolean
+    override val isSuccessful: Boolean
         get() = diagnostics.allSuccessful && (!systemInitialized || !system.hasContradiction)
 
     // ---------------------------------------- Receivers ----------------------------------------
@@ -419,6 +422,6 @@ class Candidate(
     override fun toString(): String {
         val okOrFail = if (isSuccessful) "OK" else "FAIL"
         val step = "$passedStages/${callInfo.callKind.resolutionSequence.size}"
-        return "$okOrFail($step): $symbol"
+        return "$okOrFail($step): ${FirRenderer.forReadability().renderElementAsString(symbol.fir)}"
     }
 }

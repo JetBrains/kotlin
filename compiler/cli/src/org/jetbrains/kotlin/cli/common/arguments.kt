@@ -55,25 +55,20 @@ fun CompilerConfiguration.setupCommonArguments(
     } ?: IrVerificationMode.NONE
     put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
 
-    if (arguments.verifyIrVisibility) {
-        put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
-                "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
-            )
-        }
+    if (arguments.disableIrCheckers.isNotEmpty() && irVerificationMode == IrVerificationMode.NONE) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xdisable-ir-checkers' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+        )
     }
-
-    if (arguments.verifyIrNestedOffsets) {
-        put(CommonConfigurationKeys.ENABLE_IR_NESTED_OFFSETS_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
-            this.report(
-                COMPILER_ARGUMENTS_WARNING,
-                "'-Xverify-ir-nested-offsets' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
-            )
-        }
+    put(CommonConfigurationKeys.DISABLE_IR_CHECKERS, arguments.disableIrCheckers.toList())
+    if (arguments.enableAdditionalIrCheckers.isNotEmpty() && irVerificationMode == IrVerificationMode.NONE) {
+        this.report(
+            COMPILER_ARGUMENTS_WARNING,
+            "'-Xadditional-ir-checkers' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
+        )
     }
+    put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, arguments.enableAdditionalIrCheckers.toList())
 
     @Suppress("DEPRECATION")
     if (arguments.useFirExperimentalCheckers) {
@@ -155,7 +150,7 @@ fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompiler
 private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompilerArguments) {
     val languageVersion = languageVersionSettings.languageVersion
 
-    propertiesLoop@ for ((explicitArgument, values) in arguments.explicitArguments) {
+    propertiesLoop@ for ([explicitArgument, values] in arguments.explicitArguments) {
         if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
         val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
 
@@ -174,14 +169,26 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         explicitArgument.enablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
         }
-        explicitArgument.disablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+
+        val renderedArgument = if (effectivePropertyValue is String) {
+            "${explicitArgument.argument.value}=$effectivePropertyValue"
+        } else {
+            explicitArgument.argument.value
         }
 
-        val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
+        explicitArgument.disablesAnnotations.forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) {
+                this.report(
+                    CliDiagnostics.CLI_ARG_DISABLES_STABLE_FEATURE,
+                    "The argument '$renderedArgument' disables a stable language feature for the current language version $languageVersion. Future support for this mode is not guaranteed.",
+                )
+                continue@propertiesLoop
+            }
+        }
+
         this.report(
             CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            "The argument '$renderedArgument' is redundant for the current language version $languageVersion.",
         )
     }
 }
@@ -209,7 +216,7 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
-    for ((key, values) in arguments.explicitArguments) {
+    for ([key, values] in arguments.explicitArguments) {
         if (values.size <= 1 || values.distinct().size == 1) continue
 
         val argName = key.argument.value
@@ -228,7 +235,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
             "Advanced option value is passed in an obsolete form. Please use the '=' character to specify the value: $argument=..."
         )
     }
-    for ((deprecatedName, newName) in errors.deprecatedArguments) {
+    for ([deprecatedName, newName] in errors.deprecatedArguments) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Argument $deprecatedName is deprecated. Please use $newName instead")
     }
     for (argfileError in errors.argfileErrors) {
@@ -237,7 +244,7 @@ fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments)
 
     reportUnsafeInternalArgumentsIfAny(arguments)
 
-    for ((severity, internalArgumentsProblem) in errors.internalArgumentsParsingProblems) {
+    for ([severity, internalArgumentsProblem] in errors.internalArgumentsParsingProblems) {
         report(severity, internalArgumentsProblem)
     }
 }
@@ -270,6 +277,7 @@ private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines
 private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
 private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
 private val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
+private val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
@@ -320,7 +328,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         }
     }
 
-    var modules = sourcesByFragmentName.map { (fragmentName, sources) -> HmppCliModule(fragmentName, sources) }
+    var modules = sourcesByFragmentName.map { [fragmentName, sources] -> HmppCliModule(fragmentName, sources) }
 
     var wasError = false
     // check sources mapping
@@ -364,7 +372,13 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
-        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
+        return HmppCliModuleStructure(
+            modules,
+            sourceDependencies = emptyMap(),
+            moduleDependencies = emptyMap(),
+            friendDependencies = emptyMap(),
+            incrementalDependencies = emptyMap(),
+        )
     }
 
     val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
@@ -421,6 +435,9 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
+    if (arguments.fragmentIncrementalClasspath.isNotEmpty() && arguments.incrementalCompilation != true) {
+        reportError("$FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME flag could be used only with ${CommonCompilerArguments::incrementalCompilation.cliArgument}")
+    }
 
     fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {
         return buildMap {
@@ -433,7 +450,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                     )
                     continue
                 }
-                val (moduleName, dependency) = splitArg
+                val [moduleName, dependency] = splitArg
                 val module = moduleByName[moduleName] ?: run {
                     reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
                     continue
@@ -446,6 +463,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
     val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
+    val incrementalDependencies = buildFragmentDependencyMap(arguments.fragmentIncrementalClasspath, FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME)
 
-    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies, incrementalDependencies)
 }

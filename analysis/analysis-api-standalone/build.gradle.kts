@@ -10,6 +10,10 @@ plugins {
 
 dependencies {
     implementation(intellijCore())
+    implementation(project(":core:descriptors.jvm"))
+    implementation(project(":core:language.targets.jvm"))
+    implementation(project(":compiler:config.jvm"))
+    implementation(project(":compiler:psi:parser"))
     implementation(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))

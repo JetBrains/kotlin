@@ -213,7 +213,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             }
 
             // Will be handled by [FirDelegatedPropertyChecker]
-            if (source?.kind == KtFakeSourceElementKind.DelegatedPropertyAccessor &&
+            if (source?.kind is KtFakeSourceElementKind.DelegatedPropertyAccessor &&
                 (diagnostic is ConeUnresolvedNameError || diagnostic is ConeAmbiguityError || diagnostic is ConeInapplicableWrongReceiver || diagnostic is ConeInapplicableCandidateError)
             ) {
                 return
@@ -225,7 +225,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             }
 
             // Prefix inc/dec on array access will have two calls to .get(...), don't report for the second one.
-            if (source?.kind is KtFakeSourceElementKind.DesugaredPrefixSecondGetReference) {
+            if ((source?.kind as? KtFakeSourceElementKind.DesugaredIncrementOrDecrement)?.isSecondGetReference == true) {
                 return
             }
 

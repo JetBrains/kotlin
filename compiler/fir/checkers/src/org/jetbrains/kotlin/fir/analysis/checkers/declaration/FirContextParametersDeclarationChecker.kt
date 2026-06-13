@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.resolve.allowedInContextParameters
@@ -35,7 +34,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         val contextListSources = when (declaration) {
             is FirFile -> declaration.packageDirective.source
             else -> declaration.source
-        }?.findContextReceiverListSources().orEmpty().ifEmpty { return }
+        }?.findContextParameterListSources().orEmpty().ifEmpty { return }
 
         val source = contextListSources.first()
 
@@ -86,24 +85,6 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             return
         }
 
-        if (contextReceiversEnabled) {
-            if (checkSubTypes(contextParameters.map { it.returnTypeRef.coneType })) {
-                reporter.reportOn(
-                    source,
-                    FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS
-                )
-            }
-            for (parameter in contextParameters) {
-                if (!parameter.isLegacyContextReceiver()) {
-                    reporter.reportOn(
-                        parameter.source,
-                        FirErrors.UNSUPPORTED_FEATURE,
-                        LanguageFeature.ContextParameters to context.languageVersionSettings
-                    )
-                }
-            }
-        }
-
         if (contextParametersEnabled) {
             for (parameter in contextParameters) {
                 if (parameter.isLegacyContextReceiver()) {
@@ -133,7 +114,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 
-    private fun KtSourceElement.findContextReceiverListSources(): List<KtSourceElement> {
+    private fun KtSourceElement.findContextParameterListSources(): List<KtSourceElement> {
         return when (this) {
             is KtPsiSourceElement ->
                 psi.getChildOfType<KtModifierList>()?.contextParameterLists?.map { it.toKtPsiSourceElement() }.orEmpty()
@@ -143,42 +124,6 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
                     ?.map { it.toKtLightSourceElement(treeStructure) }
                     .orEmpty()
         }
-    }
-
-    context(context: CheckerContext)
-            /**
-             * Simplified checking of subtype relation used in context receiver checkers.
-             * It converts type parameters to star projections and top level type parameters to its supertypes. Then it checks the relation.
-             */
-    fun checkSubTypes(types: List<ConeKotlinType>): Boolean {
-        fun replaceTypeParametersByStarProjections(type: ConeClassLikeType): ConeClassLikeType {
-            return type.withArguments(type.typeArguments.map {
-                when (val type = it.type) {
-                    null -> it // isStarProjection
-                    is ConeTypeParameterType -> ConeStarProjection
-                    is ConeClassLikeType -> replaceTypeParametersByStarProjections(type)
-                    else -> it
-                }
-            }.toTypedArray())
-        }
-
-        val replacedTypeParameters = types.flatMap { r ->
-            when (r) {
-                is ConeTypeParameterType -> r.lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
-                is ConeClassLikeType -> listOf(replaceTypeParametersByStarProjections(r))
-                else -> listOf(r)
-            }
-        }
-
-        for (i in replacedTypeParameters.indices)
-            for (j in i + 1..<replacedTypeParameters.size) {
-                if (replacedTypeParameters[i].isSubtypeOf(replacedTypeParameters[j], context.session)
-                    || replacedTypeParameters[j].isSubtypeOf(replacedTypeParameters[i], context.session)
-                )
-                    return true
-            }
-
-        return false
     }
 }
 

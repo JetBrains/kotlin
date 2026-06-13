@@ -19,7 +19,7 @@ class KlibIcData(incrementalData: IncrementalDataProvider) : KlibMetadataCompone
         incrementalData
             .compiledPackageParts
             .toSortedMap() // This is so that IC is more deterministic
-            .forEach { (file, translationResultValue) ->
+            .forEach { [file, translationResultValue] ->
                 val proto = parsePackageFragment(translationResultValue.metadata)
                 val fqName = proto.getExtension(KlibMetadataProtoBuf.fqName)
                 val key = file.path

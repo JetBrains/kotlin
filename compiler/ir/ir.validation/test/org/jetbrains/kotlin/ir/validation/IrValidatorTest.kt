@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.ir.validation
 
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl.Message
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.IrVerificationMode
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.TestIrBuiltins
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticWithoutSource
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -51,7 +52,8 @@ import org.junit.jupiter.api.assertThrows
 
 class IrValidatorTest {
 
-    private lateinit var messageCollector: MessageCollectorImpl
+    private lateinit var diagnosticReporter: BaseDiagnosticsCollector
+    private lateinit var irDiagnosticReporter: IrDiagnosticReporter
     private lateinit var module: IrModuleFragment
     private val defaultValidationConfig = IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
         .withAllChecks()
@@ -59,7 +61,11 @@ class IrValidatorTest {
 
     @BeforeEach
     fun setUp() {
-        messageCollector = MessageCollectorImpl()
+        diagnosticReporter = DiagnosticsCollectorImpl()
+        irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+            diagnosticReporter,
+            LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+        )
 
         val moduleDescriptor = ModuleDescriptorImpl(
             Name.special("<testModule>"),
@@ -101,6 +107,7 @@ class IrValidatorTest {
         body.statements.add(functionCall)
         function2.body = body
         val file = createIrFile()
+        file.addChild(function1)
         file.addChild(function2)
         return file
     }
@@ -160,10 +167,9 @@ class IrValidatorTest {
     }
 
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
+        block()
         if (mode == IrVerificationMode.ERROR) {
-            assertThrows<IrValidationException>(executable = block)
-        } else {
-            block()
+            assert(irDiagnosticReporter.hasErrors)
         }
     }
 
@@ -179,13 +185,21 @@ class IrValidatorTest {
                     tree,
                     TestIrBuiltins,
                     config,
-                    messageCollector,
+                    irDiagnosticReporter,
                     mode,
                     phaseName = "IrValidatorTest",
                 )
             }
         } finally {
-            assertEquals(expectedMessages, messageCollector.messages)
+            assertEquals(
+                expectedMessages,
+                diagnosticReporter.diagnostics.map {
+                    Message(
+                        it.severity.toCompilerMessageSeverity(),
+                        it.renderMessage(),
+                        (it as KtDiagnosticWithoutSource).location
+                    )
+                })
         }
     }
 
@@ -209,7 +223,7 @@ class IrValidatorTest {
                     $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -243,21 +257,6 @@ class IrValidatorTest {
     }
 
     @Test
-    fun `sanity check for IrValidatorTest, whether IrVerificationException is really thrown if IrVerificationMode is ERROR`() {
-        val exception = assertThrows<AssertionError> {
-            testValidation(
-                IrVerificationMode.ERROR,
-                buildValidIrTree(),
-                emptyList(),
-            )
-        }
-        assertEquals(
-            "Expected org.jetbrains.kotlin.ir.validation.IrValidationException to be thrown, but nothing was thrown.",
-            exception.message
-        )
-    }
-
-    @Test
     fun `sanity check for IrValidatorTest, whether message is really verified, when IrValidationException is really thrown if IrVerificationMode is ERROR`() {
         val exception = assertThrows<AssertionError> {
             testValidation(
@@ -278,7 +277,7 @@ class IrValidatorTest {
             $$"""
             expected: <[error: IT'S THE INTENTIONALLY WRONG MESSAGE TO VERIFY THE ASSERTION ERROR WOULD HAPPEN]> but was: <[error: [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
             STRING_CONCATENATION type=kotlin.Any
-              inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+              inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                 inside BLOCK_BODY
                   inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                     inside FILE fqName:org.sample fileName:test.kt]>
@@ -298,7 +297,7 @@ class IrValidatorTest {
                     $$"""
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
                           inside FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Any
                             inside FILE fqName:org.sample fileName:test.kt
@@ -1009,7 +1008,7 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
-                    FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer>
+                    FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
                       inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
                         inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
                           inside FILE fqName:org.sample fileName:test.kt
@@ -1021,9 +1020,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: The following element references a type parameter 'TYPE_PARAMETER name:T index:0 variance: superTypes:[] reified:false' that is not available in the current scope.
                     GET_VAR '<this>: org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer' type=org.sample.Outer<T of org.sample.Outer> origin=null
-                      inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer.Nested'
+                      inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> [companion] declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
-                          inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer>
+                          inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
                             inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
                               inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
                                 inside FILE fqName:org.sample fileName:test.kt
@@ -1035,9 +1034,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: The following expression references a value that is not available in the current scope.
                     GET_VAR '<this>: org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer' type=org.sample.Outer<T of org.sample.Outer> origin=null
-                      inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> declared in org.sample.Outer.Nested'
+                      inside RETURN type=kotlin.Nothing from='public final fun nestedClassMethod (): org.sample.Outer<T of org.sample.Outer> [companion] declared in org.sample.Outer.Nested'
                         inside BLOCK_BODY
-                          inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer>
+                          inside FUN name:nestedClassMethod visibility:public modality:FINAL <> () returnType:org.sample.Outer<T of org.sample.Outer> [companion]
                             inside CLASS CLASS name:Nested modality:FINAL visibility:public superTypes:[]
                               inside CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[]
                                 inside FILE fqName:org.sample fileName:test.kt
@@ -1917,8 +1916,8 @@ class IrValidatorTest {
                 Message(
                     WARNING,
                     """
-                    [IR VALIDATION] IrValidatorTest: Overrides private declaration FUN name:foo visibility:private modality:FINAL <> () returnType:kotlin.Unit
-                    FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                    [IR VALIDATION] IrValidatorTest: Overrides private declaration FUN name:foo visibility:private modality:FINAL <> () returnType:kotlin.Unit [companion]
+                    FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit [companion]
                       inside CLASS CLASS name:MySubclass modality:FINAL visibility:public superTypes:[org.sample.MyClass]
                         inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),

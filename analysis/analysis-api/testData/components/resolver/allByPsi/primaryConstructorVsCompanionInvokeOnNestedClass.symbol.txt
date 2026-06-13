@@ -1,0 +1,462 @@
+KtFile: 'primaryConstructorVsCompanionInvokeOnNestedClass.kt'
+  null
+
+KtPackageDirective(0,19): 'package com.example'
+  null
+
+KtDotQualifiedExpression(8,19): 'com.example'
+  null
+
+KtNameReferenceExpression(8,11): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(12,19): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtImportList(21,50): 'import com.example.Foo.Nested'
+  null
+
+KtImportDirective(21,50): 'import com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(28,50): 'com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(28,43): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(28,39): 'com.example'
+  null
+
+KtNameReferenceExpression(28,31): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(32,39): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtNameReferenceExpression(40,43): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtNameReferenceExpression(44,50): 'Nested'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested
+    ]
+
+KtClass(52,204): 'class Foo {'
+  null
+
+KtClassBody(62,204): '{'
+  null
+
+KtClass(67,202): 'class Nested(s: String) {'
+  null
+
+KtPrimaryConstructor(79,90): '(s: String)'
+  null
+
+KtParameterList(79,90): '(s: String)'
+  null
+
+KtParameter(80,89): 's: String'
+  null
+
+KtTypeReference(83,89): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtUserType(83,89): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(83,89): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtClassBody(91,202): '{'
+  null
+
+KtObjectDeclaration(99,197): 'companion object {'
+  null
+
+KtDeclarationModifierList(99,108): 'companion'
+  null
+
+KtClassBody(116,197): '{'
+  null
+
+KtNamedFunction(127,189): 'operator fun invoke(param: Int) = Nested("str") // constructor'
+  null
+
+KtDeclarationModifierList(127,135): 'operator'
+  null
+
+KtParameterList(146,158): '(param: Int)'
+  null
+
+KtParameter(147,157): 'param: Int'
+  null
+
+KtTypeReference(154,157): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtUserType(154,157): 'Int'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtNameReferenceExpression(154,157): 'Int'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
+
+KtCallExpression(161,174): 'Nested("str")'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(s: kotlin.String): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(161,167): 'Nested'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested
+    ]
+
+KtValueArgumentList(167,174): '("str")'
+  null
+
+KtValueArgument(168,173): '"str"'
+  null
+
+KtStringTemplateExpression(168,173): '"str"'
+  null
+
+KtLiteralStringTemplateEntry(169,172): 'str'
+  null
+
+KtNamedFunction(206,369): 'fun main() {'
+  null
+
+KtParameterList(214,216): '()'
+  null
+
+KtBlockExpression(217,369): '{'
+  null
+
+KtCallExpression(222,231): 'Nested(1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(222,228): 'Nested'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(228,231): '(1)'
+  null
+
+KtValueArgument(229,230): '1'
+  null
+
+KtConstantExpression(229,230): '1'
+  null
+
+KtDotQualifiedExpression(235,248): 'Foo.Nested(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(235,238): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtCallExpression(239,248): 'Nested(2)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(239,245): 'Nested'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(245,248): '(2)'
+  null
+
+KtValueArgument(246,247): '2'
+  null
+
+KtConstantExpression(246,247): '2'
+  null
+
+KtDotQualifiedExpression(252,277): 'com.example.Foo.Nested(3)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtDotQualifiedExpression(252,267): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(252,263): 'com.example'
+  null
+
+KtNameReferenceExpression(252,255): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(256,263): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtNameReferenceExpression(264,267): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtCallExpression(268,277): 'Nested(3)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(268,274): 'Nested'
+  isImplicitReferenceToCompanion: true
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(274,277): '(3)'
+  null
+
+KtValueArgument(275,276): '3'
+  null
+
+KtConstantExpression(275,276): '3'
+  null
+
+KtDotQualifiedExpression(282,301): 'Nested.Companion(4)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(282,288): 'Nested'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested
+    ]
+
+KtCallExpression(289,301): 'Companion(4)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(289,298): 'Companion'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(298,301): '(4)'
+  null
+
+KtValueArgument(299,300): '4'
+  null
+
+KtConstantExpression(299,300): '4'
+  null
+
+KtDotQualifiedExpression(305,328): 'Foo.Nested.Companion(5)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtDotQualifiedExpression(305,315): 'Foo.Nested'
+  null
+
+KtNameReferenceExpression(305,308): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtNameReferenceExpression(309,315): 'Nested'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested
+    ]
+
+KtCallExpression(316,328): 'Companion(5)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(316,325): 'Companion'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(325,328): '(5)'
+  null
+
+KtValueArgument(326,327): '5'
+  null
+
+KtConstantExpression(326,327): '5'
+  null
+
+KtDotQualifiedExpression(332,367): 'com.example.Foo.Nested.Companion(6)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtDotQualifiedExpression(332,354): 'com.example.Foo.Nested'
+  null
+
+KtDotQualifiedExpression(332,347): 'com.example.Foo'
+  null
+
+KtDotQualifiedExpression(332,343): 'com.example'
+  null
+
+KtNameReferenceExpression(332,335): 'com'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com
+    ]
+
+KtNameReferenceExpression(336,343): 'example'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com.example
+    ]
+
+KtNameReferenceExpression(344,347): 'Foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo
+    ]
+
+KtNameReferenceExpression(348,354): 'Nested'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested
+    ]
+
+KtCallExpression(355,367): 'Companion(6)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion.invoke(<dispatch receiver>: com.example.Foo.Nested.Companion, param: kotlin.Int): com.example.Foo.Nested
+    ]
+
+KtNameReferenceExpression(355,364): 'Companion'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      com/example/Foo.Nested.Companion
+    ]
+
+KtValueArgumentList(364,367): '(6)'
+  null
+
+KtValueArgument(365,366): '6'
+  null
+
+KtConstantExpression(365,366): '6'
+  null

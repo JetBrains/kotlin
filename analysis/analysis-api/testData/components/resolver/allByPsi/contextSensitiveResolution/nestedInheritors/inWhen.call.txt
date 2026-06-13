@@ -65,7 +65,22 @@ KtUserType(130,137): 'MyClass'
   null
 
 KtNameReferenceExpression(130,137): 'MyClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass
+        symbol = <constructor>(): MyClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(137,139): '()'
   null
@@ -686,7 +701,22 @@ KtUserType(791,801): 'OtherClass'
   null
 
 KtNameReferenceExpression(791,801): 'OtherClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OtherClass
+        symbol = <constructor>(): OtherClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(801,803): '()'
   null
@@ -740,7 +770,22 @@ KtUserType(819,823): 'Base'
   null
 
 KtNameReferenceExpression(819,823): 'Base'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OtherClass.Base
+        symbol = <constructor>(): OtherClass.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(823,825): '()'
   null
@@ -794,7 +839,22 @@ KtUserType(840,844): 'Base'
   null
 
 KtNameReferenceExpression(840,844): 'Base'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OtherClass.Base
+        symbol = <constructor>(): OtherClass.Base
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(844,846): '()'
   null
@@ -848,7 +908,22 @@ KtUserType(863,873): 'OtherClass'
   null
 
 KtNameReferenceExpression(863,873): 'OtherClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OtherClass
+        symbol = <constructor>(): OtherClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(873,875): '()'
   null
@@ -1170,7 +1245,22 @@ KtUserType(1206,1215): 'OpenClass'
   null
 
 KtNameReferenceExpression(1206,1215): 'OpenClass'
-  null
+  KaCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass
+        symbol = <constructor>(): OpenClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
 
 KtValueArgumentList(1215,1217): '()'
   null

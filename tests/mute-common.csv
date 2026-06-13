@@ -3,4 +3,15 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,KT-82305,
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlin.analysis.low.level.api.fir.ContextCollectorSourceTestGenerated.SmartCasts.testCollectionLiteralWithLambda,KTI-3169,FLAKY
-
+org.jetbrains.kotlin.gradle.mpp.smoke.ExpectActualIncrementalCompilationK2IT.testRecompilationOfActualFun[Gradle 9.5.1: File with actual declaration needs recompiling],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithMonotonousExpansionAvoidingInfiniteLoop[Gradle 9.5.1: Inline cycle with monotonous expansion - avoiding infinite loop],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithoutMonotonousExpansion[Gradle 9.5.1: Inline cycle without monotonous expansion],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsJvmIT.testBaselineForCommonSourceSetIC[Gradle 9.5.1: Baseline - compilation failure without hotfix],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.smoke.ExpectActualIncrementalCompilationK2IT.testRecompilationOfActualFun[Gradle 7.6.3: File with actual declaration needs recompiling],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithMonotonousExpansionAvoidingInfiniteLoop[Gradle 7.6.3: Inline cycle with monotonous expansion - avoiding infinite loop],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.KmpIncrementalCompilationSetExpansionIT.testInlineCycleWithoutMonotonousExpansion[Gradle 7.6.3: Inline cycle without monotonous expansion],KTI-3321,STABLE
+org.jetbrains.kotlin.gradle.mpp.CommonCodeWithPlatformSymbolsJvmIT.testBaselineForCommonSourceSetIC[Gradle 7.6.3: Baseline - compilation failure without hotfix],KTI-3321,STABLE
+org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportCoroutinesExecutionTestGenerated.testCoroutines,KT-86780,FLAKY
+org.jetbrains.kotlin.swiftexport.standalone.test.EmbeddableSwiftExportCoroutinesExecutionTestGenerated.testCoroutines,KT-86780,FLAKY
+org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportCoroutinesExecutionTestGenerated.testClosures,KT-86780,FLAKY
+org.jetbrains.kotlin.swiftexport.standalone.test.EmbeddableSwiftExportCoroutinesExecutionTestGenerated.testClosures,KT-86780,FLAKY

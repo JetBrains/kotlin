@@ -1,0 +1,62 @@
+FILE: typeVariableInvariantReturnTypeFeatureEnabled.kt
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|T|): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+    }
+    public final fun <T> R|Inv<out T>|.debounce(timeoutMillis: R|(T) -> kotlin/Int|): R|Inv<T>| {
+        ^debounce R|kotlin/TODO|()
+    }
+    @R|kotlin/jvm/JvmName|(name = String(debounceDuration) [evaluated = String(debounceDuration)]) public final fun <T> R|Inv<out T>|.debounce(timeout: R|(T) -> kotlin/String|): R|Inv<T>| {
+        ^debounce R|kotlin/TODO|()
+    }
+    public final fun foo1(x: R|Inv<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun foo2(x: R|Inv<kotlin/Any>|): R|kotlin/Unit| {
+    }
+    public final fun foo3(x: R|Inv<kotlin/Any>|): R|kotlin/Unit| {
+    }
+    public final fun foo3(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun test(x: R|Inv<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(0)
+        }
+        ).R|SubstitutionOverride</Inv.x: R|kotlin/Int|>|.R|kotlin/Int.div|(Int(1))
+        lval y0: R|Inv<kotlin/Int>| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(1)
+        }
+        )
+        lval y1: R|Inv<kotlin/Int>| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(2)
+        }
+        )
+        lval y2: R|Inv<kotlin/Any>| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(3)
+        }
+        )
+        lval y3: R|Inv<*>| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(4)
+        }
+        )
+        lval y4: R|kotlin/Any| = R|<local>/x|.R|/debounce|<R|kotlin/Int|>(<L> = debounce@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(5)
+        }
+        )
+        R|/foo1|(R|<local>/x|.<Ambiguity: debounce, [/debounce, /debounce]>#(<L> = debounce@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(6)
+        }
+        ))
+        R|/foo2|(R|<local>/x|.<Ambiguity: debounce, [/debounce, /debounce]>#(<L> = debounce@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(7)
+        }
+        ))
+        R|/foo3|(R|<local>/x|.<Ambiguity: debounce, [/debounce, /debounce]>#(<L> = debounce@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(8)
+        }
+        ))
+    }

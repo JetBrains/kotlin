@@ -19,7 +19,9 @@ import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
+import kotlin.collections.Set
 import kotlin.collections.emptyList
+import kotlin.collections.emptySet
 import kotlin.collections.joinToString
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_ASSERTIONS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_BACKEND_THREADS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_BUILD_FILE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMMON_FRAGMENTS_METADATA_DESTINATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMPILE_BUILTINS_AS_PART_OF_STDLIB
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_COMPILE_JAVA
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.JvmCompilerArgumentsImpl.Companion.X_DEBUG
@@ -129,14 +132,15 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArgumentsAllErrors
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal class JvmCompilerArgumentsImpl(
   private val adapter: JvmCompilerArgumentValueAdapter? = null,
+  argumentValidationErrors: Set<String> = emptySet(),
   restrictedArgViolations: List<RestrictedArgViolation> = emptyList(),
-) : CommonCompilerArgumentsImpl(adapter, restrictedArgViolations),
+) : CommonCompilerArgumentsImpl(adapter, argumentValidationErrors, restrictedArgViolations),
     JvmCompilerArguments,
     JvmCompilerArguments.Builder,
     DeepCopyable<JvmCompilerArgumentsImpl> {
@@ -144,6 +148,15 @@ internal class JvmCompilerArgumentsImpl(
   init {
     applyCompilerArguments(K2JVMCompilerArguments())
   }
+
+  @Suppress("UNCHECKED_CAST")
+  public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
+
+  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
+    optionsMap[key.id] = `value`
+  }
+
+  public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   @UseFromImplModuleRestricted
@@ -166,21 +179,13 @@ internal class JvmCompilerArgumentsImpl(
   )
   override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
 
-  @Suppress("UNCHECKED_CAST")
-  public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
+  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter, argumentValidationErrors.toSet(), restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
 
-  private operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V) {
-    optionsMap[key.id] = `value`
-  }
-
-  public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
-
-  override fun deepCopy(): JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(adapter, restrictedArgViolations.toList()).also { newArgs -> newArgs.applyCompilerArguments(toCompilerArguments()) }
-
-  override fun build(): JvmCompilerArguments = deepCopy()
+  override fun build(): JvmCompilerArgumentsImpl = deepCopy()
 
   @Suppress("DEPRECATION")
-  public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
+  public fun toCompilerArguments(): K2JVMCompilerArguments {
+    val arguments = K2JVMCompilerArguments()
     super.toCompilerArguments(arguments)
     val unknownArgs = optionsMap.keys.filter { it !in knownArguments }
     if (unknownArgs.isNotEmpty()) {
@@ -194,6 +199,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BACKEND_THREADS in this) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
+    if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
     try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20 and removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
@@ -266,20 +272,22 @@ internal class JvmCompilerArgumentsImpl(
     if (X_NULLABILITY_ANNOTATIONS in this) { arguments.applyNullabilityAnnotations(get(X_NULLABILITY_ANNOTATIONS))}
     if (X_JSR305 in this) { arguments.applyJsr305(get(X_JSR305))}
     arguments.internalArguments = parseCommandLineArguments<K2JVMCompilerArguments>(internalArguments.toList()).internalArguments
+    populateExplicitArguments(arguments)
     return arguments
   }
 
   @Suppress("DEPRECATION")
-  public fun applyCompilerArguments(arguments: K2JVMCompilerArguments) {
+  protected fun applyCompilerArguments(arguments: K2JVMCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_ABI_STABILITY] = arguments.abiStability?.let { AbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_ABI_STABILITY] = arguments.abiStability?.let { AbiStabilityMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::abiStability, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xabi-stability value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_ADD_MODULES] = arguments.additionalJavaModules.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_NO_SOURCE_FILES] = arguments.allowNoSourceFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_ALLOW_UNSTABLE_DEPENDENCIES] = arguments.allowUnstableDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_ANNOTATIONS_IN_METADATA] = arguments.annotationsInMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_ASSERTIONS] = arguments.assertionsMode?.let { AssertionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::assertionsMode, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xassertions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_BUILD_FILE] = arguments.buildFile } catch (_: NoSuchMethodError) {  }
+    try { this[X_COMMON_FRAGMENTS_METADATA_DESTINATION] = arguments.commonFragmentsMetadataDestination } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = arguments.getUsingReflection("expectBuiltinsAsPartOfStdlib") } catch (_: NoSuchMethodError) {  }
     try { this[X_COMPILE_JAVA] = arguments.getUsingReflection("compileJava") } catch (_: NoSuchMethodError) {  }
     try { this[X_DEBUG] = arguments.enableDebugMode } catch (_: NoSuchMethodError) {  }
@@ -297,13 +305,13 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_JAVA_PACKAGE_PREFIX] = arguments.javaPackagePrefix } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVA_SOURCE_ROOTS] = arguments.javaSourceRoots.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_JAVAC_ARGUMENTS] = arguments.getUsingReflection("javacArguments") } catch (_: NoSuchMethodError) {  }
-    try { this[X_JDK_RELEASE] = arguments.jdkRelease?.let { JdkRelease.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_JSPECIFY_ANNOTATIONS] = arguments.jspecifyAnnotations?.let { JspecifyAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_JDK_RELEASE] = arguments.jdkRelease?.let { JdkRelease.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jdkRelease, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjdk-release value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JSPECIFY_ANNOTATIONS] = arguments.jspecifyAnnotations?.let { JspecifyAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jspecifyAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xjspecify-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_DEFAULT] = arguments.jvmDefault } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_ENABLE_PREVIEW] = arguments.enableJvmPreview } catch (_: NoSuchMethodError) {  }
     try { this[X_JVM_EXPOSE_BOXED] = arguments.jvmExposeBoxed } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB] = arguments.klibLibraries?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[X_LAMBDAS] = arguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_LAMBDAS] = arguments.lambdas?.let { LambdasMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::lambdas, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xlambdas value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_LINK_VIA_SIGNATURES] = arguments.linkViaSignatures } catch (_: NoSuchMethodError) {  }
     try { this[X_MODULE_PATH] = arguments.javaModulePath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_MULTIFILE_PARTS_INHERIT] = arguments.inheritMultifileParts } catch (_: NoSuchMethodError) {  }
@@ -316,12 +324,12 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_NO_SOURCE_DEBUG_EXTENSION] = arguments.noSourceDebugExtension } catch (_: NoSuchMethodError) {  }
     try { this[X_NO_UNIFIED_NULL_CHECKS] = arguments.noUnifiedNullChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_OUTPUT_BUILTINS_METADATA] = arguments.outputBuiltinsMetadata } catch (_: NoSuchMethodError) {  }
-    try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { SamConversionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_SAM_CONVERSIONS] = arguments.samConversions?.let { SamConversionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::samConversions, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsam-conversions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SANITIZE_PARENTHESES] = arguments.sanitizeParentheses } catch (_: NoSuchMethodError) {  }
     try { this[X_SCRIPT_RESOLVER_ENVIRONMENT] = arguments.scriptResolverEnvironment.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
     try { this[X_SERIALIZE_IR] = arguments.getUsingReflection("serializeIr") } catch (_: NoSuchMethodError) {  }
-    try { this[X_STRING_CONCAT] = arguments.stringConcat?.let { StringConcatMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_STRING_CONCAT] = arguments.stringConcat?.let { StringConcatMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::stringConcat, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xstring-concat value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = arguments.supportCompatqualCheckerFrameworkAnnotations?.let { CompatqualAnnotationsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::supportCompatqualCheckerFrameworkAnnotations, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xsupport-compatqual-checker-framework-annotations value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = arguments.suppressDeprecatedJvmTargetWarning } catch (_: NoSuchMethodError) {  }
     try { this[X_SUPPRESS_MISSING_BUILTINS_ERROR] = arguments.suppressMissingBuiltinsError } catch (_: NoSuchMethodError) {  }
     try { this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = arguments.typeEnhancementImprovementsInStrictMode } catch (_: NoSuchMethodError) {  }
@@ -334,23 +342,23 @@ internal class JvmCompilerArgumentsImpl(
     try { this[X_USE_TYPE_TABLE] = arguments.useTypeTable } catch (_: NoSuchMethodError) {  }
     try { this[X_VALIDATE_BYTECODE] = arguments.validateBytecode } catch (_: NoSuchMethodError) {  }
     try { this[X_VALUE_CLASSES] = arguments.valueClasses } catch (_: NoSuchMethodError) {  }
-    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[X_WHEN_EXPRESSIONS] = arguments.whenExpressionsGeneration?.let { WhenExpressionsMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::whenExpressionsGeneration, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xwhen-expressions value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[EXPRESSION] = arguments.expression } catch (_: NoSuchMethodError) {  }
     try { this[INCLUDE_RUNTIME] = arguments.includeRuntime } catch (_: NoSuchMethodError) {  }
     try { this[JAVA_PARAMETERS] = arguments.javaParameters } catch (_: NoSuchMethodError) {  }
     try { this[JDK_HOME] = arguments.jdkHome?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
-    try { this[JVM_DEFAULT] = arguments.jvmDefaultStable?.let { JvmDefaultMode.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (_: NoSuchMethodError) {  }
+    try { this[JVM_DEFAULT] = arguments.jvmDefaultStable?.let { JvmDefaultMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmDefaultStable, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-default value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[JVM_TARGET] = arguments.jvmTarget?.let { JvmTarget.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::jvmTarget, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -jvm-target value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     try { this[NO_JDK] = arguments.noJdk } catch (_: NoSuchMethodError) {  }
     try { this[NO_REFLECT] = arguments.noReflect } catch (_: NoSuchMethodError) {  }
     try { this[NO_STDLIB] = arguments.noStdlib } catch (_: NoSuchMethodError) {  }
     try { this[SCRIPT_TEMPLATES] = arguments.scriptTemplates.toListOrEmpty() } catch (_: NoSuchMethodError) {  }
-    try { this[X_PROFILE] = applyProfileCompilerCommand(if(X_PROFILE in this) this[X_PROFILE] else null, arguments) } catch (_: NoSuchMethodError) {  }
-    try { this[X_NULLABILITY_ANNOTATIONS] = applyNullabilityAnnotations(if(X_NULLABILITY_ANNOTATIONS in this) this[X_NULLABILITY_ANNOTATIONS] else emptyList<NullabilityAnnotation>(), arguments) } catch (_: NoSuchMethodError) {  }
-    try { this[X_JSR305] = applyJsr305(if(X_JSR305 in this) this[X_JSR305] else emptyList<Jsr305>(), arguments) } catch (_: NoSuchMethodError) {  }
+    try { this[X_PROFILE] = applyProfileCompilerCommand(if(X_PROFILE in this) this[X_PROFILE] else null, arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_NULLABILITY_ANNOTATIONS] = applyNullabilityAnnotations(if(X_NULLABILITY_ANNOTATIONS in this) this[X_NULLABILITY_ANNOTATIONS] else emptyList<NullabilityAnnotation>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_JSR305] = applyJsr305(if(X_JSR305 in this) this[X_JSR305] else emptyList<Jsr305>(), arguments) } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
@@ -364,6 +372,7 @@ internal class JvmCompilerArgumentsImpl(
     if (X_ANNOTATIONS_IN_METADATA in this) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)}
     if (X_ASSERTIONS in this) { arguments.assertionsMode = get(X_ASSERTIONS)?.stringValue}
     if (X_BUILD_FILE in this) { arguments.buildFile = get(X_BUILD_FILE)}
+    if (X_COMMON_FRAGMENTS_METADATA_DESTINATION in this) { arguments.commonFragmentsMetadataDestination = get(X_COMMON_FRAGMENTS_METADATA_DESTINATION)}
     try { if (X_COMPILE_BUILTINS_AS_PART_OF_STDLIB in this) { arguments.setUsingReflection("expectBuiltinsAsPartOfStdlib", get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_BUILTINS_AS_PART_OF_STDLIB. Current compiler version is: $KC_VERSION, but the argument was introduced in 2.1.20 and removed in 2.3.20""").initCause(e) }
     try { if (X_COMPILE_JAVA in this) { arguments.setUsingReflection("compileJava", get(X_COMPILE_JAVA))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_COMPILE_JAVA. Current compiler version is: $KC_VERSION, but the argument was removed in 2.4.0""").initCause(e) }
     if (X_DEBUG in this) { arguments.enableDebugMode = get(X_DEBUG)}
@@ -440,12 +449,12 @@ internal class JvmCompilerArgumentsImpl(
   override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
     collectRestrictedArgViolations(compilerArgs, K2JVMCompilerArguments())
-    validateArguments(compilerArgs.errors)?.let { throw CompilerArgumentsParseException(it) }
+    validateArgumentsAllErrors(compilerArgs.errors).forEach { _argumentValidationErrors.add(it) }
     applyCompilerArguments(compilerArgs)
   }
 
   override fun toArgumentStrings(): List<String> {
-    val arguments = toCompilerArguments().compilerToArgumentStrings()
+    val arguments = toCompilerArguments().compilerToArgumentStrings(allowArgFileInValues = false)
     return arguments
   }
 
@@ -466,7 +475,7 @@ internal class JvmCompilerArgumentsImpl(
    * only sets arguments that have been explicitly assigned, and [compilerToArgumentStrings][org.jetbrains.kotlin.compilerRunner.toArgumentStrings]
    * skips properties whose value matches the default.
    */
-  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings().sorted()
+  public fun toCompilationInputs(): List<String> = toCompilerArgumentsAffectingOutcome().compilerToArgumentStrings(allowArgFileInValues = false).sorted()
 
   public class JvmCompilerArgument<V>(
     public val id: String,
@@ -500,6 +509,9 @@ internal class JvmCompilerArgumentsImpl(
         JvmCompilerArgument("X_BACKEND_THREADS")
 
     public val X_BUILD_FILE: JvmCompilerArgument<String?> = JvmCompilerArgument("X_BUILD_FILE")
+
+    public val X_COMMON_FRAGMENTS_METADATA_DESTINATION: JvmCompilerArgument<String?> =
+        JvmCompilerArgument("X_COMMON_FRAGMENTS_METADATA_DESTINATION")
 
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB")

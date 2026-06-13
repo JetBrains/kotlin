@@ -17,13 +17,24 @@ KtParameter(10,32): 'list: MutableList<Int>'
   null
 
 KtTypeReference(16,32): 'MutableList<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtUserType(16,32): 'MutableList<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtNameReferenceExpression(16,27): 'MutableList'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtTypeArgumentList(27,32): '<Int>'
   null
@@ -32,13 +43,24 @@ KtTypeProjection(28,31): 'Int'
   null
 
 KtTypeReference(28,31): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(28,31): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(28,31): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(34,193): '{'
   null
@@ -50,12 +72,16 @@ KtBinaryExpression(40,49): 'list += 1'
     ]
 
 KtNameReferenceExpression(40,44): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
     ]
 
 KtOperationReferenceExpression(45,47): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/plusAssign(<extension receiver>: kotlin.collections.MutableCollection<in T>, element: T): kotlin.Unit
@@ -74,6 +100,8 @@ KtArrayAccessExpression(74,81): 'list[0]'
     ]
 
 KtNameReferenceExpression(74,78): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -95,6 +123,8 @@ KtDotQualifiedExpression(106,129): 'list.get(implicitIndex)'
     ]
 
 KtNameReferenceExpression(106,110): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -107,6 +137,8 @@ KtCallExpression(111,129): 'get(implicitIndex)'
     ]
 
 KtNameReferenceExpression(111,114): 'get'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/MutableList.get(<dispatch receiver>: kotlin.collections.MutableList<E>, index: kotlin.Int): E
@@ -119,6 +151,8 @@ KtValueArgument(115,128): 'implicitIndex'
   null
 
 KtNameReferenceExpression(115,128): 'implicitIndex'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       val implicitIndex: kotlin.Int
@@ -151,12 +185,20 @@ KtConstructorCalleeExpression(136,144): 'Suppress'
     ]
 
 KtTypeReference(136,144): 'Suppress'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Suppress
+    ]
 
 KtUserType(136,144): 'Suppress'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Suppress
+    ]
 
 KtNameReferenceExpression(136,144): 'Suppress'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Suppress
@@ -181,6 +223,8 @@ KtArrayAccessExpression(159,166): 'list[1]'
     ]
 
 KtNameReferenceExpression(159,163): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -193,6 +237,8 @@ KtConstantExpression(164,165): '1'
   null
 
 KtOperationReferenceExpression(168,170): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
@@ -220,6 +266,8 @@ KtArrayAccessExpression(178,185): 'list[2]'
     ]
 
 KtNameReferenceExpression(178,182): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -232,6 +280,8 @@ KtConstantExpression(183,184): '2'
   null
 
 KtOperationReferenceExpression(187,189): '+='
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int,
@@ -251,25 +301,47 @@ KtParameter(203,209): 'i: Int'
   null
 
 KtTypeReference(206,209): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(206,209): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(206,209): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtParameter(211,233): 'list: MutableList<Int>'
   null
 
 KtTypeReference(217,233): 'MutableList<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtUserType(217,233): 'MutableList<Int>'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtNameReferenceExpression(217,228): 'MutableList'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/collections/MutableList
+    ]
 
 KtTypeArgumentList(228,233): '<Int>'
   null
@@ -278,13 +350,24 @@ KtTypeProjection(229,232): 'Int'
   null
 
 KtTypeReference(229,232): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtUserType(229,232): 'Int'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtNameReferenceExpression(229,232): 'Int'
-  null
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int
+    ]
 
 KtBlockExpression(235,279): '{'
   null
@@ -296,6 +379,8 @@ KtCallExpression(241,261): 'foo(--list[i], list)'
     ]
 
 KtNameReferenceExpression(241,244): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       /foo(i: kotlin.Int, list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
@@ -316,6 +401,8 @@ KtPrefixExpression(245,254): '--list[i]'
     ]
 
 KtOperationReferenceExpression(245,247): '--'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.dec(<dispatch receiver>: kotlin.Int): kotlin.Int,
@@ -329,6 +416,8 @@ KtArrayAccessExpression(247,254): 'list[i]'
     ]
 
 KtNameReferenceExpression(247,251): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -338,6 +427,8 @@ KtContainerNode(251,254): '[i]'
   null
 
 KtNameReferenceExpression(252,253): 'i'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       i: kotlin.Int
@@ -347,6 +438,8 @@ KtValueArgument(256,260): 'list'
   null
 
 KtNameReferenceExpression(256,260): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>
@@ -361,6 +454,8 @@ KtPrefixExpression(266,277): '++(list[2])'
     ]
 
 KtOperationReferenceExpression(266,268): '++'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int,
@@ -377,6 +472,8 @@ KtArrayAccessExpression(269,276): 'list[2]'
     ]
 
 KtNameReferenceExpression(269,273): 'list'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
       list: kotlin.collections.MutableList<kotlin.Int>

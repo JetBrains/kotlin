@@ -14,12 +14,12 @@ internal object ShorteningResultsRenderer {
             return
         }
 
-        shortening.listOfTypeToShortenInfo.forEach { (userType, shortenedRef) ->
+        shortening.listOfTypeToShortenInfo.forEach { (val userType = typeToShorten, val shortenedRef = shortenedReference) ->
             userType.element?.text?.let {
                 appendLine("[type] $it${shortenedRef?.let { ref -> " -> $ref" } ?: ""}")
             }
         }
-        shortening.listOfQualifierToShortenInfo.forEach { (qualifier, shortenedRef) ->
+        shortening.listOfQualifierToShortenInfo.forEach { (val qualifier = qualifierToShorten, val shortenedRef = shortenedReference) ->
             qualifier.element?.text?.let {
                 appendLine("[qualifier] $it${shortenedRef?.let { ref -> " -> $ref" } ?: ""}")
             }

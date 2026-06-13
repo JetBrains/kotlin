@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.storage.StorageManager
 import java.lang.ref.SoftReference
 
+@K1Deprecation
 open class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
@@ -52,11 +54,11 @@ open class KlibMetadataDeserializedPackageFragment(
 
     override val proto: ProtoBuf.PackageFragment
         get() {
-            library.hasDeclarationsAccessedDuringFrontendResolve = true
             return protoForNames
         }
 }
 
+@K1Deprecation
 class BuiltInKlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     library: KotlinLibrary,
@@ -81,6 +83,7 @@ class BuiltInKlibMetadataDeserializedPackageFragment(
         get() = false
 }
 
+@K1Deprecation
 class KlibMetadataCachedPackageFragment(
     byteArray: ByteArray,
     storageManager: StorageManager,
@@ -89,6 +92,7 @@ class KlibMetadataCachedPackageFragment(
     fqName: FqName = FqName(protoForNames.getExtension(KlibMetadataProtoBuf.fqName))
 ) : KlibMetadataPackageFragment(fqName, storageManager, module, containerSource = null)
 
+@K1Deprecation
 abstract class KlibMetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,

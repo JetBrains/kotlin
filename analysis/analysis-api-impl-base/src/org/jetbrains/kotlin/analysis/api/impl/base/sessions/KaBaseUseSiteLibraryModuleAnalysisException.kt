@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 
 /**
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
  *
  * @see org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings.allowUseSiteLibraryModuleAnalysis
  */
+@KaImplementationDetail
 class KaBaseUseSiteLibraryModuleAnalysisException(
     libraryModule: KaLibraryModule,
 ) : IllegalStateException("Cannot analyze library module '$libraryModule' as a use-site module.")

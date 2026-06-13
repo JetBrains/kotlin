@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
+@K1Deprecation
 class ApproximatingStringTable : StringTableImpl() {
     override fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? {
         return if (DescriptorUtils.isLocal(descriptor)) {

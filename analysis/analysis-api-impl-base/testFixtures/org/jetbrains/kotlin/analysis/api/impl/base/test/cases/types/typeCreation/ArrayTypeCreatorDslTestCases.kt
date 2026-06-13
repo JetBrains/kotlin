@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.Variance
 
 @Suppress("UNUSED")
 class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, KaType>) :
-    AbstractTypeCreatorDslTest.TestCases(session, caretToType) {
+    DslTypeCreationTestCases(session, caretToType) {
     fun testBoolPreferPrimitive(): KaType {
         val type = getTypeByCaret("type")
         return session.typeCreator.arrayType(type) {

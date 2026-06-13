@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.factory.configu
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirDanglingFileSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
@@ -27,6 +28,9 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
     override fun createSourceScopeProvider(): FirKotlinScopeProvider =
         FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
+    override fun createBuiltinsScopeProvider(): FirKotlinScopeProvider =
+        FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+
     override fun createPlatformSpecificSymbolProviders(
         session: LLFirSession,
         contentScope: GlobalSearchScope,
@@ -38,6 +42,10 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
         contextSession: LLFirSession,
     ): List<FirSymbolProvider> =
         listOfNotNull(contextSession.nullableJavaSymbolProvider)
+
+    override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
+        session: LLFirBuiltinsAndCloneableSession
+    ): List<FirSymbolProvider> = listOf(createCloneableSymbolProvider(session))
 
     override fun createBinaryLibrarySymbolProviders(session: LLFirSession, scope: GlobalSearchScope): List<FirSymbolProvider> =
         createSymbolProvidersWithOptionalAnnotationClassesProvider(session, scope) { packagePartProvider ->

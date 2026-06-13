@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 
 plugins {
@@ -8,6 +9,11 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+}
+
+val llvmDevBinaryDataUsage by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
 }
 
 dependencies {
@@ -22,6 +28,10 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesApi(testFixtures(project(":native:native.tests:klib-ir-inliner")))
+
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled.get()) {
+        llvmDevBinaryDataUsage(project(":kotlin-native:dependencies", configuration = "llvmDevBinaryData"))
+    }
 }
 
 sourceSets {
@@ -85,10 +95,19 @@ fun Project.customCompilerTest(
         allowParallelExecution = true,
         requirePlatformLibs = false,
     ) {
-        // nativeTestTask sets workingDir to rootDir so here we need to override it to projectDir to make compatibility tests cacheable
-        // Same override is made in `native/native.tests/codegen-box/build.gradle.kts`
-        workingDir = projectDir
+        val testTargetName = providers.gradleProperty("kotlin.internal.native.test.target")
+            .orElse(providers.gradleProperty("kn.target"))
+            .getOrElse(HostManager.hostName)
 
+        val testTarget = KonanTarget.predefinedTargets[testTargetName] ?: error("Test target $testTargetName is not defined")
+        if (!testTarget.family.isAppleFamily) {
+            // KT-85080: make sure Llvm-dev native dependency is downloaded, so Clang tool is available
+            // Clang is used via `compileWithClangToStaticLibrary()` in ObjCInteropFacade for CInterop tests with source files of types: c, cpp m, mm
+            // Note: For Apple targets, clang is invoked from XCode toolchain instead, see `Settings.defaultClangDistribution()` in Clang.kt
+            inputs.files(llvmDevBinaryDataUsage)
+                .withPropertyName("llvmDevBinaryDataUsage")
+                .withPathSensitivity(PathSensitivity.NONE)
+        }
         useJUnitPlatform { includeTags(tag) }
         testInputsCheck {
             isNative.set(true)
@@ -162,12 +181,14 @@ customFirstStageTest("2.0.0")
 customFirstStageTest("2.1.0")
 customFirstStageTest("2.2.0")
 customFirstStageTest("2.3.0")
+customFirstStageTest("2.4.0-Beta2")
 // TODO: Add a new task for the "custom-first-stage" test here.
 
 /* Custom-second-stage test task for the two compiler major versions: previous one and the latest one . */
 // TODO: Keep updating two following compiler versions to be the previous and latest ones.
 customSecondStageTest("2.3.0")
-// add `customSecondStageTest("2.4.0-Beta1")`, as soon it is released
+customSecondStageTest("2.4.0-Beta2") // TODO: change for 2.4.0, as soon it's released
+// add `customSecondStageTest("2.5.0-Beta1")`, as soon it is released, and remove 2.3.0
 
 // Backward and forward tests must be executed in the different Gradle tasks, depending on one configuration `customCompiler_$version` and task `unarchiveCustomCompiler_$version`
 // Rationale: versions of loaded Clang/LLVM shared objects(Linux) or dynamic libraries(MacOS) must be in perfect sync with versions of compilation stages.
@@ -190,4 +211,5 @@ projectTests {
     testData(project(":compiler").isolated, "testData/codegen/box")
     testData(project(":compiler").isolated, "testData/codegen/boxInline")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
+    testData(project(":native:native.tests").isolated, "testData/codegen")
 }
