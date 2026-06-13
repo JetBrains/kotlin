@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.java.direct.model
 import com.intellij.java.syntax.element.JavaSyntaxElementType
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.element.SyntaxElementTypes
+import com.intellij.platform.syntax.SyntaxElementType
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -28,8 +30,6 @@ import org.jetbrains.kotlin.java.direct.resolution.declaredOrSameFileInherited
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
 import org.jetbrains.kotlin.java.direct.resolution.findInheritedTypeParameter
 import org.jetbrains.kotlin.java.direct.resolution.findTypeParameter
-import org.jetbrains.kotlin.java.direct.resolution.getSimpleImport
-import org.jetbrains.kotlin.java.direct.resolution.isImportTargetAvailableAsJavaClass
 import org.jetbrains.kotlin.java.direct.resolution.isTypeUseAnnotationClass
 import org.jetbrains.kotlin.java.direct.resolution.recoverInheritedOuterTypeArguments
 import org.jetbrains.kotlin.java.direct.resolution.resolve
@@ -43,12 +43,14 @@ abstract class JavaTypeOverAst(
     protected val resolutionContext: JavaResolutionContext,
     // Annotations from type positions (TYPE node → JAVA_CODE_REFERENCE pass-through).
     // These are TYPE_USE by syntactic position and returned unconditionally.
+    // Non-empty only for a TYPE_USE annotation written on the type itself, where the
+    // ANNOTATION is a direct child of the TYPE node and a sibling of the wrapped
+    // JAVA_CODE_REFERENCE — e.g. `@NotNull` on the type argument in `List<@NotNull Integer>`.
+    // Relevant tests: `testAnnotatedTypeArguments`, `repeatedAnnotations.kt` and others.
     private val extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     // Annotations from the containing member's modifier list (method/field/parameter).
-    // Pre-filtered TYPE_USE-only via [isTypeUseAnnotationClass] on first
-    // read of [annotations] — mirrors PSI/javac-wrapper's structure-build-time pre-filtering
-    // (`TreeBasedAnnotationOwner` / `filterTypeAnnotations` in javac-wrapper). The legacy
-    // FIR-side `JavaTypeWithExternalAnnotationFiltering` callback bridge is no longer needed.
+    // Kept TYPE_USE-only: filtered via [isTypeUseAnnotationClass] lazily on first read of
+    // [annotations] — see [filteredMemberAnnotations].
     private val memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaType, JavaAnnotationOwner {
     // Callback-independent annotations: extra + MODIFIER_LIST children + direct ANNOTATION children.
@@ -164,37 +166,13 @@ class JavaClassifierTypeOverAst(
     override val classifierQualifiedName: String
         get() = computeClassifierQualifiedName()
 
-    private fun computeClassifierQualifiedName(): String {
-        val parts = rawTypeNameParts
-
-        // Leverage the already-cached `classifier` to avoid redundant findTypeParameter/findLocalClass lookups.
-        val resolvedClassifier = classifier
-        if (resolvedClassifier is JavaTypeParameter) {
-            return rawTypeName
-        }
-        if (resolvedClassifier is JavaClass) {
-            return resolvedClassifier.fqName?.asString() ?: rawTypeName
-        }
-
-        // 3. Check explicit single-type imports
-        // Only use import resolution if the target is a known Java class (source or binary).
-        // This matches PSI behavior where classifierQualifiedName uses canonicalText, which
-        // only returns the FQN when PSI can resolve the class through its indexes.
-        // For non-Java classes (e.g., Kotlin builtins), PSI returns just the raw reference text.
-        with(resolutionContext) {
-            val qualified = getSimpleImport(parts[0])
-            if (qualified != null && isImportTargetAvailableAsJavaClass(parts[0])) {
-                var result = qualified.asString()
-                for (i in 1 until parts.size) {
-                    result += "." + parts[i]
-                }
-                return result
+    private fun computeClassifierQualifiedName(): String =
+        when (val resolvedClassifier = classifier) {
+            is JavaClass -> {
+                resolvedClassifier.fqName?.asString() ?: rawTypeName
             }
+            else -> rawTypeName
         }
-
-        // 4. Return as-is - FIR will resolve via callback (same package, star imports, java.lang types)
-        return rawTypeName
-    }
 
     override val presentableText: String get() = tree.getText(node).toString()
 
@@ -335,26 +313,13 @@ class JavaClassifierTypeOverAst(
 
 }
 
-/** [JavaClassifierType] for enum entry fields: the constant's type is the containing enum class. */
-class JavaClassifierTypeForEnumEntry(
-    private val enumClass: JavaClass,
-) : JavaClassifierType {
-    override val classifier: JavaClassifier get() = enumClass
-    override val classifierQualifiedName: String get() = enumClass.fqName?.asString() ?: enumClass.name.asString()
-    override val presentableText: String get() = classifierQualifiedName
-    override val isRaw: Boolean get() = false
-    override val typeArguments: List<JavaType> get() = emptyList()
-    override val annotations: Collection<JavaAnnotation> get() = emptyList()
-    override val isDeprecatedInJavaDoc: Boolean get() = false
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
-}
-
 /**
- * [JavaClassifierType] backed by an already-resolved [JavaClass]. Used by
- * [JavaClassOverAst.deriveImplicitPermittedTypes] so the resolved nested
- * inner class is surfaced directly without going through AST-based
- * classifier resolution; this keeps the FIR-side
- * `setSealedClassInheritors` consumer on the non-null `classifier` branch.
+ * [JavaClassifierType] backed by an already-resolved [JavaClass], surfaced directly without
+ * going through AST-based classifier resolution. Used for:
+ *  - enum entry fields, where the constant's type is its containing enum class
+ *    ([JavaMemberOverAst.computeType]);
+ *  - implicit permitted types ([JavaClassOverAst.deriveImplicitPermittedTypes]), where it keeps
+ *    the FIR-side `setSealedClassInheritors` consumer on the non-null `classifier` branch.
  */
 class ResolvedJavaClassifierType(
     private val resolvedClass: JavaClass,
@@ -376,22 +341,24 @@ class JavaPrimitiveTypeOverAst(
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
 ) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaPrimitiveType {
-    override val type: org.jetbrains.kotlin.builtins.PrimitiveType?
-        get() {
-            val text = tree.getText(node)
-            return when {
-                text.contentEquals("void") -> null
-                text.contentEquals("boolean") -> org.jetbrains.kotlin.builtins.PrimitiveType.BOOLEAN
-                text.contentEquals("char") -> org.jetbrains.kotlin.builtins.PrimitiveType.CHAR
-                text.contentEquals("byte") -> org.jetbrains.kotlin.builtins.PrimitiveType.BYTE
-                text.contentEquals("short") -> org.jetbrains.kotlin.builtins.PrimitiveType.SHORT
-                text.contentEquals("int") -> org.jetbrains.kotlin.builtins.PrimitiveType.INT
-                text.contentEquals("float") -> org.jetbrains.kotlin.builtins.PrimitiveType.FLOAT
-                text.contentEquals("long") -> org.jetbrains.kotlin.builtins.PrimitiveType.LONG
-                text.contentEquals("double") -> org.jetbrains.kotlin.builtins.PrimitiveType.DOUBLE
-                else -> null
-            }
-        }
+    // [node] is always a primitive keyword (SyntaxElementTypes.PRIMITIVE_TYPE_BIT_SET) or
+    // VOID_KEYWORD — see [createClassifierOrPrimitive] — so the token type maps directly to a
+    // PrimitiveType. `void` (and any unexpected token) is absent from the map and yields null.
+    override val type: PrimitiveType?
+        get() = PRIMITIVE_TYPE_BY_TOKEN[tree.getType(node)]
+
+    private companion object {
+        private val PRIMITIVE_TYPE_BY_TOKEN: Map<SyntaxElementType, PrimitiveType> = mapOf(
+            JavaSyntaxTokenType.BOOLEAN_KEYWORD to PrimitiveType.BOOLEAN,
+            JavaSyntaxTokenType.CHAR_KEYWORD to PrimitiveType.CHAR,
+            JavaSyntaxTokenType.BYTE_KEYWORD to PrimitiveType.BYTE,
+            JavaSyntaxTokenType.SHORT_KEYWORD to PrimitiveType.SHORT,
+            JavaSyntaxTokenType.INT_KEYWORD to PrimitiveType.INT,
+            JavaSyntaxTokenType.FLOAT_KEYWORD to PrimitiveType.FLOAT,
+            JavaSyntaxTokenType.LONG_KEYWORD to PrimitiveType.LONG,
+            JavaSyntaxTokenType.DOUBLE_KEYWORD to PrimitiveType.DOUBLE,
+        )
+    }
 }
 
 class JavaArrayTypeOverAst(

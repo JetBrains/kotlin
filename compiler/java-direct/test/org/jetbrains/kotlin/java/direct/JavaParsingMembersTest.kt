@@ -121,7 +121,7 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         assert(paramBType.type == PrimitiveType.INT) { "Expected INT primitive type" }
 
         val paramCType = params3[2].type as JavaClassifierType
-        assert(paramCType.classifierQualifiedName == "java.util.List") { "Expected java.util.List, got ${paramCType.classifierQualifiedName}" }
+        assert(paramCType.classifierQualifiedName == "List") { "Expected List, got ${paramCType.classifierQualifiedName}" }
 
         val constructor0 = javaClass.constructors.first { it.valueParameters.isEmpty() }
         assert(constructor0.valueParameters.isEmpty()) { "Constructor should have 0 parameters" }

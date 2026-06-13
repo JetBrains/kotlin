@@ -117,11 +117,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
 
         assert(javaClass.supertypes.size == 1) { "Expected 1 supertype" }
         val supertype = javaClass.supertypes.first()
-        assert(supertype.classifierQualifiedName == "java.util.ArrayList") { "Expected qualified name java.util.ArrayList, got ${supertype.classifierQualifiedName}" }
+        assert(supertype.classifierQualifiedName == "ArrayList") { "Expected simple name ArrayList, got ${supertype.classifierQualifiedName}" }
 
         val listField = javaClass.fields.first { it.name.asString() == "list" }
         val listType = listField.type as JavaClassifierType
-        assert(listType.classifierQualifiedName == "java.util.List") { "Expected qualified name java.util.List for list field, got ${listType.classifierQualifiedName}" }
+        assert(listType.classifierQualifiedName == "List") { "Expected simple name List for list field, got ${listType.classifierQualifiedName}" }
 
         val counterField = javaClass.fields.first { it.name.asString() == "counter" }
         val counterType = counterField.type as JavaClassifierType

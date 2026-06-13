@@ -145,7 +145,8 @@ class JavaFieldOverAst(
 
     private fun computeType(): JavaType {
         if (isEnumEntry) {
-            return JavaClassifierTypeForEnumEntry(containingClass)
+            // The constant's type is its containing enum class, already resolved.
+            return ResolvedJavaClassifierType(containingClass)
         }
         // leadingFieldNode is null whenever the node has its own TYPE (see computeLeadingFieldNode),
         val typeSourceNode = leadingFieldNode ?: node

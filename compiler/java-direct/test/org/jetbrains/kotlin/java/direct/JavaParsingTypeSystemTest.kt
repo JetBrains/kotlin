@@ -32,8 +32,8 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
 
         val fieldA = javaClass.fields.first { it.name.asString() == "a" }
         val typeA = fieldA.type as JavaClassifierType
-        assert(typeA.classifierQualifiedName == "java.util.List") {
-            "Expected qualified name java.util.List for List<String>, got ${typeA.classifierQualifiedName}"
+        assert(typeA.classifierQualifiedName == "List") {
+            "Expected simple name List for List<String>, got ${typeA.classifierQualifiedName}"
         }
 
         val fieldB = javaClass.fields.first { it.name.asString() == "b" }
@@ -66,7 +66,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
 
         val items = javaClass.fields.first { it.name.asString() == "items" }
         val itemsType = items.type as JavaClassifierType
-        assert(itemsType.classifierQualifiedName == "java.util.List") { "Expected 'java.util.List', got ${itemsType.classifierQualifiedName}" }
+        assert(itemsType.classifierQualifiedName == "List") { "Expected 'List', got ${itemsType.classifierQualifiedName}" }
         assert(itemsType.typeArguments.size == 1) { "Expected 1 type argument, got ${itemsType.typeArguments.size}" }
         val stringArg = itemsType.typeArguments[0] as JavaClassifierType
         assert(stringArg.classifierQualifiedName == "String") { "Expected 'String', got ${stringArg.classifierQualifiedName}" }
@@ -81,7 +81,7 @@ class JavaParsingTypeSystemTest : JavaParsingTestBase() {
 
         val map = javaClass.fields.first { it.name.asString() == "map" }
         val mapType = map.type as JavaClassifierType
-        assert(mapType.classifierQualifiedName == "java.util.Map") { "Expected 'java.util.Map', got ${mapType.classifierQualifiedName}" }
+        assert(mapType.classifierQualifiedName == "Map") { "Expected 'Map', got ${mapType.classifierQualifiedName}" }
         assert(mapType.typeArguments.size == 2) { "Expected 2 type arguments, got ${mapType.typeArguments.size}" }
         val keyArg = mapType.typeArguments[0] as JavaClassifierType
         assert(keyArg.classifierQualifiedName == "String") { "Expected 'String', got ${keyArg.classifierQualifiedName}" }

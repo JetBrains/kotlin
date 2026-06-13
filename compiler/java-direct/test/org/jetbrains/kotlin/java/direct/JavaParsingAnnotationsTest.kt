@@ -60,8 +60,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val field = javaClass.fields.first { it.name.asString() == "items" }
         val fieldType = field.type as JavaClassifierType
 
-        assert(fieldType.classifierQualifiedName == "java.util.List") {
-            "Expected 'java.util.List', got ${fieldType.classifierQualifiedName}"
+        assert(fieldType.classifierQualifiedName == "List") {
+            "Expected 'List', got ${fieldType.classifierQualifiedName}"
         }
         assert(fieldType.typeArguments.size == 1) {
             "Expected 1 type argument, got ${fieldType.typeArguments.size}"
@@ -99,8 +99,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val field = javaClass.fields.first { it.name.asString() == "map" }
         val fieldType = field.type as JavaClassifierType
 
-        assert(fieldType.classifierQualifiedName == "java.util.Map") {
-            "Expected 'java.util.Map', got ${fieldType.classifierQualifiedName}"
+        assert(fieldType.classifierQualifiedName == "Map") {
+            "Expected 'Map', got ${fieldType.classifierQualifiedName}"
         }
         assert(fieldType.typeArguments.size == 2) {
             "Expected 2 type arguments, got ${fieldType.typeArguments.size}"
@@ -147,8 +147,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val method = javaClass.methods.first { it.name.asString() == "getItems" }
         val returnType = method.returnType as JavaClassifierType
 
-        assert(returnType.classifierQualifiedName == "java.util.List") {
-            "Expected 'java.util.List', got ${returnType.classifierQualifiedName}"
+        assert(returnType.classifierQualifiedName == "List") {
+            "Expected 'List', got ${returnType.classifierQualifiedName}"
         }
         assert(returnType.typeArguments.size == 1) {
             "Expected 1 type argument, got ${returnType.typeArguments.size}"
@@ -180,8 +180,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val param = method.valueParameters.first()
         val paramType = param.type as JavaClassifierType
 
-        assert(paramType.classifierQualifiedName == "java.util.List") {
-            "Expected 'java.util.List', got ${paramType.classifierQualifiedName}"
+        assert(paramType.classifierQualifiedName == "List") {
+            "Expected 'List', got ${paramType.classifierQualifiedName}"
         }
         assert(paramType.typeArguments.size == 1) {
             "Expected 1 type argument, got ${paramType.typeArguments.size}"
