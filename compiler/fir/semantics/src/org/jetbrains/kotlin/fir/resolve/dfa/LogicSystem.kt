@@ -58,7 +58,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
         if (underlyingVariable == alias) return // x = x
         flow.directAliasMap[alias] = underlyingVariable
-        flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.add(alias) ?: persistentSetOf(alias)
+        flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.adding(alias) ?: persistentSetOf(alias)
     }
 
     fun addTypeStatement(flow: MutableFlow, statement: TypeStatement): TypeStatement? {
@@ -67,8 +67,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val oldStatement = flow.approvedTypeStatements[variable]
         val oldUpperTypes = oldStatement?.upperTypes
         val oldLowerTypes = oldStatement?.lowerTypes
-        val newUpperTypes = oldUpperTypes?.addAll(statement.upperTypes) ?: statement.upperTypes.toPersistentSet()
-        val newLowerTypes = oldLowerTypes?.addAll(statement.lowerTypes) ?: statement.lowerTypes.toPersistentSet()
+        val newUpperTypes = oldUpperTypes?.addingAll(statement.upperTypes) ?: statement.upperTypes.toPersistentSet()
+        val newLowerTypes = oldLowerTypes?.addingAll(statement.lowerTypes) ?: statement.lowerTypes.toPersistentSet()
         if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes) return null
         return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes)
             .also { flow.approvedTypeStatements[variable] = it }
@@ -88,7 +88,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }
         if (redundant) return
         val variable = implication.condition.variable
-        flow.implications[variable] = flow.implications[variable]?.add(implication) ?: persistentListOf(implication)
+        flow.implications[variable] = flow.implications[variable]?.adding(implication) ?: persistentListOf(implication)
     }
 
     private fun MutableFlow.containsAlready(effect: TypeStatement): Boolean {
@@ -237,7 +237,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             }
             val siblings = backwardsAliasMap.getValue(original)
             if (siblings.size > 1) {
-                backwardsAliasMap[original] = siblings.remove(variable)
+                backwardsAliasMap[original] = siblings.removing(variable)
             } else {
                 backwardsAliasMap.remove(original)
             }
@@ -256,7 +256,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
                 val withoutSelf = aliases - replacementOrNext
                 if (withoutSelf.isNotEmpty()) {
                     withoutSelf.associateWithTo(directAliasMap) { replacementOrNext }
-                    backwardsAliasMap[replacementOrNext] = backwardsAliasMap[replacementOrNext]?.addAll(withoutSelf) ?: withoutSelf
+                    backwardsAliasMap[replacementOrNext] = backwardsAliasMap[replacementOrNext]?.addingAll(withoutSelf) ?: withoutSelf
                 }
             }
         }
@@ -291,7 +291,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             }
 
             val statements = logicStatements[variable] ?: continue
-            val stillUnknown = statements.removeAll {
+            val stillUnknown = statements.removingAll {
                 val knownValue = it.condition.operation.valueIfKnown(operation)
                 if (knownValue == true) {
                     when (val effect = it.effect) {
@@ -475,7 +475,7 @@ private fun MutableMap<DataFlowVariable, PersistentList<Implication>>.replaceVar
         val newImplications = if (to != null) {
             implications.replaceAll { it.replaceVariable(from, to) }
         } else {
-            implications.removeAll { it.effect.variable == from }
+            implications.removingAll { it.effect.variable == from }
         }
         if (newImplications != implications) variable to newImplications else null
     }

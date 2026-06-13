@@ -141,7 +141,7 @@ abstract class AbstractAnalysisApiSignatureContractsTest : AbstractAnalysisApiBa
             add(state)
         } else {
             for (e in list) {
-                combinations(list, state.add(e), size - 1)
+                combinations(list, state.adding(e), size - 1)
             }
         }
     }
