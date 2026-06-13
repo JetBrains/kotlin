@@ -13,6 +13,8 @@ import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -161,7 +163,7 @@ data class BuildOptions(
     )
 
     data class WasmOptions(
-        val perModule: Boolean? = null,
+        val compilationMode: WasmCompilationMode = WasmCompilationMode.MONOLITH,
     )
 
     data class NativeOptions(
@@ -262,9 +264,9 @@ data class BuildOptions(
             jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
         }
 
-        if (wasmOptions != null) {
-            wasmOptions.perModule?.let { arguments.add("-Pkotlin.internal.wasm.perModule=$it") }
-        }
+        wasmOptions?.compilationMode?.takeIf {
+            it != WasmCompilationMode.MONOLITH
+        }?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
         if (androidVersion != null) {
             arguments.add("-Dandroid_tools_version=${androidVersion}")

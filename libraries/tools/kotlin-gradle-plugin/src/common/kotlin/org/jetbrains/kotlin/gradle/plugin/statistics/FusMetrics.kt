@@ -324,8 +324,10 @@ internal object CompileKotlinJsIrLinkMetrics : FusMetrics {
 internal object CompileKotlinWasmIrLinkMetrics : FusMetrics {
     internal fun collectMetrics(
         incrementalWasm: Boolean,
+        wasmCompilerMode: String,
         metricsConsumer: StatisticsValuesConsumer,
     ) {
+        metricsConsumer.report(StringMetrics.WASM_COMPILER_MODE, wasmCompilerMode)
         metricsConsumer.report(BooleanMetrics.WASM_IR_INCREMENTAL, incrementalWasm)
     }
 }
