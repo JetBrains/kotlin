@@ -56,6 +56,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     val rangeClasses = listOfNotNull(charRange, intRange, longRange, uIntRange, uLongRange)
 
     val closedRange: IrClassSymbol = ClassIds.ClosedRange.classSymbol()
+    val openEndRange: IrClassSymbol = ClassIds.OpenEndRange.classSymbol()
 
     abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
@@ -158,6 +159,7 @@ private object ClassIds {
     val IntRange = "IntRange".rangesClassId
     val LongRange = "LongRange".rangesClassId
     val ClosedRange = "ClosedRange".rangesClassId
+    val OpenEndRange = "OpenEndRange".rangesClassId
     val UIntProgression = "UIntProgression".rangesClassId
     val ULongProgression = "ULongProgression".rangesClassId
     val UIntRange = "UIntRange".rangesClassId
