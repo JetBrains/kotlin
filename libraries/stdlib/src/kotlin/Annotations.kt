@@ -19,6 +19,7 @@ import kotlin.annotation.AnnotationTarget.*
  * To help removing deprecated API gradually, the property [level] could be used.
  * Usually a gradual phase-out goes through the "warning", then "error", then "hidden" or "removed" stages:
  * - First and by default, [DeprecationLevel.WARNING] is used to notify API consumers, but not to break their compilation or runtime usages.
+ *   You can optionally set the [since] attribute to specify when the deprecation started (e.g., version or date).
  * - Then, some time later the deprecation level is raised to [DeprecationLevel.ERROR], so that no new Kotlin code can be compiled
  *   using the deprecated API.
  * - Finally, the API is either removed entirely, or hidden ([DeprecationLevel.HIDDEN]) from code,
@@ -30,13 +31,17 @@ import kotlin.annotation.AnnotationTarget.*
  *  the deprecated API usage.
  * @property level Specifies how the deprecated element usages are reported in code.
  *  See the [DeprecationLevel] enum for the possible values.
+ * @property since Specifies the version or date when the API element was marked as deprecated.
+ *  This helps API users track deprecations over time and identify the first point in history
+ *  where the deprecation was introduced.
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
 public annotation class Deprecated(
     val message: String,
     val replaceWith: ReplaceWith = ReplaceWith(""),
-    val level: DeprecationLevel = DeprecationLevel.WARNING
+    val level: DeprecationLevel = DeprecationLevel.WARNING,
+    val since: String = "",
 )
 
 /**
