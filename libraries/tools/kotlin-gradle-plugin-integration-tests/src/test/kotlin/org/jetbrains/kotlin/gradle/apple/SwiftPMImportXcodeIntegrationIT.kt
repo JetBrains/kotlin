@@ -76,6 +76,11 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     "productName = $SYNTHETIC_IMPORT_TARGET_MAGIC_NAME;",
                     message = "Swift package dependency should reference the synthetic product name"
                 )
+                assertContains(
+                    pbxFileContent,
+                    Regex("""\bpackage = [A-F0-9]+;"""),
+                    message = "Swift package dependency should declare a 'package = <UUID>;' linkage"
+                )
 
                 assertEquals(
                     SwiftPackageLibraryType.AUTOMATIC,
@@ -480,6 +485,45 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 // Only the tampered file is reported; no spurious added/removed entries.
                 assertOutputDoesNotContain("(added)")
                 assertOutputDoesNotContain("(removed)")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateLinkagePackage repairs broken linkage from prior buggy runs`(version: GradleVersion) {
+        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
+            initDefaultKmpWithLocalSPM()
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            )
+            val pbxFile = projectPath.resolve("iosApp/iosApp.xcodeproj/project.pbxproj")
+
+            // Simulate a pbxproj produced by a pre-fix buggy KGP: strip the
+            // `package = <UUID>;` linkage line out of the XCSwiftPackageProductDependency block.
+            val originalContent = pbxFile.readText()
+            val brokenContent = originalContent.replace(
+                Regex("""\n\s*package = [A-F0-9]{24};"""),
+                ""
+            )
+            check(brokenContent != originalContent) { "Failed to simulate broken state" }
+            pbxFile.writeText(brokenContent)
+
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            ) {
+                assertOutputContains("Repaired existing broken linkage")
+                assertContains(
+                    pbxFile.readText(),
+                    Regex("""\bpackage = [A-F0-9]{24};"""),
+                    message = "Swift package dependency should be repaired with the package UUID linkage"
+                )
             }
         }
     }
