@@ -33,6 +33,4 @@ class JavaRecordComponentOverAst(
             val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
             return typeNode?.let { tree.findChildByType(it, JavaSyntaxTokenType.ELLIPSIS) } != null
         }
-
-    override val isFromSource: Boolean get() = true
 }

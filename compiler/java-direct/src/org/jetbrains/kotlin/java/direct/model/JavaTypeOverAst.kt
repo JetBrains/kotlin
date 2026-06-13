@@ -664,8 +664,6 @@ class JavaTypeParameterOverAst(
     override val isDeprecatedInJavaDoc: Boolean get() = false
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
         annotations.find { it.classId?.asSingleFqName() == fqName }
-
-    override val isFromSource: Boolean get() = true
 }
 
 /** Implicit supertype `java.lang.Enum<E>` for enum classes. */

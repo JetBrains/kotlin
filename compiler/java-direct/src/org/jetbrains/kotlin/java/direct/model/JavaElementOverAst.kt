@@ -18,6 +18,9 @@ abstract class JavaElementOverAst(
     val node: JavaLightNode,
     val tree: JavaLightTree,
 ) : JavaElement, JavaDirectSourceElementOwner {
+
+    open val isFromSource: Boolean get() = true
+
     override fun toKtSourceElement(kind: KtSourceElementKind): KtSourceElement =
         KtLightSourceElement(
             JavaLightAstNode(tree, node),

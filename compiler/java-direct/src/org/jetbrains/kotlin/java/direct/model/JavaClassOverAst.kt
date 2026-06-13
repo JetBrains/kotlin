@@ -34,7 +34,7 @@ class JavaClassOverAst(
         resolutionContext.withContainingClass(this).withTypeParameters(typeParameters)
     }
 
-    override val name: Name  by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val name: Name by lazy(LazyThreadSafetyMode.PUBLICATION) {
         Name.identifier(tree.findChildByType(node, JavaSyntaxTokenType.IDENTIFIER)?.let { tree.getText(it).toString() } ?: "<error>")
     }
 
@@ -379,6 +379,4 @@ class JavaClassOverAst(
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? =
         annotations.find { it.classId?.asSingleFqName() == fqName }
-
-    override val isFromSource: Boolean get() = true
 }

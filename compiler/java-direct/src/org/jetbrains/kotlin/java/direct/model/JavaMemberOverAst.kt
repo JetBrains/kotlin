@@ -158,7 +158,8 @@ class JavaFieldOverAst(
         if (isEnumEntry) {
             return JavaClassifierTypeForEnumEntry(containingClass)
         }
-        val typeSourceNode = if (tree.findChildByType(node, JavaSyntaxElementType.TYPE) != null) node else leadingFieldNode ?: node
+        // leadingFieldNode is null whenever the node has its own TYPE (see computeLeadingFieldNode),
+        val typeSourceNode = leadingFieldNode ?: node
         return createJavaType(typeSourceNode, tree, resolutionContext)
     }
 
@@ -314,35 +315,38 @@ class JavaFieldOverAst(
         }
     }
 
-    override val isFromSource: Boolean get() = true
-
     override val isStatic: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.STATIC_KEYWORD)
     override val isFinal: Boolean get() = containingClass.isInterface || isEnumEntry || hasFieldModifier(JavaSyntaxTokenType.FINAL_KEYWORD)
 }
 
-class JavaMethodOverAst(
+abstract class JavaMethodBaseOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, tree, containingClass), JavaMethod {
+) : JavaMemberOverAst(node, tree, containingClass) {
 
     // FIR matches Java type parameters by object identity; preserve identity across repeated
-    // accesses on the same JavaMethodOverAst (see JavaClassCache.kt KDoc).
-    override val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    // accesses on the same instance (see JavaClassCache.kt KDoc).
+    val typeParameters: List<JavaTypeParameter> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         computeTypeParameters(node, tree, containingClass.memberResolutionContext)
     }
 
     override val resolutionContext: JavaResolutionContext
         get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
 
-    override val valueParameters: List<JavaValueParameter>
+    val valueParameters: List<JavaValueParameter>
         get() {
-            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
-            return if (parameterList != null) {
-                tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
-                    .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
-            } else emptyList()
+            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST) ?: return emptyList()
+            return tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
+                .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
         }
+}
+
+class JavaMethodOverAst(
+    node: JavaLightNode,
+    tree: JavaLightTree,
+    containingClass: JavaClassOverAst,
+) : JavaMethodBaseOverAst(node, tree, containingClass), JavaMethod {
 
     override val returnType: JavaType
         get() {
@@ -390,39 +394,16 @@ class JavaMethodOverAst(
         get() = containingClass.isAnnotationType &&
                 tree.findChildByType(node, JavaSyntaxTokenType.DEFAULT_KEYWORD) != null
     override val isNative: Boolean get() = hasModifier(JavaSyntaxTokenType.NATIVE_KEYWORD)
-
-    override val isFromSource: Boolean get() = true
 }
 
 class JavaConstructorOverAst(
     node: JavaLightNode,
     tree: JavaLightTree,
     containingClass: JavaClassOverAst,
-) : JavaMemberOverAst(node, tree, containingClass), JavaConstructor {
+) : JavaMethodBaseOverAst(node, tree, containingClass), JavaConstructor {
     override val isAbstract: Boolean get() = false
     override val isStatic: Boolean get() = false
     override val isFinal: Boolean get() = true
-
-    // FIR matches Java type parameters by object identity; preserve identity across repeated
-    // accesses on the same JavaConstructorOverAst (see JavaClassCache.kt KDoc).
-    @Volatile private var _typeParameters: List<JavaTypeParameter>? = null
-    override val typeParameters: List<JavaTypeParameter>
-        get() = _typeParameters
-            ?: computeTypeParameters(node, tree, containingClass.memberResolutionContext).also { _typeParameters = it }
-
-    override val resolutionContext: JavaResolutionContext
-        get() = containingClass.memberResolutionContext.withTypeParameters(typeParameters)
-
-    override val valueParameters: List<JavaValueParameter>
-        get() {
-            val parameterList = tree.findChildByType(node, JavaSyntaxElementType.PARAMETER_LIST)
-            return if (parameterList != null) {
-                tree.getChildrenByType(parameterList, JavaSyntaxElementType.PARAMETER)
-                    .map { JavaValueParameterOverAst(it, tree, resolutionContext) }
-            } else emptyList()
-        }
-
-    override val isFromSource: Boolean get() = true
 }
 
 class JavaValueParameterOverAst(
@@ -460,7 +441,6 @@ class JavaValueParameterOverAst(
         get() = isDeprecatedInJavaDoc(tree, node)
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = annotations.find { it.classId?.asSingleFqName() == fqName }
-    override val isFromSource: Boolean get() = true
 }
 
 // JLS 5.2 narrowing-of-constant-expression conversion for the six numeric primitive types.
