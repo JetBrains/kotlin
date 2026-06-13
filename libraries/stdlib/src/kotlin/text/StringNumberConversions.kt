@@ -12,7 +12,7 @@ package kotlin.text
 /**
  * Parses the string to a [Byte] number or returns `null` if the string is not a valid representation of a [Byte].
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Byte] value range (within `Byte.MIN_VALUE..Byte.MAX_VALUE`),
  * otherwise `null` is returned.
  *
@@ -37,7 +37,7 @@ public fun String.toByteOrNull(radix: Int): Byte? {
 /**
  * Parses the string to a [Short] number or returns `null` if the string is not a valid representation of a [Short].
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Short] value range (within `Short.MIN_VALUE..Short.MAX_VALUE`),
  * otherwise `null` is returned.
  *
@@ -62,7 +62,7 @@ public fun String.toShortOrNull(radix: Int): Short? {
 /**
  * Parses the string to an [Int] number or returns `null` if the string is not a valid representation of an [Int].
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Int] value range (within `Int.MIN_VALUE..Int.MAX_VALUE`),
  * otherwise `null` is returned.
  *
@@ -142,7 +142,7 @@ public fun String.toIntOrNull(radix: Int): Int? {
 /**
  * Parses the string to a [Long] number or returns `null` if the string is not a valid representation of a [Long].
  *
- * The string must consist of an optional leading `+` or `-` sign and decimal digits (`0-9`),
+ * The string must consist of an optional leading `+` or `-` sign and decimal digits (like `0-9`),
  * and fit the valid [Long] value range (within `Long.MIN_VALUE..Long.MAX_VALUE`),
  * otherwise `null` is returned.
  *
