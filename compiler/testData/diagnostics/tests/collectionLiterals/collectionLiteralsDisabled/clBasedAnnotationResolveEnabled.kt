@@ -15,7 +15,7 @@ fun test(): String {
     for (element in <!UNSUPPORTED_FEATURE!>[1, 2, 3]<!>) {
         element + 42
     }
-    return <!RETURN_TYPE_MISMATCH, UNSUPPORTED_FEATURE!>['a', 'b', 'c']<!>
+    return <!UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>['a', 'b', 'c']<!>
 }
 
 class Custom {

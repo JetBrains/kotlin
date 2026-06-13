@@ -27,7 +27,7 @@ fun testInLib() {
 import test.MyCollection
 
 fun testInMain() {
-    val collection: MyCollection <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
+    val collection: MyCollection = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
     val collection2 = when {
         true -> MyCollection()
         else -> [1, 2, 3]

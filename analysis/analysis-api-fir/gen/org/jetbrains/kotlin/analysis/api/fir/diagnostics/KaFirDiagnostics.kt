@@ -502,6 +502,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val candidatesWithOf: List<KaClassLikeSymbol>
     }
 
+    interface UnresolvedCollectionLiteral : KaFirDiagnostic<KtCollectionLiteralExpression> {
+        override val diagnosticClass get() = UnresolvedCollectionLiteral::class
+        val incompatibleBound: KaType
+    }
+
     interface ImplicitPropertyTypeMakesBehaviorOrderDependant : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ImplicitPropertyTypeMakesBehaviorOrderDependant::class
         val property: KaVariableSymbol

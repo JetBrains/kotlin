@@ -27,16 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParamete
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver.Companion.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
-import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.resolve.calls.inference.isSubtypeConstraintCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
@@ -355,8 +351,12 @@ internal object ArgumentCheckingProcessor {
 
         if (argumentType is ConeErrorType || expectedType is ConeErrorType) return ErrorTypeInArguments
 
-        val preparedExpectedType = prepareTypeForArgumentTypeMismatch(expectedType)
-        val preparedActualType = prepareTypeForArgumentTypeMismatch(argumentType)
+        // The check must always succeed because we only have one implementation of ConstraintSystemBuilder
+        // But even if it does not, this code is diagnostics only
+        val [preparedExpectedType, preparedActualType] = context(context, csBuilder) {
+            prepareTypeForArgumentTypeMismatch(expectedType) to prepareTypeForArgumentTypeMismatch(argumentType)
+        }
+
         return ArgumentTypeMismatch(
             preparedExpectedType,
             preparedActualType,
@@ -367,49 +367,6 @@ internal object ArgumentCheckingProcessor {
             anonymousFunctionIfReturnExpression,
             csBuilder.hasContradiction,
         )
-    }
-
-    private fun ArgumentContext.prepareTypeForArgumentTypeMismatch(type: ConeKotlinType): ConeKotlinType {
-        if (type is ConeTypeVariableType) {
-            val lookupTag = type.typeConstructor
-            val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
-
-            if (variableWithConstraints != null) {
-                // Retrieve type using proper logic in ResultTypeResolver.
-                // Might return null in case of PCLA when all constraints are non-proper.
-
-                // The cast must always succeed because we only have one implementation of ConstraintSystemBuilder
-                // But even if it does not, this code is diagnostics only
-                (csBuilder as? ResultTypeResolver.Context)?.run {
-                    context.inferenceComponents.resultTypeResolver
-                        .findResultTypeOrNull(variableWithConstraints, UNKNOWN)
-                        ?.asCone()
-                        ?.applyIf(type.isMarkedNullable) {
-                            withNullability(type.isMarkedNullable, session.typeContext)
-                        }?.let {
-                            return it
-                        }
-                }
-            }
-
-            // Fallback to just intersecting all constraint types, including non-proper ones.
-            val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
-            if (!constraintTypes.isNullOrEmpty()) {
-                return ConeTypeIntersector.intersectTypes(session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
-                    withNullability(type.isMarkedNullable, session.typeContext)
-                }
-            }
-
-            // In case of no constraints, just return the corresponding type parameter type
-            val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
-            if (originalTypeParameter != null) {
-                return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
-            }
-        } else if (type is ConeIntegerLiteralType) {
-            return type.possibleTypes.firstOrNull() ?: type
-        }
-
-        return type
     }
 
     private fun ArgumentContext.preprocessCallableReference(atom: ConeResolutionAtomWithPostponedChild) {

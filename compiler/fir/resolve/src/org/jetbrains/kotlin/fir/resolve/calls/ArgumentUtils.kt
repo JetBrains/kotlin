@@ -16,10 +16,16 @@ import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.InaccessibleReceiverKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -133,4 +139,48 @@ internal fun FirInaccessibleReceiverExpression.toInaccessibleReceiverDiagnostic(
         InaccessibleReceiverKind.SecondaryConstructor,
             -> error("Should not be called for $kind")
     }
+}
+
+context(context: ResolutionContext, csBuilder: ConstraintSystemBuilder)
+internal fun prepareTypeForArgumentTypeMismatch(type: ConeKotlinType): ConeKotlinType {
+    if (type is ConeTypeVariableType) {
+        val lookupTag = type.typeConstructor
+        val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]
+
+        if (variableWithConstraints != null) {
+            // Retrieve type using proper logic in ResultTypeResolver.
+            // Might return null in case of PCLA when all constraints are non-proper.
+
+            // The check must always succeed because we only have one implementation of ConstraintSystemBuilder
+            // But even if it does not, this code is diagnostics only
+            if (csBuilder is ResultTypeResolver.Context) {
+                context.inferenceComponents.resultTypeResolver
+                    .findResultTypeOrNull(variableWithConstraints, UNKNOWN)
+                    ?.asCone()
+                    ?.applyIf(type.isMarkedNullable) {
+                        withNullability(type.isMarkedNullable, context.session.typeContext)
+                    }?.let {
+                        return it
+                    }
+            }
+        }
+
+        // Fallback to just intersecting all constraint types, including non-proper ones.
+        val constraintTypes = variableWithConstraints?.constraints?.mapNotNull { it.type as? ConeKotlinType }
+        if (!constraintTypes.isNullOrEmpty()) {
+            return ConeTypeIntersector.intersectTypes(context.session.typeContext, constraintTypes).applyIf(type.isMarkedNullable) {
+                withNullability(type.isMarkedNullable, context.session.typeContext)
+            }
+        }
+
+        // In case of no constraints, just return the corresponding type parameter type
+        val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
+        if (originalTypeParameter != null) {
+            return ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+        }
+    } else if (type is ConeIntegerLiteralType) {
+        return type.possibleTypes.firstOrNull() ?: type
+    }
+
+    return type
 }

@@ -3905,6 +3905,13 @@ private fun KaDiagnosticConverterBuilder.addConversions88() {
             token,
         )
     }
+    add(FirErrors.UNRESOLVED_COLLECTION_LITERAL) { firDiagnostic ->
+        UnresolvedCollectionLiteralImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,

@@ -18,7 +18,7 @@ fun test() {
 
     takeListListInt([[1, <!ARGUMENT_TYPE_MISMATCH!>'2'<!>, 3]])
     takeListListInt([[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]])
-    takeListListInt([[<!UNRESOLVED_REFERENCE!>[]<!>]])
+    takeListListInt([[<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]])
     takeListListInt([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 
     takeListList<Int>([])
@@ -27,7 +27,7 @@ fun test() {
 
     takeListList<Int>([[1, <!ARGUMENT_TYPE_MISMATCH!>'2'<!>, 3]])
     takeListList<Int>([[1, <!NULL_FOR_NONNULL_TYPE!>null<!>, 3]])
-    takeListList<Int>([[<!UNRESOLVED_REFERENCE!>[]<!>]])
+    takeListList<Int>([[<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]])
     takeListList<Int>([<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>])
 
     <!CANNOT_INFER_PARAMETER_TYPE!>takeListList<!>(<!CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
@@ -42,8 +42,8 @@ fun test() {
     lst = [[<!ARGUMENT_TYPE_MISMATCH!>"1"<!>, <!ARGUMENT_TYPE_MISMATCH!>"2"<!>, <!ARGUMENT_TYPE_MISMATCH!>"3"<!>]]
     lst = []
     lst = [[]]
-    lst = [[<!UNRESOLVED_REFERENCE!>[]<!>]]
-    lst = [[<!UNRESOLVED_REFERENCE!>[1, 2, 3]<!>]]
+    lst = [[<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>]]
+    lst = [[<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>]]
     lst = [[1, 2, 3]]
 }
 

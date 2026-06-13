@@ -61,18 +61,18 @@ fun couldFallback() {
 class MyCollection
 
 fun couldntFallback() {
-    val _: CharSequence <!INITIALIZER_TYPE_MISMATCH!>=<!> ['a', 'b', 'c']
-    val _: CharSequence <!INITIALIZER_TYPE_MISMATCH!>=<!> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
-    val _: CharSequence? <!INITIALIZER_TYPE_MISMATCH!>=<!> ['a', 'b', 'c']
+    val _: CharSequence = <!UNRESOLVED_COLLECTION_LITERAL!>['a', 'b', 'c']<!>
+    val _: CharSequence = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val _: CharSequence? = <!UNRESOLVED_COLLECTION_LITERAL!>['a', 'b', 'c']<!>
 
-    val _: Int <!INITIALIZER_TYPE_MISMATCH!>=<!> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
-    val _: Int? <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
+    val _: Int = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
+    val _: Int? = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
 
-    val _: MutableCollection<*> <!INITIALIZER_TYPE_MISMATCH!>=<!> [1, 2, 3]
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeMutableCollection<!>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>takeMutableCollection<!>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    val _: MutableCollection<*> = <!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeMutableCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeMutableCollection<!>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
-    val _: MyCollection <!INITIALIZER_TYPE_MISMATCH!>=<!> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+    val _: MyCollection = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
 }
 
 fun noBounds() {
@@ -110,7 +110,7 @@ fun noBounds() {
 fun <T> defaultParameters(
     x: Any = [1, 2, 3],
     y: Collection<T> = [],
-    z: MutableCollection<T> <!INITIALIZER_TYPE_MISMATCH!>=<!> <!CANNOT_INFER_PARAMETER_TYPE!>[]<!>,
+    z: MutableCollection<T> = <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>,
 ) {
 }
 

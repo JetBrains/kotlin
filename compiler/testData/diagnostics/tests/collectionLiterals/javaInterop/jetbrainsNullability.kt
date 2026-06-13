@@ -35,9 +35,9 @@ public interface VarargIsFlexible3 {
 // FILE: main.kt
 
 fun main() {
-    val v1: VarargIsFlexible1 = <!UNRESOLVED_REFERENCE!>[""]<!>
-    val v2: VarargIsFlexible2 = <!UNRESOLVED_REFERENCE!>[""]<!>
-    val v3: VarargIsFlexible3 = <!UNRESOLVED_REFERENCE!>[null]<!>
+    val v1: VarargIsFlexible1 = <!UNRESOLVED_COLLECTION_LITERAL!>[""]<!>
+    val v2: VarargIsFlexible2 = <!UNRESOLVED_COLLECTION_LITERAL!>[""]<!>
+    val v3: VarargIsFlexible3 = <!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, javaType, localProperty, propertyDeclaration,

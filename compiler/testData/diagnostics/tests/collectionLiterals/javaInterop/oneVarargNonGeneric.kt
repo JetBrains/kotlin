@@ -65,35 +65,35 @@ public interface ReturnNotNullNonPrimitive {
 fun <T> accept(t: T) { }
 
 fun test() {
-    accept<Primitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<Primitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
-    accept<Primitive>(<!ARGUMENT_TYPE_MISMATCH!>[1.toLong()]<!>)
-    accept<Primitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    accept<Primitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<Primitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<Primitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[1.toLong()]<!>)
+    accept<Primitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
 
-    accept<NonPrimitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<NonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>)
-    accept<NonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
-    accept<NonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    accept<NonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<NonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<NonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<NonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
 
-    accept<NullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<NullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>)
-    accept<NullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
-    accept<NullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    accept<NullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<NullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<NullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
+    accept<NullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
 
-    accept<NotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<NotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>)
-    accept<NotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
-    accept<NotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
+    accept<NotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<NotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<NotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
+    accept<NotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
 
-    accept<ReturnNullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<ReturnNullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>)
-    accept<ReturnNullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
-    accept<ReturnNullableNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    accept<ReturnNullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<ReturnNullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<ReturnNullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<ReturnNullableNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
 
-    accept<ReturnNotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
-    accept<ReturnNotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>["42"]<!>)
-    accept<ReturnNotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[42]<!>)
-    accept<ReturnNotNullNonPrimitive>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
+    accept<ReturnNotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
+    accept<ReturnNotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>["42"]<!>)
+    accept<ReturnNotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[42]<!>)
+    accept<ReturnNotNullNonPrimitive>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, javaType, nullableType, stringLiteral,

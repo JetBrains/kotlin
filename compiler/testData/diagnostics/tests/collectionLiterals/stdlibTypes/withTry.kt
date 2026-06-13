@@ -31,7 +31,7 @@ fun test() {
     }
 
     val _: MutableCollection<String> = try {
-        <!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>
+        <!UNRESOLVED_COLLECTION_LITERAL!>[]<!>
     } finally {
         cleanup()
     }

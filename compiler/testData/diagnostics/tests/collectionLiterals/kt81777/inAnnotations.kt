@@ -36,7 +36,7 @@ fun testWithCallables() = Unit
 
 annotation class AnnoWrong(val block: Int)
 
-@AnnoWrong(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH!>[{ if (true) "a" else "b" }]<!>)
+@AnnoWrong(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[{ if (true) "a" else "b" }]<!>)
 fun testWrong() = Unit
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, anonymousFunction, callableReference, collectionLiteral,

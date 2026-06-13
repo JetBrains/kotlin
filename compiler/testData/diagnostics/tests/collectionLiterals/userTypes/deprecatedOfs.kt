@@ -28,8 +28,8 @@ class OldSetDeprecated {
 fun <T> take(t: T) = Unit
 
 fun test() {
-    take<AllDeprecated>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2, 3]<!>)
-    take<AllDeprecated>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    take<AllDeprecated>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2, 3]<!>)
+    take<AllDeprecated>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
     take<OldSetDeprecated>([1, 2, 3])
     take<OldSetDeprecated>([])
