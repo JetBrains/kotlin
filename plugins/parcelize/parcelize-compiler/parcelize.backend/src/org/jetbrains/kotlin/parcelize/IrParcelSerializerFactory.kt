@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.getArrayElementType
@@ -292,6 +293,12 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
             classifier.isSubclassOfFqName("android.os.Parcelable")
                     // Avoid infinite loops when deriving parcelers for enum or object classes.
                     && !(toplevel && (classifier.isObject || classifier.isEnumClass)) -> {
+
+                // During incremental compilation, classes from unchanged files in the same module are loaded from pre-compiled bytecode and
+                // will have null metadata. To support this case, we fall back to comparing module names.
+                val isCurrentModule = classifier.metadata != null ||
+                        (classifier as? IrLazyClassBase)?.moduleName == parcelizeType.classOrFail.owner.file.module.name.asStringStripSpecialMarkers()
+
                 // We try to use writeToParcel/createFromParcel directly whenever possible, but there are some caveats.
                 //
                 // According to the JLS, changing a class from final to non-final is a binary compatible change, hence we
@@ -304,7 +311,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols, private val
                 // for writeToParcel/createFromParcel. For Java classes (or compiled Kotlin classes annotated with
                 // @Parcelize), we'll have a field in the class itself. Finally, with Parcelable instances which were
                 // manually implemented in Kotlin, we'll instead have an @JvmField property getter in the companion object.
-                return if (classifier.modality == Modality.FINAL && classifier.metadata != null
+                return if (classifier.modality == Modality.FINAL && isCurrentModule
                     && (classifier.isParcelize(parcelizeAnnotations) || classifier.hasCreatorField)
                 ) {
                     wrapNullableSerializerIfNeeded(irType, IrEfficientParcelableParcelSerializer(classifier))
