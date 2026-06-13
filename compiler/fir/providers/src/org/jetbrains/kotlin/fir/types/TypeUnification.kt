@@ -23,8 +23,8 @@ fun FirSession.doUnify(
     targetTypeParameters: Set<FirTypeParameterSymbol>,
     result: MutableMap<FirTypeParameterSymbol, ConeTypeProjection>,
 ): Boolean {
-    val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
-    val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
+    val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType()
+    val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType()
 
     if (typeWithParameters is ConeErrorType) {
         return true // Return true to avoid loosing `result` substitution
