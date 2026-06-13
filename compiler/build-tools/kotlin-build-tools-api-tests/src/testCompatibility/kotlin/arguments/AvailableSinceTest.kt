@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.CO
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.GENERATE_COMPILER_REF_INDEX
 import org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation.Companion.LOOKUP_TRACKER
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain.Companion.js
 import org.jetbrains.kotlin.buildtools.api.js.jsKlibCompilationOperation
@@ -34,7 +35,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.util.jar.JarFile
 import kotlin.io.path.Path
 
 class AvailableSinceTest : BaseCompilationTest() {
@@ -86,7 +92,7 @@ class AvailableSinceTest : BaseCompilationTest() {
                                 message: String,
                                 location: CompilerMessageRenderer.SourceLocation?,
                             ): String {
-                                TODO("Not yet implemented")
+                                return message
                             }
                         }
                     }
@@ -249,7 +255,7 @@ class AvailableSinceTest : BaseCompilationTest() {
                                 message: String,
                                 location: CompilerMessageRenderer.SourceLocation?,
                             ): String {
-                                TODO("Not yet implemented")
+                                return message
                             }
                         }
                     }
@@ -329,6 +335,130 @@ class AvailableSinceTest : BaseCompilationTest() {
             }
         }
     }
+
+    @Test
+    fun testAllVersionedOptionsHaveAvailableSinceVersion() {
+        val toolchains = KotlinToolchains.loadImplementation(btaClassloader)
+        assumeTrue(toolchains.hasOptionVersionChecking())
+
+        // 1. Discovery sanity check: reflection must find at least one option holder
+        val holders = discoverOptionHolders()
+        assertTrue(holders.isNotEmpty()) {
+            "Expected to discover at least one option holder in the `org.jetbrains.kotlin.buildtools.api` package"
+        }
+
+        // 2. Cross-check reflection-based discovery against the statically declared sets of expected holders
+        val discoveredOptionsHolders = holders.map { it.name }.toSet()
+        val expectedOptionsHolders = knownVersionedOptionHolders + knownUnversionedOptionHolders
+
+        val overlap = knownVersionedOptionHolders intersect knownUnversionedOptionHolders
+        assertTrue(overlap.isEmpty()) {
+            "Option holder(s) listed both as versioned and unversioned: $overlap.\n" +
+                    "Each holder must appear in exactly one of `knownVersionedOptionHolders` / `knownUnversionedOptionHolders`."
+        }
+
+        val notDiscovered = expectedOptionsHolders - discoveredOptionsHolders
+        assertTrue(notDiscovered.isEmpty()) {
+            "Reflection-based discovery did not find expected option holder(s): $notDiscovered.\n" +
+                    "Either the holder was removed/renamed, or the discovery criteria in `discoverOptionHolders()` broke."
+        }
+
+        val unregistered = discoveredOptionsHolders - expectedOptionsHolders
+        assertTrue(unregistered.isEmpty()) {
+            "New option holder(s) discovered but not registered: $unregistered.\n" +
+                    "Add each to `knownVersionedOptionHolders` (and `trySet(...)` coverage in a dedicated test above), " +
+                    "or to `knownUnversionedOptionHolders` if `availableSinceVersion` adoption is postponed."
+        }
+
+        // 3. Verify each holder's options actually carry `availableSinceVersion`
+        val problems = holders.mapNotNull { holder ->
+            val options = holder.declaredOptions()
+            val unversionedOptions = options.filterNot { it.hasAvailableSinceVersion() }
+            when {
+                unversionedOptions.isEmpty() -> if (holder.name in knownUnversionedOptionHolders) {
+                    "${holder.name} is versioned now: remove it from `knownUnversionedOptionHolders` " +
+                            "and add `trySet(...)` coverage for its options in a dedicated test above"
+                } else null
+                unversionedOptions.size < options.size -> {
+                    "${holder.name} is only partially versioned, options without an `availableSinceVersion`: ${unversionedOptions.map { it.id }}. " +
+                            "Declare it for all options and add `trySet(...)` coverage in a dedicated test above"
+                }
+                holder.name !in knownUnversionedOptionHolders -> {
+                    "${holder.name} declares options without an `availableSinceVersion`: ${unversionedOptions.map { it.id }}. " +
+                            "Declare it and add `trySet(...)` coverage in a dedicated test above"
+                }
+                else -> null
+            }
+        }
+
+        assertTrue(problems.isEmpty()) {
+            "The Build Tools API option version checking is inconsistent:\n" + problems.joinToString("\n")
+        }
+    }
+
+    private fun discoverOptionHolders(): List<Class<*>> {
+        val apiLoader = BaseOption::class.java.classLoader
+        val location = Paths.get(BaseOption::class.java.protectionDomain.codeSource.location.toURI())
+        val classFilePaths = if (Files.isDirectory(location)) {
+            location.toFile().walkTopDown().map { location.relativize(it.toPath()).joinToString("/") }.toList()
+        } else {
+            JarFile(location.toFile()).use { jar -> jar.entries().asSequence().map { it.name }.toList() }
+        }
+        // Derived from a real class in the target package instead of a hardcoded path, so a typo or
+        // a future package rename cannot silently make discovery return nothing
+        val packagePrefix = BuildOperation::class.java.name.substringBeforeLast('.').replace('.', '/') + "/"
+        return classFilePaths
+            .filter { it.startsWith(packagePrefix) && it.endsWith(".class") }
+            .mapNotNull { runCatching { apiLoader.loadClass(it.removeSuffix(".class").replace('/', '.')) }.getOrNull() }
+            .filter { it.declaredOptionFields().isNotEmpty() }
+    }
+
+    /**
+     * Option holders that adopt `availableSinceVersion` and are covered by a dedicated `trySet(...)` test above.
+     * Cross-checked against reflection-based discovery in [testAllVersionedOptionsHaveAvailableSinceVersion] so that a
+     * new holder cannot slip in without being registered and covered, and so that the discovery criteria are guarded
+     * against silently finding fewer holders than expected.
+     */
+    private val knownVersionedOptionHolders: Set<String> = setOf(
+        "org.jetbrains.kotlin.buildtools.api.BaseCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.BuildOperation",
+        "org.jetbrains.kotlin.buildtools.api.BaseIncrementalCompilationConfiguration",
+        $$"org.jetbrains.kotlin.buildtools.api.ExecutionPolicy$WithDaemon",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation",
+        "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration",
+        "org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
+    )
+
+    /**
+     * Option holders that intentionally do not adopt `availableSinceVersion`: either the
+     * adoption is postponed (tracked by a ticket), or the holder is deprecated to error for removal. Once a holder adopts
+     * `availableSinceVersion`, [testAllVersionedOptionsHaveAvailableSinceVersion] asks to remove it from this set.
+     */
+    private val knownUnversionedOptionHolders: Set<String> = setOf(
+        // deprecated with `DeprecationLevel.ERROR`, awaiting removal
+        "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions",
+        // `availableSinceVersion` adoption is postponed
+        "org.jetbrains.kotlin.buildtools.api.abi.AbiFilters",
+        "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation",
+        "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation",
+        "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
+    )
+
+    private fun Class<*>.declaredOptionFields(): List<Field> =
+        declaredFields.filter { Modifier.isStatic(it.modifiers) && BaseOption::class.java.isAssignableFrom(it.type) }
+
+    private fun Class<*>.declaredOptions(): List<BaseOption<*>> =
+        declaredOptionFields().map { field ->
+            field.isAccessible = true
+            field.get(null) as BaseOption<*>
+        }
+
+    private fun BaseOption<*>.hasAvailableSinceVersion(): Boolean =
+        this::class.java.methods.find { it.name == "getAvailableSinceVersion" }?.invoke(this) != null
 
     private fun KotlinToolchains.hasOptionVersionChecking(): Boolean =
         KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, "snapshot")
