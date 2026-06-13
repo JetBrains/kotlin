@@ -4869,10 +4869,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = FunctionDelegateMemberNameClash::class
     }
 
-    interface ValueClassWithoutJvmInlineAnnotation : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ValueClassWithoutJvmInlineAnnotation::class
-    }
-
     interface JvmInlineWithoutValueClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = JvmInlineWithoutValueClass::class
     }
