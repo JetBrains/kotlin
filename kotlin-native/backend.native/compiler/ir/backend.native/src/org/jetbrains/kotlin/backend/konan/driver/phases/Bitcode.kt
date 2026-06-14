@@ -28,6 +28,7 @@ import llvm.LLVMModuleRef
 import llvm.LLVMRelocMode
 import llvm.LLVMRunPasses
 import llvm.LLVMSetValueName
+import llvm.LLVMStripModuleDebugInfo
 import llvm.LLVMTargetMachineEmitToFile
 import llvm.LLVMTargetRefVar
 import llvm.LLVMWriteBitcodeToFile
@@ -180,6 +181,14 @@ internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeG
  *  - Orphan `unreachable:` blocks (dead arms of throw→unreachable rewrites) keep references
  *    to unbox stubs that NVPTX prints as `.extern .func` at the top of the PTX.
  *
+ * `LLVMStripModuleDebugInfo` runs first to drop all DWARF debug metadata (`!dbg`
+ * attachments, `DICompileUnit`/`DISubprogram`/etc., `llvm.dbg.*` intrinsics). The device
+ * fragment inherits the host module's debug-info configuration, but DWARF in PTX is only
+ * useful for `cuda-gdb` source-level debugging, and even when that's wanted, the
+ * host-side debug toggle isn't a reliable signal for device debuggability. Stripping
+ * unconditionally avoids a ~10x bloat in the emitted `.ptx` (most of it `.debug_*`
+ * `.b8` byte-emit sections) on host-debug builds.
+ *
  * Running LLVM's `default<O2>` covers the per-module cleanup we actually want (InstCombine
  * folds `select cond, x, null` to `x`, SimplifyCFG drops the orphan blocks, the other
  * passes are no-ops on a clean device module). `lto<O2>` adds the whole-module IPO
@@ -198,6 +207,7 @@ internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeG
 internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef>(
         name = "StripDeadDeviceIr",
 ) { _, module ->
+    LLVMStripModuleDebugInfo(module)
     val options = LLVMCreatePassBuilderOptions()!!
     try {
         val err = LLVMRunPasses(
