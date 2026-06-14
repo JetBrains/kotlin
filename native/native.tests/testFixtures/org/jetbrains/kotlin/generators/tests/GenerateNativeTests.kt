@@ -103,6 +103,15 @@ fun main(args: Array<String>) {
                 model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
                 model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
             }
+            testClass<AbstractNativeCInteropHeaderModeTest>(
+                suiteTestClassName = "CInteropHeaderModeTestGenerated",
+            ) {
+                model("simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("cCallMode/cCallMode", pattern = "^([^_](.+))$", recursive = false)
+            }
             testClass<AbstractNativeCInteropKT39120Test>(
                 suiteTestClassName = "CInteropKT39120TestGenerated",
             ) {

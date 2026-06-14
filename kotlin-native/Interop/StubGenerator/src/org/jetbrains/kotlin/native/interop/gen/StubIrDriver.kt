@@ -157,8 +157,12 @@ class StubIrDriver(
         val builderResult = StubIrBuilder(context).build()
         val bridgeBuilderResult = StubIrBridgeBuilder(context, builderResult).build()
 
-        outCFile.bufferedWriter().use {
-            emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
+        // In header mode, we only need metadata and can skip emitting the C stubs file
+        // since we bypass native bridge/bitcode compilation entirely.
+        if (!context.configuration.headerMode) {
+            outCFile.bufferedWriter().use {
+                emitCFile(context, it, entryPoint, bridgeBuilderResult.nativeBridges)
+            }
         }
 
         if (options.dumpBridges) {
