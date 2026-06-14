@@ -1573,17 +1573,33 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Annotations -----------------------------------
 
+    // `enterAnnotationCall` / `exitAnnotationCall` should be used only in combination with
+    // `enterCallArguments` / `exitCallArguments`. Otherwise, use `enterAnnotation` / `exitAnnotation`.
+
     fun enterAnnotation() {
         graphBuilder.enterFakeExpression().mergeIncomingFlow()
     }
 
-    fun exitAnnotation(alsoExitCall: Boolean = false) {
-        if (alsoExitCall) {
-            // TODO (KT-86555): clean up. One of the possible solutions is explicit call to `exitFunctionCall` from transformer.
-            context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
-        }
-        graphBuilder.exitFakeExpression(alsoExitCall)
+    fun exitAnnotation() {
+        graphBuilder.exitFakeExpression()
         resetSmartCastPosition() // rollback to position before annotation
+    }
+
+    fun enterAnnotationCall() {
+        enterAnnotation()
+    }
+
+    // See also `exitFunctionCall`
+    fun exitAnnotationCall() {
+        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
+
+        // node is exit node of fake graph
+        // this graph will be dropped later as part of `exitAnnotation()` call
+        val (lambdaExitNodes, node = value) = graphBuilder.exitAnnotationCall()
+        lambdaExitNodes.forEach { it.mergeIncomingFlow() }
+        node.mergeIncomingFlow()
+
+        exitAnnotation()
     }
 
     // ----------------------------------- Init block -----------------------------------
