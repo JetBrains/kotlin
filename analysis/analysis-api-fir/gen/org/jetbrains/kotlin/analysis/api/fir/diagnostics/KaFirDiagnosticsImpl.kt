@@ -589,6 +589,12 @@ internal class AmbiguousCollectionLiteralImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtCollectionLiteralExpression>(firDiagnostic, token), KaFirDiagnostic.AmbiguousCollectionLiteral
 
+internal class UnresolvedCollectionLiteralImpl(
+    override val incompatibleBound: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtCollectionLiteralExpression>(firDiagnostic, token), KaFirDiagnostic.UnresolvedCollectionLiteral
+
 internal class ImplicitPropertyTypeMakesBehaviorOrderDependantImpl(
     override val property: KaVariableSymbol,
     firDiagnostic: KtPsiDiagnostic,

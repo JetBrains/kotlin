@@ -377,6 +377,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_IN_CLAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_SHADOWED_BY_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_COLLECTION_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FIELD_INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
@@ -1812,6 +1813,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             AMBIGUOUS_COLLECTION_LITERAL,
             "Type of collection literal is ambiguous. Multiple candidates declare operator ''of'':{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            UNRESOLVED_COLLECTION_LITERAL,
+            "Expected type ''{0}'' for collection literal does not define operator ''of'' and is not a supertype of ''List''.",
+            RENDER_TYPE,
         )
 
         // Context parameters resolution

@@ -20,7 +20,7 @@ fun test_fun(s: String, arr: Array<String>) {
 }
 
 fun test_ann(s: String, arr: Array<String>) {
-    @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_REFERENCE!>[""]<!>, x = 1)
+    @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[""]<!>, x = 1)
     foo()
     @Ann(*[""], x = 1)
     foo()

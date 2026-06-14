@@ -41,23 +41,23 @@ public interface OnlyNullability {
 fun <T> accept(t: T) {}
 
 fun test() {
-    accept<Unrelated>(<!ARGUMENT_TYPE_MISMATCH!>[1, "a", "b"]<!>)
-    accept<Unrelated>(<!ARGUMENT_TYPE_MISMATCH!>[1]<!>)
-    accept<Unrelated>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    accept<Unrelated>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, "a", "b"]<!>)
+    accept<Unrelated>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+    accept<Unrelated>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
-    accept<NullabilityMixed>(<!ARGUMENT_TYPE_MISMATCH!>["a", "b", null]<!>)
-    accept<NullabilityMixed>(<!ARGUMENT_TYPE_MISMATCH!>["a"]<!>)
-    accept<NullabilityMixed>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    accept<NullabilityMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>["a", "b", null]<!>)
+    accept<NullabilityMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>["a"]<!>)
+    accept<NullabilityMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
-    accept<MultipleMixed>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2.0, "a", "b"]<!>)
-    accept<MultipleMixed>(<!ARGUMENT_TYPE_MISMATCH!>[1, 2.0]<!>)
-    accept<MultipleMixed>(<!ARGUMENT_TYPE_MISMATCH!>[1]<!>)
-    accept<MultipleMixed>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    accept<MultipleMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2.0, "a", "b"]<!>)
+    accept<MultipleMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>[1, 2.0]<!>)
+    accept<MultipleMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>[1]<!>)
+    accept<MultipleMixed>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 
-    accept<OnlyNullability>(<!ARGUMENT_TYPE_MISMATCH!>[null, "a", "b"]<!>)
-    accept<OnlyNullability>(<!ARGUMENT_TYPE_MISMATCH!>["a", "b"]<!>)
-    accept<OnlyNullability>(<!ARGUMENT_TYPE_MISMATCH!>[null]<!>)
-    accept<OnlyNullability>(<!ARGUMENT_TYPE_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>[]<!>)
+    accept<OnlyNullability>(<!UNRESOLVED_COLLECTION_LITERAL!>[null, "a", "b"]<!>)
+    accept<OnlyNullability>(<!UNRESOLVED_COLLECTION_LITERAL!>["a", "b"]<!>)
+    accept<OnlyNullability>(<!UNRESOLVED_COLLECTION_LITERAL!>[null]<!>)
+    accept<OnlyNullability>(<!UNRESOLVED_COLLECTION_LITERAL!>[]<!>)
 }
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, javaType, nullableType, stringLiteral,

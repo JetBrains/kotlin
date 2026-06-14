@@ -33,6 +33,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>(IntegerLiteral(42)))
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
+2. `kotlin/collections/List<kotlin/Nothing> <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
 
 ### Call 2
 
@@ -106,6 +107,7 @@ expectThroughTV#(R|<local>/x|, <collectionLiteralCall>())
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
+2. `kotlin/collections/List<kotlin/Nothing> <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
 
 ### Call 4
 
@@ -254,6 +256,7 @@ expectThroughTV#(when () {
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
+2. `kotlin/collections/List<kotlin/Nothing> <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
 
 ### Call 7
 
@@ -445,6 +448,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
+2. `kotlin/collections/List<kotlin/Nothing> <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
 
 ### Call 11
 
@@ -658,6 +662,7 @@ expectThroughTV#(<collectionLiteralCall>(IntegerLiteral(42)), R?C|<local>/x|)
    	false HAS_PROPER_EQUALITY_CONSTRAINT
    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
    )`
+2. `kotlin/collections/List<kotlin/Nothing> <: TypeVariable(T)` _from SimpleConstraintSystemConstraintPosition_
 
 ### Call 15
 
