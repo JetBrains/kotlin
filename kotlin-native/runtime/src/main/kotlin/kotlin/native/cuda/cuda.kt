@@ -64,6 +64,24 @@ public object blockIdx {
     public val z: Int inline get() = blockIdx_z()
 }
 
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.read.ptx.sreg.ntid.x")
+internal external fun blockDim_x(): Int
+
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.read.ptx.sreg.ntid.y")
+internal external fun blockDim_y(): Int
+
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.read.ptx.sreg.ntid.z")
+internal external fun blockDim_z(): Int
+
+public object blockDim {
+    public val x: Int inline get() = blockDim_x()
+    public val y: Int inline get() = blockDim_y()
+    public val z: Int inline get() = blockDim_z()
+}
+
 // TODO: gridIdx
 
 // K/N's libllvmstubs.dylib is statically linked against an LLVM (>=21) where the bare
