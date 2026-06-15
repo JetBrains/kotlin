@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
 import org.jetbrains.kotlin.descriptors.runtime.structure.Java16SealedRecordLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -47,6 +50,8 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.compact
 import java.io.Serializable
+import java.lang.Deprecated as JavaLangDeprecated
+import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
 import java.lang.reflect.Modifier
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -60,6 +65,7 @@ import kotlin.metadata.internal.toKmClass
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.metadata.jvm.moduleName
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.*
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
@@ -214,14 +220,14 @@ internal class KClassImpl<T : Any>(
                 return@lazySoft emptyList()
             }
 
-            if (useK1Implementation || isClassWithAdditionalConstructorsFromMappedType()) {
+            if (useK1Implementation) {
                 constructorDescriptors.map { descriptor ->
                     DescriptorKFunction(this@KClassImpl, descriptor) as KFunction<T>
                 }
             } else if (kmClass != null) {
                 constructorsMetadata.map { kmConstructor ->
                     createUnboundConstructor(kmConstructor, this@KClassImpl) as KFunction<T>
-                }
+                } + additionalConstructorsFromMappedJavaClass().map { it as KFunction<T> }
             } else if (jClass.isAnnotationPresent(Metadata::class.java)) {
                 // In case of a Kotlin synthetic class, there's no KmClass, and there should be no constructors.
                 emptyList()
@@ -236,11 +242,31 @@ internal class KClassImpl<T : Any>(
             }
         }
 
-        // TODO (KT-86101): support `JvmBuiltInsCustomizer.getConstructors` in new implementation.
-        private fun isClassWithAdditionalConstructorsFromMappedType(): Boolean =
-            kmClass != null && jClass.declaredConstructors.count {
-                Modifier.isPublic(it.modifiers) || Modifier.isProtected(it.modifiers)
-            } > constructorsMetadata.size
+        private fun additionalConstructorsFromMappedJavaClass(): List<JavaKConstructor> {
+            if (!isMappedBuiltin) return emptyList()
+            val metadataSignatures = constructorsMetadata.mapNotNull { it.signature?.toString() }.toSet()
+            val internalName = jClass.name.replace('.', '/')
+
+            fun Constructor<*>.isTrivialCopyConstructor(): Boolean {
+                val parameterType = parameterTypes.singleOrNull() ?: return false
+                return parameterType == jClass || parameterType == jClass.primitiveByWrapper
+            }
+
+            return jClass.declaredConstructors.mapNotNull { javaConstructor ->
+                val signature = javaConstructor.jvmSignature
+                if ((Modifier.isPublic(javaConstructor.modifiers) || Modifier.isProtected(javaConstructor.modifiers)) &&
+                    signature !in metadataSignatures &&
+                    !javaConstructor.isTrivialCopyConstructor() &&
+                    !javaConstructor.isAnnotationPresent(JavaLangDeprecated::class.java) &&
+                    "$internalName.$signature" !in JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
+                ) {
+                    JavaKConstructor(this@KClassImpl, javaConstructor, NO_RECEIVER)
+                } else {
+                    null
+                }
+            }
+        }
+
 
         val nestedClasses: Collection<KClass<*>> by ReflectProperties.lazySoft {
             val kmClass = kmClass
