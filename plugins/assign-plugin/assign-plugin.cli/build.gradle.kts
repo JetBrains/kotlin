@@ -5,12 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core:descriptors"))
-    implementation(project(":compiler:container"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:resolution"))
     api(project(":kotlin-assignment-compiler-plugin.common"))
-    api(project(":kotlin-assignment-compiler-plugin.k1"))
     api(project(":kotlin-assignment-compiler-plugin.k2"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:util"))
@@ -25,8 +20,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-
-optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()

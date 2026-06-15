@@ -298,7 +298,6 @@ include(
 include(
     ":kotlin-assignment-compiler-plugin",
     ":kotlin-assignment-compiler-plugin.common",
-    ":kotlin-assignment-compiler-plugin.k1",
     ":kotlin-assignment-compiler-plugin.k2",
     ":kotlin-assignment-compiler-plugin.cli",
     ":kotlin-assignment-compiler-plugin.embeddable"
@@ -862,7 +861,6 @@ project(":kotlin-sam-with-receiver-compiler-plugin.cli").projectDir = File("$roo
 
 project(":kotlin-assignment-compiler-plugin").projectDir = File("$rootDir/plugins/assign-plugin")
 project(":kotlin-assignment-compiler-plugin.common").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.common")
-project(":kotlin-assignment-compiler-plugin.k1").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.k1")
 project(":kotlin-assignment-compiler-plugin.k2").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.k2")
 project(":kotlin-assignment-compiler-plugin.cli").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.cli")
 project(":kotlin-assignment-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/assign-plugin/assign-plugin.embeddable")
