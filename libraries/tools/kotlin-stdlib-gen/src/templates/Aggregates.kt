@@ -195,7 +195,7 @@ object Aggregates : TemplateGroupBase() {
         else -> "AllEqual${f}Samples.$methodName"
     }
 
-    private fun MemberBuilder.appendAllEqualFloatingPointNote() {
+    private fun MemberBuilder.appendFloatingPointEqualityNote() {
         if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
             doc {
                 doc + """
@@ -214,9 +214,9 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
-    // `allEqualBy` compares selector results of type `K`, independent of the receiver's element type,
+    // The `*By` overloads compare selector results of type `K`, independent of the receiver's element type,
     // so the note applies uniformly to every overload.
-    private fun MemberBuilder.appendAllEqualByFloatingPointNote() {
+    private fun MemberBuilder.appendSelectorFloatingPointEqualityNote() {
         doc {
             doc + """
             For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
@@ -247,7 +247,7 @@ object Aggregates : TemplateGroupBase() {
             every subsequent ${f.element}.
             """
         }
-        appendAllEqualFloatingPointNote()
+        appendFloatingPointEqualityNote()
         sample(allEqualSampleRef("allEqual"))
         body {
             """
@@ -307,7 +307,7 @@ object Aggregates : TemplateGroupBase() {
             value of the first ${f.element} equals the [selector] value of every subsequent ${f.element}.
             """
         }
-        appendAllEqualByFloatingPointNote()
+        appendSelectorFloatingPointEqualityNote()
         sample(allEqualSampleRef("allEqualBy"))
         body {
             """
@@ -346,34 +346,6 @@ object Aggregates : TemplateGroupBase() {
         else -> "AllDistinct${f}Samples.$methodName"
     }
 
-    private fun MemberBuilder.appendAllDistinctFloatingPointNote() {
-        if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
-            doc {
-                doc + """
-                `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
-                consistent with [${primitive!!.name}.equals].
-                """
-            }
-        }
-        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
-            doc {
-                doc + """
-                For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
-                and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
-                """
-            }
-        }
-    }
-
-    private fun MemberBuilder.appendAllDistinctByFloatingPointNote() {
-        doc {
-            doc + """
-            For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
-            and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
-            """
-        }
-    }
-
     val f_allDistinct = fn("allDistinct()") {
         includeDefault()
         include(ArraysOfUnsigned)
@@ -396,7 +368,7 @@ object Aggregates : TemplateGroupBase() {
             The operation returns `false` as soon as a duplicate ${f.element} is found.
             """
         }
-        appendAllDistinctFloatingPointNote()
+        appendFloatingPointEqualityNote()
         sample(allDistinctSampleRef("allDistinct"))
         body {
             """
@@ -478,7 +450,7 @@ object Aggregates : TemplateGroupBase() {
             The operation returns `false` as soon as a duplicate [selector] value is found.
             """
         }
-        appendAllDistinctByFloatingPointNote()
+        appendSelectorFloatingPointEqualityNote()
         sample(allDistinctSampleRef("allDistinctBy"))
         body {
             """
