@@ -208,7 +208,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
             } else null
 
     private fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> =
-        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjections() as IrSimpleType).arguments))
+        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjectionsToMakeValidSuperType() as IrSimpleType).arguments))
 
     private val stringType = context.irBuiltIns.stringType
 
@@ -446,7 +446,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val isKReference = functionReference.isKReference
         val boundValueTypes = functionReference.boundValues.map { it.type.eraseIfReferenceType() }
 
-        val superInterfaceType = functionReference.type.removeProjections()
+        val superInterfaceType = functionReference.type.removeProjectionsToMakeValidSuperType()
         val additionalInterfaces = getAdditionalInterfaces(functionReference)
         val key = callableReferenceKey(superClass, arity, isSuspend, isKReference, boundValueTypes)
 

@@ -16,12 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.irAttribute
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -146,7 +144,9 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             createThisReceiverParameter()
         }
         val superClassType = getSuperClassType(functionReference)
-        val superInterfaceType = functionReference.type.removeProjections()
+        // SAM class used as a superclass can sometimes have type projections.
+        // But that's not suitable for super-types, so we erase them
+        val superInterfaceType = functionReference.type.removeProjectionsToMakeValidSuperType()
         functionReferenceClass.superTypes =
             listOf(superClassType, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
         val constructor = functionReferenceClass.addConstructor {

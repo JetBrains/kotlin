@@ -1321,9 +1321,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
 fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
     if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
 
-// SAM class used as a superclass can sometimes have type projections.
-// But that's not suitable for super-types, so we erase them
-fun IrType.removeProjections(): IrType {
+fun IrType.removeProjectionsToMakeValidSuperType(): IrType {
     if (this !is IrSimpleType) return this
     val arguments = arguments.mapIndexed { index, argument ->
         val typeParameter = (classifier as IrClassSymbol).owner.typeParameters[index]

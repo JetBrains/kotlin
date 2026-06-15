@@ -89,7 +89,7 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
     }
 
     override fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> =
-        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjections() as IrSimpleType).arguments))
+        listOfNotNull(reference.secondFunctionInterface?.symbol?.typeWithArguments((reference.type.removeProjectionsToMakeValidSuperType() as IrSimpleType).arguments))
 
     override fun postprocessInvoke(invokeFunction: IrSimpleFunction, functionReference: IrRichFunctionReference) {
         val superInvokeFun = functionReference.secondFunctionInterface?.invokeFun ?: return
