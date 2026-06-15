@@ -128,7 +128,7 @@ open class AbstractFirWasmJsCodegenBoxTest(
 }
 
 open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest(
-    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
+    pathToTestDir: String = "compiler/testData/codegen/box",
     testGroupOutputDirPrefix: String = "codegen/firBox/coroutinesStackSwitching"
 ) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
 

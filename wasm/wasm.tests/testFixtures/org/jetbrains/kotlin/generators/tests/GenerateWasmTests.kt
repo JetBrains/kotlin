@@ -152,7 +152,27 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingTest> {
-                model("codegen/box/coroutines", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternStackSwitchingCoroutines)
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest> {
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
+            }
+
+            testClass<AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest> {
+                model(
+                    "codegen/box/coroutines",
+                    pattern = jsTranslatorTestPattern,
+                    excludedPattern = excludedPatternStackSwitchingCoroutines
+                )
             }
 
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
