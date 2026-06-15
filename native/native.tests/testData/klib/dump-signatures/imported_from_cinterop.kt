@@ -1,4 +1,18 @@
+// MODULE: cinterop
+// FILE: lib.def
+language = Objective-C
+package = imported_from_cinterop.lib
+---
+@interface Base
+-(instancetype) init;
+-(void) overriddenFunction;
+-(void) nonOverriddenFunction;
+@property int overriddenProperty;
+@property int nonOverriddenProperty;
+@end
 
+// MODULE: main(cinterop)
+// FILE: main.kt
 package imported_from_cinterop.main
 
 import imported_from_cinterop.lib.Base
