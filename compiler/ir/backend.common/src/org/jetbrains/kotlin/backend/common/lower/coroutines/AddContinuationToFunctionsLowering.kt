@@ -132,7 +132,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(
 
         function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
             factory.stageController.restrictTo(it.owner) {
-                it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
+                it.owner.getOrCreateFunctionWithContinuationStub(context, stubReturnType).symbol
             }
         }
 

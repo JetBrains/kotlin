@@ -37,6 +37,9 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
     protected open fun suspendFunctionReturnTypeAtCallSite(expression: IrCall, newFun: IrSimpleFunction): IrType =
         newFun.returnType
 
+    protected open fun loweredSuspendFunctionReturnType(function: IrSimpleFunction): IrType =
+        defaultLoweredSuspendFunctionReturnType(function, context.irBuiltIns)
+
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
@@ -61,7 +64,8 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 val oldFun = expression.symbol.owner as? IrSimpleFunction
 
                 if (oldFun?.isSuspend == true) {
-                    expression.symbol = oldFun.getOrCreateFunctionWithContinuationStub(context).symbol
+                    expression.symbol =
+                        oldFun.getOrCreateFunctionWithContinuationStub(context, loweredSuspendFunctionReturnType(oldFun)).symbol
                 }
 
                 return super.visitRawFunctionReference(expression)
@@ -77,7 +81,8 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                 }
 
                 val oldFun = expression.symbol.owner
-                val newFun: IrSimpleFunction = oldFun.getOrCreateFunctionWithContinuationStub(context)
+                val newFun: IrSimpleFunction =
+                    oldFun.getOrCreateFunctionWithContinuationStub(context, loweredSuspendFunctionReturnType(oldFun))
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,

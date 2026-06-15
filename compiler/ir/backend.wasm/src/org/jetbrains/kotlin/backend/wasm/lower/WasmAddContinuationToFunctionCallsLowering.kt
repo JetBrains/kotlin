@@ -22,4 +22,10 @@ internal class WasmAddContinuationToFunctionCallsLowering(
             context.wasmUseStackSwitching -> expression.type
             else -> super.suspendFunctionReturnTypeAtCallSite(expression, newFun)
         }
+
+    override fun loweredSuspendFunctionReturnType(function: IrSimpleFunction): IrType =
+        when {
+            context.wasmUseStackSwitching -> function.returnType
+            else -> super.loweredSuspendFunctionReturnType(function)
+        }
 }
