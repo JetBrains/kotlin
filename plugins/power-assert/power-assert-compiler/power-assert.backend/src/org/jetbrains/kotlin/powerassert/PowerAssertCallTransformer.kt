@@ -260,18 +260,28 @@ class PowerAssertCallTransformer(
 
             fun IrType.remap(): IrType = remapTypeParameters(overload.owner, function)
 
-            // Value parameters must be compatible.
             val parameters = overload.owner.parameters
+            val messageParameter = parameters.lastOrNull()
+            if (messageParameter?.kind != IrParameterKind.Regular) return@mapNotNull null
+
+            // Value parameters must be compatible.
             if (parameters.size !in values.size..values.size + 1) return@mapNotNull null
             for (i in values.indices) {
                 val value = values[i]
                 val parameter = parameters[i]
+
+                // The signature shape (count of each type of parameter) must be the same.
                 if (value.kind != parameter.kind) return@mapNotNull null
 
                 when (value.kind) {
-                    // Regular parameters may only be assignable.
-                    IrParameterKind.Regular,
-                        -> if (!value.type.isAssignableTo(parameter.type.remap())) return@mapNotNull null
+                    IrParameterKind.Regular -> {
+                        // It is allowed for the message parameter to change type if it is not specified.
+                        // Otherwise, the parameter type must be assignable.
+                        if (
+                            !(parameter === messageParameter && original.arguments[value] == null) &&
+                            !value.type.isAssignableTo(parameter.type.remap())
+                        ) return@mapNotNull null
+                    }
 
                     // All other parameter kinds must match exactly.
                     IrParameterKind.DispatchReceiver,
@@ -281,8 +291,6 @@ class PowerAssertCallTransformer(
                 }
             }
 
-            val messageParameter = parameters.last()
-            if (messageParameter.kind != IrParameterKind.Regular) return@mapNotNull null
             val messageType = messageParameter.type
             return@mapNotNull when {
                 isStringSupertype(messageType) -> SimpleCallBuilder(overload, original)

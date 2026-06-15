@@ -41,7 +41,10 @@ fun test1() {
     val tmp1_Explain: Int = tmp0_Explain.<get-length>()
     val tmp2_Explain: Int = 5
     val tmp3_Explain: Boolean = EQEQ(arg0 = tmp1_Explain, arg1 = tmp2_Explain)
-    powerAssert(condition = tmp3_Explain, msg = "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 426, source = "    powerAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 16, endOffset = 34, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 16, endOffset = 22, displayOffset = 16, value = tmp0_Explain), ValueExpression(startOffset = 16, endOffset = 29, displayOffset = 23, value = tmp1_Explain), LiteralExpression(startOffset = 33, endOffset = 34, displayOffset = 33, value = tmp2_Explain), EqualityExpression(startOffset = 16, endOffset = 34, displayOffset = 30, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])), null])) */))
+    powerAssert(condition = tmp3_Explain, msg = local fun <anonymous>(): String {
+      return "\n" + toDefaultMessage(/* <this> = CallExplanation(offset = 426, source = "    powerAssert(\"test\".length == 5)", arguments = listOf<Argument>(elements = [Argument(startOffset = 16, endOffset = 34, kind = Kind.VALUE, expressions = listOf<Expression>(elements = [LiteralExpression(startOffset = 16, endOffset = 22, displayOffset = 16, value = tmp0_Explain), ValueExpression(startOffset = 16, endOffset = 29, displayOffset = 23, value = tmp1_Explain), LiteralExpression(startOffset = 33, endOffset = 34, displayOffset = 33, value = tmp2_Explain), EqualityExpression(startOffset = 16, endOffset = 34, displayOffset = 30, value = tmp3_Explain, lhs = tmp1_Explain, rhs = tmp2_Explain)])), null])) */)
+    }
+)
   }
 }
 
