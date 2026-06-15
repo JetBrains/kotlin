@@ -8,13 +8,7 @@ package org.jetbrains.kotlin.samWithReceiver
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.container.StorageComponentContainer
-import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.SAM_WITH_RECEIVER_ANNOTATION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.SAM_WITH_RECEIVER_PRESET
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverPluginNames.ANNOTATION_OPTION_NAME
@@ -62,7 +56,6 @@ class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
         }
         if (annotations.isEmpty()) return
 
-        StorageComponentContainerContributor.registerExtension(CliSamWithReceiverComponentContributor(annotations))
         FirExtensionRegistrar.registerExtension(FirSamWithReceiverExtensionRegistrar(annotations))
     }
 
@@ -70,16 +63,4 @@ class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean
         get() = true
-}
-
-class CliSamWithReceiverComponentContributor(val annotations: List<String>) : StorageComponentContainerContributor {
-    override fun registerModuleComponents(
-        container: StorageComponentContainer,
-        platform: TargetPlatform,
-        moduleDescriptor: ModuleDescriptor
-    ) {
-        if (!platform.isJvm()) return
-
-        container.useInstance(SamWithReceiverResolverExtension(annotations))
-    }
 }

@@ -287,7 +287,6 @@ val projectsDependingOnStableStdlib =
 
                 ":kotlin-sam-with-receiver-compiler-plugin.cli",
                 ":kotlin-sam-with-receiver-compiler-plugin.common",
-                ":kotlin-sam-with-receiver-compiler-plugin.k1",
                 ":kotlin-sam-with-receiver-compiler-plugin.k2",
 
                 ":kotlinx-serialization-compiler-plugin.cli",
@@ -314,7 +313,6 @@ val projectsDependingOnStableStdlib =
 
                 ":kotlin-sam-with-receiver-compiler-plugin.cli",
                 ":kotlin-sam-with-receiver-compiler-plugin.common",
-                ":kotlin-sam-with-receiver-compiler-plugin.k1",
                 ":kotlin-sam-with-receiver-compiler-plugin.k2",
 
                 ":kotlin-dataframe-compiler-plugin.cli",
