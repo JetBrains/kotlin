@@ -19,15 +19,12 @@ import org.jetbrains.kotlin.lombok.k2.FirLombokJavaRegistrar
 import org.jetbrains.kotlin.lombok.k2.FirLombokKotlinRegistrar
 import org.jetbrains.kotlin.lombok.k2.LombokCliDiagnostics
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.ir.LombokIrGenerationExtension
-import org.jetbrains.kotlin.resolve.jvm.extensions.SyntheticJavaResolveExtension
 import java.io.File
 
 class LombokComponentRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
             val configFile = compilerConfiguration[LOMBOK_CONFIG_FILE]
-            val config = LombokPluginConfig(configFile)
-            SyntheticJavaResolveExtension.registerExtension(LombokResolveExtension(config))
             FirExtensionRegistrar.registerExtension(FirLombokCommonRegistrar(configFile))
             FirExtensionRegistrar.registerExtension(FirLombokJavaRegistrar())
             FirExtensionRegistrar.registerExtension(FirLombokKotlinRegistrar())

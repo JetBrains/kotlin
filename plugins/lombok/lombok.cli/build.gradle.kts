@@ -14,7 +14,6 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
 
     implementation(project(":kotlin-lombok-compiler-plugin.common"))
-    implementation(project(":kotlin-lombok-compiler-plugin.k1"))
     implementation(project(":kotlin-lombok-compiler-plugin.k2"))
 
     compileOnly(intellijCore())
@@ -26,8 +25,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-
-optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()
