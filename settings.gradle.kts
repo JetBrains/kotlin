@@ -272,7 +272,6 @@ include(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-noarg-compiler-plugin.embeddable",
     ":kotlin-noarg-compiler-plugin.common",
-    ":kotlin-noarg-compiler-plugin.k1",
     ":kotlin-noarg-compiler-plugin.k2",
     ":kotlin-noarg-compiler-plugin.backend",
     ":kotlin-noarg-compiler-plugin.cli"
@@ -837,7 +836,6 @@ project(":kotlin-lombok-compiler-plugin.common").projectDir = File("$rootDir/plu
 project(":kotlin-noarg-compiler-plugin").projectDir = File("$rootDir/plugins/noarg")
 project(":kotlin-noarg-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/noarg/noarg.embeddable")
 project(":kotlin-noarg-compiler-plugin.common").projectDir = File("$rootDir/plugins/noarg/noarg.common")
-project(":kotlin-noarg-compiler-plugin.k1").projectDir = File("$rootDir/plugins/noarg/noarg.k1")
 project(":kotlin-noarg-compiler-plugin.k2").projectDir = File("$rootDir/plugins/noarg/noarg.k2")
 project(":kotlin-noarg-compiler-plugin.backend").projectDir = File("$rootDir/plugins/noarg/noarg.backend")
 project(":kotlin-noarg-compiler-plugin.cli").projectDir = File("$rootDir/plugins/noarg/noarg.cli")
