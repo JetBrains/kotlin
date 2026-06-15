@@ -65,7 +65,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 if (oldFun?.isSuspend == true) {
                     expression.symbol =
-                        oldFun.getOrCreateFunctionWithContinuationStub(context, loweredSuspendFunctionReturnType(oldFun)).symbol
+                        oldFun.getOrCreateFunctionWithContinuationStub(context, ::loweredSuspendFunctionReturnType).symbol
                 }
 
                 return super.visitRawFunctionReference(expression)
@@ -82,7 +82,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 val oldFun = expression.symbol.owner
                 val newFun: IrSimpleFunction =
-                    oldFun.getOrCreateFunctionWithContinuationStub(context, loweredSuspendFunctionReturnType(oldFun))
+                    oldFun.getOrCreateFunctionWithContinuationStub(context, ::loweredSuspendFunctionReturnType)
 
                 return IrCallImpl(
                     expression.startOffset, expression.endOffset,
