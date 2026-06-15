@@ -14320,6 +14320,7 @@ public fun <T> Array<out T>.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun ByteArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 256 values force a duplicate
     if (size > (1 shl Byte.SIZE_BITS)) return false
     val seen = UByteValueSet()
     for (element in this) {
@@ -14343,6 +14344,7 @@ public fun ByteArray.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun ShortArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 65536 values force a duplicate
     if (size > (1 shl Short.SIZE_BITS)) return false
     val seen = HashSet<Short>()
     for (element in this) {
@@ -14460,6 +14462,7 @@ public fun DoubleArray.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun BooleanArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 2 values force a duplicate
     return size == 2 && this[0] != this[1]
 }
 
@@ -14478,6 +14481,7 @@ public fun BooleanArray.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun CharArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 65536 values force a duplicate
     if (size > (1 shl Char.SIZE_BITS)) return false
     val seen = HashSet<Char>()
     for (element in this) {

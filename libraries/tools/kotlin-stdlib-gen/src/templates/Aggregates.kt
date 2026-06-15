@@ -389,12 +389,14 @@ object Aggregates : TemplateGroupBase() {
                 PrimitiveType.Boolean ->
                     """
                     if (size < 2) return true
+                    // more than 2 values force a duplicate
                     return size == 2 && this[0] != this[1]
                     """
                 PrimitiveType.Byte, PrimitiveType.UByte -> {
                     val key = if (primitive == PrimitiveType.Byte) "element.toUByte()" else "element"
                     """
                     if (size < 2) return true
+                    // more than ${1 shl Byte.SIZE_BITS} values force a duplicate
                     if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
                     val seen = UByteValueSet()
                     for (element in this) {
@@ -406,6 +408,7 @@ object Aggregates : TemplateGroupBase() {
                 PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char ->
                     """
                     if (size < 2) return true
+                    // more than ${1 shl Short.SIZE_BITS} values force a duplicate
                     if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
                     val seen = HashSet<T>()
                     for (element in this) {

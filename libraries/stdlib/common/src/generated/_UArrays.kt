@@ -6102,6 +6102,7 @@ public fun ULongArray.allDistinct(): Boolean {
 @ExperimentalUnsignedTypes
 public fun UByteArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 256 values force a duplicate
     if (size > (1 shl UByte.SIZE_BITS)) return false
     val seen = UByteValueSet()
     for (element in this) {
@@ -6126,6 +6127,7 @@ public fun UByteArray.allDistinct(): Boolean {
 @ExperimentalUnsignedTypes
 public fun UShortArray.allDistinct(): Boolean {
     if (size < 2) return true
+    // more than 65536 values force a duplicate
     if (size > (1 shl UShort.SIZE_BITS)) return false
     val seen = HashSet<UShort>()
     for (element in this) {
