@@ -19,21 +19,26 @@ import java.io.File
 
 abstract class AbstractNativeKlibDumpIrSignaturesTest : AbstractKlibToolDumpTest() {
     override fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler>> =
-        KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.map { signatureVersion ->
-            ::KlibToolIrSignaturesDumpHandler.bind(signatureVersion)
+        KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.flatMap { signatureVersion ->
+            listOf(
+                ::KlibToolIrSignaturesDumpHandler.bind(signatureVersion, false),
+                ::KlibToolIrSignaturesDumpHandler.bind(signatureVersion, true),
+            )
         }
 }
 
 private class KlibToolIrSignaturesDumpHandler(
     testServices: TestServices,
     override val signatureVersion: KotlinIrSignatureVersion,
-) : AbstractKlibToolDumpHandler(testServices, suffix = "ir-signatures") {
+    private val onlyTopLevelSignatures: Boolean,
+) : AbstractKlibToolDumpHandler(testServices, suffix = "ir-signatures" + if (onlyTopLevelSignatures) ".tl" else "") {
     override fun makeDump(klib: File): String? {
         if (isIrLessLibrary(klib)) return null
 
         return KLIB(klib).dumpIrSignatures(
             testServices.testRunSettings.get<KotlinNativeClassLoader>().classLoader,
-            signatureVersion
+            signatureVersion,
+            onlyTopLevelSignatures,
         )
     }
 

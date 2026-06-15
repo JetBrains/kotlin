@@ -338,7 +338,10 @@ internal class DumpIrSignatures(output: KlibToolOutput, args: KlibToolArguments)
 
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val signatures = IrSignaturesExtractor(library).extract()
+        val signatures = with(IrSignaturesExtractor(library)) {
+            if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
+        }
+
         IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
     }
 }

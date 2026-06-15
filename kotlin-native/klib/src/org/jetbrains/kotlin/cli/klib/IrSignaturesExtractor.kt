@@ -33,13 +33,20 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
  * This is a lightweight tool that allows extracting [IdSignature]s from the given [KotlinLibrary].
  *
  * The tool is supposed to be robust. It does not deserialize IR tree nodes and run the IR linkage like the compiler does.
- * Instead, it does few targeted reads and a limited number of deserialization calls to access IR proto stubs:
+ * Instead, it does few targeted IO reads and a limited number of deserialization calls to access IR proto stubs:
  * - [KlibIrComponentLayout.signaturesFile] is read to load the full set of [IdSignature]s that are used in the current library.
- * - [KlibIrComponentLayout.irFilesFile] is read to get the list of public top-level declarations in each library's file.
- * - [KlibIrComponentLayout.declarationsFile] is read to explore what are the public nested/member declarations of the above-mentioned
+ * - [KlibIrComponentLayout.irFilesFile] is read to get the list of top-level public declarations in each library's file.
+ * - [KlibIrComponentLayout.declarationsFile] is read to explore what are the nested/member public declarations of the above-mentioned
  *   top-level declarations.
  *
- * The entry point is [extract] function which returns [IrSignaturesExtractor.ExtractedSignatures].
+ * There are two entry points:
+ * - [extractAllPublicSignatures] extracts signatures of both top-level and nested/member public declarations.
+ *   This endpoint is useful for running investigations, debugging, etc.
+ * - [extractOnlyTopLevelPublicSignatures] extracts signatures of only top-level public declarations.
+ *   This endpoint can be helpful for e.g. understanding the DAG of dependencies between libraries.
+ *
+ * Note: [extractOnlyTopLevelPublicSignatures] is written in way to do even lesser amount of IO reads. So, it's
+ * supposed to be even more robust than [extractAllPublicSignatures].
  */
 internal class IrSignaturesExtractor(library: KotlinLibrary) {
     private val interner = IrInterningService()
@@ -129,6 +136,20 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
             return result
         }
 
+        /**
+         * Extract [IdSignature]s of all top-level public declarations that belong to the current file.
+         */
+        fun extractSignaturesOfOwnTopLevelPublicDeclarations(): Set<IdSignature> {
+            val result = hashSetOf<IdSignature>()
+
+            for (topLevelDeclarationIndex in fileProto.declarationIdList) {
+                val signature = signatureDeserializer.deserializeIdSignature(topLevelDeclarationIndex)
+                if (signature is CommonSignature) result += signature
+            }
+
+            return result
+        }
+
         private fun extractSignature(declarationProto: ProtoDeclaration, output: MutableSet<IdSignature>) {
             when (declarationProto.declaratorCase) {
                 IR_CLASS -> extractSignatureFromClass(declarationProto.irClass, output)
@@ -190,7 +211,13 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
             }
     }
 
-    fun extract(): ExtractedSignatures {
+    /**
+     * Extracts signatures of both top-level and nested/member public declarations.
+     *
+     * Note: This endpoint is useful when we need to see all contents of a KLIB.
+     * E.g. for running investigations, debugging, etc.
+     */
+    fun extractAllPublicSignatures(): ExtractedSignatures {
         val allKnownSignatures: MutableSet<IdSignature> = hashSetOf()
         val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
 
@@ -207,6 +234,35 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
         return ExtractedSignatures(
             declaredSignatures = ownDeclarationSignatures,
             importedSignatures = importedSignatures,
+        )
+    }
+
+    /**
+     * Extracts signatures of only top-level public declarations.
+     *
+     * Note: This endpoint can be helpful for e.g. understanding the DAG of dependencies between libraries.
+     * Also, it is written in way to do even lesser amount of IO reads than [extractAllPublicSignatures] for even better performance.
+     */
+    fun extractOnlyTopLevelPublicSignatures(): ExtractedSignatures {
+        val allKnownSignatures: MutableSet<IdSignature> = hashSetOf()
+        val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
+
+        for (fileIndex in 0 until ir.irFileCount) {
+            val extractorFromFile = IrSignatureExtractorFromFile(fileIndex)
+            extractorFromFile.extractSignaturesOfAllKnownPublicDeclarations().forEach {
+                allKnownSignatures += it.topLevelSignature()
+            }
+
+            ownDeclarationSignatures += extractorFromFile.extractSignaturesOfOwnTopLevelPublicDeclarations()
+        }
+
+        val importedSignatures = allKnownSignatures.filterTo(hashSetOf()) { signature ->
+            signature !in ownDeclarationSignatures
+        }
+
+        return ExtractedSignatures(
+                declaredSignatures = ownDeclarationSignatures,
+                importedSignatures = importedSignatures,
         )
     }
 }

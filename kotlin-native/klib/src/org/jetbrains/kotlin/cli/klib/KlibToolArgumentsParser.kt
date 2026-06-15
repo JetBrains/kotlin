@@ -42,6 +42,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             commandName = rawArgs[0],
             libraryPath = rawArgs[1],
             printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
+            onlyTopLevelSignatures = extraArgs[ExtraOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
             signatureVersion,
             testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true,
             absolutePathPrefixes = extraArgs[ExtraOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
@@ -96,6 +97,8 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                    -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
                                              Render IR signatures of a specific version. By default, the most up-to-date signature version
                                                that is supported in the library is used.
+                   -only-top-level-signatures {true|false}
+                                             Dump IR signatures of only top-level declatations. Applicable only to the "dump-ir-signatures" command.
                    -print-signatures {true|false}
                                              Print IR signature for every declaration. Applicable only to the "dump-metadata" command.
                 """.trimIndent()
@@ -105,6 +108,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
 
 private enum class ExtraOption(val option: String) {
     PRINT_SIGNATURES("-print-signatures"),
+    ONLY_TOP_LEVEL_SIGNATURES("-only-top-level-signatures"),
     SIGNATURE_VERSION("-signature-version"),
 
     /**

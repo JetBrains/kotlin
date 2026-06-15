@@ -33,4 +33,5 @@ fun test() {
     consume(foo.publicFun())
     consume(bar.publicVal)
     consume(foo.PublicClass())
+    consume(Any() as Map.Entry<Any, Any>) // accessing nested classifier kotlin/collections/Map.Entry without accessing it's parent class kotlin/collections/Map
 }

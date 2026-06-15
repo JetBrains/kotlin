@@ -1,4 +1,3 @@
-## FIR_IDENTICAL
 language = C
 package = just_cinterop_c
 ---
