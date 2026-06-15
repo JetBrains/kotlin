@@ -10,7 +10,7 @@ package kotlin.collections
  *
  * Used to detect duplicates in byte-domain arrays without allocating a hash-based set.
  */
-internal class ByteValueSet {
+internal class UByteValueSet {
     private val words = LongArray(4)
 
     /** Adds [value] to this set; returns `false` if it was already present. */

@@ -396,7 +396,7 @@ object Aggregates : TemplateGroupBase() {
                     """
                     if (size < 2) return true
                     if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
-                    val seen = ByteValueSet()
+                    val seen = UByteValueSet()
                     for (element in this) {
                         if (!seen.add($key)) return false
                     }

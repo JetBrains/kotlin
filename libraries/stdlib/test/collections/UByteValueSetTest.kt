@@ -7,11 +7,11 @@ package test.collections
 
 import kotlin.test.*
 
-class ByteValueSetTest {
+class UByteValueSetTest {
 
     @Test
     fun acceptsEveryByteValueExactlyOnce() {
-        val set = ByteValueSet()
+        val set = UByteValueSet()
         for (value in 0..255) {
             assertTrue(set.add(value.toUByte()), "first add of $value")
         }

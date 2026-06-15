@@ -6103,7 +6103,7 @@ public fun ULongArray.allDistinct(): Boolean {
 public fun UByteArray.allDistinct(): Boolean {
     if (size < 2) return true
     if (size > (1 shl UByte.SIZE_BITS)) return false
-    val seen = ByteValueSet()
+    val seen = UByteValueSet()
     for (element in this) {
         if (!seen.add(element)) return false
     }
