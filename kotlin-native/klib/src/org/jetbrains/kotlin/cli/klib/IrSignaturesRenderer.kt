@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.util.render
 
 internal class IrSignaturesRenderer(private val output: Appendable, private val individualSignatureRenderer: IdSignatureRenderer) {
 
-    fun render(signatures: IrSignaturesExtractor.Signatures) {
+    fun render(signatures: IrSignaturesExtractor.ExtractedSignatures) {
         header("Declared signatures: ${signatures.declaredSignatures.size}")
         sortedSignatures(signatures.declaredSignatures)
         blankLine()
