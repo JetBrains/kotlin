@@ -538,7 +538,6 @@ include(
     ":kotlinx-serialization-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin.embeddable",
     ":kotlinx-serialization-compiler-plugin.common",
-    ":kotlinx-serialization-compiler-plugin.k1",
     ":kotlinx-serialization-compiler-plugin.k2",
     ":kotlinx-serialization-compiler-plugin.backend",
     ":kotlinx-serialization-compiler-plugin.cli",
@@ -948,7 +947,6 @@ project(":kotlinx-serialization-compiler-plugin.embeddable").projectDir =
 project(":kotlinx-serialization-compiler-plugin.cli").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.cli")
 project(":kotlinx-serialization-compiler-plugin.backend").projectDir =
     File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.backend")
-project(":kotlinx-serialization-compiler-plugin.k1").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k1")
 project(":kotlinx-serialization-compiler-plugin.k2").projectDir = File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.k2")
 project(":kotlinx-serialization-compiler-plugin.common").projectDir =
     File("$rootDir/plugins/kotlinx-serialization/kotlinx-serialization.common")

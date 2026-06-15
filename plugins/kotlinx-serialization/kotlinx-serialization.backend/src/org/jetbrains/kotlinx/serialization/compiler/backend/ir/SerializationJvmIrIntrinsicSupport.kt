@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.CommonVersionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUMS_FILE
@@ -45,8 +45,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.polymorphicSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
-import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -155,15 +153,15 @@ class SerializationJvmIrIntrinsicSupport(
 
 
     private val emptyGenerator: BaseIrGenerator? = null
-    private val module = jvmBackendContext.state.module
     private val typeSystemContext = jvmBackendContext.typeSystem
     private val typeMapper = jvmBackendContext.defaultTypeMapper
 
     override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.finderForBuiltins().findClass(classId)
 
     private val currentVersion by lazy {
-        VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)
-            ?.implementationVersion
+        CommonVersionReader.computeRuntimeVersions(
+            irPluginContext.finderForBuiltins().findClass(SerialEntityNames.KSERIALIZER_CLASS_ID)?.owner?.source
+        )?.implementationVersion
     }
 
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
@@ -589,7 +587,7 @@ class SerializationJvmIrIntrinsicSupport(
                                 assert(
                                     stackValueSerializerInstance(
                                         (genericType.classifierOrNull as IrTypeParameterSymbol).owner.representativeUpperBound,
-                                        jvmBackendContext.referenceClass(module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer)),
+                                        irPluginContext.finderForBuiltins().findClass(polymorphicSerializerId)!!,
                                         this, intrinsicType
                                     )
                                 )

@@ -66,7 +66,6 @@ fun DependencyHandlerScope.implicitKotlinApiDependency(notation: String) {
 
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
-    embedded(project(":kotlinx-serialization-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
@@ -84,7 +83,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.common"))
-    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k1"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k2"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.backend"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))

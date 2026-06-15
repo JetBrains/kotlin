@@ -23,7 +23,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 class SerializerForInlineClassGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
-) : SerializerIrGenerator(irClass, compilerContext, null) {
+) : SerializerIrGenerator(irClass, compilerContext) {
     override fun generateSave(function: IrSimpleFunction) = addFunctionBody(function) { saveFunc ->
         fun irThis(): IrExpression =
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
