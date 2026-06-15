@@ -34,6 +34,7 @@ object LombokNames {
     val LOG4J2 = FqName("lombok.extern.log4j.Log4j2")
     val XSLF4J = FqName("lombok.extern.slf4j.XSlf4j")
     val TO_STRING = FqName("lombok.ToString")
+    val EQUALS_AND_HASH_CODE = FqName("lombok.EqualsAndHashCode")
 
     val TABLE = FqName("Table".guavaPackage())
 
@@ -59,8 +60,13 @@ object LombokNames {
     val LOG4J2_ID = ClassId.topLevel(LOG4J2)
     val XSLF4J_ID = ClassId.topLevel(XSLF4J)
     val TO_STRING_ID = ClassId.topLevel(TO_STRING)
-    val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Include"))
-    val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))
+    val INCLUDE_NAME = Name.identifier("Include")
+    val EXCLUDE_NAME = Name.identifier("Exclude")
+    val TO_STRING_INCLUDE_ID = TO_STRING_ID.createNestedClassId(INCLUDE_NAME)
+    val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(EXCLUDE_NAME)
+    val EQUALS_AND_HASH_CODE_ID = ClassId.topLevel(EQUALS_AND_HASH_CODE)
+    val EQUALS_AND_HASH_CODE_INCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(INCLUDE_NAME)
+    val EQUALS_AND_HASH_CODE_EXCLUDE_ID = EQUALS_AND_HASH_CODE_ID.createNestedClassId(EXCLUDE_NAME)
 
     //taken from idea lombok plugin
     val NON_NULL_ANNOTATIONS = listOf(

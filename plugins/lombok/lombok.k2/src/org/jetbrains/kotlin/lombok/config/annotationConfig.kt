@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.getBooleanArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.getStringArrayArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.ToString.CallSuperMode
-import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.parseFlagUsage
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ACCESS
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_CONFIG
@@ -58,6 +56,12 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TOPIC
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_BUILDER
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.VALUE
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.OF
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -76,6 +80,16 @@ abstract class ConeAnnotationCompanion<T>(val name: ClassId) {
     fun getOrNull(annotated: FirAnnotationContainer, session: FirSession): T? {
         return annotated.annotations.getAnnotationByClassId(name, session)?.let { this.extract(it, session) }
     }
+}
+
+fun parseFlagUsage(config: LombokConfig, key: String): FlagUsageValue? {
+    return config.getString(key)
+        ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
+}
+
+fun parseCallSuperMode(config: LombokConfig, configKey: String): CallSuperMode {
+    return CallSuperMode.entries.find { it.name.equals(config.getString(configKey), ignoreCase = true) }
+        ?: CallSuperMode.Skip
 }
 
 class GlobalConfig(
@@ -99,6 +113,11 @@ class GlobalConfig(
     val toStringCallSuper: CallSuperMode,
     val toStringOnlyExplicitlyIncluded: Boolean,
     val toStringFlagUsage: FlagUsageValue?,
+    val toStringDoNotUseGetters: Boolean,
+    val equalsAndHashCodeCallSuper: CallSuperMode,
+    val equalsAndHashCodeOnlyExplicitlyIncluded: Boolean,
+    val equalsAndHashCodeFlagUsage: FlagUsageValue?,
+    val equalsAndHashCodeDoNotUseGetters: Boolean,
 ) {
     companion object {
         fun extract(config: LombokConfig): GlobalConfig {
@@ -120,13 +139,20 @@ class GlobalConfig(
                 log4j2LogFlagUsage = parseFlagUsage(config, LOG4J2_LOG_FLAG_USAGE_CONFIG),
                 xslf4jLogFlagUsage = parseFlagUsage(config, XSLF4J_LOG_FLAG_USAGE_CONFIG),
                 toStringIncludeFieldNames = config.getBoolean(TO_STRING_INCLUDE_FIELD_NAMES_CONFIG) ?: true,
-                toStringCallSuper = run {
-                    val callSuperValue = config.getString(TO_STRING_CALL_SUPER_CONFIG)
-                    CallSuperMode.entries.find { it.name.equals(callSuperValue, ignoreCase = true) }
-                        ?: CallSuperMode.Skip
-                },
+                toStringCallSuper = parseCallSuperMode(config, TO_STRING_CALL_SUPER_CONFIG),
                 toStringOnlyExplicitlyIncluded = config.getBoolean(TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
                 toStringFlagUsage = parseFlagUsage(config, TO_STRING_FLAG_USAGE_CONFIG),
+                toStringDoNotUseGetters = config.getBoolean(TO_STRING_DO_NOT_USE_GETTERS_CONFIG) ?: false,
+                equalsAndHashCodeCallSuper = parseCallSuperMode(
+                    config,
+                    EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG
+                ),
+                equalsAndHashCodeOnlyExplicitlyIncluded = config.getBoolean(EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG) ?: false,
+                equalsAndHashCodeFlagUsage = parseFlagUsage(
+                    config,
+                    EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG
+                ),
+                equalsAndHashCodeDoNotUseGetters = config.getBoolean(EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG) ?: false,
             )
         }
     }
@@ -382,11 +408,6 @@ object ConeLombokAnnotations {
         }
     }
 
-    fun parseFlagUsage(config: LombokConfig, key: String): FlagUsageValue? {
-        return config.getString(key)
-            ?.let { str -> FlagUsageValue.entries.find { it.name.equals(str, ignoreCase = true) } }
-    }
-
     sealed class AbstractLog(
         annotation: FirAnnotation,
         val loggerClassId: ClassId,
@@ -509,20 +530,18 @@ object ConeLombokAnnotations {
         }
     }
 
+    interface CallSuper {
+        val callSuper: CallSuperMode?
+    }
+
     class ToString(
         val includeFieldNames: Boolean?,
-        val callSuper: CallSuperMode?,
+        override val callSuper: CallSuperMode?,
         val doNotUseGetters: Boolean?,
         val onlyExplicitlyIncluded: Boolean?,
         val excludeFields: Set<String>,
         annotation: FirAnnotation,
-    ) : ConeLombokAnnotation(annotation) {
-        enum class CallSuperMode {
-            Skip,
-            Call,
-            Warn
-        }
-
+    ) : ConeLombokAnnotation(annotation), CallSuper {
         companion object : ConeAnnotationCompanion<ToString>(LombokNames.TO_STRING_ID) {
             override fun extract(annotation: FirAnnotation, session: FirSession): ToString {
                 return ToString(
@@ -531,6 +550,32 @@ object ConeLombokAnnotations {
                     doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
                     excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
+                    annotation = annotation,
+                )
+            }
+        }
+    }
+
+    class EqualsAndHashCode(
+        override val callSuper: CallSuperMode?,
+        val doNotUseGetters: Boolean?,
+        val onlyExplicitlyIncluded: Boolean?,
+        val excludeFields: Set<String>,
+        /**
+         * `null` means the `of` argument was not specified at all (i.e. include-all behaviour).
+         * A non-null value (even an empty set) restricts the inclusion of those exact field names.
+         */
+        val ofFields: Set<String>?,
+        annotation: FirAnnotation,
+    ) : ConeLombokAnnotation(annotation), CallSuper {
+        companion object : ConeAnnotationCompanion<EqualsAndHashCode>(LombokNames.EQUALS_AND_HASH_CODE_ID) {
+            override fun extract(annotation: FirAnnotation, session: FirSession): EqualsAndHashCode {
+                return EqualsAndHashCode(
+                    callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
+                    doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
+                    onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
+                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
+                    ofFields = annotation.getStringArrayArgument(OF)?.toSet(),
                     annotation = annotation,
                 )
             }
