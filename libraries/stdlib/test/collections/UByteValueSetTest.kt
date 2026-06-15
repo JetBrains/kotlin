@@ -19,4 +19,20 @@ class UByteValueSetTest {
             assertFalse(set.add(value.toUByte()), "second add of $value")
         }
     }
+
+    @Test
+    fun addsDistinctValuesIndependently() {
+        val set = UByteValueSet()
+
+        assertTrue(set.add(1.toUByte()), "first add of 1")
+        assertTrue(set.add(70.toUByte()), "first add of 70")
+        assertTrue(set.add(150.toUByte()), "first add of 150")
+        assertTrue(set.add(220.toUByte()), "first add of 220")
+
+        assertFalse(set.add(1.toUByte()), "second add of 1")
+        assertFalse(set.add(150.toUByte()), "second add of 150")
+
+        assertTrue(set.add(2.toUByte()), "first add of 2")
+        assertTrue(set.add(151.toUByte()), "first add of 151")
+    }
 }
