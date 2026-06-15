@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.ToString.CallSuperMode
+import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
 import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
@@ -42,7 +42,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
         }
         if (hasConflict) {
             /**
-             * Mirrors the Java Lombok behaviour: "Not generating toString(): A method with that name already exists"
+             * Mirrors the Java Lombok behavior: "Not generating toString(): A method with that name already exists"
              */
             reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS, context)
         }
@@ -55,7 +55,13 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
              * class has a non-trivial superclass (i.e. not just `kotlin.Any`/`java.lang.Object`), emits a warning
              * because `toString()` is generated without calling the superclass implementation.
              */
-            reporter.reportOn(source, LombokFirDiagnostics.TO_STRING_CALL_SUPER_NOT_CALLED, context)
+            reporter.reportOn(
+                source,
+                LombokFirDiagnostics.CALL_SUPER_NOT_CALLED,
+                ToStringGenerator.TO_STRING_NAME.asString(),
+                LombokNames.TO_STRING.shortName(),
+                context,
+            )
         }
 
         /**
@@ -65,7 +71,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
          */
         if (toStringAnnInfo.doNotUseGetters != null) {
             val argSource = toStringAnnInfo.annotation.findArgumentByName(DO_NOT_USE_GETTERS, returnFirstWhenNotFound = false)!!.source
-            reporter.reportOn(argSource, LombokFirDiagnostics.TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT, context)
+            reporter.reportOn(argSource, LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT, context)
         }
 
         /**
@@ -79,7 +85,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) 
             property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, context.session)
                 ?: return@processAllProperties
             val includeSource = includeAnnotation.source ?: return@processAllProperties
-            reporter.reportOn(includeSource, LombokFirDiagnostics.TO_STRING_EXCLUDE_AND_INCLUDE, context)
+            reporter.reportOn(includeSource, LombokFirDiagnostics.EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE, LombokNames.TO_STRING.shortName(), context)
         }
     }
 

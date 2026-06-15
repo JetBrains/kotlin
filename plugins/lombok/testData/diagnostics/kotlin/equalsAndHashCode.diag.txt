@@ -1,0 +1,23 @@
+/equalsAndHashCode.kt:3:1: warning: This annotation has no effect on target 'file'. Relevant targets: class, object, enum class, local class.
+
+/equalsAndHashCode.kt:7:1: warning: This annotation has no effect on target 'interface'. Relevant targets: class, object, enum class, local class.
+
+/equalsAndHashCode.kt:10:1: error: This annotation is not applicable to target 'top level function'. Applicable targets: class, file, expression
+
+/equalsAndHashCode.kt:13:1: error: This annotation is not applicable to target 'typealias'. Applicable targets: class, file, expression
+
+/equalsAndHashCode.kt:16:19: warning: This annotation has no effect on target 'object literal'. Relevant targets: class, object, enum class, local class.
+
+/equalsAndHashCode.kt:19:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+
+/equalsAndHashCode.kt:26:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+
+/equalsAndHashCode.kt:32:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+
+/equalsAndHashCode.kt:38:1: error: Not generating 'equals' and 'hashCode': A method with one of those names already exists. (Either both or none of these methods will be generated).
+
+/equalsAndHashCode.kt:51:5: error: '@EqualsAndHashCode.Exclude' and '@EqualsAndHashCode.Include' are mutually exclusive; the '@Include' annotation will be ignored.
+
+/equalsAndHashCode.kt:66:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.
+
+/equalsAndHashCode.kt:69:38: warning: The 'doNotUseGetters' parameter has no effect in Kotlin. Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls.

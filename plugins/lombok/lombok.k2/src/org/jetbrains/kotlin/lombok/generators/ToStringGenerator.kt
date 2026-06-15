@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
-import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.config.lombokService

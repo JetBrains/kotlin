@@ -82,6 +82,7 @@ object LombokConfigNames {
     val DO_NOT_USE_GETTERS = Name.identifier("doNotUseGetters")
     val ONLY_EXPLICITLY_INCLUDED = Name.identifier("onlyExplicitlyIncluded")
     val EXCLUDE = Name.identifier("exclude")
+    val OF = Name.identifier("of")
     val INCLUDE_NAME = Name.identifier("name")
     val INCLUDE_RANK = Name.identifier("rank")
 
@@ -90,9 +91,24 @@ object LombokConfigNames {
     const val TO_STRING_DO_NOT_USE_GETTERS_CONFIG = "lombok.toString.doNotUseGetters"
     const val TO_STRING_ONLY_EXPLICITLY_INCLUDED_CONFIG = "lombok.toString.onlyExplicitlyIncluded"
     const val TO_STRING_FLAG_USAGE_CONFIG = "lombok.toString.flagUsage"
+
+    const val EQUALS_AND_HASH_CODE_CALL_SUPER_CONFIG = "lombok.equalsAndHashCode.callSuper"
+    const val EQUALS_AND_HASH_CODE_DO_NOT_USE_GETTERS_CONFIG = "lombok.equalsAndHashCode.doNotUseGetters"
+    const val EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG = "lombok.equalsAndHashCode.onlyExplicitlyIncluded"
+    const val EQUALS_AND_HASH_CODE_FLAG_USAGE_CONFIG = "lombok.equalsAndHashCode.flagUsage"
 }
 
 enum class FlagUsageValue {
     Warning,
     Error,
+}
+
+/**
+ * Shared between `@ToString` and `@EqualsAndHashCode` because both annotations expose a `callSuper`
+ * boolean argument plus a `lombok.<feature>.callSuper` config that can be `call`/`skip`/`warn`.
+ */
+enum class CallSuperMode {
+    Skip,
+    Call,
+    Warn,
 }

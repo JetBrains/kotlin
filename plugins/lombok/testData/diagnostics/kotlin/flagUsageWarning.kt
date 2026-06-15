@@ -11,9 +11,7 @@ import lombok.extern.jbosslog.JBossLog
 import lombok.extern.log4j.Log4j2
 import lombok.extern.slf4j.XSlf4j
 import lombok.ToString
-
-<!FLAG_USAGE_WARNING!>@ToString<!>
-class ToStringExampleWarning(val x: Int)
+import lombok.EqualsAndHashCode
 
 <!FLAG_USAGE_WARNING!>@Log<!> // Warning because `lombok.log.flagUsage` is applicable for all log annotations
 class LogExampleWarning
@@ -39,9 +37,17 @@ class Log4j2ExampleWarning
 <!FLAG_USAGE_WARNING!>@XSlf4j<!> // Warning because `lombok.log.flagUsage` is applicable for all log annotations
 class XSlf4jExampleWarning
 
+<!FLAG_USAGE_WARNING!>@ToString<!>
+class ToStringExampleWarning(val x: Int)
+
+<!FLAG_USAGE_WARNING!>@EqualsAndHashCode<!>
+class EqualsAndHashCodeExampleWarning(val x: Int)
+
 class NotAnnotated
 
 // FILE: lombok.config
 
 lombok.log.flagUsage=warning
 lombok.toString.flagUsage=warning
+lombok.equalsAndHashCode.flagUsage=warning
+

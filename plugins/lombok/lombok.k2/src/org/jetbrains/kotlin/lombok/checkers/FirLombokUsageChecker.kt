@@ -47,6 +47,11 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Common) {
                     add(toString to toStringFlagUsage)
                 }
             }
+            lombokService.config.equalsAndHashCodeFlagUsage?.let { equalsAndHashCodeFlagUsage ->
+                lombokService.getEqualsAndHashCode(declaration.symbol)?.let { equalsAndHashCode ->
+                    add(equalsAndHashCode to equalsAndHashCodeFlagUsage)
+                }
+            }
         }
 
         for ([actualLombokAnnotation, flagUsage] in lombokAnnotationsWithFlagUsages) {
