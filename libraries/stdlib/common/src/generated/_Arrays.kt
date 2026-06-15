@@ -14320,14 +14320,10 @@ public fun <T> Array<out T>.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun ByteArray.allDistinct(): Boolean {
     if (size < 2) return true
-    if (size > 256) return false
-    val seen = LongArray(4)
+    if (size > (1 shl Byte.SIZE_BITS)) return false
+    val seen = ByteValueSet()
     for (element in this) {
-        val index = element.toInt() and 0xFF
-        val mask = 1L shl (index and 0x3F)
-        val wordIndex = index shr 6
-        if (seen[wordIndex] and mask != 0L) return false
-        seen[wordIndex] = seen[wordIndex] or mask
+        if (!seen.add(element.toUByte())) return false
     }
     return true
 }
@@ -14347,7 +14343,7 @@ public fun ByteArray.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun ShortArray.allDistinct(): Boolean {
     if (size < 2) return true
-    if (size > 65536) return false
+    if (size > (1 shl Short.SIZE_BITS)) return false
     val seen = HashSet<Short>()
     for (element in this) {
         if (!seen.add(element)) return false
@@ -14482,7 +14478,7 @@ public fun BooleanArray.allDistinct(): Boolean {
 @ExperimentalStdlibApi
 public fun CharArray.allDistinct(): Boolean {
     if (size < 2) return true
-    if (size > 65536) return false
+    if (size > (1 shl Char.SIZE_BITS)) return false
     val seen = HashSet<Char>()
     for (element in this) {
         if (!seen.add(element)) return false

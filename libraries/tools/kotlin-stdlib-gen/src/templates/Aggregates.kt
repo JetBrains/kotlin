@@ -392,17 +392,13 @@ object Aggregates : TemplateGroupBase() {
                     return size == 2 && this[0] != this[1]
                     """
                 PrimitiveType.Byte, PrimitiveType.UByte -> {
-                    val toIndex = if (primitive == PrimitiveType.Byte) "element.toInt() and 0xFF" else "element.toInt()"
+                    val key = if (primitive == PrimitiveType.Byte) "element.toUByte()" else "element"
                     """
                     if (size < 2) return true
-                    if (size > 256) return false
-                    val seen = LongArray(4)
+                    if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
+                    val seen = ByteValueSet()
                     for (element in this) {
-                        val index = $toIndex
-                        val mask = 1L shl (index and 0x3F)
-                        val wordIndex = index shr 6
-                        if (seen[wordIndex] and mask != 0L) return false
-                        seen[wordIndex] = seen[wordIndex] or mask
+                        if (!seen.add($key)) return false
                     }
                     return true
                     """
@@ -410,7 +406,7 @@ object Aggregates : TemplateGroupBase() {
                 PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char ->
                     """
                     if (size < 2) return true
-                    if (size > 65536) return false
+                    if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
                     val seen = HashSet<T>()
                     for (element in this) {
                         if (!seen.add(element)) return false
