@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation(project(":plugins:parcelize:parcelize-compiler:parcelize.common"))
-    implementation(project(":plugins:parcelize:parcelize-compiler:parcelize.k1"))
     implementation(project(":core:descriptors"))
 
     implementation(project(":compiler:backend"))

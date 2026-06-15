@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.parcelize.ParcelizeConfigurationKeys
 import org.jetbrains.kotlin.parcelize.kotlinxImmutable
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -58,7 +56,6 @@ class ParcelizeEnvironmentConfigurator(testServices: TestServices) : Environment
             this,
             additionalAnnotation,
             experimentalCodeGeneration,
-            useFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
         )
     }
 }

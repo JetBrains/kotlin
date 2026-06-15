@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.IGNORED_ON_PARCEL_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.fir.ParcelizePluginKey
-import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
+import java.io.FileDescriptor
+
+private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
 
 abstract class ParcelizeIrTransformerBase(
     protected val context: IrPluginContext,
     protected val androidSymbols: AndroidSymbols,
     protected val parcelizeAnnotations: List<FqName>,
     protected val experimentalCodeGeneration: Boolean,
-) : IrVisitorVoid(), ParcelizeExtensionBase {
+) : IrVisitorVoid() {
     private val irFactory: IrFactory = IrFactoryImpl
 
     protected val deferredOperations = mutableListOf<() -> Unit>()
@@ -261,7 +263,7 @@ abstract class ParcelizeIrTransformerBase(
 
     // *Heuristic* to determine if a Parcelable contains file descriptors.
     private val IrType.containsFileDescriptors: Boolean
-        get() = erasedUpperBound.fqNameWhenAvailable == ParcelizeExtensionBase.FILE_DESCRIPTOR_FQNAME ||
+        get() = erasedUpperBound.fqNameWhenAvailable == FILE_DESCRIPTOR_FQNAME ||
                 (this as? IrSimpleType)?.arguments?.any { argument ->
                     argument.typeOrNull?.containsFileDescriptors == true
                 } == true

@@ -62,7 +62,6 @@ dependencies {
         to.attribute(Attribute.of("artifactType", String::class.java), "jar")
     }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.common")) { isTransitive = false }
-    embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k1")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.k2")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.backend")) { isTransitive = false }
     embedded(project(":plugins:parcelize:parcelize-compiler:parcelize.cli")) { isTransitive = false }
@@ -71,13 +70,7 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testFixturesApi(intellijCore())
-
     testFixturesApi(project(":plugins:parcelize:parcelize-compiler:parcelize.cli"))
-
-    testFixturesApi(project(":compiler:frontend"))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
-    testFixturesApi(project(":plugins:parcelize:parcelize-runtime"))
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
@@ -113,8 +106,6 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()

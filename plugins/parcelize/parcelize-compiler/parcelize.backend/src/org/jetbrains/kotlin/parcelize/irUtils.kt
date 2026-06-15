@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -28,12 +29,13 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELER_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
-import org.jetbrains.kotlin.parcelize.serializers.ParcelizeExtensionBase
 import org.jetbrains.kotlin.types.Variance
+
+private val PARCELIZE_ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
 
 // true if the class should be processed by the parcelize plugin
 fun IrClass.isParcelize(parcelizeAnnotations: List<FqName>): Boolean =
-    kind in ParcelizeExtensionBase.ALLOWED_CLASS_KINDS &&
+    kind in PARCELIZE_ALLOWED_CLASS_KINDS &&
             (hasAnyAnnotation(parcelizeAnnotations) || superTypes.any { superType ->
                 superType.classOrNull?.owner?.let {
                     it.modality == Modality.SEALED && it.hasAnyAnnotation(parcelizeAnnotations)

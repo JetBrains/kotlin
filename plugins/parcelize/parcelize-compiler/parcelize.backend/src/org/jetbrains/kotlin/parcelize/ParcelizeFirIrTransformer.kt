@@ -97,10 +97,10 @@ class ParcelizeFirIrTransformer(
             val origin = function.origin
             if (origin !is GeneratedByPlugin || origin.pluginKey != ParcelizePluginKey) continue
             when (function.name.identifier) {
-                ParcelizeSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS.methodName -> {
+                ParcelizeNames.DESCRIBE_CONTENTS_NAME.identifier -> {
                     function.generateDescribeContentsBody(parcelableProperties)
                 }
-                ParcelizeSyntheticComponent.ComponentKind.WRITE_TO_PARCEL.methodName -> {
+                ParcelizeNames.WRITE_TO_PARCEL_NAME.identifier -> {
                     function.apply {
                         val [receiverParameter, parcelParameter, flagsParameter] = function.parameters
 
