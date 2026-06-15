@@ -23,7 +23,7 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
         ) = with(extensionStorage) {
             val parcelizeAnnotations = ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES.toMutableList()
             additionalAnnotation.mapTo(parcelizeAnnotations) { FqName(it) }
-            IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension(parcelizeAnnotations, experimentalCodeGeneration))
+            IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension(parcelizeAnnotations, experimentalCodeGeneration))
             FirExtensionRegistrar.registerExtension(FirParcelizeExtensionRegistrar(parcelizeAnnotations, experimentalCodeGeneration))
         }
     }

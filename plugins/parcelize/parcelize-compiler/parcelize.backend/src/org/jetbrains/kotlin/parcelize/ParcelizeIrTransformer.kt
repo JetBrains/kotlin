@@ -1,25 +1,31 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.parcelize
 
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
@@ -32,25 +38,137 @@ import java.io.FileDescriptor
 
 private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
 
-abstract class ParcelizeIrTransformerBase(
-    protected val context: IrPluginContext,
-    protected val androidSymbols: AndroidSymbols,
-    protected val parcelizeAnnotations: List<FqName>,
-    protected val experimentalCodeGeneration: Boolean,
+class ParcelizeIrGeneratorExtension(
+    private val parcelizeAnnotations: List<FqName>,
+    private val experimentalCodeGeneration: Boolean,
+) : IrGenerationExtension {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+        val androidSymbols = AndroidSymbols(pluginContext, moduleFragment)
+        ParcelizeIrTransformer(pluginContext, androidSymbols, parcelizeAnnotations, experimentalCodeGeneration).transform(moduleFragment)
+    }
+}
+
+class ParcelizeIrTransformer(
+    private val context: IrPluginContext,
+    private val androidSymbols: AndroidSymbols,
+    private val parcelizeAnnotations: List<FqName>,
+    private val experimentalCodeGeneration: Boolean,
 ) : IrVisitorVoid() {
     private val irFactory: IrFactory = IrFactoryImpl
 
-    protected val deferredOperations = mutableListOf<() -> Unit>()
-    protected fun defer(block: () -> Unit) = deferredOperations.add(block)
+    private val deferredOperations = mutableListOf<() -> Unit>()
+    private fun defer(block: () -> Unit) = deferredOperations.add(block)
 
-    protected fun IrSimpleFunction.generateDescribeContentsBody(parcelableProperties: List<ParcelableProperty>) {
+    fun transform(moduleFragment: IrModuleFragment) {
+        moduleFragment.accept(this, null)
+        deferredOperations.forEach { it() }
+
+        moduleFragment.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                val callee = expression.symbol.owner
+                if (callee.isParcelableCreatorIntrinsic()) {
+                    expression.typeArguments[0]?.getClass()?.let { parcelableClass ->
+                        androidSymbols.createBuilder(expression.symbol).apply {
+                            return getParcelableCreator(parcelableClass)
+                        }
+                    }
+                }
+                return expression
+            }
+        })
+    }
+
+    override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
+
+    override fun visitClass(declaration: IrClass) {
+        declaration.acceptChildren(this, null)
+
+        // Sealed classes can be annotated with `@Parcelize`, but that only implies that we
+        // should process their immediate subclasses.
+        if (!declaration.isParcelize(parcelizeAnnotations))
+            return
+
+        val parcelableProperties = declaration.parcelableProperties
+
+        // If the companion extends Parceler, it can override parts of the generated implementation.
+        val parcelerObject = declaration.companionObject()?.takeIf {
+            it.isSubclassOfFqName(PARCELER_FQN.asString())
+        }
+        val generateInheritanceConstructor = declaration.canGenerateInheritanceConstructor()
+        if (generateInheritanceConstructor) {
+            // The signature for this constructor is not generated in [FirParcelizeDeclarationGenerator] so the checks
+            // need to be repeated here. This is on purpose. The declaration generator does not see through `expect` and `actual`
+            // which prevents us from checking if the construct's property has been marked with `IgnoredOnParcel` and should
+            // not be part of this specialized constructor.
+            declaration.addConstructor {}.apply {
+                origin = GeneratedByPlugin(ParcelizePluginKey)
+                val constructorArguments = declaration.inheritanceConstructorArguments()
+                constructorArguments.forEach {
+                    addValueParameter(it.field.name, it.field.type)
+                }
+                addValueParameter(ParcelizeNames.MARKER_NAME, androidSymbols.directInitializerMarker.defaultType)
+                // Might reference constructors from super classes and those might not be yet generated.
+                // This is why defer here is needed. We will have signature but not body.
+                defer {
+                    generateInheritanceConstructor(declaration, parcelableProperties, constructorArguments)
+                }
+            }
+        }
+
+        // At this point we generated constructor for the sealed class and there is nothing more to do.
+        if (declaration.modality == Modality.SEALED)
+            return
+
+        for (function in declaration.functions) {
+            val origin = function.origin
+            if (origin !is GeneratedByPlugin || origin.pluginKey != ParcelizePluginKey) continue
+            when (function.name.identifier) {
+                ParcelizeNames.DESCRIBE_CONTENTS_NAME.identifier -> {
+                    function.generateDescribeContentsBody(parcelableProperties)
+                }
+                ParcelizeNames.WRITE_TO_PARCEL_NAME.identifier -> {
+                    function.apply {
+                        val [receiverParameter, parcelParameter, flagsParameter] = function.parameters
+
+                        // We need to defer the construction of the writer, since it may refer to the [writeToParcel] methods in other
+                        // @Parcelize classes in the current module, which might not be constructed yet at this point.
+                        defer {
+                            if (generateInheritanceConstructor) {
+                                generateWriteToParcelBodyForInheritanceConstructor(
+                                    declaration,
+                                    parcelableProperties,
+                                    receiverParameter,
+                                    parcelParameter,
+                                    flagsParameter
+                                )
+                            } else {
+                                generateWriteToParcelBody(
+                                    declaration,
+                                    parcelerObject,
+                                    parcelableProperties,
+                                    receiverParameter,
+                                    parcelParameter,
+                                    flagsParameter
+                                )
+                            }
+                        }
+                    }
+                }
+                else -> error("Generated declaration with unknown name: ${function.render()}")
+            }
+        }
+
+        generateCreator(declaration, parcelerObject, parcelableProperties)
+    }
+
+    private fun IrSimpleFunction.generateDescribeContentsBody(parcelableProperties: List<ParcelableProperty>) {
         val flags = if (parcelableProperties.any { it.field.type.containsFileDescriptors }) 1 else 0
         body = context.createIrBuilder(symbol).run {
             irExprBody(irInt(flags))
         }
     }
 
-    protected fun IrSimpleFunction.generateWriteToParcelBodyForInheritanceConstructor(
+    private fun IrSimpleFunction.generateWriteToParcelBodyForInheritanceConstructor(
         irClass: IrClass,
         parcelableProperties: List<ParcelableProperty>,
         receiverParameter: IrValueParameter,
@@ -99,7 +217,7 @@ abstract class ParcelizeIrTransformerBase(
         }
     }
 
-    protected fun IrSimpleFunction.generateWriteToParcelBody(
+    private fun IrSimpleFunction.generateWriteToParcelBody(
         irClass: IrClass,
         parcelerObject: IrClass?,
         parcelableProperties: List<ParcelableProperty>,
@@ -135,7 +253,7 @@ abstract class ParcelizeIrTransformerBase(
         }
     }
 
-    protected fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty>) {
+    private fun generateCreator(declaration: IrClass, parcelerObject: IrClass?, parcelableProperties: List<ParcelableProperty>) {
         // Since the `CREATOR` object cannot refer to the type parameters of the parcelable class we use a star projected type
         val declarationType = declaration.symbol.starProjectedType
         val creatorType = androidSymbols.androidOsParcelableCreator.typeWith(declarationType)
@@ -192,7 +310,7 @@ abstract class ParcelizeIrTransformerBase(
                                     parcelerObject != null ->
                                         parcelerCreate(parcelerObject, parcelParameter)
 
-                                   // just to handle empty parcel case, we need some arguments other than marker to use the constructor
+                                    // just to handle empty parcel case, we need some arguments other than marker to use the constructor
                                     experimentalCodeGeneration && inheritanceConstructor != null && inheritanceConstructor.parameters.size > 1 -> {
                                         val constructorArguments = declaration.inheritanceConstructorArguments()
                                         irCall(inheritanceConstructor).apply {
@@ -235,13 +353,13 @@ abstract class ParcelizeIrTransformerBase(
             serializerFactory.get(defaultType, parcelizeType = defaultType, strict = true, toplevel = true, scope = getParcelerScope())
         }
 
-    protected class ParcelableProperty(val field: IrField, val index: Int, parcelerThunk: () -> IrParcelSerializer) {
+    private class ParcelableProperty(val field: IrField, val index: Int, parcelerThunk: () -> IrParcelSerializer) {
         val parceler by lazy(parcelerThunk)
     }
 
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols, parcelizeAnnotations)
 
-    protected val IrClass.parcelableProperties: List<ParcelableProperty>
+    private val IrClass.parcelableProperties: List<ParcelableProperty>
         get() {
             if (kind != ClassKind.CLASS) return emptyList()
 
@@ -287,7 +405,7 @@ abstract class ParcelizeIrTransformerBase(
      *      - `constructorArguments` references all properties of the current inheritance chain including this class.
      *                               However, it does not contain the initializer marker.
      */
-    protected fun IrConstructor.generateInheritanceConstructor(
+    private fun IrConstructor.generateInheritanceConstructor(
         irClass: IrClass,
         parcelableProperties: List<ParcelableProperty>,
         constructorArguments: List<ParcelableProperty>,
@@ -330,8 +448,7 @@ abstract class ParcelizeIrTransformerBase(
         }
     }
 
-
-    protected fun IrClass.inheritanceConstructorArguments(): List<ParcelableProperty> {
+    private fun IrClass.inheritanceConstructorArguments(): List<ParcelableProperty> {
         val superClassArguments = if (superClass?.isParcelize(parcelizeAnnotations) == true) {
             superClass?.inheritanceConstructorArguments() ?: emptyList()
         } else {
@@ -340,7 +457,7 @@ abstract class ParcelizeIrTransformerBase(
         return superClassArguments + parcelableProperties
     }
 
-    protected fun IrClass.hasCustomParcelerInChain(): Boolean {
+    private fun IrClass.hasCustomParcelerInChain(): Boolean {
         if (!isParcelize(parcelizeAnnotations)) return false
         return (companionObject()?.isSubclassOfFqName(PARCELER_FQN.asString()) == true) || superTypes.any {
             it.getClass()?.hasCustomParcelerInChain() == true
@@ -350,12 +467,12 @@ abstract class ParcelizeIrTransformerBase(
     private fun IrClass.inheritanceConstructor(): IrConstructor? {
         if (!isParcelize(parcelizeAnnotations)) return null
         return constructors.firstOrNull {
-            val origin = it.origin as? IrDeclarationOrigin.GeneratedByPlugin
+            val origin = it.origin as? GeneratedByPlugin
             origin?.pluginKey == ParcelizePluginKey
         }
     }
 
-    protected fun IrClass.canGenerateInheritanceConstructor(): Boolean {
+    private fun IrClass.canGenerateInheritanceConstructor(): Boolean {
         return !(isEnumClass || isInterface || hasCustomParcelerInChain() || isObject)
                 && (superClass?.isParcelize(parcelizeAnnotations) == true)
                 && experimentalCodeGeneration
