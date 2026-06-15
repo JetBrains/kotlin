@@ -24,7 +24,7 @@ object AllDistinctSampleGenerator {
         val className = "AllDistinct${collectionClass}Samples"
         writeGeneratedFile("libraries/stdlib/samples/test/samples/generated/alldistinct/$className.kt") {
             writeHeader(className, config.sampleNeedsAbsImport)
-            writeAllDistinctSample(ctor, config, emptyCollection, isSequence)
+            writeAllDistinctSample(ctor, config, emptyCollection, isSequence, primitive)
             writeAllDistinctBySample(ctor, config, emptyCollection, isSequence)
             appendLine("}")
         }
@@ -50,15 +50,31 @@ object AllDistinctSampleGenerator {
         return if (isSequence) "" to ctorCall else "        val $name = $ctorCall\n" to name
     }
 
+    private fun floatingPointShowcase(ctor: String, primitive: PrimitiveType?): String {
+        if (primitive != PrimitiveType.Float && primitive != PrimitiveType.Double) return ""
+        val typeName = primitive.name
+        val suffix = if (primitive == PrimitiveType.Float) "f" else ""
+        return "\n\n" +
+                "        assertPrints($ctor($typeName.NaN, $typeName.NaN).allDistinct(), \"false\")\n" +
+                "        assertPrints($ctor(0.0$suffix, -0.0$suffix).allDistinct(), \"true\")"
+    }
+
     private fun BufferedWriter.writeAllDistinctSample(
         ctor: String,
         config: AllDistinctTypeConfig,
         emptyCollection: String,
         isSequence: Boolean,
+        primitive: PrimitiveType?,
     ) {
         val single = config.sampleDistinctValues.first()
         val [distinctDecl, distinctRef] = valOrInline(isSequence, ctor, "distinctValues", config.sampleDistinctValues.joinToString(", "))
-        val [duplicateDecl, duplicateRef] = valOrInline(isSequence, ctor, "duplicateValues", config.sampleDuplicateValues.joinToString(", "))
+        val [duplicateDecl, duplicateRef] = valOrInline(
+            isSequence,
+            ctor,
+            "duplicateValues",
+            config.sampleDuplicateValues.joinToString(", ")
+        )
+        val fpShowcase = floatingPointShowcase(ctor, primitive)
         appendLine(
             """
     @Sample
@@ -68,7 +84,7 @@ object AllDistinctSampleGenerator {
 
 $distinctDecl        assertPrints($distinctRef.allDistinct(), "true")
 
-$duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")
+$duplicateDecl        assertPrints($duplicateRef.allDistinct(), "false")$fpShowcase
     }"""
         )
     }

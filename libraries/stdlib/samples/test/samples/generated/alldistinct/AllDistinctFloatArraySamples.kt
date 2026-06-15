@@ -25,6 +25,9 @@ class AllDistinctFloatArraySamples {
 
         val duplicateValues = floatArrayOf(1.0f, 2.0f, 1.0f)
         assertPrints(duplicateValues.allDistinct(), "false")
+
+        assertPrints(floatArrayOf(Float.NaN, Float.NaN).allDistinct(), "false")
+        assertPrints(floatArrayOf(0.0f, -0.0f).allDistinct(), "true")
     }
 
     @Sample

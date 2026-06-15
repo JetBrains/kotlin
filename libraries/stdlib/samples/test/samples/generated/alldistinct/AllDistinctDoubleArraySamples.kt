@@ -25,6 +25,9 @@ class AllDistinctDoubleArraySamples {
 
         val duplicateValues = doubleArrayOf(1.0, 2.0, 1.0)
         assertPrints(duplicateValues.allDistinct(), "false")
+
+        assertPrints(doubleArrayOf(Double.NaN, Double.NaN).allDistinct(), "false")
+        assertPrints(doubleArrayOf(0.0, -0.0).allDistinct(), "true")
     }
 
     @Sample
