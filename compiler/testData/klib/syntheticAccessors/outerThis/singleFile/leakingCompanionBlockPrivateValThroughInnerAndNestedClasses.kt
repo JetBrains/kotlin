@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JS_IR, WASM_JS
+// IGNORE_BACKEND: JS_IR
 // Static property is undefined on JS backend
 class Outer {
     companion {
