@@ -36,9 +36,9 @@ class JKlibIrLinker(
     module: ModuleDescriptor,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
-    val stubGenerator: DeclarationStubGenerator,
     val descriptorMangler: JKlibDescriptorMangler,
 ) : KotlinIrLinker(module, configuration, symbolTable, emptyList()) {
+    lateinit var stubGenerator: DeclarationStubGenerator
     override val returnUnboundSymbolsIfSignatureNotFound
         get() = false
 
