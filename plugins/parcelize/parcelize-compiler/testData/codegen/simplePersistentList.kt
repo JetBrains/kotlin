@@ -1,3 +1,5 @@
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+// Reason: https://issuetracker.google.com/issues/524008575
 // CURIOUS_ABOUT: createFromParcel
 // WITH_STDLIB
 

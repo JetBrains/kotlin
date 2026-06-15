@@ -82,7 +82,7 @@ public final class test/Bar : java/lang/Object, android/os/Parcelable {
           ILOAD (2)
           INVOKEVIRTUAL (test/Foo, writeToParcel, (Landroid/os/Parcel;I)V)
         LABEL (L2)
-        LINENUMBER (13)
+        LINENUMBER (15)
           RETURN
         LABEL (L3)
     }
@@ -152,7 +152,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           ILOAD (2)
           INVOKEVIRTUAL (test/Bar, writeToParcel, (Landroid/os/Parcel;I)V)
         LABEL (L1)
-        LINENUMBER (10)
+        LINENUMBER (12)
           RETURN
         LABEL (L2)
     }

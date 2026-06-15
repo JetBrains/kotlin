@@ -1,3 +1,5 @@
+// DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+// Reason: https://issuetracker.google.com/issues/524008575
 // WITH_STDLIB
 
 @file:OptIn(kotlin.uuid.ExperimentalUuidApi::class)
