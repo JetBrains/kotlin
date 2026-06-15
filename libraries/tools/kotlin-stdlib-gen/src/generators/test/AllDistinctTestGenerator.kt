@@ -6,7 +6,6 @@
 package generators.test
 
 import templates.*
-import templates.Family.*
 import java.io.BufferedWriter
 
 object AllDistinctTestGenerator {
