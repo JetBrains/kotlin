@@ -264,7 +264,6 @@ include(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-allopen-compiler-plugin.embeddable",
     ":kotlin-allopen-compiler-plugin.common",
-    ":kotlin-allopen-compiler-plugin.k1",
     ":kotlin-allopen-compiler-plugin.k2",
     ":kotlin-allopen-compiler-plugin.cli"
 )
@@ -826,7 +825,6 @@ project(":kotlin-parcelize-compiler").projectDir = File("$rootDir/prepare/parcel
 project(":kotlin-allopen-compiler-plugin").projectDir = File("$rootDir/plugins/allopen")
 project(":kotlin-allopen-compiler-plugin.embeddable").projectDir = File("$rootDir/plugins/allopen/allopen.embeddable")
 project(":kotlin-allopen-compiler-plugin.common").projectDir = File("$rootDir/plugins/allopen/allopen.common")
-project(":kotlin-allopen-compiler-plugin.k1").projectDir = File("$rootDir/plugins/allopen/allopen.k1")
 project(":kotlin-allopen-compiler-plugin.k2").projectDir = File("$rootDir/plugins/allopen/allopen.k2")
 project(":kotlin-allopen-compiler-plugin.cli").projectDir = File("$rootDir/plugins/allopen/allopen.cli")
 

@@ -6,10 +6,8 @@ plugins {
 
 dependencies {
     implementation(project(":kotlin-allopen-compiler-plugin.common"))
-    implementation(project(":kotlin-allopen-compiler-plugin.k1"))
     implementation(project(":kotlin-allopen-compiler-plugin.k2"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:frontend"))
 
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
@@ -29,8 +27,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { none() }
 }
-
-optInToK1Deprecation()
 
 runtimeJar()
 sourcesJar()

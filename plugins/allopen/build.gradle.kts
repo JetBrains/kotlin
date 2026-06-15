@@ -10,12 +10,10 @@ plugins {
 dependencies {
     embedded(project(":kotlin-allopen-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.cli")) { isTransitive = false }
-    embedded(project(":kotlin-allopen-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.k2")) { isTransitive = false }
 
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.common"))
-    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
     testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
@@ -35,8 +33,6 @@ sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
 }
-
-optInToK1Deprecation()
 
 publish()
 
