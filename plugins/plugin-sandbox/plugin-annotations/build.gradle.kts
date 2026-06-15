@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    id("binaryen-configuration")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
