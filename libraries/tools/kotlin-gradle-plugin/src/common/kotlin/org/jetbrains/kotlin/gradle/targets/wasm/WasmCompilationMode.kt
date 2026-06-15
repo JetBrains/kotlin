@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.wasm
 
 internal enum class WasmCompilationMode {
     MONOLITH,
-    MULTI_OPEN_WORLD,
-    MULTI_CLOSED_WORLD;
+    MULTIMODULE_OPEN_WORLD,
+    MULTIMODULE_CLOSED_WORLD;
 
-    internal fun isOpenWorld() = this == MULTI_OPEN_WORLD
+    internal fun isOpenWorld() = this == MULTIMODULE_OPEN_WORLD
 
     companion object {
         fun byArgument(argument: String): WasmCompilationMode? =

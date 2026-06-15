@@ -129,10 +129,10 @@ internal open class KotlinJsIrLinkConfig(
         add("$WASM_TARGET=$targetValue")
         if (wasmSupportsPerKlibCompilation) {
             when(wasmCompilationMode) {
-                WasmCompilationMode.MULTI_OPEN_WORLD -> {
+                WasmCompilationMode.MULTIMODULE_OPEN_WORLD -> {
                     add(WASM_INCLUDED_MODULE_ONLY)
                 }
-                WasmCompilationMode.MULTI_CLOSED_WORLD -> {
+                WasmCompilationMode.MULTIMODULE_CLOSED_WORLD -> {
                     add(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
                 }
                 else -> {}

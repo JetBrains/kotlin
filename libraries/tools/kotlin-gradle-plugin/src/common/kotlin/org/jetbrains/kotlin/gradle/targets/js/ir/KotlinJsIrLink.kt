@@ -154,12 +154,14 @@ abstract class KotlinJsIrLink @Inject constructor(
                 CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
             }
         } else {
-            val openWorldMultiModule = args.wasmIncludedModuleOnly
-            val closedWorldMultiModule = args.wasmGenerateClosedWorldMultimodule
+            val openWorldMultiModule = args.wasmIncludedModuleOnly ||
+                    args.freeArgs.contains(WASM_INCLUDED_MODULE_ONLY)
+            val closedWorldMultiModule = args.wasmGenerateClosedWorldMultimodule ||
+                    args.freeArgs.contains(WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
 
             val wasmCompilerMode = when {
-                openWorldMultiModule -> WasmCompilationMode.MULTI_OPEN_WORLD
-                closedWorldMultiModule -> WasmCompilationMode.MULTI_CLOSED_WORLD
+                openWorldMultiModule -> WasmCompilationMode.MULTIMODULE_OPEN_WORLD
+                closedWorldMultiModule -> WasmCompilationMode.MULTIMODULE_CLOSED_WORLD
                 else -> WasmCompilationMode.MONOLITH
             }.toArgument()
 

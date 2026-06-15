@@ -67,7 +67,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             build(
                 "assemble",
                 buildOptions = defaultBuildOptions.copy(
-                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
                 )
             ) {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
@@ -94,7 +94,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             build(
                 ":wasmJsD8ProductionRun",
                 buildOptions = defaultBuildOptions.copy(
-                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
                 )
             ) {
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
@@ -112,7 +112,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             build(
                 ":wasmJsD8ProductionRun",
                 buildOptions = defaultBuildOptions.copy(
-                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_CLOSED_WORLD)
+                    wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
                 )
             ) {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
@@ -411,7 +411,7 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTI_OPEN_WORLD)
+            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_OPEN_WORLD)
         )
 
     @DisplayName("Check js target with browser")
