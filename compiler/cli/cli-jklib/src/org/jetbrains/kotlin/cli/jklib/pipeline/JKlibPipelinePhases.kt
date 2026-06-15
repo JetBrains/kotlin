@@ -102,10 +102,9 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 configureJdkHomeFromSystemProperty()
             }
             configureJdkClasspathRoots()
-            val paths = PathUtil.kotlinPathsForCompiler
             if (!arguments.noStdlib) {
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::stdlibPath,
                     PathUtil.KOTLIN_JAVA_STDLIB_JAR,
                     configuration,
@@ -115,7 +114,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                     add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
                 }
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::scriptRuntimePath,
                     PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
                     configuration,
@@ -127,7 +126,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             }
             if (!arguments.noReflect && !arguments.noStdlib) {
                 getLibraryFromHome(
-                    paths,
+                    kotlinPaths,
                     KotlinPaths::reflectPath,
                     PathUtil.KOTLIN_JAVA_REFLECT_JAR,
                     configuration,
