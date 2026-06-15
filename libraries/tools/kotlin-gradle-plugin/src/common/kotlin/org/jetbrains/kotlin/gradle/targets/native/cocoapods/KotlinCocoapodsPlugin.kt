@@ -117,6 +117,18 @@ internal val PodBuildSettingsProperties.frameworkSearchPaths: List<String>
         return frameworkPathsSelfIncluding
     }
 
+/**
+ * Names of all frameworks (without the `.framework` extension) discoverable in the given [frameworkSearchPaths].
+ *
+ * Used to emit a `-framework <name>` linker option for every framework a pod brings, including its transitive vendored dependencies,
+ * rather than only the pod's own module. See the call site for why this matters with incremental compilation (KT-86995).
+ */
+private fun frameworksToLink(frameworkSearchPaths: List<String>): List<String> =
+    frameworkSearchPaths
+        .flatMap { dir -> File(dir).listFiles { file -> file.isDirectory && file.extension == "framework" }?.asList().orEmpty() }
+        .map { it.nameWithoutExtension }
+        .distinct()
+
 //Make frameworks headers discoverable with any syntax (quotes, brackets, @import, etc.)
 //https://github.com/CocoaPods/CocoaPods/blob/d18f49392c5e9ed9a2cdcb2ee89391cf7690ee5d/lib/cocoapods/target/build_settings.rb#L1188
 private val PodBuildSettingsProperties.frameworkHeadersSearchPaths: List<String>
@@ -608,14 +620,20 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
                 task.doFirst {
                     val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile())
-                    val frameworkFileName = pod.moduleName + ".framework"
                     val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
 
                     val linkerOpts = task.additionalLinkerOpts
 
                     if (isExecutable || isDynamicFramework.get()) {
-                        val frameworkFileExists = frameworkSearchPaths.any { dir -> File(dir, frameworkFileName).exists() }
-                        if (frameworkFileExists) linkerOpts.addArg("-framework", pod.moduleName)
+                        // KT-86995: Link every framework discoverable in the pod's framework search paths, not just the pod's
+                        // own module. A pod (e.g. `FirebaseAnalytics`) ships transitive vendored frameworks
+                        // (`GoogleAppMeasurement`, `GoogleUtilities`, ...) that its binary depends on. In a non-cached build
+                        // the missing `-framework` flags go unnoticed: the final binary is compiled as a single closed-world
+                        // LLVM module, so internalization + global DCE strip the unused Kotlin interop bindings and the linker
+                        // never pulls in the framework objects. With incremental compilation each library is compiled open-world
+                        // (no internalization), so those bindings survive, the linker pulls in the framework objects
+                        // and fails with undefined symbols from transitive frameworks that were never on the link line.
+                        frameworksToLink(frameworkSearchPaths).forEach { linkerOpts.addArg("-framework", it) }
                         linkerOpts.addAll(frameworkSearchPaths.map { "-F$it" })
                     }
 
