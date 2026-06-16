@@ -366,9 +366,19 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     private val eqeqeq = context.irBuiltIns.eqeqeqSymbol
     private val ieee754EqualsSymbols: Set<IrSimpleFunctionSymbol> =
             context.irBuiltIns.ieee754equalsFunByOperandType.values.toSet()
+    private val equals = context.symbols.equals
+    private val reinterpret = context.symbols.reinterpret
     private val throwClassCastException = context.symbols.throwClassCastException
     private val unitType = context.irBuiltIns.unitType
     private val nothingType = context.irBuiltIns.nothingType
+
+    private fun IrExpression.isNullConst() = this is IrConst && this.value == null
+
+    // BuiltinOperatorLowering rewrites reference comparisons into calls to the `reinterpret`
+    // intrinsic wrapping the operands (see BuiltinOperatorLowering.irEqeqNull/genFloatingOrReferenceEquals).
+    // Since that lowering may run before this pass, shortcut through `reinterpret`.
+    private fun IrExpression.unwrapReinterpret(): IrExpression =
+            (this as? IrCall)?.takeIf { it.symbol == reinterpret }?.arguments?.get(0)?.unwrapReinterpret() ?: this
 
     private fun IrTypeOperatorCall.isCast() =
             operator == IrTypeOperator.CAST || operator == IrTypeOperator.IMPLICIT_CAST
@@ -681,12 +691,32 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             else -> null
         }
 
-        fun IrSimpleFunctionSymbol.isEqualityOperator() = this == eqeq || this == eqeqeq || this in ieee754EqualsSymbols
+        fun IrSimpleFunctionSymbol.isEqualityOperator() =
+                this == eqeq || this == eqeqeq || this == equals || this in ieee754EqualsSymbols
 
         fun IrExpression.matchEquality(): Pair<IrExpression, IrExpression>? = when {
             (this as? IrCall)?.symbol?.isEqualityOperator() == true ->
-                Pair(this.arguments[0]!!, this.arguments[1]!!)
-            else -> null
+                Pair(this.arguments[0]!!.unwrapReinterpret(), this.arguments[1]!!.unwrapReinterpret())
+            else -> matchLoweredNullableEquality()
+        }
+
+        // BuiltinOperatorLowering desugars a nullable `a == b` (`a` nullable, `b` non-null) into a null-guarded block
+        // (see BuiltinOperatorLowering.genFloatingOrReferenceEquals):
+        //   { val tmp = a; (tmp !== null) && tmp.equals(b) }
+        // Since that lowering may run before this pass, recover the original `(a, b)` pair so the equality is still
+        // recognized (in particular, so the nullability predicate of `a` reaches the enclosing condition).
+        private fun IrExpression.matchLoweredNullableEquality(): Pair<IrExpression, IrExpression>? {
+            val statements = (this as? IrBlock)?.statements?.takeIf { it.size == 2 } ?: return null
+            val tmp = statements[0] as? IrVariable ?: return null
+            val initializer = tmp.initializer ?: return null
+            val [notNullCheck, equalsCall] = (statements[1] as? IrExpression)?.matchAndAnd() ?: return null
+            val notNullOperands = notNullCheck.matchNot()?.matchEquality() ?: return null
+            if ((notNullOperands.first as? IrGetValue)?.symbol?.owner != tmp || !notNullOperands.second.isNullConst())
+                return null
+            val call = equalsCall as? IrCall ?: return null
+            if (!call.symbol.isEqualityOperator()) return null
+            if ((call.arguments[0]?.unwrapReinterpret() as? IrGetValue)?.symbol?.owner != tmp) return null
+            return Pair(initializer, call.arguments[1]!!.unwrapReinterpret())
         }
 
         fun IrExpression.matchSafeCall(): Pair<IrExpression, IrExpression>? {
