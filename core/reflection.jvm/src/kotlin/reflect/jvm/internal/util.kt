@@ -106,7 +106,6 @@ internal val stdlibClassLoader: ClassLoader
 
 private fun loadClass(classLoader: ClassLoader, packageName: String, className: String, arrayDimensions: Int): Class<*>? {
     if (packageName == "kotlin") {
-        // See mapBuiltInType() in typeSignatureMapping.kt
         when (className) {
             "Array" -> return Array<Any>::class.java
             "BooleanArray" -> return BooleanArray::class.java
@@ -117,6 +116,12 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
             "IntArray" -> return IntArray::class.java
             "LongArray" -> return LongArray::class.java
             "ShortArray" -> return ShortArray::class.java
+            "Unit" -> {
+                // JDK and kotlin-stdlib can be loaded by different class loaders. In this case, trying to resolve `kotlin/Unit` reference
+                // in a builtin class will use the JDK class loader which cannot load `kotlin/Unit`. This should happen for all non-mapped
+                // builtin classes referenced from builtins, but right now Unit seems to be the only one.
+                return Unit::class.java
+            }
         }
     }
 
