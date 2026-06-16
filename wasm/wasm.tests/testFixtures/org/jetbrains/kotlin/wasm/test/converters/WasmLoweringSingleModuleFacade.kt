@@ -77,7 +77,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val currentSetup = when {
             configuration.wasmForceDebugFriendlyCompilation -> PrecompileSetup.DEBUG_FRIENDLY
             configuration.wasmUseNewExceptionProposal -> PrecompileSetup.NEW_EXCEPTION_PROPOSAL
-            configuration.wasmUseStackSwitchingProposal -> PrecompileSetup.STACK_SWITCHING
+            configuration.wasmUseStackSwitchingProposal -> PrecompileSetup.STACK_SWITCHING_PROPOSAL
             else -> PrecompileSetup.REGULAR
         }
         configureModuleResolutionMap(configuration, currentSetup)

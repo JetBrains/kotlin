@@ -40,7 +40,7 @@ abstract class AbstractWasmJsCodegenSingleModuleRegularStdTest(
             if (!precompileIsDone) {
                 precompileWasmModules(PrecompileSetup.REGULAR)
                 precompileWasmModules(PrecompileSetup.NEW_EXCEPTION_PROPOSAL)
-                precompileWasmModules(PrecompileSetup.STACK_SWITCHING)
+                precompileWasmModules(PrecompileSetup.STACK_SWITCHING_PROPOSAL)
                 precompileIsDone = true
             }
         }
@@ -138,7 +138,7 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
 
 open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest(
     pathToTestDir: String = "compiler/testData/codegen/box",
-    testGroupOutputDirPrefix: String = "codegen/firBoxSingleModule/coroutinesStackSwitching"
+    testGroupOutputDirPrefix: String = "codegen/singleModuleBoxStackSwitching"
 ) : AbstractWasmJsCodegenSingleModuleRegularStdTest(pathToTestDir, testGroupOutputDirPrefix) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>

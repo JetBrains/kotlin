@@ -57,7 +57,7 @@ internal enum class PrecompileSetup(
         File(outputDir, "out/precompile_new_exception/$precompiledStdlibOutputName"),
         File(outputDir, "out/precompile_new_exception/$precompiledKotlinTestOutputName")
     ),
-    STACK_SWITCHING(
+    STACK_SWITCHING_PROPOSAL(
         debugFriendly = false,
         newExceptionProposal = false,
         wasmCoroutinesStackSwitching = true,
