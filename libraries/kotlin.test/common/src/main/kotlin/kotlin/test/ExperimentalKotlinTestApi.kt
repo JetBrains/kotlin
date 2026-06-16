@@ -23,7 +23,7 @@ import kotlin.annotation.AnnotationTarget.VALUE_PARAMETER
  * > Beware using the annotated API especially if you're developing a library, since your library might become binary incompatible
  * with the future versions of the `kotlin.test` library.
  * >
- * > Even though the binary compatibility is rarely a concern for projects using `kotlin.test` for tests,
+ * > Even though binary is rarely a concern for projects using `kotlin.test` for tests,
  * > future changes can make such tests source incompatible and may require migration to an alternative API.
  *
  * Any usage of a declaration annotated with `@ExperimentalKotlinTestApi` must be accepted either by

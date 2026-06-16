@@ -8,6 +8,7 @@ package kotlin.test.tests
 import kotlin.reflect.typeOf
 import kotlin.test.*
 
+@OptIn(ExperimentalKotlinTestApi::class)
 class BasicAssertionsTest {
     @Test
     fun testAssertEquals() {
@@ -15,9 +16,30 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertEqualsLazy() {
+        assertEquals(1, 1) { fail() }
+
+        val msg = "I did not expect that!"
+        testFailureMessagesAreTheSame({ assertEquals(1, 2, message = msg) }) {
+            assertEquals(1, 2) { msg }
+        }
+    }
+
+    @Test
     fun testAssertSame() {
         val instance: Any = object {}
         assertSame(instance, instance)
+    }
+
+    @Test
+    fun testAssertSameLazy() {
+        val instance: Any = object {}
+        assertSame(instance, instance) { fail() }
+
+        val msg = "This is unacceptable!"
+        testFailureMessagesAreTheSame({  assertSame(instance, 42, message = msg) }) {
+            assertSame(instance, 42) { msg }
+        }
     }
 
     @Test
@@ -202,15 +224,66 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertEqualsDoubleLazy() {
+        assertEquals(0.0, 0.0, 100000.0) { fail() }
+
+        val msg = "This will not be tolerated"
+        testFailureMessagesAreTheSame({ assertEquals(0.0, 1.0, 0.0, msg) }) {
+            assertEquals(0.0, 1.0, 0.0) { msg }
+        }
+    }
+
+    @Test
+    fun testAssertNotEqualsDoubleLazy() {
+        assertNotEquals(0.0, 100000.0, 0.0) { fail() }
+
+        val msg = "This should not be tolerated"
+        testFailureMessagesAreTheSame({ assertNotEquals(0.0, 1.0, 1000.0, msg) }) {
+            assertNotEquals(0.0, 1.0, 1000.0) { msg }
+        }
+    }
+
+
+    @Test
+    fun testAssertEqualsFloatLazy() {
+        assertEquals(0.0f, 0.0f, 100000.0f) { fail() }
+
+        val msg = "This will not be tolerated"
+        testFailureMessagesAreTheSame({ assertEquals(0.0f, 1.0f, 0.0f, msg) }) {
+            assertEquals(0.0f, 1.0f, 0.0f) { msg }
+        }
+    }
+
+    @Test
+    fun testAssertNotEqualsFloatLazy() {
+        assertNotEquals(0.0f, 100000.0f, 0.0f) { fail() }
+
+        val msg = "This should not be tolerated"
+        testFailureMessagesAreTheSame({ assertNotEquals(0.0f, 1.0f, 1000.0f, msg) }) {
+            assertNotEquals(0.0f, 1.0f, 1000.0f) { msg }
+        }
+    }
+
+    @Test
     fun testAssertTrue() {
         assertTrue(true)
         assertTrue { true }
     }
 
-    @Test()
+    @Test
     fun testAssertTrueFails() {
         checkFailedAssertion { assertTrue(false) }
         checkFailedAssertion { assertTrue { false } }
+    }
+
+    @Test
+    fun testAssertTrueLazy() {
+        assertTrue(true) { fail() }
+
+        val msg = "I was hoping to find the truth here"
+        testFailureMessagesAreTheSame({ assertTrue(false, message = msg) }) {
+            assertTrue(false) { msg }
+        }
     }
 
     @Test
@@ -226,11 +299,21 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertFalseLazy() {
+        assertFalse(false) { fail() }
+
+        val msg = "Who flipped the flag?"
+        testFailureMessagesAreTheSame({ assertFalse(true, message = msg) }) {
+            assertFalse(true) { msg }
+        }
+    }
+
+    @Test
     fun testAssertFails() {
         assertFails { throw IllegalStateException() }
     }
 
-    @Test()
+    @Test
     fun testAssertFailsFails() {
         checkFailedAssertion { assertFails { } }
     }
@@ -248,7 +331,7 @@ class BasicAssertionsTest {
         assertNotSame(instance1, instance2)
     }
 
-    @Test()
+    @Test
     fun testAssertNotEqualsFails() {
         checkFailedAssertion { assertNotEquals(1, 1) }
     }
@@ -260,11 +343,34 @@ class BasicAssertionsTest {
     }
 
     @Test
+    fun testAssertNotEqualsLazy() {
+        assertNotEquals(1, 2) { fail() }
+
+        val msg = "Something unexpected happened"
+        testFailureMessagesAreTheSame({ assertNotEquals(1, 1, msg) }) {
+            assertNotEquals(1, 1) { msg }
+        }
+    }
+
+    @Test
+    fun testAssertNotSameLazy() {
+        val instance1: Any = object {}
+        val instance2: Any = object {}
+
+        assertNotSame(instance1, instance2) { fail() }
+
+        val msg = "Something unexpected happened"
+        testFailureMessagesAreTheSame({ assertNotSame(instance1, instance1, msg) }) {
+            assertNotSame(instance1, instance1) { msg }
+        }
+    }
+
+    @Test
     fun testAssertNotNull() {
         assertNotNull(true)
     }
 
-    @Test()
+    @Test
     fun testAssertNotNullFails() {
         checkFailedAssertion { assertNotNull<Any>(null) }
     }
@@ -298,7 +404,7 @@ class BasicAssertionsTest {
         checkFailedAssertion { assertNull("") }
     }
 
-    @Test()
+    @Test
     fun testFail() {
         val message = "should fail"
         val actual = checkFailedAssertion { fail(message) }
@@ -358,12 +464,40 @@ class BasicAssertionsTest {
         assertTrue(message.startsWith("Expected value to not be of type"), onFailure)
         assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
     }
+
+    @Test
+    fun testAssertIsOfTypeLazy() {
+        val s: Any = "test"
+        val result = assertIs<String>(s) { fail() }
+        assertEquals(s, result)
+
+        val msg = "Everything IS supposed to be a string"
+        testFailureMessagesAreTheSame({ assertIs<String>(42, msg) }) {
+            assertIs<String>(42) { msg }
+        }
+    }
+
+    @Test
+    fun testAssertIsNotOfTypeLazy() {
+        assertIsNot<String>(42) { fail() }
+
+        val msg = "Not everything is supposed to be a string"
+        testFailureMessagesAreTheSame({ assertIsNot<String>("42", msg) }) {
+            assertIsNot<String>("42") { msg }
+        }
+    }
 }
 
 
 internal fun testFailureMessage(expected: String, block: () -> Unit) {
     val exception = checkFailedAssertion(block)
     assertEquals(expected, exception.message, "Wrong assertion message")
+}
+
+internal fun testFailureMessagesAreTheSame(paragonFailure: () -> Unit, failureUnderTest: () -> Unit) {
+    val expectedException = checkFailedAssertion(paragonFailure)
+    val exception = checkFailedAssertion(failureUnderTest)
+    assertEquals(expectedException.message, exception.message, "Wrong assertion message")
 }
 
 internal fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
