@@ -83,14 +83,3 @@ private fun IrFile.preprocessForConstTransformer(
     }
     return preprocessedFile
 }
-
-fun InlineConstTracker.reportOnIr(irFile: IrFile, field: IrField, value: IrConst) {
-    if (field.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return
-
-    val path = irFile.path
-    val owner = field.parentAsClass.classId?.asString()?.replace(".", "$")?.replace("/", ".") ?: return
-    val name = field.name.asString()
-    val constType = value.kind.asString
-
-    report(path, owner, name, constType)
-}
