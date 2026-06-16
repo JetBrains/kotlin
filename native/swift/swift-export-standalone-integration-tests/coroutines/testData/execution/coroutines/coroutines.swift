@@ -312,39 +312,38 @@ func testParentCancellationPropagatesToStructuredChild() async throws {
     #expect(result == .failure(CancellationError()))
 }
 
-// todo: KT-86509 [Swift Export] Probable race in tests
-// @Test
-// func testCancellationRaceLoop() async throws {
-//     let cancelDelayMs: UInt64 = 50
-//
-//     try await withThrowingTaskGroup(of: Void.self) { group in
-//         for i in 1...100 {
-//             group.addTask {
-//                 let task = Task<Int32, any Error>.detached {
-//                     return try await callAfter(delay: Int64(cancelDelayMs)) {
-//                         return 42
-//                     }
-//                 }
-//
-//                 if cancelDelayMs > 0 {
-//                     try await Task.sleep(nanoseconds: cancelDelayMs * 1_000_000)
-//                 }
-//                 task.cancel()
-//
-//                 let result = await task.result
-//
-//                 switch result {
-//                 case .success(let v):
-//                     #expect(v == 42)
-//                 case .failure(let e):
-//                     #expect(e is CancellationError, "Iteration \(i) failed with non-cancellation error: \(e)")
-//                 }
-//             }
-//         }
-//
-//         for try await _ in group {}
-//     }
-// }
+@Test
+func testCancellationRaceLoop() async throws {
+    let cancelDelayMs: UInt64 = 50
+
+    try await withThrowingTaskGroup(of: Void.self) { group in
+        for i in 1...100 {
+            group.addTask {
+                let task = Task<Int32, any Error>.detached {
+                    return try await callAfter(delay: Int64(cancelDelayMs)) {
+                        return 42
+                    }
+                }
+
+                if cancelDelayMs > 0 {
+                    try await Task.sleep(nanoseconds: cancelDelayMs * 1_000_000)
+                }
+                task.cancel()
+
+                let result = await task.result
+
+                switch result {
+                case .success(let v):
+                    #expect(v == 42)
+                case .failure(let e):
+                    #expect(e is CancellationError, "Iteration \(i) failed with non-cancellation error: \(e)")
+                }
+            }
+        }
+
+        for try await _ in group {}
+    }
+}
 
 @Test
 func testFinallyCancelBeforeEnd() async throws {

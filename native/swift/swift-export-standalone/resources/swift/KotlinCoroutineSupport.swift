@@ -1,6 +1,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinCoroutineSupportBridge
+import Synchronization
 
 /// A Bridge type for Job-like class in Kotlin
 ///
@@ -10,22 +11,25 @@ import KotlinRuntimeSupport
 /// The value of this type should never outlive the task it wraps.
 @objc(KotlinTask)
 package final class KotlinTask: KotlinRuntime.KotlinBase {
-    public convenience init(_ currentTask: UnsafeCurrentTask) {
-        self.init { shouldCancel in
-            defer { if shouldCancel { currentTask.cancel() } }
-            return currentTask.isCancelled
-        }
-    }
 
-    private init(
-        cancellationCallback: @escaping (Swift.Bool) -> Swift.Bool
-    ) {
+    private let task = Mutex<UnsafeCurrentTask?>(nil)
+
+    fileprivate init(_ currentTask: UnsafeCurrentTask) {
         let __kt = __root___SwiftJob_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___SwiftJob_init_initialize(__kt, {
-            let originalBlock = cancellationCallback
-            return { arg0 in return originalBlock(arg0) }
-        }())
+        self.task.withLock { $0 = currentTask }
+        __root___SwiftJob_init_initialize(__kt, { [weak self] shouldCancel in
+            guard let self else { return true }
+            return self.task.withLock { task in
+                guard let task else { return true }
+                defer { if shouldCancel { task.cancel() } }
+                return task.isCancelled
+            }
+        })
+    }
+
+    fileprivate func clear() {
+        task.withLock { $0 = nil }
     }
 
     package override init(
@@ -49,6 +53,7 @@ package func withKotlinContinuation<T>(
 ) async throws -> T {
     try await withUnsafeCurrentTask { currentTask in
         let cancellation = KotlinTask(currentTask!)
+        defer { cancellation.clear() }
         return try await withTaskCancellationHandler {
             return try await withUnsafeThrowingContinuation { nativeContinuation in
                 let continuation: (T) -> Void = { nativeContinuation.resume(returning: $0) }
