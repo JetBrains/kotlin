@@ -387,13 +387,14 @@ class DeclarationGenerator(
         // files during link-time deduplication.
         val fqnShouldBeEmitted = (backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass) &&
                                       klass.origin != WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL)
+        val originalFqName = klass.originalFqName
         val qualifier =
             if (fqnShouldBeEmitted) {
-                (klass.originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
+                (originalFqName ?: klass.kotlinFqName).parentOrNull()?.asString() ?: ""
             } else {
                 ""
             }
-        val simpleName = klass.name.asString()
+        val simpleName = (originalFqName?.shortName() ?: klass.name).asString()
         val packageNameStringLiteralId: WasmSymbol<Int>
         val simpleNameStringLiteralId: WasmSymbol<Int>
         if (backendContext.isWasmJsTarget) {

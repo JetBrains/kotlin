@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,18 +9,20 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.originalClassId
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 /**
  * If this is a static declaration that was extracted to the top level by [StaticMembersLowering],
  * contains the fully qualified name of this declaration before extraction.
  */
-var IrClass.originalFqName: FqName? by irAttribute(copyByDefault = false)
+var IrDeclarationWithName.originalFqName: FqName? by irAttribute(copyByDefault = false)
 
 /**
  * Moves static member declarations from classes to the top level.
@@ -59,8 +61,11 @@ class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTr
                     irClass.file.declarations += declaration
                 }
 
-                if (declaration is IrClass) {
+                if (declaration is IrDeclarationWithName) {
+                    // Rename the declaration so it includes its container's name after lifting, so the generated code is more readable.
                     declaration.originalFqName = declaration.fqNameWhenAvailable
+                    val prefix = irClass.originalClassId?.relativeClassName?.pathSegments()?.joinToString("$") ?: irClass.name.asString()
+                    declaration.name = Name.identifier("$prefix$${declaration.name}")
                 }
 
                 declaration.parent = irClass.file
