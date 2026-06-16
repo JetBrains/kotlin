@@ -95,10 +95,6 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
     return AutoboxingTransformer(context)
 }
 
-private fun createObjectDeclarationLoweringPhase(context: JsCommonBackendContext): ObjectDeclarationLowering {
-    return ObjectDeclarationLowering(context, initializeParentCompanions = true)
-}
-
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
     val configuration = IrInterpreterConfiguration(
@@ -190,7 +186,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::JsInteropFunctionsLowering,
 
-    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::ObjectDeclarationLowering, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::WebStaticInitializersDeclarationLowering,
     ::WasmStaticInitializersUsageLowering,
 

@@ -1,5 +1,3 @@
-// ISSUE: KT-40768 KJS: initialization order for companion objects (inherited classes) different from K/JVM
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ISSUE: KT-86521 Native: init order of companion objects is different from JVM
 // IGNORE_BACKEND: NATIVE
 // ISSUE: KT-84267 K/Wasm: init order of companion objects is different from JVM
