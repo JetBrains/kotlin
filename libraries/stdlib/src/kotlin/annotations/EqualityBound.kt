@@ -24,4 +24,4 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("2.5")
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-public annotation class RestrictedTo(val bound: KClass<*>)
+public annotation class EqualityBound(val bound: KClass<*>)

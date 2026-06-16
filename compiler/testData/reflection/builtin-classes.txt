@@ -212,6 +212,16 @@ KClass: abstract class kotlin.Enum : Comparable, Serializable, Any
     public open fun kotlin.Enum<E>.toString(): kotlin.String
     public final val kotlin.Enum<E>.name: kotlin.String
     public final val kotlin.Enum<E>.ordinal: kotlin.Int
+KClass: interface kotlin.EqualityBound : Annotation, Any
+  constructors:
+    public final fun `<init>`(kotlin.reflect.KClass<*>): kotlin.EqualityBound
+  members:
+    public open operator fun kotlin.EqualityBound.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.EqualityBound.hashCode(): kotlin.Int
+    public open fun kotlin.EqualityBound.toString(): kotlin.String
+    public final val kotlin.EqualityBound.bound: kotlin.reflect.KClass<*>
+  declaredMembers:
+    public final val kotlin.EqualityBound.bound: kotlin.reflect.KClass<*>
 KClass: interface kotlin.ExperimentalStdlibApi : Annotation, Any
   constructors:
     public final fun `<init>`(): kotlin.ExperimentalStdlibApi
@@ -416,16 +426,6 @@ KClass: interface kotlin.RequiresOptIn : Annotation, Any
   declaredMembers:
     public final val kotlin.RequiresOptIn.level: kotlin.RequiresOptIn.Level
     public final val kotlin.RequiresOptIn.message: kotlin.String
-KClass: interface kotlin.RestrictedTo : Annotation, Any
-  constructors:
-    public final fun `<init>`(kotlin.reflect.KClass<*>): kotlin.RestrictedTo
-  members:
-    public open operator fun kotlin.RestrictedTo.equals(kotlin.Any?): kotlin.Boolean
-    public open fun kotlin.RestrictedTo.hashCode(): kotlin.Int
-    public open fun kotlin.RestrictedTo.toString(): kotlin.String
-    public final val kotlin.RestrictedTo.bound: kotlin.reflect.KClass<*>
-  declaredMembers:
-    public final val kotlin.RestrictedTo.bound: kotlin.reflect.KClass<*>
 KClass: class kotlin.Short.Companion : Any
   members:
     public open operator fun kotlin.Short.Companion.equals(kotlin.Any?): kotlin.Boolean

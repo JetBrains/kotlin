@@ -227,6 +227,13 @@ open annotation class kotlin/DslMarker : kotlin/Annotation { // kotlin/DslMarker
     constructor <init>() // kotlin/DslMarker.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/EqualityBound : kotlin/Annotation { // kotlin/EqualityBound|null[0]
+    constructor <init>(kotlin.reflect/KClass<*>) // kotlin/EqualityBound.<init>|<init>(kotlin.reflect.KClass<*>){}[0]
+
+    final val bound // kotlin/EqualityBound.bound|{}bound[0]
+        final fun <get-bound>(): kotlin.reflect/KClass<*> // kotlin/EqualityBound.bound.<get-bound>|<get-bound>(){}[0]
+}
+
 open annotation class kotlin/ExperimentalContextParameters : kotlin/Annotation { // kotlin/ExperimentalContextParameters|null[0]
     constructor <init>() // kotlin/ExperimentalContextParameters.<init>|<init>(){}[0]
 }
@@ -326,13 +333,6 @@ open annotation class kotlin/RequiresOptIn : kotlin/Annotation { // kotlin/Requi
         final fun valueOf(kotlin/String): kotlin/RequiresOptIn.Level // kotlin/RequiresOptIn.Level.valueOf|valueOf#static(kotlin.String){}[0]
         final fun values(): kotlin/Array<kotlin/RequiresOptIn.Level> // kotlin/RequiresOptIn.Level.values|values#static(){}[0]
     }
-}
-
-open annotation class kotlin/RestrictedTo : kotlin/Annotation { // kotlin/RestrictedTo|null[0]
-    constructor <init>(kotlin.reflect/KClass<*>) // kotlin/RestrictedTo.<init>|<init>(kotlin.reflect.KClass<*>){}[0]
-
-    final val bound // kotlin/RestrictedTo.bound|{}bound[0]
-        final fun <get-bound>(): kotlin.reflect/KClass<*> // kotlin/RestrictedTo.bound.<get-bound>|<get-bound>(){}[0]
 }
 
 open annotation class kotlin/SinceKotlin : kotlin/Annotation { // kotlin/SinceKotlin|null[0]

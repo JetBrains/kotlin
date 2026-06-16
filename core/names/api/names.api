@@ -307,6 +307,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getDslMarker ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getDynamicExtension ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getEnhancedNullability ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getEqualityBound ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExpectRefinement ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExperimentalAssociatedObjects ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getExposedCopyVisibility ()Lorg/jetbrains/kotlin/name/ClassId;

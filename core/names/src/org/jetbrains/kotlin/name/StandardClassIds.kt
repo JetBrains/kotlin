@@ -235,7 +235,7 @@ object StandardClassIds {
         val MustUseReturnValues = "MustUseReturnValues".baseId()
         val IgnorableReturnValue = "IgnorableReturnValue".baseId()
 
-        val RestrictedTo = "RestrictedTo".baseId()
+        val EqualityBound = "EqualityBound".baseId()
 
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 

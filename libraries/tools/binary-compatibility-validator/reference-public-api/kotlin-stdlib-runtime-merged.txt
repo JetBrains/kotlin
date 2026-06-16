@@ -46,6 +46,10 @@ public final class kotlin/DeprecationLevel : java/lang/Enum {
 public abstract interface annotation class kotlin/DslMarker : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/EqualityBound : java/lang/annotation/Annotation {
+	public abstract fun bound ()Ljava/lang/Class;
+}
+
 public final class kotlin/ExceptionsKt {
 	public static final fun addSuppressed (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
@@ -222,10 +226,6 @@ public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/RequiresOptIn$Level;
 	public static fun values ()[Lkotlin/RequiresOptIn$Level;
-}
-
-public abstract interface annotation class kotlin/RestrictedTo : java/lang/annotation/Annotation {
-	public abstract fun bound ()Ljava/lang/Class;
 }
 
 public final class kotlin/Result : java/io/Serializable {

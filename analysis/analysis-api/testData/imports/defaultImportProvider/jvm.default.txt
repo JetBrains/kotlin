@@ -23,6 +23,7 @@ HIGH:
   import kotlin.DoubleArray
   import kotlin.DslMarker
   import kotlin.Enum
+  import kotlin.EqualityBound
   import kotlin.ExperimentalStdlibApi
   import kotlin.ExperimentalSubclassOptIn
   import kotlin.ExtensionFunctionType
@@ -43,7 +44,6 @@ HIGH:
   import kotlin.PublishedApi
   import kotlin.ReplaceWith
   import kotlin.RequiresOptIn
-  import kotlin.RestrictedTo
   import kotlin.Short
   import kotlin.ShortArray
   import kotlin.SinceKotlin

@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirRestrictedToAnnotationApplicabilityChecker : FirValueParameterChecker(MppCheckerKind.Common) {
+object FirEqualityBoundAnnotationApplicabilityChecker : FirValueParameterChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirValueParameter) {
         declaration.annotations.forEach { annotation ->
-            if (annotation.toAnnotationClassId(context.session) != StandardClassIds.Annotations.RestrictedTo) return@forEach
+            if (annotation.toAnnotationClassId(context.session) != StandardClassIds.Annotations.EqualityBound) return@forEach
 
             if (!declaration.containingDeclarationSymbol.isOperatorEquals()) {
                 reporter.reportOn(
                     annotation.source,
                     FirErrors.UNSUPPORTED,
-                    "'RestrictedTo' annotation is only supported for parameters of 'equals' operator"
+                    "'EqualityBound' annotation is only supported for parameters of 'equals' operator"
                 )
             } else {
                 annotation.requireFeatureSupport(LanguageFeature.StrictEquals)
