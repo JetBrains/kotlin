@@ -59,10 +59,9 @@ open class AbstractFirWasmJsMultiModuleSteppingTest(
 }
 
 open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingMultiModuleTest(
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
     testGroupOutputDirPrefix: String = "codegen/multiModuleBoxStackSwitching"
-) : AbstractFirWasmJsCodegenBoxTest(
-    testGroupOutputDirPrefix = testGroupOutputDirPrefix
-) {
+) : AbstractFirWasmJsCodegenBoxTest(pathToTestDir, testGroupOutputDirPrefix) {
 
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
         get() = ::WasmStackSwitchingRunner

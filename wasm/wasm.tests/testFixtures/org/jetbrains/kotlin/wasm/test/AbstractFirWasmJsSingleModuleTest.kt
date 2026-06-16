@@ -137,7 +137,7 @@ open class AbstractFirWasmJsSteppingSingleModuleTest(
 }
 
 open class AbstractFirWasmJsCodegenCoroutinesStackSwitchingSingleModuleTest(
-    pathToTestDir: String = "compiler/testData/codegen/box",
+    pathToTestDir: String = "compiler/testData/codegen/box/coroutines",
     testGroupOutputDirPrefix: String = "codegen/singleModuleBoxStackSwitching"
 ) : AbstractWasmJsCodegenSingleModuleRegularStdTest(pathToTestDir, testGroupOutputDirPrefix) {
 
