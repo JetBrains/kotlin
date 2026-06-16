@@ -26,8 +26,8 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions,
         test: TestProject.() -> Unit
-    ): TestProject = project(defaultProjectName, gradleVersion) {
-        listOf("app", "lib").forEach {
+    ): TestProject = super.defaultProject(gradleVersion, buildOptions) {
+        listOf("app", "lib", "another-lib").forEach {
             val subProject = subProject(it)
             subProject.javaSourcesDir().deleteRecursively()
             val buildGradleJs = subProject.projectPath.resolve("build-js.gradle")
@@ -37,12 +37,24 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         test()
     }
 
-    override val additionalLibDependencies: String = """
+    override val additionalExternalLibDependencies: String = """
         kotlin {
             sourceSets {
                 jsMain {
                     dependencies {
                         implementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+                    }           
+                }
+            }
+        }
+    """.trimIndent()
+
+    override val additionalProjectLibDependencies: String = """
+        kotlin {
+            sourceSets {
+                jsMain {
+                    dependencies {
+                        implementation project(":another-lib")
                     }           
                 }
             }
@@ -59,22 +71,34 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
     @GradleTest
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 
-    @Disabled("In JS IR all dependencies effectively api, not implementation")
-    @DisplayName("Add new dependency in lib project")
+    @DisplayName("Add new dependency in lib project causes recompilation in JS")
     @GradleTest
-    override fun testAddDependencyInLib(gradleVersion: GradleVersion) {
+    override fun testAddExternalDependencyInLib(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble")
 
-            testAddDependencyInLib_modifyProject()
+            testAddExternalDependencyInLib_modifyProject()
 
             build("assemble") {
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
                 assertTasksUpToDate(":app:$compileKotlinTaskName")
-                assertCompiledKotlinSources(
-                    subProject("lib").projectPath.resolve("src").allKotlinSources.relativizeTo(projectPath),
-                    output
-                )
+                assertNonIncrementalCompilation(BuildAttribute.DEP_CHANGE_ADDED_ENTRY)
+            }
+        }
+    }
+
+    @DisplayName("Add project dependency in lib subproject causes recompilation in JS")
+    @GradleTest
+    override fun testAddProjectDependencyInLib(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            testAddProjectDependencyInLib_modifyProject()
+
+            build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                assertNonIncrementalCompilation(BuildAttribute.DEP_CHANGE_ADDED_ENTRY)
             }
         }
     }
@@ -152,6 +176,56 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
         }
     }
 
+    @DisplayName("Remove project library from classpath")
+    @GradleTest
+    override fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            val appBuildGradleContent = subProject("app").buildGradle.readText()
+            subProject("app").buildGradle.modify { it.checkedReplace("implementation project(':lib')", "") }
+            val aaKt = subProject("app").kotlinSourcesDir().resolve("foo/AA.kt")
+            aaKt.modify {
+                """
+                $it
+                
+                """.trimIndent()
+            }
+
+            buildAndFail("assemble")
+
+            subProject("app").buildGradle.writeText(appBuildGradleContent)
+            aaKt.modify {
+                """
+                $it
+                
+                """.trimIndent()
+            }
+
+            build("assemble") {
+                assertNonIncrementalCompilation(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
+            }
+        }
+    }
+
+    @DisplayName("Remove external library from classpath")
+    @GradleTest
+    override fun testRemoveExternalDependencyFromClasspath(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            testAddExternalDependencyInLib_modifyProject()
+
+            build("assemble")
+
+            testRemoveExternalDependencyInLib_modifyProject()
+
+            build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                assertNonIncrementalCompilation(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
+            }
+        }
+    }
+
     @DisplayName("Lib project classes became final")
     @GradleTest
     override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
@@ -166,9 +240,15 @@ class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProj
 
 @JvmGradlePluginTests
 abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
-    override val additionalLibDependencies: String = """
+    override val additionalExternalLibDependencies: String = """
         dependencies {
             implementation "org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version"
+        }
+    """.trimIndent()
+
+    override val additionalProjectLibDependencies: String = """
+        dependencies {
+            implementation project(":another-lib")
         }
     """.trimIndent()
 
@@ -353,7 +433,9 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     protected abstract val compileCacheFolderName: String
 
-    protected abstract val additionalLibDependencies: String
+    protected abstract val additionalExternalLibDependencies: String
+
+    protected abstract val additionalProjectLibDependencies: String
 
     protected fun TestProject.changeMethodSignatureInLib() {
         subProject("lib").kotlinSourcesDir().resolve("bar/A.kt").modify {
@@ -452,13 +534,13 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("Add dependency in lib subproject")
+    @DisplayName("Add external dependency in lib subproject")
     @GradleTest
-    open fun testAddDependencyInLib(gradleVersion: GradleVersion) {
+    open fun testAddExternalDependencyInLib(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble")
 
-            testAddDependencyInLib_modifyProject()
+            testAddExternalDependencyInLib_modifyProject()
 
             build("assemble") {
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
@@ -469,12 +551,45 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    protected fun TestProject.testAddDependencyInLib_modifyProject() {
+    @DisplayName("Add project dependency in lib subproject")
+    @GradleTest
+    open fun testAddProjectDependencyInLib(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            testAddProjectDependencyInLib_modifyProject()
+
+            build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                // Lib compilation is incremental (no files are recompiled)
+                assertCompiledKotlinSources(emptyList(), output)
+            }
+        }
+    }
+
+    protected fun TestProject.testAddExternalDependencyInLib_modifyProject() {
         subProject("lib").buildGradle.modify {
             """
             $it
 
-            $additionalLibDependencies
+            $additionalExternalLibDependencies
+            """.trimIndent()
+        }
+    }
+
+    protected fun TestProject.testRemoveExternalDependencyInLib_modifyProject() {
+        subProject("lib").buildGradle.modify {
+            it.replace(additionalExternalLibDependencies, "")
+        }
+    }
+
+    protected fun TestProject.testAddProjectDependencyInLib_modifyProject() {
+        subProject("lib").buildGradle.modify {
+            """
+            $it
+
+            $additionalProjectLibDependencies
             """.trimIndent()
         }
     }
@@ -549,7 +664,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
-    @DisplayName("Remove library from classpath")
+    @DisplayName("Remove project library from classpath")
     @GradleTest
     open fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -580,6 +695,48 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                     listOf(aaKt.relativeTo(projectPath)),
                     output
                 )
+            }
+        }
+    }
+
+    @DisplayName("Remove external library from classpath")
+    @GradleTest
+    open fun testRemoveExternalDependencyFromClasspath(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            testAddExternalDependencyInLib_modifyProject()
+
+            build("assemble")
+
+            testRemoveExternalDependencyInLib_modifyProject()
+
+            build("assemble") {
+                assertTasksExecuted(":lib:$compileKotlinTaskName")
+                assertTasksUpToDate(":app:$compileKotlinTaskName")
+                // Lib compilation is incremental (no files are recompiled)
+                assertCompiledKotlinSources(emptyList(), output)
+            }
+        }
+    }
+
+    @DisplayName("Remove library from classpath together with an unrelated source change")
+    @GradleTest
+    open fun testRemoveLibFromClasspathWithUnrelatedSourceChange(gradleVersion: GradleVersion) {
+        defaultProject(gradleVersion) {
+            build("assemble")
+
+            subProject("app").buildGradle.modify { it.checkedReplace("implementation project(':lib')", "") }
+            // must be a file that does not require any other files recompilation
+            // and that does not use any symbols from lib
+            val dummyKt = subProject("app").kotlinSourcesDir().resolve("foo/FooDummy.kt")
+            dummyKt.modify {
+                """
+                $it
+                
+                """.trimIndent()
+            }
+
+            buildAndFail("assemble") {
+                assertOutputContains("AA.kt:3:8 Unresolved reference 'bar'.")
             }
         }
     }

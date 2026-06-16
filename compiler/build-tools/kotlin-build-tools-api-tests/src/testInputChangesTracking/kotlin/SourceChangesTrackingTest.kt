@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoComp
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
@@ -197,6 +199,45 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
             mod.compile {
                 assertCompiledSources("foo.kt")
                 assertNoOutputSetChanges()
+            }
+        }
+    }
+
+    @DisplayName("Irrelevant ABI change in dependency does not cause any recompilation")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("basic-multimodule-project")
+    fun testUnusedAbiChange(scenario: ScenarioCreator) {
+        scenario {
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
+
+            module1.createPredefinedFile("secret.kt", "new-file")
+            module1.compile {
+                assertCompiledSources("secret.kt")
+            }
+            module2.compile {
+                assertNoCompiledSources()
+                assertNoOutputSetChanges()
+            }
+        }
+    }
+
+    @DisplayName("Mixed source + dependency change recompiles expected files")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("basic-multimodule-project")
+    fun testMixedSourceAndDependencyChange(scenario: ScenarioCreator) {
+        scenario {
+            val module1 = module("basic-multimodule-project/module-1")
+            val module2 = module("basic-multimodule-project/module-2", listOf(module1))
+
+            module1.replaceFileWithVersion("bar.kt", "add-default-argument")
+            module2.replaceFileWithVersion("a.kt", "change-value")
+
+            module1.compile {
+                assertCompiledSources("bar.kt")
+            }
+            module2.compile {
+                assertCompiledSources("a.kt", "b.kt")
             }
         }
     }

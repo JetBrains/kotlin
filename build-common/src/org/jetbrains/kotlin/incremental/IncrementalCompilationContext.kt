@@ -23,6 +23,12 @@ class IncrementalCompilationContext(
      * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
      */
     val trackChangesInLookupCache: Boolean = false,
+    /**
+     * Controls whether the IC layer maintains its own snapshot of the library set on the classpath.
+     * Required only for the build-history-files-based IC approach (JS/Wasm) so that library changes are detected.
+     * The classpath-snapshot-based JVM IC has its own mechanism and does not need this.
+     */
+    val trackLibrarySetChanges: Boolean = false,
     val icFeatures: IncrementalCompilationFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION,
     val fragmentContext: FragmentContext? = null,
     val useCompilerMapsOnly: Boolean = false
@@ -36,13 +42,13 @@ class IncrementalCompilationContext(
         trackChangesInLookupCache: Boolean = false,
         keepIncrementalCompilationCachesInMemory: Boolean = false,
     ) : this(
-        pathConverter,
-        pathConverter,
-        storeFullFqNamesInLookupCache,
-        transaction,
-        reporter,
-        trackChangesInLookupCache,
-        IncrementalCompilationFeatures.DEFAULT_CONFIGURATION.copy(
+        pathConverterForSourceFiles = pathConverter,
+        pathConverterForOutputFiles = pathConverter,
+        storeFullFqNamesInLookupCache = storeFullFqNamesInLookupCache,
+        transaction = transaction,
+        reporter = reporter,
+        trackChangesInLookupCache = trackChangesInLookupCache,
+        icFeatures = IncrementalCompilationFeatures.DEFAULT_CONFIGURATION.copy(
             keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory
         ),
     )
