@@ -93,27 +93,29 @@ internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: Stri
                     originalCallableTypeParameters = notSubstitutedMember.typeParameters,
                     overridden = listOf(notSubstitutedMember),
                 )
-            val member = notSubstitutedMember.shallowCopy(kClass, overriddenStorage)
-            val kotlinSignature = member.toEquatableCallableSignature(EqualityMode.KotlinSignature)
+            val newMember = notSubstitutedMember.shallowCopy(kClass, overriddenStorage)
+            val kotlinSignature = newMember.toEquatableCallableSignature(EqualityMode.KotlinSignature)
             if (declaredTransitiveKotlinMembers.contains(kotlinSignature)) continue
             // Inherited signatures are always compared by the JvmSignatures. Even for kotlin classes.
-            javaSignaturesMap.mergeWith(kotlinSignature.withEqualityMode(EqualityMode.JavaSignature), member) { a, b ->
-                val c = minOf(a, b, CovariantOverrideComparator)
-                when (a is KFunction<*> && b is KFunction<*>) {
-                    true -> c.shallowCopy(
-                        c.container,
-                        c.overriddenStorage.copy(
-                            modality = minOf(a, b, modalityIntersectionOverrideComparator).modality,
-                            overridden = a.overriddenStorage.overridden + b.overriddenStorage.overridden,
-                            forceIsExternal = a.isExternal || b.isExternal,
-                            forceIsOperator = a.isOperator || b.isOperator,
-                            forceIsInfix = a.isInfix || b.isInfix,
-                            forceIsInline = a.isInline || b.isInline,
+            val javaSignature = kotlinSignature.withEqualityMode(EqualityMode.JavaSignature)
+            val existingMember = javaSignaturesMap[javaSignature]
+            javaSignaturesMap[javaSignature] =
+                if (existingMember == null) newMember
+                else minOf(existingMember, newMember, CovariantOverrideComparator).let { result ->
+                    if (existingMember is KFunction<*> && newMember is KFunction<*>)
+                        result.shallowCopy(
+                            result.container,
+                            result.overriddenStorage.copy(
+                                modality = minOf(existingMember, newMember, modalityIntersectionOverrideComparator).modality,
+                                overridden = existingMember.overriddenStorage.overridden + newMember.overriddenStorage.overridden,
+                                forceIsExternal = existingMember.isExternal || newMember.isExternal,
+                                forceIsOperator = existingMember.isOperator || newMember.isOperator,
+                                forceIsInfix = existingMember.isInfix || newMember.isInfix,
+                                forceIsInline = existingMember.isInline || newMember.isInline,
+                            ),
                         )
-                    )
-                    else -> c
+                    else result
                 }
-            }
         }
     }
     for ((kotlinSignature, member) in declaredTransitiveKotlinMembers) {
@@ -164,14 +166,6 @@ internal fun computeOverriddenFunctions(
     }
     return result
 }
-
-/**
- * Alternative `MutableMap.merge` implementation that is available on JDK < 8. Reflect has to be able to work in JDK 6
- *
- * Related test: `org.jetbrains.kotlin.tools.tests.JdkApiUsageTest`
- */
-private inline fun <K, V : Any> MutableMap<K, V>.mergeWith(key: K, value: V, remappingFunction: (V, V) -> V): V =
-    (get(key)?.let { remappingFunction(it, value) } ?: value).also { this[key] = it }
 
 private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<*>> = compareBy(
     // Deprioritize interfaces, prioritize classes
