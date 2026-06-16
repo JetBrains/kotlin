@@ -493,6 +493,8 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration",
         "org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation",
         "org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration",
+        "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
+        "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
     )
 
     /**
@@ -507,8 +509,6 @@ class AvailableSinceTest : BaseCompilationTest() {
         "org.jetbrains.kotlin.buildtools.api.abi.AbiFilters",
         "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation",
         "org.jetbrains.kotlin.buildtools.api.abi.operations.DumpKlibAbiToStringOperation",
-        "org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation",
-        "org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration",
     )
 
     private fun Class<*>.declaredOptionFields(): List<Field> =
