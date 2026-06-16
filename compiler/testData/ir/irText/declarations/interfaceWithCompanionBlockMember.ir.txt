@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/interfaceWithCompanionBlockMember.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-    FUN name:interfaceFun visibility:public modality:OPEN returnType:kotlin.String [companion]
+    FUN name:interfaceFun visibility:public modality:FINAL returnType:kotlin.String [companion]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun interfaceFun (): kotlin.String declared in <root>.MyInterface'
+        RETURN type=kotlin.Nothing from='public final fun interfaceFun (): kotlin.String declared in <root>.MyInterface'
           CONST String type=kotlin.String value="InterfaceFun"
