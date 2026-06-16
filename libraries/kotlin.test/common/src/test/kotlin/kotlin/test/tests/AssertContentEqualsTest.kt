@@ -48,9 +48,10 @@ class AssertContentEqualsTest {
         assertContentEquals(list, range) { fail() }
 
         val msg = "Should share similar values"
-        testFailureMessagesAreTheSame({ assertContentEquals(list, setOf(5, 6, 7), msg) }) {
-            assertContentEquals(list, setOf(5, 6, 7)) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(list, setOf(5, 6, 7), msg) },
+            actual = { assertContentEquals(list, setOf(5, 6, 7)) { msg } }
+        )
     }
 
     @Test
@@ -101,9 +102,10 @@ class AssertContentEqualsTest {
         assertContentEquals(sequence1, sequence2) { fail() } // elements equal
 
         val msg = "Should share similar values"
-        testFailureMessagesAreTheSame({ assertContentEquals(sequence1, sequenceOf(4), msg) }) {
-            assertContentEquals(sequence1, sequenceOf(4)) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(sequence1, sequenceOf(4), msg) },
+            actual = { assertContentEquals(sequence1, sequenceOf(4)) { msg } }
+        )
     }
 
     @Test
@@ -142,9 +144,10 @@ class AssertContentEqualsTest {
         assertContentEquals(array1, array2) { fail() } // elements equal
 
         val msg = "Should share similar values"
-        testFailureMessagesAreTheSame({ assertContentEquals(array1, arrayOf(5, 6), msg) }) {
-            assertContentEquals(array1, arrayOf(5, 6)) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, arrayOf(5, 6), msg) },
+            actual = { assertContentEquals(array1, arrayOf(5, 6)) { msg } }
+        )
     }
 
     @Test
@@ -187,9 +190,10 @@ class AssertContentEqualsTest {
         assertContentEquals(array1, array2) { fail() } // elements equal
 
         val msg = "Should share similar values"
-        testFailureMessagesAreTheSame({ assertContentEquals(array1, doubleArrayOf(0.0), msg) }) {
-            assertContentEquals(array1, doubleArrayOf(0.0)) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, doubleArrayOf(0.0), msg) },
+            actual = { assertContentEquals(array1, doubleArrayOf(0.0)) { msg } }
+        )
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -230,8 +234,9 @@ class AssertContentEqualsTest {
         assertContentEquals(array1, array2) { fail() } // elements equal
 
         val msg = "Should share similar values"
-        testFailureMessagesAreTheSame({ assertContentEquals(array1, ulongArrayOf(0u), msg) }) {
-            assertContentEquals(array1, ulongArrayOf(0u)) { msg }
-        }
+        testFailureMessagesAreTheSame(
+            expected = { assertContentEquals(array1, ulongArrayOf(0u), msg) },
+            actual = { assertContentEquals(array1, ulongArrayOf(0u)) { msg } }
+        )
     }
 }
