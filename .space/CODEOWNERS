@@ -315,7 +315,7 @@
 /js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/klib/ "Kotlin Common Backend"
 /js/js.translator/testData/ "Kotlin JS" "Kotlin Wasm"
 
-/kotlin-js-store/ ilya.goncharov@jetbrains.com
+/kotlin-js-store/ ilya.goncharov@jetbrains.com "Kotlin Build Tools"
 
 /kotlin-native/ "Kotlin Native"
 /kotlin-native/runtime/src/main/kotlin/ "Kotlin Native" vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com dmitry.nekrasov@jetbrains.com
