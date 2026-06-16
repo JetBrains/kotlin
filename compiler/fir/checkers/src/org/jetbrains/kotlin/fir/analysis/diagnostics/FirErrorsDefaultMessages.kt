@@ -850,7 +850,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_DELEGATED_PROPERTY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNAMED_VAR_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_NOT_NULL_ASSERTION
@@ -3092,7 +3092,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(UNNAMED_VAR_PROPERTY, "'var' properties require a name.")
         map.put(UNNAMED_DELEGATED_PROPERTY, "Delegated properties require a name.")
-        map.put(UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE, "Type of underscore property is inferred to 'Unit'.")
+        map.put(UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE, "Type of underscore property is inferred to ignorable type ''{0}''.", RENDER_TYPE)
 
         map.put(
             DESTRUCTURING_SHORT_FORM_NAME_MISMATCH,

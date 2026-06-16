@@ -19,8 +19,14 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isUnitOrFlexibleUnit
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.withNullability
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -54,9 +60,19 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
         if (returnTypeRef.source?.kind is KtFakeSourceElementKind.ImplicitTypeRef && !isDesugaredComponentCall) {
             val returnType = returnTypeRef.coneType.fullyExpandedType()
-            if (returnType.isUnitOrFlexibleUnit) {
-                reporter.reportOn(declaration.source, FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE)
+
+            if (returnType.classId in ignorableClassIdsForUnderscoreInitialization && !returnType.isMarkedNullable) {
+                reporter.reportOn(
+                    declaration.source,
+                    FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE,
+                    returnType.withNullability(false, context.session.typeContext),
+                )
             }
         }
     }
+
+    private val ignorableClassIdsForUnderscoreInitialization = listOf(
+        StandardClassIds.Unit,
+        ClassId.topLevel(FqName("java.lang.Void")),
+    )
 }

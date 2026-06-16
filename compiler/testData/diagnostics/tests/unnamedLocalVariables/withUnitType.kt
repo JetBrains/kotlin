@@ -10,6 +10,18 @@ public class JavaUtils {
     public static <T> T id(T arg) {
         return arg;
     }
+
+    public static void primitiveVoid() {
+    }
+
+    public static Void nonPrimitiveVoid() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    public static Void nullableVoid() {
+        return null;
+    }
 }
 
 // FILE: test.kt
@@ -37,19 +49,22 @@ inline fun <reified T> Array<T>.myForEachIndexed(block: (Int, T) -> Unit) {
 }
 
 fun testWithImplicit() {
-    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> = Unit
-    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> = returnUnit()
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE("Unit")!>_<!> = Unit
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> = returnUnit()
     val _ = returnNullableUnit()
-    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> = returnUnitAlias()
-    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> = JavaUtils.id(Unit)
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> = returnUnitAlias()
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> = JavaUtils.id(Unit)
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> = JavaUtils.primitiveVoid()
+    val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE("Void")!>_<!> = JavaUtils.nonPrimitiveVoid()
+    val _ = JavaUtils.nullableVoid()
 
     val [_, _] = MyPair()
     [val _, val _] = MyPair()
 
-    for (<!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> in arrayOf(Unit, Unit, Unit)) {
+    for (<!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> in arrayOf(Unit, Unit, Unit)) {
     }
 
-    when (val <!UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE!>_<!> = returnUnit()) {
+    when (val <!UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE!>_<!> = returnUnit()) {
         Unit -> {}
     }
 
@@ -67,6 +82,11 @@ fun testWithExplicit() {
     val _: Unit? = JavaUtils.id(Unit)
     val _: UnitAlias = Unit
     val _: UnitAlias = returnUnitAlias()
+    val _: Unit = JavaUtils.primitiveVoid()
+    val _: Void = JavaUtils.nonPrimitiveVoid()
+    val _: Unit? = JavaUtils.primitiveVoid()
+    val _: Void? = JavaUtils.nonPrimitiveVoid()
+    val _: Void? = JavaUtils.nullableVoid()
 
     val [_: Unit, _: Unit?] = MyPair()
     [val _: Unit, val _: Unit?] = MyPair()

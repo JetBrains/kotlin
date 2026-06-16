@@ -4028,10 +4028,11 @@ internal class UnnamedDelegatedPropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedDelegatedProperty
 
-internal class UnnamedPropertyWithImplicitUnitTypeImpl(
+internal class UnnamedPropertyWithImplicitIgnorableTypeImpl(
+    override val ignorableType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedPropertyWithImplicitUnitType
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedPropertyWithImplicitIgnorableType
 
 internal class DestructuringShortFormNameMismatchImpl(
     override val destructuredName: Name,

@@ -1519,12 +1519,6 @@ private fun KaDiagnosticConverterBuilder.addConversions30() {
             token,
         )
     }
-    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_UNIT_TYPE) { firDiagnostic ->
-        UnnamedPropertyWithImplicitUnitTypeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.JVM_STATIC_ON_NON_PUBLIC_MEMBER) { firDiagnostic ->
         JvmStaticOnNonPublicMemberImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -5508,6 +5502,13 @@ private fun KaDiagnosticConverterBuilder.addConversions121() {
     }
     add(FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS) { firDiagnostic ->
         UnsupportedClassLiteralsWithEmptyLhsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNNAMED_PROPERTY_WITH_IMPLICIT_IGNORABLE_TYPE) { firDiagnostic ->
+        UnnamedPropertyWithImplicitIgnorableTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
