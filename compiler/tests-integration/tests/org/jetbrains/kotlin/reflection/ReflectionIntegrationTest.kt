@@ -150,6 +150,29 @@ class ReflectionIntegrationTest {
     }
 
     @Test
+    fun testDifferentClassLoaders() {
+        val tmpdir = KotlinTestUtils.tmpDirForTest(testInfo)
+        val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/differentClassLoaders").path
+
+        compileJavaFiles(
+            listOf(File("$root/Main.java")),
+            listOf("-d", tmpdir.absolutePath)
+        ).assertSuccessful()
+
+        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
+
+        runJava(
+            "-ea",
+            "-classpath",
+            tmpdir.absolutePath,
+            "Main",
+            lib.absolutePath,
+            ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+            ForTestCompileRuntime.reflectJarForTests().absolutePath,
+        )
+    }
+
+    @Test
     fun testBuiltinClasses() {
         val fqNames = mutableListOf<String>()
         val classLoader = ForTestCompileRuntime.runtimeJarClassLoader()
