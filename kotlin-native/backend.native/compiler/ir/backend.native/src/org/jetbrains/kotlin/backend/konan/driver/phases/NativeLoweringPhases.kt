@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.backend.konan.optimizations.ComputeTypesPass
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
@@ -607,8 +608,7 @@ internal val redundantCastsRemoverPhase = createFileLoweringPhase(
 
 internal val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
-            val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
-            ConstEvaluationLowering(context, configuration = configuration)
+            ConstEvaluationLowering(context, isFloatingPointOptimizationDisabled = false)
         },
         name = "ConstEvaluationLowering",
         prerequisite = setOf(inlineAllFunctionsPhase)

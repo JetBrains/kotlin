@@ -107,11 +107,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createConstEvaluationPhase(context: JsIrBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = JsPlatforms.defaultJsPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
+    return ConstEvaluationLowering(context, isFloatingPointOptimizationDisabled = true)
 }
 
 fun jsLoweringsOfTheFirstPhase(

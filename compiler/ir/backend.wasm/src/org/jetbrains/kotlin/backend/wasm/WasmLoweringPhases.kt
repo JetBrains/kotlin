@@ -97,11 +97,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
-    val configuration = IrInterpreterConfiguration(
-        printOnlyExceptionMessage = true,
-        platform = WasmPlatforms.unspecifiedWasmPlatform,
-    )
-    return ConstEvaluationLowering(context, configuration = configuration)
+    return ConstEvaluationLowering(context, isFloatingPointOptimizationDisabled = true)
 }
 
 fun wasmLoweringsOfTheFirstPhase(
