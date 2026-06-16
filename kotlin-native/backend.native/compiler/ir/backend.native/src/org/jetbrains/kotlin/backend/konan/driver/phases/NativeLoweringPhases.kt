@@ -348,6 +348,7 @@ private val removeCastsFromNothing = createFileLoweringPhase(
 private val builtinOperatorPhaseFirstRun = createFileLoweringPhase(
         ::BuiltinOperatorLowering,
         name = "BuiltinOperatorsFirstRun",
+        prerequisite = setOf(enumWhenPhase),
 )
 
 private val builtinOperatorPhaseSecondRun = createFileLoweringPhase(
@@ -667,6 +668,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         inventNamesForLocalFunctions,
         localFunctionsPhase,
         tailrecPhase,
+        enumWhenPhase,
         builtinOperatorPhaseFirstRun, // First run must be before the following computeTypes pass. See KT-86678 for details.
         finallyBlocksPhase,
         computeTypesPhaseFirstRun, // Inliner erases generics. Trying to restore some of the information and simplify IR.
@@ -679,7 +681,6 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         dataClassesPhase,
         ifNullExpressionsFusionPhase,
         staticCallableReferenceOptimizationPhase,
-        enumWhenPhase,
         enumClassPhase,
         enumUsagePhase,
         varargPhase,
