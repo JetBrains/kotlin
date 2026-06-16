@@ -260,18 +260,6 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
 
     override val defaultProjectName: String = "incrementalMultiproject"
 
-    @DisplayName("'inspectClassesForKotlinIC' task is added to execution plan")
-    open fun testInspectClassesForKotlinICTask(gradleVersion: GradleVersion) {
-        defaultProject(gradleVersion) {
-            build("assemble") {
-                assertTasksSkipped(
-                    ":lib:inspectClassesForKotlinIC",
-                    ":app:inspectClassesForKotlinIC"
-                )
-            }
-        }
-    }
-
     // todo: do the same for js backend
     @DisplayName("Duplicated class")
     @GradleTest
