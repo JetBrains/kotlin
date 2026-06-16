@@ -108,23 +108,23 @@ idea {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 tasks.compileJava {
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 }
 
 tasks.compileKotlin {
-    compilerOptions.jvmTarget = JvmTarget.JVM_1_8
+    compilerOptions.jvmTarget = JvmTarget.JVM_11
 }
 
 projectTests {
     testTask(
         jUnitMode = JUnitMode.JUnit5,
-        javaLauncher = JdkMajorVersion.JDK_17_0,
+        javaLauncher = JdkMajorVersion.JDK_21_0,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
     ) {
         // do not replace with compile/runtime dependency,
@@ -156,7 +156,7 @@ projectTests {
     }
 
     testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt", doNotSetFixturesSourceSetDependency = true) {
-        javaLauncher = project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)
+        javaLauncher = project.getToolchainLauncherFor(JdkMajorVersion.JDK_21_0)
     }
 
     withJvmStdlibAndReflect()
