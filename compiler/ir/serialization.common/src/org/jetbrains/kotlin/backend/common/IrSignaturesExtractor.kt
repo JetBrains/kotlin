@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.klib
+package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes.Companion.extensionRegistryLite
@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
  * Note: [extractOnlyTopLevelPublicSignatures] is written in way to do even lesser amount of IO reads. So, it's
  * supposed to be even more robust than [extractAllPublicSignatures].
  */
-internal class IrSignaturesExtractor(library: KotlinLibrary) {
+class IrSignaturesExtractor(library: KotlinLibrary) {
     private val interner = IrInterningService()
     private val ir = library.irOrFail
 
@@ -261,8 +261,8 @@ internal class IrSignaturesExtractor(library: KotlinLibrary) {
         }
 
         return ExtractedSignatures(
-                declaredSignatures = ownDeclarationSignatures,
-                importedSignatures = importedSignatures,
+            declaredSignatures = ownDeclarationSignatures,
+            importedSignatures = importedSignatures,
         )
     }
 }

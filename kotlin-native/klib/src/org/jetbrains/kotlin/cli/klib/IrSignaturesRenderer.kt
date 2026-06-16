@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.klib
 
+import org.jetbrains.kotlin.backend.common.IrSignaturesExtractor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render

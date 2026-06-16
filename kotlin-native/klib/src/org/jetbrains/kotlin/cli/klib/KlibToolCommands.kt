@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.backend.common.DumpIrReferenceRenderingAsSignatureStrategy
+import org.jetbrains.kotlin.backend.common.IrSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
