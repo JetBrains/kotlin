@@ -93,7 +93,7 @@ internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<Reflec
             addAll(getDescriptorBasedMembers(staticScope, INHERITED, name))
         }
     } else {
-        val isKotlin = java.isKotlin
+        val isKotlin = isKotlin
         val members = getFakeOverrideMembersByName(name).filterNot { (_, member) ->
             // Kotlin classes never inherit static members (neither from Java, nor from Kotlin).
             (isKotlin && member.isStatic && member.overriddenStorage.isFakeOverride) ||

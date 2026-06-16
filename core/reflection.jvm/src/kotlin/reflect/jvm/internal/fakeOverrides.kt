@@ -10,7 +10,6 @@ import java.lang.reflect.TypeVariable
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
-import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.*
 import kotlin.reflect.jvm.javaField
@@ -67,7 +66,7 @@ internal fun isNonTransitiveMember(kClass: KClassImpl<*>, member: ReflectKCallab
 internal fun computeFakeOverrideMembersForName(kClass: KClassImpl<*>, name: String): MembersJavaSignatureMap {
     val declaredMembers = kClass.data.value.getDeclaredMembersByName(name)
     val javaSignaturesMap: MutableMembersJavaSignatureMap = HashMap()
-    val isKotlin = kClass.java.isKotlin
+    val isKotlin = kClass.isKotlin
     val declaredTransitiveKotlinMembers: MutableMembersKotlinSignatureMap = HashMap()
     if (isKotlin) {
         for (member in declaredMembers) {
@@ -190,7 +189,7 @@ internal val ReflectKCallable<*>.isStatic: Boolean
     }
 
 private val ReflectKCallable<*>.isJavaField: Boolean
-    get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlin == false
+    get() = this is KProperty<*> && this.javaField?.declaringClass?.isKotlinClassOrPackage == false
 
 internal fun KClass<*>.getFakeOverrideMembersByName(name: String): MembersJavaSignatureMap =
     when (this) {
@@ -225,8 +224,11 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
     )
 }
 
-internal val Class<*>.isKotlin: Boolean
+internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
+
+internal val KClassImpl<*>.isKotlin: Boolean
+    get() = kmClass != null
 
 internal fun List<KTypeParameter>.substitutedWith(arguments: List<KTypeParameter>): KTypeSubstitutor? {
     if (size != arguments.size) return null
@@ -304,18 +306,6 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         false -> arrayOf<Any>(kind, kotlinParameterTypes.size, isStatic, name).contentHashCode()
     }
 
-    /**
-     * Generally, [areEqualKTypes] is unsafe to use inside [equals] implementations since [areEqualKTypes] is not transitive.
-     *
-     * But when we compare by Kotlin signatures ([EqualityMode.KotlinSignature]),
-     * on the one-hand side of the comparison there are always declared
-     * Kotlin members, which doesn't allow to observe [equals] non-transitivity
-     * (because Kotlin declared members cannot have flexible parameter types)
-     *
-     * When we compare by Java signatures ([EqualityMode.JavaSignature]),
-     * we [coerceFlexibleTypesAndMutabilityRecursive] the types,
-     * which makes [areEqualKTypes] transitive
-     */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is EquatableCallableSignature<*>) return false
@@ -343,12 +333,7 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
                     if (javaClassA.isPrimitive != javaClassB.isPrimitive) return false
 
                     // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
-                    // Make types non-flexible and non-mutable to make 'equals' transitive
-                    val kTypeA =
-                        kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug = name)
-                    val kTypeB =
-                        other.kotlinParameterTypes[i].coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug = other.name)
-                    if (!areEqualKTypes(kTypeA, kTypeB)) return false
+                    if (!areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])) return false
                 } else {
                     if (javaClassA != javaClassB) return false
                 }
@@ -375,28 +360,6 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         }
         return true
     }
-}
-
-/**
- * This util function is used to make [areEqualKTypes] transitive and to get red of mutability in types
- * (e.g. MutableList becomes List).
- * Type equality is not transitive in Kotlin because of flexible types
- * (e.g. `String?` != `String` but (`String?` == `String!` and `String` == `String!`)
- */
-private fun KType.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug: String): KType {
-    val self = this
-    if (with(ReflectTypeSystemContext) { (self as? AbstractKType)?.isError() == true }) return self
-    val classifier = classifier
-        ?: error(
-            "Non-denotable parameter types are not possible. " +
-                    "Some parameter types appear non-denotable for type '$this' (${this::class}) which belongs to member '$memberNameForDebug'"
-        )
-    // Recreating type from classifiers erases mutability (e.g., MutableList becomes List)
-    return classifier.createTypeImpl(
-        arguments.map { it.copy(type = it.type?.coerceFlexibleTypesAndMutabilityRecursive(memberNameForDebug)) },
-        nullable = false,
-        annotations
-    )
 }
 
 /**
