@@ -296,7 +296,20 @@ public fun <T : Any> assertNotNull(actual: T?, lazyMessage: () -> String): T {
 }
  */
 
-/** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
+/**
+ * Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value.
+ *
+ * The [block] is not a lazy error message generator, but a callback invoked on the non-null [actual] value.
+ * Thus, this function is semantically equivalent to `assertNotNull(actual, message).let(block)`.
+ */
+@Deprecated(
+    message = "This assertNotNull overload proved to be misused and will be removed soon. " +
+            "If you need to perform some actions on the asserted value within a new lexical scope, " +
+            "consider using assertNotNull(...).let { } instead. " +
+            "Note that there are no assertNotNull overloads accepting the lazy message at the moment.",
+    level = DeprecationLevel.WARNING,
+    replaceWith = ReplaceWith("assertNotNull(actual, message).let(block)")
+)
 @JvmName("assertNotNullInline")
 @InlineOnly
 public inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
