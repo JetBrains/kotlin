@@ -149,7 +149,7 @@ val printLlvmDir = tasks.register("printLlvmDir") {
     }
 }
 
-val hostLlvmDistribution by configurations.creating {
+val hostLlvmDistribution = configurations.create("hostLlvmDistribution") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }

@@ -25,7 +25,7 @@ analysisApiArtifact {
     }
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage",CheckForeignClassUsageTask::class) {
     classes.from(tasks.jar)
     classpath.from(configurations.runtimeClasspath)
     missingClasspathEntriesOutputFile = file("api/analysis-api-platform-interface.classpath-issues")
