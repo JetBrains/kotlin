@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,21 +15,33 @@ import org.jetbrains.kotlin.generators.builtins.printDoc
 import java.io.File
 import java.io.PrintWriter
 
+enum class Target {
+    COMMON,
+    JVM,
+    JS,
+    NATIVE,
+    WASM
+}
+
 fun generateUnsignedTypes(
     targetDir: File,
+    target: Target,
     generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit
 ) {
+    if (target != Target.COMMON) return
+    val prefix = if (targetDir.path.contains("kotlin/")) "" else "kotlin/"
+
     for (type in UnsignedType.entries) {
-        generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
-        generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
+        generate(File(targetDir, "$prefix${type.capitalized}.kt")) { UnsignedTypeGenerator(type, target, it) }
+        generate(File(targetDir, "$prefix${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, target, it) }
     }
 
     for (type in listOf(UnsignedType.UINT, UnsignedType.ULONG)) {
-        generate(File(targetDir, "kotlin/${type.capitalized}Range.kt")) { UnsignedRangeGenerator(type, it) }
+        generate(File(targetDir, "$prefix${type.capitalized}Range.kt")) { UnsignedRangeGenerator(type, target, it) }
     }
 }
 
-class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class UnsignedTypeGenerator(val type: UnsignedType, val target: Target, out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private val className = type.capitalized
     private val storageType = type.asSigned.capitalized
 
@@ -468,7 +480,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 }
 
 
-class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class UnsignedArrayGenerator(val type: UnsignedType, val target: Target, out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private val elementType = type.capitalized
     private val arrayType = elementType + "Array"
     private val arrayTypeOf = elementType.lowercase() + "ArrayOf"
@@ -556,7 +568,7 @@ public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elem
     }
 }
 
-class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class UnsignedRangeGenerator(val type: UnsignedType, val target: Target, out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private val elementType = type.capitalized
     private val signedType = type.asSigned.capitalized
     private val stepType = signedType

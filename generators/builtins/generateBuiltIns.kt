@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
+import org.jetbrains.kotlin.generators.builtins.unsigned.Target
 import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
 import java.io.File
 import java.io.PrintWriter
@@ -29,7 +30,13 @@ val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
 val BUILT_INS_NATIVE_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/")
 val RUNTIME_JVM_DIR = File("libraries/stdlib/jvm/runtime/")
-val UNSIGNED_TYPES_DIR = File("libraries/stdlib/unsigned/src")
+
+val UNSIGNED_TYPES_DIR_COMMON = File("libraries/stdlib/src/kotlin/unsigned")
+val UNSIGNED_TYPES_DIR_JVM = File("libraries/stdlib/jvm/unsigned")
+val UNSIGNED_TYPES_DIR_JS = File("libraries/stdlib/js/unsigned")
+val UNSIGNED_TYPES_DIR_WASM = File("libraries/stdlib/wasm/unsigned")
+val UNSIGNED_TYPES_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/kotlin/unsigned")
+
 val STDLIB_DIR = File("libraries/stdlib/src")
 
 interface BuiltInsGenerator {
@@ -73,7 +80,11 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     assertExists(BUILT_INS_NATIVE_DIR_WASM)
     assertExists(BUILT_INS_NATIVE_DIR_NATIVE)
     assertExists(RUNTIME_JVM_DIR)
-    assertExists(UNSIGNED_TYPES_DIR)
+    assertExists(UNSIGNED_TYPES_DIR_COMMON)
+    assertExists(UNSIGNED_TYPES_DIR_JVM)
+    assertExists(UNSIGNED_TYPES_DIR_JS)
+    assertExists(UNSIGNED_TYPES_DIR_NATIVE)
+    assertExists(UNSIGNED_TYPES_DIR_WASM)
 
     generate(File(BUILT_INS_COMMON_DIR, "Primitives.kt")) { CommonPrimitivesGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JVM, "Primitives.kt")) { JvmPrimitivesGenerator(it) }
@@ -113,7 +124,11 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     generate(File(STDLIB_DIR, "kotlin/util/FloorDivMod.kt")) { GenerateFloorDivMod(it) }
     generate(File(STDLIB_DIR, "kotlin/contextParameters/Context.kt")) { GenerateContextFunctions(it) }
 
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR_COMMON, Target.COMMON, generate)
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR_JVM, Target.JVM, generate)
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR_JS, Target.JS, generate)
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR_NATIVE, Target.NATIVE, generate)
+    generateUnsignedTypes(UNSIGNED_TYPES_DIR_WASM, Target.WASM, generate)
 }
 
 fun main() {

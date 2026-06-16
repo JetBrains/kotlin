@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,3 +67,4 @@ internal fun getProgressionLastElement(start: ULong, end: ULong, step: Long): UL
     step < 0 -> if (start <= end) end else end + differenceModulo(start, end, (-step).toULong())
     else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
+
