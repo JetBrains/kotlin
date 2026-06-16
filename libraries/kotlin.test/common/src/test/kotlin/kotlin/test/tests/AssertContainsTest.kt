@@ -6,7 +6,9 @@
 package kotlin.test.tests
 
 import kotlin.test.*
+import kotlin.test.tests.testFailureMessage
 
+@OptIn(ExperimentalKotlinTestApi::class)
 class AssertContainsTest {
 
     @Test
@@ -24,6 +26,17 @@ class AssertContainsTest {
     }
 
     @Test
+    fun testAssertContainsIterableLazy() {
+        val list = listOf(1, 2, 3)
+        assertContains(list, 2) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(list, 4, msg) }) {
+            assertContains(list, 4) { msg }
+        }
+    }
+
+    @Test
     fun testAssertContainsSequence() {
         val sequence = generateSequence(1) { it + 1 }.take(3)
 
@@ -34,6 +47,17 @@ class AssertContainsTest {
         }
         testFailureMessage("Expected the sequence to contain the element.\nSequence <$sequence>, element <5>.") {
             assertContains(sequence, 5)
+        }
+    }
+
+    @Test
+    fun testAssertContainsSequenceLazy() {
+        val sequence = generateSequence(1) { it + 1 }.take(3)
+        assertContains(sequence, 2) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(sequence, 4, msg) }) {
+            assertContains(sequence, 4) { msg }
         }
     }
 
@@ -53,6 +77,17 @@ class AssertContainsTest {
     }
 
     @Test
+    fun testAssertContainsArrayLazy() {
+        val array = arrayOf("Kot", "lin", "test")
+        assertContains(array, "test") { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(array, "parameterized", msg) }) {
+            assertContains(array, "parameterized") { msg }
+        }
+    }
+
+    @Test
     fun testAssertContainsCharArray() {
         val array = charArrayOf('x', 'y', 'z')
 
@@ -60,6 +95,17 @@ class AssertContainsTest {
 
         testFailureMessage("Expected the array to contain the element.\nArray <${array.contentToString()}>, element <5>.") {
             assertContains(array, '5')
+        }
+    }
+
+    @Test
+    fun testAssertContainsCharArrayLazy() {
+        val array = charArrayOf('x', 'y', 'z')
+        assertContains(array, 'z') { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(array, 'a', msg) }) {
+            assertContains(array, 'a') { msg }
         }
     }
 
@@ -75,6 +121,18 @@ class AssertContainsTest {
         }
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun testAssertContainsUnsignedArrayLazy() {
+        val array = ulongArrayOf(0u, ULong.MAX_VALUE, 2u)
+        assertContains(array, ULong.MAX_VALUE) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(array, 5u, msg) }) {
+            assertContains(array, 5u) { msg }
+        }
+    }
+
     @Test
     fun testAssertContainsIntRange() {
         val range = -5..5
@@ -87,6 +145,17 @@ class AssertContainsTest {
     }
 
     @Test
+    fun testAssertContainsIntRangeLazy() {
+        val range = -5..5
+        assertContains(range, 0) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(range, 15, msg) }) {
+            assertContains(range, 15) { msg }
+        }
+    }
+
+    @Test
     fun testAssertContainsCharRange() {
         val range = 'a'..'y'
 
@@ -94,6 +163,17 @@ class AssertContainsTest {
 
         testFailureMessage("Expected the range <a..y> to contain the value <A>.") {
             assertContains(range, 'A')
+        }
+    }
+
+    @Test
+    fun testAssertContainsCharRangeLazy() {
+        val range = 'a'..'k'
+        assertContains(range, 'f') { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(range, 'n', msg) }) {
+            assertContains(range, 'n') { msg }
         }
     }
 
@@ -110,6 +190,17 @@ class AssertContainsTest {
     }
 
     @Test
+    fun testAssertContainsDoubleRangeLazy() {
+        val range = 0.5..0.55
+        assertContains(range, 0.52) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(range, 2.0, msg) }) {
+            assertContains(range, 2.0) { msg }
+        }
+    }
+
+    @Test
     @OptIn(ExperimentalStdlibApi::class)
     fun assertContainsOpenRange() {
         val range = 0.0.rangeUntil(1.0) // TODO: replace with ..< by 1.8
@@ -118,6 +209,17 @@ class AssertContainsTest {
         val one = 1.0
         testFailureMessage("Expected the range <$range> to contain the value <$one>.") {
             assertContains(range, one)
+        }
+    }
+
+    @Test
+    fun assertContainsOpenRangeLazy() {
+        val range = 0.0..<1.8
+        assertContains(range, 0.99) { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(range, 2.0, msg) }) {
+            assertContains(range, 2.0) { msg }
         }
     }
 
@@ -133,6 +235,21 @@ class AssertContainsTest {
 
         testFailureMessage("Expected the map to contain the key.\nMap <$map>, key <pineapple>.") {
             assertContains(map, "pineapple")
+        }
+    }
+
+    @Test
+    fun testAssertContainsMapLazy() {
+        val map = mapOf(
+            "apple" to "green",
+            "banana" to "yellow",
+            "orange" to "orange",
+        )
+        assertContains(map, "apple") { fail() }
+
+        val msg = "A value is missing"
+        testFailureMessagesAreTheSame({ assertContains(map, "guava", msg) }) {
+            assertContains(map, "guava") { msg }
         }
     }
 
@@ -162,6 +279,38 @@ class AssertContainsTest {
         val digit = Regex("[0-9]")
         testFailureMessage("Expected the char sequence to contain the regular expression.\nCharSequence <$string>, regex <$digit>.") {
             assertContains(string, digit)
+        }
+    }
+
+    @Test
+    fun testAssertContainsCharSequenceLazy() {
+        val string = "Pineapple"
+
+        val msg = "A value is missing"
+
+        assertContains(string, 'e') { fail() }
+        testFailureMessagesAreTheSame({ assertContains(string, 'x', message = msg) }) {
+            assertContains(string, 'x') { msg }
+        }
+
+        assertContains(string, 'N', ignoreCase = true) { fail() }
+        testFailureMessagesAreTheSame({ assertContains(string, 'X', ignoreCase = true, msg) }) {
+            assertContains(string, 'X', ignoreCase = true) { msg }
+        }
+
+        assertContains(string, "app") { fail() }
+        testFailureMessagesAreTheSame({ assertContains(string, "guava", message = msg) }) {
+            assertContains(string, "guava") { msg }
+        }
+
+        assertContains(string, "ApP", ignoreCase = true) { fail() }
+        testFailureMessagesAreTheSame({ assertContains(string, "Guava", ignoreCase = true, msg) }) {
+            assertContains(string, "Guava", ignoreCase = true) { msg }
+        }
+
+        assertContains(string, Regex("[a-zA-Z]")) { fail() }
+        testFailureMessagesAreTheSame({ assertContains(string, Regex("[0-9]"), msg) }) {
+            assertContains(string, Regex("[0-9]")) { msg }
         }
     }
 }
