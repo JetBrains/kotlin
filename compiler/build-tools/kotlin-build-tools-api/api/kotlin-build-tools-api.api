@@ -194,6 +194,10 @@ public abstract class org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsExcept
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/KotlinCompilationProcessFailedException : org/jetbrains/kotlin/buildtools/api/KotlinBuildToolsException {
+	public fun <init> (Ljava/lang/String;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger {
 	public abstract fun debug (Ljava/lang/String;)V
 	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
