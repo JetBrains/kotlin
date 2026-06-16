@@ -54,7 +54,7 @@ open class MockProject @ApiStatus.Internal constructor(parent: PicoContainer?, p
     override fun dispose() {
         myCoroutineScope.cancel(CancellationException())
 
-        super.dispose()
+        super<MockComponentManager>.dispose()
     }
 
     override fun getDisposed(): Condition<*> {
@@ -66,8 +66,6 @@ open class MockProject @ApiStatus.Internal constructor(parent: PicoContainer?, p
     override fun isInitialized(): Boolean = true
 
     override fun getCoroutineScope(): CoroutineScope = myCoroutineScope
-
-    override fun getActualComponentManager(): ComponentManager = this
 
     override fun getProjectFile(): VirtualFile? = null
 
