@@ -5,8 +5,10 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.ClassKind
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
@@ -207,10 +209,14 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         this is KFunction<*> -> SignatureKind.FUNCTION
         else -> error("Unknown kind for ${this::class}")
     }
-    val javaMethod = (this as? KFunction<*>)?.javaMethod
-    val javaGenericParameterTypes = javaMethod?.genericParameterTypes.orEmpty().toList()
-    val javaParameterTypes = javaMethod?.parameterTypes.orEmpty().toList()
-    val jvmNameIfFunction = javaMethod?.name
+    val functionJvmSignature = (this as? ReflectKFunction)?.signature
+    val jvmNameIfFunction = functionJvmSignature?.substringBeforeLast('(')
+    val javaParameterTypes = functionJvmSignature?.let {
+        container.jClass.safeClassLoader.parseAndLoadDescriptor(
+            it.substring(jvmNameIfFunction!!.length, it.length),
+            loadReturnType = false,
+        ).parameters
+    }.orEmpty()
     return EquatableCallableSignature(
         kind,
         name,
@@ -218,7 +224,7 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
         typeParameters,
         kotlinParameterTypes,
         javaParameterTypes,
-        javaGenericParameterTypes,
+        { (this as? ReflectKFunction)?.javaMethod?.genericParameterTypes.orEmpty().toList() },
         isStatic,
         equalityMode,
     )
@@ -259,31 +265,36 @@ internal sealed class EqualityMode {
 }
 
 // Signatures that you can test for equality
-internal data class EquatableCallableSignature<T : EqualityMode>(
+internal class EquatableCallableSignature<T : EqualityMode>(
     val kind: SignatureKind,
     val name: String,
     val jvmNameIfFunction: String?,
     val typeParameters: List<KTypeParameter>,
     val kotlinParameterTypes: List<KType>,
-    val javaParameterTypesIfFunction: List<Class<*>>,
-    val javaGenericParameterTypesIfFunction: List<Type>,
+    val javaErasedParameterTypes: List<Class<*>>,
+    private val computeJavaGenericParameterTypes: () -> List<Type>,
     val isStatic: Boolean,
     val equalityMode: T,
 ) {
+    private val javaGenericParameterTypes: List<Type> by lazy(PUBLICATION) {
+        computeJavaGenericParameterTypes().also {
+            check(javaErasedParameterTypes.size == it.size) {
+                "javaErasedParameterTypes.size (${javaErasedParameterTypes.size}) and " +
+                        "javaGenericParameterTypes.size (${it.size}) must be equal. " +
+                        "For member: '$name'"
+            }
+        }
+    }
+
     init {
         check(
             kind != SignatureKind.FIELD_IN_JAVA_CLASS ||
-                    kotlinParameterTypes.isEmpty() && typeParameters.isEmpty() && javaParameterTypesIfFunction.isEmpty()
+                    kotlinParameterTypes.isEmpty() && typeParameters.isEmpty() && javaErasedParameterTypes.isEmpty()
         ) {
             "Inconsistent combination of EquatableCallableSignature values. kind: ${kind}, " +
                     "kotlinParameterTypes.isEmpty(): ${kotlinParameterTypes.isEmpty()}," +
                     "typeParameters.isEmpty(): ${typeParameters.isEmpty()}, " +
-                    "javaParameterTypesIfFunction.isEmpty(): ${javaParameterTypesIfFunction.isEmpty()}." +
-                    "For member: '$name'"
-        }
-        check(javaParameterTypesIfFunction.size == javaGenericParameterTypesIfFunction.size) {
-            "javaParameterTypesIfFunction.size (${javaParameterTypesIfFunction.size}) and " +
-                    "javaGenericParameterTypesIfFunction.size (${javaGenericParameterTypesIfFunction.size}) must be equal. " +
+                    "javaErasedParameterTypes.isEmpty(): ${javaErasedParameterTypes.isEmpty()}." +
                     "For member: '$name'"
         }
     }
@@ -295,8 +306,8 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
             jvmNameIfFunction,
             typeParameters,
             kotlinParameterTypes,
-            javaParameterTypesIfFunction,
-            javaGenericParameterTypesIfFunction,
+            javaErasedParameterTypes,
+            computeJavaGenericParameterTypes,
             isStatic,
             equalityMode
         )
@@ -317,16 +328,16 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
         if (kotlinParameterTypes.size != other.kotlinParameterTypes.size) return false
         if (equalityMode == EqualityMode.JavaSignature && kind == SignatureKind.FUNCTION) {
             if (jvmNameIfFunction != other.jvmNameIfFunction) return false
-            if (javaParameterTypesIfFunction.size != other.javaParameterTypesIfFunction.size) return false
-            check(javaParameterTypesIfFunction.size == kotlinParameterTypes.size) {
-                "javaParameterTypesIfFunction.size (${javaParameterTypesIfFunction.size}) and " +
+            if (javaErasedParameterTypes.size != other.javaErasedParameterTypes.size) return false
+            check(javaErasedParameterTypes.size == kotlinParameterTypes.size) {
+                "javaErasedParameterTypes.size (${javaErasedParameterTypes.size}) and " +
                         "kotlinParameterTypes.size (${kotlinParameterTypes.size}) must be equal for member '$name'"
             }
-            for (i in javaParameterTypesIfFunction.indices) {
-                val javaTypeA = javaGenericParameterTypesIfFunction[i]
-                val javaClassA = javaParameterTypesIfFunction[i]
-                val javaTypeB = other.javaGenericParameterTypesIfFunction[i]
-                val javaClassB = other.javaParameterTypesIfFunction[i]
+            for (i in javaErasedParameterTypes.indices) {
+                val javaTypeA = javaGenericParameterTypes[i]
+                val javaClassA = javaErasedParameterTypes[i]
+                val javaTypeB = other.javaGenericParameterTypes[i]
+                val javaClassB = other.javaErasedParameterTypes[i]
                 val isATypeParameterFromClass = (javaTypeA as? TypeVariable<*>)?.genericDeclaration is Class<*>
                 val isBTypeParameterFromClass = (javaTypeB as? TypeVariable<*>)?.genericDeclaration is Class<*>
                 if (isATypeParameterFromClass || isBTypeParameterFromClass) {
