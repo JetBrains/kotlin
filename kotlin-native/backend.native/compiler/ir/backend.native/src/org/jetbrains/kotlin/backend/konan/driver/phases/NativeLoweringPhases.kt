@@ -345,10 +345,15 @@ private val removeCastsFromNothing = createFileLoweringPhase(
         name = "RemoveCastsFromNothing",
 )
 
+private val ifNullExpressionsFusionPhase = createFileLoweringPhase(
+        ::IfNullExpressionsFusionLowering,
+        name = "IfNullExpressionsFusionLowering",
+)
+
 private val builtinOperatorPhaseFirstRun = createFileLoweringPhase(
         ::BuiltinOperatorLowering,
         name = "BuiltinOperatorsFirstRun",
-        prerequisite = setOf(enumWhenPhase),
+        prerequisite = setOf(enumWhenPhase, ifNullExpressionsFusionPhase),
 )
 
 private val builtinOperatorPhaseSecondRun = createFileLoweringPhase(
@@ -541,11 +546,6 @@ private val staticInitializersPhase = createFileLoweringPhase(
         prerequisite = setOf(expressionBodyTransformPhase)
 )
 
-private val ifNullExpressionsFusionPhase = createFileLoweringPhase(
-        ::IfNullExpressionsFusionLowering,
-        name = "IfNullExpressionsFusionLowering",
-)
-
 private val exportInternalAbiPhase = createFileLoweringPhase(
         ::ExportCachesAbiVisitor,
         name = "ExportInternalAbi",
@@ -669,6 +669,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         localFunctionsPhase,
         tailrecPhase,
         enumWhenPhase,
+        ifNullExpressionsFusionPhase,
         builtinOperatorPhaseFirstRun, // First run must be before the following computeTypes pass. See KT-86678 for details.
         finallyBlocksPhase,
         computeTypesPhaseFirstRun, // Inliner erases generics. Trying to restore some of the information and simplify IR.
@@ -679,7 +680,6 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         defaultParameterExtentPhase,
         innerClassPhase,
         dataClassesPhase,
-        ifNullExpressionsFusionPhase,
         staticCallableReferenceOptimizationPhase,
         enumClassPhase,
         enumUsagePhase,
