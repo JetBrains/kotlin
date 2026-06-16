@@ -17,6 +17,7 @@ import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import java.io.File
@@ -36,6 +37,7 @@ internal class GradleCompilerRunnerWithWorkers(
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?,
+        diagnostics: UsesKotlinToolingDiagnosticsParameters,
     ): WorkQueue {
 
         buildMetrics.addTimeMetric(CALL_WORKER)
@@ -47,6 +49,8 @@ internal class GradleCompilerRunnerWithWorkers(
                 params.snapshotsDir.set(taskOutputsBackup.snapshotsDir)
                 params.metricsReporter.set(buildMetrics)
             }
+            params.toolingDiagnosticsContext.set(diagnostics.toolingDiagnosticsContext)
+            params.toolingDiagnosticsCollector.set(diagnostics.toolingDiagnosticsCollector)
         }
         return workQueue
     }
@@ -71,7 +75,8 @@ internal class GradleCompilerRunnerWithWorkers(
 
             try {
                 GradleKotlinCompilerWork(
-                    parameters.compilerWorkArguments.get()
+                    parameters.compilerWorkArguments.get(),
+                    parameters
                 ).run()
             } catch (e: FailedCompilationException) {
                 // Restore outputs only in cases where we expect that the user will make some changes to their project:
@@ -93,7 +98,7 @@ internal class GradleCompilerRunnerWithWorkers(
         }
     }
 
-    internal interface GradleKotlinCompilerWorkParameters : WorkParameters {
+    internal interface GradleKotlinCompilerWorkParameters : WorkParameters, UsesKotlinToolingDiagnosticsParameters {
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty

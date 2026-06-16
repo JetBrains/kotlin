@@ -36,9 +36,11 @@ import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
 import java.net.URI
+import java.nio.file.Path
 import java.security.MessageDigest
 import kotlin.KotlinVersion as StdlibKotlinVersion
 
@@ -2311,6 +2313,52 @@ internal object KotlinToolingDiagnostics {
                 .description { "A SwiftPM package has been generated alongside the XCFramework to describe its SwiftPM dependencies" }
                 .solution { "Please publish the XCFramework with the generated SwiftPM package" }
                 .documentationLink(URI("https://kotl.in/xcframework-with-swiftpm-dependencies"))
+        }
+    }
+
+    internal object KotlinCompilationInDaemonHasFailed : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Compiler.Warning
+    ) {
+        operator fun invoke(
+            trace: Throwable?,
+            withFallback: Boolean,
+            daemonLogPath: Path? = null,
+        ): ToolingDiagnostic {
+            val (severity, group) = if (withFallback) {
+                WARNING to DiagnosticGroup.Compiler.Warning
+            } else {
+                ERROR to DiagnosticGroup.Compiler.Error
+            }
+
+            return build(severity = severity, group = group, throwable = trace) {
+                val failDetailsFallback = if (daemonLogPath != null) {
+                    "- check the build logs or the following daemon logs ${daemonLogPath.toAbsolutePath()}/kotlin-daemon.*.log."
+                } else {
+                    "check the build logs for the exact reason."
+                }
+                val failDetails = trace?.message?.removeSuffixIfPresent("\n")?.let { ": $it" }
+                    ?: failDetailsFallback
+
+                title { "Compilation in Kotlin daemon has failed" }
+                    .description {
+                        val base = "Failed to compile with Kotlin daemon $failDetails\n"
+                        val fallback = if (withFallback) {
+                            "Using fallback strategy (kotlin.daemon.useFallbackStrategy=true): Compile without Kotlin daemon."
+                        } else {
+                            "Fallback strategy (kotlin.daemon.useFallbackStrategy=false, compiling without Kotlin daemon) is turned off."
+                        }
+                        base + fallback
+                    }
+                    .solution {
+                        "Check the Kotlin daemon or compiler error message for details about the failure and possible ways to fix it. " +
+                                "If the problem persists, run './gradlew --stop' and try again. " +
+                                "If the problem does not seem to be caused by your build configuration, please report it at https://kotl.in/issue and attach the logs." +
+                                if (!withFallback) {
+                                    " You can also remove 'kotlin.daemon.useFallbackStrategy=false' from 'gradle.properties' to enable fallback compilation."
+                                } else ""
+                    }
+            }
         }
     }
 }

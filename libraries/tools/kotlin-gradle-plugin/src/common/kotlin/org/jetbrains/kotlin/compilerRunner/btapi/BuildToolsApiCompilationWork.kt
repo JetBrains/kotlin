@@ -14,6 +14,7 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
@@ -43,8 +47,6 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.report.collectIcTags
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 import javax.inject.Inject
 
@@ -53,7 +55,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val objects: ObjectFactory,
 ) :
     WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
-    internal interface BuildToolsApiCompilationParameters : WorkParameters {
+    internal interface BuildToolsApiCompilationParameters : WorkParameters, UsesKotlinToolingDiagnosticsParameters {
         val buildSessionService: Property<BuildSessionService>
         val buildIdService: Property<BuildIdService>
         val buildFinishedListenerService: Property<BuildFinishedListenerService>
@@ -103,40 +105,38 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         log: KotlinLogger,
         tryFallback: Boolean,
         compilerMessageRenderer: ProblemsApiCompilerMessageRenderer,
+        // Tasks created via KotlinJvmFactory does not have collector available
+        toolingDiagnosticsCollector: KotlinToolingDiagnosticsCollector?,
     ): Pair<CompilationResult, KotlinCompilerExecutionStrategy> {
-        val fallback: (Throwable?) -> Pair<CompilationResult, KotlinCompilerExecutionStrategy> = { t ->
-            if (t != null) {
-                log.error("Daemon compilation failed", t)
+        val fallback: (Throwable?, ExecutionPolicy?) -> Pair<CompilationResult, KotlinCompilerExecutionStrategy> = { t, executionPolicy ->
+            val daemonLogPath = if (executionPolicy is ExecutionPolicy.WithDaemon) {
+                executionPolicy[ExecutionPolicy.WithDaemon.LOGS_PATH]
+            } else {
+                null
             }
-            val recommendation = """
-                        Try ./gradlew --stop if this issue persists
-                        If it does not look related to your configuration, please file an issue with logs to https://kotl.in/issue
-                    """.trimIndent()
-            if (!tryFallback) {
-                throw RuntimeException(
-                    """
-                            |Failed to compile with Kotlin daemon.
-                            |Fallback strategy (compiling without Kotlin daemon) is turned off.
-                            |$recommendation
-                            """.trimMargin(),
-                    t
+
+            toolingDiagnosticsCollector?.report(
+                parameters,
+                KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed(
+                    t,
+                    tryFallback,
+                    daemonLogPath,
                 )
-            }
-            val failDetails = t?.stackTraceAsString()?.removeSuffixIfPresent("\n")?.let { ": $it" } ?: ""
-            log.warn(
-                """
-                    |Failed to compile with Kotlin daemon$failDetails
-                    |Using fallback strategy: Compile without Kotlin daemon
-                    |$recommendation
-                    """.trimMargin()
             )
-            runner.performCompilation(
-                buildSession,
-                KotlinCompilerExecutionStrategy.IN_PROCESS,
-                log,
-                compilerMessageRenderer,
-            ) to KotlinCompilerExecutionStrategy.IN_PROCESS
+
+            if (tryFallback) {
+                val compilationResult = runner.performCompilation(
+                    buildSession,
+                    KotlinCompilerExecutionStrategy.IN_PROCESS,
+                    log,
+                    compilerMessageRenderer,
+                )
+                compilationResult.first to KotlinCompilerExecutionStrategy.IN_PROCESS
+            } else {
+                CompilationResult.COMPILER_INTERNAL_ERROR to KotlinCompilerExecutionStrategy.DAEMON
+            }
         }
+
         return try {
             val daemonCompilationResult = runner.performCompilation(
                 buildSession,
@@ -144,13 +144,13 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 log,
                 compilerMessageRenderer,
             )
-            if (daemonCompilationResult != CompilationResult.COMPILER_INTERNAL_ERROR) {
-                daemonCompilationResult to KotlinCompilerExecutionStrategy.DAEMON
+            if (daemonCompilationResult.first != CompilationResult.COMPILER_INTERNAL_ERROR) {
+                daemonCompilationResult.first to KotlinCompilerExecutionStrategy.DAEMON
             } else {
-                fallback(null)
+                fallback(null, daemonCompilationResult.second)
             }
         } catch (t: Throwable) {
-            fallback(t)
+            fallback(t, null)
         }
     }
 
@@ -190,14 +190,21 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             val (compilationResult, effectiveExecutionStrategy) = when (executionStrategy) {
                 KotlinCompilerExecutionStrategy.DAEMON -> {
                     val tryFallback = workArguments.compilerExecutionSettings.useDaemonFallbackStrategy
-                    compileInDaemon(buildSession, runner, log, tryFallback, compilerMessageRenderer)
+                    compileInDaemon(
+                        buildSession,
+                        runner,
+                        log,
+                        tryFallback,
+                        compilerMessageRenderer,
+                        parameters.toolingDiagnosticsCollector.orNull,
+                    )
                 }
                 KotlinCompilerExecutionStrategy.IN_PROCESS -> runner.performCompilation(
                     buildSession,
                     KotlinCompilerExecutionStrategy.IN_PROCESS,
                     log,
                     compilerMessageRenderer,
-                ) to KotlinCompilerExecutionStrategy.IN_PROCESS
+                ).first to KotlinCompilerExecutionStrategy.IN_PROCESS
             }
             log.info(effectiveExecutionStrategy.asFinishLogMessage)
 

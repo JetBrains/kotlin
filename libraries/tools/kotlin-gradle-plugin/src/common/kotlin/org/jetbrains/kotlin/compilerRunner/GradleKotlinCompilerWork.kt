@@ -9,7 +9,6 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
@@ -19,10 +18,10 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.compilerRunner.btapi.BtaToolchain
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.*
 import java.net.URLClassLoader
 import java.rmi.RemoteException
@@ -81,7 +80,8 @@ internal class GradleKotlinCompilerWorkArguments(
 }
 
 internal class GradleKotlinCompilerWork @Inject constructor(
-    private val config: GradleKotlinCompilerWorkArguments
+    private val config: GradleKotlinCompilerWorkArguments,
+    private val diagnostics: UsesKotlinToolingDiagnosticsParameters
 ) : Runnable {
 
     private val metrics = if (config.reportingSettings.buildReportOutputs.isNotEmpty()) {
@@ -106,7 +106,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 gradlePrintingMessageCollector,
                 kotlinPluginVersion = config.kotlinPluginVersion
             )
-            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector, config.compilerArgumentsLogLevel)
+            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(
+                gradleMessageCollector,
+                config.compilerArgumentsLogLevel,
+                diagnostics,
+            )
             config.errorsFiles?.let {
                 gradleMessageCollector.flush(it)
             }
@@ -128,6 +132,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private fun compileWithDaemonOrFallbackImpl(
         messageCollector: MessageCollector,
         compilerArgsLogLevel: KotlinCompilerArgumentsLogLevel,
+        toolingDiagnostics: UsesKotlinToolingDiagnosticsParameters,
     ): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
         with(log) {
             kotlinDebug { "Kotlin compiler class: ${config.compilerClassName}" }
@@ -144,32 +149,14 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
-                messageCollector.report(
-                    severity = CompilerMessageSeverity.EXCEPTION,
-                    message = "Daemon compilation failed: ${e.message}\n${e.stackTraceToString()}"
+                val withFallback = config.compilerExecutionSettings.useDaemonFallbackStrategy
+                toolingDiagnostics.toolingDiagnosticsCollector.get().report(
+                    toolingDiagnostics,
+                    KotlinToolingDiagnostics.KotlinCompilationInDaemonHasFailed(e, withFallback)
                 )
-                val recommendation = """
-                    Try ./gradlew --stop if this issue persists
-                    If it does not look related to your configuration, please file an issue with logs to https://kotl.in/issue
-                """.trimIndent()
-                if (!config.compilerExecutionSettings.useDaemonFallbackStrategy) {
-                    throw RuntimeException(
-                        """
-                        |Failed to compile with Kotlin daemon.
-                        |Fallback strategy (compiling without Kotlin daemon) is turned off.
-                        |$recommendation
-                        """.trimMargin(),
-                        e
-                    )
+                if (!withFallback) {
+                    throwExceptionIfCompilationFailed(ExitCode.INTERNAL_ERROR, KotlinCompilerExecutionStrategy.DAEMON)
                 }
-                val failDetails = e.stackTraceAsString().removeSuffixIfPresent("\n")
-                log.warn(
-                    """
-                    |Failed to compile with Kotlin daemon: $failDetails
-                    |Using fallback strategy: Compile without Kotlin daemon
-                    |$recommendation
-                    """.trimMargin()
-                )
             }
         }
 

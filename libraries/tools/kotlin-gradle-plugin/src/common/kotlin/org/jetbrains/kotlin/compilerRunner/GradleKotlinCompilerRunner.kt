@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosticsParameters
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
@@ -84,7 +85,7 @@ internal fun createGradleCompilerRunner(
             buildFinishedListenerService,
             buildIdService,
             buildSessionService,
-            fusMetricsConsumer
+            fusMetricsConsumer,
         )
     } else if (compilerExecutionSettings.generateCompilerRefIndex) {
         diagnosticsReporter.reportDiagnostic(
@@ -228,7 +229,8 @@ internal open class GradleCompilerRunner(
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
             workArgs,
-            taskOutputsBackup
+            taskOutputsBackup,
+            diagnostics = environment,
         )
     }
 
@@ -252,10 +254,11 @@ internal open class GradleCompilerRunner(
     protected open fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?,
+        diagnostics: UsesKotlinToolingDiagnosticsParameters,
     ): WorkQueue? {
         try {
             buildMetrics.addTimeMetric(CALL_WORKER)
-            val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
+            val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs, diagnostics)
             kotlinCompilerRunnable.run()
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)

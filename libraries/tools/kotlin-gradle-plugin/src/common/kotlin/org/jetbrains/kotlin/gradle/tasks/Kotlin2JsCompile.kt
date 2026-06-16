@@ -359,7 +359,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv,
-            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get()
+            compilerArgumentsLogLevel = kotlinCompilerArgumentsLogLevel.get(),
+            toolingDiagnosticsContext = toolingDiagnosticsContext,
+            toolingDiagnosticsCollector = toolingDiagnosticsCollector,
         )
         processArgsBeforeCompile(args)
         @Suppress("DEPRECATION")
