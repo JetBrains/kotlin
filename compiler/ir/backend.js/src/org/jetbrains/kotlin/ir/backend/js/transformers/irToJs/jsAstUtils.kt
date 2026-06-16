@@ -17,14 +17,9 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
-import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
-import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersDeclarationLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryConstructorLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
-import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
-import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -33,7 +28,6 @@ import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -44,15 +38,11 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMap
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapLocationRemapper
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
-import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
+import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -717,9 +707,18 @@ private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMa
             return it.owner.originalNameForUseInSourceMap(policy)
         }
 
-        is IrFunction -> if (policy == SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES) {
-            fqNameWhenAvailable?.let {
-                return it.asString()
+        is IrFunction -> {
+            this.originalFqName?.let {
+                return if (policy == SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES) {
+                    it.asString()
+                } else {
+                    it.shortNameOrSpecial().asString()
+                }
+            }
+            if (policy == SourceMapNamesPolicy.FULLY_QUALIFIED_NAMES) {
+                fqNameWhenAvailable?.let {
+                    return it.asString()
+                }
             }
         }
 
