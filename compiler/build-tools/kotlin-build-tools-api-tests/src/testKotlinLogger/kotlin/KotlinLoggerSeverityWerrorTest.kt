@@ -85,7 +85,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     fun missingWarningWithInProcessMode(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-parameters"))
                 it.compilerArguments[WERROR] = true

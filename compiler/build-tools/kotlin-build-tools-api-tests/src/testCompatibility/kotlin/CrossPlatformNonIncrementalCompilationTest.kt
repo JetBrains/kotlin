@@ -22,7 +22,7 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun failedCompilationAllPlatforms(project: ProjectCreator) {
         project {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             module1.sourcesDirectory.resolve("bar.kt").writeText("aaaa")
             module1.compile {
                 expectFail()
@@ -38,7 +38,7 @@ class CrossPlatformNonIncrementalCompilationTest : BaseCompilationTest() {
     @BtaV2StrategyAndPlatformAgnosticCompilationTest
     fun successfulCompilationAllPlatforms(project: ProjectCreator) {
         project {
-            val module1 = module("jvm-module-1")
+            val module1 = module("basic-multimodule-project/module-1")
             // default assertion expects COMPILATION_SUCCESS
             module1.compile {}
             if (module1 is LinkableModule<*, *>) {

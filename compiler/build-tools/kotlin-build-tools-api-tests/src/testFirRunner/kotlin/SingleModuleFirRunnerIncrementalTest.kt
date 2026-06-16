@@ -27,10 +27,10 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Adding and removing the class")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario1(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = moduleWithFir("jvm-module-1")
+            val module1 = moduleWithFir("basic-multimodule-project/module-1")
 
             val randomString = UUID.randomUUID().toString()
             module1.createFile(
@@ -61,7 +61,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
 
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on using LV 1.9")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario2(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
@@ -69,7 +69,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
             ) {
                 // Throws on initial compilation
                 moduleWithFir(
-                    moduleName = "jvm-module-1",
+                    moduleName = "basic-multimodule-project/module-1",
                     compilationOperationConfig = {
                         it.compilerArguments[LANGUAGE_VERSION] = KotlinVersion.V1_9
                     },
@@ -81,7 +81,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Throws an exception on missing -Xuse-fir-ic")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             assertThrows<IllegalStateException>(
@@ -89,7 +89,7 @@ class SingleModuleFirRunnerIncrementalTest : BaseCompilationTest() {
             ) {
                 // Throws on initial compilation
                 module(
-                    moduleName = "jvm-module-1",
+                    moduleName = "basic-multimodule-project/module-1",
                     icOptionsConfigAction = {
                         it[USE_FIR_RUNNER] = true
                     },

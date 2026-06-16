@@ -139,7 +139,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion >= KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             for (invalidValue in argumentConfig.invalidRawValues) {
                 module.compile(compilationConfigAction = {
                     it.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))

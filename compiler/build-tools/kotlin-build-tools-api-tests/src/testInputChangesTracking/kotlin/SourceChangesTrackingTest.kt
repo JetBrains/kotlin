@@ -27,10 +27,10 @@ import org.junit.jupiter.api.DisplayName
 class SourceChangesTrackingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Intra-module IC tracks source changes in consecutive builds")
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun testConsequentBuilds(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = trackedModule("jvm-module-1")
+            val module1 = trackedModule("basic-multimodule-project/module-1")
             module1.createPredefinedFile("secret.kt", "new-file")
             module1.compile {
                 assertCompiledSources("secret.kt")

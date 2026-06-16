@@ -27,10 +27,10 @@ import org.junit.jupiter.api.DisplayName
 class ModuleNameCompilationTest : BaseCompilationTest() {
     @DisplayName("Non-incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun nonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module1 = module("jvm-module-1", moduleCompilationConfigAction = {
+            val module1 = module("basic-multimodule-project/module-1", moduleCompilationConfigAction = {
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
 
@@ -43,10 +43,10 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
 
     @DisplayName("Incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun incremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1", compilationConfigAction = {
+            val module1 = module("basic-multimodule-project/module-1", compilationConfigAction = {
                 it.compilerArguments[MODULE_NAME] = EXPLICIT_NULL_MODULE_NAME_MARKER
             })
 
@@ -63,10 +63,10 @@ class ModuleNameCompilationTest : BaseCompilationTest() {
     @OptIn(ExperimentalCompilerArgument::class)
     @DisplayName("FIR Incremental compilation without specified -module-name")
     @BtaV2StrategyAgnosticCompilationTest
-    @TestMetadata("jvm-module-1")
+    @TestMetadata("basic-multimodule-project/module-1")
     fun incrementalWithFirRunner(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
-            val module1 = module("jvm-module-1", icOptionsConfigAction = {
+            val module1 = module("basic-multimodule-project/module-1", icOptionsConfigAction = {
                 it[USE_FIR_RUNNER] = true
             }, compilationConfigAction = {
                 it.compilerArguments[CommonCompilerArguments.X_USE_FIR_IC] = true

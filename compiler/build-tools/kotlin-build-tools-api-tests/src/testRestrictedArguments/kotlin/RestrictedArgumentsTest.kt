@@ -47,7 +47,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     private fun testBuildFile(strategyConfig: CompilerExecutionStrategyConfiguration, argument: String, additionalArg: String? = null) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             val moduleFile = workingDirectory.resolve("some/path.xml")
             module.checkRestrictedArgument(
                 "-Xbuild-file", "-module",
@@ -67,7 +67,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-d emits a warning")
     fun testDestinationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-d",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -88,7 +88,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-include-runtime emits a warning")
     fun testIncludeRuntimeWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-include-runtime",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -111,7 +111,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
 
     private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-expression", "-e",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -127,7 +127,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-Xrepl emits a warning")
     fun testXReplWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-Xrepl",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -143,7 +143,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("-Xenable-incremental-compilation emits a warning")
     fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArgument(
                 "-Xenable-incremental-compilation",
                 errorSince = KotlinReleaseVersion.v2_5_0,
@@ -163,7 +163,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Multiple restricted arguments emit warnings for each")
     fun testMultipleRestrictedArgumentsWarnings(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.checkRestrictedArguments(
                 listOf("-include-runtime") to KotlinReleaseVersion.v2_5_0,
                 listOf("-Xenable-incremental-compilation") to KotlinReleaseVersion.v2_5_0,
@@ -176,7 +176,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Non-restricted arguments do not produce warnings about unsupported arguments")
     fun testNonRestrictedArgumentsNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
             }) {
@@ -190,7 +190,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Dropped argument does not produce a warning about unsupported arguments")
     fun testDroppedArgumentNoWarning(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xallow-kotlin-package"))
             }) {
@@ -204,7 +204,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @DisplayName("Wrong case for enum argument value emits a warning")
     fun testWrongCaseForEnumValue(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("jvm-module-1")
+            val module = module("basic-multimodule-project/module-1")
 
             module.compile(compilationConfigAction = {
                 it.compilerArguments.applyArgumentStrings(listOf("-Xassertions=jVm"))
