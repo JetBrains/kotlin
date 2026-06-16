@@ -26,7 +26,7 @@ val String.extensionPropertyWithContext<!>
     get() = this.length
 
 @JsExport
-annotation class <!WRONG_EXPORTED_DECLARATION("annotation class")!>AnnotationClass<!>
+annotation class AnnotationClass
 
 @JsExport
 interface SomeInterface
