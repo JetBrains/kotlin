@@ -1,6 +1,6 @@
 // WITH_STDLIB
-// CHECK_CASES_COUNT: function=A$bar2$lambda count=4
-// CHECK_IF_COUNT: function=A$bar2$lambda count=0
+// CHECK_CASES_COUNT: function=A$A$bar2$lambda count=4
+// CHECK_IF_COUNT: function=A$A$bar2$lambda count=0
 
 import kotlin.test.assertEquals
 
