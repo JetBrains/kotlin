@@ -849,7 +849,7 @@ internal sealed interface Bridge {
                     is AsObjCBridged, is AsCovariantBlock, is AsInvariantBlock ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
                     is AsObject, is AsExistential, is AsAnyBridgeable, is AsTypedFlow, is SirCustomTypeTranslatorImpl.RangeBridge ->
-                        "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res: ${
+                        "{ switch $valueExpression { case ${wrappedObject.renderNil()}: .none; case let res?: ${
                             wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                         }; } }()"
                     is AsContravariantBlock,

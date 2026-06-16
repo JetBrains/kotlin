@@ -573,14 +573,14 @@ package func kotlin_collections_CharIterator_nextChar__reverse_swift(_ `self`: S
 @_cdecl("kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift")
 package func kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?, _ startIndex: Swift.Int32, _ endIndex: Swift.Int32) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.text.Appendable
-    let _result: any ExportedKotlinPackages.kotlin.text.Appendable = _self.append(value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlin.CharSequence; } }(), startIndex: startIndex, endIndex: endIndex)
+    let _result: any ExportedKotlinPackages.kotlin.text.Appendable = _self.append(value: { switch value { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlin.CharSequence; } }(), startIndex: startIndex, endIndex: endIndex)
     return _result.__externalRCRef()
 }
 
 @_cdecl("kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift")
 package func kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ value: Swift.UnsafeMutableRawPointer?) -> Swift.UnsafeMutableRawPointer {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any ExportedKotlinPackages.kotlin.text.Appendable
-    let _result: any ExportedKotlinPackages.kotlin.text.Appendable = _self.append(value: { switch value { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlin.CharSequence; } }())
+    let _result: any ExportedKotlinPackages.kotlin.text.Appendable = _self.append(value: { switch value { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlin.CharSequence; } }())
     return _result.__externalRCRef()
 }
 

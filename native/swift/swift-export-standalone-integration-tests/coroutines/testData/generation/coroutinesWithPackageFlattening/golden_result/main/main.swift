@@ -15,7 +15,7 @@ extension ExportedKotlinPackages.flattened {
                 return { (arg0: Swift.Int32) in return { originalBlock(arg0); return true }() }
             }(), {
                 let originalBlock: (Swift.Optional<KotlinRuntime.KotlinBase>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
+                return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock({ switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()); return true }() }
             }(), cancellation.__externalRCRef())
         }
     }

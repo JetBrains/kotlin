@@ -297,7 +297,7 @@ public var normal: any main.Foeble {
 }
 public var nullable: (any main.Foeble)? {
     get {
-        return { switch __root___nullable_get() { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
+        return { switch __root___nullable_get() { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
     }
     set {
         return { __root___nullable_set__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(newValue.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -336,7 +336,7 @@ public func normal(
 public func nullable(
     value: (any main.Foeble)?
 ) -> (any main.Foeble)? {
-    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
+    return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
 }
 extension main.Barable where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var baz: any main.Foeble {

@@ -4,6 +4,8 @@
 
 fun foo(): IntRange = 2 ..< 6
 
+fun foo_opt(): IntRange? = 2 ..< 6
+
 fun bar(): ClosedRange<Int> {
     return 2 .. 3
 }

@@ -22,6 +22,9 @@ public func baz() -> Swift.Range<Swift.Int64> {
 public func foo() -> Swift.ClosedRange<Swift.Int32> {
     return { let _ref = __root___foo(); return kotlin_ranges_intRange_getStart_int_simple(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_simple(_ref) }()
 }
+public func foo_opt() -> Swift.ClosedRange<Swift.Int32>? {
+    return { switch __root___foo_opt() { case nil: .none; case let res?: { let _ref = res; return kotlin_ranges_intRange_getStart_int_simple(_ref) ... kotlin_ranges_intRange_getEndInclusive_int_simple(_ref) }(); } }()
+}
 public func unsupported() -> any ExportedKotlinPackages.kotlin.ranges.ClosedRange {
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___unsupported()) as! any ExportedKotlinPackages.kotlin.ranges.ClosedRange
 }

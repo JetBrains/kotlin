@@ -294,7 +294,7 @@ public var nullablePrim: Swift.Int32? {
 }
 public var nullableRef: main.Class_without_package? {
     get {
-        return { switch __root___nullableRef_get() { case nil: .none; case let res: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
+        return { switch __root___nullableRef_get() { case nil: .none; case let res?: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
     }
     set {
         return { __root___nullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package___(newValue.map { it in it.__externalRCRef() } ?? nil); return () }()
@@ -394,7 +394,7 @@ public func nullable_output_prim() -> Swift.Int32? {
     return __root___nullable_output_prim().map { it in it.int32Value }
 }
 public func nullable_output_ref() -> main.Class_without_package? {
-    return { switch __root___nullable_output_ref() { case nil: .none; case let res: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
+    return { switch __root___nullable_output_ref() { case nil: .none; case let res?: main.Class_without_package.__createClassWrapper(externalRCRef: res); } }()
 }
 public func produce_ABSTRACT_CLASS() -> main.ABSTRACT_CLASS {
     return main.ABSTRACT_CLASS.__createClassWrapper(externalRCRef: __root___produce_ABSTRACT_CLASS())
