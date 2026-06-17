@@ -110,8 +110,9 @@ internal fun Project.createGeneralTestTask(
         this.javaLauncher.set(getToolchainLauncherFor(javaLauncher))
 
         if (taskName != "test" && classpath.isEmpty) {
-            classpath = sourceSets.getByName("test").runtimeClasspath
-            testClassesDirs = sourceSets.getByName("test").output.classesDirs
+            // classpath/testClassesDirs are now ConfigurableFileCollection; setFrom replaces contents
+            classpath.setFrom(sourceSets.getByName("test").runtimeClasspath)
+            testClassesDirs.setFrom(sourceSets.getByName("test").output.classesDirs)
         }
         inputs.file(
             rootProject.tasks.named("createIdeaHomeForTests")
@@ -132,7 +133,7 @@ internal fun Project.createGeneralTestTask(
             if (jUnitMode == JUnitMode.JUnit5) return@doFirst
 
             val commandLineIncludePatterns = commandLineIncludePatterns.toMutableSet()
-            val patterns = filter.includePatterns + commandLineIncludePatterns
+            val patterns = filter.includePatterns.get() + commandLineIncludePatterns
             if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
             patterns.forEach { pattern ->
                 var isClassPattern = false
@@ -219,10 +220,10 @@ internal fun Project.createGeneralTestTask(
         else
             defaultMaxMemoryPerTestWorkerMb
 
-        maxHeapSize = "${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m"
+        maxHeapSize.set("${maxHeapSizeMb ?: (memoryPerTestProcessMb - maxMetaspaceSizeMb - reservedCodeCacheSizeMb)}m")
 
         if (minHeapSizeMb != null) {
-            minHeapSize = "${minHeapSizeMb}m"
+            minHeapSize.set("${minHeapSizeMb}m")
         }
 
         systemProperty("idea.is.unit.test", "true")
@@ -255,7 +256,8 @@ internal fun Project.createGeneralTestTask(
             if (excludesFile.isPresent) {
                 logger.warn("Removing excludes set by TeamCity")
                 val parallelTestsExcludes = File(excludesFile.get().path).readLines().filter { !it.startsWith("#") }.toSet()
-                filter.excludePatterns.removeAll(parallelTestsExcludes)
+                // excludePatterns is now a SetProperty; resolve, subtract, and reset
+                filter.excludePatterns.set(filter.excludePatterns.get() - parallelTestsExcludes)
             }
         }
 
@@ -274,9 +276,10 @@ internal fun Project.createGeneralTestTask(
 
         if (parallel && jUnitMode != JUnitMode.JUnit5) {
             val forks = (totalMaxMemoryForTestsMb / memoryPerTestProcessMb).coerceAtMost(16)
-            maxParallelForks =
+            maxParallelForks.set(
                 project.providers.gradleProperty("kotlin.test.maxParallelForks").orNull?.toInt()
                     ?: forks.coerceIn(1, Runtime.getRuntime().availableProcessors())
+            )
         }
 
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
@@ -292,6 +295,6 @@ internal fun Project.createGeneralTestTask(
 private val defaultMaxMemoryPerTestWorkerMb = 1600
 
 private val Test.commandLineIncludePatterns: Set<String>
-    get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns.orEmpty()
+    get() = (filter as? DefaultTestFilter)?.commandLineIncludePatterns?.get().orEmpty()
 
 private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(first())

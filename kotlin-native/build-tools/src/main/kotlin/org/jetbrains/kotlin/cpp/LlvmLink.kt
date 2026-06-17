@@ -49,7 +49,7 @@ private abstract class LlvmLinkJob : WorkAction<LlvmLinkJob.Parameters> {
         with(parameters) {
             execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
                 val sortedInputs = inputFiles.reproduciblySortedFilePaths(reproducibilityRootsMap.get()).map { it.absolutePath }
-                args = listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + sortedInputs
+                args.set(listOf("-o", outputFile.asFile.get().absolutePath) + arguments.get() + sortedInputs)
             }
         }
     }

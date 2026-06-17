@@ -136,8 +136,12 @@ fun Project.customCompilerTest(
             )
         }
         doLast {
-            systemProperties.remove("kotlin.internal.native.test.compat.customCompilerDist")
-            systemProperties.remove("kotlin.internal.native.test.compat.customCompilerClasspath")
+            // systemProperties is now a MapProperty; rebuild it without the keys to drop them
+            systemProperties.set(
+                systemProperties.get()
+                    - "kotlin.internal.native.test.compat.customCompilerDist"
+                    - "kotlin.internal.native.test.compat.customCompilerClasspath"
+            )
         }
         systemProperty("kotlin.internal.native.test.compat.customCompilerVersion", version.rawVersion)
         body()

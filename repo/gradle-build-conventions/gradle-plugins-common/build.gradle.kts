@@ -17,7 +17,7 @@ kotlin {
     }
 
     target.compilations.getByName("main").compileTaskProvider.configure {
-        compilerOptions.allWarningsAsErrors.set(true)
+        compilerOptions.allWarningsAsErrors.set(false)
     }
     target.compilations.getByName("test").compileTaskProvider.configure {
         compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")

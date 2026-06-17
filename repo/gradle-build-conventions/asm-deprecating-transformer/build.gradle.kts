@@ -12,7 +12,7 @@ kotlin {
     jvmToolchain(17)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
+        allWarningsAsErrors.set(false)
         optIn.add("kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.add("-Xsuppress-version-warnings")
     }

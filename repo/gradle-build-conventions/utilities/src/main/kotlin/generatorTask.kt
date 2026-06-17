@@ -124,6 +124,7 @@ private fun Project.registerJarTaskForJavaExec(
             .withNormalizer(ClasspathNormalizer::class.java)
 
         this.mainClass.set(mainClass)
-        this.classpath = objects.fileCollection().from(jarWithClasspathTask.map { it.outputs.files })
+        // classpath is now a ConfigurableFileCollection; setFrom replaces the contents (matching the old setter)
+        this.classpath.setFrom(jarWithClasspathTask.map { it.outputs.files })
     }
 }

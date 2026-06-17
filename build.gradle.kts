@@ -716,7 +716,8 @@ tasks {
     register<Exec>("mvnInstall") {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests")
+        // commandLine is now a read-only Provider; use the method form to set it
+        commandLine(getMvnwCmd() + listOf("clean", "install", "-DskipTests"))
         doFirst {
             environment("JDK_1_8", getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8).get())
         }
@@ -724,13 +725,13 @@ tasks {
     val mvnPublishTask = register<Exec>("mvnPublish") {
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf(
+        commandLine(getMvnwCmd() + listOf(
             "clean", "deploy", "--activate-profiles=noTest,local-bootstrap",
             "-Dinvoker.skip=true", "-DskipTests",
             "-Ddeploy-snapshot-repo=local",
             "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
             "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
-        )
+        ))
 
         val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
@@ -763,7 +764,7 @@ tasks {
         }
         group = "publishing"
         workingDir = rootProject.projectDir.resolve("libraries")
-        commandLine = getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true")
+        commandLine(getMvnwCmd() + listOf("clean", "install", "-DskipTests", "-DexcludeTestModules=true"))
         val jdk8Home = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
             environment("JDK_1_8", jdk8Home.get())

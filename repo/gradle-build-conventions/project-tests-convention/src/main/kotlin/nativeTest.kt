@@ -448,7 +448,7 @@ fun ProjectTestsExtension.nativeTestTask(
                 buildString {
                     appendLine("$path parallel test execution parameters:")
                     append("  Available CPU cores = $availableCpuCores")
-                    systemProperties.filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
+                    systemProperties.get().filterKeys { it.startsWith("junit.jupiter") }.toSortedMap().forEach { (key, value) ->
                         append("\n  $key = $value")
                     }
                 }

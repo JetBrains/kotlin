@@ -201,9 +201,11 @@ fun URI.maybeRedirect(): URI {
 
 fun RepositoryHandler.redirect() = configureEach {
     when (this) {
-        is MavenArtifactRepository -> url = url.maybeRedirect()
-        is IvyArtifactRepository -> @Suppress("SENSELESS_COMPARISON") if (url != null) {
-            url = url.maybeRedirect()
+        // url is now a Property<URI>; resolve it for the URI extension, then assign back
+        // (the Kotlin DSL assignment overload turns `url = <URI>` into `url.set(<URI>)`).
+        is MavenArtifactRepository -> url = url.get().maybeRedirect()
+        is IvyArtifactRepository -> if (url.isPresent) {
+            url = url.get().maybeRedirect()
         }
     }
 }
@@ -231,8 +233,8 @@ abstract class CheckRepositoriesTask : DefaultTask() {
         project.repositories
             .filterIsInstance<IvyArtifactRepository>()
             .filter {
-                @Suppress("SENSELESS_COMPARISON")
-                it.url == null
+                // url is now a Property<URI>; "not configured" is expressed via isPresent
+                !it.url.isPresent
             }
             .map { it.name }
     }
@@ -282,12 +284,12 @@ abstract class CheckRepositoriesTask : DefaultTask() {
 
     private fun RepositoryHandler.findNonCachedRepositories(): List<String> {
         val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()
-            .filterNot { it.url.isCachedOrLocal() }
-            .map { it.url.toString() }
+            .filterNot { it.url.get().isCachedOrLocal() }
+            .map { it.url.get().toString() }
 
         val ivyNonCachedRepos = filterIsInstance<IvyArtifactRepository>()
-            .filterNot { it.url.isCachedOrLocal() }
-            .map { it.url.toString() }
+            .filterNot { it.url.get().isCachedOrLocal() }
+            .map { it.url.get().toString() }
 
         return mavenNonCachedRepos + ivyNonCachedRepos
     }

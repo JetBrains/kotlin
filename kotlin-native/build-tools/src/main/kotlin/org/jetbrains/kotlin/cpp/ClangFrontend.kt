@@ -50,8 +50,9 @@ private abstract class ClangFrontendJob : WorkAction<ClangFrontendJob.Parameters
             outputFile.get().asFile.parentFile.mkdirs()
             execOperations.execLlvmUtility(platformManager.get(), compilerExecutable.get()) {
                 workingDir = workingDirectory.asFile.get()
-                args = arguments.get() + listOf(inputPathRelativeToWorkingDir.get(), "-o", outputFile.get().asFile.absolutePath)
-                environment["PATH"] = clangPaths.get() + File.pathSeparator + environment["PATH"]
+                args.set(arguments.get() + listOf(inputPathRelativeToWorkingDir.get(), "-o", outputFile.get().asFile.absolutePath))
+                // environment is now a MapProperty; read via get()[key] and write via put(key, value)
+                environment.put("PATH", clangPaths.get() + File.pathSeparator + environment.get()["PATH"])
             }
         }
     }

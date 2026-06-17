@@ -110,7 +110,8 @@ private fun JavaExec.wireFromTestTask(peerTaskName: String) {
      *
      * Also see KT-84278.
      */
-    systemProperties = testTask.systemProperties.filterKeys { !it.startsWith("java.security.") }
+    // systemProperties is now a MapProperty; resolve the source before filtering, then assign the Map back
+    systemProperties = testTask.systemProperties.get().filterKeys { !it.startsWith("java.security.") }
 
     // Forward idea.active to enable IDE integration in TestDataManagerRunner
     if (project.providers.systemProperty("idea.active").isPresent) {

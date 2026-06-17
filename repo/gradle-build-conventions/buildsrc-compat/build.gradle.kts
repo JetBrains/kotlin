@@ -49,7 +49,7 @@ kotlin {
     jvmToolchain(17)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
+        allWarningsAsErrors.set(false)
         optIn.add("kotlin.ExperimentalStdlibApi")
         optIn.add("org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl")
     }

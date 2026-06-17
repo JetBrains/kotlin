@@ -182,7 +182,10 @@ fun Test.applyKotlinNativeConfiguration() {
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
         dependsOn(":kotlin-native:install")
         // This is the version that K/N bundle is assumed to be published with
-        systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion.orNull
+        // systemProperties is now a MapProperty; put the value when present (it rejects null)
+        project.kotlinBuildProperties.defaultSnapshotVersion.orNull?.let {
+            systemProperties.put("kotlinNativeVersion", it)
+        }
     }
 
     val kotlinNativeVersionForTestRuns = project.kotlinBuildProperties.stringProperty("kotlinNativeVersionForGradleIT").orNull
@@ -390,7 +393,8 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
 tasks.withType<Test>().configureEach {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
-    environment.remove("KONAN_DATA_DIR")
+    // environment is now a MapProperty; rebuild it without the key to drop KONAN_DATA_DIR
+    environment.set(environment.get() - "KONAN_DATA_DIR")
     applyKotlinNativeConfiguration()
 
     val noTestProperty = project.providers.gradleProperty("noTest")

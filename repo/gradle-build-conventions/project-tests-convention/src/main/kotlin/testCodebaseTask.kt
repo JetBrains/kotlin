@@ -48,8 +48,9 @@ fun ProjectTestsExtension.testCodebaseTask(
         skipInLocalBuild = false,
     ) {
         group = "verification"
-        classpath += codebaseTest.runtimeClasspath
-        testClassesDirs = codebaseTest.output.classesDirs
+        // classpath/testClassesDirs are now ConfigurableFileCollection
+        classpath.from(codebaseTest.runtimeClasspath)
+        testClassesDirs.setFrom(codebaseTest.output.classesDirs)
 
         val projectDirectory = project.isolated.projectDirectory
         inputs.dir(projectDirectory.dir("src"))

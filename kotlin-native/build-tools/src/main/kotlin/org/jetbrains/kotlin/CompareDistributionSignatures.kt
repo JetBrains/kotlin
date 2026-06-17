@@ -193,7 +193,7 @@ open class CompareDistributionSignatures @Inject constructor(
         ByteArrayOutputStream().use { stdout ->
             execOperations.exec {
                 commandLine(newDistribution.get().klib.asFile, *args.toTypedArray())
-                this.standardOutput = stdout
+                this.standardOutput.set(stdout)
             }.assertNormalExitValue()
             return stdout.toString().lines().filter { it.isNotBlank() }
         }

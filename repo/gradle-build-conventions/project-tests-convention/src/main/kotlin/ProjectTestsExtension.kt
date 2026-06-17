@@ -258,13 +258,13 @@ abstract class ProjectTestsExtension(val project: Project) {
                 false -> GeneratorInputKind.SourceSetJar
             }
         ) {
-            this.args = buildList {
+            this.args.set(buildList {
                 add(generationPath.asFile.absolutePath)
                 if (generateTestsInBuildDirectory) {
                     add("allowGenerationOnTeamCity")
                     add("skipTestAllFilesCheck")
                 }
-            }
+            })
             if (generateTestsInBuildDirectory) {
                 this.outputs.dir(generationPath).withPropertyName("generatedTests")
                 doFirst {

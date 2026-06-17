@@ -69,8 +69,8 @@ private fun Project.getPluginDeclarationFor(mavenPublication: MavenPublication):
         val pluginDevelopment = extensions.findByType(GradlePluginDevelopmentExtension::class)
             ?: error("Plugin marker publication $name detected without the `java-gradle-plugin` plugin")
         pluginDevelopment.plugins
-            .find { pluginDeclaration -> "${pluginDeclaration.id}${PLUGIN_MARKER_SUFFIX}" == mavenPublication.artifactId }
-            ?: error("Cannot find plugin declaration for publication ${this.name} (${mavenPublication.groupId}:${mavenPublication.artifactId})")
+            .find { pluginDeclaration -> "${pluginDeclaration.id}${PLUGIN_MARKER_SUFFIX}" == mavenPublication.artifactId.get() }
+            ?: error("Cannot find plugin declaration for publication ${this.name} (${mavenPublication.groupId.get()}:${mavenPublication.artifactId.get()})")
     }
 }
 
@@ -94,8 +94,9 @@ fun Project.configureCommonPublicationSettingsForGradle(
                         }
                     configureKotlinPomAttributes(
                         project,
-                        explicitName = pluginDeclaration?.map { it.displayName } ?: provider { null },
-                        explicitDescription = pluginDeclaration?.map { it.description } ?: provider { null },
+                        // displayName/description are now Property<String>; flatMap unwraps the inner provider
+                        explicitName = pluginDeclaration?.flatMap { it.displayName } ?: provider { null },
+                        explicitDescription = pluginDeclaration?.flatMap { it.description } ?: provider { null },
                     )
                     if (sbom && project.name !in internalPlugins) {
                         if (name == "pluginMaven") {

@@ -61,20 +61,20 @@ abstract class GitClangFormat : DefaultTask() {
 
         val commit = ByteArrayOutputStream().let {
             execOperations.exec {
-                executable = "git"
+                executable.set("git")
                 args("merge-base", parent, "HEAD")
-                standardOutput = it
+                standardOutput.set(it)
             }
             it.toString().trim()
         }
         execOperations.exec {
-            executable = gitClangFormat
+            executable.set(gitClangFormat)
             args("--binary", clangFormat)
             args("--force")
             if (interactive) {
                 args("--patch")
                 // Not a nice experience, but it works.
-                standardInput = System.`in`
+                standardInput.set(System.`in`)
             }
             args(commit)
             args("--")

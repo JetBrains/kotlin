@@ -16,6 +16,6 @@ fun PlatformManager.resolveLlvmUtility(utility: String) = "${hostPlatform.absolu
 fun ExecOperations.execLlvmUtility(platformManager: PlatformManager, utility: String, action: Action<in ExecSpec>): ExecResult {
     return exec {
         action.execute(this)
-        executable = platformManager.resolveLlvmUtility(utility)
+        executable.set(platformManager.resolveLlvmUtility(utility))
     }
 }

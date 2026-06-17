@@ -63,13 +63,13 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
             // except the one containing the entry point to a single *.bc without internalization. The second
             // run internalizes this big module and links it with a module containing the entry point.
             execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
-                args = listOf("-o", llvmLinkFirstStageOutputFile.asFile.get().absolutePath) + inputFiles.map { it.absolutePath }
+                args.set(listOf("-o", llvmLinkFirstStageOutputFile.asFile.get().absolutePath) + inputFiles.map { it.absolutePath })
             }
 
             llvmLinkOutputFile.asFile.get().parentFile.mkdirs()
 
             execOperations.execLlvmUtility(platformManager.get(), "llvm-link") {
-                args = listOf("-o", llvmLinkOutputFile.asFile.get().absolutePath, mainFile.asFile.get().absolutePath, llvmLinkFirstStageOutputFile.asFile.get().absolutePath, "-internalize")
+                args.set(listOf("-o", llvmLinkOutputFile.asFile.get().absolutePath, mainFile.asFile.get().absolutePath, llvmLinkFirstStageOutputFile.asFile.get().absolutePath, "-internalize"))
             }
         }
     }
@@ -81,7 +81,7 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
             compilerOutputFile.asFile.get().parentFile.mkdirs()
 
             execOperations.execLlvmUtility(platformManager.get(), "clang++") {
-                this.args = args
+                this.args.set(args)
             }
         }
     }
@@ -100,7 +100,7 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
                         val nullOutputStream = object : OutputStream() {
                             override fun write(b: Int) {}
                         }
-                        errorOutput = nullOutputStream
+                        errorOutput.set(nullOutputStream)
                     }
                 }
             }

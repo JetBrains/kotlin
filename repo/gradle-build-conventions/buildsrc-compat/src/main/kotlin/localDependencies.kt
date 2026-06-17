@@ -54,7 +54,7 @@ fun Project.intellijSdkVersionForIde(): String? {
 
 fun RepositoryHandler.kotlinBuildLocalRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.kotlinBuildLocalRepoDir()
-    url = baseDir.toURI()
+    url.set(baseDir.toURI())
 
     patternLayout {
         ivy("[organisation]/[module]/[revision]/[module].ivy.xml")

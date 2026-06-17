@@ -155,8 +155,8 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
         val diff = ByteArrayOutputStream()
         execOperations.exec {
             commandLine("/usr/bin/diff", "/dev/stdin", changedDefFile.path)
-            standardInput = initialDefFile
-            standardOutput = diff
+            standardInput.set(initialDefFile)
+            standardOutput.set(diff)
             setIgnoreExitValue(true)
         }
         return diff.toString()

@@ -7,7 +7,7 @@ dependencies {
 }
 
 publish {
-    artifactId = artifactId.replace(".", "-").replace("kotlinx-", "kotlin-")
+    artifactId.set(artifactId.get().replace(".", "-").replace("kotlinx-", "kotlin-"))
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())

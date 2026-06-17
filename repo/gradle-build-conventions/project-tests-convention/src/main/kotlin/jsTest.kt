@@ -36,10 +36,11 @@ fun ProjectTestsExtension.jsTestTask(
         setupV8()
     }
 
-    jvmArgumentProviders += project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
+    // jvmArgumentProviders is now a ListProperty; add the single provider
+    jvmArgumentProviders.add(project.objects.newInstance<SystemPropertyClasspathProvider>().apply {
         classpath.from(project.rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
         property.set("javascript.engine.path.repl")
-    }
+    })
 
     val node = project.the<NodeExtension>()
     systemProperty("kotlin.js.test.root.out.dir", "${node.nodeProjectDir.get().asFile}/")

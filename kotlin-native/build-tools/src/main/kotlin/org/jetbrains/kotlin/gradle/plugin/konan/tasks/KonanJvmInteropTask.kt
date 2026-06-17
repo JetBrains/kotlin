@@ -64,7 +64,7 @@ private abstract class KonanJvmInteropAction @Inject constructor(
             systemProperty("java.library.path", parameters.interopStubGeneratorNativeLibraries.files.joinToString(File.pathSeparator) { it.parentFile.absolutePath })
             systemProperty("konan.home", parameters.distributionRoot.asNativeDistribution().get().root.asFile.absolutePath)
             environment("LIBCLANG_DISABLE_CRASH_RECOVERY", "1")
-            environment("PATH", (hostPlatform.clang.clangPaths + environment["PATH"]).joinToString(File.pathSeparator))
+            environment("PATH", (hostPlatform.clang.clangPaths + environment.get()["PATH"]).joinToString(File.pathSeparator))
             args("-generated", outputDirectory.dir("kotlin").asFile.absolutePath)
             args("-Xtemporary-files-dir", outputDirectory.dir("c").asFile.absolutePath)
             args("-flavor", "jvm")

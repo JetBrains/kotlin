@@ -17,8 +17,8 @@ abstract class XcodeToolchainValueSource @Inject constructor(private val execOpe
         val out = ByteArrayOutputStream()
         val execResult = execOperations.exec {
             commandLine("/usr/bin/xcrun")
-            args = listOf("-f", "ld")
-            this.standardOutput = out
+            args.set(listOf("-f", "ld"))
+            this.standardOutput.set(out)
         }
         if (execResult.exitValue != 0) {
             throw GradleException( """

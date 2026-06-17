@@ -25,9 +25,9 @@ internal fun ExecOperations.execCapture(
         exec { exec ->
             exec.commandLine(commandLine)
             exec.workingDir(workDir)
-            exec.standardOutput = stdOut
-            exec.errorOutput = errorOut
-            exec.isIgnoreExitValue = true
+            exec.standardOutput.set(stdOut)
+            exec.errorOutput.set(errorOut)
+            exec.isIgnoreExitValue.set(true)
         }
 
     require(result.exitValue == 0) {

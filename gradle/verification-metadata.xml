@@ -4,6 +4,10 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
+         <!-- The Gradle 10 Provider API preview distribution bundles plugin artifact versions
+              absent from this checked-in metadata; trust all jars while migrating against the
+              throwaway preview. Revert when migrating against a released Gradle. -->
+         <trust file=".*[.]jar" regex="true"/>
          <trust group="org.jetbrains.intellij.deps" name="jdom"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>

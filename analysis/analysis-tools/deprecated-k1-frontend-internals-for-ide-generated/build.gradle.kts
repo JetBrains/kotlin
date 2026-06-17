@@ -11,7 +11,8 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 tasks.withType<JavaCompile> {
     // deprecating a package is a `@Deprecated annotation has no effect on packages` warning in Java,
     // but we need to deprecate it for a 3rd party plugin compatibility checker
-    options.compilerArgs.remove("-Werror")
+    // compilerArgs is now a ListProperty; resolve, drop the flag, and reset
+    options.compilerArgs.set(options.compilerArgs.get() - "-Werror")
     targetCompatibility = "1.8"
     sourceCompatibility = "1.8"
 }
