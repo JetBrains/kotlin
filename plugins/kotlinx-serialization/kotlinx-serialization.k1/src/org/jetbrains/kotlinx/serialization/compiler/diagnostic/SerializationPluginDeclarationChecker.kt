@@ -37,7 +37,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LO
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoOneOfAnnotationFqName
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.protoUnknownFieldHolderClassId
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -66,7 +65,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
         checkCorrectTransientAnnotationIsUsed(descriptor, props.serializableProperties, context.trace)
         checkProtobufProperties(props.serializableProperties, context.trace)
-        checkProtoUnknownFields(descriptor, declaration, context.trace)
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
         checkInheritedAnnotations(descriptor, declaration, context.trace)
@@ -519,37 +517,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                     duplicateFieldsNames
                 )
             )
-        }
-    }
-
-    private fun checkProtoUnknownFields(
-        descriptor: ClassDescriptor,
-        declaration: KtDeclaration,
-        trace: BindingTrace,
-    ) {
-        val properties = descriptor.unsubstitutedMemberScope
-            .getContributedDescriptors()
-            .filterIsInstance<PropertyDescriptor>()
-
-        val unknownHolderProps = properties.filter {
-            it.type.constructor.declarationDescriptor?.classId == protoUnknownFieldHolderClassId
-        }
-
-        if (unknownHolderProps.size > 1) {
-            val firstProp = unknownHolderProps.first()
-            val allNames = unknownHolderProps.joinToString(", ") { it.name.asString() }
-            trace.report(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_HOLDERS.on(firstProp.findPsi() ?: declaration, descriptor.name.asString(), allNames))
-        }
-
-        val prop = unknownHolderProps.firstOrNull() ?: return
-        val propPsi = prop.findPsi() ?: return
-
-        if (!prop.type.isMarkedNullable) {
-            val ktDeclaration = propPsi as? KtDeclaration
-            val hasDefault = ktDeclaration?.let { declarationHasInitializer(it) } ?: false
-            if (!hasDefault) {
-                trace.report(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT.on(ktDeclaration ?: declaration, descriptor.name.asString(), prop.name.asString()))
-            }
         }
     }
 

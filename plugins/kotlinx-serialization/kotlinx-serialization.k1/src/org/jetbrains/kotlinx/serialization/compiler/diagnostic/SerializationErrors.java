@@ -74,9 +74,6 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<KtAnnotationEntry, String, String> PROTOBUF_PROTO_NUM_DUPLICATED = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory2<PsiElement, String, String> PROTO_UNKNOWN_FIELDS_MULTIPLE_HOLDERS = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<PsiElement, String, String> PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT = DiagnosticFactory2.create(ERROR);
-
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
