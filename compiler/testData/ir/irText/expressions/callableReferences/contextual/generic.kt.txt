@@ -6,27 +6,27 @@ fun <A : Any?, B : Any?, C : Any?, D : Any?> B.foo(p: C): D? {
 fun String.test() {
   val x: @ExtensionFunctionType Function2<Int, Boolean, Long?> = @ExtensionFunctionType KFunction2<Int, @ParameterName(name = "p") Boolean, Long?>(
     /* bound = */ [<this>],
-    /* invoke = */    local fun(c0: A, p0: Int, p1: @ParameterName(name = "p") Boolean): Long? {
+    /* invoke = */    local fun(c0: String, p0: Int, p1: @ParameterName(name = "p") Boolean): Long? {
       return foo<String, Int, Boolean, Long?>(/* t = c0, <this> = p0, */ p = p1)
     }
   )
 
   val y: KMutableProperty0<Long?> = KMutableProperty0<Long?>(
     /* bound = */ [<this>,1],
-    /* getter = */    local fun(c0: A, receiver: Int): Long? {
+    /* getter = */    local fun(c0: String, receiver: Int): Long? {
       return <get-bar><String, Int, Long>(/* t = c0, <this> = receiver */)
     }
-    /* setter = */    local fun(c0: A, receiver: Int, value: Long?) {
+    /* setter = */    local fun(c0: String, receiver: Int, value: Long?) {
       <set-bar><String, Int, Long>(/* t = c0, <this> = receiver, */ v = value)
     }
   )
 
   val z: KMutableProperty1<Int, Long?> = KMutableProperty1<Int, Long?>(
     /* bound = */ [<this>],
-    /* getter = */    local fun(c0: A, p0: Int): Long? {
+    /* getter = */    local fun(c0: String, p0: Int): Long? {
       return <get-bar><String, Int, Long>(/* t = c0, <this> = p0 */)
     }
-    /* setter = */    local fun(c0: A, p0: Int, value: Long?) {
+    /* setter = */    local fun(c0: String, p0: Int, value: Long?) {
       <set-bar><String, Int, Long>(/* t = c0, <this> = p0, */ v = value)
     }
   )

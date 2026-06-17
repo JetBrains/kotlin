@@ -126,6 +126,8 @@ class AdapterGenerator(
     ) {
         val firAdaptee: FirCallableDeclaration =
             callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as FirCallableDeclaration
+        val substitutor: ConeSubstitutor =
+            callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
         val boundDispatchReceiver: IrExpression? =
             callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = true)
         val boundExtensionReceiver: IrExpression? =
@@ -325,7 +327,7 @@ class AdapterGenerator(
                     this += createAdapterParameter(
                         irAdapterFunction,
                         Name.identifier("c$index"),
-                        contextParameter.returnTypeRef.toIrType(),
+                        substitutor.substituteOrSelf(contextParameter.returnTypeRef.coneType).toIrType(),
                         IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                         IrParameterKind.Regular,
                     )
@@ -402,7 +404,6 @@ class AdapterGenerator(
         adapterFunction: IrFunction,
         isSetter: Boolean,
     ): IrExpression = callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-        val substitutor = callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
         val type = if (isSetter) {
             builtins.unitType
         } else {

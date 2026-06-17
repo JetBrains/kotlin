@@ -18,17 +18,17 @@ FILE fqName:<root> fileName:/generic.kt
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           bound c0: GET_VAR '<this>: kotlin.String declared in <root>.test' type=kotlin.String origin=IMPLICIT_ARGUMENT
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Long?
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:A of <root>.foo
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p1 index:2 type:@[ParameterName(name = "p")] kotlin.Boolean
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo (c0: A of <root>.foo, p0: kotlin.Int, p1: @[ParameterName(name = "p")] kotlin.Boolean): kotlin.Long? declared in <root>.test'
+              RETURN type=kotlin.Nothing from='local final fun foo (c0: kotlin.String, p0: kotlin.Int, p1: @[ParameterName(name = "p")] kotlin.Boolean): kotlin.Long? declared in <root>.test'
                 CALL 'public final fun foo <A, B, C, D> (t: A of <root>.foo, <this>: B of <root>.foo, p: C of <root>.foo): D of <root>.foo? declared in <root>' type=kotlin.Long? origin=null
                   TYPE_ARG A: kotlin.String
                   TYPE_ARG B: kotlin.Int
                   TYPE_ARG C: kotlin.Boolean
                   TYPE_ARG D: kotlin.Long?
-                  ARG t: GET_VAR 'c0: A of <root>.foo declared in <root>.test.foo' type=A of <root>.foo origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG t: GET_VAR 'c0: kotlin.String declared in <root>.test.foo' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                   ARG <this>: GET_VAR 'p0: kotlin.Int declared in <root>.test.foo' type=kotlin.Int origin=null
                   ARG p: GET_VAR 'p1: @[ParameterName(name = "p")] kotlin.Boolean declared in <root>.test.foo' type=@[ParameterName(name = "p")] kotlin.Boolean origin=null
       VAR name:y type:kotlin.reflect.KMutableProperty0<kotlin.Long?> [val]
@@ -36,18 +36,18 @@ FILE fqName:<root> fileName:/generic.kt
           bound c0: GET_VAR '<this>: kotlin.String declared in <root>.test' type=kotlin.String origin=IMPLICIT_ARGUMENT
           bound receiver: CONST Int type=kotlin.Int value=1
           getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Long?
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:A of <root>.<get-bar>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:1 type:kotlin.Int
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar (c0: A of <root>.<get-bar>, receiver: kotlin.Int): kotlin.Long? declared in <root>.test'
+              RETURN type=kotlin.Nothing from='local final fun bar (c0: kotlin.String, receiver: kotlin.Int): kotlin.Long? declared in <root>.test'
                 CALL 'public final fun <get-bar> <A, B, C> (t: A of <root>.<get-bar>, <this>: B of <root>.<get-bar>): C of <root>.<get-bar>? declared in <root>' type=kotlin.Long? origin=null
                   TYPE_ARG A: kotlin.String
                   TYPE_ARG B: kotlin.Int
                   TYPE_ARG C: kotlin.Long
-                  ARG t: GET_VAR 'c0: A of <root>.<get-bar> declared in <root>.test.bar' type=A of <root>.<get-bar> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG t: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                   ARG <this>: GET_VAR 'receiver: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:A of <root>.<get-bar>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:1 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:2 type:kotlin.Long?
             BLOCK_BODY
@@ -55,25 +55,25 @@ FILE fqName:<root> fileName:/generic.kt
                 TYPE_ARG A: kotlin.String
                 TYPE_ARG B: kotlin.Int
                 TYPE_ARG C: kotlin.Long
-                ARG t: GET_VAR 'c0: A of <root>.<get-bar> declared in <root>.test.bar' type=A of <root>.<get-bar> origin=ADAPTED_FUNCTION_REFERENCE
+                ARG t: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                 ARG <this>: GET_VAR 'receiver: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=ADAPTED_FUNCTION_REFERENCE
                 ARG v: GET_VAR 'value: kotlin.Long? declared in <root>.test.bar' type=kotlin.Long? origin=ADAPTED_FUNCTION_REFERENCE
       VAR name:z type:kotlin.reflect.KMutableProperty1<kotlin.Int, kotlin.Long?> [val]
         RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty1<kotlin.Int, kotlin.Long?> origin=null reflectionTarget='public final bar: C of <root>.<get-bar>? declared in <root>'
           bound c0: GET_VAR '<this>: kotlin.String declared in <root>.test' type=kotlin.String origin=IMPLICIT_ARGUMENT
           getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Long?
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:A of <root>.<get-bar>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun bar (c0: A of <root>.<get-bar>, p0: kotlin.Int): kotlin.Long? declared in <root>.test'
+              RETURN type=kotlin.Nothing from='local final fun bar (c0: kotlin.String, p0: kotlin.Int): kotlin.Long? declared in <root>.test'
                 CALL 'public final fun <get-bar> <A, B, C> (t: A of <root>.<get-bar>, <this>: B of <root>.<get-bar>): C of <root>.<get-bar>? declared in <root>' type=kotlin.Long? origin=null
                   TYPE_ARG A: kotlin.String
                   TYPE_ARG B: kotlin.Int
                   TYPE_ARG C: kotlin.Long
-                  ARG t: GET_VAR 'c0: A of <root>.<get-bar> declared in <root>.test.bar' type=A of <root>.<get-bar> origin=ADAPTED_FUNCTION_REFERENCE
+                  ARG t: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                   ARG <this>: GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
           setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Unit
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:A of <root>.<get-bar>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:c0 index:0 type:kotlin.String
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:p0 index:1 type:kotlin.Int
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:value index:2 type:kotlin.Long?
             BLOCK_BODY
@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/generic.kt
                 TYPE_ARG A: kotlin.String
                 TYPE_ARG B: kotlin.Int
                 TYPE_ARG C: kotlin.Long
-                ARG t: GET_VAR 'c0: A of <root>.<get-bar> declared in <root>.test.bar' type=A of <root>.<get-bar> origin=ADAPTED_FUNCTION_REFERENCE
+                ARG t: GET_VAR 'c0: kotlin.String declared in <root>.test.bar' type=kotlin.String origin=ADAPTED_FUNCTION_REFERENCE
                 ARG <this>: GET_VAR 'p0: kotlin.Int declared in <root>.test.bar' type=kotlin.Int origin=null
                 ARG v: GET_VAR 'value: kotlin.Long? declared in <root>.test.bar' type=kotlin.Long? origin=ADAPTED_FUNCTION_REFERENCE
   PROPERTY name:bar visibility:public modality:FINAL [var]
