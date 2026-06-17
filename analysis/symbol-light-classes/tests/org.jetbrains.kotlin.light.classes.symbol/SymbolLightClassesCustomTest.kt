@@ -11,11 +11,15 @@ import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
@@ -27,19 +31,22 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
 
     @Test
     fun fileModificationTracker(file: KtFile, testServices: TestServices) {
-        val facadeLightClass = file.findFacadeClass() ?: error("Facade light class was not found")
-        val classLightClass = (file.declarations.first() as KtClassOrObject).toLightClass() ?: error("Light class was not found")
-        val fakeFilesWithModificationStamp = listOf(facadeLightClass, classLightClass).map { lightClass ->
-            lightClass.containingFile to lightClass.containingFile.modificationStamp
-        }
+        analyze(file) {
+            val facadeLightClass = file.symbol.asFacadePsiClass() ?: error("Facade light class was not found")
+            val classLightClass =
+                (file.declarations.first() as KtClassOrObject).classSymbol?.asPsiClass() ?: error("Light class was not found")
+            val fakeFilesWithModificationStamp = listOf(facadeLightClass, classLightClass).map { lightClass ->
+                lightClass.containingFile to lightClass.containingFile.modificationStamp
+            }
 
-        // Emulate file modification
-        file.clearCaches()
+            // Emulate file modification
+            file.clearCaches()
 
-        for ([fakeFile, originalStamp] in fakeFilesWithModificationStamp) {
-            val newStamp = fakeFile.modificationStamp
-            testServices.assertions.assertTrue(originalStamp < newStamp) {
-                "Expected that $fakeFile will have a modification stamp greater than $originalStamp, but $newStamp was found"
+            for ([fakeFile, originalStamp] in fakeFilesWithModificationStamp) {
+                val newStamp = fakeFile.modificationStamp
+                testServices.assertions.assertTrue(originalStamp < newStamp) {
+                    "Expected that $fakeFile will have a modification stamp greater than $originalStamp, but $newStamp was found"
+                }
             }
         }
     }
@@ -47,7 +54,9 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     @Test
     fun enumEntryWithTypeAliasSameNameAsPrimitiveType(file: KtFile, testServices: TestServices) {
         val enumKtClass = file.declarations.filterIsInstance<KtClass>().first { it.isEnum() }
-        val enumLightClass = enumKtClass.toLightClass() ?: error("Light class was not found")
+        val enumLightClass = analyze(file) {
+            (enumKtClass.symbol as? KaClassSymbol)?.asPsiClass() ?: error("Light class was not found")
+        }
 
         val enumConstant = enumLightClass.fields.filterIsInstance<PsiEnumConstant>().first()
         val enumConstantType = enumConstant.type as PsiClassType
@@ -90,7 +99,13 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
     }
 
     private fun assertMethodAnnotation(topLevelClass: KtClass, testServices: TestServices) {
-        val topLevelLightClass = topLevelClass.toLightClass() ?: error("Light class was not found")
+        val topLevelLightClass = analyze(topLevelClass) {
+            when (val symbol = topLevelClass.symbol) {
+                is KaEnumEntrySymbol -> symbol.initializer?.asPsiClass()
+                is KaClassSymbol -> symbol.asPsiClass()
+                else -> null
+            } ?: error("Light class was not found")
+        }
         val method = topLevelLightClass.findMethodsByName("method", false).first() as PsiMethod
         val annotation = method.annotations.first()
         val argument = annotation.findAttributeValue("value")!! as PsiLiteralExpression
