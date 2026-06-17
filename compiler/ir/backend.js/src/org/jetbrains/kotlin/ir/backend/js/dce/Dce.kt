@@ -48,6 +48,14 @@ fun eliminateDeadDeclarations(
             context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarationProcessor.usefulPolyfilledDeclarations)
         }
     }
+
+    val setFieldRemover = SetFieldRemover(usefulDeclarations)
+
+    modules.forEach { module ->
+        module.files.forEach {
+            it.transform(setFieldRemover, null)
+        }
+    }
 }
 
 private fun IrField.isConstant(): Boolean =

@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.EffectsKind
+import org.jetbrains.kotlin.ir.backend.js.computeEffectsKind
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
+import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
@@ -82,6 +89,24 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     }
 
     out.writeText(value)
+}
+
+class SetFieldRemover(val usefulDeclarations: Set<IrDeclaration>) : IrTransformer<IrFunction?>() {
+    override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
+        return super.visitFunction(declaration, declaration)
+    }
+
+    override fun visitSetField(expression: IrSetField, data: IrFunction?): IrExpression {
+        if (expression.symbol.owner !in usefulDeclarations) {
+            val effects = expression.value.computeEffectsKind()
+            return if (effects == EffectsKind.WRITE) {
+                expression.value
+            } else {
+                IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin)
+            }
+        }
+        return super.visitSetField(expression, data)
+    }
 }
 
 internal fun String.removeQuotes() = replace('"'.toString(), "")
