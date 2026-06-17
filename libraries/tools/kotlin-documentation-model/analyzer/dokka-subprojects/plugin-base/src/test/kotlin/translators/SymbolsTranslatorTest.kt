@@ -5,7 +5,6 @@
 package translators
 
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
-import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +18,6 @@ class SymbolsTranslatorTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols
     fun `should warn about unresolved symbol`() {
         testInline(
             """
@@ -46,7 +44,6 @@ class SymbolsTranslatorTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols
     fun `should warn about unresolved annotation`() {
         testInline(
             """

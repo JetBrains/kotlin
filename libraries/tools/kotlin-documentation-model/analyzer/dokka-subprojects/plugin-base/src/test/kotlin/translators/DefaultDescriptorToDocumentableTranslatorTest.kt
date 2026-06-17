@@ -13,7 +13,6 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
-import utils.OnlyDescriptors
 import utils.text
 import kotlin.test.*
 
@@ -1094,37 +1093,6 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
         }
     }
 
-    @Test
-    @OnlyDescriptors("In K2 the types of recursive typealias is resolved")
-    fun `a translator should not fail for a recursive typealias A = A #3565`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    name = "androidJvm"
-                    analysisPlatform = Platform.common.key // an androidJvm source set has a common platform
-                    sourceRoots = listOf("src/main/kotlin")
-                    classpath = listOf(commonStdlibPath!!)
-                }
-            }
-        }
-        // `java.io.File` is unavailable in a common platform
-        // so `typealias File = File` is recursive
-        testInline(
-            """
-            |/src/main/kotlin/test/typealias.jvmAndAndroid.kt
-            |package test
-            |
-            |import java.io.File
-            |typealias File = File
-            """.trimIndent(),
-            configuration
-        ) {
-            documentablesMergingStage = { module ->
-                val ta = module.dfs { it.name == "File" } as DTypeAlias
-                assertTrue { ta.type is UnresolvedBound }
-            }
-        }
-    }
 }
 
 private sealed class TestSuite {

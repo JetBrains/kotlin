@@ -19,7 +19,6 @@ import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.MemberPageNode
 import org.junit.jupiter.api.Nested
 import translators.findClasslike
-import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -636,7 +635,6 @@ class ExpectActualsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("context parameters")
     @OptIn(ExperimentalDokkaApi::class)
     fun `expect-actual overloads with context parameters`() {
         testInline(
@@ -699,7 +697,6 @@ class ExpectActualsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("context parameters")
     @OptIn(ExperimentalDokkaApi::class)
     fun `expect-actual properties with context parameters`() {
         testInline(
@@ -737,7 +734,6 @@ class ExpectActualsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#4245: New KDoc resolve for symbols")
     fun `kdoc on expect-actual`() {
         testInline(
             """

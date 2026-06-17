@@ -77,11 +77,6 @@ abstract class DokkaBuildProperties @Inject constructor(
         dokkaProperty("integration_test.exhaustive", String::toBoolean)
             .orElse(false)
 
-    /** Control whether integration tests should use the `org.jetbrains.dokka.experimental.tryK2` flag. */
-    val integrationTestUseK2: Provider<Boolean> =
-        dokkaProperty("integration_test.useK2", String::toBoolean)
-            .orElse(false)
-
     /** Allows running integration tests with a custom Dokka version */
     val integrationTestDokkaVersionOverride: Provider<String> =
         dokkaProperty("integration_test.dokkaVersionOverride") { it }

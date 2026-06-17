@@ -14,7 +14,6 @@ import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.GenericTypeConstructor
 import utils.AbstractModelTest
-import utils.OnlySymbols
 import utils.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,7 +30,6 @@ import kotlin.test.assertTrue
  *
  * See [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md).
  */
-@OnlySymbols("companion block")
 class CompanionBlockTest : AbstractModelTest("/src/main/kotlin/companions/Test.kt", "companions") {
 
 

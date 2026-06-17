@@ -9,8 +9,6 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
-import utils.OnlyDescriptors
-import utils.OnlySymbols
 import utils.assertIsInstance
 import utils.assertNotNull
 import kotlin.test.Test
@@ -76,7 +74,6 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
     }
 
     @Test
-    @OnlySymbols("context parameters")
     fun `type with typealias to functional type with context parameters`() {
         inlineModelTest(
             """
@@ -155,7 +152,6 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
     }
 
     @Test
-    @OnlySymbols("context parameters")
     @OptIn(ExperimentalDokkaApi::class)
     fun `functional type with context parameters and receiver`() {
         inlineModelTest(
@@ -261,7 +257,6 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
     }
 
     @Test
-    @OnlySymbols("Different resolution on K2")
     fun `#4422 top level typealias to nested typealias`() {
         inlineModelTest(
             """
@@ -317,25 +312,4 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
         }
     }
 
-    @Test
-    @OnlyDescriptors("Different resolution on K2")
-    fun `#4422 top level typealias to nested typealias K1`() {
-        inlineModelTest(
-            """
-            |open class AliasHolder {
-            |    typealias NestedAlias = String
-            |}
-            |typealias AliasToTopLevelClassInsideNested = AliasHolder.NestedAlias"""
-        ) {
-            with((this / "types" / "AliasToTopLevelClassInsideNested").cast<DTypeAlias>()) {
-                val type = type
-                type.assertIsInstance<GenericTypeConstructor>()
-                type.projections counts 0
-
-                name equals "AliasToTopLevelClassInsideNested"
-                val nestedTypeAlias = underlyingType.values.first()
-                nestedTypeAlias.driOrNull equals DRI("types", "AliasHolder.NestedAlias")
-            }
-        }
-    }
 }
