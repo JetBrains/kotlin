@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.backend.konan.lower.isEagerStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.isLazyStaticInitializer
 import org.jetbrains.kotlin.backend.konan.lower.originalConstructor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.isVirtualCall
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -64,8 +67,7 @@ internal val CudaDeviceCrossModuleInliningPhase = createSimpleNamedCompilerPhase
             val context = generationState.context
             module.files
                     .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
-                    .flatMap { it.declarations }
-                    .filterIsInstance<IrSimpleFunction>()
+                    .flatMap { it.collectKernelHostDeclarations() }
                     .filter { it.body != null }
                     .forEach { kernelFn ->
                         var iteration = 0
@@ -142,15 +144,56 @@ internal val AssignCudaKernelExportNamesPhase = createSimpleNamedCompilerPhase<N
     val exportForCppRuntime = context.symbols.exportForCppRuntime.owner
     irModule.files
             .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
-            .flatMap { file -> file.declarations.filterIsInstance<IrSimpleFunction>().map { file to it } }
-            .filter { (_, fn) -> fn.parent is IrFile && fn.visibility.isPublicAPI }
+            .flatMap { file -> file.collectKernelHostDeclarations().map { file to it } }
+            .filter { (_, fn) -> fn.visibility.isPublicAPI }
             .filter { (_, fn) -> !fn.hasAnnotation(RuntimeNames.exportForCppRuntime) }
             .forEach { (file, fn) ->
-                val exportName = buildCudaKernelExportName(file.packageFqName.asString(), fn.name.asString())
+                val qualifiedName = fn.qualifiedNameInPackage()
+                val exportName = buildCudaKernelExportName(file.packageFqName.asString(), qualifiedName)
                 fn.annotations = fn.annotations + buildSimpleAnnotation(
                         context.irBuiltIns, fn.startOffset, fn.endOffset, exportForCppRuntime, exportName,
                 )
             }
+}
+
+/**
+ * Yields every user-declared `IrSimpleFunction` whose containing host declaration is the file
+ * itself or a stateless `object` directly inside the file. Companion objects, classes other
+ * than top-level stateless objects, and synthetic/fake-override members are skipped — the
+ * latter to avoid attaching `@ExportForCppRuntime` on inherited `equals`/`hashCode`/`toString`.
+ *
+ * The "stateless" qualifier is intentionally a `isObject` check only here: enforcing
+ * triviality would duplicate `DropTrivialObjectInstancesLowering`'s rules; if a user puts
+ * state on the object the call-site dispatch receiver simply won't be elided and the launch
+ * argument layout will mismatch at runtime, but neither lowering produces malformed PTX.
+ */
+internal fun IrFile.collectKernelHostDeclarations(): Sequence<IrSimpleFunction> = sequence {
+    for (decl in declarations) {
+        when (decl) {
+            is IrSimpleFunction -> yield(decl)
+            is IrClass -> if (decl.isObject) {
+                for (member in decl.declarations) {
+                    if (member is IrSimpleFunction
+                            && !member.isFakeOverride
+                            && member.origin == IrDeclarationOrigin.DEFINED) {
+                        yield(member)
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+}
+
+/**
+ * Returns the kernel's dotted path from the package root: just the simple name for a
+ * top-level kernel, or `<ObjectName>.<funcName>` for an object-member kernel. Mirrored by
+ * `CudaLaunchKernelLowering` so both ends agree on the export name produced by
+ * [buildCudaKernelExportName].
+ */
+private fun IrSimpleFunction.qualifiedNameInPackage(): String = when (val owner = parent) {
+    is IrClass -> "${owner.name.asString()}.${name.asString()}"
+    else -> name.asString()
 }
 
 private fun collectCrossModuleCallees(fn: IrSimpleFunction): Set<IrFunction> {

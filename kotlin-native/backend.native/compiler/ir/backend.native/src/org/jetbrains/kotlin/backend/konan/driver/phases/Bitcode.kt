@@ -86,29 +86,29 @@ internal data class CompileModuleToPtxInput(
 )
 
 /**
- * Mark each public top-level function in a `@CudaCompile` file as an NVPTX kernel entry by
- * setting its LLVM calling convention to `PTX_Kernel` (value 71). The NVPTX asm printer
+ * Mark each public host-declared function in a `@CudaCompile` file as an NVPTX kernel entry
+ * by setting its LLVM calling convention to `PTX_Kernel` (value 71). The NVPTX asm printer
  * checks the calling convention to decide between `.entry` (kernel, host-launchable) and
  * `.func` (device helper, callable from other PTX); private helpers in the same file keep
  * the default convention and stay as `.func`.
+ *
+ * "Host-declared" means either a top-level function or a user-defined member of a top-level
+ * stateless `object`; matches the set built by `IrFile.collectKernelHostDeclarations`, so the
+ * names emitted by [AssignCudaKernelExportNamesPhase] and the kernel-entry marking here stay
+ * in lockstep.
  *
  * Why calling convention rather than `!nvvm.annotations = !{!{ptr @fn, !"kernel", i32 1}}`:
  * the annotation form depends on a NVPTX-specific lowering pass that `llc`'s default
  * pipeline includes but `LLVMTargetMachineEmitToFile` does not. The calling-convention
  * mark is honored by the asm printer directly, without that pre-pass.
- *
- * Member functions and lowering-generated synthetic functions are intentionally left as
- * device functions even if they happen to be public — kernels are by convention top-level
- * declarations in `@CudaCompile` files.
  */
 internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "AnnotateCudaKernels",
 ) { generationState, irModule ->
     irModule.files
             .filter { it.hasAnnotation(KonanFqNames.cudaCompile) }
-            .flatMap { it.declarations }
-            .filterIsInstance<IrSimpleFunction>()
-            .filter { it.isCudaKernel() }
+            .flatMap { it.collectKernelHostDeclarations() }
+            .filter { it.visibility.isPublicAPI }
             .forEach { kernelFn ->
                 val llvmFn = generationState.llvmDeclarations.forFunctionOrNull(kernelFn)?.asCallback()
                         ?: return@forEach
@@ -119,9 +119,6 @@ internal val AnnotateCudaKernelsPhase = createSimpleNamedCompilerPhase<NativeGen
 // LLVM's `LLVMPTXKernelCallConv` value. Encoded directly so we don't depend on the K/N
 // llvm cinterop exposing the enum constant.
 private const val NVPTX_KERNEL_CALL_CONV: Int = 71
-
-private fun IrSimpleFunction.isCudaKernel(): Boolean =
-        parent is IrFile && visibility.isPublicAPI
 
 // PTX symbols must match `[a-zA-Z_$][a-zA-Z_$0-9]*` — Kotlin's mangled names contain `:`,
 // `#`, `<`, `>`, `;`, `,`, `(`, `)`, `.` which all trip `LLVM ERROR: Symbol name with

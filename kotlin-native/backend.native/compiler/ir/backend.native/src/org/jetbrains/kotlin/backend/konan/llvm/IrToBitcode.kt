@@ -99,6 +99,16 @@ internal val IrField.storageKind: FieldStorageKind
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
 
 internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, referencedFunctions: Set<IrSimpleFunction>?) : IrVisitorVoid() {
+    // The CUDA device fragment has no GC, no virtual dispatch (subset validation rejects
+    // those constructs at the source), and no Obj-C interop, so RTTI and Obj-C class info
+    // are unused on the device side. Beyond being dead code, building them is also unsafe:
+    // `interfaceTableRecords` reads the class's `interface_table_struct` global type, and
+    // for classes that survive into the device fragment (e.g. a stateless `object` whose
+    // members are kernels) that global isn't materialized — `LLVMStructGetTypeAtIndex` then
+    // dereferences a stale pointer and the JVM SIGSEGVs. Skipping the whole pass for the
+    // device fragment side-steps both concerns.
+    private val skipAll = generationState.runtimeKind == Runtime.Kind.CudaDevice
+
     val generator = RTTIGenerator(generationState, referencedFunctions)
 
     val kotlinObjCClassInfoGenerator = KotlinObjCClassInfoGenerator(generationState)
@@ -108,6 +118,7 @@ internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, refe
     }
 
     override fun visitClass(declaration: IrClass) {
+        if (skipAll) return
         super.visitClass(declaration)
         if (declaration.requiresRtti()) {
             generator.generate(declaration)

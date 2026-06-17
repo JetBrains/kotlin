@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.Runtime
+import org.jetbrains.kotlin.backend.konan.lower.CudaDeviceObjectAccessorCleanupPhase
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -688,6 +689,11 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         // `CreateLLVMDeclarationsPhase` so the LLVM symbol picks up the short form.
         runAndMeasurePhase(AssignCudaKernelExportNamesPhase, module)
         runAndMeasurePhase(CudaDeviceCrossModuleInliningPhase, module)
+        // Drop `ObjectClassLowering`'s synthesized `$instance`/`$companion` accessors from
+        // classes in `@CudaCompile` files — they'd otherwise be emitted by codegen with
+        // host-runtime calls (`UpdateReturnRef` on the getter epilogue) that don't exist on
+        // the device runtime module.
+        runAndMeasurePhase(CudaDeviceObjectAccessorCleanupPhase, module)
     }
     module.files.forEach {
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
