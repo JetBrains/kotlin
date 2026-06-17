@@ -235,21 +235,14 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING
         )
         map.put(
-            FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS,
-            "@ProtoUnknownFields must not be present on more than one property, specified on ''{1}'' in class ''{0}''.",
-            CommonRenderers.STRING,
-            CommonRenderers.STRING,
-        )
-        map.put(
-            FirSerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE,
-            "@ProtoUnknownFields on field ''{1}'' in class ''{0}'' must have type ProtoUnknownFieldHolder, but has type ''{2}''.",
-            CommonRenderers.STRING,
+            FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_HOLDERS,
+            "ProtoUnknownFieldHolder cannot be used on more than one property in class ''{0}'': {1}",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
         )
         map.put(
             FirSerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT,
-            "@ProtoUnknownFields on non-nullable field ''{1}'' in class ''{0}'' must have a default value ProtoUnknownFieldHolder.Empty.",
+            "ProtoUnknownFieldHolder on non-nullable field ''{1}'' in class ''{0}'' must have a default value ProtoUnknownFieldHolder.Empty.",
             CommonRenderers.STRING,
             CommonRenderers.STRING,
         )

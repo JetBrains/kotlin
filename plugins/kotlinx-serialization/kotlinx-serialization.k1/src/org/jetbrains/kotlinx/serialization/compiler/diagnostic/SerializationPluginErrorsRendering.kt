@@ -249,8 +249,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             CommonRenderers.STRING,
             CommonRenderers.STRING
         )
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_ANNOTATIONS, "@ProtoUnknownFields must not be present on more than one property, specified on ''{1}'' in class ''{0}''.", CommonRenderers.STRING, CommonRenderers.STRING)
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_WRONG_TYPE, "@ProtoUnknownFields on field ''{1}'' in class ''{0}'' must have type ProtoUnknownFieldHolder, but has type ''{2}''.", CommonRenderers.STRING, CommonRenderers.STRING, CommonRenderers.STRING)
-        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT, "@ProtoUnknownFields on non-nullable field ''{1}'' in class ''{0}'' must have a default value ProtoUnknownFieldHolder.Empty.", CommonRenderers.STRING, CommonRenderers.STRING)
+        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MULTIPLE_HOLDERS, "ProtoUnknownFieldHolder cannot be used on more than one property in class ''{0}'': {1}", CommonRenderers.STRING, CommonRenderers.STRING)
+        MAP.put(SerializationErrors.PROTO_UNKNOWN_FIELDS_MISSING_DEFAULT, "ProtoUnknownFieldHolder on non-nullable field ''{1}'' in class ''{0}'' must have a default value ProtoUnknownFieldHolder.Empty.", CommonRenderers.STRING, CommonRenderers.STRING)
     }
 }
