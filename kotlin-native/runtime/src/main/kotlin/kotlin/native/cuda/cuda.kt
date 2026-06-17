@@ -17,6 +17,8 @@ public annotation class CudaCompile
 @Target(AnnotationTarget.LOCAL_VARIABLE)
 public annotation class Shared(val size: Int = 0)
 
+public const val WarpSize: Int = 32
+
 /**
  * Marker recognised by `CudaLaunchKernelLowering` on every [CudaLaunchpad.launch] overload. The
  * lowering rewrites annotated call sites into a direct invocation of the internal [launchKernel]
