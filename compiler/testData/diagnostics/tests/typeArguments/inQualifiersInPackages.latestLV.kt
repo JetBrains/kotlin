@@ -85,7 +85,7 @@ class WithInner {
 fun testJavaCallableReferences() {
     // for reference:
     part1.part2.GenericJava::S
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>part1.part2.GenericJava<Int><!>::S
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>part1.part2.GenericJava<Int><!>::S
     part1.part2.GenericJava<Int>::M
 
     // generic:

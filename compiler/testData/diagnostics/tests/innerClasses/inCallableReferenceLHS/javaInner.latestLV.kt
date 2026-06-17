@@ -23,7 +23,7 @@ fun main() {
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::foo
 
     JavaOuter.JavaInner::bar
-    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_WARNING!>JavaOuter<Int>.JavaInner<String><!>::bar
+    <!INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC_ERROR!>JavaOuter<Int>.JavaInner<String><!>::bar
     JavaOuter<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int, String><!>.JavaInner::bar
     <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>JavaOuter<!>.JavaInner<Int, String>::bar
 }
