@@ -444,7 +444,7 @@ class IrListParcelSerializer(
             +parcelWriteInt(irGet(parcel), irCall(sizeFunction).apply {
                 arguments[0] = irGet(list)
             })
-            val iterator = irTemporary(irCall(iteratorFunction).apply {
+            val iterator = irTemporary(irCall(iteratorFunction.symbol, iteratorClass.symbol.typeWith(elementType)).apply {
                 arguments[0] = irGet(list)
             })
             +irWhile().apply {
@@ -506,7 +506,11 @@ class IrListParcelSerializer(
         return irBlock {
             (val constructorSymbol = constructor, val addSymbol = function) = listSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
-            val list = irTemporary(irCall(constructorSymbol).apply {
+            val typeArguments = constructorSymbol.owner.parentAsClass.typeParameters.map { elementType }
+            val constructorCall = irCallConstructor(constructorSymbol, typeArguments).apply {
+                type = constructorSymbol.owner.parentAsClass.symbol.typeWith(typeArguments)
+            }
+            val list = irTemporary(constructorCall.apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
                     arguments[0] = irGet(sizeTemporary)
             })
