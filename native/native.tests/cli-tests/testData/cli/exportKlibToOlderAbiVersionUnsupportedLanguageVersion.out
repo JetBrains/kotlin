@@ -7,6 +7,6 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: exporting KLIBs in older ABI format is only supported for the following language versions: 2.3. The current language version is 2.2
+error: exporting KLIBs in older ABI format is only supported for the following language versions: 2.3, 2.4. The current language version is 2.2
 warning: following manually enabled features will force generation of pre-release binaries: ExportKlibToOlderAbiVersion
 COMPILATION_ERROR

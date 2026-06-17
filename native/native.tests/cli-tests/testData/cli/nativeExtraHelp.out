@@ -107,7 +107,7 @@ where advanced options include:
                              Maximum number of klibs that can be cached during compilation. Default is 64.
   -Xpartial-linkage={enable|disable}
                              Enables partial linkage mode.
-                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. The partial linkage engine is always turned on. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
+                             The option is deprecated since Kotlin 2.4.0. It will be removed in one of the future releases. The partial linkage engine is always turned on. If you want to adjust the compile-time log level for partial linkage, use -Xpartial-linkage-loglevel.
   -Xpartial-linkage-loglevel={silent|info|warning|error}
                              Define the compile-time log level for partial linkage.
   -Xskip-library-special-compatibility-checks
