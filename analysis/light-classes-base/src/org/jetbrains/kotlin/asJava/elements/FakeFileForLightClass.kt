@@ -44,7 +44,7 @@ open class FakeFileForLightClass(
     override fun getPackageName() = packageFqName.asString()
 
     private fun createFakeJavaFileStub(): PsiJavaFileStub {
-        val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /* compiled = */true)
+        val javaFileStub = PsiJavaFileStubImpl(null, null, /* compiled = */true)
         javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
         javaFileStub.psi = this
         return javaFileStub
