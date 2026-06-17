@@ -107,7 +107,13 @@ fun IrBuilderWithScope.parcelableCreatorCreateFromParcel(creator: IrExpression, 
         function.name == CREATE_FROM_PARCEL_NAME && function.overridesFunctionIn(CREATOR_FQN)
     }
 
-    return irCall(createFromParcel).apply {
+    val creatorSupertype = buildList {
+        add(creator.type)
+        addAll(creator.type.superTypes())
+    }.first { it.classFqName == CREATOR_FQN } as? IrSimpleType
+    val createdType = creatorSupertype?.arguments?.singleOrNull()?.typeOrNull ?: context.irBuiltIns.anyNType
+
+    return irCall(createFromParcel.symbol, createdType).apply {
         arguments[0] = creator
         arguments[1] = parcel
     }
