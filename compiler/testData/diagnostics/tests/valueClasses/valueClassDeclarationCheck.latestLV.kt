@@ -47,11 +47,11 @@ object B2 {
 
 @JvmInline
 final value class D0(val x: Int)
-<!VALUE_CLASS_NOT_FINAL!>open<!> <!UNSUPPORTED_FEATURE!>value<!> class D1(val x: Int)
-<!VALUE_CLASS_NOT_FINAL!>abstract<!> <!UNSUPPORTED_FEATURE!>value<!> class D2(val x: Int)
-<!VALUE_CLASS_NOT_FINAL!>sealed<!> <!UNSUPPORTED_FEATURE!>value<!> class D3(val x: Int)
+<!VALUE_CLASS_OPEN!>open<!> value class D1(val x: Int)
+abstract value class D2(<!ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)
+sealed value class D3(<!SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)
 
-<!INCOMPATIBLE_MODIFIERS, UNSUPPORTED_FEATURE!>value<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)
+<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, companionObject, data, nestedClass, objectDeclaration,
 primaryConstructor, propertyDeclaration, sealed, value, vararg */

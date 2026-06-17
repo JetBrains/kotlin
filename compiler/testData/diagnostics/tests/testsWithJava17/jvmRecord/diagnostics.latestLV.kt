@@ -4,24 +4,24 @@
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A0
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A1 {
     constructor()
 }
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A2()
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A3(name: String)
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A4(var name: String)
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A5(vararg val name: String, y: Int)
 
 @JvmRecord
@@ -38,7 +38,7 @@ class A5(vararg val name: String, y: Int)
     X("");
 }
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A10(
     val x: String,
     val y: Int,

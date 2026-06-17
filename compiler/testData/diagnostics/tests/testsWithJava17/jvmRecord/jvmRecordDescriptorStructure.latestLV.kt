@@ -4,7 +4,7 @@
 // JVM_TARGET: 17
 // ENABLE_JVM_PREVIEW
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+<!NON_DATA_VALUE_CLASS_JVM_RECORD!>@JvmRecord<!>
 class BasicRecord(val x: String)
 
 @JvmRecord
