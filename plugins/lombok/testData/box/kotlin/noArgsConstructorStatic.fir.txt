@@ -73,11 +73,35 @@ FILE: noArgsConstructorStatic.kt
         }
 
         public final companion object Companion : R|kotlin/Any| {
-            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithGenerics<T>| {
-                ^make R|/ConstructorExampleStaticWithGenerics|()
+            @R|kotlin/jvm/JvmStatic|() public final fun <T> make(): R|ConstructorExampleStaticWithGenerics<T>| {
+                ^make R|/ConstructorExampleStaticWithGenerics|<R|T|>()
             }
 
             private constructor(): R|ConstructorExampleStaticWithGenerics.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithBoundedGenerics<T : R|kotlin/Comparable<T>|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/Comparable<T>|>(param: R|T|): R|ConstructorExampleStaticWithBoundedGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val param: R|T| = R|<local>/param|
+            public get(): R|T|
+
+        public constructor<T : R|kotlin/Comparable<T>|>(): R|ConstructorExampleStaticWithBoundedGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun <T : R|kotlin/Comparable<T>|> make(): R|ConstructorExampleStaticWithBoundedGenerics<T>| {
+                ^make R|/ConstructorExampleStaticWithBoundedGenerics|<R|T|>()
+            }
+
+            private constructor(): R|ConstructorExampleStaticWithBoundedGenerics.Companion| {
                 super<R|kotlin/Any|>()
             }
 
@@ -92,7 +116,9 @@ FILE: noArgsConstructorStatic.kt
         R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExampleStatic.str|)
         lval zeroObject2: R|ConstructorExampleStaticWithCompanion| = Q|ConstructorExampleStaticWithCompanion|.R|/ConstructorExampleStaticWithCompanion.make|()
         R|/assertEquals|<R|kotlin/Any?|>(Null(null), R|<local>/zeroObject2|.R|/ConstructorExampleStaticWithCompanion.any|)
-        lval zeroObjectWithGenerics: R|ConstructorExampleStaticWithGenerics<T>| = Q|ConstructorExampleStaticWithGenerics|.R|/ConstructorExampleStaticWithGenerics.make|()
-        R|/assertEquals|<R|T?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|/ConstructorExampleStaticWithGenerics.param|)
+        lval zeroObjectWithGenerics: R|ConstructorExampleStaticWithGenerics<kotlin/String>| = Q|ConstructorExampleStaticWithGenerics|.R|/ConstructorExampleStaticWithGenerics.make|<R|kotlin/String|>()
+        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|SubstitutionOverride</ConstructorExampleStaticWithGenerics.param: R|kotlin/String|>|)
+        lval zeroObjectWithBoundedGenerics: R|ConstructorExampleStaticWithBoundedGenerics<kotlin/Int>| = Q|ConstructorExampleStaticWithBoundedGenerics|.R|/ConstructorExampleStaticWithBoundedGenerics.make|<R|kotlin/Int|>()
+        R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/zeroObjectWithBoundedGenerics|.R|SubstitutionOverride</ConstructorExampleStaticWithBoundedGenerics.param: R|kotlin/Int|>|)
         ^box String(OK)
     }

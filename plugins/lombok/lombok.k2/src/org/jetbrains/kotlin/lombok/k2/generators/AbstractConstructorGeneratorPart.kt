@@ -12,16 +12,11 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
-import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -31,15 +26,23 @@ import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.fir.types.withReplacedConeType
+import org.jetbrains.kotlin.load.java.structure.JavaClassifier
+import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
@@ -52,6 +55,7 @@ import org.jetbrains.kotlin.lombok.k2.java.JavaTypeSubstitutorByMap
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.callableIdForConstructor
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.ConstructorAnnotation>(private val session: FirSession) {
     protected val lombokService: LombokService
@@ -172,12 +176,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     isFromSource = true
 
                     val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
-                    classTypeParameterSymbols.mapTo(typeParameters) {
-                        buildTypeParameterCopy(it.fir) {
-                            this.symbol = FirTypeParameterSymbol()
-                            containingDeclarationSymbol = methodSymbol
-                        }
-                    }
+                    classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol)
 
                     val javaClass = targetClassSymbol.fir as FirJavaClass
                     val javaTypeParametersFromClass = javaClass.classJavaTypeParameterStack
@@ -209,8 +208,17 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
                     substitutor = JavaTypeSubstitutor.Empty
+
+                    val classTypeParameterSymbols = targetClassSymbol.fir.typeParameters.map { it.symbol }
+                    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+                    classTypeParameterSymbols.copyTypeParametersTo(typeParameters, methodSymbol, substitution)
+                    remapTypeParameterBounds(typeParameters, substitutorByMap(substitution, session))
+
+                    val functionTypeParameterSymbols = typeParameters.map { it.symbol }
+                    val constructedType = targetClassSymbol.classId.defaultType(functionTypeParameterSymbols)
+
                     returnTypeRef = buildResolvedTypeRef {
-                        coneType = targetClassSymbol.defaultType()
+                        coneType = constructedType
                     }
                     dispatchReceiverType = classSymbol.defaultType()
 
@@ -230,7 +238,15 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                                     name = targetClassSymbol.name
                                     resolvedSymbol = regularEmptyConstructor
                                 }
-                                coneTypeOrNull = targetClassSymbol.defaultType()
+                                functionTypeParameterSymbols.mapTo(typeArguments) { typeParameterSymbol ->
+                                    buildTypeProjectionWithVariance {
+                                        typeRef = buildResolvedTypeRef {
+                                            coneType = typeParameterSymbol.toConeType()
+                                        }
+                                        variance = Variance.INVARIANT
+                                    }
+                                }
+                                coneTypeOrNull = constructedType
                             }
                         }
                     )
@@ -280,5 +296,24 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             returnTarget?.bind(this)
         })
     }
-}
 
+    @OptIn(SymbolInternals::class)
+    private fun List<FirTypeParameterSymbol>.copyTypeParametersTo(
+        destination: MutableList<FirTypeParameter>,
+        methodSymbol: FirFunctionSymbol<*>,
+        substitution: MutableMap<FirTypeParameterSymbol, ConeKotlinType>? = null,
+    ) = mapTo(destination) { classTypeParameter ->
+        buildTypeParameterCopy(classTypeParameter.fir) {
+            this.symbol = FirTypeParameterSymbol()
+            containingDeclarationSymbol = methodSymbol
+        }.also { copy -> substitution?.put(classTypeParameter, copy.symbol.toConeType()) }
+    }
+
+    private fun remapTypeParameterBounds(typeParameters: List<FirTypeParameter>, substitutor: ConeSubstitutor) =
+        typeParameters.forEach { typeParameter ->
+            val remappedBounds = typeParameter.bounds.map { bound ->
+                bound.withReplacedConeType(substitutor.substituteOrNull(bound.coneType))
+            }
+            typeParameter.replaceBounds(remappedBounds)
+        }
+}
