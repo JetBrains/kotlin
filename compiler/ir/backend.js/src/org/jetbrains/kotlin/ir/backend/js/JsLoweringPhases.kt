@@ -259,4 +259,5 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModu
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,
     ::WhileConditionFoldingLowering,
+    ::EffectAnalysisLowering,
 )

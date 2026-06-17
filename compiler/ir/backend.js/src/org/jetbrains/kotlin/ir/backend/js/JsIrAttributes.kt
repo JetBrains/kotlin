@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPossiblyExternalDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
@@ -105,6 +106,11 @@ var IrSimpleFunction.originalCallableReferenceClass: IrClass? by irAttribute(cop
  * For anonymous classes representing callable references contains it's preceding [IrRichFunctionReference] node.
  */
 var IrClass.originalCallableReference: IrRichFunctionReference? by irAttribute(copyByDefault = false)
+
+/**
+ * For effect analysis.
+ */
+var IrFunction.effects: EffectsKindCell? by irAttribute(copyByDefault = false)
 
 /**
  * For classes with initialized static members, contains a reference to a function with static initializers (static_init).
