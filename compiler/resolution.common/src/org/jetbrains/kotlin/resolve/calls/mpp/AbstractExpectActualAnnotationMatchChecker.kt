@@ -25,6 +25,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.ExpectRefinement,
         StandardClassIds.Annotations.Suppress,
+        StandardClassIds.Annotations.Effects,
         StandardClassIds.Annotations.WasExperimental,
         StandardClassIds.Annotations.jsExport,
         StandardClassIds.Annotations.jsExportIgnore,
