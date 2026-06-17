@@ -328,8 +328,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("companion block")
-    fun `enum should have functions on page`() {
+    fun`enum should have functions on page`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
@@ -370,8 +369,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("companion block")
-    fun `enum should have entries property`() {
+    fun`enum should have entries property`() {
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {

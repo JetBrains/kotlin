@@ -282,45 +282,6 @@ public class DokkaBase : DokkaPlugin() {
         CoreExtensions.preGenerationCheck providing ::SourceSetIdUniquenessChecker
     }
 
-    //<editor-fold desc="Deprecated API left for compatibility">
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val kotlinAnalysis: ExtensionPoint<org.jetbrains.dokka.analysis.KotlinAnalysis> by extensionPoint()
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val externalDocumentablesProvider: ExtensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider> by extensionPoint()
-
-    @Suppress("DEPRECATION_ERROR")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val externalClasslikesTranslator: ExtensionPoint<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator> by extensionPoint()
-
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val descriptorToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val psiToDocumentableTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.transformers.sources.SourceToDocumentableTranslator, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val defaultKotlinAnalysis: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.analysis.KotlinAnalysis, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val defaultExternalDocumentablesProvider: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public val defaultExternalClasslikesTranslator: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTranslator, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-    //</editor-fold>
-
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement =
         PluginApiPreviewAcknowledgement

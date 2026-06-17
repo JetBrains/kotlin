@@ -15,8 +15,6 @@ import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
-import utils.OnlyDescriptors
-import utils.OnlySymbols
 import utils.text
 import java.io.File
 import kotlin.test.Test
@@ -130,7 +128,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3207 - In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver to some class`() {
         testInline(
             """
@@ -155,7 +152,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver to type parameter`() {
         testInline(
             """
@@ -180,7 +176,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver of dynamic that is prohibited by compiler`() {
         testInline(
             """
@@ -205,7 +200,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3207 In Dokka K1 [this] has an incorrect link that leads to a page of containing package")
     fun `link to this keyword with receiver of DNN-type`() {
         testInline(
             """
@@ -434,7 +428,6 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
-    @OnlySymbols
     @Test
     fun `link should lead to a function with a nullable parameter`() {
         testInline(
@@ -535,86 +528,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyDescriptors("KEEP #389: New KDoc resolution")
-    fun `fully qualified link should lead to package K1`() {
-        // for the test case, there is the only one link candidate in K1 and K2
-        testInline(
-            """
-            |/src/main/kotlin/Testing.kt
-            |package example
-            |
-            |/**
-            | * refs to the package [example.fn] and the property [example.x]
-            | */
-            |val x = 0
-            |
-            |/**
-            | * refs to the package [example.fn] and the property [example.x]
-            | */
-            |fun fn(p: Int){}
-            |
-            |/src/main/kotlin/Testing2.kt
-            |package example.fn
-            |
-            |fun fn(p: Int){}
-        """.trimMargin(),
-            configuration
-        ) {
-            documentablesMergingStage = { module ->
-                val propDocs =
-                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
-
-                val fnDocs =
-                    module.packages.first { it.name == "example" }.functions.first { it.name == "fn" }.documentation.values.first()
-
-                val expected = Description(
-                    root = CustomDocTag(
-                        children = listOf(
-                            P(
-                                children = listOf(
-                                    Text("refs to the package "),
-                                    DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example.fn",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                        ),
-                                        children = listOf(
-                                            Text("example.fn")
-                                        ),
-                                        params = mapOf("href" to "[example.fn]")
-                                    ),
-                                    Text(" and the property "),
-                                    DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                            callable = Callable(
-                                                "x",
-                                                params = emptyList(),
-                                                isProperty = true
-                                            )
-                                        ),
-                                        children = listOf(
-                                            Text("example.x")
-                                        ),
-                                        params = mapOf("href" to "[example.x]")
-                                    )
-                                )
-                            )
-                        ),
-                        name = "MARKDOWN_FILE"
-                    )
-                )
-                assertEquals(expected, propDocs.children.first())
-                assertEquals(expected, fnDocs.children.first())
-            }
-        }
-    }
-
-    @Test
-    @OnlySymbols("KEEP #389: New KDoc resolution")
     fun `fully qualified link should lead to function`() {
         // for the test case, there is the only one link candidate in K1 and K2
         testInline(
@@ -747,57 +660,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyDescriptors("KEEP #389: New KDoc resolution")
-    fun `short link should lead to package rather than function`() {
-        testInline(
-            """
-            |/src/main/kotlin/Testing.kt
-            |package example
-            |
-            |/**
-            | * refs to the package [example]
-            | */
-            |val x = 0
-            |
-            |fun example() {}
-        """.trimMargin(),
-            configuration
-        ) {
-            documentablesMergingStage = { module ->
-                val propDocs =
-                    module.packages.flatMap { it.properties }.first { it.name == "x" }.documentation.values.first()
-
-
-                val expected = Description(
-                    root = CustomDocTag(
-                        children = listOf(
-                            P(
-                                children = listOf(
-                                    Text("refs to the package "),
-                                    DocumentationLink(
-                                        dri = DRI(
-                                            packageName = "example",
-                                            classNames = null,
-                                            target = PointingToDeclaration,
-                                        ),
-                                        children = listOf(
-                                            Text("example")
-                                        ),
-                                        params = mapOf("href" to "[example]")
-                                    ),
-                                )
-                            )
-                        ),
-                        name = "MARKDOWN_FILE"
-                    )
-                )
-                assertEquals(expected, propDocs.children.first())
-            }
-        }
-    }
-
-    @Test
-    @OnlySymbols("KEEP #389: New KDoc resolution")
     fun `short link should lead to function`() {
         testInline(
             """
@@ -1015,73 +877,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlyDescriptors("#3555")
-    fun `K1 full link should lead to an extension with type params`() {
-        testInline(
-            """
-            |/src/main/kotlin/Testing.kt
-            |package example
-            |fun <T : Number> List<T>.foo() {}
-            |
-            |interface MyListWithT<T> : List<T>
-            |
-            |interface MyListWithTNumberBound<T : Number> : List<T>
-            |
-            |interface MyListWithNumber : List<Number>
-            |
-            |/**
-            | * 1 [List.foo] is resolved
-            | * 2 [MutableList.foo] is unresolved
-            | * 3 [MyListWithT.foo] is unresolved
-            | * 4 [MyListWithTNumberBound.foo] is resolved in K1
-            | * 5 [MyListWithNumber.foo] is resolved in K1
-            | */
-            |fun usage() {}
-        """.trimMargin(),
-            configuration
-        ) {
-            documentablesMergingStage = { module ->
-                val fooDRI = DRI(
-                    "example",
-                    null,
-                    callable = Callable(
-                        "foo",
-                        receiver = TypeConstructor(
-                            "kotlin.collections.List",
-                            params = listOf(
-                                TypeParam(
-                                    name = "T",
-                                    bounds = listOf(TypeConstructor("kotlin.Number", emptyList()))
-                                )
-                            )
-                        ),
-                        params = emptyList()
-                    )
-                )
-                assertEquals(
-                    listOf(
-                        "List.foo" to fooDRI,
-                        "MyListWithTNumberBound.foo" to fooDRI,
-                        "MyListWithNumber.foo" to DRI(
-                            "example",
-                            null,
-                            callable = Callable(
-                                "foo",
-                                receiver = TypeConstructor(
-                                    "kotlin.collections.List",
-                                    params = listOf((TypeConstructor("kotlin.Number", emptyList())))
-                                ),
-                                params = emptyList()
-                            )
-                        )
-                    ), module.getAllLinkDRIFrom("usage")
-                )
-            }
-        }
-    }
-
-    @Test
-    @OnlySymbols("#3555")
     fun `K2 full link should lead to an extension with type params`() {
         testInline(
             """
@@ -1139,7 +934,6 @@ class LinkTest : BaseAbstractTest() {
 
     // based on https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0385-kdoc-links-to-extensions.md
     @Test
-    @OnlySymbols("#3555")
     fun `links to extensions with type parameters should be resolved correctly`() {
         testInline(
             """
@@ -1302,7 +1096,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3586 - K1 does not resolve KDoc links to synthetic java properties")
     fun `KDoc link should lead to java synthetic properties`() {
         testInline(
             """
@@ -1447,7 +1240,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("#3356")
     fun `KDoc Link to a class with quoted name should be resolved`() {
         testInline(
             """
@@ -1664,7 +1456,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("context parameters")
     fun `should resolve KDoc links to context parameter`() {
         testInline(
             """
@@ -1698,7 +1489,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("companion block - Java static is marked as companion")
     fun `should resolve KDoc links that goes after markdown blocks`() {
         testInline(
             """
@@ -1759,7 +1549,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols
     fun `should warn about unresolved links`() {
         testInline(
             """
@@ -1884,7 +1673,6 @@ class LinkTest : BaseAbstractTest() {
     }
 
     @Test
-    @OnlySymbols("KEEP-0449 companion block and companion extensions")
     fun `KDoc links to companion object, companion block and companion extensions`() {
         testInline(
             """

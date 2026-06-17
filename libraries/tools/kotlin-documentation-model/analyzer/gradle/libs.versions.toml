@@ -21,7 +21,6 @@ ktor = "2.3.11"
 javaDiffUtils = "4.12"
 
 ## Analysis
-kotlin-compiler = "2.4.0-dev-5318"
 kotlin-compiler-k2 = "2.4.20-dev-5364"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
@@ -104,9 +103,6 @@ gradlePlugin-gradle-develocity = { module = "com.gradle:develocity-gradle-plugin
 gradlePlugin-gradle-foojayToolchains = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradlePlugin-gradle-foojayToolchains" }
 
 gradlePlugin-androidApi = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android" }
-
-#### Kotlin analysis ####
-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
 
 ###### K2 analysis ######
 kotlin-compiler-k2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler-k2" }

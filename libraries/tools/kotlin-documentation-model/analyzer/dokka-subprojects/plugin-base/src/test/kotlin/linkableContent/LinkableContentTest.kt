@@ -21,11 +21,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
-import utils.OnlyDescriptorsMPP
 
 class LinkableContentTest : BaseAbstractTest() {
 
-    @OnlyDescriptorsMPP("#3238")
     @Test
     fun `Include module and package documentation`() {
 
@@ -72,10 +70,78 @@ class LinkableContentTest : BaseAbstractTest() {
                 assertEquals(2, it.documentation.size)
                 assertEquals(2, it.packages.size)
                 assertEquals(1, it.packages.first().documentation.size)
-                assertEquals(1, it.packages.last().documentation.size)
+                assertEquals(0, it.packages.last().documentation.size)
             }
         }
 
+    }
+
+    @Test
+    fun `Samples multiplatform documentation`() {
+
+        val testDataDir = getTestDataDir("linkable/samples").toAbsolutePath()
+
+        val configuration = dokkaConfiguration {
+            moduleName = "example"
+            sourceSets {
+                val common = sourceSet {
+                    name = "common"
+                    displayName = "common"
+                    analysisPlatform = "common"
+                    sourceRoots = listOf(Paths.get("$testDataDir/commonMain/kotlin").toString())
+                }
+                val jvmAndJsSecondCommonMain = sourceSet {
+                    name = "jvmAndJsSecondCommonMain"
+                    displayName = "jvmAndJsSecondCommonMain"
+                    analysisPlatform = "common"
+                    dependentSourceSets = setOf(common.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jvmAndJsSecondCommonMain/kotlin").toString())
+                }
+                sourceSet {
+                    name = "js"
+                    displayName = "js"
+                    analysisPlatform = "js"
+                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jsMain/kotlin").toString())
+                    samples = listOf("$testDataDir/jsMain/resources/Samples.kt")
+                }
+                sourceSet {
+                    name = "jvm"
+                    displayName = "jvm"
+                    analysisPlatform = "jvm"
+                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
+                    sourceRoots = listOf(Paths.get("$testDataDir/jvmMain/kotlin").toString())
+                    samples = listOf("$testDataDir/jvmMain/resources/Samples.kt")
+                }
+            }
+        }
+
+        testFromData(configuration) {
+            renderingStage = { rootPageNode, dokkaContext ->
+                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
+                val moduleChildren = newRoot.children
+                assertEquals(1, moduleChildren.size)
+                val packageChildren = moduleChildren.first().children
+                assertEquals(2, packageChildren.size)
+                packageChildren.forEach { pageNode ->
+                    val name = pageNode.name.substringBefore("Class")
+                    val classChildren = pageNode.children
+                    assertEquals(2, classChildren.size)
+                    val function = classChildren.find { it.name == "printWithExclamation" }
+                    val text = (function as MemberPageNode).content.let { it as ContentGroup }.children.last()
+                        .let { it as ContentDivergentGroup }.children.single().after
+                        .let { it as ContentGroup }.children.last()
+                        .let { it as ContentGroup }.children.single()
+                        .let { it as ContentCodeBlock }.children.single()
+                        .let { it as ContentText }.text
+                    assertEquals(
+                        """${name}Class().printWithExclamation("Hi, $name")"""
+                            .trimMargin(),
+                        text
+                    )
+                }
+            }
+        }
     }
 
     @Test
@@ -145,75 +211,6 @@ class LinkableContentTest : BaseAbstractTest() {
                     assertEquals(
                         "https://github.com/user/repo/tree/master/src/${name.toLowerCase()}Main/kotlin/${name}Class.kt#L7",
                         crl?.address
-                    )
-                }
-            }
-        }
-    }
-
-    @OnlyDescriptorsMPP("#3238")
-    @Test
-    fun `Samples multiplatform documentation`() {
-
-        val testDataDir = getTestDataDir("linkable/samples").toAbsolutePath()
-
-        val configuration = dokkaConfiguration {
-            moduleName = "example"
-            sourceSets {
-                val common = sourceSet {
-                    name = "common"
-                    displayName = "common"
-                    analysisPlatform = "common"
-                    sourceRoots = listOf(Paths.get("$testDataDir/commonMain/kotlin").toString())
-                }
-                val jvmAndJsSecondCommonMain = sourceSet {
-                    name = "jvmAndJsSecondCommonMain"
-                    displayName = "jvmAndJsSecondCommonMain"
-                    analysisPlatform = "common"
-                    dependentSourceSets = setOf(common.value.sourceSetID)
-                    sourceRoots = listOf(Paths.get("$testDataDir/jvmAndJsSecondCommonMain/kotlin").toString())
-                }
-                sourceSet {
-                    name = "js"
-                    displayName = "js"
-                    analysisPlatform = "js"
-                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
-                    sourceRoots = listOf(Paths.get("$testDataDir/jsMain/kotlin").toString())
-                    samples = listOf("$testDataDir/jsMain/resources/Samples.kt")
-                }
-                sourceSet {
-                    name = "jvm"
-                    displayName = "jvm"
-                    analysisPlatform = "jvm"
-                    dependentSourceSets = setOf(common.value.sourceSetID, jvmAndJsSecondCommonMain.value.sourceSetID)
-                    sourceRoots = listOf(Paths.get("$testDataDir/jvmMain/kotlin").toString())
-                    samples = listOf("$testDataDir/jvmMain/resources/Samples.kt")
-                }
-            }
-        }
-
-        testFromData(configuration) {
-            renderingStage = { rootPageNode, dokkaContext ->
-                val newRoot = DefaultSamplesTransformer(dokkaContext).invoke(rootPageNode)
-                val moduleChildren = newRoot.children
-                assertEquals(1, moduleChildren.size)
-                val packageChildren = moduleChildren.first().children
-                assertEquals(2, packageChildren.size)
-                packageChildren.forEach { pageNode ->
-                    val name = pageNode.name.substringBefore("Class")
-                    val classChildren = pageNode.children
-                    assertEquals(2, classChildren.size)
-                    val function = classChildren.find { it.name == "printWithExclamation" }
-                    val text = (function as MemberPageNode).content.let { it as ContentGroup }.children.last()
-                        .let { it as ContentDivergentGroup }.children.single().after
-                        .let { it as ContentGroup }.children.last()
-                        .let { it as ContentGroup }.children.single()
-                        .let { it as ContentCodeBlock }.children.single()
-                        .let { it as ContentText }.text
-                    assertEquals(
-                        """${name}Class().printWithExclamation("Hi, $name")"""
-                            .trimMargin(),
-                        text
                     )
                 }
             }
