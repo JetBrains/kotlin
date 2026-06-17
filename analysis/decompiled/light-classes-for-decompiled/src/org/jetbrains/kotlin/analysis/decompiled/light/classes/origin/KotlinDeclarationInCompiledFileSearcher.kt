@@ -7,19 +7,17 @@ package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.IntellijInternalApi
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.constant.StringValue
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNamesBySetMethodName
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -162,8 +160,7 @@ class KotlinDeclarationInCompiledFileSearcher {
 
                     // To simplify the logic around the mangling name creation (especially for JvmField case),
                     // it is enough to just check the mangling fact
-                    @OptIn(IntellijInternalApi::class)
-                    return memberName == name || LightClassUtil.isMangled(memberName, name)
+                    return memberName == name || isMangled(memberName, name)
                 })
             }
             else -> declarations.singleOrNull { it.name == memberName }
@@ -210,12 +207,11 @@ class KotlinDeclarationInCompiledFileSearcher {
      * `<enclosingFun>$<localFun>` synthetics for local functions), which must not be matched
      * against an unrelated source declaration with the same prefix.
      */
-    @OptIn(IntellijInternalApi::class)
     private fun matchesAny(name: String?, names: SmartList<String>, declaration: KtDeclaration): Boolean {
         if (name == null) return false
         if (name in names) return true
         if (!declaration.hasVisibilityMangledJvmName()) return false
-        return names.any { LightClassUtil.isMangled(it, name) }
+        return names.any { isMangled(it, name) }
     }
 
     private fun KtDeclaration.hasVisibilityMangledJvmName(): Boolean {
@@ -459,6 +455,14 @@ class KotlinDeclarationInCompiledFileSearcher {
             return t1 == t2
         }
         return false
+    }
+
+    private fun isMangled(wrapperName: String, prefix: String): Boolean {
+        //see KT-54803 for other mangling strategies
+        // A memory optimization for `wrapperName.startsWith("$prefix$")`, see KT-63486
+        return wrapperName.length > prefix.length
+                && wrapperName[prefix.length] == '$'
+                && wrapperName.startsWith(prefix)
     }
 
     companion object {

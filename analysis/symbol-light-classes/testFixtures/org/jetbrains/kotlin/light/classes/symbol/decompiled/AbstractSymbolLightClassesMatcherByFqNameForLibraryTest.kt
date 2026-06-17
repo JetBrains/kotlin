@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.light.classes.symbol.KaElementJavaView
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
 
 abstract class AbstractSymbolLightClassesMatcherByFqNameForLibraryTest : AbstractSymbolLightClassesMatcherForLibraryTest() {
     override fun collectDeclarationsToMatch(file: KtClsFile): MutableMap<KtDeclaration, Boolean> {
         val lightClass = findTargetLightClass(file) ?: return mutableMapOf()
-        val root = lightClass.unwrapped as? KtDeclarationContainer ?: return mutableMapOf()
+        val root = analyze(file) {
+            (lightClass as? KaElementJavaView)?.kotlinOrigin as? KtDeclarationContainer ?: return mutableMapOf()
+        }
         return collectDeclarationsRecursively(root)
     }
 
@@ -30,6 +33,8 @@ abstract class AbstractSymbolLightClassesMatcherByFqNameForLibraryTest : Abstrac
         // but `ktFiles` may contain several `KtClsFile`s (one per top-level class in the source).
         // Restrict matching to the file that actually contains the FQ-name'd class so that other
         // sibling `.class` files in the same source do not get spurious mismatch reports.
-        return lightClass.takeIf { it.unwrapped?.containingFile == file }
+        return analyze(file) {
+            lightClass.takeIf { (it as? KaElementJavaView)?.kotlinOrigin?.containingFile == file }
+        }
     }
 }
