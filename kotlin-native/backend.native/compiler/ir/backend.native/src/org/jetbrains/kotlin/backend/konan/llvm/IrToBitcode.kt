@@ -2448,6 +2448,21 @@ internal class CodeGeneratorVisitor(
             // function has no body, and a side-effecting trap would block DCE of the dead branch).
             function.symbol == context.symbols.unreachable ->
                 functionGenerationContext.unreachable()!!
+            // `kotlin.native.cuda.cuda_atomicAdd_*` stubs are declaration-only. Replace each
+            // call with the appropriate `atomicrmw` instruction inline — modern LLVM dropped
+            // the named `llvm.nvvm.atomic.load.add.*` intrinsics that `@GCUnsafeCall` would
+            // otherwise resolve, so the stubs would link as unresolved externs in PTX. The
+            // Monotonic ordering matches CUDA's `atomicAdd` semantics (atomic on location,
+            // no cross-thread ordering); on `sm < 7.0` NVPTX emits the same `atom.add` for
+            // any ordering, on `sm 7.0+` Monotonic avoids extra `membar` fences.
+            function.symbol == context.symbols.cudaAtomicAddI32 ->
+                emitCudaAtomicAdd(args, LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpAdd)
+            function.symbol == context.symbols.cudaAtomicAddI64 ->
+                emitCudaAtomicAdd(args, LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpAdd)
+            function.symbol == context.symbols.cudaAtomicAddF32 ->
+                emitCudaAtomicAdd(args, LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpFAdd)
+            function.symbol == context.symbols.cudaAtomicAddF64 ->
+                emitCudaAtomicAdd(args, LLVMAtomicRMWBinOp.LLVMAtomicRMWBinOpFAdd)
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args, resultSlot)
             function.isBuiltInOperator -> evaluateOperatorCall(callee, args)
             function.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
@@ -2455,6 +2470,15 @@ internal class CodeGeneratorVisitor(
             function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> evaluateFileStandaloneThreadLocalInitializerCall(function)
             else -> evaluateSimpleFunctionCall(function, args, resultLifetime, callee.superQualifierSymbol?.owner, resultSlot)
         }
+    }
+
+    private fun emitCudaAtomicAdd(args: List<LLVMValueRef>, op: LLVMAtomicRMWBinOp): LLVMValueRef {
+        require(args.size == 2) { "cuda_atomicAdd expects (address, value), got ${args.size} args" }
+        return LLVMBuildAtomicRMW(
+                functionGenerationContext.builder, op, args[0], args[1],
+                LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic,
+                singleThread = 0,
+        )!!
     }
 
     private fun evaluateFileGlobalInitializerCall(fileInitializer: IrSimpleFunction) = with(functionGenerationContext) {

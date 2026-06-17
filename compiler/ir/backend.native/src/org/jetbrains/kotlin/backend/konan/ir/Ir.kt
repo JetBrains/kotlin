@@ -179,6 +179,15 @@ private object CallableIds {
     private val String.cudaCallableId get() = CallableId(KonanFqNames.cudaPackageName, Name.identifier(this))
     val launchKernel = "launchKernel".cudaCallableId
 
+    // CUDA device-side atomic stubs. `IrToBitcode.evaluateFunctionCall` matches calls to
+    // these by symbol identity and emits an `atomicrmw` instruction in place of a real
+    // call — the named LLVM intrinsics they would otherwise lower to were removed in
+    // LLVM ≥ 18.
+    val cudaAtomicAddI32 = "cuda_atomicAdd_i32".cudaCallableId
+    val cudaAtomicAddI64 = "cuda_atomicAdd_i64".cudaCallableId
+    val cudaAtomicAddF32 = "cuda_atomicAdd_f32".cudaCallableId
+    val cudaAtomicAddF64 = "cuda_atomicAdd_f64".cudaCallableId
+
     // Interop functions
     private val String.interopCallableId get() = CallableId(InteropFqNames.packageName, Name.identifier(this))
     val nativePointedGetRawPointer = InteropFqNames.nativePointedGetRawPointerFunName.interopCallableId
@@ -488,6 +497,11 @@ class BackendNativeSymbols(
     val unreachable by CallableIds.unreachable.functionSymbol()
 
     val launchKernel by CallableIds.launchKernel.functionSymbol()
+
+    val cudaAtomicAddI32 by CallableIds.cudaAtomicAddI32.functionSymbol()
+    val cudaAtomicAddI64 by CallableIds.cudaAtomicAddI64.functionSymbol()
+    val cudaAtomicAddF32 by CallableIds.cudaAtomicAddF32.functionSymbol()
+    val cudaAtomicAddF64 by CallableIds.cudaAtomicAddF64.functionSymbol()
 
     val ieee754Equals by CallableIds.ieee754Equals.functionSymbols()
 

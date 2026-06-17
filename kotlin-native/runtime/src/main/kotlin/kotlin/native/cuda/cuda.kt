@@ -103,6 +103,73 @@ internal external fun nvvm_barrier_cta_sync_aligned_all(barrier: Int)
 public inline fun __syncthreads(): Unit = nvvm_barrier_cta_sync_aligned_all(0)
 
 // =========================================================================
+// Device-side atomics
+// =========================================================================
+// Modern LLVM (≥ 18) removed the named `llvm.nvvm.atomic.load.add.*` intrinsics in favor
+// of the generic `atomicrmw` IR instruction. `@GCUnsafeCall` can only synthesize a call to
+// a named function — not an `atomicrmw` — so each typed atomic is declared here as an
+// extern stub, and `IrToBitcode.evaluateFunctionCall` recognises calls to those stubs by
+// symbol identity (mirroring how `kotlin.native.internal.unreachable` is intercepted) and
+// emits the matching `atomicrmw add` / `atomicrmw fadd` instead of generating a real call.
+// No entry in the global `IntrinsicType` enum, no compiler-side dispatch on non-CUDA paths.
+// The stub function declaration is never referenced after that intercept, so `globaldce`
+// in the device-IR cleanup drops it from the emitted PTX.
+
+@PublishedApi
+@GCUnsafeCall("cuda_atomicAdd_i32")
+internal external fun cuda_atomicAdd_i32(address: CPointer<IntVar>, value: Int): Int
+
+@PublishedApi
+@GCUnsafeCall("cuda_atomicAdd_i64")
+internal external fun cuda_atomicAdd_i64(address: CPointer<LongVar>, value: Long): Long
+
+@PublishedApi
+@GCUnsafeCall("cuda_atomicAdd_f32")
+internal external fun cuda_atomicAdd_f32(address: CPointer<FloatVar>, value: Float): Float
+
+@PublishedApi
+@GCUnsafeCall("cuda_atomicAdd_f64")
+internal external fun cuda_atomicAdd_f64(address: CPointer<DoubleVar>, value: Double): Double
+
+/**
+ * Atomically reads the [Int] at [address], adds [value] to it, writes the sum back, and
+ * returns the original (pre-add) value. Lowers to NVPTX `atom.add.s32` on global pointers
+ * (or `atom.shared.add.s32` on shared-memory pointers, etc., per the pointer's address
+ * space).
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun atomicAdd(address: CPointer<IntVar>, value: Int): Int =
+        cuda_atomicAdd_i32(address, value)
+
+/**
+ * Atomically reads the [Long] at [address], adds [value] to it, writes the sum back, and
+ * returns the original (pre-add) value. Lowers to NVPTX `atom.add.s64`.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun atomicAdd(address: CPointer<LongVar>, value: Long): Long =
+        cuda_atomicAdd_i64(address, value)
+
+/**
+ * Atomically reads the [Float] at [address], adds [value] to it, writes the sum back, and
+ * returns the original (pre-add) value. Lowers to NVPTX `atom.add.f32`. Supported on all
+ * compute capabilities targeted by this runtime (sm_50+).
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun atomicAdd(address: CPointer<FloatVar>, value: Float): Float =
+        cuda_atomicAdd_f32(address, value)
+
+/**
+ * Atomically reads the [Double] at [address], adds [value] to it, writes the sum back, and
+ * returns the original (pre-add) value. Lowers to NVPTX `atom.add.f64`. **Requires compute
+ * capability `sm_60` (Pascal) or higher** — older targets reject `atom.add.f64` at `ptxas`
+ * time. The runtime's default `sm_50` target won't include this lowering; raise the target
+ * before using it.
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun atomicAdd(address: CPointer<DoubleVar>, value: Double): Double =
+        cuda_atomicAdd_f64(address, value)
+
+// =========================================================================
 // CUDA Driver API host-side launcher
 // =========================================================================
 // Everything below runs on the host. The CUDA Driver API is reached via direct
