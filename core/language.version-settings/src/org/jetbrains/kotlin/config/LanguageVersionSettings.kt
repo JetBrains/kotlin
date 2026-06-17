@@ -636,7 +636,7 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(sinceVersion = null, testOnly = true, issue = "KT-8575"),
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null, testOnly = true, issue = "KT-56583"),
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, enabledInProgressiveMode = true, "KT-51221"),
-    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303"),
+    IntrinsicConstEvaluation(sinceVersion = null, issue = "KT-49303", enabledInLatestLVTests = true),
 
     // K1 support only. We keep it, as it's currently unclear what to do with this feature in K2
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
