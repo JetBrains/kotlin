@@ -552,15 +552,18 @@ class IrMapParcelSerializer(
             +parcelWriteInt(irGet(parcel), irCall(sizeFunction).apply {
                 dispatchReceiver = irGet(list)
             })
-            val iterator = irTemporary(irCall(iteratorFunction).apply {
-                dispatchReceiver = irCall(entriesFunction).apply {
+            val entryType = elementClass.symbol.typeWith(keyType, valueType)
+            val entriesType = entrySetClass.symbol.typeWith(entryType)
+            val iteratorType = iteratorClass.symbol.typeWith(entryType)
+            val iterator = irTemporary(irCall(iteratorFunction.symbol, iteratorType).apply {
+                dispatchReceiver = irCall(entriesFunction, entriesType).apply {
                     dispatchReceiver = irGet(list)
                 }
             })
             +irWhile().apply {
                 condition = irCall(iteratorHasNext).apply { dispatchReceiver = irGet(iterator) }
                 body = irBlock {
-                    val element = irTemporary(irCall(iteratorNext).apply {
+                    val element = irTemporary(irCall(iteratorNext.symbol, entryType).apply {
                         dispatchReceiver = irGet(iterator)
                     })
                     +writeParcelWith(keySerializer, parcel, flags, irCall(elementKey, keyType).apply {
@@ -620,12 +623,19 @@ class IrMapParcelSerializer(
         return irBlock {
             (val constructorSymbol = constructor, val putSymbol = function) = mapSymbols(androidSymbols)
             val sizeTemporary = irTemporary(parcelReadInt(irGet(parcel)))
-            val map = irTemporary(irCall(constructorSymbol).apply {
+            val constructorCall = if (constructorSymbol.owner.parentAsClass.typeParameters.isEmpty()) {
+                irCall(constructorSymbol)
+            } else {
+                irCallConstructor(constructorSymbol, listOf(keyType, valueType)).apply {
+                    type = constructorSymbol.owner.parentAsClass.symbol.typeWith(keyType, valueType)
+                }
+            }
+            val map = irTemporary(constructorCall.apply {
                 if (constructorSymbol.owner.parameters.isNotEmpty())
                     arguments[0] = irGet(sizeTemporary)
             })
             forUntil(irGet(sizeTemporary)) {
-                +irCall(putSymbol).apply {
+                +irCall(putSymbol, context.irBuiltIns.anyNType).apply {
                     arguments[0] = irGet(map)
                     arguments[1] = readParcelWith(keySerializer, parcel)
                     arguments[2] = readParcelWith(valueSerializer, parcel)
