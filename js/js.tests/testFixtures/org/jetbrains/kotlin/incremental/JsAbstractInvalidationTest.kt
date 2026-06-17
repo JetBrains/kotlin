@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.junit.ComparisonFailure
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 abstract class JsAbstractInvalidationTest(
@@ -242,7 +242,7 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 val gotDTS = dtsFile.readText()
-                JUnit4Assertions.assertEquals(expectedDTS.content, gotDTS) {
+                JUnit4Assertions.assertEqualsToFile(expectedDTS.file, gotDTS, { it }) {
                     "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }

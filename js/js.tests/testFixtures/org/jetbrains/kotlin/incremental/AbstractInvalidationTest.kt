@@ -251,7 +251,7 @@ abstract class AbstractInvalidationTest(
             val expectedDTS: ExpectedFile?,
         )
 
-        protected inner class ExpectedFile(val name: String, val content: String)
+        protected inner class ExpectedFile(val name: String, val file: File)
 
         protected fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
             val projStepId = projStep.id
@@ -296,7 +296,7 @@ abstract class AbstractInvalidationTest(
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
                 moduleStep.expectedFileStats,
-                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it.readText()) }
+                dtsFile?.let { ExpectedFile(moduleStep.expectedDTS.single(), it) }
             )
         }
 
