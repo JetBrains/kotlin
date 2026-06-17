@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.Runtime
-import org.jetbrains.kotlin.backend.konan.lower.CudaDeviceObjectAccessorCleanupPhase
+import org.jetbrains.kotlin.backend.konan.lower.CudaDeviceFragmentCleanupPhase
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -689,11 +689,12 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
         // `CreateLLVMDeclarationsPhase` so the LLVM symbol picks up the short form.
         runAndMeasurePhase(AssignCudaKernelExportNamesPhase, module)
         runAndMeasurePhase(CudaDeviceCrossModuleInliningPhase, module)
-        // Drop `ObjectClassLowering`'s synthesized `$instance`/`$companion` accessors from
-        // classes in `@CudaCompile` files — they'd otherwise be emitted by codegen with
-        // host-runtime calls (`UpdateReturnRef` on the getter epilogue) that don't exist on
-        // the device runtime module.
-        runAndMeasurePhase(CudaDeviceObjectAccessorCleanupPhase, module)
+        // Prune two classes of `IrProperty` from `@CudaCompile` files: the synthesized
+        // `$instance`/`$companion` accessors added by `ObjectClassLowering` (whose getter
+        // epilogue uses `UpdateReturnRef`, a host-only runtime symbol that would fail device
+        // codegen), and `const val` properties (already const-folded at every use site, but
+        // their externally-linked getter survives `globaldce` and clutters the PTX).
+        runAndMeasurePhase(CudaDeviceFragmentCleanupPhase, module)
     }
     module.files.forEach {
         // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
