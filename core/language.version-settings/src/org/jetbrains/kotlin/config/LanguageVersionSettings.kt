@@ -554,7 +554,7 @@ enum class LanguageFeature(
 
     ExpectActualClasses(sinceVersion = null, "KT-62885"),
 
-    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, "KT-11914"), // KT-11914 Deprecation phase 3
+    DataClassCopyRespectsConstructorVisibility(sinceVersion = null, issue = "KT-11914", enabledInLatestLVTests = true), // KT-11914 Deprecation phase 3
 
     // Disabled for an indefinite time as we've moved it forward a version twice already, and
     // it's probably better to go the other way around, and only enable it once we're ready.
