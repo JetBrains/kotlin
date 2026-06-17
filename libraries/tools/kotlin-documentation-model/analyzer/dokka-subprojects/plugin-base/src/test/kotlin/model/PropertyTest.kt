@@ -6,7 +6,6 @@ package model
 
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
-import utils.OnlySymbols
 import utils.assertNotNull
 import utils.name
 import utils.text
@@ -394,7 +393,6 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
     }
 
     @Test
-    @OnlySymbols("context parameters")
     fun `property with context parameters should have them, correct DRI, and documentation`() {
         inlineModelTest(
             """

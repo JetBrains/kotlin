@@ -4,8 +4,6 @@
 
 package org.jetbrains.dokka.analysis.test.documentable
 
-import org.jetbrains.dokka.analysis.test.OnlyDescriptors
-import org.jetbrains.dokka.analysis.test.OnlySymbols
 import org.jetbrains.dokka.analysis.test.api.kotlinJvmTestProject
 import org.jetbrains.dokka.analysis.test.api.parse
 import org.jetbrains.dokka.analysis.test.api.useServices
@@ -13,15 +11,30 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.ObviousMember
 import org.junit.jupiter.api.Nested
+import java.lang.System.clearProperty
+import java.lang.System.setProperty
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class ObviousFunctionsTest {
 
-    @OnlyDescriptors("#3354")
     @Test
     fun `kotlin_Any should not have obvious members`() {
+        fun withProperty(propertyName: String, value: String, block: () -> Unit) {
+            setProperty(propertyName, value)
+            try {
+                block()
+            } finally {
+                clearProperty(propertyName)
+            }
+        }
+        // copy-paste from the test source set of plugin-base
+        fun withAllowKotlinPackage(block: () -> Unit): Unit =
+            withProperty("org.jetbrains.dokka.analysis.allowKotlinPackage", "true", block)
+
+
+
         val project = kotlinJvmTestProject {
             ktFile("kotlin/Any.kt") {
                 +"""
@@ -35,18 +48,20 @@ class ObviousFunctionsTest {
             }
         }
 
-        val module = project.parse()
+        withAllowKotlinPackage {
+            val module = project.parse()
 
-        val pkg = module.packages.single()
-        val any = pkg.classlikes.single()
+            val pkg = module.packages.single()
+            val any = pkg.classlikes.single()
 
-        assertEquals("Any", any.name)
+            assertEquals("Any", any.name)
 
-        assertObviousFunctions(
-            expectedObviousFunctions = emptySet(),
-            expectedNonObviousFunctions = setOf("equals", "hashCode", "toString"),
-            actualFunctions = any.functions
-        )
+            assertObviousFunctions(
+                expectedObviousFunctions = emptySet(),
+                expectedNonObviousFunctions = setOf("equals", "hashCode", "toString"),
+                actualFunctions = any.functions
+            )
+        }
     }
 
     @Test
@@ -73,47 +88,8 @@ class ObviousFunctionsTest {
         }
     }
 
-    // when running with K2 - kotlin package is skipped
-    @OnlyDescriptors("#3354")
-    @Test
-    fun `kotlin_Enum should not have obvious members`() {
-        val project = kotlinJvmTestProject {
-            ktFile("kotlin/Any.kt") {
-                +"""
-                    package kotlin
-                    public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<E> {
-                        public override final fun compareTo(other: E): Int
-                        public override final fun equals(other: Any?): Boolean
-                        public override final fun hashCode(): Int
-                        public override fun toString(): String
-                    }
-                """
-            }
-        }
-
-        val module = project.parse()
-
-        val pkg = module.packages.single()
-        val any = pkg.classlikes.single()
-
-        assertEquals("Enum", any.name)
-
-        assertObviousFunctions(
-            expectedObviousFunctions = emptySet(),
-            expectedNonObviousFunctions = setOf("compareTo", "equals", "hashCode", "toString"),
-            actualFunctions = any.functions
-        )
-    }
-
     @Nested
     inner class KotlinEnumHaveNoObviousMembersViaExternalDocumentableTest {
-        @OnlyDescriptors("In K2 there is finalize method with the Deprecated annotation.  In K1 it is unavailable")
-        @Test
-        fun `K1 - kotlin_Enum should not have obvious members via external documentable provider`() {
-            `kotlin_Enum should not have obvious members via external documentable provider`(false)
-        }
-
-        @OnlySymbols("In K2 there is finalize method with the Deprecated annotation.  In K1 it is unavailable")
         @Test
         fun `K2 - kotlin_Enum should not have obvious members via external documentable provider`() {
             `kotlin_Enum should not have obvious members via external documentable provider`(true)

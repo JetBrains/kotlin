@@ -6,7 +6,6 @@ package translators
 
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
-import utils.OnlySymbols
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -71,7 +70,6 @@ class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
 
 
     @Test
-    @OnlySymbols("Wasm Wasi")
     fun `should resolve a default import of wasmWasi`() {
         val configuration = dokkaConfiguration {
             sourceSets {
@@ -103,7 +101,6 @@ class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
     }
 
     @Test
-    @OnlySymbols("Wasm Wasi")
     fun `should not resolve a default import of wasmWasi`() {
         val configuration = dokkaConfiguration {
             sourceSets {

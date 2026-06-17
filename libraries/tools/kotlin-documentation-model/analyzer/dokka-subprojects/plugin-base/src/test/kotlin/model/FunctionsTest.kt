@@ -5,13 +5,14 @@
 package model
 
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.DRIExtraContainer
+import org.jetbrains.dokka.links.EnumEntryDRIExtra
+import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
 import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.comments
-import utils.OnlyDescriptors
-import utils.OnlySymbols
 import utils.name
 import utils.text
 import kotlin.test.Test
@@ -223,7 +224,6 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         }
     }
 
-    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun functionWithAnnotatedParam() {
         inlineModelTest(
@@ -244,14 +244,26 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                             (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
                                 EnumValue(
                                     "AnnotationTarget.VALUE_PARAMETER",
-                                    DRI("kotlin.annotation", "AnnotationTarget.VALUE_PARAMETER")
+                                    DRI(
+                                        "kotlin.annotation",
+                                        "AnnotationTarget.VALUE_PARAMETER",
+                                        null,
+                                        PointingToDeclaration,
+                                        DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                                    )
                                 )
                             )
                         }
                         with(this["Retention"].assertNotNull("Retention")) {
                             (params["value"].assertNotNull("value") as EnumValue) equals EnumValue(
                                 "AnnotationRetention.SOURCE",
-                                DRI("kotlin.annotation", "AnnotationRetention.SOURCE")
+                                DRI(
+                                    "kotlin.annotation",
+                                    "AnnotationRetention.SOURCE",
+                                    null,
+                                    PointingToDeclaration,
+                                    DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                                )
                             )
                         }
                         this["MustBeDocumented"].assertNotNull("MustBeDocumented").params.entries counts 0
@@ -285,7 +297,6 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
         }
     }
 
-    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun annotatedFunctionWithAnnotationParameters() {
         inlineModelTest(
@@ -315,14 +326,26 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
                             (params["allowedTargets"].assertNotNull("allowedTargets") as ArrayValue).value equals listOf(
                                 EnumValue(
                                     "AnnotationTarget.VALUE_PARAMETER",
-                                    DRI("kotlin.annotation", "AnnotationTarget.VALUE_PARAMETER")
+                                    DRI(
+                                        "kotlin.annotation",
+                                        "AnnotationTarget.VALUE_PARAMETER",
+                                        null,
+                                        PointingToDeclaration,
+                                        DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                                    )
                                 )
                             )
                         }
                         with(this["Retention"].assertNotNull("Retention")) {
                             (params["value"].assertNotNull("value") as EnumValue) equals EnumValue(
                                 "AnnotationRetention.SOURCE",
-                                DRI("kotlin.annotation", "AnnotationRetention.SOURCE")
+                                DRI(
+                                    "kotlin.annotation",
+                                    "AnnotationRetention.SOURCE",
+                                    null,
+                                    PointingToDeclaration,
+                                    DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                                )
                             )
                         }
                         this["MustBeDocumented"].assertNotNull("MustBeDocumented").params.entries counts 0
@@ -428,7 +451,6 @@ class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "fun
     }
 
     @Test
-    @OnlySymbols("context parameters")
     fun `function with context parameters should have them, correct DRI, and documentation`() {
             inlineModelTest(
                 """

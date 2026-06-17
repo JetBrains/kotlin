@@ -6,6 +6,9 @@ package model
 
 import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.DRIExtraContainer
+import org.jetbrains.dokka.links.EnumEntryDRIExtra
+import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.*
@@ -428,7 +431,6 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
         }
     }
 
-    @OnlyDescriptors("Bug in descriptors, DRI of entry should have [EnumEntryDRIExtra]")
     @Test
     fun javaAnnotationClass() {
         inlineModelTest(
@@ -447,7 +449,13 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                         dri.classNames equals "Retention"
                         params["value"].assertNotNull("value") equals EnumValue(
                             "RetentionPolicy.SOURCE",
-                            DRI("java.lang.annotation", "RetentionPolicy.SOURCE")
+                            DRI(
+                                "java.lang.annotation",
+                                "RetentionPolicy.SOURCE",
+                                null,
+                                PointingToDeclaration,
+                                DRIExtraContainer().also { it[EnumEntryDRIExtra] = EnumEntryDRIExtra }.encode()
+                            )
                         )
                     }
                 }
