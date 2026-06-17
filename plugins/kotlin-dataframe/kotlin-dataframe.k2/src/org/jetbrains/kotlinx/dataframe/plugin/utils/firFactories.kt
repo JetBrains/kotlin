@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.FirImplementationDetail
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -104,6 +106,9 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         name = propertyName
         this.symbol = firPropertySymbol
         isVar = false
+    }.also {
+        @OptIn(FirImplementationDetail::class)
+        it.hasBackingFieldAttr = false
     }
 }
 
