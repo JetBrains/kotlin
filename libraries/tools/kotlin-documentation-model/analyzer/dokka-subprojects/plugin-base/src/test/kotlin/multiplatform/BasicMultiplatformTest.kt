@@ -8,7 +8,6 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
-import utils.OnlySymbols
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -62,7 +61,6 @@ class BasicMultiplatformTest : BaseAbstractTest() {
     }
 
 
-    @OnlySymbols("#3377 - types from transitive source sets are unresolved in K1")
     @Test
     fun `should resolve types from transitive source sets`() {
         val configuration = dokkaConfiguration {
