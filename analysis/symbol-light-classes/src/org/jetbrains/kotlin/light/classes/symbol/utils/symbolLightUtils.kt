@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.light.classes.symbol.utils
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightClass
+import com.intellij.psi.impl.light.LightField
+import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.TypeConversionUtil
@@ -15,6 +18,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiField
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiMethods
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.memberScope
@@ -24,15 +30,19 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.psiType
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.*
 
@@ -351,4 +361,99 @@ internal inline fun <R : PsiElement, T> R.cachedValue(
             KotlinAsJavaSupport.getInstance(project).sourceModificationTracker(),
         )
     }
+}
+
+internal fun getParentForLocalDeclaration(classOrObject: KtClassOrObject, useSiteModule: KaModule): PsiElement? {
+    fun <T : PsiMember> wrapMember(member: T, forceWrapping: Boolean, wrapper: (T, PsiClass) -> T): T? {
+        val containingClass = member.containingClass ?: return null
+
+        if (containingClass is KtLightClassForFacade) {
+            val facadeClassName = classOrObject.containingFile.name
+            val wrappedClass = object : LightClass(containingClass, KotlinLanguage.INSTANCE) {
+                override fun getName(): String = facadeClassName
+            }
+
+            return wrapper(member, wrappedClass)
+        }
+
+        return if (forceWrapping) wrapper(member, containingClass) else member
+    }
+
+    fun wrapMethod(member: PsiMethod, name: String = member.name, forceWrapping: Boolean): PsiMethod? {
+        return wrapMember(member, forceWrapping) { method, containingClass ->
+            object : LightMethod(containingClass.manager, method, containingClass, KotlinLanguage.INSTANCE) {
+                override fun getParent(): PsiElement = containingClass
+                override fun getName(): String = name
+            }
+        }
+    }
+
+    fun wrapField(member: PsiField, forceWrapping: Boolean): PsiField? {
+        return wrapMember(member, forceWrapping) { field, containingClass ->
+            object : LightField(containingClass.manager, field, containingClass) {
+                override fun getParent(): PsiElement = containingClass
+            }
+        }
+    }
+
+    fun map(declaration: KtElement): PsiElement? {
+        when (declaration) {
+            is KtFunction -> {
+                return analyzeForLightClasses(useSiteModule) {
+                    val psiMethod = (declaration.symbol as? KaFunctionSymbol)?.asPsiMethods()?.firstOrNull()
+                    if (psiMethod != null) {
+                        wrapMethod(psiMethod, declaration.name ?: psiMethod.name, forceWrapping = false)
+                    } else null
+                }
+            }
+
+            is KtPropertyAccessor -> {
+                return analyzeForLightClasses(useSiteModule) {
+                    val psiMethod = declaration.symbol.asPsiMethods().firstOrNull()
+                    if (psiMethod != null) {
+                        wrapMethod(psiMethod, forceWrapping = true)
+                    } else null
+                }
+            }
+
+            is KtProperty -> {
+                if (!declaration.isLocal) {
+                    return analyzeForLightClasses(useSiteModule) {
+                        val propertySymbol = declaration.symbol as? KaPropertySymbol ?: return@analyzeForLightClasses null
+                        val psiGetter = propertySymbol.getter?.asPsiMethods()?.firstOrNull()
+                        if (psiGetter != null) {
+                            return@analyzeForLightClasses wrapMethod(psiGetter, forceWrapping = true)
+                        }
+
+                        propertySymbol.backingFieldSymbol?.asPsiField()?.let {
+                            wrapField(it, forceWrapping = false)
+                        }
+                    }
+                }
+            }
+
+            is KtAnonymousInitializer -> {
+                val parent = declaration.parent
+                val grandparent = parent.parent
+
+                if (parent is KtClassBody && grandparent is KtClassOrObject) {
+                    return analyzeForLightClasses(useSiteModule) {
+                        grandparent.classSymbol?.asPsiClass()
+                    }
+                }
+            }
+
+            is KtClass -> {
+                return analyzeForLightClasses(useSiteModule) {
+                    declaration.classSymbol?.asPsiClass()
+                }
+            }
+        }
+
+        return null
+    }
+
+    return classOrObject.parents
+        .filterIsInstance<KtElement>()
+        .firstNotNullOfOrNull { map(it) }
 }

@@ -9,13 +9,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
 import org.jetbrains.kotlin.light.classes.symbol.withMultiplatformLightClassSupport
@@ -213,7 +216,9 @@ abstract class AbstractSymbolLightClassesTestBase(
         return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project)
             ?: findLightClass(fqname, project)
             // TODO: KT-78534 JavaElementFinder: support script search
-            ?: ktFile.script?.takeIf { it.fqName.asString() == fqname }?.toLightClass()
+            ?: analyze(ktFile) {
+                ktFile.script?.takeIf { it.fqName.asString() == fqname }?.symbol?.asFacadePsiClass()
+            }
     }
 
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
@@ -231,13 +236,15 @@ abstract class AbstractSymbolLightClassesTestBase(
         val enumEntryName = fqName.shortName().asString()
         enumClass.findInnerClassByName(enumEntryName, false)?.let { return it }
 
-        return kotlinEnumClass.declarations.firstNotNullOfOrNull {
-            if (it is KtEnumEntry && it.name == enumEntryName) {
-                it
-            } else {
-                null
-            }
-        }?.toLightClass()
+        return analyze(kotlinEnumClass) {
+            kotlinEnumClass.declarations.firstNotNullOfOrNull {
+                if (it is KtEnumEntry && it.name == enumEntryName) {
+                    it
+                } else {
+                    null
+                }
+            }?.symbol?.initializer?.asPsiClass()
+        }
     }
 
     protected abstract val isTestAgainstCompiledCode: Boolean
