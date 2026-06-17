@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.generators.builtins.numbers.primitives
 
 import java.io.File
+import java.util.EnumSet
 import kotlin.reflect.KClass
 
 private fun String.shift(): String {
     return this.split(END_LINE).joinToString(separator = END_LINE) { if (it.isEmpty()) it else "    $it" }
 }
 
-internal fun file(builtBy: KClass<*>, init: FileBuilder.() -> Unit): FileBuilder {
-    val file = FileBuilder(builtBy.qualifiedName!!)
+internal fun file(builtBy: KClass<*>, packageName: String = "kotlin", init: FileBuilder.() -> Unit): FileBuilder {
+    val file = FileBuilder(builtBy.qualifiedName!!, packageName)
     file.init()
     return file
 }
@@ -77,7 +78,7 @@ internal abstract class AnnotatedAndDocumented {
     }
 }
 
-internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
+internal class FileBuilder(private val builtBy: String, private val packageName: String) : PrimitiveBuilder {
     private val suppresses: MutableList<String> = mutableListOf()
     private val annotations: MutableList<String> = mutableListOf()
     private val imports: MutableList<String> = mutableListOf()
@@ -132,7 +133,7 @@ internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
                 appendLine()
             }
 
-            appendLine("package kotlin")
+            appendLine("package $packageName")
             appendLine()
 
             if (imports.isNotEmpty()) {
@@ -154,13 +155,30 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var name: String = ""
     var visibility: MethodVisibility = MethodVisibility.PUBLIC
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
+    private val classModifiers: MutableSet<ClassModifier> = EnumSet.noneOf(ClassModifier::class.java)
     private var primaryConstructor: PrimaryConstructorBuilder? = PrimaryConstructorBuilder()
     private var secondaryConstructor: SecondaryConstructorBuilder? = null
+    private var initBlock: String? = null
     private val typeParams: MutableList<String> = mutableListOf()
     private var superTypes: List<String> = emptyList()
     private var companionObject: CompanionObjectBuilder? = null
 
     private var builders: MutableList<PrimitiveBuilder> = mutableListOf()
+
+    fun modifier(modifier: ClassModifier) {
+        classModifiers.add(modifier)
+    }
+
+    fun initBlock(text: String) {
+        initBlock = text
+    }
+
+    fun klass(init: ClassBuilder.() -> Unit): ClassBuilder {
+        val classBuilder = ClassBuilder()
+        classBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
+        builders += classBuilder.apply(init)
+        return classBuilder
+    }
 
     fun primaryConstructor(init: PrimaryConstructorBuilder.() -> Unit): PrimaryConstructorBuilder {
         val builder = PrimaryConstructorBuilder().apply(init)
@@ -224,6 +242,7 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
             append("${visibility.name.lowercase()} ")
             expectActual.modifier?.let { append(it).append(' ') }
+            classModifiers.forEach { append(it.name.lowercase()).append(' ') }
             append("class $name")
             if (typeParams.isNotEmpty()) {
                 typeParams.joinTo(this, prefix = "<", postfix = ">")
@@ -242,6 +261,11 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
                 appendLine()
             }
 
+            initBlock?.let {
+                appendLine("init {$END_LINE${it.shift()}$END_LINE}".shift())
+                appendLine()
+            }
+
             if (builders.isNotEmpty()) {
                 appendLine(builders.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
             }
@@ -251,15 +275,29 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 }
 
 internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
-    private val properties: MutableList<PropertyBuilder> = mutableListOf()
+    private val members: MutableList<PrimitiveBuilder> = mutableListOf()
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
+
+    fun constProperty(init: PropertyBuilder.() -> Unit): PropertyBuilder {
+        val propertyBuilder = PropertyBuilder()
+        propertyBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
+        propertyBuilder.modifier("const")
+        members += propertyBuilder.apply(init)
+        return propertyBuilder
+    }
 
     fun property(init: PropertyBuilder.() -> Unit): PropertyBuilder {
         val propertyBuilder = PropertyBuilder()
         propertyBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
-        propertyBuilder.modifier("const")
-        properties += propertyBuilder.apply(init)
+        members += propertyBuilder.apply(init)
         return propertyBuilder
+    }
+
+    fun method(init: MethodBuilder.() -> Unit): MethodBuilder {
+        val methodBuilder = MethodBuilder()
+        methodBuilder.expectActual = ExpectActualModifier.Inherited(from = ::expectActual)
+        members += methodBuilder.apply(init)
+        return methodBuilder
     }
 
     override fun build(): String {
@@ -267,11 +305,11 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
             printDocumentationAndAnnotations()
             append("public ")
             expectActual.modifier?.let { append(it).append(' ') }
-            if (properties.isEmpty()) {
+            if (members.isEmpty()) {
                 append("companion object {}")
             } else {
                 appendLine("companion object {")
-                appendLine(properties.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
+                appendLine(members.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
                 append("}")
             }
         }
@@ -281,10 +319,16 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
 internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var visibility: MethodVisibility? = MethodVisibility.PRIVATE
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
-    private var parameters: MutableList<MethodParameterBuilder> = mutableListOf()
+    private var parameters: MutableList<PrimaryConstructorParameterBuilder> = mutableListOf()
 
     fun parameter(init: MethodParameterBuilder.() -> Unit): MethodParameterBuilder {
         val argBuilder = MethodParameterBuilder()
+        parameters.add(argBuilder.apply(init))
+        return argBuilder
+    }
+
+    fun propertyParameter(init: PropertyBuilder.() -> Unit): PropertyBuilder {
+        val argBuilder = PropertyBuilder()
         parameters.add(argBuilder.apply(init))
         return argBuilder
     }
@@ -308,7 +352,7 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
     var body: String? = null
     private val modifiers: MutableList<String> = mutableListOf()
     private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
-    private var argumentsToPrimaryContructor: MutableList<String>? = mutableListOf()
+    private var argumentsToPrimaryConstructor: MutableList<String>? = mutableListOf()
 
     fun modifier(modifier: String) {
         modifiers += modifier
@@ -321,15 +365,15 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
     }
 
     fun argument(arg: String) {
-        argumentsToPrimaryContructor!! += arg
+        argumentsToPrimaryConstructor!! += arg
     }
 
     fun noPrimaryConstructorCall() {
-        argumentsToPrimaryContructor = null
+        argumentsToPrimaryConstructor = null
     }
 
     fun primaryConstructorCall(vararg arguments: String) {
-        argumentsToPrimaryContructor = arguments.toMutableList()
+        argumentsToPrimaryConstructor = arguments.toMutableList()
     }
 
     fun String.setAsBlockBody() {
@@ -345,7 +389,7 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
             modifiers.forEach { append(it).append(' ') }
             append("constructor")
             append(parameters.joinToString(prefix = "(", postfix = ")") { it.build() })
-            argumentsToPrimaryContructor?.joinTo(this, prefix = " : this(", postfix = ")")
+            argumentsToPrimaryConstructor?.joinTo(this, prefix = " : this(", postfix = ")")
             append(body ?: "")
         }
     }
@@ -353,12 +397,15 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
 
 internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActualModifier) : PrimitiveBuilder {
     var isExternal: Boolean = false
-    var visibility: MethodVisibility = MethodVisibility.PUBLIC
+    var visibility: MethodVisibility? = MethodVisibility.PUBLIC
+    var isFinal: Boolean = false
+    var isOpen: Boolean = false
     var isOverride: Boolean = false
     var isInline: Boolean = false
     var isInfix: Boolean = false
     var isOperator: Boolean = false
 
+    var extensionReceiver: String? = null
     var methodName: String? = null
     private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
     var returnType: String? = null
@@ -380,14 +427,17 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
         throwIfWasNotInitialized(returnType, "returnType", "MethodSignatureBuilder")
 
         return buildString {
-            append("${visibility.name.lowercase()} ")
+            visibility?.let { append("${it.name.lowercase()} ") }
             expectActual().modifier?.let { append(it).append(' ') }
             if (isExternal) append("external ")
+            if (isFinal) append("final ")
+            if (isOpen) append("open ")
             if (isOverride) append("override ")
             if (isInline) append("inline ")
             if (isInfix) append("infix ")
             if (isOperator) append("operator ")
-            append("fun $methodName(${parameters.joinToString { it.build() }}): $returnType")
+            val name = if (extensionReceiver != null) "$extensionReceiver.$methodName" else methodName
+            append("fun $name(${parameters.joinToString { it.build() }}): $returnType")
         }
     }
 }
@@ -396,14 +446,23 @@ internal enum class MethodVisibility {
     PUBLIC, INTERNAL, PRIVATE
 }
 
-internal class MethodParameterBuilder : PrimitiveBuilder {
+internal sealed interface PrimaryConstructorParameterBuilder : PrimitiveBuilder
+
+
+internal open class MethodParameterBuilder : PrimaryConstructorParameterBuilder, PrimitiveBuilder {
     var name: String? = null
     var type: String? = null
+    var isVararg: Boolean = false
+    var defaultValue: String? = null
 
     override fun build(): String {
         throwIfWasNotInitialized(name, "name", "MethodParameterBuilder")
         throwIfWasNotInitialized(type, "type", "MethodParameterBuilder")
-        return "$name: $type"
+        return buildString {
+            if (isVararg) append("vararg ")
+            append("$name: $type")
+            defaultValue?.let { append(" = ").append(it) }
+        }
     }
 }
 
@@ -458,13 +517,14 @@ internal class MethodBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     }
 }
 
-internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
+internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder, PrimaryConstructorParameterBuilder {
     var visibility: MethodVisibility? = MethodVisibility.PUBLIC
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
     var name: String? = null
     var type: String? = null
     var value: String? = null
     var getterBody: String? = null
+    var isMutable: Boolean = false
     private val modifiers: MutableList<String> = mutableListOf()
 
     fun modifier(modifier: String) {
@@ -488,7 +548,8 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
             visibility?.let { append("${it.name.lowercase()} ") }
             expectActual.modifier?.let { append(it).append(' ') }
             modifiers.forEach { append(it).append(' ') }
-            append("val $name: $type")
+            val variableKeyword = if (isMutable) "var" else "val"
+            append("$variableKeyword $name: $type")
             value?.let { append(" = ").append(value) }
             if (getterBody != null) {
                 append("$END_LINE    get()")
@@ -500,6 +561,14 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
 internal class FreeFormBuilder(val text: String) : PrimitiveBuilder {
     override fun build(): String = text
+}
+
+enum class ClassModifier {
+    OPEN,
+    FINAL,
+    VALUE,
+    ABSTRACT,
+    ENUM
 }
 
 sealed class ExpectActualModifier {

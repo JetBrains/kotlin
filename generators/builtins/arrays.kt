@@ -84,6 +84,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 if (kind == null) typeParam("T")
                 superType(iteratorClassName + if (kind == null) "<T>" else "()")
                 primaryConstructor {
+                    visibility = null
                     parameter {
                         visibility = null
                         name = "val array"
