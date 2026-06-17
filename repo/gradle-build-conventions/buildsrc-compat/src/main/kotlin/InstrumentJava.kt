@@ -33,10 +33,13 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration) : Action<
 
         task.doLast {
             task.ant.withGroovyBuilder {
+                // Use a child-first (reverse) classloader instead of a shared loaderref so the
+                // instrumentator's bundled ASM is used rather than the Gradle worker's ASM, which
+                // under the Gradle 10 preview distribution lacks ClassReader.<init>(InputStream).
                 "taskdef"(
                     "name" to "instrumentIdeaExtensions",
                     "classpath" to instrumentatorClasspath,
-                    "loaderref" to "java2.loader",
+                    "reverseloader" to true,
                     "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
                 )
             }
