@@ -51,6 +51,15 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (context.incrementalCacheEnabled) {
+            // With enabled incremental compilation, we always treat @JsImplicitExport as a regular @JsExport.
+            // This is because adding or removing a reference to an implicitly exported declaration doesn't trigger its recompilation,
+            // which can lead to issues like KT-70622.
+            if (declaration.couldBeConvertedToExplicitExport() == true) {
+                declaration.markWithJsImplicitExportOrUpgrade()
+            }
+            return null
+        }
         if (!declaration.isExported(context)) return null
 
         when (declaration) {
