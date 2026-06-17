@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -31,9 +32,9 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             return
         }
 
-        val isSupportedVal = declaration.isVal && context.languageVersionSettings.supportsFeature(LanguageFeature.LateinitVals)
+        val isSupportedVal = declaration.isVal && LanguageFeature.LateinitVals.isEnabled()
 
-        if (!isSupportedVal && declaration.isVal) {
+        if (declaration.isVal && !LanguageFeature.LateinitVals.isEnabled()) {
             reporter.reportError(declaration.source, "is allowed only on mutable properties")
         }
 
