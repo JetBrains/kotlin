@@ -33,14 +33,14 @@ context(s: String)
 fun test() {
     context(s: String)
     fun foo() {
-        ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!>
+        ::foo
     }
 
     ::foo
 
     val ctx = ""
-    with(ctx) { ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!> }
-    context(ctx) { ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!> }
+    with(ctx) { ::foo }
+    context(ctx) { ::foo }
 
     ::bar
 
