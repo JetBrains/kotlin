@@ -10,6 +10,8 @@ bin/kotlinc-jvm.bat
 bin/kotlinc-wasm
 bin/kotlinc-wasm.bat
 bin/kotlinc.bat
+bin/kotlinr
+bin/kotlinr.bat
 build.txt
 lib/allopen-compiler-plugin.jar
 lib/annotations-13.0.jar
