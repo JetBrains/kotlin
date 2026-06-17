@@ -240,11 +240,17 @@ class IrDataClassParcelSerializer(
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression =
         irBlock {
             val temporary = irTemporary(value)
+            val substitutionMap = type.classOrFail.owner.typeParameters.map { it.symbol }
+                .zip((type as IrSimpleType).arguments.map { it.typeOrNull ?: context.irBuiltIns.anyNType }).toMap()
             properties.forEach { [member, serializer] ->
                 val receiverValue = irGet(temporary)
-                val propertyValue = member.owner.getter?.let { irCall(it).apply { dispatchReceiver = receiverValue } }
-                    ?: member.owner.backingField?.let { irGetField(receiverValue, it) }
-                    ?: error("$member is a data class property with no backing field?")
+                val propertyType = member.owner.getter?.returnType
+                    ?: member.owner.backingField?.type
+                    ?: error("$member is a data class property with no getter or backing field?")
+                val substitutedType = propertyType.substitute(substitutionMap)
+                val propertyValue = member.owner.getter?.let { irCall(it.symbol, substitutedType).apply { dispatchReceiver = receiverValue } }
+                        ?: member.owner.backingField?.let { irGetField(receiverValue, it, substitutedType) }
+                        ?: error("$member is a data class property with no backing field?")
                 +writeParcelWith(serializer, parcel, flags, propertyValue)
             }
         }
