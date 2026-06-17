@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElements
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -23,7 +23,9 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
 
-        val lightElements = declaration.toLightElements()
+        val lightElements = analyzeForTest(mainFile) {
+            declaration.getLightElements()
+        }
         testServices.assertions.assertFalse(lightElements.isEmpty())
 
         val expectedLightElements = mainModule.testModule.directives[Directives.EXPECTED]

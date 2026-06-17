@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.renderClass
-import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightElements
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -87,7 +87,9 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
         val directives = module.testModule.directives
         val lightElementClassQualifier = directives.singleValue(Directives.PSI)
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(ktFiles.first())
-        val lightElements = declaration.toLightElements()
+        val lightElements = analyzeForTest(declaration) {
+            declaration.getLightElements()
+        }
         val actualLightDeclaration = lightElements.find { it::class.qualifiedName == lightElementClassQualifier }
             ?: error("$lightElementClassQualifier is not found in ${lightElements.map { it::class.qualifiedName }}")
 

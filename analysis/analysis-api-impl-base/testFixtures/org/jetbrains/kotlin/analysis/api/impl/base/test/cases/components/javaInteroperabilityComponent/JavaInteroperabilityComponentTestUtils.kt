@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.render
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.session.analyze
+import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.PsiClassRenderer
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -33,28 +35,29 @@ internal object JavaInteroperabilityComponentTestUtils {
     internal fun getContainingKtLightClass(
         declaration: KtDeclaration,
         ktFile: KtFile,
-    ): KtLightClass {
-        val project = ktFile.project
-        return createLightClassByContainingClass(declaration, project)
-            ?: getFacadeLightClass(ktFile, project)
+    ): PsiClass {
+        return createLightClassByContainingClass(declaration)
+            ?: getFacadeLightClass(ktFile)
             ?: error("Can't get or create containing KtLightClass for $declaration")
 
     }
 
     private fun getFacadeLightClass(
         ktFile: KtFile,
-        project: Project,
-    ): KtLightClass? = project.getService(KotlinAsJavaSupport::class.java).getLightFacade(ktFile)
+    ): PsiClass? = analyze(ktFile) {
+        ktFile.symbol.asFacadePsiClass()
+    }
 
     private fun createLightClassByContainingClass(
         declaration: KtDeclaration,
-        project: Project
-    ): KtLightClass? {
-        val containingClass = declaration.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return null
-        return KotlinAsJavaSupport.getInstance(project).getLightClass(containingClass)
+    ): PsiClass? {
+        analyze(declaration) {
+            val containingClass = declaration.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return null
+            return containingClass.classSymbol?.asPsiClass()
+        }
     }
 
-    internal fun KtLightClass.findLightDeclarationContext(ktDeclaration: KtDeclaration): KtLightElement<*, *>? {
+    internal fun PsiClass.findLightDeclarationContext(ktDeclaration: KtDeclaration): KtLightElement<*, *>? {
         val selfOrParents = listOf(ktDeclaration) + ktDeclaration.parents.filterIsInstance<KtDeclaration>()
         var result: KtLightElement<*, *>? = null
         val visitor = object : PsiElementVisitor() {

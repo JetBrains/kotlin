@@ -16,12 +16,13 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.light.classes.symbol.utils.isValid
 import org.jetbrains.kotlin.light.classes.symbol.utils.withSymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -186,14 +186,12 @@ internal abstract class SymbolLightClassForClassLike<SType : KaClassSymbol> prot
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
 
     private val _containingClass: PsiClass? by lazyPub {
-        val containingBody = classOrObjectDeclaration?.parent
-        when (val parent = containingBody?.parent) {
-            is KtClassOrObject -> parent.toLightClass()
-            is KtScript -> parent.toLightClass()
-            null -> withClassSymbol { s ->
-                (s.containingDeclaration as? KaNamedClassSymbol)?.let { createLightClassNoCache(it, useSiteModule) }
+        withClassSymbol { classSymbol ->
+            when (val containingSymbol = classSymbol.containingSymbol) {
+                is KaClassSymbol -> containingSymbol.asPsiClass()
+                is KaScriptSymbol -> containingSymbol.asFacadePsiClass()
+                else -> null
             }
-            else -> null
         }
     }
 
