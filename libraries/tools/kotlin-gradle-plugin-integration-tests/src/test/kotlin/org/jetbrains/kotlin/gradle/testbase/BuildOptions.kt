@@ -164,7 +164,7 @@ data class BuildOptions(
 
     @Suppress("EXPOSED_PARAMETER_TYPE")
     data class WasmOptions(
-        val compilationMode: WasmCompilationMode = WasmCompilationMode.MONOLITH,
+        val compilationMode: WasmCompilationMode? = null,
     )
 
     data class NativeOptions(
@@ -265,9 +265,7 @@ data class BuildOptions(
             jsOptions.yarn?.let { arguments.add("-Pkotlin.js.yarn=$it") }
         }
 
-        wasmOptions?.compilationMode?.takeIf {
-            it != WasmCompilationMode.MONOLITH
-        }?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
+        wasmOptions?.compilationMode?.let { arguments.add("-Pkotlin.wasm.compilationMode=${it.toArgument()}") }
 
         if (androidVersion != null) {
             arguments.add("-Dandroid_tools_version=${androidVersion}")

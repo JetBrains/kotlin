@@ -185,6 +185,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val wasmCompilationMode: WasmCompilationMode
         get() = property(PropertyNames.KOTLIN_WASM_COMPILATION_MODE)
             .orNull?.let {
+                project.reportDiagnosticOncePerBuild(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                        "Wasm compilation mode selecting",
+                        "https://kotl.in/wasm-compilation-modes",
+                    ),
+                    key = "WasmCompilationMode"
+                )
                 WasmCompilationMode.byArgument(it)
             } ?: WasmCompilationMode.MONOLITH
 

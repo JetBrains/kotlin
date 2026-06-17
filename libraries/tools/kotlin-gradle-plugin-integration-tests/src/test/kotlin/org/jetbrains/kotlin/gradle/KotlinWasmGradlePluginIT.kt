@@ -10,6 +10,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
@@ -38,10 +39,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
-    override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MONOLITH)
-        )
 
     @DisplayName("Check js target with browser")
     @GradleTest
@@ -68,8 +65,13 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                 "assemble",
                 buildOptions = defaultBuildOptions.copy(
                     wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
-                )
+                ),
             ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
@@ -97,6 +99,11 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                     wasmOptions = BuildOptions.WasmOptions(compilationMode = WasmCompilationMode.MULTIMODULE_CLOSED_WORLD)
                 )
             ) {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJs")
                 assertTasksUpToDate(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
@@ -184,6 +191,11 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
         }
 
         build("compileProductionExecutableKotlinWasmJsOptimize") {
+            assertNoDiagnostic(
+                KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                "Wasm compilation mode selecting"
+            )
+
             assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
             assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
 
@@ -431,6 +443,11 @@ class KotlinWasmPerModuleGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
             val developmentSize: MutableMap<String, Long> = mutableMapOf()
 
             build("wasmJsDevelopmentExecutableCompileSync") {
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.ExperimentalFeatureWarning,
+                    "Wasm compilation mode selecting"
+                )
+
                 assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
 
                 projectPath.resolve("build/wasm/packages/redefined-wasm-module-name/kotlin").listDirectoryEntries()
