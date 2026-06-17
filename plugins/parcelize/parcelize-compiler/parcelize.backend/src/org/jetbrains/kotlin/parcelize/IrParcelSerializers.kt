@@ -45,14 +45,6 @@ fun AndroidIrBuilder.writeParcelWith(
     return with(serializer) { writeParcel(parcel, flags, value) }
 }
 
-fun IrParcelSerializer.withDeserializationPostprocessing(mapper: IrSimpleFunctionSymbol): IrParcelSerializer =
-    object : IrParcelSerializer by this {
-        override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
-            val readResult = with(this@withDeserializationPostprocessing) { readParcel(parcel) }
-            return irCall(mapper).apply { arguments[0] = readResult }
-        }
-    }
-
 // Creates a serializer from a pair of parcel methods of the form reader()T and writer(T)V.
 class IrSimpleParcelSerializer(private val reader: IrSimpleFunctionSymbol, private val writer: IrSimpleFunctionSymbol) :
     IrParcelSerializer {
