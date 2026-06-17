@@ -17,8 +17,6 @@ public final class com/package1/Class1 {
 @kotlin.Metadata
 public final class com/package1/__GENERATED__CALLABLES__Kt {
     // source: '__GENERATED__CALLABLES__.kt'
-    private final static @org.jetbrains.annotations.NotNull field somethingId$1: org.jetbrains.kotlinx.dataframe.DataColumn
-    private final static field somethingId: long
     public final static @kotlin.jvm.JvmName(name="Class1_somethingId") @org.jetbrains.annotations.NotNull method Class1_somethingId(@org.jetbrains.annotations.NotNull p0: org.jetbrains.kotlinx.dataframe.ColumnsContainer): org.jetbrains.kotlinx.dataframe.DataColumn
     public final static @kotlin.jvm.JvmName(name="Class1_somethingId") method Class1_somethingId(@org.jetbrains.annotations.NotNull p0: org.jetbrains.kotlinx.dataframe.DataRow): long
 }
