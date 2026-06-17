@@ -28,7 +28,7 @@ internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
     printReachabilityInfo: Boolean,
     removeUnusedAssociatedObjects: Boolean
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects) {
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects, ignoreFieldWrites = true) {
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
 
