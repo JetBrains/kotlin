@@ -15,7 +15,7 @@ fun localInWhen() {
 }
 
 fun destructuringDeclaration() {
-    <!INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION!>val (a, b)<!> <!SYNTAX!>field = Pair("", "")<!>
+    <!INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION!>val (<!UNRESOLVED_REFERENCE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>)<!> <!SYNTAX!>field = Pair("", "")<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, lambdaLiteral, localProperty,

@@ -1,0 +1,8 @@
+// LATEST_LV_DIFFERENCE
+// RUN_PIPELINE_TILL: FRONTEND
+// WITH_STDLIB
+// ISSUE: KT-83241
+
+val <!SYNTAX!>(a, b)<!> = run <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_IT_PARAMETER_TYPE!>(<!UNRESOLVED_REFERENCE!>c<!>, <!UNRESOLVED_REFERENCE!>d<!>)<!> -> }<!>
+
+/* GENERATED_FIR_TAGS: lambdaLiteral, localProperty, propertyDeclaration */

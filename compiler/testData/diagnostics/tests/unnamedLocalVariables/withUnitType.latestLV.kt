@@ -70,7 +70,7 @@ fun testWithImplicit() {
     }
 
     arrayOf(Unit).myForEach { _ -> }
-    arrayOf(MyPair()).myForEach { (_, _) -> }
+    arrayOf(MyPair()).myForEach { (<!NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING!>_<!>, <!NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING!>_<!>) -> }
     arrayOf(Unit).myForEachIndexed { _, _ -> }
 }
 
@@ -100,7 +100,7 @@ fun testWithExplicit() {
     }
 
     arrayOf(Unit).myForEach { _: Unit -> }
-    arrayOf(MyPair()).myForEach { (_: Unit, _: Unit?) -> }
+    arrayOf(MyPair()).myForEach { (<!NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING!>_<!>: Unit, <!NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING!>_<!>: Unit?) -> }
     arrayOf(MyPair()).myForEach { [_: Unit, _: Unit?] -> }
     arrayOf(Unit).myForEachIndexed { _: Int, _: Unit -> }
 }

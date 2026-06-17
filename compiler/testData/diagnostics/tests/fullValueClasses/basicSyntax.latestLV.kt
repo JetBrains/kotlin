@@ -64,7 +64,7 @@ value class OverridingOld(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>C<!
 
 fun main() {
     A(2).<!UNRESOLVED_REFERENCE!>copy<!>()
-    val (x) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
+    val (<!DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS!>x<!>) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
 }
 
 

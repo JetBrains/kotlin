@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-33857
 // RENDER_DIAGNOSTICS_FULL_TEXT
-
+// LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
 // KT-33857: COMPONENT_FUNCTION_AMBIGUITY diagnostic for destructuring in for loop
 class A {
     operator <!CONFLICTING_OVERLOADS!>fun component1()<!> = 1
@@ -14,7 +14,7 @@ class C {
 }
 
 fun test() {
-    for ((x, y) in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
+    for ([x, y] in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
 
     }
 }

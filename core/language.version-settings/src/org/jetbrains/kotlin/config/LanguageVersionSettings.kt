@@ -622,8 +622,8 @@ enum class LanguageFeature(
         }
     },
 
-    DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
-    EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
+    DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
+    EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404"),
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
