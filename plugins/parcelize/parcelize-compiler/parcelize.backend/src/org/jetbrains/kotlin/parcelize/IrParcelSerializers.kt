@@ -706,7 +706,7 @@ class IrUuidParcelSerializer(
         )
         val toLongs = requireNotNull(irClass.getSimpleFunction("toLongs")) { "method kotlin.uuid.Uuid.toLongs not found" }
         return irBlock {
-            +irCall(toLongs).apply {
+            +irCall(toLongs, context.irBuiltIns.unitType, listOf(context.irBuiltIns.unitType)).apply {
                 arguments[0] = value
                 arguments[1] = lambdaExpr
             }
