@@ -264,12 +264,9 @@ val FirAnnotation.resolved: Boolean
         return calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference
     }
 
-private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
-    ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
-
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
     val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return@any false
-    lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+    lookupTag.classId == StandardClassIds.Annotations.LowPriorityInOverloadResolution
 }
 
 context(sessionHolder: SessionHolder)

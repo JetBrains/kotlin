@@ -331,6 +331,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJvmName ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmStatic ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getKotlinActual ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLowPriorityInOverloadResolution ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMustBeDocumented ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getMustUseReturnValues ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getNoInfer ()Lorg/jetbrains/kotlin/name/ClassId;

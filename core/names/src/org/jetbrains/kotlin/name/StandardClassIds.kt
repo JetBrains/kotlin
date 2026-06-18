@@ -198,6 +198,8 @@ object StandardClassIds {
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
 
+        val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
+
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
         val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
