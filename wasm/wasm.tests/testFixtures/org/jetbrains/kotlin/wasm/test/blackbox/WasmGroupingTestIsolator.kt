@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
-import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -32,11 +32,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             LanguageSettingsDirectives,
             CustomKlibCompilerTestDirectives,
         )
-
-    companion object {
-
-        private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-    }
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
@@ -81,13 +76,14 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (hasCompanionJsFile)
             return BatchToken.Isolated
 
-        if (listOf(
-                packageKotlinInternalRegex,
-            ).any { moduleStructure.sourceContains(it) })
-            return BatchToken.Isolated
-
-        if ("+MultiPlatformProjects" in moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE])
-            return BatchToken.Isolated
+        if (moduleStructure.allDirectives[LanguageSettingsDirectives.LANGUAGE].any {
+                val feature = LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-"))
+                feature == LanguageFeature.MultiPlatformProjects
+                        // Avoid batch-grouping path in presence of `testOnly` language features, since WasmFirstStageInvoker uses 1st stage CLI compiler
+                        // which does not accept testOnly language features, see `LanguageSettingsParser.parseLanguageFeature`
+                        || feature.testOnly
+            }
+        ) return BatchToken.Isolated
 
         val specificTokens = listOfNotNull(
             computeEHToken(moduleStructure),
