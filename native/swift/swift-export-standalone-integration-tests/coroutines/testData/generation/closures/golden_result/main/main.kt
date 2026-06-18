@@ -9,24 +9,12 @@ public fun __root___accept_suspend_function_type__TypesOfArguments__U282920async
     val __block = run {
         val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(block);
         suspend {
-            val __cancellation: SwiftJob = SwiftJob()
-            kotlin.coroutines.coroutineContext[kotlinx.coroutines.Job]?.let {
-                __cancellation.alsoCancel(it)
-                it.alsoCancel(__cancellation)
-            }
-
-            kotlinx.coroutines.suspendCancellableCoroutine { __cont ->
-                val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-                val __continuation: Function1<Int, Unit> = { _result ->
-                    if (__cont.isActive) __cont.resumeWith(kotlin.Result.success(_result))
-                }
-                val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-                val __exception: Function1<platform.Foundation.NSError, Unit> = { _error ->
-                    if (__cont.isActive) __cont.resumeWith(kotlin.Result.failure(SwiftException(_error)))
-                }
-                val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-                originalBlock(__continuationPtr, __exceptionPtr, __cancellationPtr)
-            }
+           suspendSwiftCoroutine<Int> { __continuation, __exception, __cancellation ->
+               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
+               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
+               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
+               originalBlock(__continuationPtr, __exceptionPtr, __cancellationPtr)
+           }
         }
     }
     val _result = run { accept_suspend_function_type(__block) }

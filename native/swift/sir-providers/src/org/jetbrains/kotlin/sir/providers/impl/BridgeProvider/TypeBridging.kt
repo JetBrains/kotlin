@@ -1009,18 +1009,8 @@ internal sealed interface Bridge {
                         append("__continuationPtr, __exceptionPtr, __cancellationPtr")
                     }
 
-                    val continuationKotlinType = typeNamer.kotlinFqName(
-                        continuationBridge.swiftType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-
-                    val exceptionKotlinType = typeNamer.kotlinFqName(
-                        exceptionBridge.swiftType,
-                        SirTypeNamer.KotlinNameType.PARAMETRIZED
-                    )
-
-                    val cancellationKotlinType = typeNamer.kotlinFqName(
-                        cancellationBridge.swiftType,
+                    val returnKotlinType = typeNamer.kotlinFqName(
+                        returnType.swiftType,
                         SirTypeNamer.KotlinNameType.PARAMETRIZED
                     )
 
@@ -1031,24 +1021,12 @@ internal sealed interface Bridge {
                     return@with """run {
                     |    val originalBlock = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
                     |    suspend {$defineArgs
-                    |        val __cancellation: $cancellationKotlinType = SwiftJob()
-                    |        kotlin.coroutines.coroutineContext[kotlinx.coroutines.Job]?.let { 
-                    |            __cancellation.alsoCancel(it)
-                    |            it.alsoCancel(__cancellation)
-                    |        }
-                    |        
-                    |        kotlinx.coroutines.suspendCancellableCoroutine { __cont ->
-                    |            val __cancellationPtr = $cancellationPtrConversion
-                    |            val __continuation: $continuationKotlinType = { _result ->
-                    |                if (__cont.isActive) __cont.resumeWith(kotlin.Result.success(_result))
-                    |            }
-                    |            val __continuationPtr = $continuationPtrConversion
-                    |            val __exception: $exceptionKotlinType = { _error ->
-                    |                if (__cont.isActive) __cont.resumeWith(kotlin.Result.failure(SwiftException(_error)))
-                    |            }
-                    |            val __exceptionPtr = $exceptionPtrConversion
-                    |            originalBlock($callArgs)
-                    |        }
+                    |       suspendSwiftCoroutine<$returnKotlinType> { __continuation, __exception, __cancellation ->
+                    |           val __cancellationPtr = $cancellationPtrConversion
+                    |           val __continuationPtr = $continuationPtrConversion
+                    |           val __exceptionPtr = $exceptionPtrConversion
+                    |           originalBlock($callArgs)
+                    |       }
                     |    }
                     |}""".replaceIndentByMargin("    ")
                 }
@@ -1132,21 +1110,8 @@ internal sealed interface Bridge {
                 |        let __exception: $exceptionSwiftType = $exceptionSwiftConversion
                 |        let __cancellation: $cancellationSwiftType = $cancellationSwiftConversion
                 |        ${argsBindings.prependIndent("        ")}
-                |        let task = Task {
-                |            await withTaskCancellationHandler {
-                |                do {
-                |                    let result = try await originalBlock($originalBlockCallArgs)
-                |                    __continuation(result)
-                |                } catch {
-                |                    __exception(error)
-                |                }
-                |            } onCancel: {
-                |                __cancellation.cancelExternally()
-                |            }
-                |        }
-                |        __cancellation.setCallback { shouldCancel in
-                |            defer { if shouldCancel { task.cancel() } }
-                |            return task.isCancelled
+                |        withKotlinTask(__continuation, __exception, __cancellation) {
+                |            try await originalBlock($originalBlockCallArgs)
                 |        }
                 |    }
                 |}()""".trimMargin()

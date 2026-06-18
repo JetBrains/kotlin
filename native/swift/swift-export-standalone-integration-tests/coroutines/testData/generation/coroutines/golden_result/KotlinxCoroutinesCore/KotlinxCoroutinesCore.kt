@@ -71,24 +71,12 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
     val __function = run {
         val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(function);
         suspend { arg0: kotlin.Any? ->
-            val __cancellation: SwiftJob = SwiftJob()
-            kotlin.coroutines.coroutineContext[kotlinx.coroutines.Job]?.let {
-                __cancellation.alsoCancel(it)
-                it.alsoCancel(__cancellation)
-            }
-
-            kotlinx.coroutines.suspendCancellableCoroutine { __cont ->
-                val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-                val __continuation: Function1<Unit, Unit> = { _result ->
-                    if (__cont.isActive) __cont.resumeWith(kotlin.Result.success(_result))
-                }
-                val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-                val __exception: Function1<platform.Foundation.NSError, Unit> = { _error ->
-                    if (__cont.isActive) __cont.resumeWith(kotlin.Result.failure(SwiftException(_error)))
-                }
-                val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-                originalBlock(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0), __continuationPtr, __exceptionPtr, __cancellationPtr)
-            }
+           suspendSwiftCoroutine<Unit> { __continuation, __exception, __cancellation ->
+               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
+               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
+               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
+               originalBlock(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0), __continuationPtr, __exceptionPtr, __cancellationPtr)
+           }
         }
     }
     val _result = run { kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>(__function) }

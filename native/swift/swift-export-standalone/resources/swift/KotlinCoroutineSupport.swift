@@ -68,6 +68,30 @@ package func withKotlinContinuation<T>(
     }
 }
 
+package func withKotlinTask<T>(
+    _ continuation: @escaping (T) -> Void,
+    _ exception: @escaping (Error) -> Void,
+    _ cancellation: KotlinTask,
+    _ operation: @escaping () async throws -> T
+) {
+    let task = Task {
+        await withTaskCancellationHandler {
+            do {
+                let result = try await operation()
+                continuation(result)
+            } catch {
+                exception(error)
+            }
+        } onCancel: {
+            cancellation.cancelExternally()
+        }
+    }
+    cancellation.setCallback { shouldCancel in
+        defer { if shouldCancel { task.cancel() } }
+        return task.isCancelled
+    }
+}
+
 public protocol KotlinFlow: KotlinRuntime.KotlinBase { }
 
 public protocol KotlinTypedFlow<Element> {

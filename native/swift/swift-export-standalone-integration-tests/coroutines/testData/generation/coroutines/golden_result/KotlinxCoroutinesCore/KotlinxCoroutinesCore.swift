@@ -207,21 +207,8 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
         }()
                 let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: __cancellationPtr)
                         let __wrapped_arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-                let task = Task {
-                    await withTaskCancellationHandler {
-                        do {
-                            let result = try await originalBlock(__wrapped_arg0)
-                            __continuation(result)
-                        } catch {
-                            __exception(error)
-                        }
-                    } onCancel: {
-                        __cancellation.cancelExternally()
-                    }
-                }
-                __cancellation.setCallback { shouldCancel in
-                    defer { if shouldCancel { task.cancel() } }
-                    return task.isCancelled
+                withKotlinTask(__continuation, __exception, __cancellation) {
+                    try await originalBlock(__wrapped_arg0)
                 }
             }
         }())) as! any ExportedKotlinPackages.kotlinx.coroutines.flow.FlowCollector

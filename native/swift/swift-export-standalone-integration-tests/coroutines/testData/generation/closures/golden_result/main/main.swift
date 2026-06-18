@@ -19,21 +19,8 @@ public func accept_suspend_function_type(
     }()
             let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: __cancellationPtr)
 
-            let task = Task {
-                await withTaskCancellationHandler {
-                    do {
-                        let result = try await originalBlock()
-                        __continuation(result)
-                    } catch {
-                        __exception(error)
-                    }
-                } onCancel: {
-                    __cancellation.cancelExternally()
-                }
-            }
-            __cancellation.setCallback { shouldCancel in
-                defer { if shouldCancel { task.cancel() } }
-                return task.isCancelled
+            withKotlinTask(__continuation, __exception, __cancellation) {
+                try await originalBlock()
             }
         }
     }())
