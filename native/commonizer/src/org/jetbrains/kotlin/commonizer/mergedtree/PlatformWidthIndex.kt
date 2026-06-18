@@ -20,6 +20,7 @@ enum class PlatformIntWidth {
 object PlatformWidthIndex {
     private val widthByLeafTargets = mapOf(
         LeafCommonizerTarget(KonanTarget.IOS_ARM64) to PlatformIntWidth.LONG,
+        LeafCommonizerTarget(KonanTarget.IOS_ARM64E) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_X64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_SIMULATOR_ARM64) to PlatformIntWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32) to PlatformIntWidth.INT,

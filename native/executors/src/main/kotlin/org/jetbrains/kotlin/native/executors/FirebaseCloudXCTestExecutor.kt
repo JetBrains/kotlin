@@ -46,8 +46,8 @@ class FirebaseCloudXCTestExecutor(
         require(HostManager.host.family.isAppleFamily) {
             "$this executor isn't available for $configurables"
         }
-        require(target == KonanTarget.IOS_ARM64) {
-            "$this executor is available only for iOS arm64 (device-only)"
+        require(target == KonanTarget.IOS_ARM64 || target == KonanTarget.IOS_ARM64E) {
+            "$this executor is available only for iOS arm64 / arm64e (device-only)"
         }
     }
 

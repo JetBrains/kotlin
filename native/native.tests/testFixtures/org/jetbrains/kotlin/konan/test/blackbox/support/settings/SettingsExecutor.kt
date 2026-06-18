@@ -42,7 +42,7 @@ val Settings.testProcessExecutor: Executor
                     }
                     when (configurables.target) {
                         hostTarget -> XCTestHostExecutor(configurables)
-                        is KonanTarget.IOS_ARM64 -> FirebaseCloudXCTestExecutor(configurables)
+                        is KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM64E -> FirebaseCloudXCTestExecutor(configurables)
                         is KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> XCTestSimulatorExecutor(configurables)
                         else -> JUnit5Assertions.fail { "Running tests for $testTarget on $hostTarget with XCTest is not supported yet." }
                     }

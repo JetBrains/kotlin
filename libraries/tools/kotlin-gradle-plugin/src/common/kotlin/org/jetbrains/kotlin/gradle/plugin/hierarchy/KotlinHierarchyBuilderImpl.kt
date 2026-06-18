@@ -189,6 +189,10 @@ private class KotlinHierarchyBuilderImpl(
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM64
     }
 
+    override fun withIosArm64e() = withTargets {
+        it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_ARM64E
+    }
+
     override fun withIosX64() = withTargets {
         it is KotlinNativeTarget && it.konanTarget == KonanTarget.IOS_X64
     }

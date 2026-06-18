@@ -62,7 +62,7 @@ abstract class DevFrameworkPathValueSource : ValueSource<String, DevFrameworkPat
         val platform = when (this) {
             KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> "macosx"
             KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.IOS_X64 -> "iphonesimulator"
-            KonanTarget.IOS_ARM64 -> "iphoneos"
+            KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM64E -> "iphoneos"
             else -> error("Target $this is not supported here")
         }
 
@@ -110,6 +110,7 @@ kotlin {
         @Suppress("DEPRECATION")
         addIfEnabledOnHost(iosX64())
         addIfEnabledOnHost(iosArm64())
+        addIfEnabledOnHost(iosArm64e())
         addIfEnabledOnHost(iosSimulatorArm64())
 
         forEach {

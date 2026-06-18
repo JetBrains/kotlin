@@ -173,6 +173,22 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainer {
 
     fun iosArm64(configure: Action<KotlinNativeTarget>) = iosArm64 { configure.execute(this) }
 
+    fun iosArm64e(
+        name: String = "iosArm64e",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget
+
+    fun iosArm64e() = iosArm64e("iosArm64e") { }
+
+    fun iosArm64e(name: String) = iosArm64e(name) { }
+
+    fun iosArm64e(
+        name: String,
+        configure: Action<KotlinNativeTarget>
+    ) = iosArm64e(name) { configure.execute(this) }
+
+    fun iosArm64e(configure: Action<KotlinNativeTarget>) = iosArm64e { configure.execute(this) }
+
     fun iosX64(
         name: String = "iosX64",
         configure: KotlinNativeTargetWithSimulatorTests.() -> Unit = { }
@@ -562,6 +578,16 @@ internal abstract class DefaultKotlinTargetContainerWithPresetFunctions @Inject 
             name,
             presets.getByName("iosArm64") as KotlinNativeTargetPreset,
             project,
+            configure
+        )
+
+    override fun iosArm64e(
+        name: String,
+        configure: KotlinNativeTarget.() -> Unit
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("iosArm64e") as KotlinNativeTargetPreset,
             configure
         )
 

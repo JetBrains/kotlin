@@ -338,7 +338,7 @@ internal class XCTestRunner(val isEnabled: Boolean, private val nativeTargets: K
         val xcodeTarget = when (val target = nativeTargets.testTarget) {
             KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64 -> "macosx"
             KonanTarget.IOS_X64, KonanTarget.IOS_SIMULATOR_ARM64 -> "iphonesimulator"
-            KonanTarget.IOS_ARM64 -> "iphoneos"
+            KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM64E -> "iphoneos"
             else -> error("Target $target is not supported buy the executor")
         }
 

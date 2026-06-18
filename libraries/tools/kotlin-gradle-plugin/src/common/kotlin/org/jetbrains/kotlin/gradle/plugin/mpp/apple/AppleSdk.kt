@@ -21,7 +21,12 @@ internal object AppleSdk {
             platform.startsWith("iphoneos") -> {
                 targets.addAll(archs.map { arch ->
                     when (arch) {
-                        "arm64", "arm64e" -> KonanTarget.IOS_ARM64
+                        "arm64" -> KonanTarget.IOS_ARM64
+                        // Behavioral fix: previously, requesting `arm64e` from Xcode
+                        // silently produced an `arm64` (KonanTarget.IOS_ARM64) binary.
+                        // With the IOS_ARM64E target available, an `arm64e` request
+                        // now actually produces an arm64e binary with PAC fixups.
+                        "arm64e" -> KonanTarget.IOS_ARM64E
                         else -> throw UnknownArchitectureException(platform, arch)
                     }
                 })
@@ -97,6 +102,7 @@ internal object AppleSdk {
 
 internal enum class AppleArchitecture : Serializable {
     ARM64,
+    ARM64E,
     X86_64,
     ARMV7K,
     ARM64_32;
@@ -105,6 +111,7 @@ internal enum class AppleArchitecture : Serializable {
     val clangArch
         get() = when (this) {
             ARM64 -> "arm64"
+            ARM64E -> "arm64e"
             X86_64 -> "x86_64"
             ARMV7K -> "armv7k"
             ARM64_32 -> "arm64_32"
@@ -121,6 +128,8 @@ internal val KonanTarget.appleArchitecture: AppleArchitecture
         KonanTarget.WATCHOS_DEVICE_ARM64,
         KonanTarget.WATCHOS_SIMULATOR_ARM64,
             -> AppleArchitecture.ARM64
+
+        KonanTarget.IOS_ARM64E -> AppleArchitecture.ARM64E
 
         KonanTarget.IOS_X64,
         KonanTarget.MACOS_X64,
