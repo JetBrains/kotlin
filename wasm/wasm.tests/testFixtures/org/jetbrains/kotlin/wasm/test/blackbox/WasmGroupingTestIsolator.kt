@@ -36,11 +36,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
     companion object {
 
         private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-        // Detects stacktrace assertions that check for the Wasm module name `<main>` (e.g.
-        // `stacktrace.contains("<main>", "someFunction")`). In a grouped batch the module name is
-        // escaped to a test-class-prefixed name (e.g. `...testJsException.main`), so `<main>` would
-        // never match. Isolating such tests keeps the module name as `<main>`.
-        private val stacktraceContainsMainRegex = Regex("""\.contains\s*\(\s*["']<main>["']""")
     }
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -88,7 +83,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         if (listOf(
                 packageKotlinInternalRegex,
-                stacktraceContainsMainRegex,
             ).any { moduleStructure.sourceContains(it) })
             return BatchToken.Isolated
 
