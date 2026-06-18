@@ -49,8 +49,8 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     override fun check(expression: FirAnnotationCall) {
         val annotationClassId = expression.toAnnotationClassId(context.session)
         val fqName = annotationClassId?.asSingleFqName()
-        for (arg in expression.argumentList.arguments) {
-            val argExpression = (arg as? FirErrorExpression)?.expression ?: arg
+        for (arg in expression.arguments) {
+            val argExpression = ((arg as? FirErrorExpression)?.expression ?: arg).unwrapArgument()
             checkAnnotationArgumentWithSubElements(argExpression, context.session)
                 ?.let { reporter.reportOn(argExpression.source, it) }
         }
@@ -72,7 +72,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
             var usedNonConst = false
 
-            for (arg in args.arguments) {
+            for (arg in args.arguments.map { it.unwrapArgument() }) {
                 val sourceForReport = arg.source
 
                 when (val err = checkAnnotationArgumentWithSubElements(arg, session)) {
@@ -86,8 +86,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
 
-            return if (usedNonConst) FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
-            else null
+            return FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.takeIf { usedNonConst }
         }
 
         when (expression) {
@@ -111,8 +110,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                     FirEvaluatorResult.ResolutionError ->
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
-                        if (expression is FirFunctionCall) checkArgumentList(expression.argumentList)
-                        else null
+                        (expression as? FirFunctionCall)?.let { checkArgumentList(it.argumentList) }
                     else -> FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
                 }
             }
