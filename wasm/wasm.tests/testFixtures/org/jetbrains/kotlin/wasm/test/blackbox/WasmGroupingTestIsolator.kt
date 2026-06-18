@@ -41,7 +41,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         // escaped to a test-class-prefixed name (e.g. `...testJsException.main`), so `<main>` would
         // never match. Isolating such tests keeps the module name as `<main>`.
         private val stacktraceContainsMainRegex = Regex("""\.contains\s*\(\s*["']<main>["']""")
-        private val dceExpectedOutputSize = Regex("WASM_DCE_EXPECTED_OUTPUT_SIZE")
     }
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
@@ -90,7 +89,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         if (listOf(
                 packageKotlinInternalRegex,
                 stacktraceContainsMainRegex,
-                dceExpectedOutputSize,
             ).any { moduleStructure.sourceContains(it) })
             return BatchToken.Isolated
 
