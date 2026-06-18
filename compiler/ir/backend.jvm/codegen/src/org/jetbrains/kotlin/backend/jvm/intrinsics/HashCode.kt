@@ -34,9 +34,7 @@ object HashCode : IntrinsicMethod() {
         val receiverType = receiverValue.type
         when {
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                    irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
-                    irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER ||
-                    irFunction.origin == IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER -> {
+                    irFunction.origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER -> {
                 genHashCode(mv, receiverType)
             }
             AsmUtil.isPrimitive(receiverJvmType) -> {

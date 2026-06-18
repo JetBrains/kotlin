@@ -24,29 +24,17 @@ val JVM_NAME_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmName")
 // FIXME: would like to check as well.
 fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && this.valueClassRepresentation is InlineClassRepresentation
 
-fun DeclarationDescriptor.isMultiFieldValueClass(): Boolean =
-    this is ClassDescriptor && this.valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
-
-fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass() || isMultiFieldValueClass()
+fun DeclarationDescriptor.isValueClass(): Boolean = isInlineClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     (constructor.declarationDescriptor as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
 
 fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
     val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
-    return when {
-        declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
-        declarationDescriptor.isMultiFieldValueClass() ->
-            declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
-        else -> emptyList()
-    }
+    return if (declarationDescriptor.isInlineClass()) listOfNotNull(unsubstitutedUnderlyingType()) else emptyList()
 }
 
-
 fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?.isInlineClass() ?: false
-
-fun KotlinType.needsMfvcFlattening(): Boolean =
-    constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
 
 fun KotlinType.substitutedUnderlyingTypes(): List<KotlinType?> =
     unsubstitutedUnderlyingTypes().map { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }

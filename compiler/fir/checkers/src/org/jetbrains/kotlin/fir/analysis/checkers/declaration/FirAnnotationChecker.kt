@@ -25,15 +25,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseCh
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.forEachExpandedType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -109,39 +106,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun reportIfMfvc(
-        annotation: FirAnnotation,
-        hint: String,
-        type: ConeKotlinType,
-    ): Boolean {
-        if (type.needsJvmInlineMultiFieldValueClassFlattening(context.session)) {
-            reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, hint)
-            return true
-        } else return false
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkMultiFieldValueClassAnnotationRestrictions(declaration: FirAnnotationContainer, annotation: FirAnnotation): Boolean {
-        fun FirPropertyAccessor.hasNoReceivers() = contextParameters.isEmpty() && receiverParameter?.typeRef == null &&
-                !propertySymbol.isExtension && !propertySymbol.hasContextParameters
-
-        val [hint, type] = if (annotation.useSiteTarget == PROPERTY_DELEGATE_FIELD) {
-            // The only target that requires additional handling because both FIELD and PROPERTY_DELEGATE_FIELD use FirBackingField
-            "delegate fields" to ((declaration as? FirBackingField)?.propertySymbol?.delegate?.resolvedType
-                ?: return false)
-        } else when (declaration) {
-            is FirReceiverParameter -> "receivers" to declaration.typeRef.coneType
-            is FirProperty if declaration.symbol is FirRegularPropertySymbol -> return false
-            is FirField -> "fields" to declaration.returnTypeRef.coneType // This includes also FirBackingField
-            is FirValueParameter -> "parameters" to declaration.returnTypeRef.coneType
-            is FirVariable -> "variables" to declaration.returnTypeRef.coneType
-            is FirPropertyAccessor if declaration.isGetter && declaration.hasNoReceivers() -> "getters" to declaration.returnTypeRef.coneType
-            else -> return false
-        }
-        return reportIfMfvc(annotation, hint, type)
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationTarget(declaration: FirAnnotationContainer, annotation: FirAnnotation): Boolean {
         val actualTargets = getActualTargetList(declaration)
         val applicableTargets = annotation.getAllowedAnnotationTargets(context.session)
@@ -164,9 +128,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         if (check(actualTargets.defaultTargets) || check(actualTargets.canBeSubstituted) || checkWithUseSiteTargets()) {
-            if (LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()) {
-                checkMultiFieldValueClassAnnotationRestrictions(declaration, annotation)
-            }
             return incorrectTarget
         }
 

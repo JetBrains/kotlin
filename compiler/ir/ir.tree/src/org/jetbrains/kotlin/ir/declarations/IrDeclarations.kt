@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
+import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.IrAttribute
 import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.ir.IrElement
@@ -40,31 +40,17 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
 }
 
 /**
- * Determines whether the current [IrClass] is compatible with being a single-field value class.
+ * Checks if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
+ * the class is a full value class compatible with inline classes.
  *
- * The compatibility is assessed based on the type of value class representation associated with the [IrClass].
+ * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
  *
- * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
- *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
- *
- * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
- *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
- *
- * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
- *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
- *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
- *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
- *                                                 `false` must be used for JVM, `true` for other backends.
- * @return `true` if the [IrClass] is compatible with being a single-field value class; `false` otherwise.
+ * @return `true` if the class is an inline class or if [treatCompatibleFullValueClassesAsInline] is `true` and
+ * the class is a full value class compatible with inline classes; otherwise, `false`.
  */
 @ValueClassBackendAgnosticApi
-fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic: Boolean): Boolean =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic) != null
-
-val IrClass.isJvmInlineMultiFieldValueClass: Boolean
-    get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
+fun IrClass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline) != null
 
 val IrClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation<*>
@@ -91,36 +77,18 @@ val IrFunction.isStaticMethodOfClass: Boolean
 val IrFunction.isPropertyAccessor: Boolean
     get() = this is IrSimpleFunction && correspondingPropertySymbol != null
 
-
-val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>?
-    get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<IrSimpleType>
-
 /**
- * Retrieves the inline class representation of this class if available.
+ * Retrieves an [InlineClassRepresentation] of the [IrClass] if the class is an inline class or
+ * computes an [InlineClassRepresentation] if [treatCompatibleFullValueClassesAsInline] is `true` and
+ * the class is a compatible full value class.
  *
- * This method evaluates the type of the class's value class representation and
- * determines whether to return its equivalent inline class representation.
+ * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
  *
- * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
- *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
- *
- * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
- *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
- *
- * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
- *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
- *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
- *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
- *                                                 `false` must be used for JVM, `true` for other backends.
- * @return An [InlineClassRepresentation] if the class has a compatible value class
- *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
- *         parameter; otherwise, `null`.
+ * @return An [InlineClassRepresentation] or `null`.
  */
 @ValueClassBackendAgnosticApi
-fun IrClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic)
+fun IrClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline: Boolean): InlineClassRepresentation<IrSimpleType>? =
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline)
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

@@ -21,7 +21,7 @@ internal abstract class KonanBackendContext(config: NativeSecondStageCompilation
     @OptIn(ValueClassBackendAgnosticApi::class)
     override val inlineClassesUtils: InlineClassesUtils = object : InlineClassesUtils {
         override fun isClassInlineLike(klass: IrClass): Boolean =
-                klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+                klass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = true)
     }
 
     abstract val builtIns: KonanBuiltIns

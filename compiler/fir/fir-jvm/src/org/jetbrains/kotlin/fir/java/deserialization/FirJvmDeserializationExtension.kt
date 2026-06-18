@@ -59,13 +59,6 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
     override fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? =
         propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature)?.hasField()
 
-    override fun isMaybeMultiFieldValueClass(containerSource: DeserializedContainerSource?): Boolean {
-        val binaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass ?: return false
-        // Before metadata version 1.5.1, classes did not have inline_class_underlying_type/inline_class_underlying_property_name in the
-        // metadata. So we can only treat value classes without those fields in metadata as MFVC starting from version 1.5.1.
-        return binaryClass.classHeader.metadataVersion.isAtLeast(1, 5, 1)
-    }
-
     override fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean {
         val binaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass ?: return true
         // Since metadata version 2.4.0 annotations are stored in metadata,

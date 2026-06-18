@@ -232,12 +232,6 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
 fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
     // Properties in annotation classes become abstract methods named after the property.
     (parent as? IrClass)?.kind == ClassKind.ANNOTATION_CLASS -> true
-    // Multi-field value class accessors must always be added.
-    accessor.isGetter &&
-            accessor.nonDispatchParameters.isEmpty() &&
-            accessor.returnType.needsMfvcFlattening() -> true
-    accessor.isSetter &&
-            accessor.nonDispatchParameters.singleOrNull()?.type?.needsMfvcFlattening() == true -> true
     // @JvmField properties have no getters/setters
     resolveFakeOverride()?.backingField?.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) == true -> false
     // We do not produce default accessors for private fields
@@ -247,10 +241,6 @@ fun IrProperty.needsAccessor(accessor: IrSimpleFunction): Boolean = when {
 val IrDeclaration.isStaticInlineClassReplacement: Boolean
     get() = origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
             || origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
-
-val IrDeclaration.isStaticMultiFieldValueClassReplacement: Boolean
-    get() = origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
-            || origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
 
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(context: JvmBackendContext): Boolean {
     val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(context)
@@ -284,9 +274,6 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     // WARNING: Do not use parentAsClass here, otherwise, it leads to ICE in some obscure cases, see KT-78551
     return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
 }
-
-val IrDeclaration.isStaticValueClassReplacement: Boolean
-    get() = isStaticMultiFieldValueClassReplacement || isStaticInlineClassReplacement
 
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
@@ -333,7 +320,7 @@ val IrClass.isSyntheticSingleton: Boolean
 
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
-        !isStaticValueClassReplacement &&
+        !isStaticInlineClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
         parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
@@ -617,11 +604,11 @@ fun IrConstructor.isNonExposedConstructorOfOrdinaryClass(): Boolean =
 
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = false)
+val IrClass.isSingleFieldValueClass: Boolean get() = isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = false)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = false)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
-    getInlineClassUnderlyingType(irClass, treatFullValueClassesWithOneFieldAsBasic = false)
+    getInlineClassUnderlyingType(irClass, treatCompatibleFullValueClassesAsInline = false)

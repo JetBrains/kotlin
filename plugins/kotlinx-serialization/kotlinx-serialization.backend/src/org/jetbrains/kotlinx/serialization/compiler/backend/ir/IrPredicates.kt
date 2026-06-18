@@ -314,4 +314,4 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(isJvm: Boolean, functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+    !isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = !isJvm) && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

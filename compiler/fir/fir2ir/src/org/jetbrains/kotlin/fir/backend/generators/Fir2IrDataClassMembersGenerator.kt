@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_DATA_CLASS_MEMBER
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.GENERATED_FULL_VALUE_CLASS_MEMBER
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -65,10 +64,6 @@ class Fir2IrDataClassMembersGenerator(
 ) : Fir2IrComponents by c {
     fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
         return MyDataClassMethodsGenerator(irClass, klass, GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
-    }
-
-    fun generateMultiFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
-        return MyDataClassMethodsGenerator(irClass, klass, GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
     }
 
     fun generateFullValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {

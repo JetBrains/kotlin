@@ -188,7 +188,6 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__JsExportAdapter"),
             function,
             origin = JS_EXPORT_ADAPTER,
-            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 
         newFun.parameters.forEachIndexed { index, newParameter ->

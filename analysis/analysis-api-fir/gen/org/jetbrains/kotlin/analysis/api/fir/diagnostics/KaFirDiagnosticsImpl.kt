@@ -1977,11 +1977,6 @@ internal class ValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotBeRecursiveViaTypeParametersWarning
 
-internal class MultiFieldValueClassPrimaryConstructorDefaultParameterImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.MultiFieldValueClassPrimaryConstructorDefaultParameter
-
 internal class SecondaryConstructorWithBodyInsideValueClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -2020,12 +2015,6 @@ internal class ValueClassCannotHaveContextReceiversImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.ValueClassCannotHaveContextReceivers
-
-internal class AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
-    override val name: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationOnIllegalMultiFieldValueClassTypedTarget
 
 internal class NoneApplicableImpl(
     override val candidates: List<Pair<KaSymbol, List<String>>>,

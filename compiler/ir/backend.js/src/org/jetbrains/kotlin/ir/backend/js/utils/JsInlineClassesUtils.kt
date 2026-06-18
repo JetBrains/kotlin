@@ -68,11 +68,11 @@ class JsInlineClassesUtils(val context: JsIrBackendContext) : JsCommonInlineClas
 }
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+val IrClass.isSingleFieldValueClass get() = isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = true)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
-val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+val IrClass.inlineClassRepresentation get() = inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = true)
 
 @OptIn(ValueClassBackendAgnosticApi::class)
 fun getInlineClassUnderlyingType(irClass: IrClass): IrSimpleType =
-    getInlineClassUnderlyingType(irClass, treatFullValueClassesWithOneFieldAsBasic = true)
+    getInlineClassUnderlyingType(irClass, treatCompatibleFullValueClassesAsInline = true)

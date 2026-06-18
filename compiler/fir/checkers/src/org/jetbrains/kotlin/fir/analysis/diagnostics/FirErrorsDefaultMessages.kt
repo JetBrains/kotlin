@@ -111,7 +111,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_IN_CONTRACT_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
@@ -564,7 +563,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT_WARNING
@@ -2459,10 +2457,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive.")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS, "Value class cannot be recursive.")
         map.put(
-            MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
-            "Default parameters are not supported in the primary constructor of a multi-field value class."
-        )
-        map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
             "Invalid default value for inline function parameter. Only lambdas, anonymous functions, and callable references are supported.",
             DECLARATION_NAME
@@ -2487,11 +2481,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "{0} class cannot have inner classes.", STRING)
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be 'Cloneable'.")
         map.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers.")
-        map.put(
-            ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET,
-            "Annotations on {0} of multi-field value class type are not supported.",
-            STRING
-        )
 
 
         // Inline

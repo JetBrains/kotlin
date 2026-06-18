@@ -466,7 +466,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val VALUE_CLASS_CANNOT_BE_RECURSIVE: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_BE_RECURSIVE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS", ForbidValueClassRecursionViaTypeParameters, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
-    val MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpression::class, getRendererFactory())
     val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS: KtDiagnosticFactory0 = KtDiagnosticFactory0("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val RESERVED_MEMBER_INSIDE_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("RESERVED_MEMBER_INSIDE_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtFunction::class, getRendererFactory())
     val RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtClass::class, getRendererFactory())
@@ -474,7 +473,6 @@ object FirErrors : KtDiagnosticsContainer() {
     val INNER_CLASS_INSIDE_VALUE_CLASS: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INNER_CLASS_INSIDE_VALUE_CLASS", ERROR, SourceElementPositioningStrategies.INNER_MODIFIER, KtDeclaration::class, getRendererFactory())
     val VALUE_CLASS_CANNOT_BE_CLONEABLE: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_BE_CLONEABLE", ERROR, SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER, KtDeclaration::class, getRendererFactory())
     val VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS: KtDiagnosticFactory0 = KtDiagnosticFactory0("VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS", ERROR, SourceElementPositioningStrategies.CONTEXT_KEYWORD, KtDeclaration::class, getRendererFactory())
-    val ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // Applicability
     val NONE_APPLICABLE: KtDiagnosticFactory1<Collection<Pair<FirBasedSymbol<*>, List<String>>>> = KtDiagnosticFactory1("NONE_APPLICABLE", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())

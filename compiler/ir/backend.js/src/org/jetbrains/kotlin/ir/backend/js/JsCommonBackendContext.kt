@@ -45,7 +45,7 @@ interface JsCommonBackendContext : CommonBackendContext {
 interface JsCommonInlineClassesUtils : InlineClassesUtils {
     @OptIn(ValueClassBackendAgnosticApi::class)
     override fun isClassInlineLike(klass: IrClass): Boolean =
-        klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+        klass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = true)
 
     /**
      * Returns the inlined class for the given type, or `null` if the type is not inlined.

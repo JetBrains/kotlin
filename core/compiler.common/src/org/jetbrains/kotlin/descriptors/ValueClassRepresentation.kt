@@ -5,29 +5,29 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.descriptors.ValueClassKind.Inline
-import org.jetbrains.kotlin.descriptors.ValueClassKind.MultiField
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 /**
  * Represents how a value class is lowered/unboxed by the compiler.
  *
- * There are three possible representations:
+ * There are two possible representations:
  * - [InlineClassRepresentation] — a single-field value class declared with `inline` keyword or `@JvmInline` annotation and `value` keyword
  *   ([KEEP-0104](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md))
  *   It is always unboxed by the compiler on all backends.
- * - [JvmInlineMultiFieldValueClassRepresentation] — a multi-field `@JvmInline value class`
- *   ([KEEP-0340](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)).
- *   It is unboxed (flattened into multiple fields) by the compiler on JVM. Not available on other backends.
- * - [FullValueClassRepresentation] — a value class without `@JvmInline` annotation
+ * - [FullValueClassRepresentation] — a value class without `@JvmInline` annotation with `value` keyword
  *   ([KEEP-0454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)).
- *   It is not unboxed on JVM, but on other backends a single-field full value class is treated the same as an inline class and thus is unboxed.
- *   It can have multiple underlying fields.
+ *     * Full value class can have one field.
+ *       * In the case of non-JVM platforms, it looks like an inline class defined above and thus behaves correspondingly: it gets unboxed. It is considered **COMPATIBLE** with an inline class.
+ *       * On JVM the class is not unboxed, as inline classes have [JvmInline] annotation. It is considered **INCOMPATIBLE** with an inline class.
+ *     * Full value class can have multiple underlying fields. In this case it is always boxed and thus is considered **INCOMPATIBLE** with an inline class.
+ *     * Full value class can be abstract/sealed. It is considered **INCOMPATIBLE** with an inline class.
+ *       * It is a regular abstract class without any fields (if declared in Kotlin) and without mutable fields (if declared in Java with Valhalla support).
+ *       * It can be inherited by other value classes (both abstract/sealed and final).
+ *       * Its [underlyingPropertyNamesToTypes] is always `null`.
  *
- * [InlineClassRepresentation] and [JvmInlineMultiFieldValueClassRepresentation] are grouped under [BasicValueClassRepresentation].
+ * [InlineClassRepresentation] is the only available subclass of [BasicValueClassRepresentation].
  */
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>?
@@ -36,8 +36,6 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
 
     fun <Other : SimpleTypeMarker> mapUnderlyingType(transform: (Type) -> Other): ValueClassRepresentation<Other> = when (this) {
         is InlineClassRepresentation -> InlineClassRepresentation(underlyingPropertyName, transform(underlyingType))
-        is JvmInlineMultiFieldValueClassRepresentation ->
-            JvmInlineMultiFieldValueClassRepresentation(underlyingPropertyNamesToTypes.map { [name, type] -> name to transform(type) })
         is FullValueClassRepresentation ->
             FullValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
@@ -47,63 +45,24 @@ sealed class BasicValueClassRepresentation<Type : RigidTypeMarker>: ValueClassRe
     abstract override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 }
 
-fun <T : RigidTypeMarker> ValueClassRepresentation<T>.asOld() = this as? BasicValueClassRepresentation
-
-enum class ValueClassKind { Inline, MultiField }
-
-fun <Type : RigidTypeMarker> TypeSystemCommonBackendContext.valueClassLoweringKind(
-    fields: List<Pair<Name, Type>>,
-): ValueClassKind = when {
-    fields.size > 1 -> MultiField
-    fields.isEmpty() -> error("Value classes cannot have 0 fields")
-    else -> {
-        val type = fields.single().second
-        with(this) {
-            when {
-                type.isNullableType() -> Inline
-                !type.typeConstructor().isJvmInlineMultiFieldValueClass() -> Inline
-                else -> MultiField
-            }
-        }
-    }
-}
-
-fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemCommonBackendContext, fields: List<Pair<Name, Type>>) =
-    when (context.valueClassLoweringKind(fields)) {
-        Inline -> InlineClassRepresentation(fields[0].first, fields[0].second)
-        MultiField -> JvmInlineMultiFieldValueClassRepresentation(fields)
-    }
-
-
 
 /**
- * Casts or converts the [ValueClassRepresentation] to [InlineClassRepresentation] depending on the [treatFullValueClassesWithOneFieldAsBasic],
- * which specifies whether a single-field full value class is compatible with being an inline class or not.
+ * Interprets given [ValueClassRepresentation] as [InlineClassRepresentation].
  *
- * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
+ * * If the actual given [ValueClassRepresentation] is an instance of [InlineClassRepresentation], the function simply returns it.
+ * * If [treatCompatibleFullValueClassesAsInline] is `true` and the [ValueClassRepresentation] is a compatible [FullValueClassRepresentation],
+ *   the function computes and returns the compatible [InlineClassRepresentation].
  *
- * **Basic** value classes are [inline classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md) and [jvm inline multi-field value classes](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)
+ * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
  *
- * The overview of full value classes is that they are value classes without @JvmInline annotation on all backends, supporting one or multiple underlying fields.
- *
- * They are not optimized on JVM, regardless of the number of underlying fields. On other backends, they are optimized if there is only one underlying field.
- *
- * @param treatFullValueClassesWithOneFieldAsBasic A boolean indicating whether to treat full value classes with one underlying field as basic (inline class).
- *                                                 On JVM full value classes are not unboxed on the behalf of Kotlin compiler while `inline class`es/`@JvmInline value class`es are.
- *                                                 On other platforms there is no `@JvmInline` annotation and unboxing is done by the compiler in both basic and full value classes with a single field.
- *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
- *                                                 `false` must be used for JVM, `true` for other backends.
- * @return An [InlineClassRepresentation] if the class has a compatible value class
- *         representation and meets the conditions specified by the [treatFullValueClassesWithOneFieldAsBasic]
- *         parameter; otherwise, `null`.
+ * @return An [InlineClassRepresentation] or `null`.
  */
 @ValueClassBackendAgnosticApi
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.interpretAsInlineClassRepresentationOrNull(
-    treatFullValueClassesWithOneFieldAsBasic: Boolean
+    treatCompatibleFullValueClassesAsInline: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
-    is JvmInlineMultiFieldValueClassRepresentation -> null
-    is FullValueClassRepresentation if !treatFullValueClassesWithOneFieldAsBasic -> null
+    is FullValueClassRepresentation if !treatCompatibleFullValueClassesAsInline -> null
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
         ?.let { [name, type] -> InlineClassRepresentation(name, type) }
 }

@@ -210,14 +210,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        val isJvmInlineMultiFieldEnabled = LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()
         val finalOrBasicValueClassPrefix = when {
             !supportsFullValueClasses -> "value"
             isFullValueClass -> "final value"
             else -> "@JvmInline value"
         }
         if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
-            if (isJvmInlineMultiFieldEnabled || isFullValueClass) {
+            if (isFullValueClass) {
                 if (primaryConstructorParametersByName.isEmpty() && (!isFullValueClass || declaration.isFinal)) {
                     reporter.reportOn(
                         primaryConstructor.source,
@@ -296,17 +295,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     ViaTypeParameters -> reporter.reportOn(
                         parameterTypeRef.source, FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS,
                     )
-                }
-
-                declaration.symbol.jvmInlineMultiFieldValueClassRepresentation != null -> {
-                    val defaultValue = primaryConstructorParameter.resolvedDefaultValue
-                    if (defaultValue != null) {
-                        // TODO, KT-50113: Fix when inline arguments are supported.
-                        reporter.reportOn(
-                            defaultValue.source,
-                            FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
-                        )
-                    }
                 }
             }
         }

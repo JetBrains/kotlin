@@ -3259,12 +3259,6 @@ private fun KaDiagnosticConverterBuilder.addConversions72() {
             token,
         )
     }
-    add(FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER) { firDiagnostic ->
-        MultiFieldValueClassPrimaryConstructorDefaultParameterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS) { firDiagnostic ->
         ReservedMemberFromInterfaceInsideValueClassImpl(
             firDiagnostic.a,
@@ -6099,13 +6093,6 @@ private fun KaDiagnosticConverterBuilder.addConversions132() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions133() {
-    add(FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET) { firDiagnostic ->
-        AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.TYPE_INTERSECTION_AS_REIFIED_DEPRECATION_WARNING) { firDiagnostic ->
         TypeIntersectionAsReifiedDeprecationWarningImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),

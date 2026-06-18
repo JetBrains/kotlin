@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
-import org.jetbrains.kotlin.utils.memoryOptimizedZip
 import kotlin.reflect.full.declaredMemberProperties
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnnotation as ProtoAnnotation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as Pro
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrInlineClassRepresentation as ProtoIrInlineClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrMultiFieldValueClassRepresentation as ProtoIrMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
@@ -394,11 +392,7 @@ class IrDeclarationDeserializer(
 
                 valueClassRepresentation = when {
                     !flags.isValue -> null
-                    proto.hasMultiFieldValueClassRepresentation() && proto.hasInlineClassRepresentation() ->
-                        error("Class cannot be both inline and multi-field value: $name")
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
-                    proto.hasMultiFieldValueClassRepresentation() ->
-                        deserializeMultiFieldValueClassRepresentation(proto.multiFieldValueClassRepresentation)
                     // Inline classes with KLib version <= 1.5.20 are no longer supported
                     else -> deserializeFullValueClassRepresentation(this)
                 }
@@ -415,12 +409,6 @@ class IrDeclarationDeserializer(
             deserializeName(proto.underlyingPropertyName),
             deserializeIrType(proto.underlyingPropertyType) as IrSimpleType,
         )
-
-    private fun deserializeMultiFieldValueClassRepresentation(proto: ProtoIrMultiFieldValueClassRepresentation): JvmInlineMultiFieldValueClassRepresentation<IrSimpleType> {
-        val names = proto.underlyingPropertyNameList.memoryOptimizedMap { deserializeName(it) }
-        val types = proto.underlyingPropertyTypeList.memoryOptimizedMap { deserializeIrType(it) as IrSimpleType }
-        return JvmInlineMultiFieldValueClassRepresentation(names memoryOptimizedZip types)
-    }
 
     private fun deserializeFullValueClassRepresentation(irClass: IrClass): FullValueClassRepresentation<IrSimpleType> {
         if (irClass.modality == Modality.ABSTRACT || irClass.modality == Modality.SEALED) return FullValueClassRepresentation(null)

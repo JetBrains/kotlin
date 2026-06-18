@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isBoxedPrimitiveType
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.GenerationState.MultiFieldValueClassUnboxInfo
 import org.jetbrains.kotlin.resolve.isInlineClass
-import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -73,8 +71,7 @@ class BoxedValueDescriptor(
     private val mergedWith = HashSet<BoxedValueDescriptor>()
 
     var isSafeToRemove = true; private set
-    val multiFieldValueClassUnboxInfo = getMultiFieldValueClassUnboxInfo(boxedType, generationState)
-    val unboxedTypes: List<Type> = getUnboxedTypes(boxedType, generationState, multiFieldValueClassUnboxInfo)
+    val unboxedTypes: List<Type> = getUnboxedTypes(boxedType, generationState)
 
     fun getUnboxTypeOrOtherwiseMethodReturnType(methodInsnNode: MethodInsnNode?) =
         unboxedTypes.singleOrNull() ?: Type.getReturnType(methodInsnNode!!.desc)
@@ -154,18 +151,13 @@ internal fun makePops(unboxedTypes: List<Type>) = InsnList().apply {
 }
 
 
-fun getUnboxedTypes(
-    boxedType: Type,
-    state: GenerationState,
-    multiFieldValueClassUnboxInfo: MultiFieldValueClassUnboxInfo?
-): List<Type> {
+fun getUnboxedTypes(boxedType: Type, state: GenerationState): List<Type> {
     val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
     if (primitiveType != null) return listOf(primitiveType)
 
     if (boxedType == AsmTypes.K_CLASS_TYPE) return listOf(AsmTypes.JAVA_CLASS_TYPE)
 
     unboxedTypeOfInlineClass(boxedType, state)?.let { return listOf(it) }
-    multiFieldValueClassUnboxInfo?.let { return it.unboxedTypes }
 
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }
@@ -174,13 +166,4 @@ fun unboxedTypeOfInlineClass(boxedType: Type, state: GenerationState): Type? {
     val descriptor =
         state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isInlineClass() } ?: return null
     return state.mapInlineClass(descriptor)
-}
-
-fun getMultiFieldValueClassUnboxInfo(boxedType: Type, state: GenerationState): MultiFieldValueClassUnboxInfo? {
-    if (!state.config.supportJvmInlineMultiFieldValueClasses) return null
-
-    val descriptor =
-        state.jvmBackendClassResolver.resolveToClassDescriptors(boxedType).singleOrNull()?.takeIf { it.isMultiFieldValueClass() }
-            ?: return null
-    return state.multiFieldValueClassUnboxInfo(descriptor)
 }

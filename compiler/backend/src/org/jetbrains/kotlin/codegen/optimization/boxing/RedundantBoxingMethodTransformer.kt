@@ -183,21 +183,8 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
                 val descriptor = value.descriptor
                 if (!descriptor.isSafeToRemove) continue
-                val unboxedType = descriptor.unboxedTypes.singleOrNull()
-                if (unboxedType == null) {
-                    var offset = 0
-                    localVariablesReplacement[localVariableNode] =
-                        descriptor.multiFieldValueClassUnboxInfo!!.unboxedTypesAndMethodNamesAndFieldNames.map { [type, _, fieldName] ->
-                            val newVarName = "${localVariableNode.name}-$fieldName"
-                            val newStart = localVariableNode.start
-                            val newEnd = localVariableNode.end
-                            val newOffset = offset
-                            offset += type.size
-                            LocalVariableNode(newVarName, type.descriptor, null, newStart, newEnd, newOffset)
-                        }
-                } else {
-                    localVariableNode.desc = unboxedType.descriptor
-                }
+                val unboxedType = descriptor.unboxedTypes.single()
+                localVariableNode.desc = unboxedType.descriptor
             }
         }
         return localVariablesReplacement
@@ -420,54 +407,6 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
 
             Opcodes.CHECKCAST -> node.instructions.remove(insn)
             Opcodes.INVOKEVIRTUAL -> {
-                if (value.unboxedTypes.size != 1) {
-                    val unboxMethodCall = insn as MethodInsnNode
-                    val unboxMethodIndex = value.multiFieldValueClassUnboxInfo!!.unboxedMethodNames.indexOf(unboxMethodCall.name)
-                    val unboxedType = value.unboxedTypes[unboxMethodIndex]
-
-                    var canRemoveInsns = true
-                    var savedToVariable = false
-                    for ([i, type] in value.unboxedTypes.withIndex().toList().asReversed()) {
-                        fun canRemoveInsn(includeDup: Boolean): Boolean {
-                            if (!canRemoveInsns) return false
-                            val insnToCheck = if (i < unboxMethodIndex) unboxMethodCall.previous.previous else unboxMethodCall.previous
-                            val result = when (insnToCheck.opcode) {
-                                type.getOpcode(Opcodes.ILOAD) -> true
-                                Opcodes.DUP2 -> includeDup && type.size == 2
-                                Opcodes.DUP -> includeDup && type.size == 1
-                                else -> false
-                            }
-
-                            canRemoveInsns = result
-                            return result
-                        }
-
-                        fun insertPopInstruction() =
-                            node.instructions.insertBefore(unboxMethodCall, InsnNode(if (type.size == 2) Opcodes.POP2 else Opcodes.POP))
-
-                        fun saveToVariableIfNecessary() {
-                            if (savedToVariable) return
-                            if (i > unboxMethodIndex) return
-                            savedToVariable = true
-                            usedExtraSlots = unboxedType.size
-                            node.instructions.insertBefore(insn, VarInsnNode(unboxedType.getOpcode(Opcodes.ISTORE), node.maxLocals))
-                        }
-
-                        if (i == unboxMethodIndex) {
-                            if (unboxMethodIndex > 0 && !canRemoveInsn(includeDup = false)) {
-                                saveToVariableIfNecessary()
-                            }
-                        } else if (canRemoveInsn(includeDup = i > unboxMethodIndex)) {
-                            node.instructions.remove(if (i < unboxMethodIndex) unboxMethodCall.previous.previous else unboxMethodCall.previous)
-                        } else {
-                            saveToVariableIfNecessary()
-                            insertPopInstruction()
-                        }
-                    }
-                    if (savedToVariable) {
-                        node.instructions.insertBefore(insn, VarInsnNode(unboxedType.getOpcode(Opcodes.ILOAD), node.maxLocals))
-                    }
-                }
                 node.instructions.remove(insn)
             }
 

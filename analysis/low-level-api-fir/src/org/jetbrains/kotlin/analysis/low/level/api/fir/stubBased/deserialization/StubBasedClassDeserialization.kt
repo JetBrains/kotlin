@@ -313,13 +313,6 @@ private fun KotlinClassStubImpl.deserializeValueClassRepresentation(klass: FirRe
         return InlineClassRepresentation(parameter.name, parameter.coneRigidType())
     }
 
-    @OptIn(SuspiciousValueClassCheck::class)
-    if (klass.isValue) {
-        return JvmInlineMultiFieldValueClassRepresentation(constructor.valueParameters.map { parameter ->
-            parameter.name to parameter.coneRigidType()
-        })
-    }
-
     return null
 }
 

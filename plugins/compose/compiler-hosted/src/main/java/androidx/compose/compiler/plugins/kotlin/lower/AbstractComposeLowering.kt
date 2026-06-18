@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
@@ -169,7 +168,7 @@ abstract class AbstractComposeLowering(
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
         val representation = klass.inlineClassRepresentation(
-            treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()
+            treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()
         ) ?: return null
         if (!isInlineClassType()) return null
 
@@ -1920,6 +1919,6 @@ fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
     return if (this is IrSimpleType && classifier.owner is IrScript) {
         false
     } else {
-        erasedUpperBound.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm)
+        erasedUpperBound.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline = !isJvm)
     }
 }

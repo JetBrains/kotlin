@@ -167,7 +167,7 @@ val FirCallableSymbol<*>.isPotentialInlineClassProperty: Boolean
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
         // when we are not sure if the class is full value class or basic value class,
         // treat it better as potential inline class when not sure
-        val inlineClassRepresentation = containingClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+        val inlineClassRepresentation = containingClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline = true)
             ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }

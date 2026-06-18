@@ -532,34 +532,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
-        if (toFirRegularClass()?.isFullValueClass == true) return false
-        val fields = getValueClassProperties() ?: return false
-        return this@ConeTypeContext.valueClassLoweringKind(fields) == ValueClassKind.Inline
-    }
-
-    override fun TypeConstructorMarker.isJvmInlineMultiFieldValueClass(): Boolean {
-        val jvmInlineAnnotationClassId = session.annotationPlatformSupport.jvmInlineAnnotationClassId ?: return false
-        val regularClass = toFirRegularClass()
-        if (regularClass != null) {
-            if (regularClass.isFullValueClass) return false
-            if (!regularClass.symbol.hasAnnotation(jvmInlineAnnotationClassId, session)) return false
-        }
-        val fields = getValueClassProperties() ?: return false
-        return isMultiFieldValueClassRecursionAware(fields, visited = hashSetOf())
-    }
-
-    private fun TypeConstructorMarker.isMultiFieldValueClassRecursionAware(
-        fields: List<Pair<Name, RigidTypeMarker>>,
-        visited: MutableSet<TypeConstructorMarker>,
-    ): Boolean {
-        if (fields.size > 1) return true
-        val fieldType = fields.singleOrNull()?.second ?: return false
-        if (!visited.add(this)) return false
-
-        val typeConstructor = fieldType.typeConstructor()
-        return !fieldType.isNullableType() && typeConstructor.getValueClassProperties()?.let {
-            typeConstructor.isMultiFieldValueClassRecursionAware(it, visited)
-        } == true
+        val symbol = toClassLikeSymbol()?.fullyExpandedClass(session) ?: return false
+        return symbol.isBasicValueClass
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, ConeRigidType>>? {

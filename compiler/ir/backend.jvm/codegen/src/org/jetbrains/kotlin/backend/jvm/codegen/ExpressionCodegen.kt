@@ -301,7 +301,6 @@ class ExpressionCodegen(
             (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
             // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-            irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
             // Although these are accessible from Java, the functions they bridge to already have the assertions.
             irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
             irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
@@ -443,9 +442,7 @@ class ExpressionCodegen(
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
                 (origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER || (this as? IrValueParameter)?.kind == IrParameterKind.Context) &&
-                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
-                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
-                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
+                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
 
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {

@@ -152,7 +152,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     }
 
     private fun isMovedReceiverParameterOfStaticValueClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
-        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
+        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) &&
                 parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
 
     fun generateAnnotationDefaultValue(value: IrExpression) {
@@ -301,7 +301,6 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                 declaration.origin.isSynthetic ->
                     true
                 declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         declaration.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ->
                     true
                 else ->

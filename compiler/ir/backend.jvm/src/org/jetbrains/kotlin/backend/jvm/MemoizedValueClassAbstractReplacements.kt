@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
@@ -92,11 +91,7 @@ abstract class MemoizedValueClassAbstractReplacements(
                         // and reused when lowering the same call in all subsequent files, which would be incorrect if it was not lowered.
                         val newBackingField = context.cachedDeclarations.getStaticBackingField(oldProperty) ?: oldProperty.backingField
                         if (newBackingField != null) {
-                            context.multiFieldValueClassReplacements.getMfvcFieldNode(newBackingField)
-                            val fieldsToRemove = context.multiFieldValueClassReplacements.getFieldsToRemove(oldProperty.parentAsClass)
-                            if (newBackingField !in fieldsToRemove) {
-                                backingField = newBackingField
-                            }
+                            backingField = newBackingField
                         }
                     }
                 }

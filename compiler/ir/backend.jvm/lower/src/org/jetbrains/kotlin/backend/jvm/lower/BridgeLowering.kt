@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -461,7 +460,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }.apply {
             copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
-            context.remapMultiFieldValueClassStructure(bridge.overridden, this, parametersMappingOrNull = null)
             copyBridgeAnnotationsIfNeeded(bridge.overridden, target, bridge.isErroneous)
 
             // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
@@ -516,7 +514,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                 ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
-            context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
             copyBridgeAnnotationsIfNeeded(specialBridge.overridden, target, true)
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
@@ -668,15 +665,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         // while others (e.g user-defined) annotations are taken from the bridge target.
         returnType = returnType.withFilteredAnnotationsFrom(target.returnType)
 
-        val bridgeParamsStructure = getStructure(this) ?: this.parameters.map { RegularMapping(it) }
-        val targetParamsStructure = getStructure(target) ?: target.parameters.map { RegularMapping(it) }
-        for ([bridgeParameterStructure, targetParameterStructure] in bridgeParamsStructure zip targetParamsStructure) {
-            // in case of multi-field source parameters, use only the first one from the group
-            val targetParameter = targetParameterStructure.parameters.first()
-            for (bridgeParameter in bridgeParameterStructure.parameters) {
-                bridgeParameter.annotations = targetParameter.copyAnnotations(userIgnoredAnnotationsFilter)
-                bridgeParameter.type = bridgeParameter.type.withFilteredAnnotationsFrom(targetParameter.type)
-            }
+        for ([bridgeParameter, targetParameter] in this.parameters zip target.parameters) {
+            bridgeParameter.annotations = targetParameter.copyAnnotations(userIgnoredAnnotationsFilter)
+            bridgeParameter.type = bridgeParameter.type.withFilteredAnnotationsFrom(targetParameter.type)
         }
     }
 
@@ -726,44 +717,14 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         superQualifierSymbol: IrClassSymbol? = null
     ) = irCastIfNeeded(irBlock {
         +irReturn(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
-            if (getStructure(target) == null && getStructure(bridge) == null) {
-                for ([param, targetParam] in bridge.parameters.zip(target.parameters)) {
-                    val argument = irGet(param).let { argument ->
-                        if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
-                    }
-                    arguments[targetParam] = argument
+            for ([param, targetParam] in bridge.parameters.zip(target.parameters)) {
+                val argument = irGet(param).let { argument ->
+                    if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
                 }
-            } else {
-                this@irBlock.addBoxedAndUnboxedMfvcArguments(target, bridge, this)
+                arguments[targetParam] = argument
             }
         })
     }.unwrapBlock(), bridge.returnType.upperBound)
-
-    private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
-        val structure = function.parameterTemplateStructureOfThisNewMfvcBidingFunction ?: return null
-        require(structure.sumOf { it.parameters.size } == function.parameters.size) {
-            "Bad parameters structure: $structure"
-        }
-
-        return structure
-    }
-
-    private fun IrBlockBuilder.addBoxedAndUnboxedMfvcArguments(
-        target: IrSimpleFunction,
-        bridge: IrSimpleFunction,
-        irCall: IrCall
-    ) {
-        val parameters2arguments = this@BridgeLowering.context.multiFieldValueClassReplacements
-            .mapFunctionMfvcStructures(this, target, bridge) { sourceParameter, targetParameterType ->
-                if (sourceParameter == bridge.dispatchReceiverParameter) irGet(sourceParameter)
-                else irCastIfNeeded(irGet(sourceParameter), targetParameterType)
-            }
-        for ([parameter, argument] in parameters2arguments) {
-            if (argument != null) {
-                irCall.arguments[parameter] = argument
-            }
-        }
-    }
 
     private val IrFunction.jvmMethod: Method
         get() = context.bridgeLoweringCache.computeJvmMethod(this)
