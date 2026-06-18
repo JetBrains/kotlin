@@ -99,4 +99,15 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
             removedVersion = KotlinReleaseVersion.v2_4_0,
         )
     }
+
+    compilerArgument {
+        name = "Xvalue-classes"
+        description = "Enable experimental value classes.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_8_20,
+            removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }

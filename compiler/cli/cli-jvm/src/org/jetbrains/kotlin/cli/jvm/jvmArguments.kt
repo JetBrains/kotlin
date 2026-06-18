@@ -129,12 +129,6 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (arguments.valueClasses) {
-        this.report(
-            COMPILER_ARGUMENTS_ERROR, "This flag is deprecated, use -XXLanguage:+JvmInlineMultiFieldValueClasses instead"
-        )
-    }
-
     handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
     handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
