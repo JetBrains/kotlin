@@ -18,6 +18,7 @@ gradlePlugin {
 
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+    commonApi(project(":kotlin-gradle-plugin"))
 }
 
 tasks.named<KotlinApiBuildTask>("apiBuild") {

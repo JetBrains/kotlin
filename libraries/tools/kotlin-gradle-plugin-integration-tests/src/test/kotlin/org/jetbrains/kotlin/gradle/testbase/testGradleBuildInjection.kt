@@ -544,7 +544,12 @@ fun TestProject.addAgpToBuildScriptCompilationClasspath(androidVersion: String) 
 }
 
 fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
-    val kotlinVersion = buildOptions.kotlinVersion
+    addEcosystemPluginToBuildScriptCompilationClasspath(buildOptions.kotlinVersion)
+}
+
+fun GradleProject.addEcosystemPluginToBuildScriptCompilationClasspath(
+    kotlinVersion: String
+) {
     settingsBuildScriptBuildscriptBlockInjection {
         settings.buildscript.configurations.getByName("classpath").dependencies.add(
             settings.buildscript.dependencies.create("org.jetbrains.kotlin:kotlin-gradle-ecosystem-plugin:$kotlinVersion")
@@ -555,7 +560,7 @@ fun TestProject.addEcosystemPluginToBuildScriptCompilationClasspath() {
 /**
  * This helper method works similar to "plugins {}" block in the build script; it resolves the POM pointer to the plugin jar and applies the plugin
  */
-fun TestProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
+fun GradleProject.plugins(build: PluginDependenciesSpec.() -> Unit) {
     val spec = TestPluginDependenciesSpec()
     spec.build()
     transferPluginRepositoriesIntoBuildScript()
