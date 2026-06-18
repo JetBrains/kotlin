@@ -25,6 +25,7 @@ class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
         runTest("jps/jps-plugin/testData/incremental/custom/renameModule/")
     }
 
+    @Suppress("deprecation")
     override fun performAdditionalModifications(modifications: List<Modification>) {
         projectDescriptor.project.modules.forEach { it.name += "Renamed" }
     }
