@@ -44,18 +44,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
             return null
 
         val getInstanceFun = getOrCreateGetInstanceFunction(declaration)
-
-        val instanceField = context.irFactory.buildField {
-            name = Name.identifier(declaration.name.asString() + "_instance")
-            type = declaration.defaultType.makeNullable()
-            isStatic = true
-            origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
-        }.apply {
-            parent = declaration.parent
-            initializer = null  // Initialized with 'undefined'
-        }
-
-        declaration.objectInstanceField = instanceField
+        val instanceField = getOrCreateInstanceField(declaration)
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
@@ -164,8 +153,25 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
     }
 }
 
+private fun getOrCreateInstanceField(obj: IrClass): IrField =
+    obj::objectInstanceField.getOrSetIfNull {
+        obj.factory.buildField {
+            name = Name.identifier(obj.name.asString() + "_instance")
+            type = obj.defaultType.makeNullable()
+            isStatic = true
+            origin = IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+        }.apply {
+            parent = obj.parent
+            initializer = null  // Initialized with 'undefined'
+        }
+    }
+
+
 private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
     obj::objectGetInstanceFunction.getOrSetIfNull {
+        // There is need to initialize _instance field together with _getInstance, so the outer restrictTo call would properly assign
+        // signature and tags for JS namer. It prevents name clashes during the JS namer phase.
+        getOrCreateInstanceField(obj)
         obj.factory.buildFun {
             name = Name.identifier(obj.name.asString() + "_getInstance")
             returnType = obj.defaultType
