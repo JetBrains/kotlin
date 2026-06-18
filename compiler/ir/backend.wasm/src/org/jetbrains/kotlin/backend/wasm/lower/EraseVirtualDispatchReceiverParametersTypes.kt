@@ -67,7 +67,9 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         if (irFunction !is IrSimpleFunction) return
         if (!irFunction.isOverridableOrOverrides) return
 
-        // Companion block functions are static and have no receiver
+        // Functions with no dispatch receivers should just be ignored. This shouldn't normally
+        // happen anyway given the preconditions, but some language extension may change this in the
+        // future.
         val dispatchReceiver = irFunction.dispatchReceiverParameter ?: return
         val originalReceiverType = dispatchReceiver.type
 
