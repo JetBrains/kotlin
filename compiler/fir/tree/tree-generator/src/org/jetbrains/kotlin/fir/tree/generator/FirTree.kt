@@ -385,6 +385,22 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val collectionLiteral: Element by element(Expression) {
+        kDoc = """
+                |### Up to and including body resolution phase
+                |
+                |Represents unresolved collection literal. During body resolution, it is replaced with resolved [${functionCall.render()}]
+                |to operator `of`.
+                |  
+                |### After body resolution phase / deserialized
+                |
+                |Represents array literals in annotation arguments or default parameter values.
+                |Both original collection literals and explicit `arrayOf` (`intArrayOf`, `doubleArrayOf`, etc.) calls in annotations are
+                |represented as [${collectionLiteral.render()}] nodes.
+                |
+                |The structure of its [argumentList] is the same as for [${varargArgumentsExpression.render()}] - both regular expressions
+                |and [${spreadArgumentExpression.render()}]s are possible (consider `intArrayOf(0, *[1, 2, 3], 4)`).
+            """.trimMargin()
+
         parent(expression)
         parent(call)
     }
