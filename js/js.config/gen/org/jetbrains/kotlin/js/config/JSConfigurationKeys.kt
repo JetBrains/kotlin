@@ -86,9 +86,6 @@ object JSConfigurationKeys {
     @JvmField
     val FRIEND_PATHS_DISABLED = CompilerConfigurationKey.create<Boolean>("FRIEND_PATHS_DISABLED")
 
-    @JvmField
-    val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("METADATA_ONLY")
-
     // Generate comments with file path at the start of each file block.
     @JvmField
     val GENERATE_COMMENTS_WITH_FILE_PATH = CompilerConfigurationKey.create<Boolean>("GENERATE_COMMENTS_WITH_FILE_PATH")
@@ -287,10 +284,6 @@ var CompilerConfiguration.incrementalNextRoundChecker: IncrementalNextRoundCheck
 var CompilerConfiguration.friendPathsDisabled: Boolean
     get() = getBoolean(JSConfigurationKeys.FRIEND_PATHS_DISABLED)
     set(value) { put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, value) }
-
-var CompilerConfiguration.metadataOnly: Boolean
-    get() = getBoolean(JSConfigurationKeys.METADATA_ONLY)
-    set(value) { put(JSConfigurationKeys.METADATA_ONLY, value) }
 
 var CompilerConfiguration.generateCommentsWithFilePath: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
