@@ -40,6 +40,12 @@ fun foo() {}
 <!THROWS_LIST_EMPTY!>@Throws()<!>
 fun throwsEmptyParens() {}
 
+<!THROWS_LIST_EMPTY!>@Throws(*[], Exception1::class)<!>
+fun throwsEmptySpreadThenNonEmpty() {}
+
+<!THROWS_LIST_EMPTY!>@Throws(*arrayOf(elements = [Exception2::class]))<!>
+fun throwsDeeplyNested() {}
+
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsUnresolved() {}
 
