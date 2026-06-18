@@ -100,6 +100,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isJpsBuild = true)
 
+    @Suppress("deprecation")
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
         TestLoggerFactory.dumpLogToStdout("")

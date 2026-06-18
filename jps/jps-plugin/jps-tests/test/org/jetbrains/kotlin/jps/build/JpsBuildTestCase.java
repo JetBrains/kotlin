@@ -199,11 +199,12 @@ public abstract class JpsBuildTestCase extends UsefulTestCase {
       BuildTargetRegistryImpl targetRegistry = new BuildTargetRegistryImpl(myModel);
       ModuleExcludeIndex index = new ModuleExcludeIndexImpl(myModel);
       IgnoredFileIndexImpl ignoredFileIndex = new IgnoredFileIndexImpl(myModel);
-      BuildDataPaths dataPaths = new BuildDataPathsImpl(myDataStorageRoot);
+      BuildDataPaths dataPaths = new BuildDataPathsImpl(myDataStorageRoot.toPath());
       BuildRootIndexImpl buildRootIndex = new BuildRootIndexImpl(targetRegistry, myModel, index, dataPaths, ignoredFileIndex);
       BuildTargetIndexImpl targetIndex = new BuildTargetIndexImpl(targetRegistry, buildRootIndex);
       BuildTargetsState targetsState = new BuildTargetsState(dataPaths, myModel, buildRootIndex);
       PathRelativizerService relativizer = new PathRelativizerService(myModel.getProject());
+      @SuppressWarnings("removal")
       ProjectStamps projectStamps = new ProjectStamps(myDataStorageRoot, targetsState, relativizer);
       BuildDataManager dataManager = new BuildDataManager(dataPaths, targetsState, relativizer);
       return new ProjectDescriptor(myModel, new BuildFSState(true), projectStamps, dataManager, buildLoggingManager, index,
