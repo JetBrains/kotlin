@@ -89,10 +89,6 @@ object JSConfigurationKeys {
     @JvmField
     val METADATA_ONLY = CompilerConfigurationKey.create<Boolean>("METADATA_ONLY")
 
-    // Enable additional checkers.
-    @JvmField
-    val DEVELOPER_MODE = CompilerConfigurationKey.create<Boolean>("DEVELOPER_MODE")
-
     // Generate comments with file path at the start of each file block.
     @JvmField
     val GENERATE_COMMENTS_WITH_FILE_PATH = CompilerConfigurationKey.create<Boolean>("GENERATE_COMMENTS_WITH_FILE_PATH")
@@ -295,10 +291,6 @@ var CompilerConfiguration.friendPathsDisabled: Boolean
 var CompilerConfiguration.metadataOnly: Boolean
     get() = getBoolean(JSConfigurationKeys.METADATA_ONLY)
     set(value) { put(JSConfigurationKeys.METADATA_ONLY, value) }
-
-var CompilerConfiguration.developerMode: Boolean
-    get() = getBoolean(JSConfigurationKeys.DEVELOPER_MODE)
-    set(value) { put(JSConfigurationKeys.DEVELOPER_MODE, value) }
 
 var CompilerConfiguration.generateCommentsWithFilePath: Boolean
     get() = getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)

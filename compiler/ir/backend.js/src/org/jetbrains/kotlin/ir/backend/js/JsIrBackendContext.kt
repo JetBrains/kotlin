@@ -67,7 +67,6 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
-    val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
 
     val callMain = configuration.callMain

@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering.Companion.getActualType
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -46,8 +49,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val shortMask get() = JsIrBuilder.buildInt(context.irBuiltIns.intType, 0xFFFF)
 
     private val calculator = JsIrArithBuilder(context)
-
-    private val devMode = context.devMode
 
     //NOTE: Should we define JS-own functions similar to current implementation?
     private val throwCCE = context.symbols.throwTypeCastException
@@ -88,8 +89,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 super.visitTypeOperator(expression, data)
 
                 return when (expression.operator) {
-                    IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression, data)
-                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> lowerImplicitDynamicCast(expression, data)
+                    IrTypeOperator.IMPLICIT_CAST -> expression.wrapWithUnsafeCast(expression.argument)
+                    IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> expression.wrapWithUnsafeCast(expression.argument)
                     IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> lowerCoercionToUnit(expression)
                     IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression, data)
                     IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitNotNull(expression, data)
@@ -154,16 +155,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return expression.run {
                     IrCompositeImpl(startOffset, endOffset, expression.type, null, newStatements)
                 }
-            }
-
-            private fun lowerImplicitCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
-                assert(operator == IrTypeOperator.IMPLICIT_CAST)
-                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
-            }
-
-            private fun lowerImplicitDynamicCast(expression: IrTypeOperatorCall, data: IrDeclarationParent) = expression.run {
-                assert(operator == IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
-                if (devMode) lowerCast(expression, data, false) else wrapWithUnsafeCast(argument)
             }
 
             // Note: native `instanceOf` is not used which is important because of null-behaviour

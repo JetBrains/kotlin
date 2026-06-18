@@ -63,8 +63,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val METADATA_ONLY by key<Boolean>()
 
-    val DEVELOPER_MODE by key<Boolean>("Enable additional checkers.")
-
     val GENERATE_COMMENTS_WITH_FILE_PATH by key<Boolean>("Generate comments with file path at the start of each file block.")
 
     val GENERATE_POLYFILLS by key<Boolean>("Generate polyfills for newest properties, methods and classes from ES6+.")
