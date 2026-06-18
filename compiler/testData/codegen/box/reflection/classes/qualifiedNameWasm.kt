@@ -1,4 +1,6 @@
 // TARGET_BACKEND: WASM
+// WASM_STANDALONE
+// ^^^ in non-standalone run, test classes will be placed in a sub-package, so `::class.qualifiedName` would give different result
 
 class NonLocal
 val nonLocalObject = object {}

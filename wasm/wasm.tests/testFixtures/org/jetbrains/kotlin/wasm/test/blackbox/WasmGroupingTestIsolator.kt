@@ -35,10 +35,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
     companion object {
 
-        // Detects any `.qualifiedName` property access (e.g. on a `KClass` obtained via `T::class`
-        // through a reified inline helper). Tests asserting against `qualifiedName` rely on the
-        // original package and would break if `BatchingPackageInserter` prepended a batch package.
-        private val qualifiedNameAccessRegex = Regex("\\.qualifiedName\\b")
         private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
         private val importKotlinReflect = Regex("import\\s+kotlin\\.reflect\\.")
         // Detects stacktrace assertions that check for the Wasm module name `<main>` (e.g.
@@ -94,7 +90,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         if (listOf(
                 packageKotlinInternalRegex,
-                qualifiedNameAccessRegex,
                 importKotlinReflect,
                 stacktraceContainsMainRegex,
                 dceExpectedOutputSize,
