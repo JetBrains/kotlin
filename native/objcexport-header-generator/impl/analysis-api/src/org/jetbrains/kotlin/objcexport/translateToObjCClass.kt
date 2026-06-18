@@ -49,6 +49,13 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
         }
 
         this += analysisSession.getCallableSymbolsForObjCMemberTranslation(symbol)
+            .flatMap { callable ->
+                if (callable is KaPropertySymbol && !analysisSession.isObjCProperty(callable)) {
+                    listOfNotNull(callable.getter, callable.setter)
+                } else {
+                    listOf(callable)
+                }
+            }
             .sortedWith(analysisSession.getStableCallableOrder())
             .flatMap { translateToObjCExportStub(it) }
 

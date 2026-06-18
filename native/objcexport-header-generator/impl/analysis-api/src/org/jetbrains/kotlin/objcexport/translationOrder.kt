@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.export.utilities.getPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.getStringSignature
 
 internal val StableFileOrder: Comparator<KtObjCExportFile>
@@ -35,30 +35,25 @@ internal val StableClassifierOrder: Comparator<KaClassifierSymbol> =
         else ""
     }
 
-//Figure out when name is special and enable logic. See KT-66510
-//    when (it) {
-//        is KtPropertySymbol -> {
-//            /**
-//             * K1 property names are special: [org.jetbrains.kotlin.name.Name.special] == true
-//             * So we need to wrap setter/getter
-//             */
-//            if (it.setter == null) "<get-${it.name}>"
-//            else "<set-${it.name}>"
-//        }
-//        else -> it.name.toString()
-//    }
-internal val StableNamedOrder: Comparator<KaNamedSymbol> = compareBy { it.name.toString() }
+private fun KaSession.getStableAccessorsOrder(): Comparator<KaCallableSymbol> = compareBy {
+    when (it) {
+        is KaPropertyGetterSymbol -> "<get-${getPropertySymbol(it).name}>"
+        is KaPropertySetterSymbol -> "<set-${getPropertySymbol(it).name}>"
+        else -> it.name.toString()
+    }
+}
 
 internal fun KaSession.getStableCallableOrder(): Comparator<KaCallableSymbol> = compareBy<KaCallableSymbol> {
     when (it) {
         is KaConstructorSymbol -> -1
         is KaNamedFunctionSymbol -> 1
+        is KaPropertyAccessorSymbol -> 1
         is KaPropertySymbol -> if (isObjCProperty(it)) 2 else 0
         else -> 3
     }
 }.thenComparing(getStableConstructorOrder())
     .thenComparing(getStableFunctionOrder())
-    .thenComparing(StableNamedOrder)
+    .thenComparing(getStableAccessorsOrder())
 
 private inline fun <T, reified R> Comparator<T>.thenComparing(comparator: Comparator<R>): Comparator<T> {
     return thenComparing { a, b ->

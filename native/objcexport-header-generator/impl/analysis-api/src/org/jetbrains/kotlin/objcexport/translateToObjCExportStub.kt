@@ -26,6 +26,7 @@ internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbo
             }
         }
         is KaNamedFunctionSymbol -> result.addIfNotNull(translateToObjCMethod(symbol))
+        is KaPropertyAccessorSymbol -> result.addIfNotNull(translateToObjCMethod(symbol))
         else -> Unit
     }
     return result

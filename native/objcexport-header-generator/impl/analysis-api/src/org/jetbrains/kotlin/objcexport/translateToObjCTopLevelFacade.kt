@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStubOrigin
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterfaceImpl
@@ -47,10 +48,19 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDefaultSuperClassOrPr
  */
 fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFile): ObjCInterface? {
     val topLevelCallables = file.callableSymbols
+        .asSequence()
         .filter { analysisSession.getClassIfCategory(it) == null }
         .toList()
+        .flatMap { callable ->
+            if (callable is KaPropertySymbol && !analysisSession.isObjCProperty(callable)) {
+                listOfNotNull(callable.getter, callable.setter)
+            } else {
+                listOf(callable)
+            }
+        }
         .sortedWith(analysisSession.getStableCallableOrder())
         .flatMap { translateToObjCExportStub(it) }
+        .toList()
 
     val fileName = getObjCFileClassOrProtocolName(file)
 
