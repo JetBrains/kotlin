@@ -10,8 +10,23 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import kotlin.metadata.*
+import kotlin.metadata.jvm.JvmFieldSignature
 import kotlin.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.fieldSignature
 import kotlin.metadata.jvm.signature
+
+@OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+internal fun KmProperty.mapSignature(container: KmClass?): JvmFieldSignature {
+    fieldSignature?.let { return it }
+    val hasExtensionReceiver = receiverParameterType != null && !isStatic
+    if (hasExtensionReceiver || contextParameters.isNotEmpty()) {
+        "Extension/contextual properties are not supported when computing a builtin property signature: $name in $container"
+    }
+    val c = createTypeMappingContext(typeParameters, container, name)
+    return JvmFieldSignature(name, buildString {
+        mapType(returnType, c)
+    })
+}
 
 internal fun KmFunction.mapSignature(container: KmClass?): JvmMethodSignature =
     signature ?: mapSignature(name, typeParameters, contextParameters, receiverParameterType, valueParameters, returnType, container)
@@ -31,9 +46,7 @@ private fun mapSignature(
     returnType: KmType,
     container: KmClass?,
 ): JvmMethodSignature {
-    val allTypeParameters = typeParameters.associateByTo(mutableMapOf()) { it.id }
-    container?.typeParameters?.associateByTo(allTypeParameters) { it.id }
-    val c = ReflectTypeMappingContext(allTypeParameters) { "`$name` in ${container?.name}" }
+    val c = createTypeMappingContext(typeParameters, container, name)
     val desc = buildString {
         append("(")
         contextParameters.forEach { mapType(it.type, c) }
@@ -43,6 +56,14 @@ private fun mapSignature(
         if (returnType.isNonNullUnit) append("V") else mapType(returnType, c)
     }
     return JvmMethodSignature(name, desc)
+}
+
+private fun createTypeMappingContext(
+    ownTypeParameters: List<KmTypeParameter>, container: KmClass?, name: String,
+): ReflectTypeMappingContext {
+    val allTypeParameters = ownTypeParameters.associateByTo(mutableMapOf()) { it.id }
+    container?.typeParameters?.associateByTo(allTypeParameters) { it.id }
+    return ReflectTypeMappingContext(allTypeParameters) { "`$name` in ${container?.name}" }
 }
 
 private class ReflectTypeMappingContext(

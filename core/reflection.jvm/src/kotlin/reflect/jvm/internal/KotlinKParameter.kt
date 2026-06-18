@@ -23,7 +23,7 @@ internal class KotlinKParameter(
         kmParameter.name.takeUnless { it.startsWith("<") }
 
     override val type: KType by lazy(PUBLICATION) {
-        callable.substituteType(kmParameter.type.toKType(callable.container.jClass.safeClassLoader, typeParameterTable) {
+        callable.propertyIfAccessor.substituteType(kmParameter.type.toKType(callable.container.jClass.safeClassLoader, typeParameterTable) {
             callable.caller.parameterTypes[index]
         })
     }
