@@ -170,6 +170,54 @@ public inline fun atomicAdd(address: CPointer<DoubleVar>, value: Double): Double
         cuda_atomicAdd_f64(address, value)
 
 // =========================================================================
+// Warp shuffles
+// =========================================================================
+// `__shfl_xor(v, laneMask, width)` returns the value held by the warp lane whose index is
+// `laneId XOR laneMask`, within a contiguous segment of `width` lanes. The classic
+// butterfly-reduction primitive: with `laneMask = 1, 2, 4, 8, 16` you halve, halve, halve,
+// halve, halve the active set on each step.
+//
+// Implemented over the `sync`-variant NVVM intrinsics introduced in CUDA 9 / sm_30: the
+// non-sync `__shfl_xor` was deprecated and removed. Membermask is hard-coded to
+// `0xFFFFFFFF` (all lanes active); if you need divergent-warp shuffles, add an overload
+// that exposes the mask explicitly.
+//
+// `c` packs the segment configuration: low 5 bits = `width - 1` (the clamp value, which
+// `shfl.sync.bfly` uses for boundary lanes), bits [12:8] = `32 - width`. Matches the
+// formula Clang/CUDA emit for `__shfl_xor_sync`.
+
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.shfl.sync.bfly.i32")
+internal external fun nvvm_shfl_sync_bfly_i32(mask: Int, value: Int, laneMask: Int, c: Int): Int
+
+@PublishedApi
+@GCUnsafeCall("llvm.nvvm.shfl.sync.bfly.f32")
+internal external fun nvvm_shfl_sync_bfly_f32(mask: Int, value: Float, laneMask: Int, c: Int): Float
+
+@Suppress("NOTHING_TO_INLINE")
+@PublishedApi
+internal inline fun shflSegMask(width: Int): Int = ((32 - width) shl 8) or (width - 1)
+
+/**
+ * Returns the [Int] held by the warp lane whose index is `laneId XOR laneMask`, within a
+ * sub-warp of [width] lanes. Lowers to PTX `shfl.sync.bfly.b32`. [width] must be a
+ * power of two ≤ 32; defaults to [WarpSize] (full warp).
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun __shfl_xor(value: Int, laneMask: Int, width: Int = WarpSize): Int =
+        nvvm_shfl_sync_bfly_i32(-1, value, laneMask, shflSegMask(width))
+
+/**
+ * Returns the [Float] held by the warp lane whose index is `laneId XOR laneMask`, within a
+ * sub-warp of [width] lanes. Lowers to PTX `shfl.sync.bfly.b32` (the f32 NVVM intrinsic
+ * wraps the same b32 PTX op with a bitcast in/out). [width] must be a power of two ≤ 32;
+ * defaults to [WarpSize] (full warp).
+ */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun __shfl_xor(value: Float, laneMask: Int, width: Int = WarpSize): Float =
+        nvvm_shfl_sync_bfly_f32(-1, value, laneMask, shflSegMask(width))
+
+// =========================================================================
 // CUDA Driver API host-side launcher
 // =========================================================================
 // Everything below runs on the host. The CUDA Driver API is reached via direct
