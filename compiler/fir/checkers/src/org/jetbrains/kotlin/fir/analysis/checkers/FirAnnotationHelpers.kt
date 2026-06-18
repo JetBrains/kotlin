@@ -168,13 +168,16 @@ fun checkRepeatedAnnotation(
     }
 }
 
+/**
+ * If [this] is an argument expression provided for a vararg parameter, returns its elements.
+ */
 fun FirExpression.unwrapVarargValue(): List<FirExpression> {
     return when (this) {
-        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
-            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
-            else -> arguments
-        }
+        is FirVarargArgumentsExpression -> arguments
+
+        // This branch is necessary because of how serialization / deserialization works:
+        // When deserializing an argument for vararg, it is deserialized as `FirCollectionLiteral`, not `FirVarargArgumentsExpression`.
         is FirCollectionLiteral -> arguments
-        else -> listOf(this)
+        else -> listOf()
     }
 }

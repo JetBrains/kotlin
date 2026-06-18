@@ -17,15 +17,15 @@ fun sum() = deprecated()
 fun brain() = deprecated()
 
 @Suppress(names = arrayOf(*["DEPRECATION"]))
-fun nested() = <!DEPRECATION!>deprecated<!>()
+fun nested() = deprecated()
 
 @Suppress(names = arrayOf(elements = ["DEPRE" + "CATION"]))
-fun nestedNamed() = <!DEPRECATION!>deprecated<!>()
+fun nestedNamed() = deprecated()
 
 @Suppress(*[], "DEPRECATION")
-fun firstEmptySpread() = <!DEPRECATION!>deprecated<!>()
+fun firstEmptySpread() = deprecated()
 
 @Suppress(*["DEPRECATION_ERROR"], "DEPRECATION")
-fun firstNonEmptySpread() = <!DEPRECATION!>deprecated<!>()
+fun firstNonEmptySpread() = deprecated()
 
 /* GENERATED_FIR_TAGS: collectionLiteral, functionDeclaration, integerLiteral, stringLiteral */

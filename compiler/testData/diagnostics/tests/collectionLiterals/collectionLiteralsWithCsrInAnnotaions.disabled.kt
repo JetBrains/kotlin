@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 // DIAGNOSTICS: -REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION -REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
@@ -39,7 +39,6 @@ fun test1() = Unit
 @A2(e1 = [], e2 = [])
 @A2(e1 = [], e2 = *[X2, X2, X2])
 @A2(e2 = [X2], e1 = [X1])
-// TODO (KT-86481): this and some other annotation calls currently crash backend
 @A2(e2 = *[X2], e1 = arrayOf(*[X1]))
 fun test2() = Unit
 

@@ -1,5 +1,5 @@
 FILE: main.kt
-    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB)))))]) public final class JavaTest : R|kotlin/Any| {
+    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB))))]) public final class JavaTest : R|kotlin/Any| {
         public [ContainingClassKey=JavaTest] constructor(): R|JavaTest| {
             super<R|kotlin/Any|>()
         }
@@ -29,7 +29,7 @@ FILE: main.kt
             public [ContainingClassKey=KtComponentScan] get(): R|kotlin/Array<kotlin/String>|
 
     }
-    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB)))))]) public final class KtTest : R|kotlin/Any| {
+    @R|ComponentScans|(value = vararg(*<collectionLiteralCall>(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(<strcat>(String(String), String(A))), <collectionLiteralCall>(<strcat>(String(String), String(C))), <collectionLiteralCall>(<strcat>(String(String), String(B)))))) [evaluated = vararg(R|/ComponentScan.ComponentScan|(<collectionLiteralCall>(String(StringA)), <collectionLiteralCall>(String(StringC)), <collectionLiteralCall>(String(StringB))))]) public final class KtTest : R|kotlin/Any| {
         public [ContainingClassKey=KtTest] constructor(): R|KtTest| {
             super<R|kotlin/Any|>()
         }
