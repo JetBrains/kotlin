@@ -246,17 +246,6 @@ inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession
 
 // --------------------------- other utilities ---------------------------
 
-fun FirExpression.unwrapVarargValue(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
-            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
-            else -> arguments
-        }
-        is FirCollectionLiteral -> arguments
-        else -> listOf(this)
-    }
-}
-
 val FirAnnotation.resolved: Boolean
     get() {
         if (annotationTypeRef !is FirResolvedTypeRef) return false
