@@ -27,19 +27,12 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 
-    private func setTask(_ task: UnsafeCurrentTask) -> ((Bool) -> Bool) {
+    private func setTask(_ task: UnsafeCurrentTask) -> (() -> Void) {
         self.task.withLock {
             guard $0 == nil else { fatalError("KotlinTask has already been initialized with a Task") }
             $0 = task
         }
-        return {[weak self] shouldCancel in
-            guard let self else { return true }
-            return self.task.withLock { task in
-                guard let task else { return true }
-                defer { if shouldCancel { task.cancel() } }
-                return task.isCancelled
-            }
-        }
+        return { [weak self] in self?.task.withLock { task in task?.cancel() } }
     }
 
     fileprivate func setTask(_ task: UnsafeCurrentTask) {
