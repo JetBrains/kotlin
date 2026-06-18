@@ -122,16 +122,6 @@ See KT-45671 for more details."""
         }
 
     @Argument(
-        value = "-Xvalue-classes",
-        description = "Enable experimental value classes."
-    )
-    var valueClasses = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xjsr305",
         deprecatedName = "-Xjsr305-annotations",
         valueDescription =

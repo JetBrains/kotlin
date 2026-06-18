@@ -17,7 +17,7 @@ private val temporaryExceptions: Set<String> = setOf(
     // Add here argument name to ignore from checks
     "Xverify-ir-visibility",
     "Xverify-ir-nested-offsets",
-    "Xvalue-classes",
+    "Xvalue-classes", // has been an error for a while, despite not being deprecated
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {
