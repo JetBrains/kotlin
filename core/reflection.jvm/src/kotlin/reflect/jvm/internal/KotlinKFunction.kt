@@ -130,9 +130,12 @@ internal abstract class KotlinKFunction(
     private fun createConstructorCaller(member: Constructor<*>, isDefault: Boolean): CallerImpl<Constructor<*>> {
         return if (!isDefault && this is KotlinKConstructor && shouldHideConstructorDueToValueClassTypeValueParameters(this)) {
             if (isBound)
-                CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
+                CallerImpl.AccessorForHiddenBoundConstructor(
+                    member, boundReceiver,
+                    isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member)
+                )
             else
-                CallerImpl.AccessorForHiddenConstructor(member)
+                CallerImpl.AccessorForHiddenConstructor(member, isNonExposedConstructorOfOrdinaryClassWithInlineClassParameter(member))
         } else {
             if (isBound)
                 CallerImpl.BoundConstructor(member, boundReceiver)

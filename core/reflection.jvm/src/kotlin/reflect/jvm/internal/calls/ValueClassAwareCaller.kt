@@ -6,6 +6,7 @@
 package kotlin.reflect.jvm.internal.calls
 
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -92,12 +93,18 @@ internal class ValueClassAwareCaller<out M : Member?>(
             kotlinParameterTypes.size
         }
 
+        val boxingMarkerCount = caller.parameterTypes.count {
+            it is Class<*> && it.name == JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME.asString()
+        }
+
         // If the default argument is set,
         // (paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
+        // BoxingConstructorMarker is counted towards default parameter bits.
         val extraArgumentsTail =
-            (if (isDefault) ((paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
+            (if (isDefault) ((paramsWithAllocatedDefaultMaskBitsCount + boxingMarkerCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS) + 1 else 0) +
                     (if (callable is ReflectKFunction && callable.isSuspend) 1 else 0)
-        val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
+
+        val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail + boxingMarkerCount
         checkParametersSize(expectedArgsSize, callable, isDefault)
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox

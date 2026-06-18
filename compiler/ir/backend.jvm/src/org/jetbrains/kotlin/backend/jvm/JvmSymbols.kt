@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -485,7 +486,7 @@ class JvmSymbols(
         }
     }
 
-    val boxingConstructorMarkerClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.BoxingConstructorMarker"))
+    val boxingConstructorMarkerClass: IrClassSymbol = createClass(JvmStandardClassIds.JVM_EXPOSE_BOXED_NON_EXPOSED_CONSTRUCTOR_MARKER_FQ_NAME)
 
     private data class PropertyReferenceKey(
         val mutable: Boolean,
