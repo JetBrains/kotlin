@@ -572,11 +572,13 @@ org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.provideExtensionsFor(KaModule)
 org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.Companion.getInstance(Project)
-org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, KaSession.() -> R)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, context(KaSession) () -> R)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KtElement, KaSession.() -> R)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(PsiElement, context(KaSession) () -> R)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.clearCaches()
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(KaModule)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(KtElement)
+org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.getAnalysisSession(PsiElement)
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.symbols.AdditionalKDocResolutionProvider.Companion.resolveKdocFqName(KaSession, FqName, KtElement)
 org.jetbrains.kotlin.analysis.api.symbols.KaClassKind.isClass
