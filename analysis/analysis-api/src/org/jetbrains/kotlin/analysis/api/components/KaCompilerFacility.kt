@@ -202,7 +202,7 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
  *
  * Compilation fails if there are critical errors reported either on the frontend or on the backend side.
  * Keep in mind that [KaCompilationResult] is a part of the Analysis API, so it should only be used inside an
- * [analysis block][org.jetbrains.kotlin.analysis.api.analyze].
+ * [analysis block][org.jetbrains.kotlin.analysis.api.session.analyze].
  */
 @KaExperimentalApi
 public sealed class KaCompilationResult(

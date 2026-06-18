@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ public interface KaModuleProvider {
      * ### Use-site Modules
      *
      * The use-site module is the [KaModule] from which [getModule] is called. This concept is the same as the use-site module accepted by
-     * [analyze][org.jetbrains.kotlin.analysis.api.analyze], and closely related to the concept of a use-site element. In essence, when we
+     * [analyze][org.jetbrains.kotlin.analysis.api.session.analyze], and closely related to the concept of a use-site element. In essence, when we
      * are performing analysis, most of the time we do so from the point of view of a particular [KaModule] or [PsiElement]. If this module
      * is already known, it should be passed as the [useSiteModule] to [getModule].
      *

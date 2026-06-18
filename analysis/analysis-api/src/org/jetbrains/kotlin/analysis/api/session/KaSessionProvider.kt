@@ -22,7 +22,7 @@ import kotlin.contracts.contract
  * Provides [KaSession]s by use-site [PsiElement]s or [KaModule]s.
  *
  * This provider should not be used directly.
- * Please use [analyze][org.jetbrains.kotlin.analysis.api.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.analyzeCopy] instead.
+ * Please use [analyze][org.jetbrains.kotlin.analysis.api.session.analyze] or [analyzeCopy][org.jetbrains.kotlin.analysis.api.session.analyzeCopy] instead.
  */
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
