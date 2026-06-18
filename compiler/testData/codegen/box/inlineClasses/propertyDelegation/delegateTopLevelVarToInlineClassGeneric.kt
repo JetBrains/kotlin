@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 var setterInvoked = 0
 var backing = 42

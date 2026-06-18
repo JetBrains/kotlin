@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // FULL_JDK
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // TARGET_BACKEND: JVM_IR
 
 import java.lang.NullPointerException

@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 // TARGET_BACKEND: JVM_IR
 
 // FILE: a.kt

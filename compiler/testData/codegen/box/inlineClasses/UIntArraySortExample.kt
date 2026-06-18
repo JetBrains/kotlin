@@ -1,7 +1,6 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class UInt(private val value: Int) : Comparable<UInt> {

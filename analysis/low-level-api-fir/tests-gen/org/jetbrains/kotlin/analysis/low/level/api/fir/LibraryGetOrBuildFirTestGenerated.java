@@ -107,18 +107,6 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
-  @TestMetadata("multiFieldValueClass.kt")
-  public void testMultiFieldValueClass() {
-    run("multiFieldValueClass.kt");
-  }
-
-  @Test
-  @TestMetadata("multiFieldValueClassWithTypeAlias.kt")
-  public void testMultiFieldValueClassWithTypeAlias() {
-    run("multiFieldValueClassWithTypeAlias.kt");
-  }
-
-  @Test
   @TestMetadata("multifileFacadeFunction.kt")
   public void testMultifileFacadeFunction() {
     run("multifileFacadeFunction.kt");
@@ -425,21 +413,9 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
   }
 
   @Test
-  @TestMetadata("valueClassWithMultiFieldValueClass.kt")
-  public void testValueClassWithMultiFieldValueClass() {
-    run("valueClassWithMultiFieldValueClass.kt");
-  }
-
-  @Test
   @TestMetadata("valueClassWithNestedClass.kt")
   public void testValueClassWithNestedClass() {
     run("valueClassWithNestedClass.kt");
-  }
-
-  @Test
-  @TestMetadata("valueClassWithNullableMultiFieldValueClass.kt")
-  public void testValueClassWithNullableMultiFieldValueClass() {
-    run("valueClassWithNullableMultiFieldValueClass.kt");
   }
 
   @Test

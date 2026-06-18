@@ -1,7 +1,6 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 package test
 

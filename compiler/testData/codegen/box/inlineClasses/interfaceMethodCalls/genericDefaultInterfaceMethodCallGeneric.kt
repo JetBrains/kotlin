@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 interface IFoo<T : IFoo<T>> {
     fun foo(t: T): String = t.bar()

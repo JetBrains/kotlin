@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +JvmInlineMultiFieldValueClasses
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
