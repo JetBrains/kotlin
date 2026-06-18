@@ -57,6 +57,28 @@
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn gnu.trove.TObjectHashingStrategy
 
+# Section after upgrade to SDK 261
+# com.intellij.platform.eel.EelLowLevelObjectsPool uses java.nio.ByteBuffer.clear which cannot be found
+# com.intellij.platform.eel.EelProxyImplKt uses the same clear method and also java.nio.ByteBuffer.flip, also cannot be found
+-dontwarn java.nio.ByteBuffer
+# com.intellij.util.text.JvmKt uses java.nio.CharBuffer.position which cannot be found
+-dontwarn java.nio.CharBuffer
+# The following classes are using CoroutineDispatcher returning method limitedParallelism which cannot be found:
+# com.intellij.openapi.diagnostic.AsyncLog, com.intellij.openapi.progress.ContextKt,
+# com.intellij.platform.eel.RealEelProxy, com.intellij.platform.util.coroutines.DispatchersKt,
+# com.intellij.platform.util.coroutines.NamedDispatcher, com.intellij.util.io.BlockingKt
+-dontwarn kotlinx.coroutines.CoroutineDispatcher
+# some JDK 1.8 intellij modules illegally use List.removeLast()
+# com.intellij.java.syntax.parser.JavaDocParser was hijacked to fix exceptions in some CliTestGenerated
+# for the remaining two is not known, if the usages are dangerous
+# com.intellij.ide.plugins.PluginDescriptorLoader, com.intellij.platform.eel.path.ArrayListEelAbsolutePath
+-dontwarn java.util.List
+# seems testonly method assertNoReferenceKept is absent, so it's probably safe to ignore this problem
+-dontwarn com.intellij.openapi.util.ObjectNode
+# Used by some intellij classes, e.g. by com.intellij.platform.syntax.extensions.impl.ExtensionRegistryHolderJvmKt
+# In fact we don't need this one in runtime
+-dontwarn fleet.util.multiplatform.Actual
+
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*
 
