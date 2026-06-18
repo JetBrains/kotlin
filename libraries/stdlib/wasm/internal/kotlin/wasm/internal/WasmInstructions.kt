@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -78,15 +78,18 @@ internal fun wasm_i32_gt_u(a: Int, b: Int): Boolean =
 internal fun wasm_i32_le_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I32_LE_U)
 internal fun wasm_i32_le_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I32_GE_S)
 @UsedFromCompilerGeneratedCode
 internal fun wasm_i32_ge_s(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I32_GE_U)
 internal fun wasm_i32_ge_u(a: Int, b: Int): Boolean =
     implementedAsIntrinsic
@@ -123,6 +126,7 @@ internal fun wasm_i64_gt_u(a: Long, b: Long): Boolean =
 internal fun wasm_i64_le_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I64_LE_U)
 internal fun wasm_i64_le_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
@@ -132,6 +136,7 @@ internal fun wasm_i64_le_u(a: Long, b: Long): Boolean =
 internal fun wasm_i64_ge_s(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I64_GE_U)
 internal fun wasm_i64_ge_u(a: Long, b: Long): Boolean =
     implementedAsIntrinsic
@@ -210,6 +215,7 @@ internal fun wasm_i32_mul(a: Int, b: Int): Int =
 internal fun wasm_i32_div_s(a: Int, b: Int): Int =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I32_DIV_U)
 internal fun wasm_i32_div_u(a: Int, b: Int): Int =
     implementedAsIntrinsic
@@ -218,6 +224,7 @@ internal fun wasm_i32_div_u(a: Int, b: Int): Int =
 internal fun wasm_i32_rem_s(a: Int, b: Int): Int =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I32_REM_U)
 internal fun wasm_i32_rem_u(a: Int, b: Int): Int =
     implementedAsIntrinsic
@@ -271,6 +278,7 @@ internal fun wasm_i64_mul(a: Long, b: Long): Long =
 internal fun wasm_i64_div_s(a: Long, b: Long): Long =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I64_DIV_U)
 internal fun wasm_i64_div_u(a: Long, b: Long): Long =
     implementedAsIntrinsic
@@ -279,6 +287,7 @@ internal fun wasm_i64_div_u(a: Long, b: Long): Long =
 internal fun wasm_i64_rem_s(a: Long, b: Long): Long =
     implementedAsIntrinsic
 
+@PublishedApi
 @WasmOp(WasmOp.I64_REM_U)
 internal fun wasm_i64_rem_u(a: Long, b: Long): Long =
     implementedAsIntrinsic
@@ -443,12 +452,27 @@ internal fun wasm_i32_wrap_i64(a: Long): Int =
 internal fun wasm_i64_extend_i32_s(a: Int): Long =
     implementedAsIntrinsic
 
+@PublishedApi
+@WasmOp(WasmOp.I64_EXTEND_I32_U)
+internal fun wasm_i64_extend_i32_u(a: Int): Long =
+    implementedAsIntrinsic
+
 @WasmOp(WasmOp.F32_CONVERT_I32_S)
 internal fun wasm_f32_convert_i32_s(a: Int): Float =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_CONVERT_I64_S)
 internal fun wasm_f32_convert_i64_s(a: Long): Float =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.F32_CONVERT_I32_U)
+internal fun wasm_f32_convert_i32_u(a: Int): Float =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.F32_CONVERT_I64_U)
+internal fun wasm_f32_convert_i64_u(a: Long): Float =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F32_DEMOTE_F64)
@@ -461,6 +485,16 @@ internal fun wasm_f64_convert_i32_s(a: Int): Double =
 
 @WasmOp(WasmOp.F64_CONVERT_I64_S)
 internal fun wasm_f64_convert_i64_s(a: Long): Double =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.F64_CONVERT_I32_U)
+internal fun wasm_f64_convert_i32_u(a: Int): Double =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.F64_CONVERT_I64_U)
+internal fun wasm_f64_convert_i64_u(a: Long): Double =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.F64_PROMOTE_F32)
@@ -497,6 +531,30 @@ internal fun wasm_i64_trunc_sat_f32_s(a: Float): Long =
 
 @WasmOp(WasmOp.I64_TRUNC_SAT_F64_S)
 internal fun wasm_i64_trunc_sat_f64_s(a: Double): Long =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.I32_TRUNC_SAT_F32_U)
+internal fun wasm_i32_trunc_sat_f32_u(a: Float): Int =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.I32_TRUNC_SAT_F64_U)
+internal fun wasm_i32_trunc_sat_f64_u(a: Double): Int =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.I64_TRUNC_SAT_F32_U)
+internal fun wasm_i64_trunc_sat_f32_u(a: Float): Long =
+    implementedAsIntrinsic
+
+@PublishedApi
+@WasmOp(WasmOp.I64_TRUNC_SAT_F64_U)
+internal fun wasm_i64_trunc_sat_f64_u(a: Double): Long =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.I32_LOAD)
+internal fun wasm_i32_load(x: Int): Int =
     implementedAsIntrinsic
 
 @WasmOp(WasmOp.I32_LOAD8_S)

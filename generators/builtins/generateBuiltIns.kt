@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
+import org.jetbrains.kotlin.generators.builtins.UnsignedType
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
 import org.jetbrains.kotlin.generators.builtins.arrays.*
 import org.jetbrains.kotlin.generators.builtins.contextParameters.GenerateContextFunctions
@@ -15,8 +16,17 @@ import org.jetbrains.kotlin.generators.builtins.numbers.primitives.*
 import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
-import org.jetbrains.kotlin.generators.builtins.unsigned.Target
-import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
+import org.jetbrains.kotlin.generators.builtins.unsigned.CommonUnsignedArrayGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.CommonUnsignedTypeGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.JsUnsignedArrayGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.JsUnsignedTypeGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.JvmUnsignedArrayGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.JvmUnsignedTypeGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.NativeUnsignedArrayGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.NativeUnsignedTypeGenerator
+import unsigned.ranges.UnsignedRangeGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.WasmUnsignedArrayGenerator
+import org.jetbrains.kotlin.generators.builtins.unsigned.WasmUnsignedTypeGenerator
 import java.io.File
 import java.io.PrintWriter
 
@@ -124,11 +134,31 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     generate(File(STDLIB_DIR, "kotlin/util/FloorDivMod.kt")) { GenerateFloorDivMod(it) }
     generate(File(STDLIB_DIR, "kotlin/contextParameters/Context.kt")) { GenerateContextFunctions(it) }
 
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR_COMMON, Target.COMMON, generate)
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR_JVM, Target.JVM, generate)
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR_JS, Target.JS, generate)
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR_NATIVE, Target.NATIVE, generate)
-    generateUnsignedTypes(UNSIGNED_TYPES_DIR_WASM, Target.WASM, generate)
+    for (type in UnsignedType.entries) {
+        // Common
+        generate(File(UNSIGNED_TYPES_DIR_COMMON, "${type.capitalized}Common.kt")) { CommonUnsignedTypeGenerator(type, it) }
+        generate(File(UNSIGNED_TYPES_DIR_COMMON, "${type.capitalized}ArrayCommon.kt")) { CommonUnsignedArrayGenerator(type, it) }
+
+        // JVM
+        generate(File(UNSIGNED_TYPES_DIR_JVM, "kotlin/${type.capitalized}.kt")) { JvmUnsignedTypeGenerator(type, it) }
+        generate(File(UNSIGNED_TYPES_DIR_JVM, "kotlin/${type.capitalized}Array.kt")) { JvmUnsignedArrayGenerator(type, it) }
+
+        // JS
+        generate(File(UNSIGNED_TYPES_DIR_JS, "${type.capitalized}.kt")) { JsUnsignedTypeGenerator(type, it) }
+        generate(File(UNSIGNED_TYPES_DIR_JS, "${type.capitalized}Array.kt")) { JsUnsignedArrayGenerator(type, it) }
+
+        // Native
+        generate(File(UNSIGNED_TYPES_DIR_NATIVE, "${type.capitalized}.kt")) { NativeUnsignedTypeGenerator(type, it) }
+        generate(File(UNSIGNED_TYPES_DIR_NATIVE, "${type.capitalized}Array.kt")) { NativeUnsignedArrayGenerator(type, it) }
+
+        // Wasm
+        generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/${type.capitalized}.kt")) { WasmUnsignedTypeGenerator(type, it) }
+        generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/${type.capitalized}Array.kt")) { WasmUnsignedArrayGenerator(type, it) }
+    }
+
+    for (type in listOf(UnsignedType.UINT, UnsignedType.ULONG)) {
+        generate(File(UNSIGNED_TYPES_DIR_COMMON, "${type.capitalized}Range.kt")) { UnsignedRangeGenerator(type, it) }
+    }
 }
 
 fun main() {

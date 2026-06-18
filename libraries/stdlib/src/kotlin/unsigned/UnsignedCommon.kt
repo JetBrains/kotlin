@@ -5,59 +5,103 @@
 
 package kotlin
 
-@PublishedApi
-internal expect fun uintRemainder(v1: UInt, v2: UInt): UInt
+import kotlin.text.toString
 
 @PublishedApi
-internal expect fun ulongRemainder(v1: ULong, v2: ULong): ULong
+internal fun uintCompare(v1: Int, v2: Int): Int = (v1 xor Int.MIN_VALUE).compareTo(v2 xor Int.MIN_VALUE)
+@PublishedApi
+internal fun ulongCompare(v1: Long, v2: Long): Int = (v1 xor Long.MIN_VALUE).compareTo(v2 xor Long.MIN_VALUE)
 
 @PublishedApi
-internal expect fun uintDivide(v1: UInt, v2: UInt): UInt
+internal fun uintDivide(v1: UInt, v2: UInt): UInt = (v1.toLong() / v2.toLong()).toUInt()
+@PublishedApi
+internal fun uintRemainder(v1: UInt, v2: UInt): UInt = (v1.toLong() % v2.toLong()).toUInt()
+
+// Division and remainder are based on Guava's UnsignedLongs implementation
+// Copyright 2011 The Guava Authors
 
 @PublishedApi
-internal expect fun ulongDivide(v1: ULong, v2: ULong): ULong
+internal fun ulongDivide(v1: ULong, v2: ULong): ULong {
+    val dividend = v1.toLong()
+    val divisor = v2.toLong()
+    if (divisor < 0) { // i.e., divisor >= 2^63:
+        return if (v1 < v2) ULong(0) else ULong(1)
+    }
+
+    // Optimization - use signed division if both dividend and divisor < 2^63
+    if (dividend >= 0) {
+        return ULong(dividend / divisor)
+    }
+
+    // Otherwise, approximate the quotient, check, and correct if necessary.
+    val quotient = ((dividend ushr 1) / divisor) shl 1
+    val rem = dividend - quotient * divisor
+    return ULong(quotient + if (ULong(rem) >= ULong(divisor)) 1 else 0)
+
+}
 
 @PublishedApi
-internal expect fun uintCompare(v1: Int, v2: Int): Int
+internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
+    val dividend = v1.toLong()
+    val divisor = v2.toLong()
+    if (divisor < 0) { // i.e., divisor >= 2^63:
+        return if (v1 < v2) {
+            v1 // dividend < divisor
+        } else {
+            v1 - v2 // dividend >= divisor
+        }
+    }
+
+    // Optimization - use signed modulus if both dividend and divisor < 2^63
+    if (dividend >= 0) {
+        return ULong(dividend % divisor)
+    }
+
+    // Otherwise, approximate the quotient, check, and correct if necessary.
+    val quotient = ((dividend ushr 1) / divisor) shl 1
+    val rem = dividend - quotient * divisor
+    return ULong(rem - if (ULong(rem) >= ULong(divisor)) divisor else 0)
+}
 
 @PublishedApi
-internal expect fun ulongCompare(v1: Long, v2: Long): Int
+internal fun doubleToUInt(v: Double): UInt = when {
+    v.isNaN() -> 0u
+    v <= UInt.MIN_VALUE.toDouble() -> UInt.MIN_VALUE
+    v >= UInt.MAX_VALUE.toDouble() -> UInt.MAX_VALUE
+    v <= Int.MAX_VALUE -> v.toInt().toUInt()
+    else -> (v - Int.MAX_VALUE).toInt().toUInt() + Int.MAX_VALUE.toUInt()      // Int.MAX_VALUE < v < UInt.MAX_VALUE
+}
 
 @PublishedApi
-internal expect fun uintToULong(value: Int): ULong
+internal fun doubleToULong(v: Double): ULong = when {
+    v.isNaN() -> 0u
+    v <= ULong.MIN_VALUE.toDouble() -> ULong.MIN_VALUE
+    v >= ULong.MAX_VALUE.toDouble() -> ULong.MAX_VALUE
+    v < Long.MAX_VALUE -> v.toLong().toULong()
+
+    // Real values from Long.MAX_VALUE to (Long.MAX_VALUE + 1) are not representable in Double, so don't handle them.
+    else -> (v - 9223372036854775808.0).toLong().toULong() + 9223372036854775808uL      // Long.MAX_VALUE + 1 < v < ULong.MAX_VALUE
+}
+
 
 @PublishedApi
-internal expect fun uintToLong(value: Int): Long
+internal fun uintToDouble(v: Int): Double = (v and Int.MAX_VALUE).toDouble() + (v ushr 31 shl 30).toDouble() * 2
 
 @PublishedApi
-internal expect fun uintToFloat(value: Int): Float
+internal fun ulongToDouble(v: Long): Double = (v ushr 11).toDouble() * 2048 + (v and 2047)
 
-@PublishedApi
-internal expect fun floatToUInt(value: Float): UInt
 
-@PublishedApi
-internal expect fun uintToDouble(value: Int): Double
+internal fun ulongToString(v: Long): String = ulongToString(v, 10)
 
-@PublishedApi
-internal expect fun doubleToUInt(value: Double): UInt
+internal fun ulongToString(v: Long, base: Int): String {
+    if (v >= 0) return v.toString(base)
 
-@PublishedApi
-internal expect fun ulongToFloat(value: Long): Float
-
-@PublishedApi
-internal expect fun floatToULong(value: Float): ULong
-
-@PublishedApi
-internal expect fun ulongToDouble(value: Long): Double
-
-@PublishedApi
-internal expect fun doubleToULong(value: Double): ULong
-
-internal expect fun uintToString(value: Int): String
-
-internal expect fun uintToString(value: Int, base: Int): String
-
-internal expect fun ulongToString(value: Long): String
-
-internal expect fun ulongToString(value: Long, base: Int): String
+    var quotient = ((v ushr 1) / base) shl 1
+    var rem = v - quotient * base
+    if (rem >= base) {
+        rem -= base
+        quotient += 1
+    }
+    return quotient.toString(base) + rem.toString(base)
+}
 

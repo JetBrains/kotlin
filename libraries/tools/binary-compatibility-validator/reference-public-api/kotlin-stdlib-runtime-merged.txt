@@ -542,7 +542,7 @@ public final class kotlin/Unit {
 public abstract interface annotation class kotlin/UnsafeVariance : java/lang/annotation/Annotation {
 }
 
-public final class kotlin/UnsignedKt {
+public final class kotlin/UnsignedCommonKt {
 	public static final fun doubleToUInt (D)I
 	public static final fun doubleToULong (D)J
 	public static final fun uintCompare (II)I

@@ -5,6 +5,10 @@
 
 package kotlin.text
 
+import kotlin.ranges.contains
+import kotlin.toUInt
+import kotlin.wasm.internal.WasmCharArray
+import kotlin.wasm.internal.copyWasmArray
 import kotlin.wasm.internal.wasm_f32_demote_f64
 
 /**
@@ -145,7 +149,29 @@ public actual fun Short.toString(radix: Int): String = this.toInt().toString(rad
 public actual fun Int.toString(radix: Int): String {
     val isNegative = this < 0
     val absValue = if (isNegative) -this else this
-    val absValueString = uintToString(absValue, checkRadix(radix))
+
+    val base = checkRadix(radix)
+    var unsignedValue = absValue.toUInt()
+
+    val absValueString = when {
+        base == 10 -> unsignedValue.toString()
+        absValue in 0 until base -> absValue.getChar().toString()
+        else -> {
+            val buffer = WasmCharArray(UInt.SIZE_BITS)
+
+            val uintRadix = base.toUInt()
+            var currentBufferIndex = UInt.SIZE_BITS - 1
+
+            while (unsignedValue != 0U) {
+                buffer.set(currentBufferIndex, (unsignedValue % uintRadix).toInt().getChar())
+                unsignedValue /= uintRadix
+                currentBufferIndex--
+            }
+
+            buffer.createStringStartingFrom(currentBufferIndex + 1)
+        }
+    }
+
 
     return if (isNegative) "-$absValueString" else absValueString
 }
@@ -159,7 +185,39 @@ public actual fun Int.toString(radix: Int): String {
 public actual fun Long.toString(radix: Int): String {
     val isNegative = this < 0
     val absValue = if (isNegative) -this else this
-    val absValueString = ulongToString(absValue, checkRadix(radix))
+
+    val base = checkRadix(radix)
+    var unsignedValue = absValue.toULong()
+
+    val absValueString = when {
+        base == 10 -> unsignedValue.toString()
+        absValue in 0 until base -> absValue.toInt().getChar().toString()
+        else -> {
+            val buffer = WasmCharArray(ULong.SIZE_BITS)
+
+            val ulongRadix = base.toULong()
+            var currentBufferIndex = ULong.SIZE_BITS - 1
+
+            while (unsignedValue != 0UL) {
+                buffer.set(currentBufferIndex, (unsignedValue % ulongRadix).toInt().getChar())
+                unsignedValue /= ulongRadix
+                currentBufferIndex--
+            }
+
+            buffer.createStringStartingFrom(currentBufferIndex + 1)
+        }
+    }
 
     return if (isNegative) "-$absValueString" else absValueString
 }
+
+internal fun WasmCharArray.createStringStartingFrom(index: Int): String {
+    if (index == 0) return createString()
+    val newLength = this.len() - index
+    if (newLength == 0) return ""
+    val newChars = WasmCharArray(newLength)
+    copyWasmArray(this, newChars, index, 0, newLength)
+    return newChars.createString()
+}
+
+private fun Int.getChar() = if (this < 10) '0' + this else 'a' + (this - 10)

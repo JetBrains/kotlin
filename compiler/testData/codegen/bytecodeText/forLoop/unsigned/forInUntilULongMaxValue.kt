@@ -28,7 +28,6 @@ fun f(a: ULong): Int {
 // 0 INVOKESTATIC kotlin/ULong.constructor-impl
 // 0 INVOKE\w+ kotlin/ULong.(un)?box-impl
 
-// 1 INVOKESTATIC kotlin/UnsignedKt.ulongCompare
 // 1 IFGE
 // 1 IF
 

@@ -75,10 +75,10 @@ val commonMainSources = tasks.register<Sync>("commonMainSources") {
                 "libraries/stdlib/src/kotlin/util/Tuples.kt",
                 "libraries/stdlib/src/kotlin/uuid/**",
                 "libraries/stdlib/src/kotlin/enums/**",
-                "libraries/stdlib/src/kotlin/unsigned/UByteArray.kt",
-                "libraries/stdlib/src/kotlin/unsigned/UShortArray.kt",
-                "libraries/stdlib/src/kotlin/unsigned/UIntArray.kt",
-                "libraries/stdlib/src/kotlin/unsigned/ULongArray.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UByteArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UShortArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/UIntArrayCommon.kt",
+                "libraries/stdlib/src/kotlin/unsigned/ULongArrayCommon.kt",
                 "libraries/stdlib/src/kotlin/unsigned/UMath.kt",
                 "libraries/stdlib/src/kotlin/unsigned/UNumbers.kt",
                 "libraries/stdlib/src/kotlin/unsigned/UStrings.kt"
@@ -174,6 +174,10 @@ val jsMainSources = tasks.register<Sync>("jsMainSources") {
     from("$jsDir/builtins") {
         exclude("Collections.kt")
         into("builtins")
+    }
+    from("$jsDir/unsigned") {
+        exclude("UByteArray.kt", "UShortArray.kt", "UIntArray.kt", "ULongArray.kt")
+        into("unsigned")
     }
 
     into(layout.buildDirectory.dir("jsMainSources"))

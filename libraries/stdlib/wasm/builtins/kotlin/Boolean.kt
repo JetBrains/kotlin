@@ -77,6 +77,7 @@ public actual class Boolean private constructor(private val value: Boolean) : Co
     public actual override fun hashCode(): Int =
         if (this) 1231 else 1237
 
+    @PublishedApi
     @WasmNoOpCast
     internal fun toInt(): Int =
         implementedAsIntrinsic
