@@ -40,7 +40,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
         // original package and would break if `BatchingPackageInserter` prepended a batch package.
         private val qualifiedNameAccessRegex = Regex("\\.qualifiedName\\b")
         private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
-        private val classToStringRegex = Regex("::class.toString\\(\\)")
         private val importKotlinReflect = Regex("import\\s+kotlin\\.reflect\\.")
         // Detects stacktrace assertions that check for the Wasm module name `<main>` (e.g.
         // `stacktrace.contains("<main>", "someFunction")`). In a grouped batch the module name is
@@ -95,7 +94,6 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
 
         if (listOf(
                 packageKotlinInternalRegex,
-                classToStringRegex,
                 qualifiedNameAccessRegex,
                 importKotlinReflect,
                 stacktraceContainsMainRegex,
