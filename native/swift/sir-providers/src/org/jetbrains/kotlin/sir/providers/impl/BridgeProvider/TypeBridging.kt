@@ -929,7 +929,7 @@ internal sealed interface Bridge {
                 AsCovariantBlock(parameters = listOf(returnType), returnType = AsVoid),
                 // exception
                 AsCovariantBlock(
-                    parameters = listOf(AsObjCBridged(SirSwiftModule.error.nominalType(), CType.NSError)),
+                    parameters = listOf(AsObjCBridged(SirSwiftModule.error.nominalType().optional(), CType.NSError.nullable)),
                     returnType = AsVoid,
                 ),
                 // cancellation

@@ -58,11 +58,11 @@ public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__T
     return run { _result; true }
 }
 
-@ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Error__")
-public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Error__(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
+public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = interpretObjCPointer<platform.Foundation.NSError>(_1)
-    val _result = run { (__pointerToBlock as Function1<platform.Foundation.NSError, Unit>).invoke(___1) }
+    val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<platform.Foundation.NSError>(_1)
+    val _result = run { (__pointerToBlock as Function1<platform.Foundation.NSError?, Unit>).invoke(___1) }
     return run { _result; true }
 }
 
@@ -71,7 +71,7 @@ public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Opt
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
         suspend { arg0: kotlin.Any? ->
-            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError?, Unit>, cancellation: SwiftJob ->
                 val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)

@@ -392,6 +392,99 @@ func testCatchingClosureWithArgThrowing() async throws {
 // MARK: - Cancellation tests
 
 @Test
+func testCancelledClosureThrowsCancellationError() async throws {
+    let task = Task<Int32, any Error>.detached {
+        try await confirmation("must invoke closure", expectedCount: 1) { confirm in
+            return try await simpleSuspend(arg: 32) { arg in
+                confirm()
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                Issue.record("Task should get cancelled before closure resumes")
+                return arg
+            }
+        }
+    }
+
+    task.cancel()
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testAlreadyCancelledTaskWithoutSuspensionSucceeds() async throws {
+    let task = Task<Int32, any Error>.detached {
+        do {
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            Issue.record("Task should get cancelled before invoking Kotlin code")
+        } catch is CancellationError {
+            // Ignore as we want to test an already cancelled task
+        }
+        return try await simpleSuspend(arg: 2) { arg in
+            return arg
+        }
+    }
+    task.cancel()
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .success(2), "function should succeed")
+}
+
+@Test
+func testCancelFromInsideClosureWithoutSuspend() async throws {
+    let task = Task<Int32, any Error>.detached {
+        return try await simpleSuspend(arg: 25) { arg in
+            try await withUnsafeCurrentTask { currentTask in
+                currentTask!.cancel()
+            }
+            return arg
+        }
+    }
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .success(25), "function should succeed")
+}
+
+@Test
+func testCancelFromInsideClosureWithSuspend() async throws {
+    let task = Task<Int32, any Error>.detached {
+        return try await simpleSuspend(arg: 25) { arg in
+            try await withUnsafeCurrentTask { currentTask in
+                currentTask!.cancel()
+            }
+            try await Task.sleep(nanoseconds: 1_000_000)
+            return arg
+        }
+    }
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
+func testCancelFromInsideClosureWithKotlinSuspend() async throws {
+    let task = Task<Int32, any Error>.detached {
+        return try await simpleSuspendWithDelay(arg: 98) { arg in
+            try await withUnsafeCurrentTask { currentTask in
+                currentTask!.cancel()
+            }
+            return arg
+        }
+    }
+
+    let result = await task.result
+
+    #expect(task.isCancelled)
+    #expect(result == .failure(CancellationError()))
+}
+
+@Test
 func testCallClosureWithDelayNoCancellation() async throws {
     let task = Task<Int32, any Error>.detached {
         return try await callClosureWithDelay(delayMs: 100) {
@@ -670,4 +763,3 @@ extension Equatable {
         (other as? Self).map { self == $0 } ?? false
     }
 }
-

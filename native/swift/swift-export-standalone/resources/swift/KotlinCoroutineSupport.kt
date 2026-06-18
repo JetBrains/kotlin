@@ -41,7 +41,13 @@ class SwiftJob private constructor(
 ) : Job by backingJob {
     var cancellationCallback: (Boolean) -> Boolean
         get() = _cancellationCallback.load()
-        set(value) { _cancellationCallback.store(value) }
+        set(value) {
+            _cancellationCallback.store(value)
+            invokeOnCompletion(onCancelling = true) {
+                if (it !is CancellationException) return@invokeOnCompletion
+                value(true)
+            }
+        }
 
     constructor(cancellationCallback: (Boolean) -> Boolean = { it }) : this(backingJob = Job(), _cancellationCallback = AtomicReference(cancellationCallback))
     constructor(parentJob: Job) : this(backingJob = Job(parentJob), _cancellationCallback = AtomicReference({ it }))
@@ -84,19 +90,19 @@ public fun <T> swiftCoroutine(
 }
 
 public suspend fun <T> suspendSwiftCoroutine(
-    block: ((T) -> Unit, (NSError) -> Unit, SwiftJob) -> Unit
+    block: ((T) -> Unit, (NSError?) -> Unit, SwiftJob) -> Unit
 ): T {
     val cancellation = SwiftJob()
     coroutineContext[Job]?.let {
         cancellation.alsoCancel(it)
         it.alsoCancel(cancellation)
     }
-    return suspendCancellableCoroutine { cont ->
+    return suspendCoroutine { cont ->
         val continuation: (T) -> Unit = { _result ->
-            if (cont.isActive) cont.resumeWith(kotlin.Result.success(_result))
+            cont.resume(_result)
         }
-        val exception: (NSError) -> Unit = { _error ->
-            if (cont.isActive) cont.resumeWith(kotlin.Result.failure(SwiftException(_error)))
+        val exception: (NSError?) -> Unit = { _error ->
+            cont.resumeWithException(_error?.let(::SwiftException) ?: CancellationException("Cancelled using CancellationError in Swift"))
         }
         block(continuation, exception, cancellation)
     }

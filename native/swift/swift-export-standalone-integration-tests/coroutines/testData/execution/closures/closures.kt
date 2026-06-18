@@ -23,6 +23,12 @@ suspend fun simpleSuspend(arg: Int, block: suspend (Int) -> Int): Int {
     return block(arg)
 }
 
+suspend fun simpleSuspendWithDelay(arg: Int, block: suspend (Int) -> Int): Int {
+    val result = block(arg)
+    delay(10_000)
+    return result
+}
+
 fun withLong(arg: Long, block: suspend (Long) -> Long): Long {
     return runBlocking {
         block(arg)
@@ -287,4 +293,3 @@ fun withMapParam(map: Map<String, Int>, block: suspend (Map<String, Int>) -> Map
         block(map)
     }
 }
-
