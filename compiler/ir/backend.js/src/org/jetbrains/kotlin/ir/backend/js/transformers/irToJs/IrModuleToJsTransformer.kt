@@ -388,7 +388,6 @@ class IrModuleToJsTransformer(
         )
     }
 
-    private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
     private val optimizeGeneratedJs = backendContext.configuration.get(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, true)
 
@@ -436,7 +435,7 @@ class IrModuleToJsTransformer(
                 startComment = "region "
             }
 
-            if (generateRegionComments || generateFilePaths) {
+            if (generateRegionComments) {
                 val originalPath = fileExports.file.path
                 val path = pathPrefixMap.entries
                     .find { [k, _] -> originalPath.startsWith(k) }

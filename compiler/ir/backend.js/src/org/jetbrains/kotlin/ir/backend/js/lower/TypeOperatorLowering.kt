@@ -29,11 +29,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
-import kotlin.Boolean
-import kotlin.TODO
-import kotlin.apply
-import kotlin.assert
-import kotlin.run
 
 private val NOT_NULL_CHECK by IrStatementOriginImpl
 
