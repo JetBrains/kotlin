@@ -282,4 +282,8 @@ public class ForTestCompileRuntime {
     public static @NotNull File mainKtsJar() {
         return getFileFromProperty(MAIN_KTS_JAR_PATH);
     }
+
+    public static List<File> parcelizeRuntimeForTests() {
+        return getFilesFromProperty(PARCELIZE_COMPILER_PLUGIN_CLASSPATH);
+    }
 }

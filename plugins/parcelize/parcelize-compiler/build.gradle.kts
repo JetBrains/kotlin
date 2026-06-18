@@ -143,6 +143,9 @@ projectTests {
         addClasspathProperty(robolectricClasspath, "robolectric.classpath")
         addClasspathProperty(layoutLib, "layoutLib.path")
         addClasspathProperty(layoutLibApi, "layoutLibApi.path")
+        addClasspathProperty("parcelizePlugin.jar") {
+            from(tasks.jar)
+        }
 
         testInputsCheck {
             with(extraPermissions) {
