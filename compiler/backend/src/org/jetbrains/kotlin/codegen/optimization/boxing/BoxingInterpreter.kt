@@ -334,7 +334,7 @@ fun areSameTypedPrimitiveBoxedValues(values: List<BasicValue>): Boolean {
     return v1 is BoxedBasicValue &&
             v2 is BoxedBasicValue &&
             !v1.descriptor.isValueClassValue && !v2.descriptor.isValueClassValue &&
-            v1.descriptor.unboxedTypes.single() == v2.descriptor.unboxedTypes.single()
+            v1.descriptor.unboxedType == v2.descriptor.unboxedType
 }
 
 fun AbstractInsnNode.isAreEqualIntrinsic() =
@@ -347,8 +347,8 @@ fun AbstractInsnNode.isAreEqualIntrinsic() =
 private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
 
 fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: GenerationState): Boolean = values.none {
-    val unboxedType = getUnboxedTypes(it.type, generationState).singleOrNull()
-    unboxedType == null || unboxedType in shouldUseEqualsForWrappers
+    val unboxedType = getUnboxedType(it.type, generationState)
+    unboxedType in shouldUseEqualsForWrappers
 }
 
 fun AbstractInsnNode.isJavaLangComparableCompareToForSameTypedBoxedValues(values: List<BasicValue>) =

@@ -28,7 +28,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.InsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 abstract class BoxedBasicValue(type: Type) : StrictBasicValue(type) {
     abstract val descriptor: BoxedValueDescriptor
@@ -71,10 +70,7 @@ class BoxedValueDescriptor(
     private val mergedWith = HashSet<BoxedValueDescriptor>()
 
     var isSafeToRemove = true; private set
-    val unboxedTypes: List<Type> = getUnboxedTypes(boxedType, generationState)
-
-    fun getUnboxTypeOrOtherwiseMethodReturnType(methodInsnNode: MethodInsnNode?) =
-        unboxedTypes.singleOrNull() ?: Type.getReturnType(methodInsnNode!!.desc)
+    val unboxedType: Type = getUnboxedType(boxedType, generationState)
 
     val isValueClassValue = !isBoxedPrimitiveType(boxedType)
 
@@ -108,8 +104,6 @@ class BoxedValueDescriptor(
         isSafeToRemove = false
     }
 
-    fun getTotalUnboxSize() = unboxedTypes.sumOf { it.size }
-
     fun isFromProgressionIterator() = progressionIterator != null
 
     fun addUnboxingWithCastTo(insn: AbstractInsnNode, type: Type) {
@@ -126,38 +120,21 @@ class BoxedValueDescriptor(
     }
 }
 
-internal fun makePops(unboxedTypes: List<Type>) = InsnList().apply {
-    var restSingleSize = false
-    for (unboxType in unboxedTypes.asReversed()) {
-        restSingleSize = when (unboxType.size) {
-            1 -> {
-                if (restSingleSize) add(InsnNode(Opcodes.POP2))
-                !restSingleSize
-            }
-
-            2 -> {
-                if (restSingleSize) add(InsnNode(Opcodes.POP))
-                add(InsnNode(Opcodes.POP2))
-                false
-            }
-
-            else -> error("Illegal type size: ${unboxType.size}")
-        }
+internal fun makePop(unboxType: Type) =
+    when (unboxType.size) {
+        1 -> InsnNode(Opcodes.POP)
+        2 -> InsnNode(Opcodes.POP2)
+        else -> error("Illegal type size: ${unboxType.size}")
     }
 
-    if (restSingleSize) {
-        add(InsnNode(Opcodes.POP))
-    }
-}
 
-
-fun getUnboxedTypes(boxedType: Type, state: GenerationState): List<Type> {
+fun getUnboxedType(boxedType: Type, state: GenerationState): Type {
     val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
-    if (primitiveType != null) return listOf(primitiveType)
+    if (primitiveType != null) return primitiveType
 
-    if (boxedType == AsmTypes.K_CLASS_TYPE) return listOf(AsmTypes.JAVA_CLASS_TYPE)
+    if (boxedType == AsmTypes.K_CLASS_TYPE) return AsmTypes.JAVA_CLASS_TYPE
 
-    unboxedTypeOfInlineClass(boxedType, state)?.let { return listOf(it) }
+    unboxedTypeOfInlineClass(boxedType, state)?.let { return it }
 
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")
 }

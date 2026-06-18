@@ -30,6 +30,7 @@ fun copyK2JKlibCompilerArguments(from: K2JKlibCompilerArguments, to: K2JKlibComp
     to.samConversions = from.samConversions
     to.supportCompatqualCheckerFrameworkAnnotations = from.supportCompatqualCheckerFrameworkAnnotations
     to.typeEnhancementImprovementsInStrictMode = from.typeEnhancementImprovementsInStrictMode
+    to.valueClasses = from.valueClasses
 
     return to
 }

@@ -743,6 +743,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_VALIDATE_BYTECODE", KotlinReleaseVersion(1, 6, 0))
 
     /**
+     * Enable experimental value classes.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
+        JvmCompilerArgument("X_VALUE_CLASSES", KotlinReleaseVersion(1, 8, 20))
+
+    /**
      * Select the code generation scheme for type-checking 'when' expressions:
      * -Xwhen-expressions=indy         Generate type-checking 'when' expressions using 'invokedynamic' with 'SwitchBootstraps.typeSwitch(..)' and 
      *                                 following 'tableswitch' or 'lookupswitch'. This requires '-jvm-target 21' or greater.
