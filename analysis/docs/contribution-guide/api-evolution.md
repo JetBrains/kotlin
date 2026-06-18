@@ -18,6 +18,8 @@ The Analysis API consists of several interconnected components, each serving a s
 
 - **Analysis API Surface** ([source](../../analysis-api))
     - User-facing layer of the Analysis API. Maps the Kotlin PSI to its semantic representation
+    - Accessed through the `analyze` entry point, which opens a `KaSession` as a context parameter; capabilities are exposed as top-level
+      `context(session: KaSession)` endpoints
     - Key entities: [`KaSession`](https://kotlin.github.io/analysis-api/fundamentals.html#kasession),
       [`KaSymbol`](https://kotlin.github.io/analysis-api/symbols.html), [`KaType`](https://kotlin.github.io/analysis-api/types.html)
 

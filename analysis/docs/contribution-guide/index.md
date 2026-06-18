@@ -16,6 +16,9 @@ about Kotlin code, including symbols, types, and semantic relationships between 
 [PSI](https://plugins.jetbrains.com/docs/intellij/psi.html) syntax trees, the API offers a clean abstraction over the compiler's internal
 representations, making it accessible both for IDE plugin makers and command-line tool developers.
 
+Analysis starts with the `analyze` entry point, which opens a `KaSession` as a context parameter so that the API's endpoints are available
+inside the block.
+
 Check the [Analysis API documentation](https://kotl.in/analysis-api) for more information.
 
 ## Guidelines
