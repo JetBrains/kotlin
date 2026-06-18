@@ -88,4 +88,8 @@ private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Ch
 }
 
 val annotationForUnableToImport
-    get() = "@Deprecated(${"Unable to import this declaration".quoteAsKotlinLiteral()}, level = DeprecationLevel.ERROR)"
+    get() = "@Deprecated(" +
+            ("Unable to import this declaration. C bridge compilation failed. " +
+             "This declaration might be visible in the IDE/header-mode but cannot be compiled into the final binary. " +
+             "Check your cinterop definition (.def) file or C compiler options.").quoteAsKotlinLiteral() +
+            ", level = DeprecationLevel.ERROR)"
