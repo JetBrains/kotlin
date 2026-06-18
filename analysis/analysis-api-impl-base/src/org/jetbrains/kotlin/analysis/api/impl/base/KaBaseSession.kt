@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderEx
+import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
 
@@ -45,6 +46,7 @@ abstract class KaBaseSession(
     sourceProvider: KaSourceProvider,
     kDocProvider: KaKDocProvider,
 ) : KaSession,
+    KaInternals,
     KaResolver by resolver,
     KaSymbolRelationProvider by symbolRelationProvider,
     KaDiagnosticProvider by diagnosticProvider,
