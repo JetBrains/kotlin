@@ -1,0 +1,7 @@
+KtNameReferenceExpression(137,147): 'Annotation'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      /Annotation
+    ]

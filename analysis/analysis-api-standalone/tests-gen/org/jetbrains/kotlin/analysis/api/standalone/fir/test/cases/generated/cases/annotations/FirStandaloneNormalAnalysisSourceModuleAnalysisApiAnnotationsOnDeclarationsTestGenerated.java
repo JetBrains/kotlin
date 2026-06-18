@@ -94,6 +94,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
     }
 
     @Test
+    @TestMetadata("complexAnnotation.kt")
+    public void testComplexAnnotation() {
+      run("complexAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("emptyJavaSpreadParameter.kt")
     public void testEmptyJavaSpreadParameter() {
       run("emptyJavaSpreadParameter.kt");

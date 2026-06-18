@@ -89,6 +89,12 @@ public class SymbolLightClassesParentingByPsiForLibraryTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("complexAnnotation.kt")
+  public void testComplexAnnotation() {
+    run("complexAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     run("constructors.kt");

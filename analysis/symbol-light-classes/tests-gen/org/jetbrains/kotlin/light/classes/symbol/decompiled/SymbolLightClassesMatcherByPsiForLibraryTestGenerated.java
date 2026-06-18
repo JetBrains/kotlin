@@ -89,6 +89,12 @@ public class SymbolLightClassesMatcherByPsiForLibraryTestGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("complexAnnotation.kt")
+  public void testComplexAnnotation() {
+    run("complexAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     run("constructors.kt");

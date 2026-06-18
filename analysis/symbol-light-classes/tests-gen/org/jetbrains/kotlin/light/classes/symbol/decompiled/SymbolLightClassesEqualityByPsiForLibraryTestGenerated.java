@@ -89,6 +89,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("complexAnnotation.kt")
+  public void testComplexAnnotation() {
+    run("complexAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("constructors.kt")
   public void testConstructors() {
     run("constructors.kt");

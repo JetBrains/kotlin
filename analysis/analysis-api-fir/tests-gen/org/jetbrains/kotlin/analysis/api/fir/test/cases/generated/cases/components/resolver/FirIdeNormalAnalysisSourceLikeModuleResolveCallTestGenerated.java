@@ -1678,6 +1678,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallTestGenerated extend
     }
 
     @Test
+    @TestMetadata("complexAnnotation.kt")
+    public void testComplexAnnotation() {
+      run("complexAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("defaultAnnotationArgumentJava.kt")
     public void testDefaultAnnotationArgumentJava() {
       run("defaultAnnotationArgumentJava.kt");
