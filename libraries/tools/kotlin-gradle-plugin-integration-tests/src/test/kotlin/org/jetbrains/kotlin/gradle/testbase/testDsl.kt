@@ -263,7 +263,7 @@ private fun TestProject.buildWithAction(
     action: GradleRunner.() -> BuildResult = GradleRunner::build,
 ) {
     with(parameters) {
-        if (enableBuildScan) agreeToBuildScanService()
+        if (enableBuildScan) agreeToBuildScanService(gradleVersion)
         ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
         val runWithDebug = enableGradleDebug.toBooleanFlag()
@@ -1091,20 +1091,33 @@ internal fun Path.addDependencyManagementToSettings(
     }
 }
 
-private fun TestProject.agreeToBuildScanService() {
+private fun TestProject.agreeToBuildScanService(gradleVersion: GradleVersion) {
     val settingsFile = if (Files.exists(settingsGradle)) settingsGradle else settingsGradleKts
-    settingsFile.append(
-        """
-            
-        gradleEnterprise {
-            buildScan {
-                termsOfServiceUrl = "https://gradle.com/terms-of-service"
-                termsOfServiceAgree = "yes"
-            }
-        }
-
-        """.trimIndent()
-    )
+    if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
+        settingsFile.appendText(
+            """
+            |                    
+            |gradleEnterprise {
+            |    buildScan {
+            |        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+            |         termsOfServiceAgree = "yes"
+            |    }
+            |}
+            """.trimMargin()
+        )
+    } else {
+        settingsFile.appendText(
+            """
+            |
+            |develocity {
+            |    buildScan {
+            |        termsOfUseUrl = "https://gradle.com/help/legal-terms-of-use"
+            |        termsOfUseAgree = "yes"
+            |    }
+            |}
+            """.trimMargin()
+        )
+    }
 }
 
 private fun BuildResult.printBuildScanUrl() {

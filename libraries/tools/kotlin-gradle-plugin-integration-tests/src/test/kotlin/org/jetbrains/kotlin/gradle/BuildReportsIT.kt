@@ -33,6 +33,7 @@ import  org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_DEVELOCITY_PLUGIN_VERSION
 import kotlin.test.assertContains
 
 @DisplayName("Build reports")
@@ -779,6 +780,17 @@ class BuildReportsIT : KGPBaseTest() {
 
             val initScript = projectPath.resolve("init.gradle").createFile()
             initScript.modify {
+                val develocityClasspath = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
+                    "classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'"
+                } else {
+                    "classpath 'com.gradle:develocity-gradle-plugin:$GRADLE_DEVELOCITY_PLUGIN_VERSION'"
+                }
+                val applyPlugin = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_5)) {
+                    "it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)"
+                } else {
+                    "it.pluginManager.apply(com.gradle.develocity.agent.gradle.DevelocityPlugin)"
+                }
+
                 """
                     initscript {
                         repositories {
@@ -786,12 +798,12 @@ class BuildReportsIT : KGPBaseTest() {
                         }
 
                         dependencies {
-                            classpath 'com.gradle:gradle-enterprise-gradle-plugin:$GRADLE_ENTERPRISE_PLUGIN_VERSION'
+                            $develocityClasspath
                         }
                     }
 
                     beforeSettings {
-                        it.pluginManager.apply(com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin)
+                        $applyPlugin
                     }
                 """.trimIndent()
             }
@@ -803,7 +815,7 @@ class BuildReportsIT : KGPBaseTest() {
 
             build(
                 "compileKotlin",
-                "-I", "init.gradle",
+                "-I", "init.gradle", "-Dscan.dump",
                 enableBuildScan = true,
             )
         }
