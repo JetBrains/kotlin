@@ -113,6 +113,12 @@ public class Fe10IdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGe
   }
 
   @Test
+  @TestMetadata("constPropertyInAnnotationPreresolved.kt")
+  public void testConstPropertyInAnnotationPreresolved() {
+    run("constPropertyInAnnotationPreresolved.kt");
+  }
+
+  @Test
   @TestMetadata("differentNumberTypesComparison.kt")
   public void testDifferentNumberTypesComparison() {
     run("differentNumberTypesComparison.kt");
