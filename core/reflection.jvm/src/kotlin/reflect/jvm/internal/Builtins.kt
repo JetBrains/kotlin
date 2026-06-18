@@ -18,6 +18,7 @@ import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.common.KotlinCommonMetadata
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
+import kotlin.metadata.jvm.getterSignature
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClassImpl
@@ -107,6 +108,21 @@ internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmF
     isStatic = true
 
     signature = JvmMethodSignature("valueOf", "(Ljava/lang/String;)L${klass.classId.asString().replace('.', '$')};")
+}
+
+internal fun createEnumEntriesKmProperty(klass: KClassImpl<*>): KmProperty = KmProperty("entries").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class("kotlin/enums/EnumEntries")
+        arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {
+            classifier = KmClassifier.Class(klass.classId.asString())
+        })
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
+
+    getterSignature = JvmMethodSignature("getEntries", "()Lkotlin/enums/EnumEntries;")
 }
 
 private class BuiltinClassCache(fragment: KmModuleFragment?) {

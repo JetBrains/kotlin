@@ -83,7 +83,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         // see `findPropertyDescriptor`.
         require(this is KPackageImpl) { "Only top-level properties are supported for now: $this/$name ($signature)" }
 
-        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this) == signature }
+        val properties = propertiesMetadata.filter { it.name == name && it.computeJvmSignature(this).toString() == signature }
         if (properties.isEmpty()) {
             throw KotlinReflectionInternalError("Property '$name' (JVM signature: $signature) not resolved in $this")
         }
