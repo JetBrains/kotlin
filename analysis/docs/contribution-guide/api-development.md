@@ -824,6 +824,9 @@ public val KaType.directSupertypes: Sequence<KaType>
 > **Retiring the legacy mechanism.** Endpoints used to be members of `KaSessionComponent` interfaces mixed into `KaSession`, paired with
 > auto-generated `@KaContextParameterApi` context-parameter bridges. That mechanism is being phased out — do not add new `KaSessionComponent`
 > supertypes or `@KaContextParameterApi` bridges. New endpoints are plain `context(session: KaSession)` declarations as shown above.
+>
+> `AnalysisApiLegacySurfaceDumpTest` enforces this: it freezes the public declarations under `components/` and `KaSession.kt`, so any new
+> declaration added to the legacy surface fails the build.
 
 ### Documentation Standards
 
