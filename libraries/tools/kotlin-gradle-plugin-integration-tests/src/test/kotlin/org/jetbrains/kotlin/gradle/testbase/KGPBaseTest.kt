@@ -9,7 +9,7 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.gradle.BrokenMacosTestInterceptor
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
@@ -43,7 +43,7 @@ abstract class KGPBaseTest {
     @TempDir
     lateinit var workingDir: Path
 
-    @AfterAll
+    @AfterEach
     fun checkThatDefaultKonanHasNotBeenCreated() {
         if (isTeamCityRun) {
             val userHomeDir = System.getProperty("user.home")
