@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,24 +27,32 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 internal class KaFirTypeRelationChecker(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseTypeRelationChecker<KaFirSession>(), KaFirSessionComponent {
-    override fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
+    override fun semanticallyEquals(
+        type: KaType,
+        other: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean = type.withValidityAssertion {
         other.assertIsValidAndAccessible()
-        check(this is KaFirType)
+        check(type is KaFirType)
         check(other is KaFirType)
         return AbstractTypeChecker.equalTypes(
             createTypeCheckerContext(errorTypePolicy),
-            this.coneType,
+            type.coneType,
             other.coneType,
         )
     }
 
-    override fun KaType.isSubtypeOf(supertype: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean = withValidityAssertion {
+    override fun isSubtypeOf(
+        type: KaType,
+        supertype: KaType,
+        errorTypePolicy: KaSubtypingErrorTypePolicy,
+    ): Boolean = type.withValidityAssertion {
         supertype.assertIsValidAndAccessible()
-        check(this is KaFirType)
+        check(type is KaFirType)
         check(supertype is KaFirType)
         return AbstractTypeChecker.isSubtypeOf(
             createTypeCheckerContext(errorTypePolicy),
-            this.coneType,
+            type.coneType,
             supertype.coneType,
         )
     }

@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.analysis.api.KaSession
  */
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaInternals
+public interface KaInternals {
+    public val typeRelationChecker: KaInternalsTypeRelationChecker
+}
 
 /**
  * Accesses the [KaInternals] facade of the [KaSession] context parameter by casting the session to its implementation.

@@ -106,6 +106,12 @@ org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity.WARNING
 org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportPriority.HIGH
 org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportPriority.LOW
 org.jetbrains.kotlin.analysis.api.imports.KaDefaultImportsProvider.Companion.getService(Project)
+org.jetbrains.kotlin.analysis.api.internals.KaInternals.typeRelationChecker
+org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker
+org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker.isSubtypeOf(KaType, ClassId, KaSubtypingErrorTypePolicy)
+org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker.isSubtypeOf(KaType, KaClassLikeSymbol, KaSubtypingErrorTypePolicy)
+org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker.isSubtypeOf(KaType, KaType, KaSubtypingErrorTypePolicy)
+org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker.semanticallyEquals(KaType, KaType, KaSubtypingErrorTypePolicy)
 org.jetbrains.kotlin.analysis.api.lifetime.KaIllegalLifetimeOwnerAccessException
 org.jetbrains.kotlin.analysis.api.lifetime.KaInaccessibleLifetimeOwnerAccessException
 org.jetbrains.kotlin.analysis.api.lifetime.KaInvalidLifetimeOwnerAccessException

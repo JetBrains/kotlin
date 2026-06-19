@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.components.*
+import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaTypeRelationCheckerBridge
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -63,7 +65,7 @@ private constructor(
     symbolProvider = KaFirSymbolProvider(analysisSessionProvider, resolutionFacade.useSiteFirSession.symbolProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
     symbolInformationProvider = KaFirSymbolInformationProvider(analysisSessionProvider),
-    typeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider),
+    typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
     expressionInformationProvider = KaFirExpressionInformationProvider(analysisSessionProvider),
     evaluator = KaFirEvaluator(analysisSessionProvider),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
@@ -81,6 +83,8 @@ private constructor(
     sourceProvider = KaFirSourceProvider(analysisSessionProvider),
     kDocProvider = KaFirKDocProvider(analysisSessionProvider),
 ) {
+    override val typeRelationChecker: KaInternalsTypeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider)
+
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)
     }
