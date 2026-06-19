@@ -1307,7 +1307,8 @@ public interface KaResolver : KaSessionComponent {
 
     /**
      * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
-     * whether the name is already resolved through context-sensitive resolution.
+     * whether the name is already resolved through context-sensitive resolution, and whether a redundant explicit
+     * qualifier or import could be removed in favor of it.
      *
      * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
      *
@@ -1316,10 +1317,8 @@ public interface KaResolver : KaSessionComponent {
      * ```
      * enum class Foo { BAR }
      *
-     * fun usage(foo: Foo) {}
-     *
-     * fun main() {
-     *     usage(BAR) // 'BAR' is resolved against the expected type 'Foo' -> KaContextSensitiveResolutionStatus.Used
+     * fun usage(): Foo {
+     *     return Foo.BAR // the 'Foo.' qualifier can be removed -> KaContextSensitiveResolutionStatus.QualifierCanBeRemoved
      * }
      * ```
      *
@@ -3001,7 +3000,8 @@ public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
 
 /**
  * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
- * whether the name is already resolved through context-sensitive resolution.
+ * whether the name is already resolved through context-sensitive resolution, and whether a redundant explicit
+ * qualifier or import could be removed in favor of it.
  *
  * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
  *
@@ -3010,10 +3010,8 @@ public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
  * ```
  * enum class Foo { BAR }
  *
- * fun usage(foo: Foo) {}
- *
- * fun main() {
- *     usage(BAR) // 'BAR' is resolved against the expected type 'Foo' -> KaContextSensitiveResolutionStatus.Used
+ * fun usage(): Foo {
+ *     return Foo.BAR // the 'Foo.' qualifier can be removed -> KaContextSensitiveResolutionStatus.QualifierCanBeRemoved
  * }
  * ```
  *

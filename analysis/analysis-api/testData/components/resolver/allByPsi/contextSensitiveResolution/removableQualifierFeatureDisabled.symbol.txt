@@ -124,7 +124,7 @@ KtNameReferenceExpression(258,261): 'Foo'
 
 KtNameReferenceExpression(262,265): 'BAR'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
@@ -152,7 +152,7 @@ KtNameReferenceExpression(278,281): 'Foo'
 
 KtNameReferenceExpression(282,285): 'BAR'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR

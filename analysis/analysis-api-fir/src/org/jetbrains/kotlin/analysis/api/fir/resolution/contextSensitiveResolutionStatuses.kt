@@ -18,3 +18,11 @@ internal object KaContextSensitiveResolutionNotAvailableImpl : KaContextSensitiv
 internal object KaContextSensitiveResolutionUsedImpl : KaContextSensitiveResolutionStatus.Used {
     override fun toString(): String = "Used"
 }
+
+internal object KaContextSensitiveResolutionQualifierCanBeRemovedImpl : KaContextSensitiveResolutionStatus.QualifierCanBeRemoved {
+    override fun toString(): String = "QualifierCanBeRemoved"
+}
+
+internal object KaContextSensitiveResolutionImportCanBeRemovedImpl : KaContextSensitiveResolutionStatus.ImportCanBeRemoved {
+    override fun toString(): String = "ImportCanBeRemoved"
+}

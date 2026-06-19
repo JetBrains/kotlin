@@ -116,7 +116,7 @@ KtNameReferenceExpression(298,301): 'Foo'
 
 KtNameReferenceExpression(302,305): 'BAR'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Top.Foo.BAR

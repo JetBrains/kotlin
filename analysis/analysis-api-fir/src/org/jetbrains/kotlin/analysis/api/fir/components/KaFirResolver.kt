@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelpe
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedTypeRef
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.toTargetSymbol
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionImportCanBeRemovedImpl
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionNotAvailableImpl
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionQualifierCanBeRemovedImpl
 import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionUsedImpl
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
@@ -58,6 +60,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.TypeArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toArrayOfFactoryName
@@ -76,10 +80,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.psi.psiUtil.topParenthesizedParentOrMe
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -148,9 +149,29 @@ internal class KaFirResolver(
                 ?: return KaContextSensitiveResolutionNotAvailableImpl
 
             if (fir.isResolvedThroughContextSensitiveResolution()) {
-                KaContextSensitiveResolutionUsedImpl
-            } else {
-                KaContextSensitiveResolutionNotAvailableImpl
+                return KaContextSensitiveResolutionUsedImpl
+            }
+
+            // The hint is attached to the fully resolved outer node — the whole qualified expression
+            // (`Foo.BAR`) or the enclosing type-operator call (`x is Foo.Bar`) — which is not necessarily the
+            // FIR mapped to the simple name itself, so it is re-fetched from the appropriate anchor.
+            val hintHolder = when (fir) {
+                is FirResolvedTypeRef -> enclosingTypeOperatorCall()
+                else -> qualifiedExpressionFir() ?: fir
+            }
+
+            val nonFatalDiagnostics = when (hintHolder) {
+                is FirQualifiedAccessExpression -> hintHolder.nonFatalDiagnostics
+                is FirResolvedQualifier -> hintHolder.nonFatalDiagnostics
+                is FirTypeOperatorCall -> hintHolder.nonFatalDiagnostics
+                else -> emptyList()
+            }
+
+            when {
+                nonFatalDiagnostics.isEmpty() -> KaContextSensitiveResolutionNotAvailableImpl
+                ContextSensitiveResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics -> KaContextSensitiveResolutionImportCanBeRemovedImpl
+                ContextSensitiveResolutionMightBeUsed in nonFatalDiagnostics -> KaContextSensitiveResolutionQualifierCanBeRemovedImpl
+                else -> KaContextSensitiveResolutionNotAvailableImpl
             }
         }
 
@@ -158,6 +179,55 @@ internal class KaFirResolver(
         is FirResolvedTypeRef -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
         is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
         else -> toReference(analysisSession.firSession)?.isContextSensitive == true
+    }
+
+    /**
+     * For a [KtSimpleNameExpression] that is the selector of a [KtDotQualifiedExpression], returns the FIR of
+     * the whole qualified expression — the node the CSR "removable qualifier/import" hint is attached to.
+     *
+     * The hint lives on the fully-resolved outer node, not on the FIR mapped to the selector name itself, so
+     * it has to be re-fetched from the qualified expression:
+     *
+     * ```kotlin
+     * Foo.BAR // for the `BAR` selector, returns the FIR of the whole `Foo.BAR`
+     * ```
+     *
+     * Returns `null` for anything that is not such a selector (e.g. the `Foo` receiver), so that the caller
+     * falls back to the simple name's own FIR.
+     */
+    private fun KtSimpleNameExpression.qualifiedExpressionFir(): FirElement? {
+        return getQualifiedExpressionForSelector()?.getOrBuildFir(analysisSession.resolutionFacade)
+    }
+
+    /**
+     * For a [KtSimpleNameExpression] that is the reference of an `is`/`as` operator's (or a `when` `is`-pattern's)
+     * conversion type, returns that operator's [FirTypeOperatorCall] — the node the CSR hint is attached to (see
+     * [buildTypeOperatorCall][org.jetbrains.kotlin.fir.expressions.builder.buildTypeOperatorCall] in the raw-FIR builder).
+     *
+     * The hint always concerns the operator's *own* conversion type, so only the name of that type is accepted:
+     *
+     * ```kotlin
+     * b is Base.Child              // `Child` -> the FirTypeOperatorCall; `Base` (qualifier) -> null
+     * when (b) { is Base.Child }   // same, for the `when` `is`-pattern
+     * b as Base.Child<Foo>         // `Child` -> the call; `Foo` (type argument) -> null
+     * ```
+     *
+     * The accepted PSI shape is `KtUserType` -> `KtTypeReference` (optionally through a `KtNullableType` for
+     * `as T?`) -> the operator. A qualifier segment sits under another `KtUserType`, and a name inside a type
+     * argument sits under a `KtTypeReference` whose parent is a projection rather than the operator — both
+     * therefore yield `null`.
+     */
+    private fun KtSimpleNameExpression.enclosingTypeOperatorCall(): FirTypeOperatorCall? {
+        val userType = parent as? KtUserType ?: return null
+        if (userType.referenceExpression != this) return null
+
+        val typeReferenceParent = userType.parent.let { if (it is KtNullableType) it.parent else it } as? KtTypeReference ?: return null
+        return when (val operator = typeReferenceParent.parent) {
+            is KtBinaryExpressionWithTypeRHS, is KtIsExpression, is KtWhenConditionIsPattern ->
+                operator.getOrBuildFir(analysisSession.resolutionFacade) as? FirTypeOperatorCall
+
+            else -> null
+        }
     }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {

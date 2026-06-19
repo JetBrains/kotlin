@@ -122,7 +122,7 @@ KtUserType(125,130): 'Child'
 
 KtNameReferenceExpression(125,130): 'Child'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: ImportCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base.Child

@@ -208,7 +208,7 @@ KtNameReferenceExpression(187,191): 'Base'
 
 KtNameReferenceExpression(192,197): 'Child'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: QualifierCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Base.Child

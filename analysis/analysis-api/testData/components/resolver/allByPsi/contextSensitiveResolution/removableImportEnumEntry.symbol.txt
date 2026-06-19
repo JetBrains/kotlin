@@ -153,7 +153,7 @@ KtValueArgument(139,142): 'BAR'
 
 KtNameReferenceExpression(139,142): 'BAR'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: ImportCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
@@ -167,7 +167,7 @@ KtReturnExpression(148,158): 'return BAR'
 
 KtNameReferenceExpression(155,158): 'BAR'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: ImportCanBeRemoved
   KaSymbolResolutionSuccess:
     symbols = [
       test/Foo.BAR
