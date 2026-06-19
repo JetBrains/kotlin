@@ -1,9 +1,10 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
-import hair.sym.HairType
 
 object DataFlow : ModelDSL() {
+
+    val valueNode by nodeInterface()
 
     val varOp by abstractClass(ControlFlow.blockBody) {
         formParam("variable", Any::class)
@@ -16,7 +17,7 @@ object DataFlow : ModelDSL() {
     }
 
     val phi by node {
-        formParam("type", HairType::class)
+        interfaces(valueNode)
         param("block", ControlFlow.blockEntry)
         variadicParam("joinedValues")
     }
@@ -28,6 +29,7 @@ object DataFlow : ModelDSL() {
     }
 
     val param by node {
+        interfaces(valueNode)
         formParam("index", Int::class)
     }
 

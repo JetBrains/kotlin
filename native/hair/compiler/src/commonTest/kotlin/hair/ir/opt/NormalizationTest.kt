@@ -3,8 +3,7 @@ package hair.ir.opt
 import hair.ir.*
 import hair.ir.Add
 import hair.ir.nodes.*
-import hair.sym.HairType
-import hair.sym.HairType.*
+import hair.sym.ArithmeticType.*
 import hair.test.Fun
 import kotlin.test.*
 

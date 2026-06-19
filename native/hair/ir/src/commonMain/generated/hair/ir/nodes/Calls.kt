@@ -4,13 +4,14 @@ import hair.sym.*
 import hair.ir.*
 import hair.sym.Type.*
 
-sealed interface AnyCall : Node {
+sealed interface AnyCall : ValueNode {
     
     
 }
 
 
 sealed class AnyInvoke(form: Form, args: List<Node?>) : BlockBodyWithException(form, args), AnyCall {
+    abstract val function: HairFunction
     val callArgsIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnyInvoke(this)
@@ -22,7 +23,7 @@ class InvokeStatic internal constructor(form: Form, control: Controlling?, varar
         override val args = listOf<Any>(function)
     }
     
-    val function: HairFunction by form::function
+    override val function: HairFunction by form::function
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -42,7 +43,7 @@ class InvokeVirtual internal constructor(form: Form, control: Controlling?, vara
         override val args = listOf<Any>(function)
     }
     
-    val function: HairFunction by form::function
+    override val function: HairFunction by form::function
     
     
     override fun paramName(index: Int): String = when (index) {

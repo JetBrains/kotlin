@@ -6,7 +6,7 @@
 package hair.sym
 
 object RuntimeInterface {
-    class RTFun(override val name: String, override val resultHairType: HairType) : HairFunction {
+    class RTFun(override val name: String, override val resultHairType: HairType, override val parameterTypes: List<HairType> = emptyList()) : HairFunction {
         override fun toString(): String = "RTFun($name)"
     }
 
