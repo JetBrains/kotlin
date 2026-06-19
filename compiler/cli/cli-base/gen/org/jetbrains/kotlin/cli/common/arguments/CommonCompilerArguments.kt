@@ -633,6 +633,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xhome-package-resolution",
+        description = "Enables `HomePackageResolution` language feature.",
+    )
+    @Enables(LanguageFeature.HomePackageResolution)
+    var homePackageResolution: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xignore-const-optimization-errors",
         description = "Ignore all compilation exceptions while optimizing some constant expressions.",
     )

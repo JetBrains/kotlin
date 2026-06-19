@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.NO_ISSUE_SPECIFIED
 
 val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.commonCompilerArguments) {
     compilerArgument {
@@ -1450,6 +1451,19 @@ Warning: this flag is not intended for production use. If you want to configure 
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0
+        )
+    }
+
+    compilerArgument {
+        name = "Xhome-package-resolution"
+        description = "Enables `HomePackageResolution` language feature.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.HomePackageResolution),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
 }

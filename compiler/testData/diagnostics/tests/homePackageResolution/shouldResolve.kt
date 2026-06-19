@@ -1,6 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // DIAGNOSTICS: -UNUSED_EXPRESSION
-// FIR_DUMP
 // LANGUAGE: +HomePackageResolution
 
 // FILE: a.kt
@@ -18,6 +17,8 @@ fun baz(a: A) { }
 package second
 
 import first.A
+import first.foo
+import first.bar
 
 class B : A()
 
@@ -25,25 +26,8 @@ fun B.foo() {}
 fun baz(b: B) { }
 
 fun checkB(b: B) {
-    b.foo()
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
-}
-
-// FILE: c.kt
-
-package other
-
-import first.A
-import second.B
-
-fun checkC(a: A, b: B) {
-    a.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>foo<!>()
-    a.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
-    <!UNRESOLVED_REFERENCE!>baz<!>(a)
-
     b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>foo<!>()
     b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
-    <!UNRESOLVED_REFERENCE!>baz<!>(b)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

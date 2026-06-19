@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -406,9 +407,10 @@ internal open class FirTowerResolveTask(
         )
 
         // try home package resolution
-        if (receiver.hasResolvedType) {
+        if (LanguageFeature.HomePackageResolution.isEnabled() && receiver.hasResolvedType) {
             val receivers = receiver.resolvedType.allSuperTypes()
-            val scope = FirExtensionsScope(receivers, receivers.map { FirPackageMemberScope(it.classId.packageFqName, session) }, session)
+            val packages = receivers.map { it.classId.packageFqName }
+            val scope = FirExtensionsScope(receivers, packages.map { FirPackageMemberScope(it, session) }, session)
             processScopeForExplicitReceiver(
                 scope,
                 explicitReceiverValue,

@@ -243,6 +243,7 @@ where advanced options include:
                              Generates output based on what it is used for:
                              -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
                              -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
+  -Xhome-package-resolution  Enables `HomePackageResolution` language feature.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xinline-classes           Enable experimental inline classes.
