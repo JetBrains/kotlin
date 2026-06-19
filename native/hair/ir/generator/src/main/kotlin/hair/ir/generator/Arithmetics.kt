@@ -1,12 +1,13 @@
 package hair.ir.generator
 
 import hair.ir.generator.toolbox.ModelDSL
+import hair.sym.ArithmeticType
 import hair.sym.CmpOp
 import hair.sym.HairType
 
 object Arithmetics : ModelDSL() {
 
-    val constAny by nodeInterface {
+    val constAny by nodeInterface(DataFlow.valueNode) {
         //formParam("value", Any::class) // TODO nullable?
     }
 
@@ -35,44 +36,52 @@ object Arithmetics : ModelDSL() {
     }
 
     val binaryOp by abstractClass {
-        formParam("type", HairType::class)
+        interfaces(DataFlow.valueNode)
         param("lhs")
         param("rhs")
     }
 
-    val add by node(binaryOp)
-    val sub by node(binaryOp)
-    val mul by node(binaryOp)
-    val div by node(binaryOp)
-    val rem by node(binaryOp)
+    val arithBinaryOp by abstractClass(binaryOp) {
+        formParam("opType", ArithmeticType::class)
+    }
+
+    val add by node(arithBinaryOp)
+    val sub by node(arithBinaryOp)
+    val mul by node(arithBinaryOp)
+    val div by node(arithBinaryOp)
+    val rem by node(arithBinaryOp)
 
     val neg by node {
         param("operand")
     }
 
     // TODO
-    val and by node(binaryOp)
-    val or by node(binaryOp)
-    val xor by node(binaryOp)
-    val shl by node(binaryOp)
-    val shr by node(binaryOp)
-    val ushr by node(binaryOp)
+    val and by node(arithBinaryOp)
+    val or by node(arithBinaryOp)
+    val xor by node(arithBinaryOp)
+    val shl by node(arithBinaryOp)
+    val shr by node(arithBinaryOp)
+    val ushr by node(arithBinaryOp)
 
     val inv by node {
+        interfaces(DataFlow.valueNode)
         param("operand")
     }
 
     // FIXME not exactly arithmetics:
     val cmp by node(binaryOp) {
+        formParam("type", HairType::class)
         formParam("op", CmpOp::class)
     }
 
     // Boolean negation
     val not by node {
+        interfaces(DataFlow.valueNode)
         param("operand")
     }
 
     val cast by abstractClass {
+        interfaces(DataFlow.valueNode)
         formParam("targetType", HairType::class)
         param("operand")
     }

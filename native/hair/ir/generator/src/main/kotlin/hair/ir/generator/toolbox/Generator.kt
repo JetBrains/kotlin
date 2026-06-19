@@ -383,6 +383,10 @@ class Generator(private val generationPath: File) {
         if (cls.builtin) return ""
         return buildString {
             appendLine("sealed class ${cls.name}(form: Form, args: List<Node?>) : ${renderSupersList(cls)} {")
+            for (param in cls.formParams) {
+                val override = if (cls.superDecl(param) != null) "override " else ""
+                appendLine("    ${override}abstract val ${renderParam(param)}")
+            }
             appendIndented("    ", renderOwnParams(cls))
             appendIndented("    ", renderAcceptFun(cls))
             appendLine("}")

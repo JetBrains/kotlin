@@ -1,6 +1,7 @@
 package hair.ir
 
 import hair.ir.nodes.*
+import hair.sym.ArithmeticType
 import hair.sym.HairClass
 import hair.sym.HairType
 import hair.sym.HairType.*
@@ -33,12 +34,11 @@ fun Const(value: Number) = when (value) {
 }
 
 context(nodeBuilder: NodeBuilder)
-fun Const(type: HairType, value: Number) = when (type) {
-    INT -> ConstI(value.toInt())
-    LONG -> ConstL(value.toLong())
-    FLOAT -> ConstF(value.toFloat())
-    DOUBLE -> ConstD(value.toDouble())
-    else -> error("Should not reach here $value (${value::class.simpleName})")
+fun Const(type: ArithmeticType, value: Number) = when (type) {
+    ArithmeticType.INT -> ConstI(value.toInt())
+    ArithmeticType.LONG -> ConstL(value.toLong())
+    ArithmeticType.FLOAT -> ConstF(value.toFloat())
+    ArithmeticType.DOUBLE -> ConstD(value.toDouble())
 }
 
 // FIXME make Unreachable value-numbered
@@ -57,10 +57,10 @@ fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
 }
 
 context(nodeBuilder: NodeBuilder)
-fun Phi(type: HairType, block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
+fun Phi(block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
     is BlockEntry -> {
         val joinedValues = block.preds.map { exit -> inputs.single { it.first == exit }.second }.toTypedArray()
-        Phi(type)(block, *joinedValues)
+        Phi(block, *joinedValues)
     }
     else -> inputs.single().second
 }
@@ -152,7 +152,7 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBui
         // TODO how do we handle nested try blocks?
         val unwinds = throwers.map { it.unwind ?: Unwind(it) }.toTypedArray()
         val handlerBlock = BlockEntry(*unwinds) as BlockEntry // FIXME cast?
-        val exception = Catch(Phi(EXCEPTION)(handlerBlock, *unwinds))
+        val exception = Catch(Phi(handlerBlock, *unwinds))
 
         for ([type, catchBody] in catches) {
             // FIXME what do we know about the catchers order? Are all the type checks always possible?

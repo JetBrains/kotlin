@@ -45,7 +45,7 @@ sealed class Element(val name: String, val nestedIn: Element?) {
     internal fun allPromisedNodeParams() = allInterfaces().flatMap { it.nodeParams }.toSet()
     internal fun promisedVariadic() = allInterfaces().mapNotNull { it.variadicParam }.singleOrNull()
 
-    internal fun superDeclFormParam(name: String): FormParam? {
+    internal open fun superDeclFormParam(name: String): FormParam? {
         val promisedWithName = allPromisedFormParams().filter { it.name == name }
         require(promisedWithName.size <= 1)
         return promisedWithName.singleOrNull()
@@ -83,6 +83,13 @@ sealed class ElementWithParams(name: String, val parent: AbstractClass? = null, 
     override fun getParam(name: String) = allParams().first { it.name == name }
 
     internal fun allParents(): List<ElementWithParams> = parent?.let { listOf(it) + it.allParents() } ?: emptyList()
+
+    override fun superDeclFormParam(name: String): FormParam? {
+        super.superDeclFormParam(name)?.let { return it }
+        val fromParents = allParents().flatMap { it.formParams }.filter { it.name == name }
+        require(fromParents.size <= 1)
+        return fromParents.singleOrNull()
+    }
     internal fun allFormParams(): List<FormParam> = (parent?.allFormParams() ?: emptyList()) + formParams
     internal fun allParams(): List<NodeParam> = (parent?.allParams() ?: emptyList()) + nodeParams
     internal fun variadicWithInherited(): NodeParam? {
