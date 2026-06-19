@@ -1,0 +1,205 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(27,39): 'package main'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(35,39): 'main'
+  NO_CANDIDATES
+
+KtImportList(41,63): 'import test.expectsFoo'
+  NO_CANDIDATES
+
+KtImportDirective(41,63): 'import test.expectsFoo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(48,63): 'test.expectsFoo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(48,52): 'test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(53,63): 'expectsFoo'
+  NO_CANDIDATES
+
+KtNamedFunction(65,109): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(74,76): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(77,109): '{'
+  NO_CANDIDATES
+
+KtCallExpression(83,107): 'expectsFoo(test.Foo.BAR)'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test.Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtNameReferenceExpression(83,93): 'expectsFoo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = test/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        test.Foo.BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtValueArgumentList(93,107): '(test.Foo.BAR)'
+  NO_CANDIDATES
+
+KtValueArgument(94,106): 'test.Foo.BAR'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(94,106): 'test.Foo.BAR'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(94,102): 'test.Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Foo
+        symbol = <constructor>(): test.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(94,98): 'test'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Foo
+        symbol = <constructor>(): test.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(99,102): 'Foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Foo
+        symbol = <constructor>(): test.Foo
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(103,106): 'BAR'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = test.Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

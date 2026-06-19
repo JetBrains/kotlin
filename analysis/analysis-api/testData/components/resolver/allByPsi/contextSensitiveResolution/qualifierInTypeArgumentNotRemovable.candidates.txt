@@ -1,0 +1,218 @@
+KtFile: 'qualifierInTypeArgumentNotRemovable.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(70,82): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(78,82): 'test'
+  NO_CANDIDATES
+
+KtImportList(82,82): ''
+  NO_CANDIDATES
+
+KtClass(84,93): 'class Foo'
+  NO_CANDIDATES
+
+KtClass(95,150): 'sealed class Base<T> {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(95,101): 'sealed'
+  NO_CANDIDATES
+
+KtTypeParameterList(112,115): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(113,114): 'T'
+  NO_CANDIDATES
+
+KtClassBody(116,150): '{'
+  NO_CANDIDATES
+
+KtClass(122,148): 'class Child<T> : Base<T>()'
+  NO_CANDIDATES
+
+KtTypeParameterList(133,136): '<T>'
+  NO_CANDIDATES
+
+KtTypeParameter(134,135): 'T'
+  NO_CANDIDATES
+
+KtSuperTypeList(139,148): 'Base<T>()'
+  NO_CANDIDATES
+
+KtSuperTypeCallEntry(139,148): 'Base<T>()'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(139,146): 'Base<T>'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(139,146): 'Base<T>'
+  NO_CANDIDATES
+
+KtUserType(139,146): 'Base<T>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(139,143): 'Base'
+  KaApplicableCallCandidate:
+    candidate = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.Base<T>
+        symbol = <constructor>(): test.Base<T>
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {
+        T -> (T)
+      }
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeArgumentList(143,146): '<T>'
+  NO_CANDIDATES
+
+KtTypeProjection(144,145): 'T'
+  NO_CANDIDATES
+
+KtTypeReference(144,145): 'T'
+  NO_CANDIDATES
+
+KtUserType(144,145): 'T'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(144,145): 'T'
+  NO_CANDIDATES
+
+KtValueArgumentList(146,148): '()'
+  NO_CANDIDATES
+
+KtNamedFunction(152,204): 'fun usage(b: Base<Foo>) {'
+  NO_CANDIDATES
+
+KtParameterList(161,175): '(b: Base<Foo>)'
+  NO_CANDIDATES
+
+KtParameter(162,174): 'b: Base<Foo>'
+  NO_CANDIDATES
+
+KtTypeReference(165,174): 'Base<Foo>'
+  NO_CANDIDATES
+
+KtUserType(165,174): 'Base<Foo>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(165,169): 'Base'
+  NO_CANDIDATES
+
+KtTypeArgumentList(169,174): '<Foo>'
+  NO_CANDIDATES
+
+KtTypeProjection(170,173): 'Foo'
+  NO_CANDIDATES
+
+KtTypeReference(170,173): 'Foo'
+  NO_CANDIDATES
+
+KtUserType(170,173): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(170,173): 'Foo'
+  NO_CANDIDATES
+
+KtBlockExpression(176,204): '{'
+  NO_CANDIDATES
+
+KtBinaryExpressionWithTypeRHS(182,202): 'b as Base.Child<Foo>'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(182,183): 'b'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = b
+        receiverType = null
+        returnType = test.Base<test.Foo>
+        symbol = b: test.Base<test.Foo>
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(184,186): 'as'
+  NO_CANDIDATES
+
+KtTypeReference(187,202): 'Base.Child<Foo>'
+  NO_CANDIDATES
+
+KtUserType(187,202): 'Base.Child<Foo>'
+  NO_CANDIDATES
+
+KtUserType(187,191): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(187,191): 'Base'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(192,197): 'Child'
+  NO_CANDIDATES
+
+KtTypeArgumentList(197,202): '<Foo>'
+  NO_CANDIDATES
+
+KtTypeProjection(198,201): 'Foo'
+  NO_CANDIDATES
+
+KtTypeReference(198,201): 'Foo'
+  NO_CANDIDATES
+
+KtUserType(198,201): 'Foo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(198,201): 'Foo'
+  NO_CANDIDATES

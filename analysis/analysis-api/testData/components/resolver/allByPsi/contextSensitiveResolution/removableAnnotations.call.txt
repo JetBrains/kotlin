@@ -1,0 +1,213 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(88,100): 'package main'
+  null
+
+KtNameReferenceExpression(96,100): 'main'
+  null
+
+KtImportList(100,100): ''
+  null
+
+KtClass(102,124): 'enum class Foo { BAR }'
+  null
+
+KtDeclarationModifierList(102,106): 'enum'
+  null
+
+KtClassBody(117,124): '{ BAR }'
+  null
+
+KtEnumEntry(119,122): 'BAR'
+  null
+
+KtClass(126,159): 'annotation class Anno(val f: Foo)'
+  null
+
+KtDeclarationModifierList(126,136): 'annotation'
+  null
+
+KtPrimaryConstructor(147,159): '(val f: Foo)'
+  null
+
+KtParameterList(147,159): '(val f: Foo)'
+  null
+
+KtParameter(148,158): 'val f: Foo'
+  null
+
+KtTypeReference(155,158): 'Foo'
+  null
+
+KtUserType(155,158): 'Foo'
+  null
+
+KtNameReferenceExpression(155,158): 'Foo'
+  null
+
+KtNamedFunction(161,191): '@Anno(Foo.BAR)'
+  null
+
+KtDeclarationModifierList(161,175): '@Anno(Foo.BAR)'
+  null
+
+KtAnnotationEntry(161,175): '@Anno(Foo.BAR)'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = main.Anno
+        symbol = <constructor>(f: main.Foo): main.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = main.Foo
+            symbol = f: main.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Foo.BAR -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = main.Foo
+          symbol = f: main.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(162,166): 'Anno'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = main.Anno
+        symbol = <constructor>(f: main.Foo): main.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = main.Foo
+            symbol = f: main.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Foo.BAR -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = main.Foo
+          symbol = f: main.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtTypeReference(162,166): 'Anno'
+  null
+
+KtUserType(162,166): 'Anno'
+  null
+
+KtNameReferenceExpression(162,166): 'Anno'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = main.Anno
+        symbol = <constructor>(f: main.Foo): main.Anno
+        valueParameters = [
+          KaVariableSignature:
+            name = f
+            receiverType = null
+            returnType = main.Foo
+            symbol = f: main.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        Foo.BAR -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = main.Foo
+          symbol = f: main.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(166,175): '(Foo.BAR)'
+  null
+
+KtValueArgument(167,174): 'Foo.BAR'
+  null
+
+KtDotQualifiedExpression(167,174): 'Foo.BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = main.Foo
+        symbol = main/Foo.BAR
+        contextParameters = []
+        callableId = main/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(167,170): 'Foo'
+  null
+
+KtNameReferenceExpression(171,174): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = Foo
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = main.Foo
+        symbol = main/Foo.BAR
+        contextParameters = []
+        callableId = main/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtParameterList(185,187): '()'
+  null
+
+KtBlockExpression(188,191): '{'
+  null

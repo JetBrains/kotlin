@@ -1,0 +1,189 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(25,37): 'package main'
+  null
+
+KtNameReferenceExpression(33,37): 'main'
+  null
+
+KtImportList(39,74): 'import test.Foo'
+  null
+
+KtImportDirective(39,54): 'import test.Foo'
+  null
+
+KtDotQualifiedExpression(46,54): 'test.Foo'
+  null
+
+KtNameReferenceExpression(46,50): 'test'
+  null
+
+KtNameReferenceExpression(51,54): 'Foo'
+  null
+
+KtImportDirective(55,74): 'import test.Foo.BAR'
+  null
+
+KtDotQualifiedExpression(62,74): 'test.Foo.BAR'
+  null
+
+KtDotQualifiedExpression(62,70): 'test.Foo'
+  null
+
+KtNameReferenceExpression(62,66): 'test'
+  null
+
+KtNameReferenceExpression(67,70): 'Foo'
+  null
+
+KtNameReferenceExpression(71,74): 'BAR'
+  null
+
+KtNamedFunction(76,103): 'fun expectsFoo(foo: Foo) {}'
+  null
+
+KtParameterList(90,100): '(foo: Foo)'
+  null
+
+KtParameter(91,99): 'foo: Foo'
+  null
+
+KtTypeReference(96,99): 'Foo'
+  null
+
+KtUserType(96,99): 'Foo'
+  null
+
+KtNameReferenceExpression(96,99): 'Foo'
+  null
+
+KtBlockExpression(101,103): '{}'
+  null
+
+KtNamedFunction(105,160): 'fun usage(): Foo {'
+  null
+
+KtParameterList(114,116): '()'
+  null
+
+KtTypeReference(118,121): 'Foo'
+  null
+
+KtUserType(118,121): 'Foo'
+  null
+
+KtNameReferenceExpression(118,121): 'Foo'
+  null
+
+KtBlockExpression(122,160): '{'
+  null
+
+KtCallExpression(128,143): 'expectsFoo(BAR)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(128,138): 'expectsFoo'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = main/expectsFoo(foo: test.Foo): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = foo
+            receiverType = null
+            returnType = test.Foo
+            symbol = foo: test.Foo
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = main/expectsFoo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        BAR -> (KaVariableSignature:
+          name = foo
+          receiverType = null
+          returnType = test.Foo
+          symbol = foo: test.Foo
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(138,143): '(BAR)'
+  null
+
+KtValueArgument(139,142): 'BAR'
+  null
+
+KtNameReferenceExpression(139,142): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}
+
+KtReturnExpression(148,158): 'return BAR'
+  null
+
+KtNameReferenceExpression(155,158): 'BAR'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = BAR
+        receiverType = null
+        returnType = test.Foo
+        symbol = test/Foo.BAR
+        contextParameters = []
+        callableId = test/Foo.BAR
+      typeArgumentsMapping = {}

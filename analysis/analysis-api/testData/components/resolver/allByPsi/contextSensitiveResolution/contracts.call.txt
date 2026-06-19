@@ -1,0 +1,838 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(103,115): 'package main'
+  null
+
+KtNameReferenceExpression(111,115): 'main'
+  null
+
+KtImportList(117,234): 'import kotlin.contracts.ExperimentalContracts'
+  null
+
+KtImportDirective(117,162): 'import kotlin.contracts.ExperimentalContracts'
+  null
+
+KtDotQualifiedExpression(124,162): 'kotlin.contracts.ExperimentalContracts'
+  null
+
+KtDotQualifiedExpression(124,140): 'kotlin.contracts'
+  null
+
+KtNameReferenceExpression(124,130): 'kotlin'
+  null
+
+KtNameReferenceExpression(131,140): 'contracts'
+  null
+
+KtNameReferenceExpression(141,162): 'ExperimentalContracts'
+  null
+
+KtImportDirective(163,201): 'import kotlin.contracts.InvocationKind'
+  null
+
+KtDotQualifiedExpression(170,201): 'kotlin.contracts.InvocationKind'
+  null
+
+KtDotQualifiedExpression(170,186): 'kotlin.contracts'
+  null
+
+KtNameReferenceExpression(170,176): 'kotlin'
+  null
+
+KtNameReferenceExpression(177,186): 'contracts'
+  null
+
+KtNameReferenceExpression(187,201): 'InvocationKind'
+  null
+
+KtImportDirective(202,234): 'import kotlin.contracts.contract'
+  null
+
+KtDotQualifiedExpression(209,234): 'kotlin.contracts.contract'
+  null
+
+KtDotQualifiedExpression(209,225): 'kotlin.contracts'
+  null
+
+KtNameReferenceExpression(209,215): 'kotlin'
+  null
+
+KtNameReferenceExpression(216,225): 'contracts'
+  null
+
+KtNameReferenceExpression(226,234): 'contract'
+  null
+
+KtNamedFunction(236,507): '@OptIn(ExperimentalContracts::class)'
+  null
+
+KtDeclarationModifierList(236,272): '@OptIn(ExperimentalContracts::class)'
+  null
+
+KtAnnotationEntry(236,272): '@OptIn(ExperimentalContracts::class)'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.OptIn
+        symbol = <constructor>(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>): kotlin.OptIn
+        valueParameters = [
+          KaVariableSignature:
+            name = markerClass
+            receiverType = null
+            returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+            symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ExperimentalContracts::class -> (KaVariableSignature:
+          name = markerClass
+          receiverType = null
+          returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+          symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstructorCalleeExpression(237,242): 'OptIn'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.OptIn
+        symbol = <constructor>(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>): kotlin.OptIn
+        valueParameters = [
+          KaVariableSignature:
+            name = markerClass
+            receiverType = null
+            returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+            symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ExperimentalContracts::class -> (KaVariableSignature:
+          name = markerClass
+          receiverType = null
+          returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+          symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+          contextParameters = []
+          callableId = null)
+      }
+
+KtTypeReference(237,242): 'OptIn'
+  null
+
+KtUserType(237,242): 'OptIn'
+  null
+
+KtNameReferenceExpression(237,242): 'OptIn'
+  KaCallResolutionSuccess:
+    call = KaAnnotationCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.OptIn
+        symbol = <constructor>(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>): kotlin.OptIn
+        valueParameters = [
+          KaVariableSignature:
+            name = markerClass
+            receiverType = null
+            returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+            symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        ExperimentalContracts::class -> (KaVariableSignature:
+          name = markerClass
+          receiverType = null
+          returnType = kotlin.reflect.KClass<out kotlin.Annotation>
+          symbol = vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(242,272): '(ExperimentalContracts::class)'
+  null
+
+KtValueArgument(243,271): 'ExperimentalContracts::class'
+  null
+
+KtClassLiteralExpression(243,271): 'ExperimentalContracts::class'
+  null
+
+KtNameReferenceExpression(243,264): 'ExperimentalContracts'
+  null
+
+KtParameterList(282,322): '(block1: () -> Unit, block2: () -> Unit)'
+  null
+
+KtParameter(283,301): 'block1: () -> Unit'
+  null
+
+KtTypeReference(291,301): '() -> Unit'
+  null
+
+KtFunctionType(291,301): '() -> Unit'
+  null
+
+KtParameterList(291,293): '()'
+  null
+
+KtTypeReference(297,301): 'Unit'
+  null
+
+KtUserType(297,301): 'Unit'
+  null
+
+KtNameReferenceExpression(297,301): 'Unit'
+  null
+
+KtParameter(303,321): 'block2: () -> Unit'
+  null
+
+KtTypeReference(311,321): '() -> Unit'
+  null
+
+KtFunctionType(311,321): '() -> Unit'
+  null
+
+KtParameterList(311,313): '()'
+  null
+
+KtTypeReference(317,321): 'Unit'
+  null
+
+KtUserType(317,321): 'Unit'
+  null
+
+KtNameReferenceExpression(317,321): 'Unit'
+  null
+
+KtBlockExpression(323,507): '{'
+  null
+
+KtCallExpression(329,478): 'contract {'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/contracts/contract(builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = builder
+            receiverType = null
+            returnType = kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+            symbol = builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/contract
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                callsInPlace(block1, InvocationKind.EXACTLY_ONCE)
+                callsInPlace(block2, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+            } -> (KaVariableSignature:
+          name = builder
+          receiverType = null
+          returnType = kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+          symbol = builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(329,337): 'contract'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/contracts/contract(builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = builder
+            receiverType = null
+            returnType = kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+            symbol = builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/contract
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        {
+                callsInPlace(block1, InvocationKind.EXACTLY_ONCE)
+                callsInPlace(block2, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+            } -> (KaVariableSignature:
+          name = builder
+          receiverType = null
+          returnType = kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+          symbol = builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit
+          contextParameters = []
+          callableId = null)
+      }
+
+KtLambdaArgument(338,478): '{'
+  null
+
+KtLambdaExpression(338,478): '{'
+  null
+
+KtFunctionLiteral(338,478): '{'
+  null
+
+KtBlockExpression(348,472): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
+  null
+
+KtCallExpression(348,397): 'callsInPlace(block1, InvocationKind.EXACTLY_ONCE)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          contextReceivers: []
+          isActual: false
+          isCompanion: false
+          isDelegated: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/contracts/ContractBuilder
+          visibility: PUBLIC
+        type = kotlin.contracts.ContractBuilder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.contracts.CallsInPlace
+        symbol = kotlin/contracts/ContractBuilder.callsInPlace(<dispatch receiver>: kotlin.contracts.ContractBuilder, lambda: kotlin.Function<R>, kind: kotlin.contracts.InvocationKind): kotlin.contracts.CallsInPlace
+        valueParameters = [
+          KaVariableSignature:
+            name = lambda
+            receiverType = null
+            returnType = kotlin.Function<kotlin.Unit>
+            symbol = lambda: kotlin.Function<R>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = kind
+            receiverType = null
+            returnType = kotlin.contracts.InvocationKind
+            symbol = kind: kotlin.contracts.InvocationKind
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/ContractBuilder.callsInPlace
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        block1 -> (KaVariableSignature:
+          name = lambda
+          receiverType = null
+          returnType = kotlin.Function<kotlin.Unit>
+          symbol = lambda: kotlin.Function<R>
+          contextParameters = []
+          callableId = null),
+        InvocationKind.EXACTLY_ONCE -> (KaVariableSignature:
+          name = kind
+          receiverType = null
+          returnType = kotlin.contracts.InvocationKind
+          symbol = kind: kotlin.contracts.InvocationKind
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(348,360): 'callsInPlace'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          contextReceivers: []
+          isActual: false
+          isCompanion: false
+          isDelegated: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/contracts/ContractBuilder
+          visibility: PUBLIC
+        type = kotlin.contracts.ContractBuilder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.contracts.CallsInPlace
+        symbol = kotlin/contracts/ContractBuilder.callsInPlace(<dispatch receiver>: kotlin.contracts.ContractBuilder, lambda: kotlin.Function<R>, kind: kotlin.contracts.InvocationKind): kotlin.contracts.CallsInPlace
+        valueParameters = [
+          KaVariableSignature:
+            name = lambda
+            receiverType = null
+            returnType = kotlin.Function<kotlin.Unit>
+            symbol = lambda: kotlin.Function<R>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = kind
+            receiverType = null
+            returnType = kotlin.contracts.InvocationKind
+            symbol = kind: kotlin.contracts.InvocationKind
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/ContractBuilder.callsInPlace
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        block1 -> (KaVariableSignature:
+          name = lambda
+          receiverType = null
+          returnType = kotlin.Function<kotlin.Unit>
+          symbol = lambda: kotlin.Function<R>
+          contextParameters = []
+          callableId = null),
+        InvocationKind.EXACTLY_ONCE -> (KaVariableSignature:
+          name = kind
+          receiverType = null
+          returnType = kotlin.contracts.InvocationKind
+          symbol = kind: kotlin.contracts.InvocationKind
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(360,397): '(block1, InvocationKind.EXACTLY_ONCE)'
+  null
+
+KtValueArgument(361,367): 'block1'
+  null
+
+KtNameReferenceExpression(361,367): 'block1'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = block1
+        receiverType = null
+        returnType = () -> kotlin.Unit
+        symbol = block1: () -> kotlin.Unit
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgument(369,396): 'InvocationKind.EXACTLY_ONCE'
+  null
+
+KtDotQualifiedExpression(369,396): 'InvocationKind.EXACTLY_ONCE'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = InvocationKind
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = EXACTLY_ONCE
+        receiverType = null
+        returnType = kotlin.contracts.InvocationKind
+        symbol = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+        contextParameters = []
+        callableId = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+      typeArgumentsMapping = {}
+
+KtNameReferenceExpression(369,383): 'InvocationKind'
+  null
+
+KtNameReferenceExpression(384,396): 'EXACTLY_ONCE'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = InvocationKind
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = EXACTLY_ONCE
+        receiverType = null
+        returnType = kotlin.contracts.InvocationKind
+        symbol = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+        contextParameters = []
+        callableId = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+      typeArgumentsMapping = {}
+
+KtCallExpression(406,472): 'callsInPlace(block2, kotlin.contracts.InvocationKind.EXACTLY_ONCE)'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          contextReceivers: []
+          isActual: false
+          isCompanion: false
+          isDelegated: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/contracts/ContractBuilder
+          visibility: PUBLIC
+        type = kotlin.contracts.ContractBuilder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.contracts.CallsInPlace
+        symbol = kotlin/contracts/ContractBuilder.callsInPlace(<dispatch receiver>: kotlin.contracts.ContractBuilder, lambda: kotlin.Function<R>, kind: kotlin.contracts.InvocationKind): kotlin.contracts.CallsInPlace
+        valueParameters = [
+          KaVariableSignature:
+            name = lambda
+            receiverType = null
+            returnType = kotlin.Function<kotlin.Unit>
+            symbol = lambda: kotlin.Function<R>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = kind
+            receiverType = null
+            returnType = kotlin.contracts.InvocationKind
+            symbol = kind: kotlin.contracts.InvocationKind
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/ContractBuilder.callsInPlace
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        block2 -> (KaVariableSignature:
+          name = lambda
+          receiverType = null
+          returnType = kotlin.Function<kotlin.Unit>
+          symbol = lambda: kotlin.Function<R>
+          contextParameters = []
+          callableId = null),
+        kotlin.contracts.InvocationKind.EXACTLY_ONCE -> (KaVariableSignature:
+          name = kind
+          receiverType = null
+          returnType = kotlin.contracts.InvocationKind
+          symbol = kind: kotlin.contracts.InvocationKind
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(406,418): 'callsInPlace'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = KaReceiverParameterSymbol:
+          annotations: []
+          callableId: null
+          contextReceivers: []
+          isActual: false
+          isCompanion: false
+          isDelegated: false
+          isExpect: false
+          isExtension: false
+          isExternal: false
+          isVal: true
+          location: LOCAL
+          modality: FINAL
+          name: <receiver>
+          origin: SOURCE
+          owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/contracts/ContractBuilder
+          visibility: PUBLIC
+        type = kotlin.contracts.ContractBuilder
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.contracts.CallsInPlace
+        symbol = kotlin/contracts/ContractBuilder.callsInPlace(<dispatch receiver>: kotlin.contracts.ContractBuilder, lambda: kotlin.Function<R>, kind: kotlin.contracts.InvocationKind): kotlin.contracts.CallsInPlace
+        valueParameters = [
+          KaVariableSignature:
+            name = lambda
+            receiverType = null
+            returnType = kotlin.Function<kotlin.Unit>
+            symbol = lambda: kotlin.Function<R>
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = kind
+            receiverType = null
+            returnType = kotlin.contracts.InvocationKind
+            symbol = kind: kotlin.contracts.InvocationKind
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/contracts/ContractBuilder.callsInPlace
+      typeArgumentsMapping = {
+        R -> (kotlin.Unit)
+      }
+      valueArgumentMapping = {
+        block2 -> (KaVariableSignature:
+          name = lambda
+          receiverType = null
+          returnType = kotlin.Function<kotlin.Unit>
+          symbol = lambda: kotlin.Function<R>
+          contextParameters = []
+          callableId = null),
+        kotlin.contracts.InvocationKind.EXACTLY_ONCE -> (KaVariableSignature:
+          name = kind
+          receiverType = null
+          returnType = kotlin.contracts.InvocationKind
+          symbol = kind: kotlin.contracts.InvocationKind
+          contextParameters = []
+          callableId = null)
+      }
+
+KtValueArgumentList(418,472): '(block2, kotlin.contracts.InvocationKind.EXACTLY_ONCE)'
+  null
+
+KtValueArgument(419,425): 'block2'
+  null
+
+KtNameReferenceExpression(419,425): 'block2'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = block2
+        receiverType = null
+        returnType = () -> kotlin.Unit
+        symbol = block2: () -> kotlin.Unit
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgument(427,471): 'kotlin.contracts.InvocationKind.EXACTLY_ONCE'
+  null
+
+KtDotQualifiedExpression(427,471): 'kotlin.contracts.InvocationKind.EXACTLY_ONCE'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = kotlin.contracts.InvocationKind
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = EXACTLY_ONCE
+        receiverType = null
+        returnType = kotlin.contracts.InvocationKind
+        symbol = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+        contextParameters = []
+        callableId = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+      typeArgumentsMapping = {}
+
+KtDotQualifiedExpression(427,458): 'kotlin.contracts.InvocationKind'
+  null
+
+KtDotQualifiedExpression(427,443): 'kotlin.contracts'
+  null
+
+KtNameReferenceExpression(427,433): 'kotlin'
+  null
+
+KtNameReferenceExpression(434,443): 'contracts'
+  null
+
+KtNameReferenceExpression(444,458): 'InvocationKind'
+  null
+
+KtNameReferenceExpression(459,471): 'EXACTLY_ONCE'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = kotlin.contracts.InvocationKind
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = EXACTLY_ONCE
+        receiverType = null
+        returnType = kotlin.contracts.InvocationKind
+        symbol = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+        contextParameters = []
+        callableId = kotlin/contracts/InvocationKind.EXACTLY_ONCE
+      typeArgumentsMapping = {}
+
+KtCallExpression(484,492): 'block1()'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block1
+        isSafeNavigation = false
+        type = () -> kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function0.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(484,490): 'block1'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = block1
+        receiverType = null
+        returnType = () -> kotlin.Unit
+        symbol = block1: () -> kotlin.Unit
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(490,492): '()'
+  null
+
+KtCallExpression(497,505): 'block2()'
+  KaCallResolutionSuccess:
+    call = KaImplicitInvokeCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = block2
+        isSafeNavigation = false
+        type = () -> kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/Function0.invoke(<dispatch receiver>: () -> R): R
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Function0.invoke
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(497,503): 'block2'
+  KaCallResolutionSuccess:
+    call = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = block2
+        receiverType = null
+        returnType = () -> kotlin.Unit
+        symbol = block2: () -> kotlin.Unit
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+
+KtValueArgumentList(503,505): '()'
+  null

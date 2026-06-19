@@ -425,6 +425,90 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallByFileTestGenerat
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
+    @Test
+    @TestMetadata("contracts.kt")
+    public void testContracts() {
+      run("contracts.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifierInTypeArgumentNotRemovable.kt")
+    public void testQualifierInTypeArgumentNotRemovable() {
+      run("qualifierInTypeArgumentNotRemovable.kt");
+    }
+
+    @Test
+    @TestMetadata("removableAnnotations.kt")
+    public void testRemovableAnnotations() {
+      run("removableAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("removableFullyQualified.kt")
+    public void testRemovableFullyQualified() {
+      run("removableFullyQualified.kt");
+    }
+
+    @Test
+    @TestMetadata("removableFullyQualifiedWithImport.kt")
+    public void testRemovableFullyQualifiedWithImport() {
+      run("removableFullyQualifiedWithImport.kt");
+    }
+
+    @Test
+    @TestMetadata("removableImportEnumEntry.kt")
+    public void testRemovableImportEnumEntry() {
+      run("removableImportEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierDeeplyNested.kt")
+    public void testRemovableQualifierDeeplyNested() {
+      run("removableQualifierDeeplyNested.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierEnumEntry.kt")
+    public void testRemovableQualifierEnumEntry() {
+      run("removableQualifierEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierFeatureDisabled.kt")
+    public void testRemovableQualifierFeatureDisabled() {
+      run("removableQualifierFeatureDisabled.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierSealedSubclass.kt")
+    public void testRemovableQualifierSealedSubclass() {
+      run("removableQualifierSealedSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("removableQualifierWhenIsPattern.kt")
+    public void testRemovableQualifierWhenIsPattern() {
+      run("removableQualifierWhenIsPattern.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportEnumEntry.kt")
+    public void testRemovableStarImportEnumEntry() {
+      run("removableStarImportEnumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportSealedSubclass.kt")
+    public void testRemovableStarImportSealedSubclass() {
+      run("removableStarImportSealedSubclass.kt");
+    }
+
+    @Test
+    @TestMetadata("removableStarImportWhenIsPattern.kt")
+    public void testRemovableStarImportWhenIsPattern() {
+      run("removableStarImportWhenIsPattern.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution/ambiguity")
     @TestDataPath("$PROJECT_ROOT")
