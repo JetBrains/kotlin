@@ -1,9 +1,6 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // DUMP_KLIB_ABI: DEFAULT
 // DUMP_IR
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// Notes:
-// JS compBlockVal is undefined
 
 class A {
     companion {

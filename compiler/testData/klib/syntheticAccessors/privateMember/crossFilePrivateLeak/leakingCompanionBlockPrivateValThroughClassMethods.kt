@@ -1,6 +1,4 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JS_IR
-// Static property is undefined on JS backend
 // FILE: A.kt
 class A {
     companion {

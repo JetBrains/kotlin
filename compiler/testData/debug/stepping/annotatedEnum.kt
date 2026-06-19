@@ -61,16 +61,16 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:13 box
-// test.kt:10 Enum_initEntries
+// test.kt:10 static_init_6
 // test.kt:8 <init>
-// test.kt:10 Enum_initEntries
+// test.kt:10 static_init_6
 // test.kt:8 <init>
 // test.kt:14 box
 // test.kt:15 box
 // test.kt:17 box
-// test.kt:5 Type_initEntries
+// test.kt:5 static_init_5
 // test.kt:5 <init>
-// test.kt:5 Type_initEntries
+// test.kt:5 static_init_5
 // test.kt:5 <init>
 // test.kt:18 box
 // test.kt:19 box
@@ -78,29 +78,29 @@ fun box(): String {
 
 // EXPECTATIONS WASM
 // test.kt:13 $box (9)
-// test.kt:10 $Enum_initEntries (18)
+// test.kt:10 $static_init (18)
 // test.kt:10 $Enum.<init> (34)
-// test.kt:10 $Enum_initEntries (18, 26)
+// test.kt:10 $static_init (18, 26)
 // test.kt:10 $Enum.<init> (34)
-// test.kt:10 $Enum_initEntries (26)
+// test.kt:10 $static_init (26)
 // test.kt:13 $box (9)
 // test.kt:14 $box (17, 9)
-// test.kt:10 $Enum_initEntries (18)
+// test.kt:10 $static_init (18)
 // test.kt:14 $box (9)
 // test.kt:15 $box (9)
-// test.kt:10 $Enum_initEntries (18)
+// test.kt:10 $static_init (18)
 // test.kt:15 $box (9)
 // test.kt:17 $box (14)
-// test.kt:5 $Type_initEntries (22)
+// test.kt:5 $static_init (22)
 // test.kt:5 $Type.<init> (36)
-// test.kt:5 $Type_initEntries (22, 29)
+// test.kt:5 $static_init (22, 29)
 // test.kt:5 $Type.<init> (36)
-// test.kt:5 $Type_initEntries (29)
+// test.kt:5 $static_init (29)
 // test.kt:17 $box (14)
 // test.kt:18 $box (22, 14)
-// test.kt:5 $Type_initEntries (22)
+// test.kt:5 $static_init (22)
 // test.kt:18 $box (14)
 // test.kt:19 $box (14)
-// test.kt:5 $Type_initEntries (22)
+// test.kt:5 $static_init (22)
 // test.kt:19 $box (14)
 // test.kt:20 $box (11, 4)

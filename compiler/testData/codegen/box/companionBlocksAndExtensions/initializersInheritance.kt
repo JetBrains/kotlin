@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: NATIVE, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
 
 var initOrder = ""
 

@@ -1,8 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // DUMP_KLIB_ABI: DEFAULT
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// Notes:
-// JS "Oundefined"
 
 class A {
     companion {

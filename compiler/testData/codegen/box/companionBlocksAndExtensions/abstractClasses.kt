@@ -1,5 +1,4 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 abstract class Base {
     companion {

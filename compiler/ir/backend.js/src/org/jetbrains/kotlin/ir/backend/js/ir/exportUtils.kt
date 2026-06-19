@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.promisifiedWrapperFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedMemberWrapper
+import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
@@ -60,7 +60,7 @@ internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, special
 
     val parentClass = parent as? IrClass
 
-    if (parentClass != null && parentClass.initEntryInstancesFun == this) {
+    if (parentClass != null && parentClass.staticInitFunction == this) {
         return Exportability.NotNeeded
     }
 

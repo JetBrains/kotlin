@@ -1,5 +1,4 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: WASM, WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
 
 var initOrder = ""
 

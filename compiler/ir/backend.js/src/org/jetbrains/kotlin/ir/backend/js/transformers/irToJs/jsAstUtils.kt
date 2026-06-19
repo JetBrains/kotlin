@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.ENUM_ENTRIES_INITIALIZER_ORIGIN
+import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersDeclarationLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
@@ -766,7 +767,8 @@ private val debugFriendlyOrigins: Set<IrDeclarationOrigin> = hashSetOf(
     AbstractSuspendFunctionsLowering.DECLARATION_ORIGIN_COROUTINE_IMPL_INVOKE,
     ENUM_ENTRIES_INITIALIZER_ORIGIN,
     SecondaryConstructorLowering.SECONDARY_CONSTRUCTOR_INIT_ORIGIN,
-    JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
+    JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT,
+    WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER
 )
 
 val IrDeclaration.isInlinedCode: Boolean
