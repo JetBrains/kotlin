@@ -533,7 +533,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
         val symbol = toClassLikeSymbol()?.fullyExpandedClass(session) ?: return false
-        return symbol.isBasicValueClass
+        return symbol.isInlineClass
     }
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, ConeRigidType>>? {

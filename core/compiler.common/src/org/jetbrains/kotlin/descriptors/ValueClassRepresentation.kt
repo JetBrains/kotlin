@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
  *       * It is a regular abstract class without any fields (if declared in Kotlin) and without mutable fields (if declared in Java with Valhalla support).
  *       * It can be inherited by other value classes (both abstract/sealed and final).
  *       * Its [underlyingPropertyNamesToTypes] is always `null`.
- *
- * [InlineClassRepresentation] is the only available subclass of [BasicValueClassRepresentation].
  */
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>?
@@ -40,10 +38,6 @@ sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
         is FullValueClassRepresentation ->
             FullValueClassRepresentation(underlyingPropertyNamesToTypes?.map { [name, type] -> name to transform(type) })
     }
-}
-
-sealed class BasicValueClassRepresentation<Type : RigidTypeMarker>: ValueClassRepresentation<Type>() {
-    abstract override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
 }
 
 

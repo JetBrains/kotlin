@@ -44,10 +44,10 @@ value class UnitWrapper(val x: Unit)
 
 
 @JvmInline
-value class BasicInlineClass(val x: Int)
+value class JvmInlineInlineClass(val x: Int)
 
 @JvmInline
-value class BasicMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
+value class JvmInlineMultiFieldValueClass<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
 
 value class Delegation(val x: Int) : Comparable<Int> by x
 value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 
 /**
@@ -62,8 +61,6 @@ fun IrType.isInlineClassType(): Boolean {
         erasedUpperBound.isInlineClass
     }
 }
-
-fun IrType.isBasicValueClassType(): Boolean = erasedUpperBound.isBasicValueClass
 
 val IrType.upperBound: IrSimpleType
     get() = erasedUpperBound.symbol.starProjectedType

@@ -73,7 +73,7 @@ class FirKotlinScopeProvider(
                 // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
                 if (
                     klass is FirRegularClass && !klass.isExpect &&
-                    (klass.isData || klass.isBasicValueClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
+                    (klass.isData || klass.isInlineClass || klass.isFullValueClass && !klass.isAbstract && !klass.isSealed) &&
                     klass.origin != FirDeclarationOrigin.Library
                 ) {
                     // See also KT-58926 (we apply delegation first, and data/value classes after it)

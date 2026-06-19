@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class FullValue {
-    // source: 'interopWithBasicValueClasses.kt'
+    // source: 'interopWithInlineClasses.kt'
     private final field x: int
     private final field y: int
     private method <init>(p0: int, p1: int): void
@@ -18,7 +18,7 @@ public final class FullValue {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InnerInline {
-    // source: 'interopWithBasicValueClasses.kt'
+    // source: 'interopWithInlineClasses.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): InnerInline
@@ -38,15 +38,15 @@ public final class InnerInline {
 }
 
 @kotlin.Metadata
-public final class InteropWithBasicValueClassesKt {
-    // source: 'interopWithBasicValueClasses.kt'
+public final class InteropWithInlineClassesKt {
+    // source: 'interopWithInlineClasses.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class OuterInline {
-    // source: 'interopWithBasicValueClasses.kt'
+    // source: 'interopWithInlineClasses.kt'
     private final @org.jetbrains.annotations.NotNull field x: FullValue
     private synthetic method <init>(p0: FullValue): void
     public synthetic final static method box-impl(p0: FullValue): OuterInline

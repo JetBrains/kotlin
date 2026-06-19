@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.isBasicValueClass
+import org.jetbrains.kotlin.fir.declarations.isInlineClass
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -20,4 +20,4 @@ fun FirTypeRef.isInlineClassThatRequiresMangling(session: FirSession): Boolean {
 }
 
 fun FirRegularClassSymbol.isInlineClassThatRequiresMangling(): Boolean =
-    isBasicValueClass && classId != StandardClassIds.Result
+    isInlineClass && classId != StandardClassIds.Result

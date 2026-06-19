@@ -157,13 +157,13 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
         // Check dispatch receiver as well - we use `-impl` suffix for them
         if (this !is FirConstructor) {
             val containingClass = containingClassLookupTag()?.toRegularClassSymbol(session)
-            return containingClass?.isBasicValueClass == true
+            return containingClass?.isInlineClass == true
         }
         return false
     }
 
     private fun FirTypeRef.isInline(session: FirSession): Boolean {
         val classSymbol = toRegularClassSymbol(session) ?: return false
-        return classSymbol.isBasicValueClass
+        return classSymbol.isInlineClass
     }
 }

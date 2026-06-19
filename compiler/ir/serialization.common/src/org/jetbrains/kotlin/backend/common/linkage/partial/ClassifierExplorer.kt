@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.i
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
@@ -219,7 +219,7 @@ internal class ClassifierExplorer(
                     ClassKind.INTERFACE,
                     ClassKind.ENUM_CLASS,
                     ClassKind.ANNOTATION_CLASS -> true
-                    else -> isBasicValueClass || when (superClass.kind) {
+                    else -> isInlineClass || when (superClass.kind) {
                         ClassKind.ENUM_CLASS -> kind != ClassKind.ENUM_ENTRY
                         ClassKind.CLASS -> superClass.modality == Modality.FINAL
                         else -> true
@@ -233,6 +233,12 @@ internal class ClassifierExplorer(
 
         return null
     }
+
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    private val IrClass.isInlineClass: Boolean
+        // does not really matter if the flag is true or false here, as compatible full value classes don't have superclasses anyway.
+        get() = isInlineClass(treatCompatibleFullValueClassesAsInline = true)
+
 
     companion object {
         private val IrClass.annotationConstructorsIfApplicable: Sequence<IrConstructor>?

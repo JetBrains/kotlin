@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isBasicInlineClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isInlineClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -78,7 +78,7 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on abstract properties")
         }
 
-        if (declaration.returnTypeRef.coneType.isBasicInlineClass(context.session)) {
+        if (declaration.returnTypeRef.coneType.isInlineClass(context.session)) {
             val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType()
             val variables = if (declaration.symbol is FirLocalPropertySymbol) "local variables" else "properties"
             when {

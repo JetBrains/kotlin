@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
@@ -42,8 +41,8 @@ val FirRegularClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation
 
 @SymbolInternals
-val FirRegularClass.isBasicValueClass: Boolean
-    get() = valueClassRepresentation is BasicValueClassRepresentation
+val FirRegularClass.isInlineClass: Boolean
+    get() = valueClassRepresentation is InlineClassRepresentation
 
-val FirRegularClassSymbol.isBasicValueClass: Boolean
-    get() = valueClassRepresentation is BasicValueClassRepresentation
+val FirRegularClassSymbol.isInlineClass: Boolean
+    get() = valueClassRepresentation is InlineClassRepresentation

@@ -210,7 +210,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             }
         }
 
-        val finalOrBasicValueClassPrefix = when {
+        val finalOrInlineClassPrefix = when {
             !supportsFullValueClasses -> "value"
             isFullValueClass -> "final value"
             else -> "@JvmInline value"
@@ -221,7 +221,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     reporter.reportOn(
                         primaryConstructor.source,
                         FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
-                        finalOrBasicValueClassPrefix.capitalizeAsciiOnly(),
+                        finalOrInlineClassPrefix.capitalizeAsciiOnly(),
                     )
                     return
                 }
@@ -243,14 +243,14 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         } else if (!isFullValueClass || declaration.isFinal) {
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
                 reporter.reportOn(
-                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrBasicValueClassPrefix
+                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrInlineClassPrefix
                 )
             } else {
                 declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
                     reporter.reportOn(
                         constructor.source,
                         FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
-                        finalOrBasicValueClassPrefix,
+                        finalOrInlineClassPrefix,
                     )
                 }
             }

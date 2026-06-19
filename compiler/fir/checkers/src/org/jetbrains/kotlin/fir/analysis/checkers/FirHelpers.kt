@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -134,7 +134,7 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
-fun ConeKotlinType.isBasicInlineClass(session: FirSession): Boolean =
+fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
     with(session.typeContext) { typeConstructor().isInlineClass() }
 
 fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
@@ -153,10 +153,10 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
-    // Reminder: single-field value class is basic if it has @JvmInline annotation or if the FullValueClasses feature is disabled
+    // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
     val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
         null -> false
-        is BasicValueClassRepresentation -> true
+        is InlineClassRepresentation -> true
         is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         is FullValueClassRepresentation -> true
     }
