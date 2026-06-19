@@ -353,7 +353,7 @@ class SerializableIrGenerator(
             ) { irClass.companionObject()!! }
 
             serializeAllProperties(
-                serializableProperties, objectToSerialize,
+                irClass, serializableProperties, objectToSerialize,
                 localOutput, localSerialDesc, kOutputClass,
                 ignoreIndexTo, initializerAdapter, cachedChildSerializerByIndex,
             ) { it, _ ->

@@ -373,6 +373,8 @@ internal class Instantiator(
                                 }
                             }
                         }!!
+//                        expr.type = type.withArgumentsFrom(kType)
+                        expr.retypeSubclassSerializerInContainerScope(type, kType, path)
                         generator.wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
                     }
                 )
@@ -383,6 +385,31 @@ internal class Instantiator(
         val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations).owner
         return callConstructor(ctor, typeArgs, newArgs)
     }
+
+    // TODO: Discuss
+    // original: A<_>, new: _<T>, result: A<T>
+    private fun IrType.withArgumentsFrom(source: IrSimpleType): IrType {
+        val parameters = getClass()?.typeParameters ?: return this
+        val arguments = source.argumentTypesOrUpperBounds()
+        if (arguments.isEmpty()) {
+            return this.substitute(parameters, parameters.map { it.representativeUpperBound })
+        }
+        return this.substitute(parameters, arguments)
+    }
+
+    private fun IrExpression.retypeSubclassSerializerInContainerScope(
+        subclassType: IrType,
+        kType: IrSimpleType,
+        path: List<IrSimpleType>?,
+    ) {
+        val subclass = subclassType.classOrNull?.owner ?: return
+        val containerArguments = kType.argumentTypesOrUpperBounds()
+        type = type.substitute(subclass.typeParameters, subclass.typeParameters.map { typeParameter ->
+            path?.let { mapTypeParameterIndex(typeParameter.index, it) }?.let(containerArguments::getOrNull)
+                ?: typeParameter.representativeUpperBound
+        })
+    }
+
 
     context(irBuilder: IrBuilderWithScope)
     fun instantiateWithNewGetter(
