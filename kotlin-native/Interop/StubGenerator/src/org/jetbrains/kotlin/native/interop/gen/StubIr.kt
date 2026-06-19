@@ -231,9 +231,7 @@ sealed class AnnotationStub(val classifier: Classifier) {
             AnnotationStub(Classifier.topLevel("kotlin", "Deprecated")) {
         companion object {
             val unableToImport = Deprecated(
-                    "Unable to import this declaration. C bridge compilation failed. " +
-                    "This declaration might be visible in the IDE/header-mode but cannot be compiled into the final binary. " +
-                    "Check your cinterop definition (.def) file or C compiler options.",
+                    "Unable to import this declaration",
                     "",
                     DeprecationLevel.ERROR
             )

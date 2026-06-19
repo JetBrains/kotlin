@@ -102,45 +102,4 @@ class CInteropHeaderModeValidationTest : AbstractNativeSimpleTest() {
             "Expected link compilation to fail, but it succeeded! Result: $result"
         }
     }
-
-    @Test
-    fun testDetailedDeprecationMessage() {
-        val includeArg = listOf("-compiler-option", "-I${headerFile.parentFile.canonicalPath}")
-
-        // 1. Compile CInterop in Full Mode
-        val fullKlib = cinteropToLibrary(
-            defFile,
-            buildDir.resolve("fullModeOutForDeprecation").apply { mkdirs() },
-            TestCInteropArgs(includeArg)
-        ).assertSuccess().resultingArtifact
-
-        // 2. Compile dependent Kotlin code directly against the Full-Mode KLIB (fails compilation)
-        val testCase = generateTestCaseWithSingleModule(dependentKotlinDir, TestCompilerArgs.EMPTY)
-        val compilation = LibraryCompilation(
-            settings = testRunSettings,
-            freeCompilerArgs = testCase.freeCompilerArgs,
-            sourceModules = testCase.modules,
-            dependencies = listOf(fullKlib.asLibraryDependency()),
-            expectedArtifact = getLibraryArtifact(testCase, buildDir.resolve("dependentFullFailure").apply { mkdirs() })
-        )
-        val result = compilation.result
-
-        // Verify that compile fails with our new descriptive error message
-        assertTrue(result is TestCompilationResult.CompilationToolFailure) {
-            "Expected CompilationToolFailure but got: $result. Details: " +
-            when (result) {
-                is TestCompilationResult.UnexpectedFailure -> "UnexpectedFailure LoggedData:\n${result.loggedData}"
-                is TestCompilationResult.Success -> "Success Artifact: ${result.resultingArtifact}\nLoggedData:\n${result.loggedData}"
-                is TestCompilationResult.DependencyFailures -> "DependencyFailures: ${result.causes}"
-                else -> ""
-            }
-        }
-        val errorMessage = (result as TestCompilationResult.CompilationToolFailure).loggedData.toString()
-        assertTrue(errorMessage.contains("Unable to import this declaration. C bridge compilation failed.")) {
-            "First assertion failed. Actual error message:\n$errorMessage"
-        }
-        assertTrue(errorMessage.contains("This declaration might be visible in the IDE/header-mode but cannot be compiled into the final binary.")) {
-            "Second assertion failed. Actual error message:\n$errorMessage"
-        }
-    }
 }

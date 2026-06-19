@@ -219,8 +219,6 @@ class SimpleBridgeGeneratorImpl(
     override fun prepare(): NativeBridges {
         // In header mode we return a stub NativeBridges implementation to bypass
         // native verification since native bridge code is not compiled or generated.
-        // Note: Invalid C bridges won't be deprecated here, letting dependent Kotlin code compile in header-mode.
-        // They will still be caught and fail later during full mode compilation.
         if (headerMode) {
             return object : NativeBridges {
                 override val kotlinLines: Sequence<String>

@@ -174,7 +174,7 @@ open class CInteropArguments(argParser: ArgParser =
     ).default(KlibAbiCompatibilityLevel.LATEST_STABLE)
 
     val headerMode by argParser.option(ArgType.Boolean, "Xheader-mode",
-            description = "Generate only metadata, skip bitcode compilation").default(false)
+            description = "Generate only metadata, skip bridge validation and bitcode compilation. Declarations with non-compilable C bridges will not be deprecated or excluded in this mode, deferring errors to link-time.").default(false)
 }
 
 internal fun warn(msg: String) {
