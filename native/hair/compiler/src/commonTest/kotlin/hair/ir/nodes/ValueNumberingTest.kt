@@ -13,8 +13,8 @@ class ValueNumberingTest : IrTest {
     @Test
     fun testConst() = withTestSession {
         buildInitialIR {
-            val c1 = ConstI(0)
-            val c2 = ConstI(0)
+            val c1 = Const(0)
+            val c2 = Const(0)
             assertSame(c1, c2)
             ReturnVoid()
         }

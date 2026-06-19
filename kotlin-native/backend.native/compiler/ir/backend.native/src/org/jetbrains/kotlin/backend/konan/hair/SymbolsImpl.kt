@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 
 internal fun IrType.asHairType(): HairType = when (val binaryType = computePrimitiveBinaryTypeOrNull()) {
-    PrimitiveBinaryType.BOOLEAN -> HairType.INT
-    PrimitiveBinaryType.BYTE -> HairType.INT
-    PrimitiveBinaryType.SHORT -> HairType.INT
+    PrimitiveBinaryType.BOOLEAN -> HairType.BOOLEAN
+    PrimitiveBinaryType.BYTE -> HairType.BYTE
+    PrimitiveBinaryType.SHORT -> HairType.SHORT
 
     PrimitiveBinaryType.INT -> HairType.INT
     PrimitiveBinaryType.LONG -> HairType.LONG

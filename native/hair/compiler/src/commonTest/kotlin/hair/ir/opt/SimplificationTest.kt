@@ -22,8 +22,8 @@ class SimplificationTest : IrTest {
             val v = Var.nextNumbered()
             branch(
                 True(),
-                { AssignVar(v)(ConstI(42)) },
-                { AssignVar(v)(ConstI(37)) }
+                { AssignVar(v)(Const(42)) },
+                { AssignVar(v)(Const(37)) }
             )
             Return(ReadVar(v))
         }
@@ -31,6 +31,6 @@ class SimplificationTest : IrTest {
         optimize()
         printGraphviz()
         val ret = allNodes<Return>().single()
-        assertEquals(42, (ret.result as ConstI).value)
+        assertEquals(42, (ret.result as Const).value)
     }
 }

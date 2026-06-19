@@ -48,15 +48,13 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitCatch(node: Catch): Catch = context(nodeBuilder, NoControlFlowBuilder) { Catch(null) } as Catch
 
-    override fun visitConstI(node: ConstI): ConstI = context(nodeBuilder, NoControlFlowBuilder) { ConstI(node.value) }
-
-    override fun visitConstL(node: ConstL): ConstL = context(nodeBuilder, NoControlFlowBuilder) { ConstL(node.value) }
-
-    override fun visitConstF(node: ConstF): ConstF = context(nodeBuilder, NoControlFlowBuilder) { ConstF(node.value) }
-
-    override fun visitConstD(node: ConstD): ConstD = context(nodeBuilder, NoControlFlowBuilder) { ConstD(node.value) }
+    override fun visitConst(node: Const): Const = context(nodeBuilder, NoControlFlowBuilder) { Const(node.value) }
 
     override fun visitNull(node: Null): Null = context(nodeBuilder, NoControlFlowBuilder) { Null() }
+
+    override fun visitTrue(node: True): True = context(nodeBuilder, NoControlFlowBuilder) { True() }
+
+    override fun visitFalse(node: False): False = context(nodeBuilder, NoControlFlowBuilder) { False() }
 
     override fun visitAdd(node: Add): Add = context(nodeBuilder, NoControlFlowBuilder) { Add(node.opType)(null, null) } as Add
 
@@ -110,7 +108,7 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null, null) } as Load
 
-    override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null, null) } as Store
+    override fun visitStore(node: Store): Store = context(nodeBuilder, NoControlFlowBuilder) { Store(node.type)(null, null, null) } as Store
 
     override fun visitLoadField(node: LoadField): LoadField = context(nodeBuilder, NoControlFlowBuilder) { LoadField(node.field)(null, null) } as LoadField
 

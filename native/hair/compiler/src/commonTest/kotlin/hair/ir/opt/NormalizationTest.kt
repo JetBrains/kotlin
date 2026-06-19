@@ -16,7 +16,7 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 23
             val b = 42
-            assertEquals(ConstI(a + b), Add(INT)(ConstI(a), ConstI(b)))
+            assertEquals(Const(a + b), Add(INT)(Const(a), Const(b)))
             ReturnVoid()
         }
     }
@@ -31,12 +31,12 @@ class NormalizationTest : IrTest {
             val e = 23
             val f = 42
             assertEquals(
-                ConstI(a + b + c + d + e + f),
+                Const(a + b + c + d + e + f),
                 Add(INT)(
-                    Add(INT)(ConstI(a), ConstI(b)),
+                    Add(INT)(Const(a), Const(b)),
                     Add(INT)(
-                        Add(INT)(ConstI(c), ConstI(d)),
-                        Add(INT)(ConstI(e), ConstI(f))
+                        Add(INT)(Const(c), Const(d)),
+                        Add(INT)(Const(e), Const(f))
                     )
                 )
             )
@@ -50,8 +50,8 @@ class NormalizationTest : IrTest {
             val a = 23
             val b = 42
             assertEquals(
-                Add(INT)(Add(INT)(Param(1), ConstI(a)), ConstI(b)),
-                Add(INT)(Param(1), ConstI(a + b))
+                Add(INT)(Add(INT)(Param(1), Const(a)), Const(b)),
+                Add(INT)(Param(1), Const(a + b))
             )
             ReturnVoid()
         }
@@ -64,8 +64,8 @@ class NormalizationTest : IrTest {
             val b = 23
             val c = 15
             assertEquals(
-                ConstI(a - b - c),
-                Sub(INT)(Sub(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const(a - b - c),
+                Sub(INT)(Sub(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -74,8 +74,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testSubSelf() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(0), Sub(INT)(a, a))
+            val a = Const(42)
+            assertEquals(Const(0), Sub(INT)(a, a))
             ReturnVoid()
         }
     }
@@ -88,10 +88,10 @@ class NormalizationTest : IrTest {
             val c = 15
             val d = 16
             assertEquals(
-                ConstI(a * b * c * d),
+                Const(a * b * c * d),
                 Mul(INT)(
-                    Mul(INT)(ConstI(a), ConstI(b)),
-                    Mul(INT)(ConstI(c), ConstI(d))
+                    Mul(INT)(Const(a), Const(b)),
+                    Mul(INT)(Const(c), Const(d))
                 )
             )
             ReturnVoid()
@@ -101,8 +101,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testMulAbsorption() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(0), Mul(INT)(a, ConstI(0)))
+            val a = Const(42)
+            assertEquals(Const(0), Mul(INT)(a, Const(0)))
             ReturnVoid()
         }
     }
@@ -114,8 +114,8 @@ class NormalizationTest : IrTest {
             val b = 4
             val c = 5
             assertEquals(
-                ConstI(a / b / c),
-                Div(INT)(Div(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const(a / b / c),
+                Div(INT)(Div(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -124,8 +124,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testDivSelf() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(1), Div(INT)(a, a))
+            val a = Const(42)
+            assertEquals(Const(1), Div(INT)(a, a))
             ReturnVoid()
         }
     }
@@ -135,7 +135,7 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 23
             val b = 8
-            assertEquals(ConstI(a % b), Rem(INT)(ConstI(a), ConstI(b)))
+            assertEquals(Const(a % b), Rem(INT)(Const(a), Const(b)))
             ReturnVoid()
         }
     }
@@ -143,8 +143,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testRemSelf() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(0), Rem(INT)(a, a))
+            val a = Const(42)
+            assertEquals(Const(0), Rem(INT)(a, a))
             ReturnVoid()
         }
     }
@@ -152,7 +152,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testConstNeg() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(-42), Neg(ConstI(42)))
+            assertEquals(Const(-42), Neg(Const(42)))
             ReturnVoid()
         }
     }
@@ -160,7 +160,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testDoubleNeg() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
+            val a = Const(42)
             assertEquals(a, Neg(Neg(a)))
             ReturnVoid()
         }
@@ -169,7 +169,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testConstNot() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(42.inv()), Inv(ConstI(42)))
+            assertEquals(Const(42.inv()), Inv(Const(42)))
             ReturnVoid()
         }
     }
@@ -177,7 +177,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testNotZero() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(-1), Inv(ConstI(0)))
+            assertEquals(Const(-1), Inv(Const(0)))
             ReturnVoid()
         }
     }
@@ -189,8 +189,8 @@ class NormalizationTest : IrTest {
             val b = 0b11001100
             val c = 0b10101010
             assertEquals(
-                ConstI(a and b and c),
-                And(INT)(And(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const(a and b and c),
+                And(INT)(And(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -199,8 +199,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testAndAbsorber() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(0), And(INT)(a, ConstI(0)))
+            val a = Const(42)
+            assertEquals(Const(0), And(INT)(a, Const(0)))
             ReturnVoid()
         }
     }
@@ -208,8 +208,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testAndIdentity() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(a, And(INT)(a, ConstI(-1)))
+            val a = Const(42)
+            assertEquals(a, And(INT)(a, Const(-1)))
             ReturnVoid()
         }
     }
@@ -221,8 +221,8 @@ class NormalizationTest : IrTest {
             val b = 0b00000010
             val c = 0b00000100
             assertEquals(
-                ConstI(a or b or c),
-                Or(INT)(Or(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const(a or b or c),
+                Or(INT)(Or(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -231,8 +231,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testOrAbsorber() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(-1), Or(INT)(a, ConstI(-1)))
+            val a = Const(42)
+            assertEquals(Const(-1), Or(INT)(a, Const(-1)))
             ReturnVoid()
         }
     }
@@ -240,8 +240,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testOrIdentity() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(a, Or(INT)(a, ConstI(0)))
+            val a = Const(42)
+            assertEquals(a, Or(INT)(a, Const(0)))
             ReturnVoid()
         }
     }
@@ -253,8 +253,8 @@ class NormalizationTest : IrTest {
             val b = 0b10101010
             val c = 0b11001100
             assertEquals(
-                ConstI(a xor b xor c),
-                Xor(INT)(Xor(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const(a xor b xor c),
+                Xor(INT)(Xor(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -263,8 +263,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testXorSelf() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(ConstI(0), Xor(INT)(a, a))
+            val a = Const(42)
+            assertEquals(Const(0), Xor(INT)(a, a))
             ReturnVoid()
         }
     }
@@ -272,8 +272,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testXorIdentity() = withTestSession {
         buildInitialIR {
-            val a = ConstI(42)
-            assertEquals(a, Xor(INT)(a, ConstI(0)))
+            val a = Const(42)
+            assertEquals(a, Xor(INT)(a, Const(0)))
             ReturnVoid()
         }
     }
@@ -285,8 +285,8 @@ class NormalizationTest : IrTest {
             val b = 4
             val c = 2
             assertEquals(
-                ConstI((a shl b) shl c),
-                Shl(INT)(Shl(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const((a shl b) shl c),
+                Shl(INT)(Shl(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -299,8 +299,8 @@ class NormalizationTest : IrTest {
             val b = 2
             val c = 1
             assertEquals(
-                ConstI((a shr b) shr c),
-                Shr(INT)(Shr(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const((a shr b) shr c),
+                Shr(INT)(Shr(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -313,8 +313,8 @@ class NormalizationTest : IrTest {
             val b = 2
             val c = 1
             assertEquals(
-                ConstI((a ushr b) ushr c),
-                Ushr(INT)(Ushr(INT)(ConstI(a), ConstI(b)), ConstI(c))
+                Const((a ushr b) ushr c),
+                Ushr(INT)(Ushr(INT)(Const(a), Const(b)), Const(c))
             )
             ReturnVoid()
         }
@@ -326,8 +326,8 @@ class NormalizationTest : IrTest {
             val a = -1
             val shift = 1
             assertNotEquals(
-                Shr(INT)(ConstI(a), ConstI(shift)),
-                Ushr(INT)(ConstI(a), ConstI(shift))
+                Shr(INT)(Const(a), Const(shift)),
+                Ushr(INT)(Const(a), Const(shift))
             )
             ReturnVoid()
         }
@@ -339,10 +339,10 @@ class NormalizationTest : IrTest {
             val high = 0x12
             val low  = 0x34
             assertEquals(
-                ConstI(0x1234),
+                Const(0x1234),
                 Or(INT)(
-                    Shl(INT)(ConstI(high), ConstI(8)),
-                    ConstI(low)
+                    Shl(INT)(Const(high), Const(8)),
+                    Const(low)
                 )
             )
             ReturnVoid()
@@ -354,10 +354,10 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val high = 0x12
             val low  = 0x34
-            val packed = Or(INT)(Shl(INT)(ConstI(high), ConstI(8)), ConstI(low))
+            val packed = Or(INT)(Shl(INT)(Const(high), Const(8)), Const(low))
 
-            assertEquals(ConstI(high), And(INT)(Shr(INT)(packed, ConstI(8)), ConstI(0xFF)))
-            assertEquals(ConstI(low),  And(INT)(packed, ConstI(0xFF)))
+            assertEquals(Const(high), And(INT)(Shr(INT)(packed, Const(8)), Const(0xFF)))
+            assertEquals(Const(low),  And(INT)(packed, Const(0xFF)))
             ReturnVoid()
         }
     }
@@ -368,8 +368,8 @@ class NormalizationTest : IrTest {
             val value = 0b10100000
             val bit   = 3
             assertEquals(
-                ConstI(0b10101000),
-                Or(INT)(ConstI(value), Shl(INT)(ConstI(1), ConstI(bit)))
+                Const(0b10101000),
+                Or(INT)(Const(value), Shl(INT)(Const(1), Const(bit)))
             )
             ReturnVoid()
         }
@@ -381,8 +381,8 @@ class NormalizationTest : IrTest {
             val value = 0b10101010
             val bit   = 3
             assertEquals(
-                ConstI(0b10100010),
-                And(INT)(ConstI(value), Inv(Shl(INT)(ConstI(1), ConstI(bit))))
+                Const(0b10100010),
+                And(INT)(Const(value), Inv(Shl(INT)(Const(1), Const(bit))))
             )
             ReturnVoid()
         }
@@ -394,8 +394,8 @@ class NormalizationTest : IrTest {
             val value = 0b10101010
             val bit   = 3
             assertEquals(
-                ConstI(0b10100010),
-                Xor(INT)(ConstI(value), Shl(INT)(ConstI(1), ConstI(bit)))
+                Const(0b10100010),
+                Xor(INT)(Const(value), Shl(INT)(Const(1), Const(bit)))
             )
             ReturnVoid()
         }
@@ -405,8 +405,8 @@ class NormalizationTest : IrTest {
     fun testExtractBitField() = withTestSession {
         buildInitialIR {
             assertEquals(
-                ConstI(0xB),
-                And(INT)(Shr(INT)(ConstI(0xABCD), ConstI(8)), ConstI(0xF))
+                Const(0xB),
+                And(INT)(Shr(INT)(Const(0xABCD), Const(8)), Const(0xF))
             )
             ReturnVoid()
         }
@@ -415,8 +415,8 @@ class NormalizationTest : IrTest {
     @Test
     fun testSignMask() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(-1), Shr(INT)(ConstI(Int.MIN_VALUE), ConstI(31)))
-            assertEquals(ConstI(0),  Shr(INT)(ConstI(42),            ConstI(31)))
+            assertEquals(Const(-1), Shr(INT)(Const(Int.MIN_VALUE), Const(31)))
+            assertEquals(Const(0),  Shr(INT)(Const(42),            Const(31)))
             ReturnVoid()
         }
     }
@@ -424,7 +424,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testNegAddIsSubReversed() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(3 - 10), Add(INT)(Neg(ConstI(10)), ConstI(3)))
+            assertEquals(Const(3 - 10), Add(INT)(Neg(Const(10)), Const(3)))
             ReturnVoid()
         }
     }
@@ -432,7 +432,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testAddNegIsSub() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(10 - 3), Add(INT)(ConstI(10), Neg(ConstI(3))))
+            assertEquals(Const(10 - 3), Add(INT)(Const(10), Neg(Const(3))))
             ReturnVoid()
         }
     }
@@ -440,7 +440,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testSubNegIsAdd() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(10 + 3), Sub(INT)(ConstI(10), Neg(ConstI(3))))
+            assertEquals(Const(10 + 3), Sub(INT)(Const(10), Neg(Const(3))))
             ReturnVoid()
         }
     }
@@ -448,7 +448,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testNegSubIsNegOfSum() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(-(10 + 3)), Sub(INT)(Neg(ConstI(10)), ConstI(3)))
+            assertEquals(Const(-(10 + 3)), Sub(INT)(Neg(Const(10)), Const(3)))
             ReturnVoid()
         }
     }
@@ -458,8 +458,8 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 10; val b = 3
             assertEquals(
-                ConstI(a - b),
-                Neg(Add(INT)(Neg(ConstI(a)), ConstI(b)))
+                Const(a - b),
+                Neg(Add(INT)(Neg(Const(a)), Const(b)))
             )
             ReturnVoid()
         }
@@ -470,10 +470,10 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 4; val b = 8; val c = 3; val d = 5
             assertEquals(
-                ConstI((a + b) * (c + d)),
+                Const((a + b) * (c + d)),
                 Mul(INT)(
-                    Add(INT)(ConstI(a), ConstI(b)),
-                    Add(INT)(ConstI(c), ConstI(d))
+                    Add(INT)(Const(a), Const(b)),
+                    Add(INT)(Const(c), Const(d))
                 )
             )
             ReturnVoid()
@@ -485,10 +485,10 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 15; val b = 4; val c = 8; val d = 3
             assertEquals(
-                ConstI(a * b - c * d),
+                Const(a * b - c * d),
                 Sub(INT)(
-                    Mul(INT)(ConstI(a), ConstI(b)),
-                    Mul(INT)(ConstI(c), ConstI(d))
+                    Mul(INT)(Const(a), Const(b)),
+                    Mul(INT)(Const(c), Const(d))
                 )
             )
             ReturnVoid()
@@ -499,15 +499,15 @@ class NormalizationTest : IrTest {
     fun testQuadraticExpression() = withTestSession {
         buildInitialIR {
             // 3*x^2 + 2*x + 1 at x=4 => 3*16 + 8 + 1 = 57
-            val x = ConstI(4)
+            val x = Const(4)
             assertEquals(
-                ConstI(57),
+                Const(57),
                 Add(INT)(
                     Add(INT)(
-                        Mul(INT)(ConstI(3), Mul(INT)(x, x)),
-                        Mul(INT)(ConstI(2), x)
+                        Mul(INT)(Const(3), Mul(INT)(x, x)),
+                        Mul(INT)(Const(2), x)
                     ),
-                    ConstI(1)
+                    Const(1)
                 )
             )
             ReturnVoid()
@@ -520,10 +520,10 @@ class NormalizationTest : IrTest {
             // (a / b) * b + (a % b) == a  (Euclidean division identity)
             val a = 23; val b = 5
             assertEquals(
-                ConstI(a),
+                Const(a),
                 Add(INT)(
-                    Mul(INT)(Div(INT)(ConstI(a), ConstI(b)), ConstI(b)),
-                    Rem(INT)(ConstI(a), ConstI(b))
+                    Mul(INT)(Div(INT)(Const(a), Const(b)), Const(b)),
+                    Rem(INT)(Const(a), Const(b))
                 )
             )
             ReturnVoid()
@@ -538,8 +538,8 @@ class NormalizationTest : IrTest {
             val a = 200; val b = 137
             // (a + b) & 0xFF — wrap to byte
             assertEquals(
-                ConstI((a + b) and 0xFF),
-                And(INT)(Add(INT)(ConstI(a), ConstI(b)), ConstI(0xFF))
+                Const((a + b) and 0xFF),
+                And(INT)(Add(INT)(Const(a), Const(b)), Const(0xFF))
             )
             ReturnVoid()
         }
@@ -551,10 +551,10 @@ class NormalizationTest : IrTest {
             val a = 5; val b = 3
             // (a << 4) + (b << 4) = (a + b) * 16
             assertEquals(
-                ConstI((a shl 4) + (b shl 4)),
+                Const((a shl 4) + (b shl 4)),
                 Add(INT)(
-                    Shl(INT)(ConstI(a), ConstI(4)),
-                    Shl(INT)(ConstI(b), ConstI(4))
+                    Shl(INT)(Const(a), Const(4)),
+                    Shl(INT)(Const(b), Const(4))
                 )
             )
             ReturnVoid()
@@ -567,8 +567,8 @@ class NormalizationTest : IrTest {
             val a = 0b1010; val b = 0b0101
             // (a | b) << 2
             assertEquals(
-                ConstI((a or b) shl 2),
-                Shl(INT)(Or(INT)(ConstI(a), ConstI(b)), ConstI(2))
+                Const((a or b) shl 2),
+                Shl(INT)(Or(INT)(Const(a), Const(b)), Const(2))
             )
             ReturnVoid()
         }
@@ -581,10 +581,10 @@ class NormalizationTest : IrTest {
             // For x = -2: shr gives -1, ushr gives MAX_VALUE, difference is very negative
             val x = -2
             assertEquals(
-                ConstI((x shr 1) - (x ushr 1)),
+                Const((x shr 1) - (x ushr 1)),
                 Sub(INT)(
-                    Shr(INT)(ConstI(x), ConstI(1)),
-                    Ushr(INT)(ConstI(x), ConstI(1))
+                    Shr(INT)(Const(x), Const(1)),
+                    Ushr(INT)(Const(x), Const(1))
                 )
             )
             ReturnVoid()
@@ -599,8 +599,8 @@ class NormalizationTest : IrTest {
             // Gray code: g = n ^ (n >> 1)
             val n = 6
             assertEquals(
-                ConstI(n xor (n shr 1)),
-                Xor(INT)(ConstI(n), Shr(INT)(ConstI(n), ConstI(1)))
+                Const(n xor (n shr 1)),
+                Xor(INT)(Const(n), Shr(INT)(Const(n), Const(1)))
             )
             ReturnVoid()
         }
@@ -612,13 +612,13 @@ class NormalizationTest : IrTest {
             // n & (n - 1) == 0 iff n is a power of two (for n > 0)
             val n = 16
             assertEquals(
-                ConstI(0),
-                And(INT)(ConstI(n), Sub(INT)(ConstI(n), ConstI(1)))
+                Const(0),
+                And(INT)(Const(n), Sub(INT)(Const(n), Const(1)))
             )
             val notPow2 = 42
             assertNotEquals(
-                ConstI(0),
-                And(INT)(ConstI(notPow2), Sub(INT)(ConstI(notPow2), ConstI(1)))
+                Const(0),
+                And(INT)(Const(notPow2), Sub(INT)(Const(notPow2), Const(1)))
             )
             ReturnVoid()
         }
@@ -629,10 +629,10 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             // abs(x) via branchless: mask = x >> 31; (x + mask) ^ mask
             val x = 42
-            val mask = Shr(INT)(ConstI(x), ConstI(31))
+            val mask = Shr(INT)(Const(x), Const(31))
             assertEquals(
-                ConstI(42),
-                Xor(INT)(Add(INT)(ConstI(x), mask), mask)
+                Const(42),
+                Xor(INT)(Add(INT)(Const(x), mask), mask)
             )
             ReturnVoid()
         }
@@ -642,10 +642,10 @@ class NormalizationTest : IrTest {
     fun testAbsoluteValueNegative() = withTestSession {
         buildInitialIR {
             val x = -42
-            val mask = Shr(INT)(ConstI(x), ConstI(31))
+            val mask = Shr(INT)(Const(x), Const(31))
             assertEquals(
-                ConstI(42),
-                Xor(INT)(Add(INT)(ConstI(x), mask), mask)
+                Const(42),
+                Xor(INT)(Add(INT)(Const(x), mask), mask)
             )
             ReturnVoid()
         }
@@ -661,14 +661,14 @@ class NormalizationTest : IrTest {
         lateinit var expected: Node
 
         buildInitialIR {
-            use = Use(Add(INT)(Param(0), ConstI(a))) as Use
-            expected = ConstI(a + b)
+            use = Use(Add(INT)(Param(0), Const(a))) as Use
+            expected = Const(a + b)
             Return(expected)
         }
         modifyIR {
             val add = use.value as Add
-            assertTrue(add.rhs is ConstI) // make sure normalization has not messed things up
-            add.lhs = ConstI(b)
+            assertTrue(add.rhs is Const) // make sure normalization has not messed things up
+            add.lhs = Const(b)
         }
         assertEquals(expected, use.value)
     }
@@ -680,14 +680,14 @@ class NormalizationTest : IrTest {
         val value = 42
 
         buildInitialIR {
-            val thr = Throw(ConstI(value)) as Throw
+            val thr = Throw(Const(value)) as Throw
             val unwind = Unwind(thr)
             BlockEntry(unwind)
             val catch = Catch(unwind)
             Return(catch)
         }
         val ret = allNodes<Return>().single()
-        assertEquals(value, (ret.result as ConstI).value)
+        assertEquals(value, (ret.result as Const).value)
     }
 
     context(cfb: ControlFlowBuilder)
@@ -701,10 +701,10 @@ class NormalizationTest : IrTest {
 //            branch(
 //                cond = Param(1010),
 //                trueInit = {
-//                    value1 = ConstI(42)
+//                    value1 = Const(42)
 //                },
 //                falseInit = {
-//                    Throw(ConstI(0))
+//                    Throw(Const(0))
 //                    BlockEntry()
 //                    value2 = InvokeStatic(Fun("f"))()
 //                })

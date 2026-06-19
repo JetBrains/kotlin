@@ -58,17 +58,18 @@ class Load internal constructor(form: Form, control: Controlling?, location: Nod
 }
 
 
-class Store internal constructor(form: Form, control: Controlling?, location: Node?) : DirectMemoryOp(form, listOf(control, location)), AnyLoad {
+class Store internal constructor(form: Form, control: Controlling?, location: Node?, value: Node?) : DirectMemoryOp(form, listOf(control, location, value)), AnyStore {
     class Form internal constructor(metaForm: MetaForm, val type: HairType) : MetaForm.ParametrisedControlFlowForm<Form>(metaForm) {
         override val args = listOf<Any>(type)
     }
     
     override val type: HairType by form::type
-    
+    override val valueIndex: Int = 2
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
         1 -> "location"
+        2 -> "value"
         else -> error("Unexpected arg index: $index")
     }
     

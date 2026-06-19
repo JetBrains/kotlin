@@ -158,6 +158,11 @@ val DirectMemoryOp.location: Node
 val DirectMemoryOp.locationOrNull: Node?
     get() = args.getOrNull(locationIndex)
 
+val Store.value: Node
+    get() = args[valueIndex]
+val Store.valueOrNull: Node?
+    get() = args.getOrNull(valueIndex)
+
 val LoadField.obj: Node
     get() = args[objIndex]
 val LoadField.objOrNull: Node?
@@ -427,6 +432,14 @@ interface ArgumentAccessor {
 
     val DirectMemoryOp.locationOrNull: Node?
         get() = args.getOrNull(locationIndex)
+
+    
+
+    val Store.value: Node
+        get() = args[valueIndex]
+
+    val Store.valueOrNull: Node?
+        get() = args.getOrNull(valueIndex)
 
     
 
@@ -709,6 +722,16 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
     override var DirectMemoryOp.locationOrNull: Node?
         get() = args.getOrNull(locationIndex)
         set(value) { args[locationIndex] = value }
+
+    
+
+    override var Store.value: Node
+        get() = args[valueIndex]
+        set(value) { args[valueIndex] = value }
+
+    override var Store.valueOrNull: Node?
+        get() = args.getOrNull(valueIndex)
+        set(value) { args[valueIndex] = value }
 
     
 

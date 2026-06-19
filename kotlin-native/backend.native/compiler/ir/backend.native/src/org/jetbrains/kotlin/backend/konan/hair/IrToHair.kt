@@ -146,13 +146,13 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitConst(expression: IrConst, data: Unit): Node {
                         return when (expression.kind) {
                             IrConstKind.Boolean -> if (expression.value as Boolean) True() else False()
-                            IrConstKind.Byte -> ConstI((expression.value as Byte).toInt())
-                            IrConstKind.Short -> ConstI((expression.value as Short).toInt())
-                            IrConstKind.Char -> ConstI((expression.value as Char).code)
-                            IrConstKind.Int -> ConstI(expression.value as Int)
-                            IrConstKind.Long -> ConstL(expression.value as Long)
-                            IrConstKind.Float -> ConstF(expression.value as Float)
-                            IrConstKind.Double -> ConstD(expression.value as Double)
+                            IrConstKind.Byte -> Const((expression.value as Byte))
+                            IrConstKind.Short -> Const((expression.value as Short))
+                            IrConstKind.Char -> Const((expression.value as Char).code.toShort()) // FIXME IrToBitcode does llvm.constChar16 here
+                            IrConstKind.Int -> Const(expression.value as Int)
+                            IrConstKind.Long -> Const(expression.value as Long)
+                            IrConstKind.Float -> Const(expression.value as Float)
+                            IrConstKind.Double -> Const(expression.value as Double)
                             IrConstKind.Null -> Null()
                             IrConstKind.String -> notImplemented(HairTODO.STRING_LITERALS)
                         }
