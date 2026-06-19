@@ -33,8 +33,10 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
             override fun visitNeg(node: Neg): Node = when (val operand = node.operand) {
                 // -const[x] => const[-x]
-                is ConstAny -> Const(
-                    when (val value = operand.numberValue) {
+                is Const -> Const(
+                    when (val value = operand.value) {
+                        is Byte -> -value
+                        is Short -> -value
                         is Int -> -value
                         is Long -> -value
                         is Float -> -value
@@ -49,20 +51,20 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
             }
 
             private fun normalizeBinary(op: BinaryOpKind, node: BinaryOp, lhs: Node, rhs: Node, builder: (Node, Node) -> Node): Node {
-                if (rhs is ConstAny) {
+                if (rhs is Const) {
                     // const[a] op const[b] => const[a op b]
-                    if (lhs is ConstAny)
-                        return Const(op.op(lhs.numberValue, rhs.numberValue))
+                    if (lhs is Const)
+                        return Const(op.op(lhs.value, rhs.value))
 
                     // a op identity => a
-                    if (rhs.numberValue == op.identity)
+                    if (rhs.value == op.identity)
                         return lhs
                 }
 
                 if (op.associative && lhs is BinaryOp && lhs.form == node.form) {
                     // (a op const[b]) op const[c] => a op const[b op c]
-                    if (lhs.rhs is ConstAny && rhs is ConstAny)
-                        return builder(lhs.lhs, Const(op.op((lhs.rhs as ConstAny).numberValue, rhs.numberValue)))
+                    if (lhs.rhs is Const && rhs is Const)
+                        return builder(lhs.lhs, Const(op.op((lhs.rhs as Const).value, rhs.value)))
 
                     // (a op b) op (c op d) => ((a op b) op c) op d
                     if (rhs is BinaryOp && rhs.form == node.form)
@@ -81,8 +83,8 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 if (needSwap(lhs, rhs)) rhs to lhs else lhs to rhs
 
             private fun needSwap(lhs: Node, rhs: Node): Boolean = when {
-                rhs is ConstAny -> false
-                lhs is ConstAny -> true
+                rhs is Const -> false
+                lhs is Const -> true
                 rhs is BinaryOp && lhs !is BinaryOp -> true
                 lhs is BinaryOp -> false
                 rhs.id > lhs.id -> true
@@ -111,7 +113,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // a + a => a << const[1]
                 if (node.opType.isIntegral && lhs == rhs) {
-                    return Shl(node.opType)(lhs, ConstI(1))
+                    return Shl(node.opType)(lhs, Const(1))
                 }
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Add(node.opType)(lhs, rhs) }
@@ -154,7 +156,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // TODO: Support for NaN and infinities
                 // a * const[0] => const[0]
-                if (node.opType.isIntegral && rhs is ConstAny && rhs.numberValue == 0)
+                if (node.opType.isIntegral && rhs is Const && rhs.value == 0)
                     return Const(node.opType, 0)
 
                 return normalizeBinary(opKind, node, lhs, rhs) { lhs, rhs -> Mul(node.opType)(lhs, rhs) }
@@ -191,8 +193,8 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
             }
 
             override fun visitInv(node: Inv): Node = when (val operand = node.operand) {
-                is ConstAny -> Const(
-                    when (val value = operand.numberValue) {
+                is Const -> Const(
+                    when (val value = operand.value) {
                         is Int -> value.inv()
                         is Long -> value.inv()
                         else -> error("Should not reach here $node")
@@ -215,7 +217,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
 
                 // a & const[0] => const[0]
-                if (rhs is ConstAny && rhs.numberValue == 0)
+                if (rhs is Const && rhs.value == 0)
                     return Const(node.opType, 0)
 
                 // a & a => a
@@ -249,7 +251,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
 
                 // a | const[-1] => const[-1]
-                if (rhs is ConstAny && rhs.numberValue == -1)
+                if (rhs is Const && rhs.value == -1)
                     return Const(node.opType, -1)
 
                 // a | a => a
@@ -283,7 +285,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
                 val [lhs, rhs] = canonicalArgs(node.lhs, node.rhs)
 
                 // a ^ const[-1] => ~a
-                if (rhs is ConstAny && rhs.numberValue == -1)
+                if (rhs is Const && rhs.value == -1)
                     return Inv(lhs)
 
                 // a ^ a => const[0]
@@ -363,15 +365,6 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
         }
     }
 }
-
-val ConstAny.numberValue: Number
-    get() = when (this) {
-        is ConstI -> value
-        is ConstL -> value
-        is ConstF -> value
-        is ConstD -> value
-        else -> error("Should not reach here $this")
-    }
 
 enum class BinaryOpKind(
     val associative: Boolean,

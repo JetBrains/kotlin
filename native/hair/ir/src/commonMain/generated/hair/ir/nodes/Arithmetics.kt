@@ -10,78 +10,21 @@ sealed interface ConstAny : ValueNode {
 }
 
 
-class ConstI internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Int) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
+class Const internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
+    class Form internal constructor(metaForm: MetaForm, val value: Number) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
         override val args = listOf<Any>(value)
     }
     
-    val value: Int by form::value
+    val value: Number by form::value
     
     
     override fun paramName(index: Int): String = when (index) {
         else -> error("Unexpected arg index: $index")
     }
     
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstI(this)
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConst(this)
     companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstI")
-    }
-}
-
-
-class ConstL internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Long) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
-    }
-    
-    val value: Long by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstL(this)
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstL")
-    }
-}
-
-
-class ConstF internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Float) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
-    }
-    
-    val value: Float by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstF(this)
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstF")
-    }
-}
-
-
-class ConstD internal constructor(form: Form) : NodeBase(form, listOf()), ConstAny {
-    class Form internal constructor(metaForm: MetaForm, val value: Double) : MetaForm.ParametrisedValueForm<Form>(metaForm) {
-        override val args = listOf<Any>(value)
-    }
-    
-    val value: Double by form::value
-    
-    
-    override fun paramName(index: Int): String = when (index) {
-        else -> error("Unexpected arg index: $index")
-    }
-    
-    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstD(this)
-    companion object {
-        internal fun metaForm(session: Session) = MetaForm(session, "ConstD")
+        internal fun metaForm(session: Session) = MetaForm(session, "Const")
     }
 }
 
@@ -96,6 +39,41 @@ class Null internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstA
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitNull(this)
     companion object {
         internal fun form(session: Session) = SimpleValueForm(session, "Null")
+    }
+}
+
+
+sealed class ConstBoolean(form: Form, args: List<Node?>) : NodeBase(form, args), ConstAny {
+    
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitConstBoolean(this)
+}
+
+
+class True internal constructor(form: Form, ) : ConstBoolean(form, listOf()) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitTrue(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "True")
+    }
+}
+
+
+class False internal constructor(form: Form, ) : ConstBoolean(form, listOf()) {
+    
+    
+    override fun paramName(index: Int): String = when (index) {
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitFalse(this)
+    companion object {
+        internal fun form(session: Session) = SimpleValueForm(session, "False")
     }
 }
 

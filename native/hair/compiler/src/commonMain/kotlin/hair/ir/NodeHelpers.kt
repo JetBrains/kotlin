@@ -1,6 +1,7 @@
 package hair.ir
 
 import hair.ir.nodes.*
+import hair.sym.HairType
 import hair.utils.closure
 
 val BlockEntry.phies: Sequence<Phi> get() = uses.filterIsInstance<Phi>()
@@ -41,3 +42,20 @@ fun Node.unproject() = when (this) {
 //    is Goto -> this
 //    is Handler -> this
 //}
+
+val Const.type: HairType
+    get() = when (value) {
+        is Byte -> HairType.BYTE
+        is Short -> HairType.SHORT
+        is Int -> HairType.INT
+        is Long -> HairType.LONG
+        is Float -> HairType.FLOAT
+        is Double -> HairType.DOUBLE
+        else -> error("Unexpected number type $value")
+    }
+
+val ConstBoolean.value: Boolean
+    get() = when (this) {
+        is False -> false
+        is True -> true
+    }
