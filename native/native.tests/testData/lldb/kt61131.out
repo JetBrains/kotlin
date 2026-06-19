@@ -2,65 +2,65 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-Stop hook #1 added.
 (lldb) b call_bar
-Breakpoint 1: where = lldb_kt61131.kexe`kfun:#call_bar(Foo){} + <breakpoint offset> at kt61131-1.kt:9:1, address = <memory address>
+Breakpoint 1: where = lldb_kt61131.kexe`kfun:#call_bar(Foo){} + <breakpoint offset> at kt61131-1.kt:10:1, address = <memory address>
 (lldb) r
+Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:9:1
-   6   	    override fun bar() = "zzz"
-   7   	}
-   8
--> 9   	fun call_bar(foo: Foo) {
+    frame #0: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:1
+   7   	    override fun bar() = "zzz"
+   8   	}
+   9
+-> 10  	fun call_bar(foo: Foo) {
     	^
-   10  	    val s1 = foo.bar()
-   11  	    val s2 = foo.bar()
-   12  	    println(s1 + s2)
-Process <process id> launched: <path to executable>
+   11  	    val s1 = foo.bar()
+   12  	    val s2 = foo.bar()
+   13  	    println(s1 + s2)
 (lldb) s
 Process <process id> stopped
 * thread #<thread id>, stop reason = step in
-    frame #0: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:14
-   7   	}
-   8
-   9   	fun call_bar(foo: Foo) {
--> 10  	    val s1 = foo.bar()
+    frame #0: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:14
+   8   	}
+   9
+   10  	fun call_bar(foo: Foo) {
+-> 11  	    val s1 = foo.bar()
     	             ^
-   11  	    val s2 = foo.bar()
-   12  	    println(s1 + s2)
-   13  	}
+   12  	    val s2 = foo.bar()
+   13  	    println(s1 + s2)
+   14  	}
 (lldb) s
 Process <process id> stopped
 * thread #<thread id>, stop reason = step in
-    frame #0: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:21:5
-   18
+    frame #0: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
    19
-   20  	interface Foo {
--> 21  	    fun bar(): String
+   20
+   21  	interface Foo {
+-> 22  	    fun bar(): String
     	    ^
-   22  	}
+   23  	}
 (lldb) bt
 * thread #<thread id>, stop reason = step in
-  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:21:5
-    frame #1: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:18
-    frame #2: <frame pc> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:16:5
+  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
+    frame #1: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:18
+    frame #2: <frame pc> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:17:5
 (lldb) s
 Process <process id> stopped
 * thread #<thread id>, stop reason = step in
-    frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:14
-   3
+    frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:7:14
    4
-   5   	class FooImpl : Foo {
--> 6   	    override fun bar() = "zzz"
+   5
+   6   	class FooImpl : Foo {
+-> 7   	    override fun bar() = "zzz"
     	             ^
-   7   	}
-   8
-   9   	fun call_bar(foo: Foo) {
+   8   	}
+   9
+   10  	fun call_bar(foo: Foo) {
 (lldb) bt
 * thread #<thread id>, stop reason = step in
-  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:6:14
-    frame #1: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:21:5
-    frame #2: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:10:18
-    frame #3: <frame pc> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:16:5
+  * frame #0: <frame pc> lldb_kt61131.kexe`kfun:FooImpl#bar(_this=[]){}kotlin.String at kt61131-1.kt:7:14
+    frame #1: <frame pc> lldb_kt61131.kexe`kfun:Foo#bar(){}kotlin.String-trampoline at kt61131-2.kt:22:5
+    frame #2: <frame pc> lldb_kt61131.kexe`kfun:#call_bar(foo=[]){} at kt61131-1.kt:11:18
+    frame #3: <frame pc> lldb_kt61131.kexe`kfun:#main(){} at kt61131-1.kt:17:5
 (lldb) q
+
