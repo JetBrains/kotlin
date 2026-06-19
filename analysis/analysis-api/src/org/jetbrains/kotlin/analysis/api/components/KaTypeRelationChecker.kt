@@ -125,6 +125,13 @@ public enum class KaSubtypingErrorTypePolicy {
  * discussion about structural vs. semantic type equality.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.semanticallyEquals(other, errorTypePolicy)",
+        "org.jetbrains.kotlin.analysis.api.types.semanticallyEquals",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaType.semanticallyEquals(
@@ -143,6 +150,13 @@ public fun KaType.semanticallyEquals(
  * Returns whether this [KaType] is a subtype of [supertype]. The relation is non-strict, i.e. any type `t` is a subtype of itself.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isSubtypeOf(supertype, errorTypePolicy)",
+        "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaType.isSubtypeOf(
@@ -182,6 +196,13 @@ public fun KaType.isSubtypeOf(
  *   is `true` for all unresolved class IDs.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isSubtypeOf(classId, errorTypePolicy)",
+        "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaType.isSubtypeOf(
@@ -215,6 +236,13 @@ public fun KaType.isSubtypeOf(
  * [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isSubtypeOf(symbol, errorTypePolicy)",
+        "org.jetbrains.kotlin.analysis.api.types.isSubtypeOf",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaType.isSubtypeOf(
