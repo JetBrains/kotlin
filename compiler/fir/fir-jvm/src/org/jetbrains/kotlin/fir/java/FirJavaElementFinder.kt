@@ -366,7 +366,7 @@ private fun newTypeParameterList(parent: StubElement<*>, parameters: List<Pair<S
 }
 
 private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): PsiJavaFileStub {
-    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
+    val javaFileStub = PsiJavaFileStubImpl(null, null, /*compiled = */true)
     javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
 
     val fakeFile = object : ClsFileImpl(DummyHolderViewProvider(psiManager)) {
