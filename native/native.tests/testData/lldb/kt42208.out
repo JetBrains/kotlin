@@ -2,14 +2,13 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-Stop hook #1 added.
-(lldb) b ThrowException
+(lldb) br s -n ThrowException -s lldb_kt42208.kexe
 Breakpoint 1: where = lldb_kt42208.kexe`ThrowException, address = <memory address>
 (lldb) r
+Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
     frame #0: <frame pc> lldb_kt42208.kexe`ThrowException
-Process <process id> launched: <path to executable>
 (lldb) bt
 * thread #<thread id>, stop reason = breakpoint 1.1
   * frame #0: <frame pc> lldb_kt42208.kexe`ThrowException
@@ -19,3 +18,4 @@ Process <process id> launched: <path to executable>
     frame #4: <frame pc> lldb_kt42208.kexe`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
     frame #5: <frame pc> lldb_kt42208.kexe`kfun:#main(){} at kt42208-1.kt:7:5
 (lldb) q
+
