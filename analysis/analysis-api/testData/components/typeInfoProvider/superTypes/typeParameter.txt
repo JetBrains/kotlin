@@ -1,3 +1,6 @@
+[type]
+T
+
 [direct super types]
 kotlin.collections.List<kotlin.String>
 

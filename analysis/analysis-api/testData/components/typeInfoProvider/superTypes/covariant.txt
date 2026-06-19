@@ -1,3 +1,6 @@
+[type]
+kotlin.collections.MutableList<out kotlin.String>
+
 [direct super types]
 kotlin.collections.List<CapturedType(out kotlin.String)>
 kotlin.collections.MutableCollection<CapturedType(out kotlin.String)>

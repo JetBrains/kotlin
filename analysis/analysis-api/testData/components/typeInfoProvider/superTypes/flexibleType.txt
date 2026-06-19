@@ -1,3 +1,6 @@
+[type]
+kotlin.collections.(Mutable)List<kotlin.String!>!
+
 [direct super types]
 kotlin.collections.List<kotlin.String!>
 kotlin.collections.MutableCollection<kotlin.String!>

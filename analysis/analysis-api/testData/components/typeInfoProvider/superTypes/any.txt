@@ -1,3 +1,6 @@
+[type]
+kotlin.Any
+
 [direct super types]
 
 [approximated direct super types]
