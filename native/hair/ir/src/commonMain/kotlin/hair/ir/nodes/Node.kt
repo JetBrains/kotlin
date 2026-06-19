@@ -1,6 +1,7 @@
 package hair.ir.nodes
 
 import hair.ir.NodeVisitor
+import hair.sym.HairType
 import kotlin.collections.plus
 import kotlin.collections.remove
 
@@ -34,6 +35,8 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 
     internal var args_: Array<Node?> = args.toTypedArray()
     final override val args: ArgsList get() = ArgsList(this)
+
+    var valueTypeOrNull: HairType? = null
 
     // TODO: inline ArrayList
 //    internal val uses_: Array<Node?> = arrayOfNulls(4) // TODO choose size based on statistics

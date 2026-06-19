@@ -11,6 +11,7 @@ import hair.ir.nodes.ReadVar
 import hair.ir.nodes.Return
 import hair.ir.nodes.Throw
 import hair.ir.nodes.Use
+import hair.sym.ArithmeticType
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.HairType.*
@@ -39,7 +40,7 @@ class SSATest : IrTest {
 
             ReturnVoid()
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
 
@@ -65,11 +66,11 @@ class SSATest : IrTest {
                 AssignVar(var1)(ConstI(22))
                 AssignVar(var0)(ConstI(20))
             })
-            AssignVar(var0)(Add(INT)(ReadVar(var0), ConstI(1)))
+            AssignVar(var0)(Add(ArithmeticType.INT)(ReadVar(var0), ConstI(1)))
             AssignVar(var2)(ConstI(0))
             branch(ReadVar(var1), {
                 whileLoop(cond()) {
-                    AssignVar(var2)(Add(INT)(ReadVar(var2), ConstI(1)))
+                    AssignVar(var2)(Add(ArithmeticType.INT)(ReadVar(var2), ConstI(1)))
                 }
             }, {
                 AssignVar(var2)(ReadVar(var1))
@@ -78,7 +79,7 @@ class SSATest : IrTest {
 
             ReturnVoid()
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
 
@@ -96,17 +97,17 @@ class SSATest : IrTest {
                 Use(ConstI(23))
             }, {
                 branch(cond(), {
-                    Use(Add(INT)(ConstI(23), ConstI(42)))
+                    Use(Add(ArithmeticType.INT)(ConstI(23), ConstI(42)))
                 }, {
                     whileLoop(cond()) {
-                        Use(Add(INT)(ConstI(23), ConstI(42)))
+                        Use(Add(ArithmeticType.INT)(ConstI(23), ConstI(42)))
                     }
                 })
             })
 
             ReturnVoid()
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
         }
@@ -133,7 +134,7 @@ class SSATest : IrTest {
             BlockEntry(callUnwind, throwUnwind)
             val ret = Return(ReadVar(v)) as Return
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
 
@@ -176,7 +177,7 @@ class SSATest : IrTest {
             BlockEntry(callUnwind, throwUnwind)
             val retHandler = Return(ReadVar(v)) as Return
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
 
@@ -194,7 +195,7 @@ class SSATest : IrTest {
             val cond = Cmp(HairType.REFERENCE, CmpOp.EQ)(cc1, cc2)
             Return(cond)
 
-            buildSSA { INT }
+            buildSSA()
 
             printGraphviz()
         }

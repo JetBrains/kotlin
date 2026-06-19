@@ -2,6 +2,7 @@ package hair.transform
 
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.sym.ArithmeticType
 import hair.sym.HairType
 import hair.test.Cls
 import hair.test.Fld
@@ -53,7 +54,7 @@ class GCMTest : IrTest {
 
         buildInitialIR {
             load = LoadGlobal(global) as LoadGlobal
-            val inc = Add(HairType.INT)(load, ConstI(1))
+            val inc = Add(ArithmeticType.INT)(load, ConstI(1))
             store = StoreGlobal(global)(inc) as StoreGlobal
             ReturnVoid()
         }
