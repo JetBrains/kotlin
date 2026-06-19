@@ -777,8 +777,8 @@ class GeneralNativeIT : KGPBaseTest() {
     @DisplayName("Checks that build fails if a test executable crashes")
     @GradleTest
     @TestMetadata("native-tests")
-    fun kt33750(gradleVersion: GradleVersion) {
-        nativeProject("native-tests", gradleVersion) {
+    fun kt33750(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
+        nativeProject("native-tests", gradleVersion, buildOptions = defaultBuildOptions.copy(konanDataDir = konanTemp)) {
             projectPath.resolve("src/commonTest/kotlin/test.kt")
                 .appendText("\nval fail: Int = error(\"\")\n")
             buildAndFail("check") {
