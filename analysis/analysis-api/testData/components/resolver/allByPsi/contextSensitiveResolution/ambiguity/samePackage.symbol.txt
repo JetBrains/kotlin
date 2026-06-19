@@ -6,7 +6,7 @@ KtPackageDirective(59,70): 'package foo'
 
 KtNameReferenceExpression(67,70): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -59,7 +59,7 @@ KtUserType(114,120): 'Sealed'
 
 KtNameReferenceExpression(114,120): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -97,7 +97,7 @@ KtUserType(147,150): 'Int'
 
 KtNameReferenceExpression(147,150): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -132,7 +132,7 @@ KtUserType(154,160): 'Sealed'
 
 KtNameReferenceExpression(154,160): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -176,7 +176,7 @@ KtUserType(183,189): 'Sealed'
 
 KtNameReferenceExpression(183,189): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -214,7 +214,7 @@ KtUserType(216,219): 'Int'
 
 KtNameReferenceExpression(216,219): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -249,7 +249,7 @@ KtUserType(223,229): 'Sealed'
 
 KtNameReferenceExpression(223,229): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -293,7 +293,7 @@ KtUserType(261,267): 'kotlin'
 
 KtNameReferenceExpression(261,267): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -301,7 +301,7 @@ KtNameReferenceExpression(261,267): 'kotlin'
 
 KtNameReferenceExpression(268,274): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -336,7 +336,7 @@ KtUserType(278,284): 'Sealed'
 
 KtNameReferenceExpression(278,284): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -374,7 +374,7 @@ KtUserType(322,328): 'Sealed'
 
 KtNameReferenceExpression(322,328): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -394,7 +394,7 @@ KtUserType(331,334): 'Int'
 
 KtNameReferenceExpression(331,334): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -405,7 +405,7 @@ KtWhenExpression(337,432): 'when (s) {'
 
 KtNameReferenceExpression(343,344): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -419,7 +419,7 @@ KtWhenConditionWithExpression(352,353): 'A'
 
 KtNameReferenceExpression(352,353): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -448,7 +448,7 @@ KtUserType(366,367): 'B'
 
 KtNameReferenceExpression(366,367): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/B
@@ -465,7 +465,7 @@ KtWhenConditionWithExpression(377,378): 'C'
 
 KtNameReferenceExpression(377,378): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.C
@@ -494,7 +494,7 @@ KtUserType(391,392): 'D'
 
 KtNameReferenceExpression(391,392): 'D'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.D
@@ -523,7 +523,7 @@ KtUserType(405,411): 'String'
 
 KtNameReferenceExpression(405,411): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -561,7 +561,7 @@ KtUserType(456,462): 'Sealed'
 
 KtNameReferenceExpression(456,462): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -581,7 +581,7 @@ KtUserType(465,468): 'Int'
 
 KtNameReferenceExpression(465,468): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -592,7 +592,7 @@ KtWhenExpression(471,536): 'when (s) {'
 
 KtNameReferenceExpression(477,478): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -609,7 +609,7 @@ KtDotQualifiedExpression(486,494): 'Sealed.A'
 
 KtNameReferenceExpression(486,492): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -617,7 +617,7 @@ KtNameReferenceExpression(486,492): 'Sealed'
 
 KtNameReferenceExpression(493,494): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.A
@@ -652,7 +652,7 @@ KtUserType(507,513): 'Sealed'
 
 KtNameReferenceExpression(507,513): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -660,7 +660,7 @@ KtNameReferenceExpression(507,513): 'Sealed'
 
 KtNameReferenceExpression(514,515): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.B
@@ -698,7 +698,7 @@ KtUserType(562,568): 'Sealed'
 
 KtNameReferenceExpression(562,568): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -718,7 +718,7 @@ KtUserType(571,574): 'Int'
 
 KtNameReferenceExpression(571,574): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -729,7 +729,7 @@ KtWhenExpression(577,636): 'when (s) {'
 
 KtNameReferenceExpression(583,584): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -746,7 +746,7 @@ KtDotQualifiedExpression(592,597): 'foo.A'
 
 KtNameReferenceExpression(592,595): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -754,7 +754,7 @@ KtNameReferenceExpression(592,595): 'foo'
 
 KtNameReferenceExpression(596,597): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -789,7 +789,7 @@ KtUserType(610,613): 'foo'
 
 KtNameReferenceExpression(610,613): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -797,7 +797,7 @@ KtNameReferenceExpression(610,613): 'foo'
 
 KtNameReferenceExpression(614,615): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/B
@@ -835,7 +835,7 @@ KtUserType(656,662): 'Sealed'
 
 KtNameReferenceExpression(656,662): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -855,7 +855,7 @@ KtUserType(665,668): 'Int'
 
 KtNameReferenceExpression(665,668): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -869,7 +869,7 @@ KtBinaryExpressionWithTypeRHS(675,681): 's as A'
 
 KtNameReferenceExpression(675,676): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -877,7 +877,7 @@ KtNameReferenceExpression(675,676): 's'
 
 KtOperationReferenceExpression(677,679): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(680,681): 'A'
@@ -894,7 +894,7 @@ KtUserType(680,681): 'A'
 
 KtNameReferenceExpression(680,681): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -932,7 +932,7 @@ KtUserType(716,722): 'Sealed'
 
 KtNameReferenceExpression(716,722): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -952,7 +952,7 @@ KtUserType(725,728): 'Int'
 
 KtNameReferenceExpression(725,728): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -966,7 +966,7 @@ KtBinaryExpressionWithTypeRHS(735,741): 's as B'
 
 KtNameReferenceExpression(735,736): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -974,7 +974,7 @@ KtNameReferenceExpression(735,736): 's'
 
 KtOperationReferenceExpression(737,739): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(740,741): 'B'
@@ -991,7 +991,7 @@ KtUserType(740,741): 'B'
 
 KtNameReferenceExpression(740,741): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/B
@@ -1029,7 +1029,7 @@ KtUserType(777,783): 'Sealed'
 
 KtNameReferenceExpression(777,783): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1049,7 +1049,7 @@ KtUserType(786,789): 'Int'
 
 KtNameReferenceExpression(786,789): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1063,7 +1063,7 @@ KtBinaryExpressionWithTypeRHS(796,809): 's as Sealed.A'
 
 KtNameReferenceExpression(796,797): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1071,7 +1071,7 @@ KtNameReferenceExpression(796,797): 's'
 
 KtOperationReferenceExpression(798,800): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(801,809): 'Sealed.A'
@@ -1094,7 +1094,7 @@ KtUserType(801,807): 'Sealed'
 
 KtNameReferenceExpression(801,807): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1102,7 +1102,7 @@ KtNameReferenceExpression(801,807): 'Sealed'
 
 KtNameReferenceExpression(808,809): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.A
@@ -1140,7 +1140,7 @@ KtUserType(845,851): 'Sealed'
 
 KtNameReferenceExpression(845,851): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1160,7 +1160,7 @@ KtUserType(854,857): 'Int'
 
 KtNameReferenceExpression(854,857): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1174,7 +1174,7 @@ KtBinaryExpressionWithTypeRHS(864,877): 's as Sealed.B'
 
 KtNameReferenceExpression(864,865): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1182,7 +1182,7 @@ KtNameReferenceExpression(864,865): 's'
 
 KtOperationReferenceExpression(866,868): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(869,877): 'Sealed.B'
@@ -1205,7 +1205,7 @@ KtUserType(869,875): 'Sealed'
 
 KtNameReferenceExpression(869,875): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1213,7 +1213,7 @@ KtNameReferenceExpression(869,875): 'Sealed'
 
 KtNameReferenceExpression(876,877): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.B
@@ -1251,7 +1251,7 @@ KtUserType(915,921): 'Sealed'
 
 KtNameReferenceExpression(915,921): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1271,7 +1271,7 @@ KtUserType(924,927): 'Int'
 
 KtNameReferenceExpression(924,927): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1285,7 +1285,7 @@ KtBinaryExpressionWithTypeRHS(934,944): 's as foo.A'
 
 KtNameReferenceExpression(934,935): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1293,7 +1293,7 @@ KtNameReferenceExpression(934,935): 's'
 
 KtOperationReferenceExpression(936,938): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(939,944): 'foo.A'
@@ -1316,7 +1316,7 @@ KtUserType(939,942): 'foo'
 
 KtNameReferenceExpression(939,942): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -1324,7 +1324,7 @@ KtNameReferenceExpression(939,942): 'foo'
 
 KtNameReferenceExpression(943,944): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -1362,7 +1362,7 @@ KtUserType(982,988): 'Sealed'
 
 KtNameReferenceExpression(982,988): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1382,7 +1382,7 @@ KtUserType(991,994): 'Int'
 
 KtNameReferenceExpression(991,994): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1396,7 +1396,7 @@ KtBinaryExpressionWithTypeRHS(1001,1011): 's as foo.B'
 
 KtNameReferenceExpression(1001,1002): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1404,7 +1404,7 @@ KtNameReferenceExpression(1001,1002): 's'
 
 KtOperationReferenceExpression(1003,1005): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1006,1011): 'foo.B'
@@ -1427,7 +1427,7 @@ KtUserType(1006,1009): 'foo'
 
 KtNameReferenceExpression(1006,1009): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -1435,7 +1435,7 @@ KtNameReferenceExpression(1006,1009): 'foo'
 
 KtNameReferenceExpression(1010,1011): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/B
@@ -1473,7 +1473,7 @@ KtUserType(1043,1049): 'Sealed'
 
 KtNameReferenceExpression(1043,1049): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1493,7 +1493,7 @@ KtUserType(1052,1055): 'Int'
 
 KtNameReferenceExpression(1052,1055): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1507,7 +1507,7 @@ KtBinaryExpressionWithTypeRHS(1062,1068): 's as C'
 
 KtNameReferenceExpression(1062,1063): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1515,7 +1515,7 @@ KtNameReferenceExpression(1062,1063): 's'
 
 KtOperationReferenceExpression(1064,1066): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1067,1068): 'C'
@@ -1532,7 +1532,7 @@ KtUserType(1067,1068): 'C'
 
 KtNameReferenceExpression(1067,1068): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.C
@@ -1570,7 +1570,7 @@ KtUserType(1100,1106): 'Sealed'
 
 KtNameReferenceExpression(1100,1106): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1590,7 +1590,7 @@ KtUserType(1109,1112): 'Int'
 
 KtNameReferenceExpression(1109,1112): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1604,7 +1604,7 @@ KtBinaryExpressionWithTypeRHS(1119,1125): 's as D'
 
 KtNameReferenceExpression(1119,1120): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1612,7 +1612,7 @@ KtNameReferenceExpression(1119,1120): 's'
 
 KtOperationReferenceExpression(1121,1123): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(1124,1125): 'D'
@@ -1629,7 +1629,7 @@ KtUserType(1124,1125): 'D'
 
 KtNameReferenceExpression(1124,1125): 'D'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.D
@@ -1667,7 +1667,7 @@ KtUserType(1164,1170): 'Sealed'
 
 KtNameReferenceExpression(1164,1170): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1687,7 +1687,7 @@ KtUserType(1173,1180): 'Boolean'
 
 KtNameReferenceExpression(1173,1180): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1701,7 +1701,7 @@ KtBinaryExpression(1183,1189): 's == A'
 
 KtNameReferenceExpression(1183,1184): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1709,7 +1709,7 @@ KtNameReferenceExpression(1183,1184): 's'
 
 KtOperationReferenceExpression(1185,1187): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1717,7 +1717,7 @@ KtOperationReferenceExpression(1185,1187): '=='
 
 KtNameReferenceExpression(1188,1189): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -1746,7 +1746,7 @@ KtUserType(1213,1219): 'Sealed'
 
 KtNameReferenceExpression(1213,1219): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1766,7 +1766,7 @@ KtUserType(1222,1229): 'Boolean'
 
 KtNameReferenceExpression(1222,1229): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1780,7 +1780,7 @@ KtBinaryExpression(1232,1245): 's == Sealed.A'
 
 KtNameReferenceExpression(1232,1233): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1788,7 +1788,7 @@ KtNameReferenceExpression(1232,1233): 's'
 
 KtOperationReferenceExpression(1234,1236): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1799,7 +1799,7 @@ KtDotQualifiedExpression(1237,1245): 'Sealed.A'
 
 KtNameReferenceExpression(1237,1243): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1807,7 +1807,7 @@ KtNameReferenceExpression(1237,1243): 'Sealed'
 
 KtNameReferenceExpression(1244,1245): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.A
@@ -1836,7 +1836,7 @@ KtUserType(1271,1277): 'Sealed'
 
 KtNameReferenceExpression(1271,1277): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1856,7 +1856,7 @@ KtUserType(1280,1287): 'Boolean'
 
 KtNameReferenceExpression(1280,1287): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1870,7 +1870,7 @@ KtBinaryExpression(1290,1300): 's == foo.A'
 
 KtNameReferenceExpression(1290,1291): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1878,7 +1878,7 @@ KtNameReferenceExpression(1290,1291): 's'
 
 KtOperationReferenceExpression(1292,1294): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1889,7 +1889,7 @@ KtDotQualifiedExpression(1295,1300): 'foo.A'
 
 KtNameReferenceExpression(1295,1298): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo
@@ -1897,7 +1897,7 @@ KtNameReferenceExpression(1295,1298): 'foo'
 
 KtNameReferenceExpression(1299,1300): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/A
@@ -1926,7 +1926,7 @@ KtUserType(1320,1326): 'Sealed'
 
 KtNameReferenceExpression(1320,1326): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1946,7 +1946,7 @@ KtUserType(1329,1336): 'Boolean'
 
 KtNameReferenceExpression(1329,1336): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1960,7 +1960,7 @@ KtBinaryExpression(1339,1352): 's == Sealed.C'
 
 KtNameReferenceExpression(1339,1340): 's'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       s: foo.Sealed
@@ -1968,7 +1968,7 @@ KtNameReferenceExpression(1339,1340): 's'
 
 KtOperationReferenceExpression(1341,1343): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1979,7 +1979,7 @@ KtDotQualifiedExpression(1344,1352): 'Sealed.C'
 
 KtNameReferenceExpression(1344,1350): 'Sealed'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed
@@ -1987,7 +1987,7 @@ KtNameReferenceExpression(1344,1350): 'Sealed'
 
 KtNameReferenceExpression(1351,1352): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       foo/Sealed.C

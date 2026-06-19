@@ -1,6 +1,6 @@
 KtNameReferenceExpression(130,134): 'List'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/List

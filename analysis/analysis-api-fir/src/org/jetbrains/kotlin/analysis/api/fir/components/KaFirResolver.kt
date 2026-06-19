@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelpe
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedTypeRef
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.toTargetSymbol
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionNotAvailableImpl
+import org.jetbrains.kotlin.analysis.api.fir.resolution.KaContextSensitiveResolutionUsedImpl
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
@@ -136,18 +138,27 @@ internal class KaFirResolver(
             return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
         }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+        get() = contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used
+
+    override val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
         get() = withPsiValidityAssertion {
-            val fir = getOrBuildFir(analysisSession.resolutionFacade) ?: return false
-            when (fir) {
-                is FirResolvedTypeRef -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
-                is FirResolvedQualifier -> fir.resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
-                else -> {
-                    val firReference = fir.toReference(analysisSession.firSession) ?: return false
-                    firReference.isContextSensitive
-                }
+            val fir = getOrBuildFir(analysisSession.resolutionFacade)
+                ?: return KaContextSensitiveResolutionNotAvailableImpl
+
+            if (fir.isResolvedThroughContextSensitiveResolution()) {
+                KaContextSensitiveResolutionUsedImpl
+            } else {
+                KaContextSensitiveResolutionNotAvailableImpl
             }
         }
+
+    private fun FirElement.isResolvedThroughContextSensitiveResolution(): Boolean = when (this) {
+        is FirResolvedTypeRef -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+        is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
+        else -> toReference(analysisSession.firSession)?.isContextSensitive == true
+    }
 
     override fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
         when (psi) {

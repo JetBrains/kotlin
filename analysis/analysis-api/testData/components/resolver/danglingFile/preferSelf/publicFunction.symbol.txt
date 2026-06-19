@@ -1,6 +1,6 @@
 KtNameReferenceExpression(65,69): 'call'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo.call(<dispatch receiver>: Foo): kotlin.Unit

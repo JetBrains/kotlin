@@ -1,6 +1,6 @@
 KtNameReferenceExpression(13,21): 'Suppress'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Suppress

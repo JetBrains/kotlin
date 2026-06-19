@@ -48,7 +48,7 @@ KtUserType(78,79): 'T'
 
 KtNameReferenceExpression(78,79): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -71,7 +71,7 @@ KtUserType(90,91): 'T'
 
 KtNameReferenceExpression(90,91): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -91,7 +91,7 @@ KtUserType(94,101): 'Boolean'
 
 KtNameReferenceExpression(94,101): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -138,7 +138,7 @@ KtUserType(175,178): 'Any'
 
 KtNameReferenceExpression(175,178): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -158,7 +158,7 @@ KtUserType(182,189): 'Boolean'
 
 KtNameReferenceExpression(182,189): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -202,7 +202,7 @@ KtUserType(256,259): 'Any'
 
 KtNameReferenceExpression(256,259): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -222,7 +222,7 @@ KtUserType(263,270): 'Boolean'
 
 KtNameReferenceExpression(263,270): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -257,7 +257,7 @@ KtUserType(311,326): 'ItemCallback<T>'
 
 KtNameReferenceExpression(311,323): 'ItemCallback'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /ItemCallback
@@ -283,7 +283,7 @@ KtUserType(324,325): 'T'
 
 KtNameReferenceExpression(324,325): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -297,7 +297,7 @@ KtTypeConstraint(333,356): 'T : InterfaceWithEquals'
 
 KtNameReferenceExpression(333,334): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -317,7 +317,7 @@ KtUserType(337,356): 'InterfaceWithEquals'
 
 KtNameReferenceExpression(337,356): 'InterfaceWithEquals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals
@@ -328,7 +328,7 @@ KtTypeConstraint(358,376): 'T : MessagePreview'
 
 KtNameReferenceExpression(358,359): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -348,7 +348,7 @@ KtUserType(362,376): 'MessagePreview'
 
 KtNameReferenceExpression(362,376): 'MessagePreview'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview
@@ -389,7 +389,7 @@ KtUserType(388,403): 'ItemCallback<T>'
 
 KtNameReferenceExpression(388,400): 'ItemCallback'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /ItemCallback
@@ -415,7 +415,7 @@ KtUserType(401,402): 'T'
 
 KtNameReferenceExpression(401,402): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -453,7 +453,7 @@ KtUserType(453,454): 'T'
 
 KtNameReferenceExpression(453,454): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -476,7 +476,7 @@ KtUserType(465,466): 'T'
 
 KtNameReferenceExpression(465,466): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -496,7 +496,7 @@ KtUserType(469,476): 'Boolean'
 
 KtNameReferenceExpression(469,476): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -510,7 +510,7 @@ KtBinaryExpression(479,497): 'oldItem == newItem'
 
 KtNameReferenceExpression(479,486): 'oldItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       oldItem: T
@@ -518,7 +518,7 @@ KtNameReferenceExpression(479,486): 'oldItem'
 
 KtOperationReferenceExpression(487,489): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
@@ -526,7 +526,7 @@ KtOperationReferenceExpression(487,489): '=='
 
 KtNameReferenceExpression(490,497): 'newItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       newItem: T
@@ -561,7 +561,7 @@ KtUserType(538,553): 'ItemCallback<T>'
 
 KtNameReferenceExpression(538,550): 'ItemCallback'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /ItemCallback
@@ -587,7 +587,7 @@ KtUserType(551,552): 'T'
 
 KtNameReferenceExpression(551,552): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -601,7 +601,7 @@ KtTypeConstraint(560,578): 'T : MessagePreview'
 
 KtNameReferenceExpression(560,561): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -621,7 +621,7 @@ KtUserType(564,578): 'MessagePreview'
 
 KtNameReferenceExpression(564,578): 'MessagePreview'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview
@@ -632,7 +632,7 @@ KtTypeConstraint(580,603): 'T : InterfaceWithEquals'
 
 KtNameReferenceExpression(580,581): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -652,7 +652,7 @@ KtUserType(584,603): 'InterfaceWithEquals'
 
 KtNameReferenceExpression(584,603): 'InterfaceWithEquals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals
@@ -693,7 +693,7 @@ KtUserType(615,630): 'ItemCallback<T>'
 
 KtNameReferenceExpression(615,627): 'ItemCallback'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /ItemCallback
@@ -719,7 +719,7 @@ KtUserType(628,629): 'T'
 
 KtNameReferenceExpression(628,629): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -757,7 +757,7 @@ KtUserType(680,681): 'T'
 
 KtNameReferenceExpression(680,681): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -780,7 +780,7 @@ KtUserType(692,693): 'T'
 
 KtNameReferenceExpression(692,693): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -800,7 +800,7 @@ KtUserType(696,703): 'Boolean'
 
 KtNameReferenceExpression(696,703): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -814,7 +814,7 @@ KtBinaryExpression(706,724): 'oldItem == newItem'
 
 KtNameReferenceExpression(706,713): 'oldItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       oldItem: T
@@ -822,7 +822,7 @@ KtNameReferenceExpression(706,713): 'oldItem'
 
 KtOperationReferenceExpression(714,716): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
@@ -830,7 +830,7 @@ KtOperationReferenceExpression(714,716): '=='
 
 KtNameReferenceExpression(717,724): 'newItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       newItem: T
@@ -862,7 +862,7 @@ KtUserType(745,759): 'MessagePreview'
 
 KtNameReferenceExpression(745,759): 'MessagePreview'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview
@@ -906,7 +906,7 @@ KtUserType(784,799): 'ItemCallback<T>'
 
 KtNameReferenceExpression(784,796): 'ItemCallback'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /ItemCallback
@@ -932,7 +932,7 @@ KtUserType(797,798): 'T'
 
 KtNameReferenceExpression(797,798): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -970,7 +970,7 @@ KtUserType(849,850): 'T'
 
 KtNameReferenceExpression(849,850): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -993,7 +993,7 @@ KtUserType(861,862): 'T'
 
 KtNameReferenceExpression(861,862): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -1013,7 +1013,7 @@ KtUserType(865,872): 'Boolean'
 
 KtNameReferenceExpression(865,872): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -1027,7 +1027,7 @@ KtBinaryExpression(875,893): 'oldItem == newItem'
 
 KtNameReferenceExpression(875,882): 'oldItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       oldItem: T
@@ -1035,7 +1035,7 @@ KtNameReferenceExpression(875,882): 'oldItem'
 
 KtOperationReferenceExpression(883,885): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
@@ -1043,7 +1043,7 @@ KtOperationReferenceExpression(883,885): '=='
 
 KtNameReferenceExpression(886,893): 'newItem'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       newItem: T
@@ -1072,7 +1072,7 @@ KtUserType(910,929): 'InterfaceWithEquals'
 
 KtNameReferenceExpression(910,929): 'InterfaceWithEquals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals
@@ -1095,7 +1095,7 @@ KtUserType(934,948): 'MessagePreview'
 
 KtNameReferenceExpression(934,948): 'MessagePreview'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview
@@ -1112,7 +1112,7 @@ KtBinaryExpression(956,962): 'i == m'
 
 KtNameReferenceExpression(956,957): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals
@@ -1120,7 +1120,7 @@ KtNameReferenceExpression(956,957): 'i'
 
 KtOperationReferenceExpression(958,960): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
@@ -1128,7 +1128,7 @@ KtOperationReferenceExpression(958,960): '=='
 
 KtNameReferenceExpression(961,962): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1142,7 +1142,7 @@ KtBinaryExpression(967,973): 'i != m'
 
 KtNameReferenceExpression(967,968): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals
@@ -1150,7 +1150,7 @@ KtNameReferenceExpression(967,968): 'i'
 
 KtOperationReferenceExpression(969,971): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
@@ -1158,7 +1158,7 @@ KtOperationReferenceExpression(969,971): '!='
 
 KtNameReferenceExpression(972,973): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1172,7 +1172,7 @@ KtBinaryExpression(979,985): 'm == i'
 
 KtNameReferenceExpression(979,980): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1180,7 +1180,7 @@ KtNameReferenceExpression(979,980): 'm'
 
 KtOperationReferenceExpression(981,983): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
@@ -1188,7 +1188,7 @@ KtOperationReferenceExpression(981,983): '=='
 
 KtNameReferenceExpression(984,985): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals
@@ -1202,7 +1202,7 @@ KtBinaryExpression(990,996): 'm != i'
 
 KtNameReferenceExpression(990,991): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1210,7 +1210,7 @@ KtNameReferenceExpression(990,991): 'm'
 
 KtOperationReferenceExpression(992,994): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
@@ -1218,7 +1218,7 @@ KtOperationReferenceExpression(992,994): '!='
 
 KtNameReferenceExpression(995,996): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals
@@ -1232,7 +1232,7 @@ KtDotQualifiedExpression(1002,1013): 'i.equals(m)'
 
 KtNameReferenceExpression(1002,1003): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals
@@ -1246,7 +1246,7 @@ KtCallExpression(1004,1013): 'equals(m)'
 
 KtNameReferenceExpression(1004,1010): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /InterfaceWithEquals.equals(<dispatch receiver>: InterfaceWithEquals, other: kotlin.Any?): kotlin.Boolean
@@ -1260,7 +1260,7 @@ KtValueArgument(1011,1012): 'm'
 
 KtNameReferenceExpression(1011,1012): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1274,7 +1274,7 @@ KtDotQualifiedExpression(1018,1029): 'm.equals(i)'
 
 KtNameReferenceExpression(1018,1019): 'm'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m: MessagePreview
@@ -1288,7 +1288,7 @@ KtCallExpression(1020,1029): 'equals(i)'
 
 KtNameReferenceExpression(1020,1026): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MessagePreview.equals(<dispatch receiver>: MessagePreview, other: kotlin.Any?): kotlin.Boolean
@@ -1302,7 +1302,7 @@ KtValueArgument(1027,1028): 'i'
 
 KtNameReferenceExpression(1027,1028): 'i'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       i: InterfaceWithEquals

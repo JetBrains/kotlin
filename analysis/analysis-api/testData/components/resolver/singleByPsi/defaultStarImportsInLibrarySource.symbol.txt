@@ -1,6 +1,6 @@
 KtNameReferenceExpression(67,75): 'Sequence'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/sequences/Sequence

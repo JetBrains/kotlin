@@ -1,6 +1,6 @@
 KtNameReferenceExpression(17,24): 'HashSet'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       java/util/HashSet

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(64,68): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:

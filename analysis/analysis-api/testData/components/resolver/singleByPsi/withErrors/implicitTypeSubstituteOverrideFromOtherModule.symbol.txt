@@ -1,6 +1,6 @@
 KtNameReferenceExpression(168,171): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.String

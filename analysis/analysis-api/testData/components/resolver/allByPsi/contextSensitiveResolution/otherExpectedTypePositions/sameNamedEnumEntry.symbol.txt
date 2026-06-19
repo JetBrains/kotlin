@@ -45,7 +45,7 @@ KtUserType(122,123): 'A'
 
 KtNameReferenceExpression(122,123): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -59,7 +59,7 @@ KtWhenExpression(131,185): 'when (a) {'
 
 KtNameReferenceExpression(137,138): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       a: A
@@ -79,7 +79,7 @@ KtDotQualifiedExpression(150,153): 'A.A'
 
 KtNameReferenceExpression(150,151): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -87,7 +87,7 @@ KtNameReferenceExpression(150,151): 'A'
 
 KtNameReferenceExpression(152,153): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A.A
@@ -113,7 +113,7 @@ KtDotQualifiedExpression(169,172): 'A.B'
 
 KtNameReferenceExpression(169,170): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -121,7 +121,7 @@ KtNameReferenceExpression(169,170): 'A'
 
 KtNameReferenceExpression(171,172): 'B'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A.B

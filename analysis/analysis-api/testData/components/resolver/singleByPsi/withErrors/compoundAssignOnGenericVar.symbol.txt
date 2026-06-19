@@ -1,6 +1,6 @@
 KtNameReferenceExpression(51,56): 'value'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var value: T

@@ -6,7 +6,7 @@ KtPackageDirective(43,55): 'package test'
 
 KtNameReferenceExpression(51,55): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -57,7 +57,7 @@ KtDotQualifiedExpression(131,138): 'C.foo()'
 
 KtNameReferenceExpression(131,132): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -72,7 +72,7 @@ KtCallExpression(133,138): 'foo()'
 
 KtNameReferenceExpression(133,136): 'foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       test/C.foo(): kotlin.Unit

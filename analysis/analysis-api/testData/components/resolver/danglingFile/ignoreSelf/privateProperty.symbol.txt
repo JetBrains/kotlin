@@ -1,6 +1,6 @@
 KtNameReferenceExpression(70,74): 'name'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val name: kotlin.String

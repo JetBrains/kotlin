@@ -30,7 +30,7 @@ KtCallExpression(47,61): 'JavaClass<Int>'
 
 KtNameReferenceExpression(47,56): 'JavaClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -56,7 +56,7 @@ KtUserType(57,60): 'Int'
 
 KtNameReferenceExpression(57,60): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -64,7 +64,7 @@ KtNameReferenceExpression(57,60): 'Int'
 
 KtNameReferenceExpression(62,67): 'field'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var field: kotlin.Int!
@@ -84,7 +84,7 @@ KtCallExpression(79,94): 'JavaClass<Long>'
 
 KtNameReferenceExpression(79,88): 'JavaClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass
@@ -110,7 +110,7 @@ KtUserType(89,93): 'Long'
 
 KtNameReferenceExpression(89,93): 'Long'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Long
@@ -124,7 +124,7 @@ KtCallExpression(95,103): 'method()'
 
 KtNameReferenceExpression(95,101): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /JavaClass.method(): kotlin.String!

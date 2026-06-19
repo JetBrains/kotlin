@@ -1,6 +1,6 @@
 KtNameReferenceExpression(47,53): 'length'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val length: kotlin.Int

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(112,118): 'stream'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/collections/Collection.stream(<dispatch receiver>: kotlin.collections.Collection<E>): @EnhancedNullability java.util.stream.Stream<@EnhancedNullability E>

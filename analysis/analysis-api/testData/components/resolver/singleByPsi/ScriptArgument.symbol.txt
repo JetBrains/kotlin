@@ -1,6 +1,6 @@
 KtNameReferenceExpression(16,20): 'args'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val args: kotlin.Array<kotlin.String>

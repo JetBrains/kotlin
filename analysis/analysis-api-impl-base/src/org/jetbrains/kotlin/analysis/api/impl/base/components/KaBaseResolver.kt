@@ -10,6 +10,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -385,11 +386,14 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
 
     @Deprecated(
         "Use `KtSimpleNameExpression` instead",
-        replaceWith = ReplaceWith("(element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true")
+        replaceWith = ReplaceWith(
+            "(element as? KtSimpleNameExpression)?.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
+            "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
+        )
     )
     final override val KtReference.usesContextSensitiveResolution: Boolean
         get() = withPsiValidityAssertion(element) {
-            (this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true
+            (this.element as? KtSimpleNameExpression)?.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used
         }
 
     @Deprecated(

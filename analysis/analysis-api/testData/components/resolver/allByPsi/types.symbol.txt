@@ -9,7 +9,7 @@ KtDotQualifiedExpression(8,15): 'one.two'
 
 KtNameReferenceExpression(8,11): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -17,7 +17,7 @@ KtNameReferenceExpression(8,11): 'one'
 
 KtNameReferenceExpression(12,15): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -40,7 +40,7 @@ KtDotQualifiedExpression(24,31): 'one.two'
 
 KtNameReferenceExpression(24,27): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -48,7 +48,7 @@ KtNameReferenceExpression(24,27): 'one'
 
 KtNameReferenceExpression(28,31): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -56,7 +56,7 @@ KtNameReferenceExpression(28,31): 'two'
 
 KtNameReferenceExpression(32,45): 'TopLevelClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass
@@ -64,7 +64,7 @@ KtNameReferenceExpression(32,45): 'TopLevelClass'
 
 KtNameReferenceExpression(46,56): 'InnerClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass.InnerClass
@@ -117,7 +117,7 @@ KtUserType(150,153): 'one'
 
 KtNameReferenceExpression(150,153): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -125,7 +125,7 @@ KtNameReferenceExpression(150,153): 'one'
 
 KtNameReferenceExpression(154,157): 'two'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one.two
@@ -133,7 +133,7 @@ KtNameReferenceExpression(154,157): 'two'
 
 KtNameReferenceExpression(158,171): 'TopLevelClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass
@@ -165,7 +165,7 @@ KtUserType(189,202): 'TopLevelClass'
 
 KtNameReferenceExpression(189,202): 'TopLevelClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass
@@ -173,7 +173,7 @@ KtNameReferenceExpression(189,202): 'TopLevelClass'
 
 KtNameReferenceExpression(203,214): 'NestedClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass.NestedClass
@@ -199,7 +199,7 @@ KtUserType(238,248): 'InnerAlias'
 
 KtNameReferenceExpression(238,248): 'InnerAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass.InnerClass
@@ -213,7 +213,7 @@ KtCallExpression(251,263): 'InnerClass()'
 
 KtNameReferenceExpression(251,261): 'InnerClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/two/TopLevelClass.InnerClass

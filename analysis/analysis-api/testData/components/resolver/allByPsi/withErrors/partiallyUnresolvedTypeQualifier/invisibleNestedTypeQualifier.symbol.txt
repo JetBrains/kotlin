@@ -32,7 +32,7 @@ KtUserType(27,33): 'Hidden'
 
 KtNameReferenceExpression(27,33): 'Hidden'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Hidden
@@ -40,7 +40,7 @@ KtNameReferenceExpression(27,33): 'Hidden'
 
 KtNameReferenceExpression(34,40): 'Nested'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /Hidden.Nested
@@ -55,5 +55,5 @@ KtConstantExpression(43,47): 'null'
 
 KtOperationReferenceExpression(47,49): '!!'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null

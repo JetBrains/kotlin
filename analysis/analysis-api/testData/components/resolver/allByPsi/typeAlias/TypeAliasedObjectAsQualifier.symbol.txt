@@ -6,7 +6,7 @@ KtPackageDirective(0,12): 'package test'
 
 KtNameReferenceExpression(8,12): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -47,7 +47,7 @@ KtUserType(73,76): 'Int'
 
 KtNameReferenceExpression(73,76): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -73,7 +73,7 @@ KtUserType(105,113): 'MyObject'
 
 KtNameReferenceExpression(105,113): 'MyObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyObject
@@ -96,7 +96,7 @@ KtDotQualifiedExpression(133,151): 'MyAlias.function()'
 
 KtNameReferenceExpression(133,140): 'MyAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyAlias
@@ -110,7 +110,7 @@ KtCallExpression(141,151): 'function()'
 
 KtNameReferenceExpression(141,149): 'function'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
@@ -127,7 +127,7 @@ KtDotQualifiedExpression(156,172): 'MyAlias.property'
 
 KtNameReferenceExpression(156,163): 'MyAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyAlias
@@ -135,7 +135,7 @@ KtNameReferenceExpression(156,163): 'MyAlias'
 
 KtNameReferenceExpression(164,172): 'property'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val property: kotlin.Int
@@ -149,7 +149,7 @@ KtCallableReferenceExpression(178,195): 'MyAlias::function'
 
 KtNameReferenceExpression(178,185): 'MyAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyAlias
@@ -157,7 +157,7 @@ KtNameReferenceExpression(178,185): 'MyAlias'
 
 KtNameReferenceExpression(187,195): 'function'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyObject.function(<dispatch receiver>: test.MyObject): kotlin.Unit
@@ -171,7 +171,7 @@ KtCallableReferenceExpression(200,217): 'MyAlias::property'
 
 KtNameReferenceExpression(200,207): 'MyAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/MyAlias
@@ -179,7 +179,7 @@ KtNameReferenceExpression(200,207): 'MyAlias'
 
 KtNameReferenceExpression(209,217): 'property'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val property: kotlin.Int

@@ -6,7 +6,7 @@ KtPackageDirective(0,11): 'package one'
 
 KtNameReferenceExpression(8,11): 'one'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one
@@ -47,7 +47,7 @@ KtUserType(71,74): 'Int'
 
 KtNameReferenceExpression(71,74): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -82,7 +82,7 @@ KtUserType(111,117): 'String'
 
 KtNameReferenceExpression(111,117): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -108,7 +108,7 @@ KtBinaryExpression(142,165): 'ClientTransaction += 10'
 
 KtNameReferenceExpression(142,159): 'ClientTransaction'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction
@@ -116,7 +116,7 @@ KtNameReferenceExpression(142,159): 'ClientTransaction'
 
 KtOperationReferenceExpression(160,162): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
@@ -133,7 +133,7 @@ KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
 
 KtNameReferenceExpression(170,187): 'ClientTransaction'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction
@@ -141,7 +141,7 @@ KtNameReferenceExpression(170,187): 'ClientTransaction'
 
 KtOperationReferenceExpression(188,190): '-='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit

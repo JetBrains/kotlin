@@ -36,7 +36,7 @@ KtUserType(20,21): 'A'
 
 KtNameReferenceExpression(20,21): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -56,7 +56,7 @@ KtUserType(36,37): 'A'
 
 KtNameReferenceExpression(36,37): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -94,7 +94,7 @@ KtUserType(65,66): 'A'
 
 KtNameReferenceExpression(65,66): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -114,7 +114,7 @@ KtUserType(81,82): 'A'
 
 KtNameReferenceExpression(81,82): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -140,7 +140,7 @@ KtUserType(91,94): 'Int'
 
 KtNameReferenceExpression(91,94): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -175,7 +175,7 @@ KtUserType(111,112): 'A'
 
 KtNameReferenceExpression(111,112): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -195,7 +195,7 @@ KtUserType(127,128): 'A'
 
 KtNameReferenceExpression(127,128): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -221,7 +221,7 @@ KtUserType(136,139): 'Int'
 
 KtNameReferenceExpression(136,139): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -256,7 +256,7 @@ KtUserType(156,157): 'A'
 
 KtNameReferenceExpression(156,157): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -276,7 +276,7 @@ KtUserType(172,173): 'A'
 
 KtNameReferenceExpression(172,173): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -302,7 +302,7 @@ KtUserType(181,184): 'Int'
 
 KtNameReferenceExpression(181,184): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -325,7 +325,7 @@ KtUserType(189,190): 'A'
 
 KtNameReferenceExpression(189,190): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -360,7 +360,7 @@ KtUserType(207,208): 'A'
 
 KtNameReferenceExpression(207,208): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -380,7 +380,7 @@ KtUserType(223,224): 'A'
 
 KtNameReferenceExpression(223,224): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -418,7 +418,7 @@ KtUserType(249,250): 'A'
 
 KtNameReferenceExpression(249,250): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -438,7 +438,7 @@ KtUserType(265,266): 'A'
 
 KtNameReferenceExpression(265,266): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -464,7 +464,7 @@ KtUserType(281,284): 'Int'
 
 KtNameReferenceExpression(281,284): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -499,7 +499,7 @@ KtUserType(301,302): 'A'
 
 KtNameReferenceExpression(301,302): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -519,7 +519,7 @@ KtUserType(317,318): 'A'
 
 KtNameReferenceExpression(317,318): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -542,7 +542,7 @@ KtUserType(326,327): 'A'
 
 KtNameReferenceExpression(326,327): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -586,7 +586,7 @@ KtThisExpression(337,341): 'this'
 
 KtNameReferenceExpression(337,341): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
@@ -645,7 +645,7 @@ KtUserType(384,385): 'A'
 
 KtNameReferenceExpression(384,385): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -683,7 +683,7 @@ KtUserType(435,436): 'A'
 
 KtNameReferenceExpression(435,436): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -709,7 +709,7 @@ KtUserType(463,466): 'Int'
 
 KtNameReferenceExpression(463,466): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -744,7 +744,7 @@ KtUserType(487,488): 'A'
 
 KtNameReferenceExpression(487,488): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -770,7 +770,7 @@ KtUserType(514,517): 'Int'
 
 KtNameReferenceExpression(514,517): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -805,7 +805,7 @@ KtUserType(538,539): 'A'
 
 KtNameReferenceExpression(538,539): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -831,7 +831,7 @@ KtUserType(565,568): 'Int'
 
 KtNameReferenceExpression(565,568): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -854,7 +854,7 @@ KtUserType(573,574): 'A'
 
 KtNameReferenceExpression(573,574): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -889,7 +889,7 @@ KtUserType(595,596): 'A'
 
 KtNameReferenceExpression(595,596): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -927,7 +927,7 @@ KtUserType(643,644): 'A'
 
 KtNameReferenceExpression(643,644): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -953,7 +953,7 @@ KtUserType(677,680): 'Int'
 
 KtNameReferenceExpression(677,680): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -988,7 +988,7 @@ KtUserType(701,702): 'A'
 
 KtNameReferenceExpression(701,702): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1011,7 +1011,7 @@ KtUserType(728,743): 'SimpleOperators'
 
 KtNameReferenceExpression(728,743): 'SimpleOperators'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators
@@ -1034,7 +1034,7 @@ KtThisExpression(753,773): 'this@SimpleOperators'
 
 KtNameReferenceExpression(753,757): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators
@@ -1045,7 +1045,7 @@ KtContainerNode(757,773): '@SimpleOperators'
 
 KtLabelReferenceExpression(757,773): '@SimpleOperators'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators
@@ -1071,7 +1071,7 @@ KtCallExpression(805,808): 'A()'
 
 KtNameReferenceExpression(805,806): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1091,7 +1091,7 @@ KtCallExpression(821,838): 'SimpleOperators()'
 
 KtNameReferenceExpression(821,836): 'SimpleOperators'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators
@@ -1108,7 +1108,7 @@ KtCallExpression(843,1229): 'with(A()){'
 
 KtNameReferenceExpression(843,847): 'with'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/with(receiver: T, block: T.() -> R): R
@@ -1128,7 +1128,7 @@ KtCallExpression(848,851): 'A()'
 
 KtNameReferenceExpression(848,849): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1181,7 +1181,7 @@ KtThisExpression(877,881): 'this'
 
 KtNameReferenceExpression(877,881): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
@@ -1216,7 +1216,7 @@ KtPrefixExpression(890,899): '+thisProp'
 
 KtOperationReferenceExpression(890,891): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /unaryPlus(<extension receiver>: A): kotlin.Unit
@@ -1224,7 +1224,7 @@ KtOperationReferenceExpression(890,891): '+'
 
 KtNameReferenceExpression(891,899): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1238,7 +1238,7 @@ KtPrefixExpression(908,910): '+a'
 
 KtOperationReferenceExpression(908,909): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /unaryPlus(<extension receiver>: A): kotlin.Unit
@@ -1246,7 +1246,7 @@ KtOperationReferenceExpression(908,909): '+'
 
 KtNameReferenceExpression(909,910): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1260,7 +1260,7 @@ KtBinaryExpression(919,931): 'thisProp + 1'
 
 KtNameReferenceExpression(919,927): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1268,7 +1268,7 @@ KtNameReferenceExpression(919,927): 'thisProp'
 
 KtOperationReferenceExpression(928,929): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -1285,7 +1285,7 @@ KtBinaryExpression(940,945): 'a + 1'
 
 KtNameReferenceExpression(940,941): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1293,7 +1293,7 @@ KtNameReferenceExpression(940,941): 'a'
 
 KtOperationReferenceExpression(942,943): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -1310,7 +1310,7 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
 
 KtNameReferenceExpression(954,962): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1330,7 +1330,7 @@ KtArrayAccessExpression(974,978): 'a[1]'
 
 KtNameReferenceExpression(974,975): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1356,7 +1356,7 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
 
 KtNameReferenceExpression(987,995): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1370,7 +1370,7 @@ KtConstantExpression(996,997): '1'
 
 KtOperationReferenceExpression(999,1000): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
@@ -1384,7 +1384,7 @@ KtCallExpression(1001,1004): 'A()'
 
 KtNameReferenceExpression(1001,1002): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1407,7 +1407,7 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
 
 KtNameReferenceExpression(1013,1014): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1421,7 +1421,7 @@ KtConstantExpression(1015,1016): '1'
 
 KtOperationReferenceExpression(1018,1019): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
@@ -1435,7 +1435,7 @@ KtCallExpression(1020,1023): 'A()'
 
 KtNameReferenceExpression(1020,1021): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1452,7 +1452,7 @@ KtCallExpression(1032,1042): 'thisProp()'
 
 KtNameReferenceExpression(1032,1040): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1469,7 +1469,7 @@ KtCallExpression(1051,1054): 'a()'
 
 KtNameReferenceExpression(1051,1052): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1486,7 +1486,7 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
 
 KtNameReferenceExpression(1063,1071): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1494,7 +1494,7 @@ KtNameReferenceExpression(1063,1071): 'thisProp'
 
 KtOperationReferenceExpression(1072,1074): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -1511,7 +1511,7 @@ KtBinaryExpression(1085,1091): 'a += 1'
 
 KtNameReferenceExpression(1085,1086): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1519,7 +1519,7 @@ KtNameReferenceExpression(1085,1086): 'a'
 
 KtOperationReferenceExpression(1087,1089): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -1537,7 +1537,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
 
 KtNameReferenceExpression(1100,1108): 'thisProp'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var thisProp: A
@@ -1545,7 +1545,7 @@ KtNameReferenceExpression(1100,1108): 'thisProp'
 
 KtOperationReferenceExpression(1108,1110): '++'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /inc(<extension receiver>: A): A
@@ -1559,7 +1559,7 @@ KtBinaryExpression(1119,1126): 'a = a++'
 
 KtNameReferenceExpression(1119,1120): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1567,7 +1567,7 @@ KtNameReferenceExpression(1119,1120): 'a'
 
 KtOperationReferenceExpression(1121,1122): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtPostfixExpression(1123,1126): 'a++'
@@ -1579,7 +1579,7 @@ KtPostfixExpression(1123,1126): 'a++'
 
 KtNameReferenceExpression(1123,1124): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1587,7 +1587,7 @@ KtNameReferenceExpression(1123,1124): 'a'
 
 KtOperationReferenceExpression(1124,1126): '++'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /inc(<extension receiver>: A): A
@@ -1601,7 +1601,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
 
 KtNameReferenceExpression(1136,1137): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1609,7 +1609,7 @@ KtNameReferenceExpression(1136,1137): 'b'
 
 KtOperationReferenceExpression(1138,1139): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
@@ -1626,7 +1626,7 @@ KtPrefixExpression(1150,1152): '+b'
 
 KtOperationReferenceExpression(1150,1151): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
@@ -1634,7 +1634,7 @@ KtOperationReferenceExpression(1150,1151): '+'
 
 KtNameReferenceExpression(1151,1152): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1648,7 +1648,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
 
 KtNameReferenceExpression(1161,1162): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1674,7 +1674,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
 
 KtNameReferenceExpression(1174,1175): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1688,7 +1688,7 @@ KtConstantExpression(1176,1177): '1'
 
 KtOperationReferenceExpression(1179,1180): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
@@ -1702,7 +1702,7 @@ KtCallExpression(1181,1184): 'A()'
 
 KtNameReferenceExpression(1181,1182): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1719,7 +1719,7 @@ KtCallExpression(1193,1196): 'b()'
 
 KtNameReferenceExpression(1193,1194): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1736,7 +1736,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
 
 KtNameReferenceExpression(1205,1206): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1744,7 +1744,7 @@ KtNameReferenceExpression(1205,1206): 'b'
 
 KtOperationReferenceExpression(1207,1209): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
@@ -1762,7 +1762,7 @@ KtPostfixExpression(1220,1223): 'b++'
 
 KtNameReferenceExpression(1220,1221): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -1770,7 +1770,7 @@ KtNameReferenceExpression(1220,1221): 'b'
 
 KtOperationReferenceExpression(1221,1223): '++'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators
@@ -1796,7 +1796,7 @@ KtCallExpression(1268,1271): 'A()'
 
 KtNameReferenceExpression(1268,1269): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1816,7 +1816,7 @@ KtCallExpression(1284,1301): 'SimpleOperators()'
 
 KtNameReferenceExpression(1284,1299): 'SimpleOperators'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SimpleOperators
@@ -1834,7 +1834,7 @@ KtPrefixExpression(1307,1309): '+a'
 
 KtOperationReferenceExpression(1307,1308): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /unaryPlus(<extension receiver>: A): kotlin.Unit
@@ -1843,7 +1843,7 @@ KtOperationReferenceExpression(1307,1308): '+'
 
 KtNameReferenceExpression(1308,1309): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1858,7 +1858,7 @@ KtBinaryExpression(1314,1319): 'a + 1'
 
 KtNameReferenceExpression(1314,1315): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1866,7 +1866,7 @@ KtNameReferenceExpression(1314,1315): 'a'
 
 KtOperationReferenceExpression(1316,1317): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /plus(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -1885,7 +1885,7 @@ KtArrayAccessExpression(1324,1328): 'a[1]'
 
 KtNameReferenceExpression(1324,1325): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1913,7 +1913,7 @@ KtArrayAccessExpression(1333,1337): 'a[1]'
 
 KtNameReferenceExpression(1333,1334): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1927,7 +1927,7 @@ KtConstantExpression(1335,1336): '1'
 
 KtOperationReferenceExpression(1338,1339): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /set(<extension receiver>: A, b: kotlin.Int, x: A): kotlin.Unit
@@ -1942,7 +1942,7 @@ KtCallExpression(1340,1343): 'A()'
 
 KtNameReferenceExpression(1340,1341): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -1960,7 +1960,7 @@ KtCallExpression(1348,1351): 'a()'
 
 KtNameReferenceExpression(1348,1349): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1978,7 +1978,7 @@ KtBinaryExpression(1356,1362): 'a += 1'
 
 KtNameReferenceExpression(1356,1357): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -1986,7 +1986,7 @@ KtNameReferenceExpression(1356,1357): 'a'
 
 KtOperationReferenceExpression(1358,1360): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /plusAssign(<extension receiver>: A, b: kotlin.Int): kotlin.Unit
@@ -2012,7 +2012,7 @@ KtPostfixExpression(1367,1370): 'a++'
 
 KtNameReferenceExpression(1367,1368): 'a'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var a: A
@@ -2020,7 +2020,7 @@ KtNameReferenceExpression(1367,1368): 'a'
 
 KtOperationReferenceExpression(1368,1370): '++'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /inc(<extension receiver>: A): A
@@ -2036,7 +2036,7 @@ KtBinaryExpression(1376,1381): 'b + 1'
 
 KtNameReferenceExpression(1376,1377): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2044,7 +2044,7 @@ KtNameReferenceExpression(1376,1377): 'b'
 
 KtOperationReferenceExpression(1378,1379): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /SimpleOperators.plus(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
@@ -2063,7 +2063,7 @@ KtPrefixExpression(1386,1388): '+b'
 
 KtOperationReferenceExpression(1386,1387): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /SimpleOperators.unaryPlus(<dispatch receiver>: SimpleOperators): kotlin.Unit
@@ -2072,7 +2072,7 @@ KtOperationReferenceExpression(1386,1387): '+'
 
 KtNameReferenceExpression(1387,1388): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2087,7 +2087,7 @@ KtArrayAccessExpression(1393,1397): 'b[1]'
 
 KtNameReferenceExpression(1393,1394): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2115,7 +2115,7 @@ KtArrayAccessExpression(1402,1406): 'b[1]'
 
 KtNameReferenceExpression(1402,1403): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2129,7 +2129,7 @@ KtConstantExpression(1404,1405): '1'
 
 KtOperationReferenceExpression(1407,1408): '='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /SimpleOperators.set(<dispatch receiver>: SimpleOperators, b: kotlin.Int, x: A): kotlin.Unit
@@ -2144,7 +2144,7 @@ KtCallExpression(1409,1412): 'A()'
 
 KtNameReferenceExpression(1409,1410): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /A
@@ -2162,7 +2162,7 @@ KtCallExpression(1417,1420): 'b()'
 
 KtNameReferenceExpression(1417,1418): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2180,7 +2180,7 @@ KtBinaryExpression(1425,1431): 'b += 1'
 
 KtNameReferenceExpression(1425,1426): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2188,7 +2188,7 @@ KtNameReferenceExpression(1425,1426): 'b'
 
 KtOperationReferenceExpression(1427,1429): '+='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /SimpleOperators.plusAssign(<dispatch receiver>: SimpleOperators, b: kotlin.Int): kotlin.Unit
@@ -2214,7 +2214,7 @@ KtPostfixExpression(1436,1439): 'b++'
 
 KtNameReferenceExpression(1436,1437): 'b'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       var b: SimpleOperators
@@ -2222,7 +2222,7 @@ KtNameReferenceExpression(1436,1437): 'b'
 
 KtOperationReferenceExpression(1437,1439): '++'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /SimpleOperators.inc(<dispatch receiver>: SimpleOperators): SimpleOperators

@@ -6,7 +6,7 @@ KtPackageDirective(43,55): 'package test'
 
 KtNameReferenceExpression(51,55): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -74,7 +74,7 @@ KtDotQualifiedExpression(191,200): 'C.outer()'
 
 KtNameReferenceExpression(191,192): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -88,7 +88,7 @@ KtCallExpression(193,200): 'outer()'
 
 KtNameReferenceExpression(193,198): 'outer'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C.outer(): kotlin.Unit

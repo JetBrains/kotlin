@@ -45,7 +45,7 @@ KtUserType(47,50): 'Any'
 
 KtNameReferenceExpression(47,50): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -65,7 +65,7 @@ KtUserType(54,61): 'Boolean'
 
 KtNameReferenceExpression(54,61): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -94,7 +94,7 @@ KtSuperExpression(79,84): 'super'
 
 KtNameReferenceExpression(79,84): 'super'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -108,7 +108,7 @@ KtCallExpression(85,98): 'equals(other)'
 
 KtNameReferenceExpression(85,91): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -122,7 +122,7 @@ KtValueArgument(92,97): 'other'
 
 KtNameReferenceExpression(92,97): 'other'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       other: kotlin.Any?
@@ -166,7 +166,7 @@ KtUserType(142,149): 'Another'
 
 KtNameReferenceExpression(142,149): 'Another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -210,7 +210,7 @@ KtUserType(185,188): 'Any'
 
 KtNameReferenceExpression(185,188): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -230,7 +230,7 @@ KtUserType(192,199): 'Boolean'
 
 KtNameReferenceExpression(192,199): 'Boolean'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean
@@ -259,7 +259,7 @@ KtSuperExpression(217,222): 'super'
 
 KtNameReferenceExpression(217,222): 'super'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -273,7 +273,7 @@ KtCallExpression(223,236): 'equals(other)'
 
 KtNameReferenceExpression(223,229): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -287,7 +287,7 @@ KtValueArgument(230,235): 'other'
 
 KtNameReferenceExpression(230,235): 'other'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       other: kotlin.Any?
@@ -316,7 +316,7 @@ KtUserType(262,269): 'MyClass'
 
 KtNameReferenceExpression(262,269): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -339,7 +339,7 @@ KtUserType(275,282): 'MyClass'
 
 KtNameReferenceExpression(275,282): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -353,7 +353,7 @@ KtBinaryExpression(290,299): 'm1 === m2'
 
 KtNameReferenceExpression(290,292): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -361,12 +361,12 @@ KtNameReferenceExpression(290,292): 'm1'
 
 KtOperationReferenceExpression(293,296): '==='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(297,299): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -377,7 +377,7 @@ KtBinaryExpression(304,313): 'm1 !== m2'
 
 KtNameReferenceExpression(304,306): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -385,12 +385,12 @@ KtNameReferenceExpression(304,306): 'm1'
 
 KtOperationReferenceExpression(307,310): '!=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(311,313): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -404,7 +404,7 @@ KtBinaryExpression(318,326): 'm1 == m2'
 
 KtNameReferenceExpression(318,320): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -412,7 +412,7 @@ KtNameReferenceExpression(318,320): 'm1'
 
 KtOperationReferenceExpression(321,323): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -420,7 +420,7 @@ KtOperationReferenceExpression(321,323): '=='
 
 KtNameReferenceExpression(324,326): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -434,7 +434,7 @@ KtBinaryExpression(331,339): 'm1 != m2'
 
 KtNameReferenceExpression(331,333): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -442,7 +442,7 @@ KtNameReferenceExpression(331,333): 'm1'
 
 KtOperationReferenceExpression(334,336): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -450,7 +450,7 @@ KtOperationReferenceExpression(334,336): '!='
 
 KtNameReferenceExpression(337,339): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -464,7 +464,7 @@ KtDotQualifiedExpression(344,357): 'm1.equals(m2)'
 
 KtNameReferenceExpression(344,346): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -478,7 +478,7 @@ KtCallExpression(347,357): 'equals(m2)'
 
 KtNameReferenceExpression(347,353): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -492,7 +492,7 @@ KtValueArgument(354,356): 'm2'
 
 KtNameReferenceExpression(354,356): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -503,7 +503,7 @@ KtBinaryExpression(363,372): 'm2 === m1'
 
 KtNameReferenceExpression(363,365): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -511,12 +511,12 @@ KtNameReferenceExpression(363,365): 'm2'
 
 KtOperationReferenceExpression(366,369): '==='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(370,372): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -527,7 +527,7 @@ KtBinaryExpression(377,386): 'm2 !== m1'
 
 KtNameReferenceExpression(377,379): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -535,12 +535,12 @@ KtNameReferenceExpression(377,379): 'm2'
 
 KtOperationReferenceExpression(380,383): '!=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(384,386): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -554,7 +554,7 @@ KtBinaryExpression(391,399): 'm2 == m1'
 
 KtNameReferenceExpression(391,393): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -562,7 +562,7 @@ KtNameReferenceExpression(391,393): 'm2'
 
 KtOperationReferenceExpression(394,396): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -570,7 +570,7 @@ KtOperationReferenceExpression(394,396): '=='
 
 KtNameReferenceExpression(397,399): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -584,7 +584,7 @@ KtBinaryExpression(404,412): 'm2 != m1'
 
 KtNameReferenceExpression(404,406): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -592,7 +592,7 @@ KtNameReferenceExpression(404,406): 'm2'
 
 KtOperationReferenceExpression(407,409): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -600,7 +600,7 @@ KtOperationReferenceExpression(407,409): '!='
 
 KtNameReferenceExpression(410,412): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -614,7 +614,7 @@ KtDotQualifiedExpression(417,430): 'm2.equals(m1)'
 
 KtNameReferenceExpression(417,419): 'm2'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m2: MyClass
@@ -628,7 +628,7 @@ KtCallExpression(420,430): 'equals(m1)'
 
 KtNameReferenceExpression(420,426): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -642,7 +642,7 @@ KtValueArgument(427,429): 'm1'
 
 KtNameReferenceExpression(427,429): 'm1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       m1: MyClass
@@ -668,7 +668,7 @@ KtCallExpression(468,477): 'Another()'
 
 KtNameReferenceExpression(468,475): 'Another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -682,7 +682,7 @@ KtBinaryExpression(482,501): 'another === another'
 
 KtNameReferenceExpression(482,489): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -690,12 +690,12 @@ KtNameReferenceExpression(482,489): 'another'
 
 KtOperationReferenceExpression(490,493): '==='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(494,501): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -706,7 +706,7 @@ KtBinaryExpression(506,525): 'another !== another'
 
 KtNameReferenceExpression(506,513): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -714,12 +714,12 @@ KtNameReferenceExpression(506,513): 'another'
 
 KtOperationReferenceExpression(514,517): '!=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(518,525): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -733,7 +733,7 @@ KtBinaryExpression(530,550): 'another == Another()'
 
 KtNameReferenceExpression(530,537): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -741,7 +741,7 @@ KtNameReferenceExpression(530,537): 'another'
 
 KtOperationReferenceExpression(538,540): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -755,7 +755,7 @@ KtCallExpression(541,550): 'Another()'
 
 KtNameReferenceExpression(541,548): 'Another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -772,7 +772,7 @@ KtBinaryExpression(555,575): 'another != Another()'
 
 KtNameReferenceExpression(555,562): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -780,7 +780,7 @@ KtNameReferenceExpression(555,562): 'another'
 
 KtOperationReferenceExpression(563,565): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -794,7 +794,7 @@ KtCallExpression(566,575): 'Another()'
 
 KtNameReferenceExpression(566,573): 'Another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -811,7 +811,7 @@ KtDotQualifiedExpression(580,605): 'another.equals(Another())'
 
 KtNameReferenceExpression(580,587): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -825,7 +825,7 @@ KtCallExpression(588,605): 'equals(Another())'
 
 KtNameReferenceExpression(588,594): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -845,7 +845,7 @@ KtCallExpression(595,604): 'Another()'
 
 KtNameReferenceExpression(595,602): 'Another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Another
@@ -865,7 +865,7 @@ KtCallExpression(623,630): 'Child()'
 
 KtNameReferenceExpression(623,628): 'Child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Child
@@ -885,7 +885,7 @@ KtCallExpression(649,658): 'MyClass()'
 
 KtNameReferenceExpression(649,656): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -899,7 +899,7 @@ KtBinaryExpression(663,680): 'child === another'
 
 KtNameReferenceExpression(663,668): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -907,12 +907,12 @@ KtNameReferenceExpression(663,668): 'child'
 
 KtOperationReferenceExpression(669,672): '==='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(673,680): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -923,7 +923,7 @@ KtBinaryExpression(685,702): 'another !== child'
 
 KtNameReferenceExpression(685,692): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -931,12 +931,12 @@ KtNameReferenceExpression(685,692): 'another'
 
 KtOperationReferenceExpression(693,696): '!=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtNameReferenceExpression(697,702): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -950,7 +950,7 @@ KtBinaryExpression(708,724): 'child == myClass'
 
 KtNameReferenceExpression(708,713): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -958,7 +958,7 @@ KtNameReferenceExpression(708,713): 'child'
 
 KtOperationReferenceExpression(714,716): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -966,7 +966,7 @@ KtOperationReferenceExpression(714,716): '=='
 
 KtNameReferenceExpression(717,724): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -980,7 +980,7 @@ KtDotQualifiedExpression(729,750): 'child.equals(myClass)'
 
 KtNameReferenceExpression(729,734): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -994,7 +994,7 @@ KtCallExpression(735,750): 'equals(myClass)'
 
 KtNameReferenceExpression(735,741): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -1008,7 +1008,7 @@ KtValueArgument(742,749): 'myClass'
 
 KtNameReferenceExpression(742,749): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1022,7 +1022,7 @@ KtBinaryExpression(755,771): 'myClass != child'
 
 KtNameReferenceExpression(755,762): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1030,7 +1030,7 @@ KtNameReferenceExpression(755,762): 'myClass'
 
 KtOperationReferenceExpression(763,765): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -1038,7 +1038,7 @@ KtOperationReferenceExpression(763,765): '!='
 
 KtNameReferenceExpression(766,771): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1052,7 +1052,7 @@ KtPrefixExpression(776,798): '!myClass.equals(child)'
 
 KtOperationReferenceExpression(776,777): '!'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
@@ -1066,7 +1066,7 @@ KtDotQualifiedExpression(777,798): 'myClass.equals(child)'
 
 KtNameReferenceExpression(777,784): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1080,7 +1080,7 @@ KtCallExpression(785,798): 'equals(child)'
 
 KtNameReferenceExpression(785,791): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -1094,7 +1094,7 @@ KtValueArgument(792,797): 'child'
 
 KtNameReferenceExpression(792,797): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1108,7 +1108,7 @@ KtBinaryExpression(804,820): 'another == child'
 
 KtNameReferenceExpression(804,811): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1116,7 +1116,7 @@ KtNameReferenceExpression(804,811): 'another'
 
 KtOperationReferenceExpression(812,814): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1124,7 +1124,7 @@ KtOperationReferenceExpression(812,814): '=='
 
 KtNameReferenceExpression(815,820): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1138,7 +1138,7 @@ KtDotQualifiedExpression(825,846): 'another.equals(child)'
 
 KtNameReferenceExpression(825,832): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1152,7 +1152,7 @@ KtCallExpression(833,846): 'equals(child)'
 
 KtNameReferenceExpression(833,839): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1166,7 +1166,7 @@ KtValueArgument(840,845): 'child'
 
 KtNameReferenceExpression(840,845): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1180,7 +1180,7 @@ KtBinaryExpression(851,867): 'child == another'
 
 KtNameReferenceExpression(851,856): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1188,7 +1188,7 @@ KtNameReferenceExpression(851,856): 'child'
 
 KtOperationReferenceExpression(857,859): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -1196,7 +1196,7 @@ KtOperationReferenceExpression(857,859): '=='
 
 KtNameReferenceExpression(860,867): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1210,7 +1210,7 @@ KtDotQualifiedExpression(872,893): 'child.equals(another)'
 
 KtNameReferenceExpression(872,877): 'child'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val child: Child
@@ -1224,7 +1224,7 @@ KtCallExpression(878,893): 'equals(another)'
 
 KtNameReferenceExpression(878,884): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Child.equals(<dispatch receiver>: Child, other: kotlin.Any?): kotlin.Boolean
@@ -1238,7 +1238,7 @@ KtValueArgument(885,892): 'another'
 
 KtNameReferenceExpression(885,892): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1252,7 +1252,7 @@ KtBinaryExpression(899,917): 'another == myClass'
 
 KtNameReferenceExpression(899,906): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1260,7 +1260,7 @@ KtNameReferenceExpression(899,906): 'another'
 
 KtOperationReferenceExpression(907,909): '=='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1268,7 +1268,7 @@ KtOperationReferenceExpression(907,909): '=='
 
 KtNameReferenceExpression(910,917): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1282,7 +1282,7 @@ KtDotQualifiedExpression(922,945): 'another.equals(myClass)'
 
 KtNameReferenceExpression(922,929): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1296,7 +1296,7 @@ KtCallExpression(930,945): 'equals(myClass)'
 
 KtNameReferenceExpression(930,936): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
@@ -1310,7 +1310,7 @@ KtValueArgument(937,944): 'myClass'
 
 KtNameReferenceExpression(937,944): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1324,7 +1324,7 @@ KtBinaryExpression(950,968): 'myClass != another'
 
 KtNameReferenceExpression(950,957): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1332,7 +1332,7 @@ KtNameReferenceExpression(950,957): 'myClass'
 
 KtOperationReferenceExpression(958,960): '!='
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -1340,7 +1340,7 @@ KtOperationReferenceExpression(958,960): '!='
 
 KtNameReferenceExpression(961,968): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another
@@ -1354,7 +1354,7 @@ KtPrefixExpression(973,997): '!myClass.equals(another)'
 
 KtOperationReferenceExpression(973,974): '!'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Boolean.not(<dispatch receiver>: kotlin.Boolean): kotlin.Boolean
@@ -1368,7 +1368,7 @@ KtDotQualifiedExpression(974,997): 'myClass.equals(another)'
 
 KtNameReferenceExpression(974,981): 'myClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val myClass: MyClass
@@ -1382,7 +1382,7 @@ KtCallExpression(982,997): 'equals(another)'
 
 KtNameReferenceExpression(982,988): 'equals'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.equals(<dispatch receiver>: MyClass, other: kotlin.Any?): kotlin.Boolean
@@ -1396,7 +1396,7 @@ KtValueArgument(989,996): 'another'
 
 KtNameReferenceExpression(989,996): 'another'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val another: Another

@@ -6,7 +6,7 @@ KtPackageDirective(43,55): 'package test'
 
 KtNameReferenceExpression(51,55): 'test'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test
@@ -80,7 +80,7 @@ KtUserType(122,128): 'String'
 
 KtNameReferenceExpression(122,128): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -118,7 +118,7 @@ KtUserType(156,157): 'C'
 
 KtNameReferenceExpression(156,157): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -150,7 +150,7 @@ KtUserType(193,194): 'C'
 
 KtNameReferenceExpression(193,194): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -182,7 +182,7 @@ KtUserType(230,231): 'C'
 
 KtNameReferenceExpression(230,231): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -208,7 +208,7 @@ KtUserType(250,253): 'Int'
 
 KtNameReferenceExpression(250,253): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -238,7 +238,7 @@ KtCallExpression(277,280): 'C()'
 
 KtNameReferenceExpression(277,278): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): test.C,
@@ -263,7 +263,7 @@ KtDotQualifiedExpression(285,295): 'C.invoke()'
 
 KtNameReferenceExpression(285,286): 'C'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       test/C
@@ -281,7 +281,7 @@ KtCallExpression(287,295): 'invoke()'
 
 KtNameReferenceExpression(287,293): 'invoke'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       test/invoke(<extension receiver>: test.C): kotlin.Unit,

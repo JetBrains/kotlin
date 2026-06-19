@@ -24,7 +24,7 @@ KtUserType(20,26): 'String'
 
 KtNameReferenceExpression(20,26): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -59,7 +59,7 @@ KtClassLiteralExpression(63,71): 'T::class'
 
 KtNameReferenceExpression(63,64): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -73,7 +73,7 @@ KtClassLiteralExpression(75,89): 'MyAlias::class'
 
 KtNameReferenceExpression(75,82): 'MyAlias'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyAlias
@@ -87,7 +87,7 @@ KtClassLiteralExpression(93,106): 'String::class'
 
 KtNameReferenceExpression(93,99): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -104,7 +104,7 @@ KtDotQualifiedExpression(110,120): 'kotlin.Int'
 
 KtNameReferenceExpression(110,116): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -112,7 +112,7 @@ KtNameReferenceExpression(110,116): 'kotlin'
 
 KtNameReferenceExpression(117,120): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -120,7 +120,7 @@ KtNameReferenceExpression(117,120): 'Int'
 
 KtNameReferenceExpression(121,130): 'Companion'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int.Companion

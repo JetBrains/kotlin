@@ -1,6 +1,6 @@
 KtNameReferenceExpression(100,109): 'TOP_LEVEL'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val TOP_LEVEL: kotlin.Int

@@ -9,7 +9,7 @@ KtDotQualifiedExpression(8,19): 'com.example'
 
 KtNameReferenceExpression(8,11): 'com'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com
@@ -17,7 +17,7 @@ KtNameReferenceExpression(8,11): 'com'
 
 KtNameReferenceExpression(12,19): 'example'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com.example
@@ -67,7 +67,7 @@ KtUserType(91,94): 'Int'
 
 KtNameReferenceExpression(91,94): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -81,7 +81,7 @@ KtCallExpression(98,103): 'Foo()'
 
 KtNameReferenceExpression(98,101): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
@@ -107,7 +107,7 @@ KtCallExpression(145,151): 'Foo(1)'
 
 KtNameReferenceExpression(145,148): 'Foo'
   isImplicitReferenceToCompanion: true
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
@@ -133,7 +133,7 @@ KtDotQualifiedExpression(156,167): 'com.example'
 
 KtNameReferenceExpression(156,159): 'com'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com
@@ -141,7 +141,7 @@ KtNameReferenceExpression(156,159): 'com'
 
 KtNameReferenceExpression(160,167): 'example'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com.example
@@ -155,7 +155,7 @@ KtCallExpression(168,174): 'Foo(2)'
 
 KtNameReferenceExpression(168,171): 'Foo'
   isImplicitReferenceToCompanion: true
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
@@ -178,7 +178,7 @@ KtDotQualifiedExpression(180,196): 'Foo.Companion(3)'
 
 KtNameReferenceExpression(180,183): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
@@ -192,7 +192,7 @@ KtCallExpression(184,196): 'Companion(3)'
 
 KtNameReferenceExpression(184,193): 'Companion'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion
@@ -221,7 +221,7 @@ KtDotQualifiedExpression(201,212): 'com.example'
 
 KtNameReferenceExpression(201,204): 'com'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com
@@ -229,7 +229,7 @@ KtNameReferenceExpression(201,204): 'com'
 
 KtNameReferenceExpression(205,212): 'example'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com.example
@@ -237,7 +237,7 @@ KtNameReferenceExpression(205,212): 'example'
 
 KtNameReferenceExpression(213,216): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo
@@ -251,7 +251,7 @@ KtCallExpression(217,229): 'Companion(4)'
 
 KtNameReferenceExpression(217,226): 'Companion'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       com/example/Foo.Companion

@@ -45,7 +45,7 @@ KtUserType(150,156): 'String'
 
 KtNameReferenceExpression(150,156): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -74,7 +74,7 @@ KtUserType(159,174): 'SealedInterface'
 
 KtNameReferenceExpression(159,174): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -136,7 +136,7 @@ KtUserType(269,276): 'MyClass'
 
 KtNameReferenceExpression(269,276): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -174,7 +174,7 @@ KtUserType(296,297): 'X'
 
 KtNameReferenceExpression(296,297): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -194,7 +194,7 @@ KtUserType(300,301): 'X'
 
 KtNameReferenceExpression(300,301): 'X'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       X
@@ -202,7 +202,7 @@ KtNameReferenceExpression(300,301): 'X'
 
 KtNameReferenceExpression(304,305): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: X
@@ -237,7 +237,7 @@ KtUserType(327,328): 'T'
 
 KtNameReferenceExpression(327,328): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -269,7 +269,7 @@ KtUserType(341,348): 'MyClass'
 
 KtNameReferenceExpression(341,348): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -295,7 +295,7 @@ KtUserType(373,374): 'T'
 
 KtNameReferenceExpression(373,374): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -315,7 +315,7 @@ KtUserType(377,383): 'String'
 
 KtNameReferenceExpression(377,383): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -329,7 +329,7 @@ KtCallExpression(386,392): 'TODO()'
 
 KtNameReferenceExpression(386,390): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -370,7 +370,7 @@ KtUserType(460,461): 'T'
 
 KtNameReferenceExpression(460,461): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -390,7 +390,7 @@ KtUserType(464,470): 'String'
 
 KtNameReferenceExpression(464,470): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -404,7 +404,7 @@ KtTypeConstraint(477,488): 'T : MyClass'
 
 KtNameReferenceExpression(477,478): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -424,7 +424,7 @@ KtUserType(481,488): 'MyClass'
 
 KtNameReferenceExpression(481,488): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -435,7 +435,7 @@ KtTypeConstraint(490,500): 'T : OtherI'
 
 KtNameReferenceExpression(490,491): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -455,7 +455,7 @@ KtUserType(494,500): 'OtherI'
 
 KtNameReferenceExpression(494,500): 'OtherI'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /OtherI
@@ -469,7 +469,7 @@ KtCallExpression(503,509): 'TODO()'
 
 KtNameReferenceExpression(503,507): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -507,7 +507,7 @@ KtUserType(538,545): 'MyClass'
 
 KtNameReferenceExpression(538,545): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -527,7 +527,7 @@ KtUserType(549,555): 'String'
 
 KtNameReferenceExpression(549,555): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -541,7 +541,7 @@ KtCallExpression(558,564): 'TODO()'
 
 KtNameReferenceExpression(558,562): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -579,7 +579,7 @@ KtUserType(574,581): 'MyClass'
 
 KtNameReferenceExpression(574,581): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -611,7 +611,7 @@ KtUserType(627,628): 'T'
 
 KtNameReferenceExpression(627,628): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -631,7 +631,7 @@ KtUserType(631,634): 'Any'
 
 KtNameReferenceExpression(631,634): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -651,7 +651,7 @@ KtUserType(637,643): 'String'
 
 KtNameReferenceExpression(637,643): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -665,7 +665,7 @@ KtCallExpression(646,652): 'TODO()'
 
 KtNameReferenceExpression(646,650): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -703,7 +703,7 @@ KtUserType(692,693): 'T'
 
 KtNameReferenceExpression(692,693): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -723,7 +723,7 @@ KtUserType(696,702): 'String'
 
 KtNameReferenceExpression(696,702): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -737,7 +737,7 @@ KtTypeConstraint(709,728): 'T : SealedInterface'
 
 KtNameReferenceExpression(709,710): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -757,7 +757,7 @@ KtUserType(713,728): 'SealedInterface'
 
 KtNameReferenceExpression(713,728): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -768,7 +768,7 @@ KtTypeConstraint(730,765): 'T : SealedInterface.NestedInheritor'
 
 KtNameReferenceExpression(730,731): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -794,7 +794,7 @@ KtUserType(734,749): 'SealedInterface'
 
 KtNameReferenceExpression(734,749): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -802,7 +802,7 @@ KtNameReferenceExpression(734,749): 'SealedInterface'
 
 KtNameReferenceExpression(750,765): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface.NestedInheritor
@@ -816,7 +816,7 @@ KtCallExpression(768,774): 'TODO()'
 
 KtNameReferenceExpression(768,772): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -854,7 +854,7 @@ KtUserType(821,822): 'T'
 
 KtNameReferenceExpression(821,822): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -874,7 +874,7 @@ KtUserType(825,831): 'String'
 
 KtNameReferenceExpression(825,831): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -888,7 +888,7 @@ KtTypeConstraint(838,873): 'T : SealedInterface.NestedInheritor'
 
 KtNameReferenceExpression(838,839): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -914,7 +914,7 @@ KtUserType(842,857): 'SealedInterface'
 
 KtNameReferenceExpression(842,857): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -922,7 +922,7 @@ KtNameReferenceExpression(842,857): 'SealedInterface'
 
 KtNameReferenceExpression(858,873): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface.NestedInheritor
@@ -933,7 +933,7 @@ KtTypeConstraint(875,894): 'T : SealedInterface'
 
 KtNameReferenceExpression(875,876): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -953,7 +953,7 @@ KtUserType(879,894): 'SealedInterface'
 
 KtNameReferenceExpression(879,894): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -967,7 +967,7 @@ KtCallExpression(897,903): 'TODO()'
 
 KtNameReferenceExpression(897,901): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -1005,7 +1005,7 @@ KtUserType(946,947): 'T'
 
 KtNameReferenceExpression(946,947): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -1025,7 +1025,7 @@ KtUserType(950,956): 'String'
 
 KtNameReferenceExpression(950,956): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -1039,7 +1039,7 @@ KtTypeConstraint(963,982): 'T : SealedInterface'
 
 KtNameReferenceExpression(963,964): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -1059,7 +1059,7 @@ KtUserType(967,982): 'SealedInterface'
 
 KtNameReferenceExpression(967,982): 'SealedInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /SealedInterface
@@ -1070,7 +1070,7 @@ KtTypeConstraint(984,995): 'T : MyClass'
 
 KtNameReferenceExpression(984,985): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -1090,7 +1090,7 @@ KtUserType(988,995): 'MyClass'
 
 KtNameReferenceExpression(988,995): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -1104,7 +1104,7 @@ KtCallExpression(998,1004): 'TODO()'
 
 KtNameReferenceExpression(998,1002): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -1139,7 +1139,7 @@ KtUserType(1043,1049): 'MyEnum'
 
 KtNameReferenceExpression(1043,1049): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -1153,7 +1153,7 @@ KtCallExpression(1052,1066): 'id(EnumValue1)'
 
 KtNameReferenceExpression(1052,1054): 'id'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1167,7 +1167,7 @@ KtValueArgument(1055,1065): 'EnumValue1'
 
 KtNameReferenceExpression(1055,1065): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -1190,7 +1190,7 @@ KtUserType(1079,1086): 'MyClass'
 
 KtNameReferenceExpression(1079,1086): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -1204,7 +1204,7 @@ KtCallExpression(1089,1108): 'id(InheritorObject)'
 
 KtNameReferenceExpression(1089,1091): 'id'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1218,7 +1218,7 @@ KtValueArgument(1092,1107): 'InheritorObject'
 
 KtNameReferenceExpression(1092,1107): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -1232,7 +1232,7 @@ KtCallExpression(1114,1145): 'receive<MyEnum>(id(EnumValue1))'
 
 KtNameReferenceExpression(1114,1121): 'receive'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /receive(arg: T): kotlin.Unit
@@ -1258,7 +1258,7 @@ KtUserType(1122,1128): 'MyEnum'
 
 KtNameReferenceExpression(1122,1128): 'MyEnum'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum
@@ -1278,7 +1278,7 @@ KtCallExpression(1130,1144): 'id(EnumValue1)'
 
 KtNameReferenceExpression(1130,1132): 'id'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1292,7 +1292,7 @@ KtValueArgument(1133,1143): 'EnumValue1'
 
 KtNameReferenceExpression(1133,1143): 'EnumValue1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyEnum.EnumValue1
@@ -1306,7 +1306,7 @@ KtCallExpression(1150,1187): 'receive<MyClass>(id(InheritorObject))'
 
 KtNameReferenceExpression(1150,1157): 'receive'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /receive(arg: T): kotlin.Unit
@@ -1332,7 +1332,7 @@ KtUserType(1158,1165): 'MyClass'
 
 KtNameReferenceExpression(1158,1165): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -1352,7 +1352,7 @@ KtCallExpression(1167,1186): 'id(InheritorObject)'
 
 KtNameReferenceExpression(1167,1169): 'id'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /id(x: X): X
@@ -1366,7 +1366,7 @@ KtValueArgument(1170,1185): 'InheritorObject'
 
 KtNameReferenceExpression(1170,1185): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -1380,7 +1380,7 @@ KtCallExpression(1193,1222): 'testNullable(InheritorObject)'
 
 KtNameReferenceExpression(1193,1205): 'testNullable'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /testNullable(instance: MyClass?): kotlin.String
@@ -1394,7 +1394,7 @@ KtValueArgument(1206,1221): 'InheritorObject'
 
 KtNameReferenceExpression(1206,1221): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -1408,7 +1408,7 @@ KtCallExpression(1227,1266): 'testTypeParam<MyClass>(InheritorObject)'
 
 KtNameReferenceExpression(1227,1240): 'testTypeParam'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /testTypeParam(instance: T): kotlin.String
@@ -1434,7 +1434,7 @@ KtUserType(1241,1248): 'MyClass'
 
 KtNameReferenceExpression(1241,1248): 'MyClass'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass
@@ -1448,7 +1448,7 @@ KtValueArgument(1250,1265): 'InheritorObject'
 
 KtNameReferenceExpression(1250,1265): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: true
+  contextSensitiveResolutionStatus: Used
   KaSymbolResolutionSuccess:
     symbols = [
       /MyClass.InheritorObject
@@ -1463,7 +1463,7 @@ KtCallExpression(1272,1302): 'testTypeParam(InheritorObject)'
 
 KtNameReferenceExpression(1272,1285): 'testTypeParam'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testTypeParam(instance: T): kotlin.String
@@ -1478,7 +1478,7 @@ KtValueArgument(1286,1301): 'InheritorObject'
 
 KtNameReferenceExpression(1286,1301): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -1492,7 +1492,7 @@ KtCallExpression(1307,1354): 'testTypeParamWithMultipleBound(InheritorObject)'
 
 KtNameReferenceExpression(1307,1337): 'testTypeParamWithMultipleBound'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testTypeParamWithMultipleBound(instance: T): kotlin.String
@@ -1507,7 +1507,7 @@ KtValueArgument(1338,1353): 'InheritorObject'
 
 KtNameReferenceExpression(1338,1353): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -1521,7 +1521,7 @@ KtCallExpression(1359,1409): 'testDefinitelyNotNullIntersection(InheritorObject)
 
 KtNameReferenceExpression(1359,1392): 'testDefinitelyNotNullIntersection'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testDefinitelyNotNullIntersection(instance: T & Any): kotlin.String
@@ -1536,7 +1536,7 @@ KtValueArgument(1393,1408): 'InheritorObject'
 
 KtNameReferenceExpression(1393,1408): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -1550,7 +1550,7 @@ KtCallExpression(1414,1451): 'testFakeIntersection(InheritorObject)'
 
 KtNameReferenceExpression(1414,1434): 'testFakeIntersection'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testFakeIntersection(instance: T): kotlin.String
@@ -1565,7 +1565,7 @@ KtValueArgument(1435,1450): 'InheritorObject'
 
 KtNameReferenceExpression(1435,1450): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -1579,7 +1579,7 @@ KtCallExpression(1456,1500): 'testReverseFakeIntersection(InheritorObject)'
 
 KtNameReferenceExpression(1456,1483): 'testReverseFakeIntersection'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testReverseFakeIntersection(instance: T): kotlin.String
@@ -1594,7 +1594,7 @@ KtValueArgument(1484,1499): 'InheritorObject'
 
 KtNameReferenceExpression(1484,1499): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>
@@ -1608,7 +1608,7 @@ KtCallExpression(1505,1545): 'testRegularIntersection(InheritorObject)'
 
 KtNameReferenceExpression(1505,1528): 'testRegularIntersection'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /testRegularIntersection(instance: T): kotlin.String
@@ -1623,7 +1623,7 @@ KtValueArgument(1529,1544): 'InheritorObject'
 
 KtNameReferenceExpression(1529,1544): 'InheritorObject'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'InheritorObject'.>

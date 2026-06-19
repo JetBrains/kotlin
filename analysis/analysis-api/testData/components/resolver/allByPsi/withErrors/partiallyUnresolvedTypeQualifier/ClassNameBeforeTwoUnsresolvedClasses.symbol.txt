@@ -42,7 +42,7 @@ KtUserType(36,39): 'Foo'
 
 KtNameReferenceExpression(36,39): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -50,14 +50,14 @@ KtNameReferenceExpression(36,39): 'Foo'
 
 KtNameReferenceExpression(40,43): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
 KtNameReferenceExpression(44,47): 'Baz'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
@@ -97,7 +97,7 @@ KtUserType(86,89): 'Foo'
 
 KtNameReferenceExpression(86,89): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -105,14 +105,14 @@ KtNameReferenceExpression(86,89): 'Foo'
 
 KtNameReferenceExpression(90,93): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
 
 KtNameReferenceExpression(94,97): 'Baz'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Bar'.>
@@ -164,7 +164,7 @@ KtUserType(123,124): 'T'
 
 KtNameReferenceExpression(123,124): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -184,7 +184,7 @@ KtUserType(129,133): 'Unit'
 
 KtNameReferenceExpression(129,133): 'Unit'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Unit
@@ -205,7 +205,7 @@ KtCallExpression(150,190): 'take {'
 
 KtNameReferenceExpression(150,154): 'take'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       /take(action: (T) -> kotlin.Unit): kotlin.Unit
@@ -250,7 +250,7 @@ KtUserType(174,177): 'Foo'
 
 KtNameReferenceExpression(174,177): 'Foo'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Foo
@@ -258,14 +258,14 @@ KtNameReferenceExpression(174,177): 'Foo'
 
 KtNameReferenceExpression(178,181): 'Bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>
 
 KtNameReferenceExpression(182,185): 'Baz'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = []
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Baz'.>

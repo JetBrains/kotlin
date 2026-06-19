@@ -69,7 +69,7 @@ KtUserType(157,158): 'E'
 
 KtNameReferenceExpression(157,158): 'E'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       E
@@ -98,7 +98,7 @@ KtUserType(161,179): 'Either<E, Nothing>'
 
 KtNameReferenceExpression(161,167): 'Either'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Either
@@ -124,7 +124,7 @@ KtUserType(168,169): 'E'
 
 KtNameReferenceExpression(168,169): 'E'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       E
@@ -147,7 +147,7 @@ KtUserType(171,178): 'Nothing'
 
 KtNameReferenceExpression(171,178): 'Nothing'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
@@ -191,7 +191,7 @@ KtUserType(219,220): 'A'
 
 KtNameReferenceExpression(219,220): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       A
@@ -220,7 +220,7 @@ KtUserType(223,241): 'Either<Nothing, A>'
 
 KtNameReferenceExpression(223,229): 'Either'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Either
@@ -246,7 +246,7 @@ KtUserType(230,237): 'Nothing'
 
 KtNameReferenceExpression(230,237): 'Nothing'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Nothing
@@ -269,7 +269,7 @@ KtUserType(239,240): 'A'
 
 KtNameReferenceExpression(239,240): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       A
@@ -301,7 +301,7 @@ KtUserType(256,268): 'Either<E, A>'
 
 KtNameReferenceExpression(256,262): 'Either'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Either
@@ -327,7 +327,7 @@ KtUserType(263,264): 'E'
 
 KtNameReferenceExpression(263,264): 'E'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       E
@@ -350,7 +350,7 @@ KtUserType(266,267): 'A'
 
 KtNameReferenceExpression(266,267): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       A
@@ -376,7 +376,7 @@ KtUserType(288,289): 'A'
 
 KtNameReferenceExpression(288,289): 'A'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       A
@@ -421,7 +421,7 @@ KtThisExpression(299,303): 'this'
 
 KtNameReferenceExpression(299,303): 'this'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       KaReceiverParameterSymbol:
@@ -475,7 +475,7 @@ KtUserType(314,318): 'Left'
 
 KtNameReferenceExpression(314,318): 'Left'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Either.Left
@@ -483,7 +483,7 @@ KtNameReferenceExpression(314,318): 'Left'
 
 KtNameReferenceExpression(322,329): 'default'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       default: A
@@ -509,7 +509,7 @@ KtUserType(337,342): 'Right'
 
 KtNameReferenceExpression(337,342): 'Right'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       /Either.Right
@@ -517,7 +517,7 @@ KtNameReferenceExpression(337,342): 'Right'
 
 KtNameReferenceExpression(346,351): 'value'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val value: A

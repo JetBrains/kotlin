@@ -6,7 +6,7 @@ KtPackageDirective(0,12): 'package pack'
 
 KtNameReferenceExpression(8,12): 'pack'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack
@@ -38,7 +38,7 @@ KtUserType(32,35): 'Int'
 
 KtNameReferenceExpression(32,35): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -70,7 +70,7 @@ KtUserType(58,64): 'String'
 
 KtNameReferenceExpression(58,64): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -108,7 +108,7 @@ KtUserType(103,106): 'Int'
 
 KtNameReferenceExpression(103,106): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -140,7 +140,7 @@ KtUserType(129,135): 'String'
 
 KtNameReferenceExpression(129,135): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String
@@ -166,7 +166,7 @@ KtUserType(166,169): 'Int'
 
 KtNameReferenceExpression(166,169): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -207,7 +207,7 @@ KtUserType(220,223): 'Int'
 
 KtNameReferenceExpression(220,223): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -233,7 +233,7 @@ KtUserType(248,251): 'Int'
 
 KtNameReferenceExpression(248,251): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -271,7 +271,7 @@ KtUserType(290,293): 'Int'
 
 KtNameReferenceExpression(290,293): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -297,7 +297,7 @@ KtUserType(316,319): 'Int'
 
 KtNameReferenceExpression(316,319): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -335,7 +335,7 @@ KtUserType(346,347): 'T'
 
 KtNameReferenceExpression(346,347): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -355,7 +355,7 @@ KtUserType(350,351): 'T'
 
 KtNameReferenceExpression(350,351): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -363,7 +363,7 @@ KtNameReferenceExpression(350,351): 'T'
 
 KtNameReferenceExpression(354,355): 'x'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       x: T
@@ -410,7 +410,7 @@ KtUserType(405,406): 'U'
 
 KtNameReferenceExpression(405,406): 'U'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       U
@@ -430,7 +430,7 @@ KtUserType(409,410): 'T'
 
 KtNameReferenceExpression(409,410): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -444,7 +444,7 @@ KtCallExpression(413,419): 'TODO()'
 
 KtNameReferenceExpression(413,417): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -470,7 +470,7 @@ KtUserType(438,439): 'T'
 
 KtNameReferenceExpression(438,439): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -490,7 +490,7 @@ KtCallExpression(448,454): 'TODO()'
 
 KtNameReferenceExpression(448,452): 'TODO'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/TODO(): kotlin.Nothing
@@ -528,7 +528,7 @@ KtUserType(490,503): 'LoggerContext'
 
 KtNameReferenceExpression(490,503): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -554,7 +554,7 @@ KtUserType(524,527): 'Int'
 
 KtNameReferenceExpression(524,527): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -589,7 +589,7 @@ KtUserType(544,557): 'LoggerContext'
 
 KtNameReferenceExpression(544,557): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -609,7 +609,7 @@ KtUserType(584,587): 'Int'
 
 KtNameReferenceExpression(584,587): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -645,7 +645,7 @@ KtCallableReferenceExpression(638,650): '::overloaded'
 
 KtNameReferenceExpression(640,650): 'overloaded'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/overloaded(x: kotlin.Int): kotlin.Unit,
@@ -676,7 +676,7 @@ KtCallableReferenceExpression(697,711): 'Holder::method'
 
 KtNameReferenceExpression(697,703): 'Holder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Holder
@@ -684,7 +684,7 @@ KtNameReferenceExpression(697,703): 'Holder'
 
 KtNameReferenceExpression(705,711): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit,
@@ -712,7 +712,7 @@ KtCallExpression(716,724): 'Holder()'
 
 KtNameReferenceExpression(716,722): 'Holder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Holder
@@ -723,7 +723,7 @@ KtValueArgumentList(722,724): '()'
 
 KtNameReferenceExpression(726,732): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit,
@@ -754,7 +754,7 @@ KtCallableReferenceExpression(786,809): 'Holder::ambiguousMember'
 
 KtNameReferenceExpression(786,792): 'Holder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Holder
@@ -762,7 +762,7 @@ KtNameReferenceExpression(786,792): 'Holder'
 
 KtNameReferenceExpression(794,809): 'ambiguousMember'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/Holder.ambiguousMember(<dispatch receiver>: pack.Holder): kotlin.Unit,
@@ -793,7 +793,7 @@ KtCallableReferenceExpression(856,874): '::overloaded(true)'
 
 KtNameReferenceExpression(858,868): 'overloaded'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/overloaded(x: kotlin.Int): kotlin.Unit,
@@ -824,7 +824,7 @@ KtCallableReferenceExpression(879,909): 'Holder::method(Holder(), true)'
 
 KtNameReferenceExpression(879,885): 'Holder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Holder
@@ -832,7 +832,7 @@ KtNameReferenceExpression(879,885): 'Holder'
 
 KtNameReferenceExpression(887,893): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/Holder.method(<dispatch receiver>: pack.Holder, x: kotlin.Int): kotlin.Unit,
@@ -856,7 +856,7 @@ KtCallExpression(894,902): 'Holder()'
 
 KtNameReferenceExpression(894,900): 'Holder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Holder
@@ -888,7 +888,7 @@ KtCallableReferenceExpression(967,978): '::simple(1)'
 
 KtNameReferenceExpression(969,975): 'simple'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/simple(x: kotlin.Int): kotlin.Unit
@@ -911,7 +911,7 @@ KtCallableReferenceExpression(983,999): '::simpleProperty'
 
 KtNameReferenceExpression(985,999): 'simpleProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val simpleProperty: kotlin.Int
@@ -925,7 +925,7 @@ KtCallableReferenceExpression(1004,1031): 'Single::method(Single(), 1)'
 
 KtNameReferenceExpression(1004,1010): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -933,7 +933,7 @@ KtNameReferenceExpression(1004,1010): 'Single'
 
 KtNameReferenceExpression(1012,1018): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
@@ -953,7 +953,7 @@ KtCallExpression(1019,1027): 'Single()'
 
 KtNameReferenceExpression(1019,1025): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -982,7 +982,7 @@ KtCallExpression(1036,1044): 'Single()'
 
 KtNameReferenceExpression(1036,1042): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -993,7 +993,7 @@ KtValueArgumentList(1042,1044): '()'
 
 KtNameReferenceExpression(1046,1052): 'method'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single.method(<dispatch receiver>: pack.Single, x: kotlin.Int): kotlin.Unit
@@ -1016,7 +1016,7 @@ KtCallableReferenceExpression(1060,1086): 'Single::property(Single())'
 
 KtNameReferenceExpression(1060,1066): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -1024,7 +1024,7 @@ KtNameReferenceExpression(1060,1066): 'Single'
 
 KtNameReferenceExpression(1068,1076): 'property'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val property: kotlin.Int
@@ -1044,7 +1044,7 @@ KtCallExpression(1077,1085): 'Single()'
 
 KtNameReferenceExpression(1077,1083): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -1067,7 +1067,7 @@ KtCallExpression(1091,1099): 'Single()'
 
 KtNameReferenceExpression(1091,1097): 'Single'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/Single
@@ -1078,7 +1078,7 @@ KtValueArgumentList(1097,1099): '()'
 
 KtNameReferenceExpression(1101,1109): 'property'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val property: kotlin.Int
@@ -1102,7 +1102,7 @@ KtCallableReferenceExpression(1160,1174): '::generic<Int>'
 
 KtNameReferenceExpression(1162,1169): 'generic'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/generic(x: T): T
@@ -1120,7 +1120,7 @@ KtUserType(1170,1173): 'Int'
 
 KtNameReferenceExpression(1170,1173): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtCallableReferenceExpression(1179,1196): '::generic<Int>(1)'
@@ -1132,7 +1132,7 @@ KtCallableReferenceExpression(1179,1196): '::generic<Int>(1)'
 
 KtNameReferenceExpression(1181,1188): 'generic'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/generic(x: T): T
@@ -1150,7 +1150,7 @@ KtUserType(1189,1192): 'Int'
 
 KtNameReferenceExpression(1189,1192): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtValueArgumentList(1193,1196): '(1)'
@@ -1174,7 +1174,7 @@ KtCallExpression(1201,1219): 'GenericHolder<Int>'
 
 KtNameReferenceExpression(1201,1214): 'GenericHolder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/GenericHolder
@@ -1200,7 +1200,7 @@ KtUserType(1215,1218): 'Int'
 
 KtNameReferenceExpression(1215,1218): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1208,7 +1208,7 @@ KtNameReferenceExpression(1215,1218): 'Int'
 
 KtNameReferenceExpression(1221,1228): 'generic'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
@@ -1226,7 +1226,7 @@ KtUserType(1229,1235): 'String'
 
 KtNameReferenceExpression(1229,1235): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtCallableReferenceExpression(1241,1297): 'GenericHolder<Int>::generic<String>(GenericHolder(), "")'
@@ -1241,7 +1241,7 @@ KtCallExpression(1241,1259): 'GenericHolder<Int>'
 
 KtNameReferenceExpression(1241,1254): 'GenericHolder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/GenericHolder
@@ -1267,7 +1267,7 @@ KtUserType(1255,1258): 'Int'
 
 KtNameReferenceExpression(1255,1258): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1275,7 +1275,7 @@ KtNameReferenceExpression(1255,1258): 'Int'
 
 KtNameReferenceExpression(1261,1268): 'generic'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/GenericHolder.generic(<dispatch receiver>: pack.GenericHolder<T>, x: U): T
@@ -1293,7 +1293,7 @@ KtUserType(1269,1275): 'String'
 
 KtNameReferenceExpression(1269,1275): 'String'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtValueArgumentList(1276,1297): '(GenericHolder(), "")'
@@ -1311,7 +1311,7 @@ KtCallExpression(1277,1292): 'GenericHolder()'
 
 KtNameReferenceExpression(1277,1290): 'GenericHolder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       <constructor>(): pack.GenericHolder<T>
@@ -1338,7 +1338,7 @@ KtCallExpression(1302,1320): 'GenericHolder<Int>'
 
 KtNameReferenceExpression(1302,1315): 'GenericHolder'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/GenericHolder
@@ -1364,7 +1364,7 @@ KtUserType(1316,1319): 'Int'
 
 KtNameReferenceExpression(1316,1319): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int
@@ -1372,7 +1372,7 @@ KtNameReferenceExpression(1316,1319): 'Int'
 
 KtNameReferenceExpression(1322,1330): 'property'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val property: T
@@ -1396,7 +1396,7 @@ KtCallableReferenceExpression(1384,1397): '::withContext'
 
 KtNameReferenceExpression(1386,1397): 'withContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
@@ -1412,7 +1412,7 @@ KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
 
 KtNameReferenceExpression(1404,1415): 'withContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
@@ -1433,7 +1433,7 @@ KtCallExpression(1416,1431): 'LoggerContext()'
 
 KtNameReferenceExpression(1416,1429): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -1457,7 +1457,7 @@ KtCallableReferenceExpression(1440,1461): '::withContextProperty'
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       val withContextProperty: kotlin.Int
@@ -1473,7 +1473,7 @@ KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext()
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       val withContextProperty: kotlin.Int
@@ -1494,7 +1494,7 @@ KtCallExpression(1488,1503): 'LoggerContext()'
 
 KtNameReferenceExpression(1488,1501): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -1529,7 +1529,7 @@ KtUserType(1519,1532): 'LoggerContext'
 
 KtNameReferenceExpression(1519,1532): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -1549,7 +1549,7 @@ KtCallableReferenceExpression(1595,1608): '::withContext'
 
 KtNameReferenceExpression(1597,1608): 'withContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
@@ -1563,7 +1563,7 @@ KtCallableReferenceExpression(1613,1646): '::withContext(LoggerContext(), 1)'
 
 KtNameReferenceExpression(1615,1626): 'withContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
@@ -1583,7 +1583,7 @@ KtCallExpression(1627,1642): 'LoggerContext()'
 
 KtNameReferenceExpression(1627,1640): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext
@@ -1606,7 +1606,7 @@ KtCallableReferenceExpression(1651,1672): '::withContextProperty'
 
 KtNameReferenceExpression(1653,1672): 'withContextProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val withContextProperty: kotlin.Int
@@ -1620,7 +1620,7 @@ KtCallableReferenceExpression(1677,1715): '::withContextProperty(LoggerContext()
 
 KtNameReferenceExpression(1679,1698): 'withContextProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       val withContextProperty: kotlin.Int
@@ -1640,7 +1640,7 @@ KtCallExpression(1699,1714): 'LoggerContext()'
 
 KtNameReferenceExpression(1699,1712): 'LoggerContext'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       pack/LoggerContext

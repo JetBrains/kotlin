@@ -1295,8 +1295,38 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        message = "Use `contextSensitiveResolutionStatus` instead",
+        replaceWith = ReplaceWith(
+            "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
+            "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
+        ),
+    )
     @KaExperimentalApi
     public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+
+    /**
+     * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
+     * whether the name is already resolved through context-sensitive resolution.
+     *
+     * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
+     *
+     * #### Example
+     *
+     * ```
+     * enum class Foo { BAR }
+     *
+     * fun usage(foo: Foo) {}
+     *
+     * fun main() {
+     *     usage(BAR) // 'BAR' is resolved against the expected type 'Foo' -> KaContextSensitiveResolutionStatus.Used
+     * }
+     * ```
+     *
+     * @see KaContextSensitiveResolutionStatus
+     */
+    @KaExperimentalApi
+    public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
 
     /**
      * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
@@ -2955,11 +2985,46 @@ public val KtReference.usesContextSensitiveResolution: Boolean
  * ```
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use `contextSensitiveResolutionStatus` instead",
+    replaceWith = ReplaceWith(
+        "this.contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used",
+        "org.jetbrains.kotlin.analysis.api.resolution.KaContextSensitiveResolutionStatus",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
 public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
+    @Suppress("DEPRECATION")
     get() = with(session) { usesContextSensitiveResolution }
+
+/**
+ * The [context-sensitive resolution](https://github.com/Kotlin/KEEP/issues/379) status of the [KtSimpleNameExpression]:
+ * whether the name is already resolved through context-sensitive resolution.
+ *
+ * The information is available even when the `-Xcontext-sensitive-resolution` feature is not enabled.
+ *
+ * #### Example
+ *
+ * ```
+ * enum class Foo { BAR }
+ *
+ * fun usage(foo: Foo) {}
+ *
+ * fun main() {
+ *     usage(BAR) // 'BAR' is resolved against the expected type 'Foo' -> KaContextSensitiveResolutionStatus.Used
+ * }
+ * ```
+ *
+ * @see KaContextSensitiveResolutionStatus
+ */
+// Auto-generated bridge. DO NOT EDIT MANUALLY!
+@KaExperimentalApi
+@KaContextParameterApi
+context(session: KaSession)
+public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
+    get() = with(session) { contextSensitiveResolutionStatus }
 
 /**
  * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with

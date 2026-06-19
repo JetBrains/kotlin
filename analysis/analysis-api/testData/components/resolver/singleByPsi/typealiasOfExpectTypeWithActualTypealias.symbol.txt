@@ -5,7 +5,7 @@ jvm - Jvm.kt:
   <caret_return>:
     KtNameReferenceExpression(182,204): 'ExpectClassCommonAlias'
       isImplicitReferenceToCompanion: false
-      usesContextSensitiveResolution: false
+      contextSensitiveResolutionStatus: NotAvailable
       KaSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias
@@ -14,7 +14,7 @@ jvm - Jvm.kt:
   <caret_instanceCheck>:
     KtNameReferenceExpression(225,247): 'ExpectClassCommonAlias'
       isImplicitReferenceToCompanion: false
-      usesContextSensitiveResolution: false
+      contextSensitiveResolutionStatus: NotAvailable
       KaSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias
@@ -23,7 +23,7 @@ jvm - Jvm.kt:
   <caret_typeArg>:
     KtNameReferenceExpression(272,294): 'ExpectClassCommonAlias'
       isImplicitReferenceToCompanion: false
-      usesContextSensitiveResolution: false
+      contextSensitiveResolutionStatus: NotAvailable
       KaSymbolResolutionSuccess:
         symbols = [
           /ExpectClassCommonAlias

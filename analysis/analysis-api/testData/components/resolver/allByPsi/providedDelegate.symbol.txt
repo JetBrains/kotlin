@@ -6,7 +6,7 @@ KtPackageDirective(17,31): 'package myPack'
 
 KtNameReferenceExpression(25,31): 'myPack'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       myPack
@@ -26,7 +26,7 @@ KtDotQualifiedExpression(40,54): 'kotlin.reflect'
 
 KtNameReferenceExpression(40,46): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -34,7 +34,7 @@ KtNameReferenceExpression(40,46): 'kotlin'
 
 KtNameReferenceExpression(47,54): 'reflect'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.reflect
@@ -42,7 +42,7 @@ KtNameReferenceExpression(47,54): 'reflect'
 
 KtNameReferenceExpression(55,64): 'KProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
@@ -59,7 +59,7 @@ KtDotQualifiedExpression(72,89): 'kotlin.properties'
 
 KtNameReferenceExpression(72,78): 'kotlin'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin
@@ -67,7 +67,7 @@ KtNameReferenceExpression(72,78): 'kotlin'
 
 KtNameReferenceExpression(79,89): 'properties'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin.properties
@@ -75,7 +75,7 @@ KtNameReferenceExpression(79,89): 'properties'
 
 KtNameReferenceExpression(90,106): 'ReadOnlyProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/properties/ReadOnlyProperty
@@ -125,7 +125,7 @@ KtUserType(172,175): 'Any'
 
 KtNameReferenceExpression(172,175): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -148,7 +148,7 @@ KtUserType(188,200): 'KProperty<*>'
 
 KtNameReferenceExpression(188,197): 'KProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
@@ -174,7 +174,7 @@ KtUserType(203,228): 'ReadOnlyProperty<Any?, T>'
 
 KtNameReferenceExpression(203,219): 'ReadOnlyProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/properties/ReadOnlyProperty
@@ -206,7 +206,7 @@ KtUserType(220,223): 'Any'
 
 KtNameReferenceExpression(220,223): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -229,7 +229,7 @@ KtUserType(226,227): 'T'
 
 KtNameReferenceExpression(226,227): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -252,7 +252,7 @@ KtCallExpression(246,258): 'MyDelegate()'
 
 KtNameReferenceExpression(246,256): 'MyDelegate'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       myPack/MyDelegate
@@ -293,7 +293,7 @@ KtUserType(290,315): 'ReadOnlyProperty<Any?, T>'
 
 KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/properties/ReadOnlyProperty
@@ -325,7 +325,7 @@ KtUserType(307,310): 'Any'
 
 KtNameReferenceExpression(307,310): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -348,7 +348,7 @@ KtUserType(313,314): 'T'
 
 KtNameReferenceExpression(313,314): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -389,7 +389,7 @@ KtUserType(353,356): 'Any'
 
 KtNameReferenceExpression(353,356): 'Any'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Any
@@ -412,7 +412,7 @@ KtUserType(369,381): 'KProperty<*>'
 
 KtNameReferenceExpression(369,378): 'KProperty'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/reflect/KProperty
@@ -438,7 +438,7 @@ KtUserType(384,385): 'T'
 
 KtNameReferenceExpression(384,385): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -461,7 +461,7 @@ KtConstantExpression(403,407): 'null'
 
 KtOperationReferenceExpression(408,410): 'as'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   null
 
 KtTypeReference(411,412): 'T'
@@ -478,7 +478,7 @@ KtUserType(411,412): 'T'
 
 KtNameReferenceExpression(411,412): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       T
@@ -502,7 +502,7 @@ KtCallExpression(446,463): 'ResourceID<Int>()'
 
 KtNameReferenceExpression(446,456): 'ResourceID'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       myPack/ResourceID
@@ -528,7 +528,7 @@ KtUserType(457,460): 'Int'
 
 KtNameReferenceExpression(457,460): 'Int'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/Int

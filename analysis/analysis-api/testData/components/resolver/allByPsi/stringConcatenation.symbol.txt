@@ -39,7 +39,7 @@ KtLiteralStringTemplateEntry(31,32): '1'
 
 KtOperationReferenceExpression(34,35): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String
@@ -53,7 +53,7 @@ KtLiteralStringTemplateEntry(37,38): '2'
 
 KtOperationReferenceExpression(40,41): '+'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       kotlin/String.plus(<dispatch receiver>: kotlin.String, other: kotlin.Any?): kotlin.String

@@ -6,7 +6,7 @@ KtPackageDirective(0,11): 'package bar'
 
 KtNameReferenceExpression(8,11): 'bar'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       bar
@@ -41,7 +41,7 @@ KtUserType(54,65): 'MyInterface'
 
 KtNameReferenceExpression(54,65): 'MyInterface'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       bar/MyInterface
@@ -82,7 +82,7 @@ KtUserType(92,93): 'T'
 
 KtNameReferenceExpression(92,93): 'T'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionError:
     candidateSymbols = [
       T

@@ -1,6 +1,6 @@
 KtNameReferenceExpression(108,143): 'generatedTopLevelExtensionFunction1'
   isImplicitReferenceToCompanion: false
-  usesContextSensitiveResolution: false
+  contextSensitiveResolutionStatus: NotAvailable
   KaSymbolResolutionSuccess:
     symbols = [
       generated/generatedTopLevelExtensionFunction1(<extension receiver>: kotlin.String, boolean: kotlin.Boolean): kotlin.Int
