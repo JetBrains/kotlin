@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
@@ -56,7 +58,9 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
                 }
             )
 
-            // TODO: KT-86707 Report warning if test framework was set with something else.
+            if (testTask.testFramework != null) {
+                project.reportDiagnostic(KotlinToolingDiagnostics.DuplicateJsBrowserTestFrameworkConfiguration())
+            }
             testTask.testFramework = KotlinPlaywrightJsTestFramework(
                 compilation = testCompilation,
                 frameworkTaskInputs = inputs,

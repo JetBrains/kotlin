@@ -2361,6 +2361,21 @@ internal object KotlinToolingDiagnostics {
             }
         }
     }
+
+    internal object DuplicateJsBrowserTestFrameworkConfiguration : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke() = build {
+            title { "Duplicate JS browser test framework configuration" }
+                .description {
+                    "JS browser test framework has been configured using both the new test {} DSL and the old testTask {} " +
+                            "DSL. The behavior in this scenario is undefined."
+                }
+                .solution { "Please use either the old DSL or the new one, but not both" }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
