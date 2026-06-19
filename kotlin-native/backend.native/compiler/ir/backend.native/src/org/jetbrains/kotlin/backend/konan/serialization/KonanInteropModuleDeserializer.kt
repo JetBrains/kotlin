@@ -102,6 +102,33 @@ class CInteropKlibMetadata2IRTransformer {
         val doubleType = doubleClass.defaultTypeWithoutArguments
         val stringType = stringClass.defaultTypeWithoutArguments
     }
+
+    /** Used to track the declarations that were deserialized during conversion from kotlinx-metadata to IR. */
+    open class DeclarationTracker {
+        /** The cache of the deserialized declarations. */
+        val deserializedDeclarations: Map<IdSignature, IrDeclaration>
+                field = mutableMapOf<IdSignature, IrDeclaration>()
+
+        open fun onNewClass(clazz: IrClass) {
+            deserializedDeclarations[clazz.symbol.signature!!] = clazz
+        }
+
+        fun onNewEnumEntry(enumEntry: IrEnumEntry) {
+            deserializedDeclarations[enumEntry.symbol.signature!!] = enumEntry
+        }
+
+        fun onNewFunction(function: IrSimpleFunction) {
+            deserializedDeclarations[function.symbol.signature!!] = function
+        }
+
+        fun onNewProperty(property: IrProperty) {
+            deserializedDeclarations[property.symbol.signature!!] = property
+        }
+
+        fun onNewClassConstructor(constructor: IrConstructor) {
+            deserializedDeclarations[constructor.symbol.signature!!] = constructor
+        }
+    }
 }
 
 /**
@@ -141,11 +168,18 @@ internal class KonanInteropModuleDeserializer(
 
     override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor)
-    private val deserializedDeclarations = hashMapOf<IdSignature, IrDeclaration>()
     private var externalIrPackageFragment: IrExternalPackageFragment? = null
     private var typeDefinitionsIrFile: IrFile? = null
 
     private val symbols = CInteropKlibMetadata2IRTransformer.ExternalSymbols(symbolTable)
+
+    /** The cache of the declarations deserialized by the current deserializer. */
+    private val declarationTracker = object : CInteropKlibMetadata2IRTransformer.DeclarationTracker() {
+        override fun onNewClass(clazz: IrClass) {
+            super.onNewClass(clazz)
+            linker.fakeOverrideBuilder.enqueueClass(clazz, clazz.symbol.signature!!, CompatibilityMode.CURRENT)
+        }
+    }
 
     private fun IdSignature.isInteropSignature() = IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.test()
 
@@ -187,7 +221,7 @@ internal class KonanInteropModuleDeserializer(
     }
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-        deserializedDeclarations[idSig]?.let {
+        declarationTracker.deserializedDeclarations[idSig]?.let {
             // The signature may have been already deserialized, just return it.
             return it.symbol
         }
@@ -238,7 +272,7 @@ internal class KonanInteropModuleDeserializer(
         }
 
         // If the deserialization process above found a declaration with the requested signature, it should store it in this map.
-        deserializedDeclarations[idSig]?.let {
+        declarationTracker.deserializedDeclarations[idSig]?.let {
             return it.symbol
         }
 
@@ -265,23 +299,22 @@ internal class KonanInteropModuleDeserializer(
         }
 
         val signature = signatureComputer.computeSignature(declaration)
-        deserializedDeclarations[signature] = declaration
         when (declaration) {
             is IrFunctionWithLateBinding -> symbolTable.declareSimpleFunction(
                     signature = signature,
                     symbolFactory = { IrSimpleFunctionSymbolImpl(signature = signature) },
-                    functionFactory = { declaration.acquireSymbol(it) }
+                    functionFactory = { declaration.acquireSymbol(it).also(declarationTracker::onNewFunction) }
             )
             is IrConstructorWithLateBinding -> symbolTable.declareConstructor(
                     signature = signature,
                     symbolFactory = { IrConstructorSymbolImpl(signature = signature) },
-                    constructorFactory = { declaration.acquireSymbol(it) }
+                    constructorFactory = { declaration.acquireSymbol(it).also(declarationTracker::onNewClassConstructor) }
             )
             is IrPropertyWithLateBinding -> {
                 symbolTable.declareProperty(
                         signature = signature,
                         symbolFactory = { IrPropertySymbolImpl(signature = signature) },
-                        propertyFactory = { declaration.acquireSymbol(it) }
+                        propertyFactory = { declaration.acquireSymbol(it).also(declarationTracker::onNewProperty) }
                 )
 
                 declaration.getter?.let(::computeSignatureAndRegisterInSymbolTable)
@@ -371,9 +404,8 @@ internal class KonanInteropModuleDeserializer(
                     isData = kmClass.isData,
                     isFun = kmClass.isFunInterface,
                     hasEnumEntries = kmClass.hasEnumEntries,
-            )
+            ).also(declarationTracker::onNewClass)
         }
-        deserializedDeclarations[signature] = clazz
 
         clazz.annotations = kmClass.annotations.map { deserializeAnnotation(it) }
         clazz.superTypes = if (kmClass.supertypes.isNotEmpty()) {
@@ -417,7 +449,6 @@ internal class KonanInteropModuleDeserializer(
             computeSignatureAndRegisterInSymbolTable(member as IrDeclarationWithName)
         }
 
-        linker.fakeOverrideBuilder.enqueueClass(clazz, signature, CompatibilityMode.CURRENT)
         return clazz
     }
 
@@ -434,9 +465,8 @@ internal class KonanInteropModuleDeserializer(
                     origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
                     name = Name.identifier(kmEnumEntry.name),
                     symbol = symbol,
-            )
+            ).also(declarationTracker::onNewEnumEntry)
         }
-        deserializedDeclarations[signature] = enumEntry
 
         enumEntry.annotations = kmEnumEntry.annotations.map { deserializeAnnotation(it) }
 
