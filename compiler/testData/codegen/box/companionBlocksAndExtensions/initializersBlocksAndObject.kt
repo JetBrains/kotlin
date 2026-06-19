@@ -5,24 +5,15 @@ var initOrder = ""
 
 class C {
     companion {
-        val blockProp1: String = run {
-            initOrder += "1"
-            "block1"
-        }
+        val blockProp1: String = run { initOrder += "1"; "block1" }
     }
 
     companion object {
-        val objectProp: String = run {
-            initOrder += "2"
-            "object"
-        }
+        val objectProp: String = run { initOrder += "2"; "object" }
     }
 
     companion {
-        val blockProp2: String = run {
-            initOrder += "3"
-            "block2"
-        }
+        val blockProp2: String = run { initOrder += "3"; "block2" }
     }
 }
 

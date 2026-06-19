@@ -5,24 +5,15 @@ var initOrder = ""
 
 class C {
     companion {
-        val blockProp1: String = run {
-            initOrder += "B1"
-            "block1"
-        }
+        val blockProp1: String = run { initOrder += "B1 "; "block1" }
     }
 
     companion object {
-        val objectProp: String = run {
-            initOrder += "O"
-            "object"
-        }
+        val objectProp: String = run { initOrder += "O "; "object" }
     }
 
     companion {
-        val blockProp2: String = run {
-            initOrder += "B2"
-            "block2"
-        }
+        val blockProp2: String = run { initOrder += "B2 "; "block2" }
     }
 }
 
@@ -40,7 +31,7 @@ fun box(): String {
     if (C.blockProp2 != "block2") return "FAIL: blockProp2=${C.blockProp2}"
 
     // All initializers ran in program order
-    if (initOrder != "B1OB2") return "FAIL: initOrder=$initOrder"
+    if (initOrder != "B1 O B2 ") return "FAIL: initOrder=$initOrder"
 
     return "OK"
 }

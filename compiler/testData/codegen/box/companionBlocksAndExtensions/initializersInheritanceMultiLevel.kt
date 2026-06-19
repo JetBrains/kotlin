@@ -5,43 +5,22 @@ var initOrder = ""
 
 open class Grandparent {
     companion {
-        val gpProp1: String = run {
-            initOrder += "GP1"
-            "gp1"
-        }
-
-        val gpProp2: String = run {
-            initOrder += "GP2"
-            "gp2"
-        }
+        val gpProp1: String = run { initOrder += "GP1 "; "gp1" }
+        val gpProp2: String = run { initOrder += "GP2 "; "gp2" }
     }
 }
 
 open class Parent : Grandparent() {
     companion {
-        val parentProp1: String = run {
-            initOrder += "P1"
-            "p1"
-        }
-
-        val parentProp2: String = run {
-            initOrder += "P2"
-            "p2"
-        }
+        val parentProp1: String = run { initOrder += "P1 "; "p1" }
+        val parentProp2: String = run { initOrder += "P2 "; "p2" }
     }
 }
 
 class Child : Parent() {
     companion {
-        val childProp1: String = run {
-            initOrder += "C1"
-            "c1"
-        }
-
-        val childProp2: String = run {
-            initOrder += "C2"
-            "c2"
-        }
+        val childProp1: String = run { initOrder += "C1 "; "c1" }
+        val childProp2: String = run { initOrder += "C2 "; "c2" }
     }
 }
 
@@ -57,7 +36,7 @@ fun box(): String {
     if (c1 != "c1") return "FAIL: childProp1=$c1"
     if (Child.childProp2 != "c2") return "FAIL: childProp2=${Child.childProp2}"
 
-    if (initOrder != "GP1GP2P1P2C1C2") return "FAIL: initOrder=$initOrder"
+    if (initOrder != "GP1 GP2 P1 P2 C1 C2 ") return "FAIL: initOrder=$initOrder"
 
     return "OK"
 }

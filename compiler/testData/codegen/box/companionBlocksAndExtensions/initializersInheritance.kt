@@ -5,29 +5,15 @@ var initOrder = ""
 
 open class Parent {
     companion {
-        val parentProp1: String = run {
-            initOrder += "P1"
-            "parent1"
-        }
-
-        val parentProp2: String = run {
-            initOrder += "P2"
-            "parent2"
-        }
+        val parentProp1: String = run { initOrder += "P1 "; "parent1" }
+        val parentProp2: String = run { initOrder += "P2 "; "parent2" }
     }
 }
 
 class Child : Parent() {
     companion {
-        val childProp1: String = run {
-            initOrder += "C1"
-            "child1"
-        }
-
-        val childProp2: String = run {
-            initOrder += "C2"
-            "child2"
-        }
+        val childProp1: String = run { initOrder += "C1 "; "child1" }
+        val childProp2: String = run { initOrder += "C2 "; "child2" }
     }
 }
 
@@ -47,7 +33,7 @@ fun box(): String {
     if (Child.childProp2 != "child2") return "FAIL: childProp2=${Child.childProp2}"
 
     // Parent initializers run before child initializers, both in program order
-    if (initOrder != "P1P2C1C2") return "FAIL: initOrder=$initOrder"
+    if (initOrder != "P1 P2 C1 C2 ") return "FAIL: initOrder=$initOrder"
 
     return "OK"
 }
