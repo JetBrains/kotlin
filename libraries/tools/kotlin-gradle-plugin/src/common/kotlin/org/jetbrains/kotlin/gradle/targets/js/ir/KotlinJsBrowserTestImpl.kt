@@ -128,7 +128,7 @@ internal abstract class KotlinJsBrowserTestImpl
         .apply {
             testsLocation.convention(defaultTestsLocation)
             headless.convention(true)
-            timeout.convention(Duration.ofSeconds(2))
+            timeout.convention(Duration.ofMinutes(2))
         }
 
     override fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>) =
