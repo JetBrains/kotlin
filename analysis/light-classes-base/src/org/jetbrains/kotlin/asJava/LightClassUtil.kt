@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@Suppress("DEPRECATION")
+@Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
 @OptIn(IntellijInternalApi::class)
 object LightClassUtil {
 
@@ -311,6 +313,8 @@ object LightClassUtil {
     }
 }
 
+@Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")
+@Suppress("DEPRECATION")
 fun KtNamedDeclaration.getAccessorLightMethods(): LightClassUtil.PropertyAccessorsPsiMethods {
     return when (this) {
         is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this)
