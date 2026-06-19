@@ -10,7 +10,8 @@ enum class ArithmeticType {
         DOUBLE -> HairType.DOUBLE
     }
 
-    val isIntegral get() = toHairType().isIntegral
+    val isIntegral
+        get() = toHairType().isIntegral
 }
 
 fun HairType.asArithmeticType(): ArithmeticType =

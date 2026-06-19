@@ -25,7 +25,7 @@ class GCMTest : IrTest {
 
         buildInitialIR {
             val obj = Param(0)
-            val value = ConstI(42)
+            val value = Const(42)
             store = StoreField(field)(obj, value) as StoreField
             load = LoadField(field)(obj) as LoadField
             Return(load)
@@ -54,7 +54,7 @@ class GCMTest : IrTest {
 
         buildInitialIR {
             load = LoadGlobal(global) as LoadGlobal
-            val inc = Add(ArithmeticType.INT)(load, ConstI(1))
+            val inc = Add(ArithmeticType.INT)(load, Const(1))
             store = StoreGlobal(global)(inc) as StoreGlobal
             ReturnVoid()
         }

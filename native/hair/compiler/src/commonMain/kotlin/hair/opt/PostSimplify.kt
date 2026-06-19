@@ -73,11 +73,11 @@ fun Session.simplify(): Boolean {
             }
 
             override fun visitIf(node: If) {
-                val constCond = (node.cond as? ConstI) ?: return
+                val constCond = (node.cond as? ConstBoolean) ?: return
 
                 changed = true
 
-                val [takenExit, droppedExit] = if (constCond.value == 0) {
+                val [takenExit, droppedExit] = if (!constCond.value) {
                     node.falseExit to node.trueExit
                 } else {
                     node.trueExit to node.falseExit

@@ -27,8 +27,8 @@ object Memory : ModelDSL() {
     }
 
     val store by node(directMemoryOp) {
-        interfaces(anyLoad)
-        // param("value")
+        interfaces(anyStore)
+        param("value")
     }
 
 

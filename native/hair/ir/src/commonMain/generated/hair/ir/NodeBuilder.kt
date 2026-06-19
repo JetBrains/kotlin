@@ -132,43 +132,22 @@ context(nodeBuilder: NodeBuilder)
 fun Catch(unwind: Node?): Node = nodeBuilder.onNodeBuilt(Catch(nodeBuilder.session.catchForm, unwind))
 
 context(nodeBuilder: NodeBuilder)
-private fun ConstIForm(value: Int): ConstI.Form = ConstI.Form(nodeBuilder.session.constIMetaForm, value).ensureFormUniq()
+private fun ConstForm(value: Number): Const.Form = Const.Form(nodeBuilder.session.constMetaForm, value).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun ConstI.Form.invoke(): ConstI = nodeBuilder.onNodeBuilt(ConstI(this@invoke)) as ConstI
+operator fun Const.Form.invoke(): Const = nodeBuilder.onNodeBuilt(Const(this@invoke)) as Const
 
 context(nodeBuilder: NodeBuilder)
-fun ConstI(value: Int): ConstI = ConstIForm(value)()
-
-context(nodeBuilder: NodeBuilder)
-private fun ConstLForm(value: Long): ConstL.Form = ConstL.Form(nodeBuilder.session.constLMetaForm, value).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun ConstL.Form.invoke(): ConstL = nodeBuilder.onNodeBuilt(ConstL(this@invoke)) as ConstL
-
-context(nodeBuilder: NodeBuilder)
-fun ConstL(value: Long): ConstL = ConstLForm(value)()
-
-context(nodeBuilder: NodeBuilder)
-private fun ConstFForm(value: Float): ConstF.Form = ConstF.Form(nodeBuilder.session.constFMetaForm, value).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun ConstF.Form.invoke(): ConstF = nodeBuilder.onNodeBuilt(ConstF(this@invoke)) as ConstF
-
-context(nodeBuilder: NodeBuilder)
-fun ConstF(value: Float): ConstF = ConstFForm(value)()
-
-context(nodeBuilder: NodeBuilder)
-private fun ConstDForm(value: Double): ConstD.Form = ConstD.Form(nodeBuilder.session.constDMetaForm, value).ensureFormUniq()
-
-context(nodeBuilder: NodeBuilder)
-operator fun ConstD.Form.invoke(): ConstD = nodeBuilder.onNodeBuilt(ConstD(this@invoke)) as ConstD
-
-context(nodeBuilder: NodeBuilder)
-fun ConstD(value: Double): ConstD = ConstDForm(value)()
+fun Const(value: Number): Const = ConstForm(value)()
 
 context(nodeBuilder: NodeBuilder)
 fun Null(): Null = nodeBuilder.onNodeBuilt(Null(nodeBuilder.session.nullForm)) as Null
+
+context(nodeBuilder: NodeBuilder)
+fun True(): True = nodeBuilder.onNodeBuilt(True(nodeBuilder.session.trueForm)) as True
+
+context(nodeBuilder: NodeBuilder)
+fun False(): False = nodeBuilder.onNodeBuilt(False(nodeBuilder.session.falseForm)) as False
 
 context(nodeBuilder: NodeBuilder)
 fun Add(opType: ArithmeticType): Add.Form = Add.Form(nodeBuilder.session.addMetaForm, opType).ensureFormUniq()
@@ -339,10 +318,10 @@ context(nodeBuilder: NodeBuilder)
 fun Store(type: HairType): Store.Form = Store.Form(nodeBuilder.session.storeMetaForm, type).ensureFormUniq()
 
 context(nodeBuilder: NodeBuilder)
-operator fun Store.Form.invoke(control: Controlling?, location: Node?): Controlling = nodeBuilder.onNodeBuilt(Store(this@invoke, control, location)) as Controlling
+operator fun Store.Form.invoke(control: Controlling?, location: Node?, value: Node?): Controlling = nodeBuilder.onNodeBuilt(Store(this@invoke, control, location, value)) as Controlling
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-operator fun Store.Form.invoke(location: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location) }
+operator fun Store.Form.invoke(location: Node?, value: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, location, value) }
 
 context(nodeBuilder: NodeBuilder)
 fun LoadField(field: Field): LoadField.Form = LoadField.Form(nodeBuilder.session.loadFieldMetaForm, field).ensureFormUniq()
