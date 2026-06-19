@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.konan.util.DependencyExtractor
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.FileAlreadyExistsException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {
@@ -120,24 +123,58 @@ internal abstract class NativeVersionValueSource :
             fromDirectory: File,
             toDirectory: File,
         ) {
-            logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.absolutePath}")
-            if (!toDirectory.list().isNullOrEmpty()) {
-                logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
+            logger.info("Installing Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
+
+            // Fast path: another process/daemon already installed this bundle.
+            if (toDirectory.resolve(MARKER_FILE).exists()) {
+                logger.info("Kotlin/Native bundle already installed at ${toDirectory.absolutePath}")
+                return
             }
-            unzipTo(fromDirectory, toDirectory.parentFile)
 
-            checkKotlinNativeVersionWasDownloaded(toDirectory)
+            val tmpParent = Files.createTempDirectory(
+                toDirectory.parentFile.toPath(),
+                "${toDirectory.name}.tmp."
+            ).toFile()
 
-            createSuccessfulInstallationFile(toDirectory)
+            try {
+                unzipTo(fromDirectory, tmpParent)
 
-            logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
+                val extractedDir = tmpParent.listFiles()?.singleOrNull()
+                    ?: error("Kotlin/Native bundle archive $fromDirectory did not contain a single top-level directory")
+
+                checkKotlinNativeVersionWasDownloaded(extractedDir)
+                createSuccessfulInstallationFile(extractedDir)
+
+                // The caller holds NativeDistributionCommonizerLock, so no other writer races here.
+                if (toDirectory.exists()) {
+                    if (toDirectory.resolve(MARKER_FILE).exists()) {
+                        logger.info("Kotlin/Native bundle already installed at ${toDirectory.absolutePath}")
+                        return
+                    }
+                    toDirectory.deleteRecursively()
+                }
+
+                try {
+                    Files.move(
+                        extractedDir.toPath(),
+                        toDirectory.toPath(),
+                        StandardCopyOption.ATOMIC_MOVE,
+                    )
+                } catch (e: FileAlreadyExistsException) {
+                    if (!toDirectory.resolve(MARKER_FILE).exists()) {
+                        error("Failed to install Kotlin/Native bundle to ${toDirectory.absolutePath}")
+                    }
+                }
+
+                logger.info("Installed Kotlin/Native bundle at ${toDirectory.absolutePath}")
+            } finally {
+                tmpParent.deleteRecursively()
+            }
         }
 
-        private fun checkKotlinNativeVersionWasDownloaded(
-            gradleKotlinNativeDir: File,
-        ) {
-            //check that native was actually downloaded and unpacked and there is something except .lock file
-            if (!gradleKotlinNativeDir.exists() || (gradleKotlinNativeDir.list().size <= 1)) {
+        private fun checkKotlinNativeVersionWasDownloaded(extractedDir: File) {
+            // extractedDir is a temp directory, so it has no .lock file to ignore.
+            if (!extractedDir.exists() || extractedDir.list().isNullOrEmpty()) {
                 error(
                     "Kotlin Native bundle dependency was used. " +
                             "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."

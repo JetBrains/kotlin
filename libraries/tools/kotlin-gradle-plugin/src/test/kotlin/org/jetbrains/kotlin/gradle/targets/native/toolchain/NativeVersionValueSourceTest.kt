@@ -21,6 +21,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NativeVersionValueSourceTest : WithTemporaryFolder {
@@ -39,6 +40,19 @@ class NativeVersionValueSourceTest : WithTemporaryFolder {
         assertEquals("class A {}", versionDir.resolve("A.kt").toFile().readText())
         assertTrue("File B.kt should be copied from directory") { versionDir.resolve("B.kt").exists() }
         assertTrue("Marker file should be created") { versionDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }
+    }
+
+    @Test
+    fun testSkipWhenAlreadyInstalled() {
+        val nativeDir = newTempDirectory().resolve("native_dir").also { it.createDirectories() }
+        val versionDir = nativeDir.resolve("version").also { it.createDirectory() }
+        versionDir.resolve("C.kt").createFile()
+        versionDir.resolve(NativeVersionValueSource.MARKER_FILE).createFile()
+
+        NativeVersionValueSource.copyNativeBundleDistribution(createTarGz(), versionDir.toFile())
+
+        assertTrue("Existing file should be preserved") { versionDir.resolve("C.kt").exists() }
+        assertFalse("Archive content should not overwrite an installed bundle") { versionDir.resolve("B.kt").exists() }
     }
 
     private fun createTarGz(): File {
