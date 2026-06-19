@@ -113,6 +113,15 @@ class Strings {
     }
 
     @Sample
+    fun elementAtOrElse() {
+        val phone = "+263783"
+        assertPrints(phone.elementAtOrElse(0) { 'X' }, "+")
+        assertPrints(phone.elementAtOrElse(2) { 'X' }, "6")
+        assertPrints(phone.elementAtOrElse(8) { 'X' }, "X")
+        assertPrints("".elementAtOrElse(0) { 'X' }, "X")
+    }
+
+    @Sample
     fun filter() {
         val text = "a1b2c3d4e5"
 

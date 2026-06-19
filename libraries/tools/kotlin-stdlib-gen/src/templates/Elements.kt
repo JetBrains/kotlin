@@ -400,6 +400,9 @@ object Elements : TemplateGroupBase() {
                 """
             }
         }
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.elementAtOrElse")
+        }
     }
 
     val f_getOrElse = fn("getOrElse(index: Int, defaultValue: (Int) -> T)") {
