@@ -1404,6 +1404,14 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaStarTy
 	public fun getType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy : java/lang/Enum {
+	public static final field LENIENT Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;
+	public static final field STRICT Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;
+	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaType : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getAbbreviation ()Lorg/jetbrains/kotlin/analysis/api/types/KaUsualClassType;
 	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
@@ -1464,13 +1472,13 @@ public abstract class org/jetbrains/kotlin/analysis/api/types/KaUsualClassType :
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeRelationsKt {
 	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;)Z
-	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
+	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;)Z
 	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
+	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;)Z
 	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
-	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
+	public static final fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;)Z
 	public static final fun semanticallyEquals (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
-	public static final fun semanticallyEquals (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
+	public static final fun semanticallyEquals (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaSubtypingErrorTypePolicy;)Z
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeUtilsKt {

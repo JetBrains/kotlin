@@ -15,20 +15,26 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.analysis.api.types.isSubtypeOf as isSubtypeOfEndpoint
 import org.jetbrains.kotlin.analysis.api.types.semanticallyEquals as semanticallyEqualsEndpoint
+import org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy as KaEndpointSubtypingErrorTypePolicy
 
 @KaImplementationDetail
 internal class KaTypeRelationCheckerBridge(
     override val analysisSessionProvider: () -> KaSession,
 ) : KaBaseSessionComponent<KaSession>(), KaTypeRelationChecker {
     override fun KaType.semanticallyEquals(other: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
-        context(analysisSession) { semanticallyEqualsEndpoint(other, errorTypePolicy) }
+        context(analysisSession) { semanticallyEqualsEndpoint(other, errorTypePolicy.toEndpointPolicy()) }
 
     override fun KaType.isSubtypeOf(supertype: KaType, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
-        context(analysisSession) { isSubtypeOfEndpoint(supertype, errorTypePolicy) }
+        context(analysisSession) { isSubtypeOfEndpoint(supertype, errorTypePolicy.toEndpointPolicy()) }
 
     override fun KaType.isSubtypeOf(classId: ClassId, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
-        context(analysisSession) { isSubtypeOfEndpoint(classId, errorTypePolicy) }
+        context(analysisSession) { isSubtypeOfEndpoint(classId, errorTypePolicy.toEndpointPolicy()) }
 
     override fun KaType.isSubtypeOf(symbol: KaClassLikeSymbol, errorTypePolicy: KaSubtypingErrorTypePolicy): Boolean =
-        context(analysisSession) { isSubtypeOfEndpoint(symbol, errorTypePolicy) }
+        context(analysisSession) { isSubtypeOfEndpoint(symbol, errorTypePolicy.toEndpointPolicy()) }
+}
+
+private fun KaSubtypingErrorTypePolicy.toEndpointPolicy(): KaEndpointSubtypingErrorTypePolicy = when (this) {
+    KaSubtypingErrorTypePolicy.STRICT -> KaEndpointSubtypingErrorTypePolicy.STRICT
+    KaSubtypingErrorTypePolicy.LENIENT -> KaEndpointSubtypingErrorTypePolicy.LENIENT
 }
