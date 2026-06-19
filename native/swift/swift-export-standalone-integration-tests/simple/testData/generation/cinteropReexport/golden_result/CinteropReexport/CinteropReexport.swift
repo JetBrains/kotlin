@@ -5,6 +5,11 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.main {
+    public static func consumesBar(
+        x: any FooKit.Bar
+    ) -> Swift.Int32 {
+        return main_consumesBar__TypesOfArguments__anyU20FooKit_Bar__(x)
+    }
     public static func consumesFoo(
         x: FooKit.Foo
     ) -> Swift.Int32 {

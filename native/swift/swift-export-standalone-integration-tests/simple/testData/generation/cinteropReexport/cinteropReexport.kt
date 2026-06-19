@@ -18,6 +18,10 @@ package = foo
 - (int)someValue;
 @end
 
+@protocol Bar
+- (int)barValue;
+@end
+
 // FILE: module.modulemap
 module FooKit {
     header "Foo.h"
@@ -31,7 +35,12 @@ module FooKit {
 package main
 
 import foo.Foo
+import foo.BarProtocol
 
 fun consumesFoo(x: Foo): Int = 0
 
 fun producesFoo(): Foo? = null
+
+// The cinterop names the Objective-C protocol `Bar` as the Kotlin interface `BarProtocol`; the
+// generated Swift must reference it under its original Objective-C name `FooKit.Bar`.
+fun consumesBar(x: BarProtocol): Int = 0

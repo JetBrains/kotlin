@@ -62,6 +62,9 @@ private fun bridgeExistential(type: SirExistentialType, position: SirTypeVarianc
     if (type.protocols.singleOrNull()?.first == KotlinRuntimeSupportModule.kotlinBridgeable) {
         return AsAnyBridgeable
     }
+    if (type.protocols.singleOrNull()?.first?.parent is SirPlatformLikeModule) {
+        return AsObjCProtocol(type)
+    }
     return AsExistential(
         swiftType = type,
         KotlinType.KotlinObject,
@@ -625,6 +628,16 @@ internal sealed interface Bridge {
     class AsNSObject(
         swiftType: SirNominalType,
     ) : AsObjCBridged(swiftType, CType.NSObject) {
+        override val inSwiftSources: ValueConversion = object : ValueConversion {
+            context(session: SirSession)
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
+                "$valueExpression as! ${typeNamer.swiftFqName(swiftType)}"
+        }
+    }
+
+    class AsObjCProtocol(
+        swiftType: SirExistentialType,
+    ) : AsObjCBridged(swiftType, CType.id) {
         override val inSwiftSources: ValueConversion = object : ValueConversion {
             context(session: SirSession)
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String =
