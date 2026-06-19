@@ -2,20 +2,21 @@
 Current executable set to <path to executable>.
 (lldb) settings set stop-disassembly-display never
 (lldb) command script import <path to lldb script>
-(lldb) b main.kt:8
+(lldb) b main.kt:11
 Breakpoint 1: 2 locations.
 (lldb) r
 Process <process id> launched: <path to executable>
 Process <process id> stopped
 * thread #<thread id>, stop reason = breakpoint 1.1
-    frame #0: <frame pc> lldb_canInspectArrayChildren.kexe`kfun:#main(args=[]){} at main.kt:8:2
-   5   	fun main(args: Array<String>) {
-   6   	    val xs = intArrayOf(3, 5, 8)
-   7   	    return
--> 8   	}
+    frame #0: <frame pc> lldb_canInspectArrayChildren.kexe`kfun:#main(args=[]){} at main.kt:11:2
+   8   	fun main(args: Array<String>) {
+   9   	    val xs = intArrayOf(3, 5, 8)
+   10  	    return
+-> 11  	}
     	 ^
-   9
-   10  	data class Point(val x: Int, val y: Int)
+   12
+   13  	data class Point(val x: Int, val y: Int)
 (lldb) fr var xs
 (ObjHeader *) xs = [3, 5, 8]
 (lldb) q
+
