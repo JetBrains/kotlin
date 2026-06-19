@@ -1303,6 +1303,13 @@ extension main.InterfaceWithDeprecatedMembers where Self : main.__InterfaceWithD
     }
 }
 extension main.InterfaceWithDeprecatedMembers {
+    @available(*, deprecated, message: "Deprecated")
+    public func deprecatedWarningFunction() -> Swift.Void {
+        return { InterfaceWithDeprecatedMembers_deprecatedWarningFunction_direct(self.__externalRCRef()); return () }()
+    }
+    public func regularFunction() -> Swift.Void {
+        return { InterfaceWithDeprecatedMembers_regularFunction_direct(self.__externalRCRef()); return () }()
+    }
 }
 extension main.NonDeprecatedInterface where Self : main.__NonDeprecatedInterface {
     public func bar() -> Swift.Void {
@@ -1310,6 +1317,9 @@ extension main.NonDeprecatedInterface where Self : main.__NonDeprecatedInterface
     }
 }
 extension main.NonDeprecatedInterface {
+    public func bar() -> Swift.Void {
+        return { NonDeprecatedInterface_bar_direct(self.__externalRCRef()); return () }()
+    }
 }
 extension main.SomeInterface where Self : main.__SomeInterface {
     public var barC: Swift.String {

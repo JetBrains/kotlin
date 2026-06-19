@@ -13,9 +13,13 @@ int32_t kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20Kotl
 
 _Bool kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable__(void * self, void * value);
 
+_Bool kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable___direct(void * self, void * value);
+
 void * kotlin_ranges_ClosedRange_endInclusive_get(void * self);
 
 _Bool kotlin_ranges_ClosedRange_isEmpty(void * self);
+
+_Bool kotlin_ranges_ClosedRange_isEmpty_direct(void * self);
 
 void * kotlin_ranges_ClosedRange_start_get(void * self);
 

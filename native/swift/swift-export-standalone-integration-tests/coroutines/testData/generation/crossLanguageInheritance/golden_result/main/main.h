@@ -13,6 +13,10 @@ _Bool AsyncBase_greet__TypesOfArguments__Swift_String____reverse_swift(void * se
 
 NSString * AsyncBase_sync__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * name);
 
+_Bool AsyncDefaulter_describe__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
+
+_Bool AsyncDefaulter_tag__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
+
 _Bool AsyncGreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * name, void * continuation, void * exception, void * cancellation);
 
 _Bool AsyncGreeterBase_salutation__reverse_swift(void * self, void * continuation, void * exception, void * cancellation);
@@ -40,6 +44,12 @@ _Bool AsyncBase_notOpen(void * self, _Bool (^continuation)(NSString *), _Bool (^
 NSString * AsyncBase_sync__TypesOfArguments__Swift_String__(void * self, NSString * name);
 
 NSString * AsyncBase_sync__TypesOfArguments__Swift_String___direct(void * self, NSString * name);
+
+_Bool AsyncDefaulter_describe(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncDefaulter_describe_direct(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
+
+_Bool AsyncDefaulter_tag(void * self, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 
 _Bool AsyncGreeterBase_greet__TypesOfArguments__Swift_String__(void * self, NSString * name, _Bool (^continuation)(NSString *), _Bool (^exception)(void * _Nullable ), void * cancellation);
 

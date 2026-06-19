@@ -45,7 +45,11 @@ NSString * FooObject_objectProperty_get(void * self);
 
 _Bool InterfaceWithDeprecatedMembers_deprecatedWarningFunction(void * self);
 
+_Bool InterfaceWithDeprecatedMembers_deprecatedWarningFunction_direct(void * self);
+
 _Bool InterfaceWithDeprecatedMembers_regularFunction(void * self);
+
+_Bool InterfaceWithDeprecatedMembers_regularFunction_direct(void * self);
 
 void * KotlinClassA_KotlinSubClassA_init_allocate();
 
@@ -80,6 +84,8 @@ _Bool KotlinObjectB_kotlinFunB__TypesOfArguments__Swift_String__(void * self, NS
 _Bool KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(void * self, NSString * objCParamC);
 
 _Bool NonDeprecatedInterface_bar(void * self);
+
+_Bool NonDeprecatedInterface_bar_direct(void * self);
 
 NSString * OptInConstructor_name_get(void * self);
 

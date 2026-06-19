@@ -11,6 +11,14 @@ int32_t Base_count__reverse_swift(void * self);
 
 NSString * Base_greet__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * name);
 
+NSString * Boxed_label__reverse_swift(void * self);
+
+void * _Nullable Boxed_unbox__reverse_swift(void * self);
+
+NSString * Defaulter_describe__reverse_swift(void * self);
+
+NSString * Defaulter_tag__reverse_swift(void * self);
+
 NSString * GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(void * self, NSString * name);
 
 NSString * GreeterBase_salutation__reverse_swift(void * self);
@@ -34,6 +42,18 @@ NSString * Base_greet__TypesOfArguments__Swift_String__(void * self, NSString * 
 NSString * Base_greet__TypesOfArguments__Swift_String___direct(void * self, NSString * name);
 
 NSString * Base_notOpen(void * self);
+
+NSString * Boxed_label(void * self);
+
+NSString * Boxed_label_direct(void * self);
+
+void * _Nullable Boxed_unbox(void * self);
+
+NSString * Defaulter_describe(void * self);
+
+NSString * Defaulter_describe_direct(void * self);
+
+NSString * Defaulter_tag(void * self);
 
 NSString * GreeterBase_greet__TypesOfArguments__Swift_String__(void * self, NSString * name);
 

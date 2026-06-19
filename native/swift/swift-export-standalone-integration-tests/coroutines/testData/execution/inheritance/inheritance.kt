@@ -32,6 +32,18 @@ open class AsyncSpeakerBase : AsyncSpeaker {
 
 suspend fun callSpeak(s: AsyncSpeaker): String = s.speak()
 
+// Defaulted suspend interface method: a Swift class that inherits a Kotlin class and first-adopts this
+// interface, without overriding `describe`, must inherit the Kotlin async default via the non-virtual
+// ("_direct") forward async bridge, never recursing through its patched itable slot. The default's
+// open self-call to the abstract `tag()` must reach the Swift override.
+interface AsyncDefaulter {
+    suspend fun tag(): String
+    suspend fun describe(): String = "default-describe(" + tag() + ")"
+}
+
+suspend fun callAsyncDescribe(d: AsyncDefaulter): String = d.describe()
+suspend fun callAsyncTag(d: AsyncDefaulter): String = d.tag()
+
 class AsyncException(message: String) : RuntimeException(message)
 
 open class AsyncThrower {

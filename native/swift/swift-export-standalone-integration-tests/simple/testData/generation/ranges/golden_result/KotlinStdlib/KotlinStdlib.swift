@@ -30,6 +30,14 @@ extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : Exported
     }
 }
 extension ExportedKotlinPackages.kotlin.ranges.ClosedRange {
+    public func contains(
+        value: any ExportedKotlinPackages.kotlin.Comparable
+    ) -> Swift.Bool {
+        return kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable___direct(self.__externalRCRef(), value.__externalRCRef())
+    }
+    public func isEmpty() -> Swift.Bool {
+        return kotlin_ranges_ClosedRange_isEmpty_direct(self.__externalRCRef())
+    }
 }
 extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(

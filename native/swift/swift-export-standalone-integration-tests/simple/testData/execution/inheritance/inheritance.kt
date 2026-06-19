@@ -61,3 +61,15 @@ open class Vehicle {
 
 fun callDescribe(v: Vehicle): String = v.describe()
 fun callWheels(v: Vehicle): Int = v.wheels()
+
+// Defaulted interface methods (methods-only). A Swift class that inherits a Kotlin class and
+// first-adopts this interface, without overriding `describe`, must inherit the Kotlin default —
+// dispatched non-virtually so it never recurses through its patched itable slot. The default's open
+// (virtual) self-call to the abstract `tag()` must still reach the Swift override.
+interface Defaulter {
+    fun tag(): String
+    fun describe(): String = "default-describe(" + tag() + ")"
+}
+
+fun callDefDescribe(d: Defaulter): String = d.describe()
+fun callDefTag(d: Defaulter): String = d.tag()

@@ -28,3 +28,10 @@ open class AsyncGreeterBase : AsyncGreeter {
     override suspend fun greet(name: String): String = "Hello, $name"
     override suspend fun salutation(): String = "Hi"
 }
+
+// Defaulted suspend interface method: `describe` (default, gets a non-virtual `_direct` async witness
+// in the unconstrained extension) vs `tag` (abstract, no witness — Swift conformers must implement it).
+interface AsyncDefaulter {
+    suspend fun tag(): String
+    suspend fun describe(): String = "default: ${tag()}"
+}

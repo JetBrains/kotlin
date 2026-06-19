@@ -2,14 +2,32 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+public protocol Boxed: KotlinRuntime.KotlinBase, main._Boxed {
+    func label() -> Swift.String
+    func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+}
+public protocol Defaulter: KotlinRuntime.KotlinBase, main._Defaulter {
+    func describe() -> Swift.String
+    func tag() -> Swift.String
+}
 public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
     func greet(
         name: Swift.String
     ) -> Swift.String
     func salutation() -> Swift.String
 }
+@objc(_Boxed)
+public protocol _Boxed {
+}
+@objc(_Defaulter)
+public protocol _Defaulter {
+}
 @objc(_Greeter)
 public protocol _Greeter {
+}
+public protocol __Boxed: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Defaulter: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __Greeter: KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -99,6 +117,32 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
         }
     }
 }
+extension main.Boxed where Self : main.__Boxed {
+    public func label() -> Swift.String {
+        return Boxed_label(self.__externalRCRef())
+    }
+    public func unbox() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch Boxed_unbox(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    }
+}
+extension main.Boxed {
+    public func label() -> Swift.String {
+        return Boxed_label_direct(self.__externalRCRef())
+    }
+}
+extension main.Defaulter where Self : main.__Defaulter {
+    public func describe() -> Swift.String {
+        return Defaulter_describe(self.__externalRCRef())
+    }
+    public func tag() -> Swift.String {
+        return Defaulter_tag(self.__externalRCRef())
+    }
+}
+extension main.Defaulter {
+    public func describe() -> Swift.String {
+        return Defaulter_describe_direct(self.__externalRCRef())
+    }
+}
 extension main.Greeter where Self : main.__Greeter {
     public func greet(
         name: Swift.String
@@ -113,7 +157,15 @@ extension main.Greeter {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.Greeter, main.__Greeter where Wrapped : main._Greeter {
 }
+extension KotlinRuntimeSupport._KotlinExistential: main.Defaulter, main.__Defaulter where Wrapped : main._Defaulter {
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.Boxed, main.__Boxed where Wrapped : main._Boxed {
+}
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Greeter {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Defaulter {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Boxed {
 }
 @_cdecl("AbstractBase_abstractMethod__reverse_swift")
 package func AbstractBase_abstractMethod__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
@@ -140,6 +192,34 @@ package func Base_count__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) 
 package func Base_greet__TypesOfArguments__Swift_String____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ name: Swift.String) -> Swift.String {
     let _self = main.Base.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.String = _self.greet(name: name)
+    return _result
+}
+
+@_cdecl("Boxed_label__reverse_swift")
+package func Boxed_label__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _result: Swift.String = _self.label()
+    return _result
+}
+
+@_cdecl("Boxed_unbox__reverse_swift")
+package func Boxed_unbox__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer? {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Boxed
+    let _result: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = _self.unbox()
+    return _result.map { it in it.__externalRCRef() } ?? nil
+}
+
+@_cdecl("Defaulter_describe__reverse_swift")
+package func Defaulter_describe__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _result: Swift.String = _self.describe()
+    return _result
+}
+
+@_cdecl("Defaulter_tag__reverse_swift")
+package func Defaulter_tag__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.String {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.Defaulter
+    let _result: Swift.String = _self.tag()
     return _result
 }
 

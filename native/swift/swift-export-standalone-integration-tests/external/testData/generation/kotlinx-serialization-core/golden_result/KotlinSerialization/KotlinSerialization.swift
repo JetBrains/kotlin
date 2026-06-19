@@ -3105,6 +3105,10 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer, ExportedKotlinPackages.kotlinx.serialization.`internal`.__GeneratedSerializer where Wrapped : ExportedKotlinPackages.kotlinx.serialization.`internal`._GeneratedSerializer {
 }
 extension ExportedKotlinPackages.kotlinx.serialization.`internal`.GeneratedSerializer {
+    @_spi(kotlinx$serialization$InternalSerializationApi)
+    public func typeParametersSerializers() -> ExportedKotlinPackages.kotlin.Array {
+        return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: kotlinx_serialization_internal_GeneratedSerializer_typeParametersSerializers_direct(self.__externalRCRef()))
+    }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Self : ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
 }
@@ -3376,6 +3380,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
     public func decodeSequentially() -> Swift.Bool {
         fatalError("'decodeSequentially' is an @_spi requirement that must be implemented by Swift conformers")
     }
+    public func decodeCollectionSize(
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+    ) -> Swift.Int32 {
+        return kotlinx_serialization_encoding_CompositeDecoder_decodeCollectionSize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor___direct(self.__externalRCRef(), descriptor.__externalRCRef())
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public func decodeSequentially() -> Swift.Bool {
+        return kotlinx_serialization_encoding_CompositeDecoder_decodeSequentially_direct(self.__externalRCRef())
+    }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
     public var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -3476,6 +3489,13 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
         index: Swift.Int32
     ) -> Swift.Bool {
         fatalError("'shouldEncodeElementDefault' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public func shouldEncodeElementDefault(
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
+        index: Swift.Int32
+    ) -> Swift.Bool {
+        return kotlinx_serialization_encoding_CompositeEncoder_shouldEncodeElementDefault__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self.__externalRCRef(), descriptor.__externalRCRef(), index)
     }
 }
 extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder where Self : ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder {
@@ -3643,6 +3663,16 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public func encodeNull() -> Swift.Void {
         fatalError("'encodeNull' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+    public func beginCollection(
+        descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
+        collectionSize: Swift.Int32
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder {
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_encoding_Encoder_beginCollection__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32___direct(self.__externalRCRef(), descriptor.__externalRCRef(), collectionSize)) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public func encodeNotNullMark() -> Swift.Void {
+        return { kotlinx_serialization_encoding_Encoder_encodeNotNullMark_direct(self.__externalRCRef()); return () }()
     }
 }
 @_cdecl("kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder____reverse_swift")

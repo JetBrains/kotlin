@@ -69,6 +69,24 @@ func swiftCanOverrideKotlinSuspendInterfaceMethod() async throws {
     #expect(try await callSpeak(s: base) == "Kotlin speaks")
 }
 
+// A Swift class that inherits a Kotlin class and first-adopts a Kotlin `suspend`-interface, inheriting
+// its DEFAULT method (does not override `describe`). The inherited default must dispatch non-virtually
+// (via the `_direct` async bridge) so it never recurses through the patched itable; its open self-call
+// to `tag()` must reach the Swift override.
+@Test
+func swiftInheritsKotlinSuspendInterfaceDefault() async throws {
+    class MyAsyncDefaulter: AsyncSpeakerBase, AsyncDefaulter {
+        func tag() async throws -> String { "swift-tag" }
+        // describe() intentionally NOT overridden -> inherits the Kotlin async default.
+    }
+    let d = MyAsyncDefaulter()
+
+    // Direct Swift dispatch: inherited async default runs; its open self-call reaches the Swift override.
+    #expect(try await d.describe() == "default-describe(swift-tag)")
+    // Kotlin-side dispatch must terminate (no infinite recursion) and yield the same result.
+    #expect(try await callAsyncDescribe(d: d) == "default-describe(swift-tag)")
+}
+
 // A Swift override that throws: the error must travel back through the reverse bridge's exception
 // channel into the Kotlin coroutine and then out to the caller.
 @Test

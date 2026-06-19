@@ -244,8 +244,22 @@ public fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction(self: kotlin
     return run { _result; true }
 }
 
+@ExportedBridge("InterfaceWithDeprecatedMembers_deprecatedWarningFunction_direct", nonVirtualTargetMethod = "deprecatedWarningFunction")
+public fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceWithDeprecatedMembers
+    val _result = run { __self.deprecatedWarningFunction() }
+    return run { _result; true }
+}
+
 @ExportedBridge("InterfaceWithDeprecatedMembers_regularFunction")
 public fun InterfaceWithDeprecatedMembers_regularFunction(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceWithDeprecatedMembers
+    val _result = run { __self.regularFunction() }
+    return run { _result; true }
+}
+
+@ExportedBridge("InterfaceWithDeprecatedMembers_regularFunction_direct", nonVirtualTargetMethod = "regularFunction")
+public fun InterfaceWithDeprecatedMembers_regularFunction_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InterfaceWithDeprecatedMembers
     val _result = run { __self.regularFunction() }
     return run { _result; true }
@@ -367,6 +381,13 @@ public fun KotlinObjectB_kotlinFunC__TypesOfArguments__Swift_String__(self: kotl
 
 @ExportedBridge("NonDeprecatedInterface_bar")
 public fun NonDeprecatedInterface_bar(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as NonDeprecatedInterface
+    val _result = run { __self.bar() }
+    return run { _result; true }
+}
+
+@ExportedBridge("NonDeprecatedInterface_bar_direct", nonVirtualTargetMethod = "bar")
+public fun NonDeprecatedInterface_bar_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as NonDeprecatedInterface
     val _result = run { __self.bar() }
     return run { _result; true }

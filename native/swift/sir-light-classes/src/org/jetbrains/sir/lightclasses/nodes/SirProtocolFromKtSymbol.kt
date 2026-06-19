@@ -539,7 +539,12 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
                 }.also { it.parent = this }
             }
 
-        // Per swift rules, @_spi-requirements in non-@_spi protocols require default implementations.
+        val defaultWitnesses = members
+            .filterIsInstance<SirFunctionFromKtSymbol>()
+            .mapNotNull { fn -> fn.directDispatchProtocolWitnessOrNull()?.let { fn to it } }
+        val witnessSources: Set<SirFunction> = defaultWitnesses.mapTo(mutableSetOf()) { it.first }
+        defaultWitnesses.forEach { it.second.parent = this }
+
         val protocolSpiGroups = targetProtocol.attributes
             .filterIsInstance<SirAttribute.SPI>()
             .mapTo(mutableSetOf()) { it.name }
@@ -586,7 +591,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             }
         }
 
-        (typeAliases + spiFunctionTraps + spiVariableTraps).toMutableList()
+        (typeAliases + spiFunctionTraps + spiVariableTraps + defaultWitnesses.map { it.second }).toMutableList()
     }
 }
 

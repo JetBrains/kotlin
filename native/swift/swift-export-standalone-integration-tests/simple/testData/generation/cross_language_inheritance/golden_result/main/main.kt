@@ -2,6 +2,8 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(AbstractBase::class, "4main12AbstractBaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Base::class, "4main4BaseC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(GreeterBase::class, "4main11GreeterBaseC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Boxed::class, "_Boxed")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Defaulter::class, "_Defaulter")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Greeter::class, "_Greeter")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
@@ -48,6 +50,46 @@ public fun Base_greet__TypesOfArguments__Swift_String____reverse(self: Base, nam
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
     val _result = Base_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Boxed_label__reverse_swift")
+internal external fun Boxed_label__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Boxed::class, "label")
+public fun Boxed_label__reverse(self: Boxed<kotlin.Any?>): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Boxed_label__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Boxed_unbox__reverse_swift")
+internal external fun Boxed_unbox__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Boxed::class, "unbox")
+public fun Boxed_unbox__reverse(self: Boxed<kotlin.Any?>): kotlin.Any? {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Boxed_unbox__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
+}
+
+@ImportedBridge("Defaulter_describe__reverse_swift")
+internal external fun Defaulter_describe__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Defaulter::class, "describe")
+public fun Defaulter_describe__reverse(self: Defaulter): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Defaulter_describe__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
+}
+
+@ImportedBridge("Defaulter_tag__reverse_swift")
+internal external fun Defaulter_tag__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Defaulter::class, "tag")
+public fun Defaulter_tag__reverse(self: Defaulter): kotlin.String {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Defaulter_tag__reverse_swift(__self)
     return interpretObjCPointer<kotlin.String>(_result)
 }
 
@@ -148,6 +190,48 @@ public fun Base_greet__TypesOfArguments__Swift_String___direct(self: kotlin.nati
 public fun Base_notOpen(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
     val _result = run { __self.notOpen() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Boxed_label")
+public fun Boxed_label(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Boxed<kotlin.Any?>
+    val _result = run { __self.label() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Boxed_label_direct", nonVirtualTargetMethod = "label")
+public fun Boxed_label_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Boxed<kotlin.Any?>
+    val _result = run { __self.label() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Boxed_unbox")
+public fun Boxed_unbox(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Boxed<kotlin.Any?>
+    val _result = run { __self.unbox() }
+    return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Defaulter_describe")
+public fun Defaulter_describe(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
+    val _result = run { __self.describe() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Defaulter_describe_direct", nonVirtualTargetMethod = "describe")
+public fun Defaulter_describe_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
+    val _result = run { __self.describe() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Defaulter_tag")
+public fun Defaulter_tag(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Defaulter
+    val _result = run { __self.tag() }
     return _result.objcPtr()
 }
 
