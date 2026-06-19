@@ -40,3 +40,4 @@ Process <process id> stopped
 (ObjHeader *) e1 = <memory address>
 (ObjHeader *) e2 = NULL
 (lldb) q
+
