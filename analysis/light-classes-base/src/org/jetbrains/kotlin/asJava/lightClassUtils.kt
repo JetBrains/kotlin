@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.lang.jvm.JvmModifier
@@ -30,8 +32,10 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 /**
  * Can be null in scripts and for elements from non-jvm modules.
  */
+@Deprecated("Use `asPsiClass` from Analysis API or replace with a direct call to `JavaPsiFacade`. See KT-85385")
 fun KtClassOrObject.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClass(this)
 
+@Deprecated("Use `asPsiClass` from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
     toLightClass()?.let { return it }
 
@@ -41,12 +45,16 @@ fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
     return JavaPsiFacade.getInstance(project).findClass(javaClassFqName.asString(), searchScope)
 }
 
+@Deprecated("Replace with a direct call to `KotlinAsJavaSupport`. See KT-85385")
 fun KtClassOrObject.toFakeLightClass(): KtFakeLightClass = KotlinAsJavaSupport.getInstance(project).getFakeLightClass(this)
 
+@Deprecated("Use `asFacadePsiClass` from Analysis API or replace with a direct call to `JavaPsiFacade`. See KT-85385")
 fun KtFile.findFacadeClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightFacade(this)
 
+@Deprecated("Use `asFacadePsiClass` from Analysis API or replace with a direct call to `JavaPsiFacade`. See KT-85385")
 fun KtScript.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClassForScript(this)
 
+@Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
     is KtClassOrObject -> listOfNotNull(toLightClass())
     is KtNamedFunction,
@@ -64,6 +72,7 @@ fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
     else -> listOf()
 }
 
+@Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
 fun PsiElement.toLightMethods(): List<PsiMethod> = when (this) {
     is KtFunction -> LightClassUtil.getLightClassMethods(this)
     is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
@@ -74,6 +83,7 @@ fun PsiElement.toLightMethods(): List<PsiMethod> = when (this) {
     else -> listOf()
 }
 
+@Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
 fun PsiElement.getRepresentativeLightMethod(): PsiMethod? = when (this) {
     is KtFunction -> LightClassUtil.getLightClassMethod(this)
     is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).getter
@@ -83,6 +93,7 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? = when (this) {
     else -> null
 }
 
+@Deprecated("Use `asPsiParameters` from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 
@@ -108,10 +119,13 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
     return LightClassUtil.getLightClassMethod(this)
 }
 
+@Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).getter
 
+@Deprecated("Use `asPsiMethods` from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
 
+@Deprecated("Use `asPsiTypeParameters` from Analysis API or replace with a custom implementation. See KT-85385")
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
 
@@ -133,6 +147,7 @@ val PsiElement.unwrapped: PsiElement?
         else -> this
     }
 
+@Deprecated("Use `kotlinOrigin` from `KaSymbolJavaView`. See KT-85385")
 val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType()
 
@@ -168,6 +183,7 @@ fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 private val REPEATABLE_ANNOTATION_CONTAINER_NAME = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
 fun FqName.repeatableAnnotationContainerChild() = child(REPEATABLE_ANNOTATION_CONTAINER_NAME)
 
+@Deprecated("Use light-class construction utilities from Analysis API or replace with a custom implementation. See KT-85385")
 @Suppress("unused")
 fun KtElement.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
