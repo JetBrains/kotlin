@@ -50,7 +50,7 @@ diff-utils = "4.12"
 opentelemetry-api = "1.41.0"
 auto-value-annotations = "1.11.0" # Used in opentelemetry-api
 fastutil = "8.5.14-jb1"
-rwmutex-idea = "0.0.7"
+rwmutex-idea = "0.0.10"
 # Wasm specific
 wasmedge = "0.16.3"
 wasmtime = "44.0.1"
