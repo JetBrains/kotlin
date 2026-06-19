@@ -2,13 +2,13 @@
 CapturedType(in kotlin.CharSequence)
 
 [direct super types]
-kotlin.Any
+kotlin.Any?
 
 [approximated direct super types]
-kotlin.Any
+kotlin.Any?
 
 [all super types]
-kotlin.Any
+kotlin.Any?
 
 [approximated all super types]
-kotlin.Any
+kotlin.Any?

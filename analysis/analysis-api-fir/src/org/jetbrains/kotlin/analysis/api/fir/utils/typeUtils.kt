@@ -146,7 +146,7 @@ private fun ConeLookupTagBasedType.calculateSupertypes(
     }
 
     if (calculationMode == ConeSupertypeCalculationMode.NO_SUBSTITUTION) {
-        return superTypes.asSequence()
+        return superTypes.asSequence().adjustSupertypes(this, session, calculationMode)
     }
 
     return substituteSuperTypes(symbol, superTypes, session, calculationMode)
@@ -167,7 +167,8 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
     session: FirSession,
     calculationMode: ConeSupertypeCalculationMode,
 ): Sequence<ConeKotlinType> {
-    val typeParameterSymbols = symbol.typeParameterSymbols ?: return superTypes.asSequence()
+    val typeParameterSymbols = symbol.typeParameterSymbols
+        ?: return superTypes.asSequence().adjustSupertypes(this, session, calculationMode)
     val argumentTypes = (session.typeContext.captureArguments(this, CaptureStatus.FROM_EXPRESSION)?.toList()
         ?: this.typeArguments.mapNotNull { it.type })
 
@@ -186,7 +187,7 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
  *
  * The refinement consists of two steps:
  * - Supertype approximation to denotable types. Only performed when [calculationMode] is [ConeSupertypeCalculationMode.SUBSTITUTE_AND_APPROXIMATE].
- * - Supertype nullability adjustment. Performed regardless of [calculationMode].
+ * - Supertype nullability adjustment. Performed using [adjustSupertypeNullability] regardless of [calculationMode].
  */
 private fun Sequence<ConeKotlinType>.adjustSupertypes(
     baseType: ConeKotlinType,
@@ -201,8 +202,47 @@ private fun Sequence<ConeKotlinType>.adjustSupertypes(
             ) ?: type
         } else {
             type
-        }.withNullabilityOf(baseType, session.typeContext)
+        }.adjustSupertypeNullability(baseType, session.typeContext)
     }
+}
+
+/**
+ * Adjusts nullability of supertype [this] based on [subType] nullability.
+ * Updates the nullability of [this] to nullable if [subType] is nullable.
+ * Otherwise, when [subType] is not nullable, the nullability of [this] is not affected.
+ *
+ * It's necessary for various cases.
+ * If [subType] is a regular class type, then all of its supertypes are non-nullable as they are taken from the class symbol,
+ * and it's prohibited to inherit from a nullable class:
+ * ```kotlin
+ * class MyClass: MyInterface // MyInterface? is not allowed
+ *
+ * fun main(nullableType: MyClass?) {}
+ * ```
+ * But some concrete type instance could be marked as nullable. Then, the supertype needs to be marked nullable as well.
+ * This way, we can avoid inconsistencies such as `MyClass? <: MyInterface`.
+ *
+ * The same goes for type parameters. If some type parameter already has a nullable upperbound, then nothing needs to be done.
+ * However, if some type parameter doesn't have a nullable upperbound and is marked as nullable on the use-site instead,
+ * the upperbound needs to be marked nullable as well:
+ * ```kotlin
+ * class Foo<T : Number>(nullableType: T?) {}
+ * ```
+ *
+ * Note that we cannot just always use the nullability of the subtype while completely ignoring the supertype nullability.
+ * That would break the cases for type parameters with nullable upperbounds:
+ * ```kotlin
+ * class Foo<T : Number?>(nullableType: T) {}
+ * ```
+ * In this case, `T: Number?` would be turned into `T: Number` (as `T` is not marked as nullable), which is incorrect.
+ */
+private fun <T : ConeKotlinType> T.adjustSupertypeNullability(
+    subType: ConeKotlinType,
+    typeContext: ConeTypeContext
+): T {
+    if (hasFlexibleMarkedNullability && subType.hasFlexibleMarkedNullability) return this
+
+    return withNullability(isMarkedNullable || subType.isMarkedNullable, typeContext)
 }
 
 internal fun <C : ConeKotlinType, T : KaType> createTypePointer(

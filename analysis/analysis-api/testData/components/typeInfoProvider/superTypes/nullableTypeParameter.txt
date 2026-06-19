@@ -2,17 +2,17 @@
 T?
 
 [direct super types]
-kotlin.Number
+kotlin.Number?
 
 [approximated direct super types]
-kotlin.Number
+kotlin.Number?
 
 [all super types]
-kotlin.Number
-kotlin.Any
-java.io.Serializable
+kotlin.Number?
+kotlin.Any?
+java.io.Serializable?
 
 [approximated all super types]
-kotlin.Number
-kotlin.Any
-java.io.Serializable
+kotlin.Number?
+kotlin.Any?
+java.io.Serializable?
