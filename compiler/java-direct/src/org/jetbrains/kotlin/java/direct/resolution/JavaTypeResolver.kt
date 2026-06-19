@@ -362,18 +362,15 @@ private fun resolveFromJavaLang(simpleName: String, tryResolve: (ClassId) -> Boo
 /**
  * Step 6: Type-import-on-demand (`import a.b.*;`, JLS 7.5.2).
  *
- * Each entry is *nominally* a package FqName; the primary probe is `ClassId(pkg, simpleName)`.
- * However, the Kotlin compiler also accepts `import a.D.*;` where `a.D` is a *class*
- * (strictly illegal per JLS — must be `import static a.D.*;`) and resolves nested types through
- * it; the test suite (`testImportThriceNestedClass`, `testNestedAndTopLevelClassClash`) relies on
- * this permissive behaviour. So when the package-shape probe misses, we additionally try the
- * class-level fallback: resolve the entry as a class via [resolveAsClassId], then probe
- * `outerClassId.createNestedClassId(simpleName)`. The strictly-static variant
- * (`import static a.b.C.*;`) is handled by [resolveFromStaticStarImports] at rank 7.
+ * The primary probe is `ClassId(pkg, simpleName)`. Since the on-demand target is a
+ * `PackageOrTypeName`, it may also be a *class/interface* (`import a.D.*;`, importing the member
+ * types of `a.D`), so on a miss we fall back to resolving the entry as a class via
+ * [resolveAsClassId] and probing `outerClassId.createNestedClassId(simpleName)`
+ * (`testImportThriceNestedClass`, `testNestedAndTopLevelClassClash`). The static variant
+ * (`import static a.b.C.*;`, JLS 7.5.4) is handled by [resolveFromStaticStarImports] at rank 7.
  *
- * Detects ambiguity across multiple star entries: if two distinct entries resolve the same simple
- * name to different ClassIds, returns `null` (JLS 7.5.2 calls this a compile-time error; the
- * dispatcher naturally falls through to Step 7).
+ * Returns `null` on ambiguity (two entries resolving the same name to different ClassIds — a
+ * JLS 7.5.2 compile-time error), falling through to Step 7.
  */
 context(c: JavaResolutionContext)
 private fun resolveFromTypeStarImports(
@@ -381,15 +378,15 @@ private fun resolveFromTypeStarImports(
     tryResolve: (ClassId) -> Boolean,
 ): ClassId? {
     var foundClassId: ClassId? = null
-    for (starPackage in c.fileContext.imports.typeStarImports) {
-        val candidateClassId = ClassId(starPackage, Name.identifier(simpleName))
+    for (starImport in c.fileContext.imports.typeStarImports) {
+        val candidateClassId = ClassId(starImport, Name.identifier(simpleName))
         if (tryResolve(candidateClassId)) {
             if (foundClassId != null && foundClassId != candidateClassId) return null // Ambiguous
             foundClassId = candidateClassId
         } else {
             // Class-level fallback (`import a.D.*` where `a.D` is a class): resolve the
             // entry as a ClassId and form the nested-class shape.
-            val outerClassId = resolveAsClassId(starPackage, tryResolve)
+            val outerClassId = resolveAsClassId(starImport, tryResolve)
             if (outerClassId != null) {
                 val nestedClassId = outerClassId.createNestedClassId(Name.identifier(simpleName))
                 if (tryResolve(nestedClassId)) {
@@ -813,23 +810,6 @@ internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
     return ClassId(starPackage, Name.identifier(simpleName))
 }
 
-/**
- * Returns the ClassIds of the containing class chain, from innermost to outermost.
- */
-context(c: JavaResolutionContext)
-internal fun getContainingClassIds(): List<ClassId> {
-    val result = mutableListOf<ClassId>()
-    var cls: JavaClass? = c.scopeContext.containingClass
-    while (cls != null) {
-        val fqName = cls.fqName
-        if (fqName != null) {
-            result.add(fqNameToClassId(fqName))
-        }
-        cls = cls.outerClass
-    }
-    return result
-}
-
 context(c: JavaResolutionContext)
 private fun fqNameToClassId(fqName: FqName): ClassId =
     fqNameInPackageToClassId(fqName, c.packageFqName)
@@ -845,14 +825,21 @@ private fun fqNameToClassId(fqName: FqName): ClassId =
  * Used for explicit imports with nested class FQNs and for class-level star import resolution.
  */
 private fun resolveAsClassId(fqName: FqName, tryResolve: (ClassId) -> Boolean): ClassId? {
+    if (fqName.isRoot) return null
+
+    // most common case: the longest-package split
+    ClassId.topLevel(fqName).takeIf(tryResolve)?.let { return it }
+
     val parts = fqName.pathSegments()
-    if (parts.isEmpty()) return null
     val stringParts = parts.map { it.asString() }
-    for (classStartIndex in (parts.size - 1) downTo 0) {
-        val pkg = if (classStartIndex == 0) FqName.ROOT
-        else FqName.fromSegments(stringParts.subList(0, classStartIndex))
+    for (classStartIndex in (parts.size - 2) downTo 0) {
+        val pkg = when (classStartIndex) {
+            0 -> FqName.ROOT
+            else -> FqName.fromSegments(stringParts.subList(0, classStartIndex))
+        }
         val cls = FqName.fromSegments(stringParts.subList(classStartIndex, stringParts.size))
         val classId = ClassId(pkg, cls, false)
+
         if (tryResolve(classId)) return classId
     }
     return null
