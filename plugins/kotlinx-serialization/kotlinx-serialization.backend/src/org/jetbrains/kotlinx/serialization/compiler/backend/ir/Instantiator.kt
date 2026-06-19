@@ -373,7 +373,8 @@ internal class Instantiator(
                                 }
                             }
                         }!!
-                        generator.wrapWithNullableSerializerIfNeeded(type, expr, nullableSerClass)
+                        expr.retypeToInScopeTypeParameters(type, kType, path ?: emptyList())
+                        generator.wrapWithNullableSerializerIfNeeded(expr.type, expr, nullableSerClass)
                     }
                 )
             )
@@ -382,6 +383,14 @@ internal class Instantiator(
 
         val ctor = findConstructorWithoutTypeParameters(serializerClass, needToCopyAnnotations).owner
         return callConstructor(ctor, typeArgs, newArgs)
+    }
+
+    private fun IrExpression.retypeToInScopeTypeParameters(subclassType: IrSimpleType, kType: IrSimpleType, path: List<IrSimpleType>) {
+        val subclass = subclassType.getClass() ?: return
+        val retypedArguments = kType.argumentTypesOrUpperBounds()
+        type = type.substitute(subclass.typeParameters, subclass.typeParameters.map {
+            mapTypeParameterIndex(it.index, path)?.let(retypedArguments::getOrNull) ?: it.representativeUpperBound
+        })
     }
 
     context(irBuilder: IrBuilderWithScope)
