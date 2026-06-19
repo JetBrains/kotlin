@@ -10,7 +10,7 @@ sealed interface MemoryOp : Node {
 }
 
 
-sealed interface AnyLoad : MemoryOp {
+sealed interface AnyLoad : MemoryOp, ValueNode {
     
     
 }
@@ -30,6 +30,7 @@ sealed class PinnedMemoryOp(form: Form, args: List<Node?>) : BlockBody(form, arg
 
 
 sealed class DirectMemoryOp(form: Form, args: List<Node?>) : PinnedMemoryOp(form, args), MemoryOp {
+    abstract val type: HairType
     val locationIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDirectMemoryOp(this)
@@ -41,7 +42,7 @@ class Load internal constructor(form: Form, control: Controlling?, location: Nod
         override val args = listOf<Any>(type)
     }
     
-    val type: HairType by form::type
+    override val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {
@@ -62,7 +63,7 @@ class Store internal constructor(form: Form, control: Controlling?, location: No
         override val args = listOf<Any>(type)
     }
     
-    val type: HairType by form::type
+    override val type: HairType by form::type
     
     
     override fun paramName(index: Int): String = when (index) {

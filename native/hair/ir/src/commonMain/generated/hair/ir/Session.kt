@@ -36,6 +36,8 @@ class Session: SessionBase() {
 
     internal val unwindForm = Unwind.form(this).also { register(it) }
 
+    internal val phiForm = Phi.form(this).also { register(it) }
+
     internal val catchForm = Catch.form(this).also { register(it) }
 
     internal val nullForm = Null.form(this).also { register(it) }
@@ -53,8 +55,6 @@ class Session: SessionBase() {
     internal val readVarMetaForm = ReadVar.metaForm(this)
 
     internal val assignVarMetaForm = AssignVar.metaForm(this)
-
-    internal val phiMetaForm = Phi.metaForm(this)
 
     internal val phiPlaceholderMetaForm = PhiPlaceholder.metaForm(this)
 

@@ -3,6 +3,7 @@ package hair.ir.opt
 import hair.ir.*
 import hair.ir.Add
 import hair.ir.nodes.*
+import hair.sym.ArithmeticType
 import hair.sym.HairType
 import hair.sym.HairType.*
 import hair.test.Fun
@@ -17,7 +18,7 @@ class NormalizationTest : IrTest {
         buildInitialIR {
             val a = 23
             val b = 42
-            assertEquals(ConstI(a + b), Add(INT)(ConstI(a), ConstI(b)))
+            assertEquals(ConstI(a + b), Add(ArithmeticType.INT)(ConstI(a), ConstI(b)))
             ReturnVoid()
         }
     }
@@ -33,11 +34,11 @@ class NormalizationTest : IrTest {
             val f = 42
             assertEquals(
                 ConstI(a + b + c + d + e + f),
-                Add(INT)(
-                    Add(INT)(ConstI(a), ConstI(b)),
-                    Add(INT)(
-                        Add(INT)(ConstI(c), ConstI(d)),
-                        Add(INT)(ConstI(e), ConstI(f))
+                Add(ArithmeticType.INT)(
+                    Add(ArithmeticType.INT)(ConstI(a), ConstI(b)),
+                    Add(ArithmeticType.INT)(
+                        Add(ArithmeticType.INT)(ConstI(c), ConstI(d)),
+                        Add(ArithmeticType.INT)(ConstI(e), ConstI(f))
                     )
                 )
             )
@@ -55,7 +56,7 @@ class NormalizationTest : IrTest {
         lateinit var expected: Node
 
         buildInitialIR {
-            use = Use(Add(INT)(Param(0), ConstI(a))) as Use
+            use = Use(Add(ArithmeticType.INT)(Param(0), ConstI(a))) as Use
             expected = ConstI(a + b)
             Return(expected)
         }

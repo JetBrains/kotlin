@@ -21,6 +21,7 @@ import hair.ir.nodes.*
 import hair.opt.optimize
 import hair.sym.CmpOp
 import hair.sym.HairType
+import hair.sym.asArithmeticType
 import hair.utils.*
 import hair.transform.*
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
@@ -34,13 +35,13 @@ import org.jetbrains.kotlin.backend.konan.lower.StaticInitializersOrigins
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isChar
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.render
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
@@ -104,7 +105,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 }
                 f.body?.accept(object : IrVisitor<Node, Unit>() {
                     override fun visitElement(element: IrElement, data: Unit): Node {
-                        error("Should not reach here $element")
+                        error("Should not reach here ${element.render()}")
                     }
 
                     override fun visitExpressionBody(body: IrExpressionBody, data: Unit): Node {
@@ -182,19 +183,19 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     }
 
                     private fun generateIntrinsic(call: IrCall, resType: HairType, args: List<Node?>): Node = when (val iType = tryGetIntrinsicType(call)) {
-                        IntrinsicType.PLUS -> Add(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.MINUS -> Sub(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.TIMES -> Mul(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.PLUS -> Add(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        IntrinsicType.MINUS -> Sub(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        IntrinsicType.TIMES -> Mul(resType.asArithmeticType())(args[0]!!, args[1]!!)
                         // FIXME signed vs unsigned
-                        // IntrinsicType.SIGNED_DIV -> Div(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SIGNED_REM -> Rem(resType)(args[0]!!, args[1]!!)
+                        // IntrinsicType.SIGNED_DIV -> Div(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        // IntrinsicType.SIGNED_REM -> Rem(resType.asArithmeticType())(args[0]!!, args[1]!!)
 
-                        IntrinsicType.AND -> And(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.OR -> Or(resType)(args[0]!!, args[1]!!)
-                        IntrinsicType.XOR -> Xor(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SHL -> Shl(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.SHR -> Shr(resType)(args[0]!!, args[1]!!)
-                        // IntrinsicType.USHR -> Ushr(resType)(args[0]!!, args[1]!!)
+                        IntrinsicType.AND -> And(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        IntrinsicType.OR -> Or(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        IntrinsicType.XOR -> Xor(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        // IntrinsicType.SHL -> Shl(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        // IntrinsicType.SHR -> Shr(resType.asArithmeticType())(args[0]!!, args[1]!!)
+                        // IntrinsicType.USHR -> Ushr(resType.asArithmeticType())(args[0]!!, args[1]!!)
 
                         IntrinsicType.THE_UNIT_INSTANCE -> UnitValue()
 
@@ -208,8 +209,8 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                         IntrinsicType.IDENTITY -> args[0]!!
 
-                        IntrinsicType.INC -> Add(resType)(args[0]!!, Const(resType, 1))
-                        IntrinsicType.DEC -> Sub(resType)(args[0]!!, Const(resType, 1))
+                        IntrinsicType.INC -> Add(resType.asArithmeticType())(args[0]!!, Const(resType, 1))
+                        IntrinsicType.DEC -> Sub(resType.asArithmeticType())(args[0]!!, Const(resType, 1))
 
                         IntrinsicType.ARE_EQUAL_BY_VALUE -> notImplemented(HairTODO.ARE_EQUAL_BY_VALUE)
                         IntrinsicType.FLOAT_TRUNCATE -> notImplemented(HairTODO.FLOAT_TRUNCATE)
@@ -277,7 +278,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
                             val merge = BlockEntry(*exits.toTypedArray())
-                            Phi(expression.type.asHairType(), merge, *((exits.map { it!! }).zip(values)).toTypedArray())
+                            Phi( merge, *((exits.map { it!! }).zip(values)).toTypedArray())
                         } else NoValue()
 
                         return result
@@ -369,7 +370,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         @Suppress("UNCHECKED_CAST")
                         val results = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null } as List<Pair<BlockExit, Node>>
                         val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
-                        return Phi(expression.type.asHairType(), exitBlock, *results.toTypedArray())
+                        return Phi(exitBlock, *results.toTypedArray())
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
@@ -441,7 +442,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
             funCompilation.dumpHair("initial_ir")
 
-            buildSSA { (it as IrValueSymbol).owner.type.asHairType() }
+            buildSSA()
             funCompilation.dumpHair("initial_ir_after_SSA")
 
             optimize()
