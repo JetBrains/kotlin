@@ -24,7 +24,7 @@ sourceSets {
     }
 }
 
-val bootClasspathCompileOnly by configurations.getting
+val bootClasspathCompileOnly = configurations.getByName("bootClasspathCompileOnly")
 
 dependencies {
     compileOnly(libs.intellij.asm)

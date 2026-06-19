@@ -24,7 +24,7 @@ val nativeImageClasspath = configurations.create("nativeImageClasspath") {
     isCanBeResolved = true
 }
 
-val pluginsRuntime by configurations.creating {
+val pluginsRuntime = configurations.create("pluginsRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
