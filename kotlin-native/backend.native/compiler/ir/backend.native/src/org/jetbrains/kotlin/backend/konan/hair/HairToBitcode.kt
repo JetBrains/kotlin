@@ -13,7 +13,9 @@ import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
 import hair.transform.GCMResult
+import hair.transform.valueType
 import hair.transform.withGCM
+import hair.transform.withValueTypes
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState;
 import org.jetbrains.kotlin.backend.konan.llvm.CodeContext
@@ -51,6 +53,7 @@ internal class HairToBitcode(
         HairType.FLOAT -> llvm.floatType
         HairType.DOUBLE -> llvm.doubleType
         HairType.REFERENCE -> llvm.pointerType
+        HairType.NATIVE_POINTER -> llvm.pointerType
         HairType.EXCEPTION -> llvm.pointerType
     }
 
@@ -119,7 +122,7 @@ internal class HairToBitcode(
             // LLVM requires phis first; GCM may interleave other nodes, so defer wiring.
             for (phi in node.uses.filterIsInstance<Phi>()) {
                 deferredPhies += phi
-                nodeValues[phi] = fgc.phi(phi.type.asLLVMType(), "phi_${phi.id}")
+                nodeValues[phi] = fgc.phi(phi.valueType.asLLVMType(), "phi_${phi.id}")
             }
             return null
         }
@@ -189,28 +192,28 @@ internal class HairToBitcode(
         // Arithmetic
 
         override fun visitAdd(node: Add): LLVMValueRef = emit {
-            if (node.type.isIntegral) add(node.lhs.value(), node.rhs.value())
+            if (node.opType.isIntegral) add(node.lhs.value(), node.rhs.value())
             else fadd(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitSub(node: Sub): LLVMValueRef = emit {
-            if (node.type.isIntegral) sub(node.lhs.value(), node.rhs.value())
+            if (node.opType.isIntegral) sub(node.lhs.value(), node.rhs.value())
             else fsub(node.lhs.value(), node.rhs.value())
         }
 
         override fun visitMul(node: Mul): LLVMValueRef = emit {
             // TODO use FGC helpers once mul/fmul are promoted
-            if (node.type.isIntegral) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.opType.isIntegral) LLVMBuildMul(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFMul(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
         override fun visitDiv(node: Div): LLVMValueRef = emit {
-            if (node.type.isIntegral) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.opType.isIntegral) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
         override fun visitRem(node: Rem): LLVMValueRef = emit {
-            if (node.type.isIntegral) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+            if (node.opType.isIntegral) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
             else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
@@ -255,7 +258,7 @@ internal class HairToBitcode(
                         CmpOp.S_GE -> fcmpGe(lhs, rhs)
                         CmpOp.S_LT -> fcmpLt(lhs, rhs)
                         CmpOp.S_LE -> fcmpLe(lhs, rhs)
-                        else -> error("Unsupported floating-point CmpOp: ${node.op}")
+                        else -> error("Unexpected floating-point CmpOp: ${node.op}")
                     }
                 }
             }
@@ -391,46 +394,49 @@ internal class HairToBitcode(
         with(session) {
             withGCM {
                 hairComp.dumpHair("before_codegen")
-                val blocks = topSort(cfg()).associateWith {
-                    functionGenerationContext.basicBlock("block_${it.id}", null)
-                }
-                // FIXME codegen inserts additional blocks (e.g. around calls)
-                //     so we can't rely on the blocks map to locate the llvm block of a random node
-                val blockExitBlocks = mutableMapOf<BlockExit, LLVMBasicBlockRef>()
-                val nodeValues = mutableMapOf<Node, LLVMValueRef>()
-                val deferredPhies = mutableListOf<Phi>()
+                // TODO move to global pipeline
+                withValueTypes(hairComp) {
+                    val blocks = topSort(cfg()).associateWith {
+                        functionGenerationContext.basicBlock("block_${it.id}", null)
+                    }
+                    // FIXME codegen inserts additional blocks (e.g. around calls)
+                    //     so we can't rely on the blocks map to locate the llvm block of a random node
+                    val blockExitBlocks = mutableMapOf<BlockExit, LLVMBasicBlockRef>()
+                    val nodeValues = mutableMapOf<Node, LLVMValueRef>()
+                    val deferredPhies = mutableListOf<Phi>()
 
-                val nodeCodegen = NodeCodegen(
-                        fgc = functionGenerationContext,
-                        currentCodeContext = currentCodeContext,
-                        declaration = declaration,
-                        blocks = blocks,
-                        nodeValues = nodeValues,
-                        blockExitBlocks = blockExitBlocks,
-                        deferredPhies = deferredPhies,
-                )
+                    val nodeCodegen = NodeCodegen(
+                            fgc = functionGenerationContext,
+                            currentCodeContext = currentCodeContext,
+                            declaration = declaration,
+                            blocks = blocks,
+                            nodeValues = nodeValues,
+                            blockExitBlocks = blockExitBlocks,
+                            deferredPhies = deferredPhies,
+                    )
 
-                for ([block, llvmBlock] in blocks) {
-                    functionGenerationContext.appendingTo(llvmBlock) {
-                        for (node in gcm.linearOrder(block)) {
-                            val value = node.accept(nodeCodegen)
-                            if (value != null) nodeValues[node] = value
+                    for ([block, llvmBlock] in blocks) {
+                        functionGenerationContext.appendingTo(llvmBlock) {
+                            for (node in gcm.linearOrder(block)) {
+                                val value = node.accept(nodeCodegen)
+                                if (value != null) nodeValues[node] = value
+                            }
                         }
                     }
-                }
 
-                for (phi in deferredPhies) {
-                    val llvmPhi = nodeValues[phi]!!
-                    val incoming = phi.inputs.map { [value, blockExit] ->
-                        val inBlock = blockExitBlocks[blockExit] ?: error("No LLVM block for Hair block-exit $blockExit")
-                        val inValue = nodeValues[value] ?: error("No value generated for input $value of $phi")
-                        inBlock to inValue
+                    for (phi in deferredPhies) {
+                        val llvmPhi = nodeValues[phi]!!
+                        val incoming = phi.inputs.map { [value, blockExit] ->
+                            val inBlock = blockExitBlocks[blockExit] ?: error("No LLVM block for Hair block-exit $blockExit")
+                            val inValue = nodeValues[value] ?: error("No value generated for input $value of $phi")
+                            inBlock to inValue
+                        }
+                        functionGenerationContext.addPhiIncoming(llvmPhi, *incoming.toTypedArray())
                     }
-                    functionGenerationContext.addPhiIncoming(llvmPhi, *incoming.toTypedArray())
-                }
 
-                functionGenerationContext.positionAtEnd(entryBlock)
-                functionGenerationContext.br(blocks[entry]!!)
+                    functionGenerationContext.positionAtEnd(entryBlock)
+                    functionGenerationContext.br(blocks[entry]!!)
+                }
             }
         }
     }

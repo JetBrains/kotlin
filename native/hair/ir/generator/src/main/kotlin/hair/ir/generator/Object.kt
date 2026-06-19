@@ -7,7 +7,7 @@ object Object : ModelDSL() {
 
     // new
 
-    val anyNew by nodeInterface()
+    val anyNew by nodeInterface(DataFlow.valueNode)
 
     val new by node(ControlFlow.blockBody) {
         interfaces(anyNew)
@@ -22,7 +22,7 @@ object Object : ModelDSL() {
 
     // type-checks
 
-    val typeCheck by nodeInterface {
+    val typeCheck by nodeInterface(DataFlow.valueNode) {
         formParam("targetType", HairClass::class)
         param("obj")
     }
@@ -33,6 +33,7 @@ object Object : ModelDSL() {
 
     // TODO filter/projeciton interface or whatever
     val throwingCheck by abstractClass(ControlFlow.blockBodyWithException) {
+        interfaces(DataFlow.valueNode)
         param("obj")
     }
 
@@ -41,6 +42,7 @@ object Object : ModelDSL() {
     }
 
     val typeInfo by node {
+        interfaces(DataFlow.valueNode)
         param("obj")
     }
 
