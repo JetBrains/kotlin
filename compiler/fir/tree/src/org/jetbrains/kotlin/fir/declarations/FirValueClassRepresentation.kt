@@ -27,18 +27,12 @@ val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<Con
         return fir.valueClassRepresentation
     }
 
-/**
- * Retrieves an [InlineClassRepresentation] of the [FirRegularClassSymbol] if the class is an inline class or
- * computes an [InlineClassRepresentation] if [treatCompatibleFullValueClassesAsInline] is `true` and
- * the class is a compatible full value class.
- *
- * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
- *
- * @return An [InlineClassRepresentation] or `null`.
- */
-@ValueClassBackendAgnosticApi
-fun FirRegularClassSymbol.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline: Boolean): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline)
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun FirRegularClassSymbol.inlineClassRepresentationInJvm(): InlineClassRepresentation<ConeRigidType>? =
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
+        treatCompatibleFullValueClassesAsInline = false,
+        hasSuperClass = { error("No super class check must be called for inline classes in JVM") }
+    )
 
 val FirRegularClassSymbol.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation

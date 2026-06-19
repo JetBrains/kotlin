@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNu
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils.getPackagePartClassNamePrefix
 import java.io.File
@@ -50,7 +51,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.isSingleFieldValueClass(treatCompatibleFullValueClassesAsInline: Boolean): Boolean =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline) != null
+    inlineClassRepresentation(treatCompatibleFullValueClassesAsInline) != null
 
 val IrClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation<*>
@@ -88,7 +89,10 @@ val IrFunction.isPropertyAccessor: Boolean
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.inlineClassRepresentation(treatCompatibleFullValueClassesAsInline: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatCompatibleFullValueClassesAsInline)
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(
+        treatCompatibleFullValueClassesAsInline = treatCompatibleFullValueClassesAsInline,
+        hasSuperClass = { superClass != null }
+    )
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

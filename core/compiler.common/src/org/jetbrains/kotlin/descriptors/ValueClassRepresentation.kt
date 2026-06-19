@@ -18,9 +18,10 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
  *   It is always unboxed by the compiler on all backends.
  * - [FullValueClassRepresentation] — a value class without `@JvmInline` annotation with `value` keyword
  *   ([KEEP-0454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)).
- *     * Full value class can have one field.
+ *     * Full value class can have one field and no (non-`Any`) super class.
  *       * In the case of non-JVM platforms, it looks like an inline class defined above and thus behaves correspondingly: it gets unboxed. It is considered **COMPATIBLE** with an inline class.
  *       * On JVM the class is not unboxed, as inline classes have [JvmInline] annotation. It is considered **INCOMPATIBLE** with an inline class.
+ *     * Full value class can have one field and a (non-`Any`) super class. In this case it is always boxed and thus is considered **INCOMPATIBLE** with an inline class.
  *     * Full value class can have multiple underlying fields. In this case it is always boxed and thus is considered **INCOMPATIBLE** with an inline class.
  *     * Full value class can be abstract/sealed. It is considered **INCOMPATIBLE** with an inline class.
  *       * It is a regular abstract class without any fields (if declared in Kotlin) and without mutable fields (if declared in Java with Valhalla support).
@@ -53,17 +54,21 @@ sealed class BasicValueClassRepresentation<Type : RigidTypeMarker>: ValueClassRe
  * * If [treatCompatibleFullValueClassesAsInline] is `true` and the [ValueClassRepresentation] is a compatible [FullValueClassRepresentation],
  *   the function computes and returns the compatible [InlineClassRepresentation].
  *
+ * [hasSuperClass] is called only when the function result is ambiguous without that.
+ *
  * See [ValueClassRepresentation] documentation for more details about value class types and their compatibility.
  *
  * @return An [InlineClassRepresentation] or `null`.
  */
 @ValueClassBackendAgnosticApi
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.interpretAsInlineClassRepresentationOrNull(
-    treatCompatibleFullValueClassesAsInline: Boolean
+    treatCompatibleFullValueClassesAsInline: Boolean,
+    hasSuperClass: () -> Boolean,
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this
     is FullValueClassRepresentation if !treatCompatibleFullValueClassesAsInline -> null
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
+        ?.takeIf { !hasSuperClass() }
         ?.let { [name, type] -> InlineClassRepresentation(name, type) }
 }
 
