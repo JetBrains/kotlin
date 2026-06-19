@@ -62,7 +62,7 @@ class NormalizationTest : IrTest {
         }
         modifyIR {
             val add = use.value as Add
-            assertTrue(add.rhs is ConstI) // make sure normalization has not messed things up
+            assertTrue(add.rhs is Const) // make sure normalization has not messed things up
             add.lhs = ConstI(b)
         }
         assertEquals(expected, use.value)
@@ -82,7 +82,7 @@ class NormalizationTest : IrTest {
             Return(catch)
         }
         val ret = allNodes<Return>().single()
-        assertEquals(value, (ret.result as ConstI).value)
+        assertEquals(value, (ret.result as Const).value)
     }
 
     context(cfb: ControlFlowBuilder)

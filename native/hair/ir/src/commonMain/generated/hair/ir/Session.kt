@@ -42,6 +42,10 @@ class Session: SessionBase() {
 
     internal val nullForm = Null.form(this).also { register(it) }
 
+    internal val trueForm = True.form(this).also { register(it) }
+
+    internal val falseForm = False.form(this).also { register(it) }
+
     internal val negForm = Neg.form(this).also { register(it) }
 
     internal val notForm = Not.form(this).also { register(it) }
@@ -60,13 +64,7 @@ class Session: SessionBase() {
 
     internal val paramMetaForm = Param.metaForm(this)
 
-    internal val constIMetaForm = ConstI.metaForm(this)
-
-    internal val constLMetaForm = ConstL.metaForm(this)
-
-    internal val constFMetaForm = ConstF.metaForm(this)
-
-    internal val constDMetaForm = ConstD.metaForm(this)
+    internal val constMetaForm = Const.metaForm(this)
 
     internal val addMetaForm = Add.metaForm(this)
 

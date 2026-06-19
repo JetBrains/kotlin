@@ -13,31 +13,26 @@ fun ReturnVoid(control: Controlling?) = Return(control, UnitValue())
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun ReturnVoid() = Return(UnitValue())
 
+context(nodeBuilder: NodeBuilder)
+fun ConstI(value: Int) = Const(value)
 
 context(nodeBuilder: NodeBuilder)
-fun True() = ConstI(1)
+fun ConstL(value: Long) = Const(value)
 
 context(nodeBuilder: NodeBuilder)
-fun False() = ConstI(0)
-
+fun ConstF(value: Float) = Const(value)
 
 context(nodeBuilder: NodeBuilder)
-fun Const(value: Number) = when (value) {
-    is Byte,
-    is Short,
-    is Int -> ConstI(value.toInt())
-    is Long -> ConstL(value)
-    is Float -> ConstF(value)
-    is Double -> ConstD(value)
-    else -> error("Should not reach here $value (${value::class.simpleName})")
-}
+fun ConstD(value: Double) = Const(value)
 
 context(nodeBuilder: NodeBuilder)
 fun Const(type: HairType, value: Number) = when (type) {
-    INT -> ConstI(value.toInt())
-    LONG -> ConstL(value.toLong())
-    FLOAT -> ConstF(value.toFloat())
-    DOUBLE -> ConstD(value.toDouble())
+    BYTE -> Const(value.toByte())
+    SHORT -> Const(value.toShort())
+    INT -> Const(value.toInt())
+    LONG -> Const(value.toLong())
+    FLOAT -> Const(value.toFloat())
+    DOUBLE -> Const(value.toDouble())
     else -> error("Should not reach here $value (${value::class.simpleName})")
 }
 

@@ -32,8 +32,10 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
             // Arithmetic
 
             override fun visitNeg(node: Neg): Node = when (val operand = node.operand) {
-                is ConstAny -> Const(
-                    when (val value = operand.numberValue) {
+                is Const -> Const(
+                    when (val value = operand.value) {
+                        is Byte -> -value
+                        is Short -> -value
                         is Int -> -value
                         is Long -> -value
                         is Float -> -value
@@ -47,8 +49,8 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
             private fun normalizeBinary(op: BinaryOpKind, node: BinaryOp, lhs: Node, rhs: Node, builder: (Node, Node) -> Node): Node {
                 // fold constant
-                if (lhs is ConstAny && rhs is ConstAny) {
-                    return Const(op.op(lhs.numberValue, rhs.numberValue))
+                if (lhs is Const && rhs is Const) {
+                    return Const(op.op(lhs.value, rhs.value))
                 }
 
                 // fold with identity
@@ -124,15 +126,6 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
         }
     }
 }
-
-val ConstAny.numberValue: Number
-    get() = when (this) {
-        is ConstI -> value
-        is ConstL -> value
-        is ConstF -> value
-        is ConstD -> value
-        else -> error("Should not reach here $this")
-    }
 
 enum class BinaryOpKind(val associative: Boolean, val commutative: Boolean, val identity: Number, val op: (Number, Number) -> Number) {
     // FIXME toInt

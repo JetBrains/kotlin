@@ -3,6 +3,9 @@ package hair.sym
 enum class ArithmeticType {
     INT, LONG, FLOAT, DOUBLE;
 
+    val isIntegral
+        get() = toHairType().isIntegral
+
     fun toHairType(): HairType = when (this) {
         INT -> HairType.INT
         LONG -> HairType.LONG

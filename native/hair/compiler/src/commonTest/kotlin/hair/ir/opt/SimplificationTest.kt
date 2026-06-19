@@ -31,6 +31,6 @@ class SimplificationTest : IrTest {
         optimize()
         printGraphviz()
         val ret = allNodes<Return>().single()
-        assertEquals(42, (ret.result as ConstI).value)
+        assertEquals(42, (ret.result as Const).value)
     }
 }
