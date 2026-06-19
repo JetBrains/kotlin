@@ -21,7 +21,7 @@ class InlineTest : AbstractInlinerTest {
         lateinit var call: InvokeStatic
         val caller = define(Fun("caller")) {
             // FIXME varargs :c
-            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(42))) as InvokeStatic
+            call = InvokeStatic(callee.function)(callArgs = arrayOf(Const(42))) as InvokeStatic
             Use(call)
             ReturnVoid()
         }
@@ -33,7 +33,7 @@ class InlineTest : AbstractInlinerTest {
                 printGraphviz()
                 val use = allNodes<Use>().single()
                 modifyIR {
-                    assertEquals(ConstI(42), use.value)
+                    assertEquals(Const(42), use.value)
                 }
             }
         }
@@ -52,7 +52,7 @@ class InlineTest : AbstractInlinerTest {
         lateinit var call: InvokeStatic
         val caller = define(Fun("caller")) {
             // FIXME varargs :c
-            call = InvokeStatic(callee.function)(callArgs = arrayOf(ConstI(1), ConstI(2), ConstI(3))) as InvokeStatic
+            call = InvokeStatic(callee.function)(callArgs = arrayOf(Const(1), Const(2), Const(3))) as InvokeStatic
             Use(call)
             ReturnVoid()
         }
@@ -68,7 +68,7 @@ class InlineTest : AbstractInlinerTest {
                 modifyIR {
                     val result = use.value
                     assertTrue(result is Phi)
-                    assertContentEquals(listOf(ConstI(2), ConstI(3)), result.joinedValues)
+                    assertContentEquals(listOf(Const(2), Const(3)), result.joinedValues)
                 }
             }
         }

@@ -15,7 +15,7 @@ class DCETest : IrTest {
             BlockEntry()
             branch(Param(1010), {
                 whileLoop(Param(1010), {
-                    Use(ConstI(42))
+                    Use(Const(42))
                 })
             }, {
                 tryCatch(
@@ -28,7 +28,7 @@ class DCETest : IrTest {
                     emptyList()
                 )
                 BlockEntry()
-                Use(ConstI(37))
+                Use(Const(37))
             })
         }
         // FIXME maybe just DCE?

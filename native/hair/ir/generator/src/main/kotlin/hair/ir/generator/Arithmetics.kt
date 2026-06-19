@@ -11,29 +11,21 @@ object Arithmetics : ModelDSL() {
         //formParam("value", Any::class) // TODO nullable?
     }
 
-    val constI by node {
+    val const by node {
         interfaces(constAny)
-        formParam("value", Int::class)
-    }
-
-    val constL by node {
-        interfaces(constAny)
-        formParam("value", Long::class)
-    }
-
-    val constF by node {
-        interfaces(constAny)
-        formParam("value", Float::class)
-    }
-
-    val constD by node {
-        interfaces(constAny)
-        formParam("value", Double::class)
+        formParam("value", Number::class)
     }
 
     val `null` by node {
         interfaces(constAny)
     }
+
+    val constBoolean by abstractClass {
+        interfaces(constAny)
+    }
+
+    val `true` by node(constBoolean)
+    val `false` by node(constBoolean)
 
     val binaryOp by abstractClass {
         interfaces(DataFlow.valueNode)

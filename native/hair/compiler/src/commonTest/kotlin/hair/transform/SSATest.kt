@@ -28,8 +28,8 @@ class SSATest : IrTest {
     @Test
     fun testIf() = withTestSession {
         buildInitialIR {
-            val v1 = ConstI(23)
-            val v2 = ConstI(42)
+            val v1 = Const(23)
+            val v2 = Const(42)
             val v = Var.nextNumbered()
             branch(cond(), {
                 AssignVar(v)(v1)
@@ -58,19 +58,19 @@ class SSATest : IrTest {
             val var0 = Var(0)
             val var1 = Var(1)
             val var2 = Var(2)
-            AssignVar(var0)(ConstI(0))
+            AssignVar(var0)(Const(0))
             branch(cond(), {
-                AssignVar(var0)(ConstI(10))
-                AssignVar(var1)(ConstI(21))
+                AssignVar(var0)(Const(10))
+                AssignVar(var1)(Const(21))
             }, {
-                AssignVar(var1)(ConstI(22))
-                AssignVar(var0)(ConstI(20))
+                AssignVar(var1)(Const(22))
+                AssignVar(var0)(Const(20))
             })
-            AssignVar(var0)(Add(ArithmeticType.INT)(ReadVar(var0), ConstI(1)))
-            AssignVar(var2)(ConstI(0))
+            AssignVar(var0)(Add(ArithmeticType.INT)(ReadVar(var0), Const(1)))
+            AssignVar(var2)(Const(0))
             branch(ReadVar(var1), {
                 whileLoop(cond()) {
-                    AssignVar(var2)(Add(ArithmeticType.INT)(ReadVar(var2), ConstI(1)))
+                    AssignVar(var2)(Add(ArithmeticType.INT)(ReadVar(var2), Const(1)))
                 }
             }, {
                 AssignVar(var2)(ReadVar(var1))
@@ -94,13 +94,13 @@ class SSATest : IrTest {
     fun testComplex2() = withTestSession {
         buildInitialIR {
             branch(cond(), {
-                Use(ConstI(23))
+                Use(Const(23))
             }, {
                 branch(cond(), {
-                    Use(Add(ArithmeticType.INT)(ConstI(23), ConstI(42)))
+                    Use(Add(ArithmeticType.INT)(Const(23), Const(42)))
                 }, {
                     whileLoop(cond()) {
-                        Use(Add(ArithmeticType.INT)(ConstI(23), ConstI(42)))
+                        Use(Add(ArithmeticType.INT)(Const(23), Const(42)))
                     }
                 })
             })
@@ -118,15 +118,15 @@ class SSATest : IrTest {
         buildInitialIR {
             val v = Var.nextNumbered()
 
-            val v1 = ConstI(23)
+            val v1 = Const(23)
             AssignVar(v)(v1)
 
             val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
-            val v2 = ConstI(42)
+            val v2 = Const(42)
             AssignVar(v)(v2)
 
-            val thr = Throw(ConstI(108)) as Throw
+            val thr = Throw(Const(108)) as Throw
 
             val callUnwind = Unwind(call)
             val throwUnwind = Unwind(thr)
@@ -149,23 +149,23 @@ class SSATest : IrTest {
         buildInitialIR {
             val v = Var.nextNumbered()
 
-            val v1 = ConstI(23)
+            val v1 = Const(23)
             AssignVar(v)(v1)
 
             val call = InvokeStatic(Fun("foo"))() as InvokeStatic // FIXME
 
-            val v2 = ConstI(42)
+            val v2 = Const(42)
             AssignVar(v)(v2)
 
             lateinit var thr: Throw
-            val v3 = ConstI(37)
+            val v3 = Const(37)
             branch(
                 cond(),
                 {
                     AssignVar(v)(v3)
                 },
                 {
-                    thr = Throw(ConstI(108)) as Throw
+                    thr = Throw(Const(108)) as Throw
                 }
             )
 

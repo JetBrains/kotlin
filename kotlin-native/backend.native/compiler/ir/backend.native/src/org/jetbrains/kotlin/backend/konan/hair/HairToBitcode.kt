@@ -44,17 +44,16 @@ internal class HairToBitcode(
     private val context = generationState.context
 
     fun HairType.asLLVMType() = when (this) {
-        HairType.VOID -> llvm.voidType
-//        HairType.BOOLEAN -> llvm.int1Type
-//        HairType.BYTE -> llvm.int8Type
-//        HairType.SHORT -> llvm.int16Type
+        HairType.NOTHING -> llvm.voidType
+        HairType.BOOLEAN -> llvm.int1Type
+        HairType.BYTE -> llvm.int8Type
+        HairType.SHORT -> llvm.int16Type
         HairType.INT -> llvm.int32Type
         HairType.LONG -> llvm.int64Type
         HairType.FLOAT -> llvm.floatType
         HairType.DOUBLE -> llvm.doubleType
         HairType.REFERENCE -> llvm.pointerType
         HairType.NATIVE_POINTER -> llvm.pointerType
-        HairType.EXCEPTION -> llvm.pointerType
     }
 
     /**
@@ -79,20 +78,10 @@ internal class HairToBitcode(
         private fun <R> emit(block: FunctionGenerationContext.() -> R): R = fgc.block()
 
         /** Widens narrow integral types to i32 (Hair's canonical integer width). */
-        fun adaptToHair(value: LLVMValueRef): LLVMValueRef = when (LLVMTypeOf(value)) {
-            llvm.int1Type,
-            llvm.int8Type,
-            llvm.int16Type -> fgc.sext(value, llvm.int32Type)
-            else -> value
-        }
+        fun adaptToHair(value: LLVMValueRef): LLVMValueRef = value
 
         /** Truncates from Hair's i32 back to a narrower [targetType] when needed. */
-        fun adaptFromHair(value: LLVMValueRef, targetType: LLVMTypeRef): LLVMValueRef = when (targetType) {
-            llvm.int1Type,
-            llvm.int8Type,
-            llvm.int16Type -> fgc.trunc(value, targetType)
-            else -> value
-        }
+        fun adaptFromHair(value: LLVMValueRef, targetType: LLVMTypeRef): LLVMValueRef = value
 
         // TODO: copied from IntrinsicGenerator
         fun makeConstOfType(value: Int, targetType: LLVMTypeRef) = when (targetType) {
@@ -181,10 +170,17 @@ internal class HairToBitcode(
         override fun visitPhi(node: Phi): LLVMValueRef =
                 nodeValues[node]!! // already allocated by visitBlockEntry
 
-        override fun visitConstI(node: ConstI): LLVMValueRef = llvm.constInt32(node.value).llvm
-        override fun visitConstL(node: ConstL): LLVMValueRef = llvm.constInt64(node.value).llvm
-        override fun visitConstF(node: ConstF): LLVMValueRef = llvm.constFloat32(node.value).llvm
-        override fun visitConstD(node: ConstD): LLVMValueRef = llvm.constFloat64(node.value).llvm
+        override fun visitConst(node: Const): LLVMValueRef = when (val value = node.value) {
+            is Byte -> llvm.constInt8(value).llvm
+            is Short -> llvm.constInt16(value).llvm
+            is Int -> llvm.constInt32(value).llvm
+            is Long -> llvm.constInt64(value).llvm
+            is Float -> llvm.constFloat32(value).llvm
+            is Double -> llvm.constFloat64(value).llvm
+            else -> error("Unexpected constant value type: ${value}")
+        }
+
+        override fun visitConstBoolean(node: ConstBoolean): LLVMValueRef = llvm.constInt1(node.value).llvm
         override fun visitNull(node: Null): LLVMValueRef = llvm.kNull
         override fun visitUnitValue(node: UnitValue): LLVMValueRef = codegen.theUnitInstanceRef.llvm
 

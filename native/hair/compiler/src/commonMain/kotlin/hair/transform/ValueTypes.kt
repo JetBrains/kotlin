@@ -4,6 +4,7 @@ import hair.compilation.FunctionCompilation
 import hair.ir.Session
 import hair.ir.nodes.*
 import hair.ir.nodes.NodeBase
+import hair.ir.type
 import hair.sym.HairType
 import hair.utils.toWorklist
 
@@ -46,10 +47,8 @@ fun Session.computeValueTypes() {
 context(compilation: FunctionCompilation)
 private fun ValueNode.typeRule(): HairType? = when (this) {
     // Structural — resolved from form parameters alone:
-    is ConstI -> HairType.INT
-    is ConstL -> HairType.LONG
-    is ConstF -> HairType.FLOAT
-    is ConstD -> HairType.DOUBLE
+    is Const -> type
+    is ConstBoolean -> HairType.BOOLEAN
     is Null -> HairType.REFERENCE
     is ConstTypeInfo -> HairType.NATIVE_POINTER
 
@@ -61,7 +60,6 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
     is Load -> type
     is LoadField -> field.type
     is LoadGlobal -> field.type
-    is Store -> HairType.VOID
 
     is AnyNew -> HairType.REFERENCE // New / NewArray
 
@@ -74,11 +72,11 @@ private fun ValueNode.typeRule(): HairType? = when (this) {
     is InvokeVirtual -> function.resultHairType
 
     is UnitValue -> HairType.REFERENCE
-    is NoValue -> HairType.VOID
+    is NoValue -> HairType.NOTHING
 
     // Data-flow — propagate the operand's type; null until the operand is resolved:
     is Inv -> (operand as NodeBase).valueTypeOrNull
-    is Not -> HairType.INT
+    is Not -> HairType.BOOLEAN
 
     // Param — resolved via the caller-supplied callback:
     is Param -> compilation.function.parameterTypes[index]
