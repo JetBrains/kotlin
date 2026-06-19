@@ -1,4 +1,4 @@
-b ThrowException
+br s -n ThrowException -s lldb_kt42208.kexe
 r
 bt
 q
