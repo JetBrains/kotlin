@@ -127,6 +127,7 @@ internal fun ConeKotlinType.getDirectSupertypes(
             ConeDefinitelyNotNullType.create(it, session.typeContext) ?: it
         }
         is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSupertypes(session, calculationMode) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().asSequence().adjustSupertypes(this, session, calculationMode)
         is ConeErrorType -> emptySequence()
         is ConeLookupTagBasedType -> calculateSupertypes(session, calculationMode)
         else -> emptySequence()
@@ -176,8 +177,23 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
     }
 
     val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)
-    return superTypes.asSequence().map {
-        val type = substitutor.substituteOrSelf(it)
+    return superTypes.asSequence().map { substitutor.substituteOrSelf(it) }
+        .adjustSupertypes(this, session, calculationMode)
+}
+
+/**
+ * Adjust supertypes of the given [baseType].
+ *
+ * The refinement consists of two steps:
+ * - Supertype approximation to denotable types. Only performed when [calculationMode] is [ConeSupertypeCalculationMode.SUBSTITUTE_AND_APPROXIMATE].
+ * - Supertype nullability adjustment. Performed regardless of [calculationMode].
+ */
+private fun Sequence<ConeKotlinType>.adjustSupertypes(
+    baseType: ConeKotlinType,
+    session: FirSession,
+    calculationMode: ConeSupertypeCalculationMode,
+): Sequence<ConeKotlinType> {
+    return map { type ->
         if (calculationMode == ConeSupertypeCalculationMode.SUBSTITUTE_AND_APPROXIMATE) {
             session.typeApproximator.approximateToSuperType(
                 type,
@@ -185,7 +201,7 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
             ) ?: type
         } else {
             type
-        }.withNullabilityOf(this, session.typeContext)
+        }.withNullabilityOf(baseType, session.typeContext)
     }
 }
 
