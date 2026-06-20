@@ -384,9 +384,6 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         runAndMeasurePhase(CheckExternalCallsPhase)
     }
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
-    if (checkExternalCalls) {
-        runAndMeasurePhase(RewriteExternalCallsCheckerGlobals)
-    }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
     }

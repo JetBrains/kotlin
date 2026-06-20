@@ -187,10 +187,6 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
     }
 }
 
-private const val functionListGlobal = "Kotlin_callsCheckerKnownFunctions"
-private const val functionListSizesGlobal = "Kotlin_callsCheckerKnownFunctionsCounts"
-private const val functionListSizesSizeGlobal = "Kotlin_callsCheckerKnownFunctionsCountsCount"
-
 internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState) {
     val llvm = generationState.llvm
     val staticData = llvm.staticData
@@ -216,54 +212,5 @@ internal fun checkLlvmModuleExternalCalls(generationState: NativeGenerationState
     getFunctions(llvm.module)
             .filter { !it.isExternalFunction() && it !in ignoredFunctions }
             .forEach(checker::processFunction)
-    // otherwise optimiser can inline it
-    staticData.getGlobal(functionListGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesGlobal)?.setExternallyInitialized(true)
-    staticData.getGlobal(functionListSizesSizeGlobal)?.setExternallyInitialized(true)
     verifyModule(llvm.module)
 }
-
-// this should be a separate pass, to handle DCE correctly
-internal fun addFunctionsListSymbolForChecker(generationState: NativeGenerationState) {
-    val llvm = generationState.llvm
-    val staticData = llvm.staticData
-    val context = generationState.context
-
-    val functions = getFunctions(llvm.module)
-            .filter { !it.isExternalFunction() }
-            .map { constPointer(it) }
-            .toList()
-
-    val libName = context.config.libraryToCache?.klib?.uniqueName ?: context.config.moduleId
-    staticData.placeGlobalConstArray(libName.knownFunctionsGlobalName, llvm.pointerType, functions, isExported = true)
-    staticData.placeGlobal(libName.knownFunctionsCountGlobalName, llvm.constInt32(functions.size), isExported = true)
-
-    if (generationState.config.isFinalBinary) {
-        val libraryNames = generationState.dependenciesTracker.nativeDependenciesToLink
-                .filter { context.config.cachedLibraries.isLibraryCached(it) }
-                .map { it.uniqueName } + listOf(libName)
-
-        val allFunctionListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsGlobalName })
-        val allFunctionSizesListsArray = llvm.exportedGlobalPointerArray(staticData, libraryNames.map { it.knownFunctionsCountGlobalName })
-
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListGlobal).setInitializer(allFunctionListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.pointerType, functionListSizesGlobal).setInitializer(allFunctionSizesListsArray)
-        staticData.getOrCreateExportedGlobal(llvm.int32Type, functionListSizesSizeGlobal).setInitializer(llvm.constInt32(libraryNames.size))
-    }
-    verifyModule(llvm.module)
-}
-
-
-private val String.knownFunctionsGlobalName
-    get() = "_Konan_callsCheckerKnownFunctions_${this}"
-
-private val String.knownFunctionsCountGlobalName
-    get() = "_Konan_callsCheckerKnownFunctionsCount_${this}"
-
-private fun KotlinStaticData.getOrCreateExportedGlobal(type: LLVMTypeRef, name: String) =
-        staticData.getGlobal(name) ?: staticData.createGlobal(type, name, isExported = true)
-
-private fun CodegenLlvmHelpers.exportedGlobalPointerArray(staticData: KotlinStaticData, values: List<String>) =
-        staticData.placeGlobalConstArray("", pointerType, values.map {
-            staticData.getOrCreateExportedGlobal(pointerType, it).pointer
-        })

@@ -9,3 +9,6 @@ using namespace kotlin;
 
 CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept = default;
 CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() = default;
+
+CallsChecker::CallsChecker() noexcept = default;
+CallsChecker::~CallsChecker() = default;
