@@ -2,8 +2,10 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3,2.4
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.3
 // ^^^ KT-86026 TODO: Rework testdata to move functions/globals definitions from .def/.h into separate source files
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
+// KT-77616 is available in 2.4.20-Beta2
 
 // TARGET_BACKEND: NATIVE
 // NATIVE_STANDALONE
