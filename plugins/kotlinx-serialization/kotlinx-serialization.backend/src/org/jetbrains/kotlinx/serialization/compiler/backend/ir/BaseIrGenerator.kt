@@ -492,10 +492,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
     // create serializers for type arguments if all arguments are classes, `null` otherwise
     private fun IrBuilderWithScope.createSerializerOnlyForClasses(type: IrSimpleType, serializableClass: IrClass): List<IrExpression>? {
-        // arguments contain star projections or type parameter
-        if (!type.arguments.all { it is IrSimpleType && it.typeOrNull?.isTypeParameter() != true }) {
-            return null
-        }
+        if (type.containsTypeParameter()) return null
 
         return type.arguments.map { argumentType ->
             if (argumentType !is IrSimpleType) return null
@@ -511,6 +508,12 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 null
             ) ?: return null // we can't create serializer
         }
+    }
+
+    private fun IrType.containsTypeParameter(): Boolean {
+        if (this !is IrSimpleType) return false
+        if (isTypeParameter()) return true
+        return arguments.any { it.typeOrNull?.containsTypeParameter() == true }
     }
 
     private fun IrSimpleType.checkTypeArgumentsHasSelf(itselfClass: IrClassSymbol): Boolean {
