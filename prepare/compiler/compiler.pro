@@ -341,6 +341,10 @@
     public static void deleteRecursively(java.nio.file.Path);
 }
 
+# Used indirectly e.g. from LanguageLevel.<clinit>
+-keepclassmembers class com.intellij.AbstractBundle {
+    java.util.function.Supplier getLazyMessage(java.lang.String,java.lang.Object[]);
+}
 
 # This is used from standalone analysis API, which is NOT a part of the compiler but is bundled into kotlin-annotation-processing.
 -keepclassmembers class com.intellij.openapi.vfs.VirtualFileManager {
