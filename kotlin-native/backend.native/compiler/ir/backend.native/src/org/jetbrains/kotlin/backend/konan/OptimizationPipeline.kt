@@ -414,6 +414,12 @@ class RemoveRedundantSafepointsPipeline(config: LlvmPipelineConfig, performanceM
     }
 }
 
+class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-calls-checker-module"
+    override val passes = listOf("kotlin-calls-checker-module")
+}
+
 internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode

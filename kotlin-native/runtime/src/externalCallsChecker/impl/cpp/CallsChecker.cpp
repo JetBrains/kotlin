@@ -5,6 +5,7 @@
 
 #include "CallsChecker.hpp"
 
+#include <atomic>
 #include <string_view>
 #include <cstring>
 #include <unordered_set>
@@ -15,13 +16,9 @@
 #include "StackTrace.hpp"
 #include "ThreadData.hpp"
 #include "ExecFormat.h"
+#include "concurrent/Mutex.hpp"
 
 using namespace kotlin;
-
-// this values will be substituted by compiler
-extern "C" const void*** Kotlin_callsCheckerKnownFunctions;
-extern "C" const int** Kotlin_callsCheckerKnownFunctionsCounts;
-extern "C" const int Kotlin_callsCheckerKnownFunctionsCountsCount;
 
 extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "\x01_mprotect",
@@ -297,21 +294,26 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
 
 namespace {
 
-class KnownFunctionChecker {
+class KnownFunctionChecker : private Pinned {
 public:
     KnownFunctionChecker() {
-        for (int i = 0; i < Kotlin_callsCheckerKnownFunctionsCountsCount; i++) {
-            for (int j = 0; j < *Kotlin_callsCheckerKnownFunctionsCounts[i]; j++) {
-                known_functions_.insert(Kotlin_callsCheckerKnownFunctions[i][j]);
-            }
-        }
         std::copy(
                 std::begin(Kotlin_callsCheckerGoodFunctionNames), std::end(Kotlin_callsCheckerGoodFunctionNames),
                 std::begin(good_names_copy_));
         std::sort(std::begin(good_names_copy_), std::end(good_names_copy_));
     }
 
-    bool isKnown(const void* fun) const noexcept { return known_functions_.find(fun) != known_functions_.end(); }
+    ~KnownFunctionChecker() = delete;
+
+    bool isKnown(const void* fun) const noexcept {
+        // This is a hot path, but we have already tried to read another atomic, so this
+        // shouldn't add too much overhead.
+        if (!sealed_.load(std::memory_order_relaxed)) {
+            PrintStackTraceStderr();
+            RuntimeFail("isKnown is called before the checker is sealed");
+        }
+        return known_functions_.find(fun) != known_functions_.end();
+    }
 
     bool isSafeByName(std::string_view name) const noexcept {
         auto it = std::lower_bound(std::begin(good_names_copy_), std::end(good_names_copy_), name);
@@ -330,14 +332,38 @@ public:
         return false;
     }
 
-    ~KnownFunctionChecker() = delete;
+    void insert(std_support::span<const void*> knownFunctions) noexcept {
+        std::unique_lock guard(initLock_);
+        if (sealed_.load(std::memory_order_relaxed)) {
+            PrintStackTraceStderr();
+            RuntimeFail(
+                    "Using CallsChecker with dynamically loaded modules is unsupported: all known functions must be registered before "
+                    "GlobalData is created.");
+        }
+        known_functions_.insert(knownFunctions.begin(), knownFunctions.end());
+    }
+
+    void seal() noexcept {
+        std::unique_lock guard(initLock_);
+        sealed_.store(true, std::memory_order_relaxed);
+    }
 
 private:
+    SpinLock initLock_; // may be used very early on the start, safer to use a simple spin lock.
+    std::atomic<bool> sealed_ = false;
     std::unordered_set<const void*> known_functions_;
     std::string_view good_names_copy_[sizeof(Kotlin_callsCheckerGoodFunctionNames) / sizeof(Kotlin_callsCheckerGoodFunctionNames[0])];
 };
 
-[[clang::no_destroy]] const KnownFunctionChecker checker;
+// This can't be just a part of `GlobalData`, because this may be called very early from
+// global constructors.
+// For the same reason, it can't just be a simple global: if some global constructor
+// used this global before the global initialized, we have UB. Using lazy initialization
+// avoid this problem.
+static KnownFunctionChecker& knownFunctionChecker() noexcept {
+    [[clang::no_destroy]] static KnownFunctionChecker instance;
+    return instance;
+}
 
 constexpr int MSG_SEND_TO_NULL = -1;
 constexpr int CALLED_LLVM_BUILTIN = -2;
@@ -368,6 +394,8 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     if (actualState == ThreadState::kNative) {
         return;
     }
+
+    auto& checker = knownFunctionChecker();
     if (reinterpret_cast<int64_t>(calleePtr) != CALLED_LLVM_BUILTIN && checker.isKnown(calleePtr)) {
         return;
     }
@@ -390,9 +418,20 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
     RuntimeFail("Expected kNative thread state at call of function %s by function %s", callee, caller);
 }
 
+// Called from global constructors.
+extern "C" RUNTIME_NOTHROW RUNTIME_EXPORT void Kotlin_callsChecker_init(const void** knownFunctions, uint64_t knownFunctionsCount) {
+    knownFunctionChecker().insert({knownFunctions, static_cast<size_t>(knownFunctionsCount)});
+}
+
 ALWAYS_INLINE CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {
     ++ignoreGuardsCount;
 }
 ALWAYS_INLINE CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {
     --ignoreGuardsCount;
 }
+
+CallsChecker::CallsChecker() noexcept {
+    knownFunctionChecker().seal();
+}
+
+CallsChecker::~CallsChecker() = default;

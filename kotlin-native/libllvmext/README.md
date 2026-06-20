@@ -40,3 +40,4 @@ Custom LLVM passes live in the [Passes](src/main/cpp/Passes) directory:
 - `RemoveRedundantSafepointsPass` (`kotlin-remove-sp`): function pass, that removes unnecessary prologue
   safepoints from functions; useful, when run after LLVM inlining; can be configured as
   `kotlin-remove-sp<inline>` to additionally inline the remaining safepoints.
+- `ModuleCallsCheckerPass` (`kotlin-calls-checker-module`): module pass for external calls checker instrumentation; creates module contructor; should be run after DCE

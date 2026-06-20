@@ -67,15 +67,10 @@ internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGene
     checkLlvmModuleExternalCalls(context)
 }
 
-/**
- * Rewrites globals for external calls checker after optimizer run.
- */
-internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
-        name = "RewriteExternalCallsCheckerGlobals",
-        postactions = getDefaultLlvmModuleActions(),
-) { context, _ ->
-    addFunctionsListSymbolForChecker(context)
-}
+internal val ModuleCallsChecker = optimizationPipelinePass(
+        name = "ModuleCallsChecker",
+        pipeline = ::ModuleCallsCheckerPipeline
+)
 
 internal class OptimizationState(
         config: NativeSecondStageCompilationConfig,
@@ -198,6 +193,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         if (!context.config.runLLVMPassesInCompiler) {
             it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+        }
+        if (context.config.checkStateAtExternalCalls) {
+            it.runAndMeasurePhase(ModuleCallsChecker, module)
         }
     }
     if (context.config.runLLVMPassesInCompiler) {
