@@ -1,5 +1,8 @@
 ; OPT: --passes=kotlin-calls-checker-module
 
+; CHECK: @kotlin.callsChecker.goodFunctionNamesSorted = private constant [[[SIZE:[0-9]+]] x ptr]
+; CHECK: @Kotlin_callsChecker_goodFunctionNamesSorted = linkonce_odr constant ptr @kotlin.callsChecker.goodFunctionNamesSorted
+; CHECK: @Kotlin_callsChecker_goodFunctionNamesSize = linkonce_odr constant i64 [[SIZE]]
 ; CHECK: @kotlin.callsChecker.knownFunctions = private constant [2 x ptr] [ptr @f_defined1, ptr @f_defined2]
 ; CHECK: @llvm.global_ctors = appending global [1 x { i32, ptr, ptr }] [{ i32, ptr, ptr } { i32 0, ptr @kotlin.callsChecker.module_ctor, ptr null }]
 
