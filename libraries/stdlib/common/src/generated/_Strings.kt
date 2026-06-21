@@ -156,6 +156,8 @@ public fun CharSequence.getOrNull(index: Int): Char? {
 
 /**
  * Returns index of the first character matching the given [predicate], or -1 if the char sequence does not contain such character.
+ * 
+ * @sample samples.text.Strings.indexOfFirst
  */
 public inline fun CharSequence.indexOfFirst(predicate: (Char) -> Boolean): Int {
     for (index in indices) {

@@ -1081,4 +1081,18 @@ class Strings {
         assertPrints(StringBuilder("!!!content!!!").removeSurrounding("!"), "!!content!!")
     }
 
+    @Sample
+    fun indexOfFirst() {
+        val string = "Kotlin knowledge"
+
+        assertPrints(string.indexOfFirst { it == 'K' }, "0")
+        assertPrints(string.indexOfFirst { it == 'k' }, "7")
+        assertPrints(string.indexOfFirst { it == 'n' }, "5")
+        assertPrints(string.indexOfFirst { it == ' ' }, "6")
+        assertPrints(string.indexOfFirst { it == 'z' }, "-1")
+
+        val emptyString = "";
+        assertPrints(emptyString.indexOfFirst { it == 'z' }, "-1")
+    }
+
 }

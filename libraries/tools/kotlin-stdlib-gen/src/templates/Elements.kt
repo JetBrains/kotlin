@@ -233,6 +233,10 @@ object Elements : TemplateGroupBase() {
             inlineOnly()
             body { "return storage.indexOfFirst { predicate(it.to${primitive!!.name}()) }" }
         }
+
+        specialFor(CharSequences) {
+            sample("${f.sampleClass}.indexOfFirst")
+        }
     }
 
     val f_indexOfLast = fn("indexOfLast(predicate: (T) -> Boolean)") {
