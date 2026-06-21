@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUs
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 abstract class IrValidationPhase<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {
@@ -46,7 +47,7 @@ class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Co
                 IrExpressionBodyInFunctionChecker,
                 IrVisibilityChecker.Relaxed,
                 IrCrossFileFieldUsageChecker,
-                //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
+                IrTypeParameterScopeChecker,
             )
             .withVarargChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
