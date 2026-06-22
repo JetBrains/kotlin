@@ -33,6 +33,9 @@ object WasmConfigurationKeys {
     val WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS = CompilerConfigurationKey.create<Boolean>("WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS")
 
     @JvmField
+    val WASM_IC_GENERATE_UNCHANGED_MODULES = CompilerConfigurationKey.create<Boolean>("WASM_IC_GENERATE_UNCHANGED_MODULES")
+
+    @JvmField
     val WASM_USE_NEW_EXCEPTION_PROPOSAL = CompilerConfigurationKey.create<Boolean>("WASM_USE_NEW_EXCEPTION_PROPOSAL")
 
     // Don't use WebAssembly.JSTag for throwing and catching exceptions
@@ -95,6 +98,10 @@ var CompilerConfiguration.wasmTarget: WasmTarget
 var CompilerConfiguration.wasmUseTrapsInsteadOfExceptions: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)
     set(value) { put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, value) }
+
+var CompilerConfiguration.wasmIcGenerateUnchangedModules: Boolean
+    get() = getBoolean(WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES)
+    set(value) { put(WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES, value) }
 
 var CompilerConfiguration.wasmUseNewExceptionProposal: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
