@@ -296,6 +296,14 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaR
 	public abstract fun resolveToSymbols (Lorg/jetbrains/kotlin/idea/references/KtReference;)Ljava/util/Collection;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaResolverKt {
+	public static final fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/idea/references/KtReference;)Z
+	public static final fun resolveToCall (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)Lorg/jetbrains/kotlin/analysis/api/resolution/KaCallInfo;
+	public static final fun resolveToCallCandidates (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
+	public static final fun resolveToSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/idea/references/KtReference;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
+	public static final fun resolveToSymbols (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/idea/references/KtReference;)Ljava/util/Collection;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaScopeContext : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public fun getImplicitReceivers ()Ljava/util/List;
 	public abstract fun getScopes ()Ljava/util/List;
@@ -530,6 +538,10 @@ public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity : ja
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionInformationKt {
+	public static final fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {

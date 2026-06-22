@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaInternals {
+    public val resolver: KaInternalsResolver
+
     public val typeRelationChecker: KaInternalsTypeRelationChecker
 }
 

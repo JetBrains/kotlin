@@ -126,26 +126,25 @@ internal class KaFirResolver(
      * are different, we can certainly say that the [KtSimpleNameExpression] does not
      * point to the companion object.
      */
-    override val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
-        get() = withPsiValidityAssertion {
+    override fun isImplicitReferenceToCompanion(simpleNameExpression: KtSimpleNameExpression): Boolean =
+        simpleNameExpression.withPsiValidityAssertion {
             val implicitInvokeCall = run {
-                val parentCallExpression = parent as? KtCallExpression
+                val parentCallExpression = simpleNameExpression.parent as? KtCallExpression
                 parentCallExpression?.getOrBuildFir(analysisSession.resolutionFacade) as? FirImplicitInvokeCall
             }
 
             val wholeQualifier = implicitInvokeCall?.explicitReceiver
-                ?: getOrBuildFir(analysisSession.resolutionFacade)
+                ?: simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
 
             return wholeQualifier is FirResolvedQualifier && wholeQualifier.resolvedToCompanionObject
         }
 
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
-        get() = contextSensitiveResolutionStatus is KaContextSensitiveResolutionStatus.Used
+    override fun usesContextSensitiveResolution(simpleNameExpression: KtSimpleNameExpression): Boolean =
+        contextSensitiveResolutionStatus(simpleNameExpression) is KaContextSensitiveResolutionStatus.Used
 
-    override val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
-        get() = withPsiValidityAssertion {
-            val fir = getOrBuildFir(analysisSession.resolutionFacade)
+    override fun contextSensitiveResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
+        simpleNameExpression.withPsiValidityAssertion {
+            val fir = simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
                 ?: return KaContextSensitiveResolutionNotAvailableImpl
 
             if (fir.isResolvedThroughContextSensitiveResolution()) {
@@ -156,8 +155,8 @@ internal class KaFirResolver(
             // (`Foo.BAR`) or the enclosing type-operator call (`x is Foo.Bar`) — which is not necessarily the
             // FIR mapped to the simple name itself, so it is re-fetched from the appropriate anchor.
             val hintHolder = when (fir) {
-                is FirResolvedTypeRef -> enclosingTypeOperatorCall()
-                else -> qualifiedExpressionFir() ?: fir
+                is FirResolvedTypeRef -> simpleNameExpression.enclosingTypeOperatorCall()
+                else -> simpleNameExpression.qualifiedExpressionFir() ?: fir
             }
 
             val nonFatalDiagnostics = when (hintHolder) {

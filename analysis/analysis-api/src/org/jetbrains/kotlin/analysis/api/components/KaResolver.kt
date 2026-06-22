@@ -2852,7 +2852,6 @@ public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
  * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
     return with(session) {
@@ -2871,7 +2870,6 @@ public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
  * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.resolveToSymbol(): KaSymbol? {
     return with(session) {
@@ -2903,7 +2901,6 @@ public fun KtReference.resolveToSymbol(): KaSymbol? {
     message = "Use `KtSimpleNameExpression` instead",
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.isImplicitReferenceToCompanion == true"),
 )
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtReference.isImplicitReferenceToCompanion(): Boolean {
     @Suppress("DEPRECATION")
@@ -2960,7 +2957,6 @@ public val KtSimpleNameExpression.isImplicitReferenceToCompanion: Boolean
     replaceWith = ReplaceWith("(this.element as? KtSimpleNameExpression)?.usesContextSensitiveResolution == true"),
 )
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KtReference.usesContextSensitiveResolution: Boolean
     @Suppress("DEPRECATION")
@@ -2992,7 +2988,6 @@ public val KtReference.usesContextSensitiveResolution: Boolean
     ),
 )
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
     @Suppress("DEPRECATION")
@@ -3035,7 +3030,6 @@ public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSen
  * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.resolveToCall(): KaCallInfo? {
     return with(session) {
@@ -3055,7 +3049,6 @@ public fun KtElement.resolveToCall(): KaCallInfo? {
  * @see KtResolvableCall.collectCallCandidates
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo> {
     return with(session) {
