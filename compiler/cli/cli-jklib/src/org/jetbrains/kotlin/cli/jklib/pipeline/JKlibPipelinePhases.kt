@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.pathString
 
 
@@ -211,7 +212,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
             dependencies(configuration.jvmClasspathRoots.map { it.absolutePath })
             dependencies(configuration.jvmModularRoots.map { it.absolutePath })
-            dependencies(resolvedLibraries.map { it.libraryFile.absolutePath })
+            dependencies(resolvedLibraries.map { it.path.absolutePathString() })
             friendDependencies(configuration.friendPaths)
         }
 

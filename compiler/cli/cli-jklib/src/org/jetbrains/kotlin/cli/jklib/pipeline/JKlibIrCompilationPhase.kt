@@ -45,11 +45,9 @@ import org.jetbrains.kotlin.ir.backend.jklib.JKlibDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJklibStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -72,6 +70,8 @@ import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageF
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 object JKlibIrCompilationPhase :
@@ -82,11 +82,11 @@ object JKlibIrCompilationPhase :
 
     override fun executePhase(input: JKlibSerializationArtifact): JKlibIrCompilationArtifact {
         val configuration = input.configuration
-        val klib = File(input.outputKlibPath)
+        val klib = Path(input.outputKlibPath)
 
         val projectEnvironment = input.projectEnvironment
 
-        val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePath
+        val klibFiles = configuration.getList(JVMConfigurationKeys.KLIB_PATHS) + klib.absolutePathString()
         val projectContext = ProjectContext(projectEnvironment.project, "TopDownAnalyzer for JKlib")
         val storageManager = projectContext.storageManager
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
@@ -104,7 +104,7 @@ object JKlibIrCompilationPhase :
         val descriptors = dependencyDescriptorsByKlib.values + jarDepsModuleDescriptor
         descriptors.forEach { it.setDependencies(descriptors) }
 
-        val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.libraryFile == klib })
+        val mainModule = dependencyDescriptorsByKlib.getValue(sortedDependencies.single { it.path == klib })
 
         val trace = BindingTraceContext(projectContext.project)
         val mangler = JKlibDescriptorMangler(
