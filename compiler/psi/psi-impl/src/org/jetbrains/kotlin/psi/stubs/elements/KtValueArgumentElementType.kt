@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.stubs.StubElementFactory
+import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinValueArgumentStubFactory
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinValueArgumentStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
 
 class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClass: Class<T>) :
@@ -19,17 +21,10 @@ class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClas
         psiClass,
         KotlinValueArgumentStub::class.java,
     ) {
+    private val stubFactory = KotlinValueArgumentStubFactory(this)
+    private val stubSerializer = KotlinValueArgumentStubSerializer(this)
 
-    override fun createStub(psi: T, parentStub: StubElement<out PsiElement>?): KotlinValueArgumentStubImpl<T> {
-        return KotlinValueArgumentStubImpl(parentStub, this, psi.isSpread)
-    }
+    override fun getStubFactory(): StubElementFactory<KotlinValueArgumentStubImpl<T>, T> = stubFactory
 
-    override fun serialize(stub: KotlinValueArgumentStubImpl<T>, dataStream: StubOutputStream) {
-        dataStream.writeBoolean(stub.isSpread)
-    }
-
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinValueArgumentStubImpl<T> {
-        val isSpread = dataStream.readBoolean()
-        return KotlinValueArgumentStubImpl(parentStub, this, isSpread)
-    }
+    override fun getStubSerializer(): StubSerializer<KotlinValueArgumentStubImpl<T>> = stubSerializer
 }
