@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty

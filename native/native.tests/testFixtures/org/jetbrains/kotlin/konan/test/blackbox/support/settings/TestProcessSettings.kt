@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
 import org.jetbrains.kotlin.config.nativeBinaryOptions.parseBinaryOptions
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.io.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -249,7 +248,7 @@ sealed class CacheMode {
     companion object {
         fun defaultForTestTarget(distribution: Distribution, kotlinNativeTargets: KotlinNativeTargets): Alias {
             val cacheableTargets = distribution.properties
-                .resolvablePropertyList("cacheableTargets", kotlinNativeTargets.hostTarget.name)
+                .resolvablePropertyList("cacheableTargets", suffix = kotlinNativeTargets.hostTarget.name)
                 .map { KonanTarget.predefinedTargets.getValue(it) }
                 .toSet()
 
