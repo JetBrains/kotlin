@@ -63,18 +63,6 @@ data class File(internal val javaPath: Path) {
     val listFilesOrEmpty: List<File>
         get() = if (exists) listFiles else emptyList()
 
-    // A fileKey is an object that uniquely identifies the given file.
-    val fileKey: Any
-        get() {
-            // It is not guaranteed that all filesystems have fileKey. If not we fall
-            // back on canonicalPath which can be significantly slower to get.
-            var key = Files.readAttributes(javaPath, BasicFileAttributes::class.java).fileKey()
-            if (key == null) {
-                key = this.canonicalPath
-            }
-            return key
-        }
-
     val size: Long get() = Files.size(javaPath)
 
     fun child(name: String): File = File(this, name)

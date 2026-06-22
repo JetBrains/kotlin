@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
+import org.jetbrains.kotlin.io.fileKey
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
@@ -157,7 +158,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
         val result = KotlinLibraryResolverResultImpl(rootLibraries)
 
         val cache = mutableMapOf<Any, KotlinResolvedLibrary>()
-        cache.putAll(rootLibraries.map { it.library.libraryFile.fileKey to it })
+        cache.putAll(rootLibraries.map { it.library.path.fileKey() to it })
 
         val processingQueue = ArrayDeque(rootLibraries)
         while(processingQueue.isNotEmpty()) {
@@ -166,7 +167,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
                 .forEach { unresolvedDependency ->
                     if (!searchPathResolver.isProvidedByDefault(unresolvedDependency)) {
                         searchPathResolver.resolve(unresolvedDependency)?.let { resolvedDependencyLibrary ->
-                            val fileKey = resolvedDependencyLibrary.libraryFile.fileKey
+                            val fileKey = resolvedDependencyLibrary.path.fileKey()
                             if (fileKey in cache) {
                                 currentLibrary.addDependency(cache[fileKey]!!)
                             } else {
