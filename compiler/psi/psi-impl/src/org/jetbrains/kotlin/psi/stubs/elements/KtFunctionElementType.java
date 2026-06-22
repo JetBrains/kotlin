@@ -5,122 +5,30 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
-import org.jetbrains.kotlin.psi.stubs.StubUtils;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinFunctionStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinFunctionStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean;
 
-import java.io.IOException;
-import java.util.List;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubImpl, KtNamedFunction> {
-
-    private static final String NAME = "kotlin.FUNCTION";
 
     public KtFunctionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
     }
 
-    /**
-     * Functions always stubbed since we want to index even local ones
-     */
     @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public KotlinFunctionStubImpl createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
-        boolean isTopLevel = psi.getParent() instanceof KtFile;
-        boolean isExtension = psi.getReceiverTypeReference() != null;
-        FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
-        boolean hasNoExpressionBody = psi.hasBlockBody();
-        boolean hasBody = psi.hasBody();
-        return new KotlinFunctionStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
-                isExtension, hasNoExpressionBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                psi.mayHaveContract(),
-                /* kdocText = */ null,
-                /* contract = */ null,
-                /* origin = */ null
-        );
+    public StubElementFactory<KotlinFunctionStubImpl, KtNamedFunction> getStubFactory() {
+        return KotlinFunctionStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinFunctionStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-        dataStream.writeBoolean(stub.isTopLevel());
-
-        FqName fqName = stub.getFqName();
-        dataStream.writeName(fqName != null ? fqName.asString() : null);
-
-        dataStream.writeBoolean(stub.isExtension());
-        dataStream.writeBoolean(stub.getHasNoExpressionBody());
-        dataStream.writeBoolean(stub.getHasBody());
-        dataStream.writeBoolean(stub.getHasTypeParameterListBeforeFunctionName());
-        boolean haveContract = stub.getMayHaveContract();
-        dataStream.writeBoolean(haveContract);
-
-        if (haveContract) {
-            StubUtils.writeContract$org_jetbrains_kotlin_psi_impl(dataStream, stub.getContract());
-        }
-
-        StubUtils.serializeKdocText(dataStream, stub.getKdocText());
-
-        KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
-    }
-
-    @NotNull
-    @Override
-    public KotlinFunctionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        StringRef name = dataStream.readName();
-        boolean isTopLevel = dataStream.readBoolean();
-
-        StringRef fqNameAsString = dataStream.readName();
-        FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
-
-        boolean isExtension = dataStream.readBoolean();
-        boolean hasNoExpressionBody = dataStream.readBoolean();
-        boolean hasBody = dataStream.readBoolean();
-        boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
-        boolean mayHaveContract = dataStream.readBoolean();
-
-        @SuppressWarnings("rawtypes")
-        List<KtContractDescriptionElement> contract = mayHaveContract ? StubUtils.readContract$org_jetbrains_kotlin_psi_impl(dataStream) : null;
-
-        String kdocText = StubUtils.deserializeKdocText(dataStream);
-        return new KotlinFunctionStubImpl(
-                (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasNoExpressionBody, hasBody,
-                hasTypeParameterListBeforeFunctionName, mayHaveContract,
-                kdocText,
-                contract,
-                KotlinStubOrigin.deserialize(dataStream)
-        );
-    }
-
-    @Override
-    public void indexStub(@NotNull KotlinFunctionStubImpl stub, @NotNull IndexSink sink) {
-        StubIndexService.getInstance().indexFunction(stub, sink);
-    }
-
-    @NotNull
-    @Override
-    public String getExternalId() {
-        return NAME;
+    public StubSerializer<KotlinFunctionStubImpl> getStubSerializer() {
+        return KotlinFunctionStubSerializer.INSTANCE;
     }
 }
