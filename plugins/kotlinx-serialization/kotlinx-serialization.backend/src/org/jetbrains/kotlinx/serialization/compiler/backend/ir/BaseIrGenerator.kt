@@ -309,6 +309,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 symbol,
                 listOf(irBuilder.irGetObject(companionClass)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
                 adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
+                kSerializerType(thisIrType)
             )
         }
     }
@@ -441,7 +442,13 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
         return { index: Int ->
             if (cacheableSerializers[index]) {
-                val lazyDelegate = irInvoke(compilerContext.arrayValueGetter.symbol, irGet(variable), irInt(index))
+                val arrayType = (variable.type as IrSimpleType).arguments.last().typeOrFail
+                val lazyDelegate = irInvoke(
+                    compilerContext.arrayValueGetter.symbol,
+                    irGet(variable),
+                    irInt(index),
+                    returnTypeHint = arrayType
+                )
                 irInvoke(
                     compilerContext.lazyValueGetter,
                     lazyDelegate,

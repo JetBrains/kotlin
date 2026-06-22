@@ -100,6 +100,7 @@ class SerializerForInlineClassGenerator(
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
             listOf(expression),
             (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
+            returnTypeHint = inlineClassBoxType,
         )
 
 }

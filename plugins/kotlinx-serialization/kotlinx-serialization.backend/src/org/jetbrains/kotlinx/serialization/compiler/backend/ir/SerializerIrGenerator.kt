@@ -514,7 +514,7 @@ open class SerializerIrGenerator(
         if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
-            +irReturn(irInvoke(deserCtor, args, typeArgs))
+            +irReturn(irInvoke(deserCtor, args, typeArgs, loadFunc.returnType))
         } else {
             if (irClass.isLocal) {
                 // if the serializer is local, then the serializable class too, since they must be in the same scope
