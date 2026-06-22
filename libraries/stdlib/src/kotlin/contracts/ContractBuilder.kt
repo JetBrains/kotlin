@@ -7,6 +7,7 @@ package kotlin.contracts
 
 import kotlin.internal.ContractsDsl
 import kotlin.internal.InlineOnly
+import kotlin.jvm.JvmName
 
 /**
  * This marker distinguishes the experimental contract declaration API and is used to opt-in for that feature
@@ -94,7 +95,18 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceExactlyOnceContract
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
-    @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>?, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("callsInPlaceNullable")
+    @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+
+    /**
+     * This overload accepts a nullable [lambda]. Only the [InvocationKind.UNKNOWN] and [InvocationKind.AT_MOST_ONCE] kinds are allowed for a nullable [lambda].
+     *
+     * The non-nullable [callsInPlace] overload above is retained for binary compatibility
+     */
+    @ContractsDsl
+    @SinceKotlin("2.4")
+    public fun <R> callsInPlace(lambda: Function<R>?, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
 
     /**
      * Specifies the effect that will be observed if the condition passed as a receiver argument holds.
