@@ -5,37 +5,29 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtBackingField;
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinBackingFieldStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinBackingFieldStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBackingFieldStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtBackingFieldElementType extends KtStubElementType<KotlinBackingFieldStubImpl, KtBackingField> {
     public KtBackingFieldElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtBackingField.class, KotlinBackingFieldStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinBackingFieldStubImpl createStub(@NotNull KtBackingField psi, StubElement parentStub) {
-        return new KotlinBackingFieldStubImpl(parentStub, psi.hasInitializer());
+    public StubElementFactory<KotlinBackingFieldStubImpl, KtBackingField> getStubFactory() {
+        return KotlinBackingFieldStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinBackingFieldStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.getHasInitializer());
-    }
-
-    @NotNull
-    @Override
-    public KotlinBackingFieldStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        boolean hasInitializer = dataStream.readBoolean();
-        return new KotlinBackingFieldStubImpl(parentStub, hasInitializer);
+    public StubSerializer<KotlinBackingFieldStubImpl> getStubSerializer() {
+        return KotlinBackingFieldStubSerializer.INSTANCE;
     }
 }
