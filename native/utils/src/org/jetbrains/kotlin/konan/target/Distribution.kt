@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.nio.file.Path
 
 class Distribution private constructor(private val serialized: Serialized) : java.io.Serializable {
     constructor(

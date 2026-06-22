@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import java.nio.file.Files
@@ -42,7 +42,7 @@ object KonanLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChec
         val propertiesPath = konanRoot.resolve(KONAN_PROPERTIES_FILE)
         if (!Files.exists(propertiesPath)) return null
 
-        val properties = loadProperties(propertiesPath.toString())
+        val properties = propertiesPath.readProperties()
         return properties.getProperty(KONAN_COMPILER_VERSION)
     }
 
