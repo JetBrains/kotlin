@@ -59,12 +59,10 @@ val log4j2CoreClasspathForTests by configurations.resolvable("log4j2CoreClasspat
 }
 
 dependencies {
-    embedded(project(":kotlin-lombok-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-lombok-compiler-plugin.cli")) { isTransitive = false }
 
     testFixturesApi(intellijCore())
-    testFixturesApi(project(":kotlin-lombok-compiler-plugin.common"))
     testFixturesApi(project(":kotlin-lombok-compiler-plugin.k2"))
     testFixturesApi(project(":kotlin-lombok-compiler-plugin.cli"))
 

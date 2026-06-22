@@ -296,7 +296,6 @@ val projectsDependingOnStableStdlib =
                 ":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend",
 
                 ":kotlin-lombok-compiler-plugin.cli",
-                ":kotlin-lombok-compiler-plugin.common",
                 ":kotlin-lombok-compiler-plugin.k2",
 
                 ":kotlin-noarg-compiler-plugin.cli",
