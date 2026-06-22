@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.file
-import org.jetbrains.kotlin.konan.file.withZipFileSystem
+import org.jetbrains.kotlin.io.withZipFileSystem
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_BODIES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_DEBUG_INFO_FILE_NAME
@@ -64,7 +63,7 @@ fun loadSizeInfo(klibPath: Path): KlibElementWithSize? {
     return when {
         klibPath.isRegularFile() -> KlibElementWithSize(
             "KLIB file cumulative size",
-            klibPath.withZipFileSystem { fs -> fs.file("/").collectTopLevelElements() }
+            klibPath.withZipFileSystem { fs -> fs.getPath("/").collectTopLevelElements() }
         )
 
         !klibPath.isDirectory() -> null
