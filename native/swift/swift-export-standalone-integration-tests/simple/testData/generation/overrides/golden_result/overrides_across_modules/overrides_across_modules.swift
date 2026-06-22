@@ -28,7 +28,11 @@ open class Cousin: overrides.Parent {
     open override func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
-        return Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        if Self.self == overrides_across_modules.Cousin.self {
+            return Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        } else {
+            return Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
+        }
     }
 }
 public final class FinalDerived3: overrides.AbstractDerived2 {

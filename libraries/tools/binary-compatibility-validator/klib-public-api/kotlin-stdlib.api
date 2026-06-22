@@ -9954,10 +9954,12 @@ open annotation class kotlin.native.internal/ExportTypeInfo : kotlin/Annotation 
 
 // Targets: [native]
 open annotation class kotlin.native.internal/ExportedBridge : kotlin/Annotation { // kotlin.native.internal/ExportedBridge|null[0]
-    constructor <init>(kotlin/String) // kotlin.native.internal/ExportedBridge.<init>|<init>(kotlin.String){}[0]
+    constructor <init>(kotlin/String, kotlin/String = ...) // kotlin.native.internal/ExportedBridge.<init>|<init>(kotlin.String;kotlin.String){}[0]
 
     final val bridgeName // kotlin.native.internal/ExportedBridge.bridgeName|{}bridgeName[0]
         final fun <get-bridgeName>(): kotlin/String // kotlin.native.internal/ExportedBridge.bridgeName.<get-bridgeName>|<get-bridgeName>(){}[0]
+    final val nonVirtualTargetMethod // kotlin.native.internal/ExportedBridge.nonVirtualTargetMethod|{}nonVirtualTargetMethod[0]
+        final fun <get-nonVirtualTargetMethod>(): kotlin/String // kotlin.native.internal/ExportedBridge.nonVirtualTargetMethod.<get-nonVirtualTargetMethod>|<get-nonVirtualTargetMethod>(){}[0]
 }
 
 // Targets: [native]

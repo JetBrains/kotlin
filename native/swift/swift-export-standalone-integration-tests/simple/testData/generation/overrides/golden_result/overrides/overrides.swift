@@ -23,10 +23,18 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func abstractFun1() -> Swift.Void {
-        return { AbstractBase_abstractFun1(self.__externalRCRef()); return () }()
+        if Self.self == overrides.AbstractBase.self {
+            return { AbstractBase_abstractFun1(self.__externalRCRef()); return () }()
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'overrides.AbstractBase.abstractFun1': a Swift subclass must override it and must not call super.")
+        }
     }
     open func abstractFun2() -> Swift.Void {
-        return { AbstractBase_abstractFun2(self.__externalRCRef()); return () }()
+        if Self.self == overrides.AbstractBase.self {
+            return { AbstractBase_abstractFun2(self.__externalRCRef()); return () }()
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'overrides.AbstractBase.abstractFun2': a Swift subclass must override it and must not call super.")
+        }
     }
 }
 open class AbstractDerived2: overrides.OpenDerived1 {
@@ -45,7 +53,11 @@ open class AbstractDerived2: overrides.OpenDerived1 {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open override func abstractFun1() -> Swift.Void {
-        return { AbstractDerived2_abstractFun1(self.__externalRCRef()); return () }()
+        if Self.self == overrides.AbstractDerived2.self {
+            return { AbstractDerived2_abstractFun1(self.__externalRCRef()); return () }()
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'overrides.AbstractDerived2.abstractFun1': a Swift subclass must override it and must not call super.")
+        }
     }
 }
 open class Child: overrides.Parent {
@@ -119,55 +131,103 @@ open class Child: overrides.Parent {
         poly: overrides.Parent,
         nullablePoly: overrides.Parent?
     ) -> Swift.Void {
-        return { Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil); return () }()
+        if Self.self == overrides.Child.self {
+            return { Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil); return () }()
+        } else {
+            return { Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent____direct(self.__externalRCRef(), nullable.map { it in NSNumber(value: it) } ?? nil, poly.__externalRCRef(), nullablePoly.map { it in it.__externalRCRef() } ?? nil); return () }()
+        }
     }
     open override func contains(
         element: Swift.Int32
     ) -> Swift.Bool {
-        return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+        if Self.self == overrides.Child.self {
+            return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+        } else {
+            return Child_contains__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), element)
+        }
     }
     open override func equals(
         to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        if Self.self == overrides.Child.self {
+            return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        } else {
+            return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        }
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return { Child_finalOverrideFunc(self.__externalRCRef()); return () }()
     }
     open func genericReturnTypeFunc() -> [overrides.Child] {
-        return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
+        if Self.self == overrides.Child.self {
+            return Child_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Child>
+        } else {
+            return Child_genericReturnTypeFunc_direct(self.__externalRCRef()) as! Swift.Array<overrides.Child>
+        }
     }
     open func nonoverride() -> Swift.Never {
-        return { Child_nonoverride(self.__externalRCRef()); fatalError() }()
+        if Self.self == overrides.Child.self {
+            return { Child_nonoverride(self.__externalRCRef()); fatalError() }()
+        } else {
+            return { Child_nonoverride_direct(self.__externalRCRef()); fatalError() }()
+        }
     }
     open override func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        if Self.self == overrides.Child.self {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        } else {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Child_objectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
+        }
     }
     open override func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        if Self.self == overrides.Child.self {
+            return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        } else {
+            return { switch Child_objectOptionalFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        }
     }
     open override func overrideChainFunc() -> Swift.Void {
-        return { Child_overrideChainFunc(self.__externalRCRef()); return () }()
+        if Self.self == overrides.Child.self {
+            return { Child_overrideChainFunc(self.__externalRCRef()); return () }()
+        } else {
+            return { Child_overrideChainFunc_direct(self.__externalRCRef()); return () }()
+        }
     }
     open override func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
-        return Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        if Self.self == overrides.Child.self {
+            return Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        } else {
+            return Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
+        }
     }
     open override func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Child {
-        return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        if Self.self == overrides.Child.self {
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        } else {
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
+        }
     }
     open override func subtypeOptionalObjectFunc() -> overrides.Child {
-        return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc(self.__externalRCRef()))
+        if Self.self == overrides.Child.self {
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc(self.__externalRCRef()))
+        } else {
+            return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeOptionalObjectFunc_direct(self.__externalRCRef()))
+        }
     }
     open override func subtypeOptionalPrimitiveFunc() -> Swift.Int32 {
-        return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
+        if Self.self == overrides.Child.self {
+            return Child_subtypeOptionalPrimitiveFunc(self.__externalRCRef())
+        } else {
+            return Child_subtypeOptionalPrimitiveFunc_direct(self.__externalRCRef())
+        }
     }
     public static func ~=(
         this: overrides.Child,
@@ -225,10 +285,18 @@ open class OpenDerived1: overrides.AbstractBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open override func abstractFun1() -> Swift.Void {
-        return { OpenDerived1_abstractFun1(self.__externalRCRef()); return () }()
+        if Self.self == overrides.OpenDerived1.self {
+            return { OpenDerived1_abstractFun1(self.__externalRCRef()); return () }()
+        } else {
+            return { OpenDerived1_abstractFun1_direct(self.__externalRCRef()); return () }()
+        }
     }
     open override func abstractFun2() -> Swift.Void {
-        return { OpenDerived1_abstractFun2(self.__externalRCRef()); return () }()
+        if Self.self == overrides.OpenDerived1.self {
+            return { OpenDerived1_abstractFun2(self.__externalRCRef()); return () }()
+        } else {
+            return { OpenDerived1_abstractFun2_direct(self.__externalRCRef()); return () }()
+        }
     }
 }
 open class Parent: KotlinRuntime.KotlinBase {
@@ -291,61 +359,121 @@ open class Parent: KotlinRuntime.KotlinBase {
         poly: overrides.Child,
         nullablePoly: overrides.Child
     ) -> Swift.Void {
-        return { Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
+        if Self.self == overrides.Parent.self {
+            return { Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
+        } else {
+            return { Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child___direct(self.__externalRCRef(), nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
+        }
     }
     open func contains(
         element: Swift.Int32
     ) -> Swift.Bool {
-        return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+        if Self.self == overrides.Parent.self {
+            return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
+        } else {
+            return Parent_contains__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), element)
+        }
     }
     open func equals(
         to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        if Self.self == overrides.Parent.self {
+            return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        } else {
+            return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        }
     }
     open func finalOverrideFunc() -> Swift.Void {
-        return { Parent_finalOverrideFunc(self.__externalRCRef()); return () }()
+        if Self.self == overrides.Parent.self {
+            return { Parent_finalOverrideFunc(self.__externalRCRef()); return () }()
+        } else {
+            return { Parent_finalOverrideFunc_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func finalOverrideHopFunc() -> Swift.Void {
-        return { Parent_finalOverrideHopFunc(self.__externalRCRef()); return () }()
+        if Self.self == overrides.Parent.self {
+            return { Parent_finalOverrideHopFunc(self.__externalRCRef()); return () }()
+        } else {
+            return { Parent_finalOverrideHopFunc_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func genericReturnTypeFunc() -> [overrides.Parent] {
-        return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
+        if Self.self == overrides.Parent.self {
+            return Parent_genericReturnTypeFunc(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
+        } else {
+            return Parent_genericReturnTypeFunc_direct(self.__externalRCRef()) as! Swift.Array<overrides.Parent>
+        }
     }
     open func hopFunc() -> Swift.Void {
-        return { Parent_hopFunc(self.__externalRCRef()); return () }()
+        if Self.self == overrides.Parent.self {
+            return { Parent_hopFunc(self.__externalRCRef()); return () }()
+        } else {
+            return { Parent_hopFunc_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func nonoverride() -> Swift.Int32 {
-        return Parent_nonoverride(self.__externalRCRef())
+        if Self.self == overrides.Parent.self {
+            return Parent_nonoverride(self.__externalRCRef())
+        } else {
+            return Parent_nonoverride_direct(self.__externalRCRef())
+        }
     }
     open func objectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        if Self.self == overrides.Parent.self {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        } else {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_objectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
+        }
     }
     open func objectOptionalFunc(
         arg: overrides.Child
     ) -> overrides.Parent? {
-        return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        if Self.self == overrides.Parent.self {
+            return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        } else {
+            return { switch Parent_objectOptionalFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        }
     }
     open func overrideChainFunc() -> Swift.Void {
-        return { Parent_overrideChainFunc(self.__externalRCRef()); return () }()
+        if Self.self == overrides.Parent.self {
+            return { Parent_overrideChainFunc(self.__externalRCRef()); return () }()
+        } else {
+            return { Parent_overrideChainFunc_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func primitiveTypeFunc(
         arg: Swift.Int32
     ) -> Swift.Int32 {
-        return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        if Self.self == overrides.Parent.self {
+            return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg)
+        } else {
+            return Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg)
+        }
     }
     open func subtypeObjectFunc(
         arg: overrides.Child
     ) -> overrides.Parent {
-        return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        if Self.self == overrides.Parent.self {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(self.__externalRCRef(), arg.__externalRCRef()))
+        } else {
+            return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), arg.__externalRCRef()))
+        }
     }
     open func subtypeOptionalObjectFunc() -> overrides.Parent? {
-        return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        if Self.self == overrides.Parent.self {
+            return { switch Parent_subtypeOptionalObjectFunc(self.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        } else {
+            return { switch Parent_subtypeOptionalObjectFunc_direct(self.__externalRCRef()) { case nil: .none; case let res?: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
+        }
     }
     open func subtypeOptionalPrimitiveFunc() -> Swift.Int32? {
-        return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }
+        if Self.self == overrides.Parent.self {
+            return Parent_subtypeOptionalPrimitiveFunc(self.__externalRCRef()).map { it in it.int32Value }
+        } else {
+            return Parent_subtypeOptionalPrimitiveFunc_direct(self.__externalRCRef()).map { it in it.int32Value }
+        }
     }
     public static func ~=(
         this: overrides.Parent,

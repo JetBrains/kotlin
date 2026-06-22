@@ -149,8 +149,18 @@ public interface BridgeFunctionProxy {
     context(sir: SirSession)
     public fun createSirBridges(kotlinCall: BridgeFunctionBuilder.() -> String): List<SirBridge>
 
+    context(sir: SirSession)
+    public fun createDirectDispatchForwardBridge(
+        nonVirtualTargetMethod: String,
+        kotlinCall: BridgeFunctionBuilder.() -> String,
+    ): SirBridge
+
     context(session: SirSession)
-    public fun createSwiftInvocation(argumentOverrides: Map<String, String> = emptyMap(), resultTransformer: ((String) -> String)?): List<String>
+    public fun createSwiftInvocation(
+        argumentOverrides: Map<String, String> = emptyMap(),
+        useDirectDispatch: Boolean = false,
+        resultTransformer: ((String) -> String)?,
+    ): List<String>
 
     context(session: SirSession)
     public fun argumentsForInvocation(): List<String>
@@ -179,6 +189,7 @@ private class BridgeFunctionDescriptor(
 ) : BridgeFunctionBuilder, BridgeFunctionProxy {
     val kotlinBridgeName = bridgeDeclarationName(baseBridgeName, parameters, contextParameters, extensionReceiverParameter, typeNamer)
     val cBridgeName = kotlinBridgeName
+    val directCBridgeName get() = "${cBridgeName}_direct"
 
     context(session: SirSession)
     val allParameters
@@ -260,7 +271,7 @@ private class BridgeFunctionDescriptor(
                 SirFunctionBridge(
                     name = baseBridgeName,
                     KotlinFunctionBridge(
-                        createKotlinBridge(typeNamer, kotlinCall),
+                        createKotlinBridge(typeNamer, buildCallSite = kotlinCall),
                         listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
                     ),
                     CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
@@ -278,8 +289,21 @@ private class BridgeFunctionDescriptor(
         }.distinct()
     }
 
+    context(sir: SirSession)
+    override fun createDirectDispatchForwardBridge(
+        nonVirtualTargetMethod: String,
+        kotlinCall: BridgeFunctionBuilder.() -> String,
+    ): SirBridge = SirFunctionBridge(
+        name = "${baseBridgeName}_direct",
+        KotlinFunctionBridge(
+            createKotlinBridge(typeNamer, bridgeName = directCBridgeName, nonVirtualTargetMethod = nonVirtualTargetMethod, buildCallSite = kotlinCall),
+            listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
+        ),
+        CFunctionBridge(listOf(cDeclaration(bridgeName = directCBridgeName)), listOf(foundationHeader, stdintHeader))
+    )
+
     context(session: SirSession)
-    override fun createSwiftInvocation(argumentOverrides: Map<String, String>, resultTransformer: ((String) -> String)?): List<String> = buildList {
+    override fun createSwiftInvocation(argumentOverrides: Map<String, String>, useDirectDispatch: Boolean, resultTransformer: ((String) -> String)?): List<String> = buildList {
         val descriptor = this@BridgeFunctionDescriptor
         val contextParameters = descriptor.contextParameters
         val errorParameter = descriptor.errorParameter
@@ -291,12 +315,12 @@ private class BridgeFunctionDescriptor(
             add(descriptor.swiftAsyncCall(typeNamer, argumentOverrides))
         } else if (errorParameter != null) {
             add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
-            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides))
+            add("let _result = ".takeIf { resultTransformer != null }.orEmpty() + descriptor.swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch))
             val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
             add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
             resultTransformer?.let { add(it(descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result"))) }
         } else {
-            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer, argumentOverrides)
+            val swiftCallAndTransformationLines = descriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer, argumentOverrides, useDirectDispatch)
             addAll(swiftCallAndTransformationLines.dropLast(1))
             add((resultTransformer ?: { it })(swiftCallAndTransformationLines.last()))
         }
@@ -487,9 +511,12 @@ private fun bridgeDeclarationName(
 context(session: SirSession)
 private fun BridgeFunctionDescriptor.createKotlinBridge(
     typeNamer: SirTypeNamer,
+    bridgeName: String = cBridgeName,
+    nonVirtualTargetMethod: String? = null,
     buildCallSite: BridgeFunctionDescriptor.() -> String,
 ) = buildList {
-    add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${cBridgeName}\")")
+    val nonVirtualArg = nonVirtualTargetMethod?.let { ", nonVirtualTargetMethod = \"$it\"" }.orEmpty()
+    add("@${exportAnnotationFqName.substringAfterLast('.')}(\"${bridgeName}\"$nonVirtualArg)")
     kotlinOptIns.optInAnnotation?.let(::add)
 
     val kotlinReturnType = returnType.kotlinType.takeIf { !isAsync } ?: KotlinType.Unit
@@ -498,7 +525,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
         "${it.name.kotlinIdentifier}: ${it.bridge.kotlinType.repr}"
     }
 
-    add("public fun $kotlinBridgeName($parameters): ${kotlinReturnType.repr} {")
+    add("public fun $bridgeName($parameters): ${kotlinReturnType.repr} {")
     val indent = "    "
 
     allParameters.forEach {
@@ -542,18 +569,19 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): String {
+private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap(), useDirectDispatch: Boolean = false): String {
     val parameters = allParameters.joinToString {
         val nameExpr = it.name.takeIf { it == "self" } ?: it.name.swiftIdentifier
         // We fix ugly `self` escaping here. This is the only place we'd otherwise need full support for swift's contextual keywords
         argumentOverrides[nameExpr] ?: it.bridge.inSwiftSources.swiftToKotlin(typeNamer, nameExpr)
     }
-    return "$cBridgeName($parameters)"
+    val bridgeName = if (useDirectDispatch) directCBridgeName else cBridgeName
+    return "$bridgeName($parameters)"
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): List<String> {
-    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer, argumentOverrides)
+private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap(), useDirectDispatch: Boolean = false): List<String> {
+    val swiftInvocation = swiftInvocationLineForCBridge(typeNamer, argumentOverrides, useDirectDispatch)
     return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
 }
 
@@ -574,12 +602,12 @@ private fun BridgeFunctionDescriptor.swiftAsyncCall(typeNamer: SirTypeNamer, arg
 }
 
 context(session: SirSession)
-private fun BridgeFunctionDescriptor.cDeclaration() = buildString {
+private fun BridgeFunctionDescriptor.cDeclaration(bridgeName: String = cBridgeName) = buildString {
     val returnTypeBridge = returnType.takeIf { !isAsync } ?: Bridge.AsVoid
 
     append(
         returnTypeBridge.cType.render(buildString {
-            append(cBridgeName)
+            append(bridgeName)
             append("(")
             allParameters.joinTo(this) {
                 it.bridge.cType.render(it.name.cIdentifier)

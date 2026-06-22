@@ -23,15 +23,25 @@ NSString * AbstractBase_abstractMethod(void * self);
 
 int32_t AbstractBase_concreteMethod(void * self);
 
+int32_t AbstractBase_concreteMethod_direct(void * self);
+
 int32_t Base_count(void * self);
 
+int32_t Base_count_direct(void * self);
+
 NSString * Base_greet__TypesOfArguments__Swift_String__(void * self, NSString * name);
+
+NSString * Base_greet__TypesOfArguments__Swift_String___direct(void * self, NSString * name);
 
 NSString * Base_notOpen(void * self);
 
 NSString * GreeterBase_greet__TypesOfArguments__Swift_String__(void * self, NSString * name);
 
+NSString * GreeterBase_greet__TypesOfArguments__Swift_String___direct(void * self, NSString * name);
+
 NSString * GreeterBase_salutation(void * self);
+
+NSString * GreeterBase_salutation_direct(void * self);
 
 NSString * Greeter_greet__TypesOfArguments__Swift_String__(void * self, NSString * name);
 

@@ -25,7 +25,11 @@ open class Base: KotlinRuntime.KotlinBase {
     open func g(
         x: any override.P
     ) -> Swift.Void {
-        return { Base_g__TypesOfArguments__anyU20override_P__(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        if Self.self == override.Base.self {
+            return { Base_g__TypesOfArguments__anyU20override_P__(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        } else {
+            return { Base_g__TypesOfArguments__anyU20override_P___direct(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        }
     }
 }
 open class Sub: override.Base {
@@ -43,7 +47,11 @@ open class Sub: override.Base {
     open override func g(
         x: any override.P
     ) -> Swift.Void {
-        return { Sub_g__TypesOfArguments__anyU20override_P__(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        if Self.self == override.Sub.self {
+            return { Sub_g__TypesOfArguments__anyU20override_P__(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        } else {
+            return { Sub_g__TypesOfArguments__anyU20override_P___direct(self.__externalRCRef(), x.__externalRCRef()); return () }()
+        }
     }
 }
 extension override.P where Self : override.__P {

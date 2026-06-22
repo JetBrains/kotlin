@@ -38,7 +38,11 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
     open func compareTo(
         other: f_bounded_type.SelfReferencing
     ) -> Swift.Int32 {
-        return SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(self.__externalRCRef(), other.__externalRCRef())
+        if Self.self == f_bounded_type.SelfReferencing.self {
+            return SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(self.__externalRCRef(), other.__externalRCRef())
+        } else {
+            return SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing___direct(self.__externalRCRef(), other.__externalRCRef())
+        }
     }
 }
 extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable {

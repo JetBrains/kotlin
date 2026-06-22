@@ -279,7 +279,11 @@ open class StringProducer: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func produce() -> Swift.String {
-        return StringProducer_produce(self.__externalRCRef())
+        if Self.self == main.StringProducer.self {
+            return StringProducer_produce(self.__externalRCRef())
+        } else {
+            return StringProducer_produce_direct(self.__externalRCRef())
+        }
     }
 }
 public final class TripleBox: main.Box {

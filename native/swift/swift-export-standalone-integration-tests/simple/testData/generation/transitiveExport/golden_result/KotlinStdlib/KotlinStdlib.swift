@@ -41,7 +41,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_ByteIterator_next(self.__externalRCRef())
         }
         open func nextByte() -> Swift.Int8 {
-            return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
+            }
         }
     }
 }

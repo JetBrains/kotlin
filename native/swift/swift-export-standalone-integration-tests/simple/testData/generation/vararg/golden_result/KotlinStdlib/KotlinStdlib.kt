@@ -177,6 +177,13 @@ public fun kotlin_Number_toChar(self: kotlin.native.internal.NativePtr): Char {
     return _result
 }
 
+@ExportedBridge("kotlin_Number_toChar_direct", nonVirtualTargetMethod = "toChar")
+public fun kotlin_Number_toChar_direct(self: kotlin.native.internal.NativePtr): Char {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number
+    val _result = run { __self.toChar() }
+    return _result
+}
+
 @ExportedBridge("kotlin_Number_toDouble")
 public fun kotlin_Number_toDouble(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Number

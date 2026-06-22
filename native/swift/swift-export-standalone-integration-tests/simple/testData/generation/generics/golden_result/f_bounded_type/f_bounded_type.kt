@@ -47,6 +47,14 @@ public fun SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfRefer
     return _result
 }
 
+@ExportedBridge("SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing___direct", nonVirtualTargetMethod = "compareTo")
+public fun SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing___direct(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyComparable<kotlin.Any?>
+    val __other = kotlin.native.internal.ref.dereferenceExternalRCRef(other) as SelfReferencing<*>
+    val _result = run { __self.compareTo(__other) }
+    return _result
+}
+
 @ExportedBridge("__root___ConcreteSelfReferencing_init_allocate")
 public fun __root___ConcreteSelfReferencing_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<ConcreteSelfReferencing>() }

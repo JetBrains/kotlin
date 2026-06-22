@@ -21,6 +21,8 @@ void * namespace_Zar_foo__reverse_swift(void * self);
 
 void * namespace_Bar_foo(void * self);
 
+void * namespace_Bar_foo_direct(void * self);
+
 void * namespace_Bar_init_allocate();
 
 _Bool namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -28,6 +30,8 @@ _Bool namespace_Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoi
 void * namespace_Bar_voo_get(void * self);
 
 void * namespace_Foo_foo(void * self);
+
+void * namespace_Foo_foo_direct(void * self);
 
 void * namespace_Foo_init_allocate();
 
@@ -37,6 +41,8 @@ void * namespace_Foo_voo_get(void * self);
 
 void * namespace_MutableSharedFoo_foo(void * self);
 
+void * namespace_MutableSharedFoo_foo_direct(void * self);
+
 void * namespace_MutableSharedFoo_init_allocate();
 
 _Bool namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -44,6 +50,8 @@ _Bool namespace_MutableSharedFoo_init_initialize__TypesOfArguments__Swift_Unsafe
 void * namespace_MutableSharedFoo_voo_get(void * self);
 
 void * namespace_MutableStateFoo_foo(void * self);
+
+void * namespace_MutableStateFoo_foo_direct(void * self);
 
 void * namespace_MutableStateFoo_init_allocate();
 
@@ -53,6 +61,8 @@ void * namespace_MutableStateFoo_voo_get(void * self);
 
 void * namespace_Nar_foo(void * self);
 
+void * namespace_Nar_foo_direct(void * self);
+
 void * namespace_Nar_init_allocate();
 
 _Bool namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -60,6 +70,8 @@ _Bool namespace_Nar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoi
 void * namespace_Nar_voo_get(void * self);
 
 void * namespace_SharedFoo_foo(void * self);
+
+void * namespace_SharedFoo_foo_direct(void * self);
 
 void * namespace_SharedFoo_init_allocate();
 
@@ -69,6 +81,8 @@ void * namespace_SharedFoo_voo_get(void * self);
 
 void * namespace_StateFoo_foo(void * self);
 
+void * namespace_StateFoo_foo_direct(void * self);
+
 void * namespace_StateFoo_init_allocate();
 
 _Bool namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -76,6 +90,8 @@ _Bool namespace_StateFoo_init_initialize__TypesOfArguments__Swift_UnsafeMutableR
 void * namespace_StateFoo_voo_get(void * self);
 
 void * namespace_Zar_foo(void * self);
+
+void * namespace_Zar_foo_direct(void * self);
 
 void * namespace_Zar_init_allocate();
 

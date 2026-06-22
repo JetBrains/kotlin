@@ -57,6 +57,19 @@ public fun weird_A_throws(self: kotlin.native.internal.NativePtr, _out_error: ko
     }
 }
 
+@ExportedBridge("weird_A_throws_direct", nonVirtualTargetMethod = "throws")
+public fun weird_A_throws_direct(self: kotlin.native.internal.NativePtr, _out_error: kotlinx.cinterop.COpaquePointerVar): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.A
+    val ___out_error = _out_error
+    try {
+        val _result = run { __self.throws() }
+        return run { _result; true }
+    } catch (error: Throwable) {
+        ___out_error.value = StableRef.create(error).asCPointer()
+        return false
+    }
+}
+
 @ExportedBridge("weird_B_bar_get")
 public fun weird_B_bar_get(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as weird.B

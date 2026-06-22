@@ -45,6 +45,8 @@ void * _Nullable Producer_produce(void * self);
 
 NSString * StringProducer_produce(void * self);
 
+NSString * StringProducer_produce_direct(void * self);
+
 void * __root___A();
 
 void * __root___AnyConsumer_init_allocate();

@@ -155,7 +155,11 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Enum_hashCode(self.__externalRCRef())
         }
         open func toString() -> Swift.String {
-            return kotlin_Enum_toString(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Enum.self {
+                return kotlin_Enum_toString(self.__externalRCRef())
+            } else {
+                return kotlin_Enum_toString_direct(self.__externalRCRef())
+            }
         }
     }
 }

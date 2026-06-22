@@ -121,6 +121,13 @@ public fun kotlin_Enum_toString(self: kotlin.native.internal.NativePtr): kotlin.
     return _result.objcPtr()
 }
 
+@ExportedBridge("kotlin_Enum_toString_direct", nonVirtualTargetMethod = "toString")
+public fun kotlin_Enum_toString_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Enum<*>
+    val _result = run { __self.toString() }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("kotlin_collections_Iterator_hasNext")
 public fun kotlin_collections_Iterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>

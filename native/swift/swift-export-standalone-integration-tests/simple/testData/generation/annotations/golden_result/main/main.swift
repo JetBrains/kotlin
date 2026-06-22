@@ -275,10 +275,18 @@ open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func bar() -> Swift.Void {
-        return { PublicClassImplHiddenInterface_bar(self.__externalRCRef()); return () }()
+        if Self.self == main.PublicClassImplHiddenInterface.self {
+            return { PublicClassImplHiddenInterface_bar(self.__externalRCRef()); return () }()
+        } else {
+            return { PublicClassImplHiddenInterface_bar_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func foo() -> Swift.Void {
-        return { PublicClassImplHiddenInterface_foo(self.__externalRCRef()); return () }()
+        if Self.self == main.PublicClassImplHiddenInterface.self {
+            return { PublicClassImplHiddenInterface_foo(self.__externalRCRef()); return () }()
+        } else {
+            return { PublicClassImplHiddenInterface_foo_direct(self.__externalRCRef()); return () }()
+        }
     }
 }
 @available(*, unavailable, message: "Obsoleted")
@@ -543,7 +551,11 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func deprecationInheritedF() -> Swift.Void {
-        return { deprecatedT_deprecationInheritedF(self.__externalRCRef()); return () }()
+        if Self.self == main.deprecatedT.self {
+            return { deprecatedT_deprecationInheritedF(self.__externalRCRef()); return () }()
+        } else {
+            return { deprecatedT_deprecationInheritedF_direct(self.__externalRCRef()); return () }()
+        }
     }
     @available(*, unavailable, message: "Obsoleted")
     open func deprecationReinforcedF() -> Swift.Void {
@@ -551,7 +563,11 @@ open class deprecatedT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     open func deprecationRestatedF() -> Swift.Void {
-        return { deprecatedT_deprecationRestatedF(self.__externalRCRef()); return () }()
+        if Self.self == main.deprecatedT.self {
+            return { deprecatedT_deprecationRestatedF(self.__externalRCRef()); return () }()
+        } else {
+            return { deprecatedT_deprecationRestatedF_direct(self.__externalRCRef()); return () }()
+        }
     }
 }
 public final class normalChildT: main.normalT {
@@ -817,23 +833,43 @@ open class normalT: KotlinRuntime.KotlinBase {
     }
     @available(*, deprecated, message: "Deprecated")
     open func deprecatedF() -> Swift.Void {
-        return { normalT_deprecatedF(self.__externalRCRef()); return () }()
+        if Self.self == main.normalT.self {
+            return { normalT_deprecatedF(self.__externalRCRef()); return () }()
+        } else {
+            return { normalT_deprecatedF_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func deprecatedInFutureF() -> Swift.Void {
-        return { normalT_deprecatedInFutureF(self.__externalRCRef()); return () }()
+        if Self.self == main.normalT.self {
+            return { normalT_deprecatedInFutureF(self.__externalRCRef()); return () }()
+        } else {
+            return { normalT_deprecatedInFutureF_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func normalF() -> Swift.Void {
-        return { normalT_normalF(self.__externalRCRef()); return () }()
+        if Self.self == main.normalT.self {
+            return { normalT_normalF(self.__externalRCRef()); return () }()
+        } else {
+            return { normalT_normalF_direct(self.__externalRCRef()); return () }()
+        }
     }
     @available(*, unavailable, message: "Obsoleted")
     open func obsoletedF() -> Swift.Void {
         fatalError()
     }
     open func obsoletedInFutureF() -> Swift.Void {
-        return { normalT_obsoletedInFutureF(self.__externalRCRef()); return () }()
+        if Self.self == main.normalT.self {
+            return { normalT_obsoletedInFutureF(self.__externalRCRef()); return () }()
+        } else {
+            return { normalT_obsoletedInFutureF_direct(self.__externalRCRef()); return () }()
+        }
     }
     open func removedInFutureF() -> Swift.Void {
-        return { normalT_removedInFutureF(self.__externalRCRef()); return () }()
+        if Self.self == main.normalT.self {
+            return { normalT_removedInFutureF(self.__externalRCRef()); return () }()
+        } else {
+            return { normalT_removedInFutureF_direct(self.__externalRCRef()); return () }()
+        }
     }
 }
 @available(*, unavailable, message: "Unavailable type(s): main.obsoletedT")

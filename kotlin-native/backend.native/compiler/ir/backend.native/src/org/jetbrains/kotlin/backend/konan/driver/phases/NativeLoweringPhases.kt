@@ -470,6 +470,12 @@ private val typeOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(coroutinesPhase)
 )
 
+private val exportedBridgeNonVirtualPhase = createFileLoweringPhase(
+        ::ExportedBridgeNonVirtualLowering,
+        name = "ExportedBridgeNonVirtual",
+        prerequisite = setOf(coroutinesPhase, postInlinePhase)
+)
+
 private val bridgesPhase = createFileLoweringPhase(
         { context, irFile ->
             BridgesBuilding(context).runOnFilePostfix(irFile)
@@ -677,6 +683,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         optimizeCastsPhase.takeIf { this.genericSafeCasts },
         typeOperatorPhase,
         builtinOperatorPhase,
+        exportedBridgeNonVirtualPhase,
         bridgesPhase,
         exportInternalAbiPhase.takeIf { this.produce.isCache },
         useInternalAbiPhase,

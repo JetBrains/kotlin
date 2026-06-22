@@ -24,10 +24,18 @@ open class AbstractBase: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func abstractMethod() -> Swift.String {
-        return AbstractBase_abstractMethod(self.__externalRCRef())
+        if Self.self == main.AbstractBase.self {
+            return AbstractBase_abstractMethod(self.__externalRCRef())
+        } else {
+            fatalError("Cannot invoke the inherited implementation of abstract member 'main.AbstractBase.abstractMethod': a Swift subclass must override it and must not call super.")
+        }
     }
     open func concreteMethod() -> Swift.Int32 {
-        return AbstractBase_concreteMethod(self.__externalRCRef())
+        if Self.self == main.AbstractBase.self {
+            return AbstractBase_concreteMethod(self.__externalRCRef())
+        } else {
+            return AbstractBase_concreteMethod_direct(self.__externalRCRef())
+        }
     }
 }
 open class Base: KotlinRuntime.KotlinBase {
@@ -43,12 +51,20 @@ open class Base: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
     open func count() -> Swift.Int32 {
-        return Base_count(self.__externalRCRef())
+        if Self.self == main.Base.self {
+            return Base_count(self.__externalRCRef())
+        } else {
+            return Base_count_direct(self.__externalRCRef())
+        }
     }
     open func greet(
         name: Swift.String
     ) -> Swift.String {
-        return Base_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name)
+        if Self.self == main.Base.self {
+            return Base_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name)
+        } else {
+            return Base_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name)
+        }
     }
     public final func notOpen() -> Swift.String {
         return Base_notOpen(self.__externalRCRef())
@@ -69,10 +85,18 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main._Greeter, m
     open func greet(
         name: Swift.String
     ) -> Swift.String {
-        return GreeterBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name)
+        if Self.self == main.GreeterBase.self {
+            return GreeterBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name)
+        } else {
+            return GreeterBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name)
+        }
     }
     open func salutation() -> Swift.String {
-        return GreeterBase_salutation(self.__externalRCRef())
+        if Self.self == main.GreeterBase.self {
+            return GreeterBase_salutation(self.__externalRCRef())
+        } else {
+            return GreeterBase_salutation_direct(self.__externalRCRef())
+        }
     }
 }
 extension main.Greeter where Self : main.__Greeter {

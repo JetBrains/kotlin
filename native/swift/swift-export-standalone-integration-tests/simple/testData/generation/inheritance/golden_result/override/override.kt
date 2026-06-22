@@ -49,6 +49,14 @@ public fun Base_g__TypesOfArguments__anyU20override_P__(self: kotlin.native.inte
     return run { _result; true }
 }
 
+@ExportedBridge("Base_g__TypesOfArguments__anyU20override_P___direct", nonVirtualTargetMethod = "g")
+public fun Base_g__TypesOfArguments__anyU20override_P___direct(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as P
+    val _result = run { __self.g(__x) }
+    return run { _result; true }
+}
+
 @ExportedBridge("P_f")
 public fun P_f(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as P
@@ -58,6 +66,14 @@ public fun P_f(self: kotlin.native.internal.NativePtr): Boolean {
 
 @ExportedBridge("Sub_g__TypesOfArguments__anyU20override_P__")
 public fun Sub_g__TypesOfArguments__anyU20override_P__(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Sub
+    val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as P
+    val _result = run { __self.g(__x) }
+    return run { _result; true }
+}
+
+@ExportedBridge("Sub_g__TypesOfArguments__anyU20override_P___direct", nonVirtualTargetMethod = "g")
+public fun Sub_g__TypesOfArguments__anyU20override_P___direct(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Sub
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as P
     val _result = run { __self.g(__x) }

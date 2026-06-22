@@ -28,10 +28,17 @@ extension ExportedKotlinPackages.weird {
             fatalError()
         }
         open func `throws`() throws -> Swift.Void {
-            var _out_error: UnsafeMutableRawPointer? = nil
-            let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
-            guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
-            return { _result; return () }()
+            if Self.self == ExportedKotlinPackages.weird.A.self {
+                var _out_error: UnsafeMutableRawPointer? = nil
+                let _result = weird_A_throws(self.__externalRCRef(), &_out_error)
+                guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
+                return { _result; return () }()
+            } else {
+                var _out_error: UnsafeMutableRawPointer? = nil
+                let _result = weird_A_throws_direct(self.__externalRCRef(), &_out_error)
+                guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
+                return { _result; return () }()
+            }
         }
     }
     public final class B: ExportedKotlinPackages.weird.A {

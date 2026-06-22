@@ -11,6 +11,8 @@ int32_t MyComparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRun
 
 int32_t SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(void * self, void * other);
 
+int32_t SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing___direct(void * self, void * other);
+
 void * __root___ConcreteSelfReferencing_init_allocate();
 
 _Bool __root___ConcreteSelfReferencing_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

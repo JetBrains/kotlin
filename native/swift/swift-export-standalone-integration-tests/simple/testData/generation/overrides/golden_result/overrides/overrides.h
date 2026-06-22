@@ -77,19 +77,33 @@ _Bool AbstractDerived2_abstractFun1(void * self);
 
 _Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent___(void * self, NSNumber * _Nullable nullable, void * poly, void * _Nullable nullablePoly);
 
+_Bool Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overrides_Parent_Swift_Optional_overrides_Parent____direct(void * self, NSNumber * _Nullable nullable, void * poly, void * _Nullable nullablePoly);
+
 _Bool Child_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
 
+_Bool Child_contains__TypesOfArguments__Swift_Int32___direct(void * self, int32_t element);
+
 _Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
+
+_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable to);
 
 _Bool Child_finalOverrideFunc(void * self);
 
 NSArray<id> * Child_genericReturnTypeFunc(void * self);
 
+NSArray<id> * Child_genericReturnTypeFunc_direct(void * self);
+
 _Bool Child_nonoverride(void * self) __attribute((noreturn));
+
+_Bool Child_nonoverride_direct(void * self) __attribute((noreturn));
 
 void * Child_objectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
+void * Child_objectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
+
 void * _Nullable Child_objectOptionalFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
+
+void * _Nullable Child_objectOptionalFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
 
 void * _Nullable Child_objectOptionalVar_get(void * self);
 
@@ -97,19 +111,29 @@ void * Child_objectVar_get(void * self);
 
 _Bool Child_overrideChainFunc(void * self);
 
+_Bool Child_overrideChainFunc_direct(void * self);
+
 int32_t Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(void * self, int32_t arg);
+
+int32_t Child_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * self, int32_t arg);
 
 int32_t Child_primitiveTypeVar_get(void * self);
 
 void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
+void * Child_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
+
 void * Child_subtypeObjectVar_get(void * self);
 
 void * Child_subtypeOptionalObjectFunc(void * self);
 
+void * Child_subtypeOptionalObjectFunc_direct(void * self);
+
 void * Child_subtypeOptionalObjectVar_get(void * self);
 
 int32_t Child_subtypeOptionalPrimitiveFunc(void * self);
+
+int32_t Child_subtypeOptionalPrimitiveFunc_direct(void * self);
 
 int32_t Child_subtypeOptionalPrimitiveVar_get(void * self);
 
@@ -121,29 +145,53 @@ _Bool GrandChild_overrideChainFunc(void * self);
 
 _Bool OpenDerived1_abstractFun1(void * self);
 
+_Bool OpenDerived1_abstractFun1_direct(void * self);
+
 _Bool OpenDerived1_abstractFun2(void * self);
+
+_Bool OpenDerived1_abstractFun2_direct(void * self);
 
 int32_t OpenDerived1_abstractVal_get(void * self);
 
 _Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child__(void * self, int32_t nullable, void * poly, void * nullablePoly);
 
+_Bool Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_overrides_Child___direct(void * self, int32_t nullable, void * poly, void * nullablePoly);
+
 _Bool Parent_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
+
+_Bool Parent_contains__TypesOfArguments__Swift_Int32___direct(void * self, int32_t element);
 
 _Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
 
+_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable to);
+
 _Bool Parent_finalOverrideFunc(void * self);
+
+_Bool Parent_finalOverrideFunc_direct(void * self);
 
 _Bool Parent_finalOverrideHopFunc(void * self);
 
+_Bool Parent_finalOverrideHopFunc_direct(void * self);
+
 NSArray<id> * Parent_genericReturnTypeFunc(void * self);
+
+NSArray<id> * Parent_genericReturnTypeFunc_direct(void * self);
 
 _Bool Parent_hopFunc(void * self);
 
+_Bool Parent_hopFunc_direct(void * self);
+
 int32_t Parent_nonoverride(void * self);
+
+int32_t Parent_nonoverride_direct(void * self);
 
 void * Parent_objectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
+void * Parent_objectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
+
 void * _Nullable Parent_objectOptionalFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
+
+void * _Nullable Parent_objectOptionalFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
 
 void * _Nullable Parent_objectOptionalVar_get(void * self);
 
@@ -151,19 +199,29 @@ void * Parent_objectVar_get(void * self);
 
 _Bool Parent_overrideChainFunc(void * self);
 
+_Bool Parent_overrideChainFunc_direct(void * self);
+
 int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(void * self, int32_t arg);
+
+int32_t Parent_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(void * self, int32_t arg);
 
 int32_t Parent_primitiveTypeVar_get(void * self);
 
 void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child__(void * self, void * arg);
 
+void * Parent_subtypeObjectFunc__TypesOfArguments__overrides_Child___direct(void * self, void * arg);
+
 void * Parent_subtypeObjectVar_get(void * self);
 
 void * _Nullable Parent_subtypeOptionalObjectFunc(void * self);
 
+void * _Nullable Parent_subtypeOptionalObjectFunc_direct(void * self);
+
 void * _Nullable Parent_subtypeOptionalObjectVar_get(void * self);
 
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc(void * self);
+
+NSNumber * _Nullable Parent_subtypeOptionalPrimitiveFunc_direct(void * self);
 
 NSNumber * _Nullable Parent_subtypeOptionalPrimitiveVar_get(void * self);
 
