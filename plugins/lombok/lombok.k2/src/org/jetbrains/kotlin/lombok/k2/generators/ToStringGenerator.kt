@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.INCLUDE_RANK
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.k2.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 

@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.lombok.config.AccessLevel
-import org.jetbrains.kotlin.lombok.utils.trimToNull
 import org.jetbrains.kotlin.name.Name
 
 @DirectDeclarationsAccess
@@ -41,7 +39,8 @@ private fun FirAnnotation?.getArgumentAsString(field: Name): String? {
     }
 }
 
-fun FirAnnotation.getNonBlankStringArgument(name: Name): String? = getStringArgument(name)?.trimToNull()
+fun FirAnnotation.getNonBlankStringArgument(name: Name): String? =
+    getStringArgument(name)?.let { stringArgument -> stringArgument.trim().takeIf { it.isNotEmpty() } }
 
 object LombokConfigNames {
     val VALUE = Name.identifier("value")

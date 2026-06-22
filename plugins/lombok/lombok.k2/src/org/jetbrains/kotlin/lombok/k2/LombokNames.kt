@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.utils
+package org.jetbrains.kotlin.lombok.k2
 
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -141,4 +141,10 @@ object LombokNames {
         val prefix = listOf("com", "google", "common", "collect").joinToString(".")
         return "$prefix.$this"
     }
+}
+
+object AccessorNames {
+    const val IS = "is"
+    const val GET = "get"
+    const val SET = "set"
 }

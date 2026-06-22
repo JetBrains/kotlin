@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.config
+package org.jetbrains.kotlin.lombok.k2.config
 
 import java.io.File
 

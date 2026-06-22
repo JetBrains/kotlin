@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.With
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.utils.collectWithNotNull
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -77,7 +75,10 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         return classSymbol.fir.declarations
             .filterIsInstance<FirJavaField>()
             .filter { !it.isStatic }
-            .collectWithNotNull { lombokService.getWith(it.symbol) ?: classWith }
+            .mapNotNull { declaration ->
+                val currentWithAnn = lombokService.getWith(declaration.symbol) ?: classWith
+                currentWithAnn?.let { declaration to it }
+            }
             .takeIf { it.isNotEmpty() }
     }
 
