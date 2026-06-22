@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolv
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.components.resolveToCall
-import org.jetbrains.kotlin.analysis.api.components.tryResolveCall
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionError
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.KaBaseCallResolutionSuccess
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.assertStableResult

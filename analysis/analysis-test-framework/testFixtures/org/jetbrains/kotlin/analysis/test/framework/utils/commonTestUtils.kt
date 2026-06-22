@@ -10,15 +10,9 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.resolveCall
-import org.jetbrains.kotlin.analysis.api.components.resolveSymbol
-import org.jetbrains.kotlin.analysis.api.components.tryResolveCall
-import org.jetbrains.kotlin.analysis.api.components.tryResolveSymbols
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
-import org.jetbrains.kotlin.analysis.api.resolution.KaSingleOrMultiCall
-import org.jetbrains.kotlin.analysis.api.resolution.calls
-import org.jetbrains.kotlin.analysis.api.resolution.symbols
+import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.offsetToLineAndColumn
 import org.jetbrains.kotlin.psi.*
