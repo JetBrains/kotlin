@@ -125,7 +125,7 @@ fun RepositoryHandler.intellijDependencies() {
             content.includeVersion("com.google.protobuf", "protobuf-parent", "3.24.4-jb.2")
             content.includeVersion("com.google.protobuf", "protobuf-java", "3.24.4-jb.2")
             content.includeVersion("com.google.protobuf", "protobuf-bom", "3.24.4-jb.2")
-            content.includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax).*")
+            content.includeModuleByRegex("org\\.jetbrains", "(syntax\\-api|lang\\-syntax|multiplatform).*")
         }
     }
 }
