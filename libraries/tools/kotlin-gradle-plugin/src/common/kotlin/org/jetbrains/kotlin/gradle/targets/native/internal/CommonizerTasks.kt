@@ -188,6 +188,8 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             KotlinNativeBundleBuildService.registerIfAbsent(this)
         }
 
+        val nativeDownloadTask = getOrRegisterDownloadKotlinNativeDistributionTask()
+
         return locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = {
@@ -213,6 +215,8 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 kotlinCompilerArgumentsLogLevel
                     .value(kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                     .finalizeValueOnRead()
+
+                dependsOn(nativeDownloadTask)
             }
         )
     }

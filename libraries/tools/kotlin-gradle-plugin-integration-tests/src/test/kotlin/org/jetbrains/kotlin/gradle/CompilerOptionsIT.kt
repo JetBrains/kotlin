@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -243,10 +245,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Should pass -opt-in from compiler options DSL in native project")
     @NativeGradlePluginTests
     @GradleTest
-    fun passesOptInAnnotationNative(gradleVersion: GradleVersion) {
+    fun passesOptInAnnotationNative(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         nativeProject(
             projectName = "native-link-simple",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(konanDataDir = konanTemp),
         ) {
             buildGradle.appendText(
                 """
@@ -311,10 +314,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Should pass -progressive from compiler options DSL in native project")
     @NativeGradlePluginTests
     @GradleTest
-    fun passesProgressiveModeNative(gradleVersion: GradleVersion) {
+    fun passesProgressiveModeNative(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         nativeProject(
             projectName = "native-link-simple",
             gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(konanDataDir = konanTemp),
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -345,12 +349,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("KT-57823: should be possible to configure native module name via compilation")
     @NativeGradlePluginTests
     @GradleTest
-    fun passesModuleNameFromNativeCompilation(gradleVersion: GradleVersion) {
+    fun passesModuleNameFromNativeCompilation(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+                .copy(konanDataDir = konanTemp),
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -390,12 +395,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("KT-57823: uses archivesName value for native compilation module name convention")
     @NativeGradlePluginTests
     @GradleTest
-    fun nativeCompilationModuleNameConvention(gradleVersion: GradleVersion) {
+    fun nativeCompilationModuleNameConvention(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+                .copy(konanDataDir = konanTemp),
         ) {
             buildGradle.append("base.archivesName.set(\"myNativeLib\")")
 

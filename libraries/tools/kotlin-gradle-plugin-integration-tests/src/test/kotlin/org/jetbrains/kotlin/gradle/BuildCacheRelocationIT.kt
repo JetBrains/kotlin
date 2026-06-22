@@ -21,6 +21,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -263,13 +264,14 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @NativeGradlePluginTests
     @DisplayName("with native project")
     @GradleTest
-    fun testRelocationNative(gradleVersion: GradleVersion) {
+    fun testRelocationNative(gradleVersion: GradleVersion, @TempDir konanTemp: Path) {
         val localRepoDir = defaultLocalRepo(gradleVersion)
         val buildOptionsBeforeCaching = defaultBuildOptions.copy(
             nativeOptions = super.defaultBuildOptions.nativeOptions.copy(
                 version = TestVersions.Kotlin.STABLE_RELEASE,
                 distributionDownloadFromMaven = true
-            )
+            ),
+            konanDataDir = konanTemp,
         )
         val [firstProject, secondProject] = prepareTestProjects(
             "native-build-cache",
