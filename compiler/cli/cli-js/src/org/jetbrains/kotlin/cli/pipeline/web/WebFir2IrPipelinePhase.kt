@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.incrementalDataProvider
 import org.jetbrains.kotlin.js.config.wasmCompilation
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -46,9 +46,14 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
     postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): WebFir2IrPipelineArtifact {
-        (val firResult = frontendOutput, val configuration, val moduleStructure, val hasErrors) = input
+        (val firResult = frontendOutput, val configuration, val resolvedLibraries, val hasErrors) = input
         val diagnosticsReporter = configuration.diagnosticsCollector
-        val fir2IrActualizedResult = transformFirToIr(moduleStructure, firResult.outputs, diagnosticsReporter)
+        val fir2IrActualizedResult = transformFirToIr(
+            configuration,
+            resolvedLibraries,
+            firResult.outputs,
+            diagnosticsReporter
+        )
 
         runWebKlibCallCheckers(diagnosticsReporter, configuration, firResult.outputs, fir2IrActualizedResult)
 
@@ -61,7 +66,8 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
     }
 
     private fun transformFirToIr(
-        moduleStructure: ModulesStructure,
+        configuration: CompilerConfiguration,
+        resolvedLibraries: List<KotlinLibrary>,
         firOutputs: List<SingleModuleFrontendOutput>,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): Fir2IrActualizedResult {
@@ -70,12 +76,12 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        val librariesDescriptors = moduleStructure.klibs.all.map { resolvedLibrary ->
+        val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
             val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 resolvedLibrary,
-                moduleStructure.compilerConfiguration.languageVersionSettings,
+                configuration.languageVersionSettings,
                 storageManager,
                 builtInsModule,
                 lookupTracker = LookupTracker.DO_NOTHING
@@ -92,8 +98,8 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
         val firResult = AllModulesFrontendOutput(firOutputs)
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
-            Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
-            moduleStructure.compilerConfiguration.getCompilerExtensions(IrGenerationExtension),
+            Fir2IrConfiguration.forKlibCompilation(configuration, diagnosticsReporter),
+            configuration.getCompilerExtensions(IrGenerationExtension),
             irMangler = JsManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
