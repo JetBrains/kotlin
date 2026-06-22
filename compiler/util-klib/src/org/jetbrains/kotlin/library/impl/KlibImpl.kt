@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.library.loader.KlibManifestTransformer
 import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import java.nio.file.Path
 import java.util.Properties
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 internal class KlibImpl(
     override val path: Path,
@@ -53,8 +52,6 @@ internal class KlibImpl(
     override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>) = components.getComponent(kind)
 
     override val attributes = KlibAttributes()
-
-    override val libraryFile get() = KlibFile(path)
 
     override fun toString() = listOfNotNull(
         path,
