@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.file
 import java.io.IOException
 import java.nio.file.FileVisitResult

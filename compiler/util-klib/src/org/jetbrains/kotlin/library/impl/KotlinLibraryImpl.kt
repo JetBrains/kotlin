@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.library.impl
 
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 

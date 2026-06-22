@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.TestComponentConstants.MANDATORY_COMPONENT_BASE_FOLDER_NAME
 import org.jetbrains.kotlin.library.TestComponentConstants.MANDATORY_COMPONENT_INT_VALUE_FILE_NAME
 import org.jetbrains.kotlin.library.TestComponentConstants.OPTIONAL_COMPONENT_BASE_FOLDER_NAME

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome

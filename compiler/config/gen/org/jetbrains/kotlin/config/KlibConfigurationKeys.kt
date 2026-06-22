@@ -12,7 +12,7 @@ package org.jetbrains.kotlin.config
  * DO NOT MODIFY IT MANUALLY
  */
 
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.io.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 object KlibConfigurationKeys {
