@@ -543,7 +543,7 @@ private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragme
 
 private fun PhaseEngine<NativeGenerationState>.findDependenciesToCompile(): List<IrModuleFragment> {
     return context.config.librariesWithDependencies()
-            .mapNotNull { context.context.irModules[it.path.toString()] }
+            .mapNotNull { context.context.irModules[it.path] }
             .filter { context.llvmModuleSpecification.containsModule(it) }
 }
 

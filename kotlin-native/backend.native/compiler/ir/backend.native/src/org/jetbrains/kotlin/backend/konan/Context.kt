@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.util.isTrivialGetter
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefault = false)
@@ -46,7 +47,7 @@ internal class Context(
         @OptIn(K1Deprecation::class)
         override val builtIns: KonanBuiltIns,
         override val irBuiltIns: IrBuiltIns,
-        val irModules: Map<String, IrModuleFragment>,
+        val irModules: Map<Path, IrModuleFragment>,
         val irLinker: KonanIrLinker,
         override val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,

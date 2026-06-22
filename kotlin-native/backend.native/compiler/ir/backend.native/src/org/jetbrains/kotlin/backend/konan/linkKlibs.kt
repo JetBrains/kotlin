@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import java.nio.file.Path
 import org.jetbrains.kotlin.K1Deprecation
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
@@ -67,8 +68,7 @@ data class LinkKlibsInput(
 )
 
 internal class LinkKlibsOutput(
-        // TODO (KT-87104): Use Path as a key, not String
-        val irModules: Map<String, IrModuleFragment>,
+        val irModules: Map<Path, IrModuleFragment>,
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
         val symbols: BackendNativeSymbols,
@@ -236,7 +236,7 @@ internal fun LinkKlibsContext.linkKlibs(
     return if (libraryToCache == null) {
         LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer)
     } else {
-        val libraryPath = libraryToCache.klib.path.toString()
+        val libraryPath: Path = libraryToCache.klib.path
         val libraryModule = modules[libraryPath] ?: error("No module for the library being cached: $libraryPath")
         LinkKlibsOutput(
                 irModules = modules.filterKeys { it != libraryPath },

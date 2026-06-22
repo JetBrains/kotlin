@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import java.nio.file.Path
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class KonanIrLinker(
@@ -133,14 +134,13 @@ class KonanIrLinker(
     @OptIn(K1Deprecation::class)
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
-    // TODO (KT-87104): Use Path as a key, not String
-    val modules: Map<String, IrModuleFragment>
-        get() = mutableMapOf<String, IrModuleFragment>().apply {
+    val modules: Map<Path, IrModuleFragment>
+        get() = mutableMapOf<Path, IrModuleFragment>().apply {
             deserializersForModules
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
-                    this[klib.path.toString()] = it.value.moduleFragment
+                    this[klib.path] = it.value.moduleFragment
                 }
         }
 }
