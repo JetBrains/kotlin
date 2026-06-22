@@ -693,8 +693,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLACEHOLDER_PROJECTION_IN_TYPEREF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_AMBIGUOUS_INTERCEPTED_SYMBOL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POSSIBLE_INITIALIZATION_DEADLOCK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_UNINITIALIZED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
@@ -954,6 +957,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_T
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_SETTER_RETURN_TYPE
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.renderReadable
@@ -4020,6 +4024,24 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
+        )
+        map.put(
+            POSSIBLE_INITIALIZATION_DEADLOCK,
+            "Possible initialization deadlock between ''{0}''.",
+            Renderer<List<FirBasedSymbol<*>>> { classes ->
+                classes.joinToString(transform = SYMBOL::render)
+            }
+        )
+        map.put(
+            POTENTIALLY_UNINITIALIZED_PROPERTY,
+            "Potentially uninitialized property due to mutually dependent access in ''{0}''.",
+            Renderer<List<FirBasedSymbol<*>>> { classes ->
+                classes.joinToString(transform = SYMBOL::render)
+            }
+        )
+        map.put(
+            POTENTIALLY_UNINITIALIZED_ACCESS,
+            "The access expression might (either directly or indirectly) cause static initialization issues."
         )
     }
 }

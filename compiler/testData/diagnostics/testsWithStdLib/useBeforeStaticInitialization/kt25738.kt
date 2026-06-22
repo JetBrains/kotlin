@@ -1,0 +1,11 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// FIR_IDENTICAL
+<!POSSIBLE_INITIALIZATION_DEADLOCK!>sealed class S {
+    <!POSSIBLE_INITIALIZATION_DEADLOCK!>object O<!> : S()
+
+    companion object {
+        <!POTENTIALLY_UNINITIALIZED_PROPERTY!>val x = foo(<!POTENTIALLY_UNINITIALIZED_ACCESS!>O<!>)<!>
+    }
+}<!>
+
+fun foo(o: S) = 42

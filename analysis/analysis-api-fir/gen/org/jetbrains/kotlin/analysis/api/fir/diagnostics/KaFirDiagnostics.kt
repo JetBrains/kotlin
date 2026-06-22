@@ -4825,6 +4825,20 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionExtensionNullableReceiver::class
     }
 
+    interface PossibleInitializationDeadlock : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PossibleInitializationDeadlock::class
+        val mutualDependencies: List<KaSymbol>
+    }
+
+    interface PotentiallyUninitializedProperty : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PotentiallyUninitializedProperty::class
+        val mutualDependencies: List<KaSymbol>
+    }
+
+    interface PotentiallyUninitializedAccess : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PotentiallyUninitializedAccess::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

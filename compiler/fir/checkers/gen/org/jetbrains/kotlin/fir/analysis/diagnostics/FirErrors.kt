@@ -1142,5 +1142,10 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_RECEIVER_ANNOTATED: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_RECEIVER_ANNOTATED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
+    // Static Initialization
+    val POSSIBLE_INITIALIZATION_DEADLOCK: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("POSSIBLE_INITIALIZATION_DEADLOCK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POTENTIALLY_UNINITIALIZED_PROPERTY: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("POTENTIALLY_UNINITIALIZED_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POTENTIALLY_UNINITIALIZED_ACCESS: KtDiagnosticFactory0 = KtDiagnosticFactory0("POTENTIALLY_UNINITIALIZED_ACCESS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }
