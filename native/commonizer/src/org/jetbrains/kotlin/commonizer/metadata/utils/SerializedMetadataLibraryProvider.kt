@@ -7,17 +7,17 @@ package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
+import org.jetbrains.kotlin.library.SerializedFragment
 import org.jetbrains.kotlin.library.SerializedMetadata
 
 private typealias FragmentPartContents = ByteArray
-private typealias ListOfFragmentParts = List<FragmentPartContents>
 private typealias MapOfFragmentParts = Map<String, FragmentPartContents>
 
 class SerializedMetadataLibraryProvider(
     override val moduleHeaderData: ByteArray,
-    fragments: List<ListOfFragmentParts>,
+    fragments: List<List<SerializedFragment>>,
     fragmentNames: List<String>,
-    override val metadataVersion: KlibMetadataVersion
+    override val metadataVersion: KlibMetadataVersion,
 ) : KlibModuleMetadata.MetadataLibraryProvider {
     private val fragmentMap: Map<String, MapOfFragmentParts>
 
@@ -28,13 +28,13 @@ class SerializedMetadataLibraryProvider(
             // fragmentName is package FQ name, fragmentShortName is right-most part of package FQ name
             val fragmentShortName = fragmentName.substringAfterLast('.')
 
-            val fragmentParts: ListOfFragmentParts = fragments[fragmentIndex]
+            val fragmentParts: List<SerializedFragment> = fragments[fragmentIndex]
             val digitCount = fragmentParts.size.toString().length
 
             // N.B. the same fragment part numbering scheme as in org.jetbrains.kotlin.library.impl.MetadataWriterImpl
             val fragmentPartMap: MapOfFragmentParts = fragmentParts.mapIndexed { partIndex, part ->
                 val partName = partIndex.toString().padStart(digitCount, '0') + "_" + fragmentShortName
-                partName to part
+                partName to part.content
             }.toMap()
 
             fragmentName to fragmentPartMap

@@ -117,7 +117,7 @@ private fun readModule(metadata: SerializedMetadata, consumer: (CirEntityId, Cir
         val classProtosToRead = ClassProtosToRead()
 
         for (j in packageFragments.indices) {
-            val packageFragmentProto = parsePackageFragment(packageFragments[j])
+            val packageFragmentProto = parsePackageFragment(packageFragments[j].content)
 
             val classProtos: List<ProtoBuf.Class> = packageFragmentProto.class_List
             val typeAliasProtos: List<ProtoBuf.TypeAlias> = packageFragmentProto.`package`?.typeAliasList.orEmpty()

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
+import org.jetbrains.kotlin.library.SerializedFragment
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
@@ -27,7 +28,7 @@ internal class KlibMetadataComponentWriterImpl(
             packageFragmentDir.mkdirs()
 
             val shortPackageName: String = packageFqName.substringAfterLast(".")
-            val packageFragmentParts: List<ByteArray> = metadata.fragments[index]
+            val packageFragmentParts: List<SerializedFragment> = metadata.fragments[index]
 
             val padding: Int = packageFragmentParts.size.toString().length
             fun withPadding(packageFragmentPartIndex: Int) = String.format("%0${padding}d", packageFragmentPartIndex)
@@ -36,7 +37,7 @@ internal class KlibMetadataComponentWriterImpl(
                 layout.getPackageFragmentFile(
                     packageFqName = packageFqName,
                     partName = "${withPadding(packageFragmentPartIndex)}_$shortPackageName"
-                ).writeBytes(packageFragmentPart)
+                ).writeBytes(packageFragmentPart.content)
             }
         }
     }

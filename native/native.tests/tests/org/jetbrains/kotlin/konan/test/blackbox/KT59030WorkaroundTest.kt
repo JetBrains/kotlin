@@ -144,7 +144,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
 
             // Write back the metadata.
             return with(moduleMetadata.write()) {
-                SerializedMetadata(module = header, fragments, fragmentNames, MetadataVersion.INSTANCE.toArray())
+                SerializedMetadata(module = header, fragments.map { it.map(::SerializedFragment) }, fragmentNames, MetadataVersion.INSTANCE.toArray())
             }
         }
 

@@ -36,6 +36,7 @@ object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipeli
                 AllModulesFrontendOutput(listOf(output)),
                 configuration = configuration,
                 sourceFiles = input.sourceFiles,
+                isForIncrementalCompilation = true
             )
             val metadataInMemory = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
             MetadataKlibFileWriterPhase.writeToDisc(

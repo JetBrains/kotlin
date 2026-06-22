@@ -17,6 +17,7 @@ data class MetadataFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val sourceFiles: List<KtSourceFile>,
+    val isForIncrementalCompilation: Boolean = false,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataFrontendPipelineArtifact {

@@ -62,7 +62,7 @@ class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
 
             val fragmentsCount = random.nextInt(3, 5)
 
-            val fragments = mutableListOf<List<ByteArray>>()
+            val fragments = mutableListOf<List<SerializedFragment>>()
             val fragmentNames = mutableListOf<String>()
 
             repeat(fragmentsCount) { index ->
@@ -70,7 +70,7 @@ class KlibMockDSL(val currentDir: File, val parent: KlibMockDSL?) {
                 val packageName = if (index == 0) "" else generateRandomPackageName(segmentsCount = random.nextInt(1, 4))
 
                 fragmentNames += packageName
-                fragments += List(random.nextInt(1, 5)) { random.nextBytes(100) }
+                fragments += List(random.nextInt(1, 5)) { SerializedFragment(random.nextBytes(100)) }
             }
 
             return SerializedMetadata(
