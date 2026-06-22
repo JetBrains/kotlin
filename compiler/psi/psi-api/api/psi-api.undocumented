@@ -1845,7 +1845,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub.projectionKind
 org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub.isSpread
-org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:constructor(String, Class<PsiT>, Class<?>)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:createPsiFromAst(ASTNode)
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType:getArrayFactory()

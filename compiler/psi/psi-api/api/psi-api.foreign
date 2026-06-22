@@ -45,6 +45,10 @@ com/intellij/psi/stubs/NamedStub
 com/intellij/psi/stubs/PsiFileStub
 com/intellij/psi/stubs/Stub
 com/intellij/psi/stubs/StubElement
+com/intellij/psi/stubs/StubElementFactory
+com/intellij/psi/stubs/StubInputStream
+com/intellij/psi/stubs/StubOutputStream
+com/intellij/psi/stubs/StubSerializer
 com/intellij/psi/tree/IElementType
 com/intellij/psi/tree/IFileElementType
 com/intellij/psi/tree/ILazyParseableElementType

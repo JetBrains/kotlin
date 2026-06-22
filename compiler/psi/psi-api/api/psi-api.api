@@ -4210,12 +4210,23 @@ public abstract class org/jetbrains/kotlin/psi/stubs/elements/KtStubElementType 
 	public synthetic fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/PsiElement;
 	public fun createPsi (Lcom/intellij/psi/stubs/StubElement;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
 	public fun createPsiFromAst (Lcom/intellij/lang/ASTNode;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
+	public fun createPsiFromStub (Lcom/intellij/psi/stubs/StubElement;)Lorg/jetbrains/kotlin/psi/KtElementImplStub;
+	public synthetic fun createStub (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/stubs/StubElement;
+	public fun createStub (Lorg/jetbrains/kotlin/psi/KtElementImplStub;Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/stubs/StubElement;
+	public synthetic fun deserialize (Lcom/intellij/psi/stubs/StubInputStream;Lcom/intellij/psi/stubs/Stub;)Lcom/intellij/psi/stubs/Stub;
+	public fun deserialize (Lcom/intellij/psi/stubs/StubInputStream;Lcom/intellij/psi/stubs/StubElement;)Lcom/intellij/psi/stubs/StubElement;
 	public fun getArrayFactory ()Lcom/intellij/util/ArrayFactory;
+	public final fun getConventionalExternalId ()Ljava/lang/String;
 	public fun getExternalId ()Ljava/lang/String;
+	public abstract fun getStubFactory ()Lcom/intellij/psi/stubs/StubElementFactory;
+	public abstract fun getStubSerializer ()Lcom/intellij/psi/stubs/StubSerializer;
 	public synthetic fun indexStub (Lcom/intellij/psi/stubs/Stub;Lcom/intellij/psi/stubs/IndexSink;)V
 	public fun indexStub (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IndexSink;)V
 	public fun isExpression ()Z
+	public synthetic fun serialize (Lcom/intellij/psi/stubs/Stub;Lcom/intellij/psi/stubs/StubOutputStream;)V
+	public fun serialize (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/StubOutputStream;)V
 	public fun shouldCreateStub (Lcom/intellij/lang/ASTNode;)Z
+	public static fun shouldCreateStubDependingOnParent (Lcom/intellij/lang/ASTNode;)Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/elements/KtTokenSets {
