@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
+import java.nio.file.Paths
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
@@ -148,6 +150,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         }
 
         override val location: KlibFile get() = KlibFile(".")
+        override val path: Path get() = Paths.get(".")
         override val attributes: KlibAttributes get() = error("Not supported")
 
         override val versions: KotlinLibraryVersioning get() = error("Not supported")

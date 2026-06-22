@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
+import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -31,6 +32,14 @@ interface Klib {
      * The [KlibFile] that points to the library location on the file system.
      */
     val location: KlibFile
+
+    /**
+     * The [Path] that points to the library location on the file system.
+     *
+     * This path is exactly the same "raw" path as was supplied by the user in compiler's CLI invocation.
+     * To get the absolute path use an additional [Path.toAbsolutePath] call.
+     */
+    val path: Path
 
     /**
      * Read/write attributes associated with the current instance of [Klib].

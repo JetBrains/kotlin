@@ -21,7 +21,6 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 /**
  * The [KlibLoader] component helps to load [KotlinLibrary]s based on the supplied
@@ -253,7 +252,7 @@ private class KlibLoaderImpl(
             // of the manifest file. If the manifest, which is the essential part of KLIB, is not available
             // or is corrupted, an exception is thrown. We immediately treat such library as problematic.
             KlibImpl(
-                location = KFile(validPath),
+                path = validPath,
                 zipFileSystemAccessor = zipFileSystemAccessor,
                 manifestTransformer = manifestTransformer,
             )
