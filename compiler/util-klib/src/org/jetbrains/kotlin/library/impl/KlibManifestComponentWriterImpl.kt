@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.properties.saveToFile
+import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
@@ -38,7 +38,7 @@ internal class KlibManifestComponentWriterImpl(
 
         val layout = KlibManifestComponentLayout(root)
         layout.manifestFile.parent.createDirectories()
-        properties.saveToFile(layout.manifestFile)
+        layout.manifestFile.writeProperties(properties)
     }
 
     private fun assembleProperties(): Properties = Properties().apply {

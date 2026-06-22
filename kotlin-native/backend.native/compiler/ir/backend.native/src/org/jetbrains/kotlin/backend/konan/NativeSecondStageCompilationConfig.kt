@@ -21,16 +21,18 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.config.nativeBinaryOptions.UnitSuspendFunctionObjCExport
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.native.resolve.KonanLibrariesResolveSupport
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.Properties
+import kotlin.io.path.Path
 
 class NativeSecondStageCompilationConfig(
         val project: Project,
@@ -485,8 +487,8 @@ class NativeSecondStageCompilationConfig(
         configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
-    override val manifestProperties = configuration.konanManifestAddend?.let {
-        File(it).loadProperties()
+    override val manifestProperties: Properties? = configuration.konanManifestAddend?.let {
+        Path(it).readProperties()
     }
 
     private val defaultPropertyLazyInitialization = true
