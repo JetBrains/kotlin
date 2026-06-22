@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.junit.jupiter.api.Test
-import java.io.File
+import java.nio.file.Path
 import java.util.Properties
+import kotlin.io.path.nameWithoutExtension
 
 class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
     class NewNativeKlibWriterParameters : NativeParameters() {
@@ -48,7 +49,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
             ?: parameters.target.visibleName
     }
 
-    override fun writeKlib(parameters: NewNativeKlibWriterParameters): File {
+    override fun writeKlib(parameters: NewNativeKlibWriterParameters): Path {
         val klibDir = createNewKlibDir()
         val klibLocation = if (parameters.nopack) klibDir else klibDir.resolveSibling(klibDir.nameWithoutExtension + ".klib")
 
@@ -75,9 +76,9 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
             }
             includeMetadata(parameters.metadata)
             includeIr(parameters.ir)
-            includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file.path })
-            includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file.path })
-        }.writeTo(klibLocation.path)
+            includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file })
+            includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file })
+        }.writeTo(klibLocation)
 
         return klibLocation
     }

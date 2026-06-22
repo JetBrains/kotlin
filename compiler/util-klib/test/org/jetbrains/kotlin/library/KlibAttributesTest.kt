@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.nio.file.Path
 
 class KlibAttributesTest {
     @TempDir
-    lateinit var tmpDir: File
+    lateinit var tmpDir: Path
 
     @Test
     fun `Public member attributes reading and writing`() {

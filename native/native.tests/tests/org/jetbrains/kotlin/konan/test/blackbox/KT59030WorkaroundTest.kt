@@ -12,8 +12,8 @@ import kotlinx.metadata.KmDeclarationContainer
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.unzipTo
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -37,8 +37,14 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
+import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.moveTo
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 // See KT-59030.
 @Tag("partial-linkage")
@@ -74,20 +80,21 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         ).assertSuccess()
     }
 
+    @OptIn(ExperimentalPathApi::class)
     private fun spoilDeprecatedAnnotationsInLibrary(klib: TestCompilationArtifact.KLIB) {
         // Move the original library to a different location. The former location will be used for the patched library.
-        val originalLibraryFile = KFile(with(klib.klibFile) { parentFile.newDir("__backup__").resolve(name).path })
-        val patchedLibraryFile = KFile(klib.klibFile.path)
-        patchedLibraryFile.renameTo(originalLibraryFile)
+        val originalLibraryFile = with(klib.klibFile.toPath()) { parent.newDir("__backup__").resolve(name) }
+        val patchedLibraryFile = klib.klibFile.toPath()
+        patchedLibraryFile.moveTo(originalLibraryFile)
 
         // Read the original library.
-        val oldLibrary = KlibLoader { libraryPaths(originalLibraryFile.path) }.load().librariesStdlibFirst.single()
+        val oldLibrary = KlibLoader { libraryPaths(originalLibraryFile) }.load().librariesStdlibFirst.single()
 
         // Patch the metadata.
         val patchedMetadata = spoilDeprecatedAnnotationsInMetadata(oldLibrary.metadata)
 
         // Write the patched library.
-        val patchedLibraryTmpDir = KFile(patchedLibraryFile.path + "-tmp")
+        val patchedLibraryTmpDir = Path(patchedLibraryFile.pathString + "-tmp")
 
         KlibWriter {
             manifest {
@@ -97,19 +104,19 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
             }
             includeMetadata(patchedMetadata)
             // Note: The IR will be copied from the original library anyway.
-        }.writeTo(patchedLibraryTmpDir.path)
+        }.writeTo(patchedLibraryTmpDir)
 
         // Unzip the original library.
-        val originalLibraryTmpDir = KFile(originalLibraryFile.path + "-tmp")
+        val originalLibraryTmpDir = Path(originalLibraryFile.pathString + "-tmp")
         originalLibraryFile.unzipTo(originalLibraryTmpDir)
 
         // Drop the metadata from the original library.
-        val originalLibraryMetadataDir = KlibMetadataComponentLayout(originalLibraryTmpDir.path).metadataDir
+        val originalLibraryMetadataDir = KlibMetadataComponentLayout(originalLibraryTmpDir).metadataDir
         originalLibraryMetadataDir.deleteRecursively()
 
         // Copy the metadata from the patched library.
-        val patchedLibraryMetadataDir = KlibMetadataComponentLayout(patchedLibraryTmpDir.path).metadataDir
-        patchedLibraryMetadataDir.renameTo(originalLibraryMetadataDir)
+        val patchedLibraryMetadataDir = KlibMetadataComponentLayout(patchedLibraryTmpDir).metadataDir
+        patchedLibraryMetadataDir.moveTo(originalLibraryMetadataDir)
 
         // Zip the resulting library.
         originalLibraryTmpDir.zipDirAs(patchedLibraryFile)
@@ -124,7 +131,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         private const val REPLACE_WITH_ARG = "replaceWith"
         private const val EXPRESSION_ARG = "expression"
 
-        private fun File.newDir(name: String): File = resolve(name).apply { mkdirs() }
+        private fun Path.newDir(name: String): Path = resolve(name).apply { createDirectories() }
 
         private fun spoilDeprecatedAnnotationsInMetadata(originalMetadata: KlibMetadataComponent): SerializedMetadata {
             // Read the metadata.

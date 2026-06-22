@@ -17,28 +17,3 @@ fun File.loadProperties(): Properties {
     }
     return properties
 }
-
-/**
- * Standard properties writer has two issues, which prevents build reproducibility
- *
- * 1. The order of lines is not defined
- * 2. It uses platform-specific end-of-lines
- *
- * This function deals with both issues
- */
-fun File.saveProperties(properties: Properties) {
-    val rawData = StringWriter().apply {
-        properties.store(this, null)
-    }.toString()
-
-    val lines = rawData
-        .split(System.lineSeparator())
-        .filterNot { it.isEmpty() || it.startsWith("#") }
-        .sorted()
-
-    outputStream().use {
-        it.write(lines.joinToString("\n", postfix = "\n").toByteArray())
-    }
-}
-
-fun Properties.saveToFile(file: File) = file.saveProperties(this)

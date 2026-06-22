@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
@@ -19,18 +19,30 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import java.io.File
-import java.nio.file.Files.createTempDirectory
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
 import kotlin.collections.forEach
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.copyToRecursively
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.moveTo
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
-import org.jetbrains.kotlin.konan.file.File as KFile
+import kotlin.io.path.writeText
 
 abstract class AbstractKlibLoaderTest {
-    protected lateinit var tmpDir: File
+    protected lateinit var tmpDir: Path
         private set
 
     /** Path to platform-specific stdlib. */
@@ -47,62 +59,64 @@ abstract class AbstractKlibLoaderTest {
 
     private val nonExistingPaths: List<String>
         get() = listOf(
-            tmpDir.resolve("non-existing-library1").path,
+            tmpDir.resolve("non-existing-library1").pathString,
             "non-existing-library2",
             "../non-existing-library3",
             "./non-existing-library4",
         )
 
+    @OptIn(ExperimentalPathApi::class)
     @Suppress("LocalVariableName")
     private val corruptedLibraryPaths: List<String> by lazy {
-        buildList {
+        buildList<Path> {
             // Just an empty directory.
-            this += tmpDir.resolve("corrupted-library1").apply { mkdirs() }
+            add(tmpDir.resolve("corrupted-library1").apply { createTempDirectory() })
 
             // Just an empty file.
-            this += tmpDir.resolve("corrupted-library2").apply { createNewFile() }
+            add(tmpDir.resolve("corrupted-library2").apply { createTempDirectory() })
 
             // Copy of a real KLIB without the "default" component. As a directory.
             val noDefaultComponentDir = tmpDir.resolve("corrupted-library3")
-            File(stdlib).copyRecursively(noDefaultComponentDir)
-            with(noDefaultComponentDir.resolve("default")) { renameTo(resolveSibling("non-default")) }
-            this += noDefaultComponentDir
+            Path(stdlib).copyToRecursively(noDefaultComponentDir, followLinks = false, overwrite = true)
+            with(noDefaultComponentDir.resolve("default")) { moveTo(resolveSibling("non-default")) }
+            add(noDefaultComponentDir)
 
             // Copy of a real KLIB without the "default" component. As a file.
             val noDefaultComponentFile = tmpDir.resolve("corrupted-library4")
-            KFile(noDefaultComponentDir.path).zipDirAs(KFile(noDefaultComponentFile.path))
-            this += noDefaultComponentFile
+            noDefaultComponentDir.zipDirAs(noDefaultComponentFile)
+            add(noDefaultComponentFile)
 
             // Copy of a real KLIB without a manifest. As a directory.
             val noManifestDir = tmpDir.resolve("corrupted-library5")
-            File(stdlib).copyRecursively(noManifestDir)
-            noManifestDir.resolve("default/manifest").delete()
-            this += noManifestDir
+            Path(stdlib).copyToRecursively(noManifestDir, followLinks = false, overwrite = true)
+            noManifestDir.resolve("default/manifest").deleteIfExists()
+            add(noManifestDir)
 
             // Copy of a real KLIB without a manifest. As a file.
             val noManifestFile = tmpDir.resolve("corrupted-library6")
-            KFile(noManifestDir.path).zipDirAs(KFile(noManifestFile.path))
-            this += noManifestFile
+            noManifestDir.zipDirAs(noManifestFile)
+            add(noManifestFile)
         }.flatMap { libraryFile ->
-            val libraryPath = libraryFile.path
+            val libraryPath = libraryFile.pathString
 
             // Just make a copy of the original file/directory but with an extension.
-            val libraryFile_klib = File("$libraryPath.klib")
-            libraryFile.copyRecursively(libraryFile_klib)
+            val libraryFile_klib = Path("$libraryPath.klib")
+            libraryFile.copyToRecursively(libraryFile_klib, followLinks = false, overwrite = true)
 
-            val libraryFile_txt = File("$libraryPath.txt")
-            libraryFile.copyRecursively(libraryFile_txt)
+            val libraryFile_txt = Path("$libraryPath.txt")
+            libraryFile.copyToRecursively(libraryFile_txt, followLinks = false, overwrite = true)
 
             listOf(libraryFile, libraryFile_klib, libraryFile_txt)
-        }.map { it.path }
+        }.map { it.pathString }
     }
 
     @BeforeEach
     fun setup(info: TestInfo) {
-        tmpDir = createTempDirectory(info.testClass.get().simpleName + "-" + info.testMethod.get().name).toRealPath().toFile()
+        tmpDir = Files.createTempDirectory(info.testClass.get().simpleName + "-" + info.testMethod.get().name).toRealPath()
     }
 
     @AfterEach
+    @OptIn(ExperimentalPathApi::class)
     fun tearDown() {
         tmpDir.deleteRecursively()
     }
@@ -249,7 +263,7 @@ abstract class AbstractKlibLoaderTest {
             if (it.exists()) {
                 assertEquals(it.toRealPath(), it)
             }
-            assertTrue(it.startsWith(tmpDir.path))
+            assertTrue(it.startsWith(tmpDir))
         }
 
         val cwd: Path = Paths.get("").toRealPath()
@@ -285,16 +299,16 @@ abstract class AbstractKlibLoaderTest {
     @Suppress("LocalVariableName")
     @Test
     fun testNoFileExtensionHeuristics() {
-        val libsDir = tmpDir.resolve("libs-with-distinct-names").apply { mkdirs() }
+        val libsDir = tmpDir.resolve("libs-with-distinct-names").apply { createDirectories() }
 
-        val foo = libsDir.resolve("foo").path
-        val foo_klib = libsDir.resolve("foo.klib").path
-        val bar = libsDir.resolve("bar").path
-        val bar_klib = libsDir.resolve("bar.klib").path
-        val baz = libsDir.resolve("baz").path
-        val baz_klib = libsDir.resolve("baz.klib").path
-        val qux = libsDir.resolve("qux").path
-        val qux_klib = libsDir.resolve("qux.klib").path
+        val foo = libsDir.resolve("foo").pathString
+        val foo_klib = libsDir.resolve("foo.klib").pathString
+        val bar = libsDir.resolve("bar").pathString
+        val bar_klib = libsDir.resolve("bar.klib").pathString
+        val baz = libsDir.resolve("baz").pathString
+        val baz_klib = libsDir.resolve("baz.klib").pathString
+        val qux = libsDir.resolve("qux").pathString
+        val qux_klib = libsDir.resolve("qux.klib").pathString
 
         with(File(generateNewKlib(asFile = false, fileExtension = ""))) {
             copyRecursively(File(foo))
@@ -312,7 +326,7 @@ abstract class AbstractKlibLoaderTest {
 
         assertEquals(
             listOf("bar", "bar.klib", "baz", "baz.klib", "foo", "foo.klib", "qux", "qux.klib"),
-            libsDir.list().orEmpty().sorted()
+            libsDir.listDirectoryEntries().map { it.pathString }.sorted()
         )
 
         KlibLoader {
@@ -393,7 +407,7 @@ abstract class AbstractKlibLoaderTest {
         val lib: Path = Paths.get(generateNewKlib(asFile = false, fileExtension = ""))
 
         assertEquals(lib.toRealPath(), lib)
-        assertTrue(lib.startsWith(tmpDir.path))
+        assertTrue(lib.startsWith(tmpDir))
 
         val cwd: Path = Paths.get("").toRealPath()
 
@@ -702,19 +716,19 @@ abstract class AbstractKlibLoaderTest {
         // Sometimes the compiler sets file extension on its own. This needs to be fixed specifically for KLIB loader tests.
         if (asFile && !klibLocation.exists()) {
             val altKlibLocation = klibLocation.resolveSibling(klibLocation.nameWithoutExtension + ".klib")
-            if (altKlibLocation.exists()) altKlibLocation.renameTo(klibLocation)
+            if (altKlibLocation.exists()) altKlibLocation.moveTo(klibLocation)
         }
 
         assertTrue(klibLocation.exists()) { "KLIB should exist after compilation: $klibLocation" }
         assertEquals(fileExtension, klibLocation.extension)
 
-        return klibLocation.path
+        return klibLocation.pathString
     }
 
     data class CompilationParameters(
         val asFile: Boolean,
-        val sourceFile: File,
-        val klibLocation: File,
+        val sourceFile: Path,
+        val klibLocation: Path,
         val abiVersion: KotlinAbiVersion,
         val withCompanionBlocksAndExtensionsFeature: Boolean = false,
     )
