@@ -4,9 +4,9 @@ package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.project
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionSt
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.testing.*
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.tooling.core.closure
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -743,7 +742,9 @@ class UklibInterprojectResolutionTests {
             "consumer:transformLinuxTestCInteropDependenciesMetadataForIde",
             "consumer:transformNativeMainCInteropDependenciesMetadataForIde",
             "consumer:transformNativeTestCInteropDependenciesMetadataForIde",
-            // FIXME: KT-81139: Why is :producer:commonizeCInterop missing here?
+            "producer:commonizeCInterop",
+            "producer:commonizeNativeDistribution",
+            "producer:downloadKotlinNativeDistribution",
             "producer:cinteropProducerLinuxArm64",
             "producer:cinteropProducerLinuxX64",
             "producer:serializeUklibManifestWithoutCompilationDependency",
@@ -779,6 +780,7 @@ class UklibInterprojectResolutionTests {
             "producer:compileKotlinJs",
         ),
         transformLinuxMainCInteropDependenciesMetadata = mutableSetOf(
+            "consumer:transformNativeMainCInteropDependenciesMetadataForIde",
             "producer:serializeUklibManifestWithoutCompilationDependency",
         ),
         runJvm = mutableSetOf(
@@ -850,9 +852,7 @@ class UklibInterprojectResolutionTests {
             consumerTaskName: String,
         ) = assertEquals(
             expectedTaskDependencies.prettyPrinted,
-            consumer.tasks.getByName(consumerTaskName).closure {
-                it.taskDependencies.getDependencies(null)
-            }.filter { task ->
+            (consumer as ProjectInternal).allTaskDependencies(consumer.tasks.getByName(consumerTaskName)).filter { task ->
                 return@filter !listOf(
                     // isLifecycleTask
                     { task.javaClass.superclass == DefaultTask::class.java },
