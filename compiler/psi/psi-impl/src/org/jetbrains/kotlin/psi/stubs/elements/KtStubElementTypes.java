@@ -59,8 +59,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtPackageDirective> PACKAGE_DIRECTIVE =
             new KtPlaceHolderStubElementType<>("PACKAGE_DIRECTIVE", KtPackageDirective.class);
 
-    KtModifierListElementType<KtDeclarationModifierList> MODIFIER_LIST =
-            new KtModifierListElementType<>("MODIFIER_LIST", KtDeclarationModifierList.class);
+    KtModifierListElementType MODIFIER_LIST = new KtModifierListElementType("MODIFIER_LIST");
 
     KtPlaceHolderStubElementType<KtTypeConstraintList> TYPE_CONSTRAINT_LIST =
             new KtPlaceHolderStubElementType<>("TYPE_CONSTRAINT_LIST", KtTypeConstraintList.class);

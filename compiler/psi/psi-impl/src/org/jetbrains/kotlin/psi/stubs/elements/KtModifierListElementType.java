@@ -5,40 +5,29 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.DataInputOutputUtil;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtModifierList;
+import org.jetbrains.kotlin.psi.KtDeclarationModifierList;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinModifierListStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinModifierListStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl;
 
-import java.io.IOException;
-
-import static org.jetbrains.kotlin.psi.stubs.impl.ModifierMaskUtils.computeMaskFromModifierList;
-
-public class KtModifierListElementType<T extends KtModifierList> extends KtStubElementType<KotlinModifierListStubImpl, T> {
-    public KtModifierListElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
-        super(debugName, psiClass, KotlinModifierListStub.class);
-    }
-
-    @NotNull
-    @Override
-    public KotlinModifierListStubImpl createStub(@NotNull T psi, StubElement<?> parentStub) {
-        return new KotlinModifierListStubImpl(parentStub, computeMaskFromModifierList(psi));
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+public class KtModifierListElementType extends KtStubElementType<KotlinModifierListStubImpl, KtDeclarationModifierList> {
+    public KtModifierListElementType(@NotNull @NonNls String debugName) {
+        super(debugName, KtDeclarationModifierList.class, KotlinModifierListStub.class);
     }
 
     @Override
-    public void serialize(@NotNull KotlinModifierListStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        DataInputOutputUtil.writeLONG(dataStream, stub.getMask());
+    public StubElementFactory<KotlinModifierListStubImpl, KtDeclarationModifierList> getStubFactory() {
+        return KotlinModifierListStubFactory.INSTANCE;
     }
 
-    @NotNull
     @Override
-    public KotlinModifierListStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        long mask = DataInputOutputUtil.readLONG(dataStream);
-        return new KotlinModifierListStubImpl(parentStub, mask);
+    public StubSerializer<KotlinModifierListStubImpl> getStubSerializer() {
+        return KotlinModifierListStubSerializer.INSTANCE;
     }
 }
