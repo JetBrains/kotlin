@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
 import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
+import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -32,25 +34,37 @@ internal class KlibMetadataComponentWriterImpl(
             packageFragmentDir.mkdirs()
 
             val shortPackageName: String = packageFqName.substringAfterLast(".")
-            val packageFragmentParts: List<SerializedFragment> = metadata.fragments[index]
+            val (packageFragmentWithSourceParts, packageFragmentWithoutSourceParts) =
+                metadata.fragments[index].partition { it.sourceFilePathOrNull != null }
 
-            val padding: Int = packageFragmentParts.size.toString().length
-            fun withPadding(packageFragmentPartIndex: Int) = String.format("%0${padding}d", packageFragmentPartIndex)
+            val padding: Int = packageFragmentWithoutSourceParts.size.toString().length
+            packageFragmentWithoutSourceParts.forEachIndexed { partIndex, packageFragmentPart ->
+                val partName = "${partIndex.toString().padStart(padding, '0')}_$shortPackageName"
+                layout.writeFragment(packageFqName, partName, packageFragmentPart.content, sourceFile = null)
+            }
 
-            packageFragmentParts.forEachIndexed { packageFragmentPartIndex, packageFragmentPart ->
-                val packageFragmentFile = layout.getPackageFragmentFile(
-                    packageFqName = packageFqName,
-                    partName = "${withPadding(packageFragmentPartIndex)}_$shortPackageName"
-                )
-                packageFragmentFile.writeBytes(packageFragmentPart.content)
+            packageFragmentWithSourceParts.forEach { packageFragmentPart ->
+                val sourceFile = Path(requireNotNull(packageFragmentPart.sourceFilePathOrNull))
+                val sourceFileName = sourceFile.nameWithoutExtension
 
-                if (fragmentTracker != null && packageFragmentPart is SerializedFragmentWithSource) {
-                    fragmentTracker.recordSourceFile(
-                        packageFragmentPart.sourceFilePath?.let { Path(it) },
-                        packageFragmentFile.javaPath()
-                    )
-                }
+                layout.writeFragment(packageFqName, sourceFileName, packageFragmentPart.content, sourceFile)
             }
         }
+    }
+
+    private val SerializedFragment.sourceFilePathOrNull: String?
+        get() = (this as? SerializedFragmentWithSource)?.sourceFilePath
+
+    private fun KlibMetadataComponentLayout.writeFragment(
+        packageFqName: String,
+        partName: String,
+        content: ByteArray,
+        sourceFile: Path?,
+    ) {
+        val packageFragmentFile = getPackageFragmentFile(packageFqName = packageFqName, partName = partName)
+        check(packageFragmentFile.exists.not()) { "Duplicate package fragment name '${packageFragmentFile.path}'" }
+        packageFragmentFile.writeBytes(content)
+
+        fragmentTracker?.recordSourceFile(sourceFile, packageFragmentFile.javaPath())
     }
 }

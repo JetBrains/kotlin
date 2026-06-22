@@ -233,7 +233,8 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
 
         val layout = KlibMetadataComponentLayout(KlibFile(klibDir.path))
         val expectedMappings = listOf(
-            Path("/src/a.kt") to layout.getPackageFragmentFile(packageFqName = "", partName = "0_").javaPath(),
+            null to layout.getPackageFragmentFile(packageFqName = "", partName = "0_").javaPath(),
+            Path("/src/a.kt") to layout.getPackageFragmentFile(packageFqName = "", partName = "a").javaPath(),
             null to layout.getPackageFragmentFile(packageFqName = "foo.bar", partName = "0_bar").javaPath(),
         )
 
@@ -241,6 +242,29 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
             expectedMappings.map { (source, output) -> source to output },
             recordedMappings.map { (source, output) -> source to output },
         )
+    }
+
+    @Test
+    fun `Fragments source file with the same name and package reports`() {
+        val content = ByteArray(10)
+
+        assertThrows<IllegalStateException> {
+            writeKlib(
+                NewKlibWriterParameters().apply {
+                    metadata = SerializedMetadata(
+                        module = content,
+                        fragments = listOf(
+                            listOf(
+                                SerializedFragmentWithSource(content, "/src/x/a.kt"),
+                                SerializedFragmentWithSource(content, "/src/y/a.kt"),
+                            ),
+                        ),
+                        fragmentNames = listOf("foo.bar"),
+                        metadataVersion = MetadataVersion.INSTANCE.toArray(),
+                    )
+                }
+            )
+        }
     }
 
     @Test
