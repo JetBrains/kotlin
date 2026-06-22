@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.io
 
-import org.jetbrains.kotlin.konan.file.withZipFileSystem
-import org.jetbrains.kotlin.konan.file.zipFileSystem
 import java.nio.file.FileSystem
 import java.nio.file.Path
 

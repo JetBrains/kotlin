@@ -32,7 +32,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import kotlin.collections.Iterable
-import kotlin.io.path.copyTo
 import kotlin.io.path.fileSize
 import kotlin.io.path.readBytes
 import kotlin.random.Random

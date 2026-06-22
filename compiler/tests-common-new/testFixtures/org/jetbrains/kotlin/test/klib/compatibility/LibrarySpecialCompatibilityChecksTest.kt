@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.junit.jupiter.api.*
@@ -335,5 +335,5 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
 }
 
 private fun zipDirectory(directory: File, zipFile: File) {
-    KFile(directory.toPath()).zipDirAs(KFile(zipFile.toPath()))
+    directory.toPath().zipDirAs(zipFile.toPath())
 }
