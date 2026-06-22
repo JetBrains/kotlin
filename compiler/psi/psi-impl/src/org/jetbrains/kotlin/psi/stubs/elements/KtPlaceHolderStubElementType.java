@@ -6,36 +6,33 @@
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinPlaceHolderStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinPlaceHolderStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtPlaceHolderStubElementType<T extends KtElementImplStub<? extends StubElement<?>>> extends
                                                                                                  KtStubElementType<KotlinPlaceHolderStubImpl<T>, T> {
+    private final KotlinPlaceHolderStubFactory<T> stubFactory = new KotlinPlaceHolderStubFactory<>(this);
+    private final KotlinPlaceHolderStubSerializer<T> stubSerializer = new KotlinPlaceHolderStubSerializer<>(this);
+
     public KtPlaceHolderStubElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
         super(debugName, psiClass, KotlinPlaceHolderStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinPlaceHolderStubImpl<T> createStub(@NotNull T psi, StubElement<?> parentStub) {
-        return new KotlinPlaceHolderStubImpl<>(parentStub, this);
+    public StubElementFactory<KotlinPlaceHolderStubImpl<T>, T> getStubFactory() {
+        return stubFactory;
     }
 
     @Override
-    public void serialize(@NotNull KotlinPlaceHolderStubImpl<T> stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //do nothing
-    }
-
-    @NotNull
-    @Override
-    public KotlinPlaceHolderStubImpl<T> deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new KotlinPlaceHolderStubImpl<>(parentStub, this);
+    public StubSerializer<KotlinPlaceHolderStubImpl<T>> getStubSerializer() {
+        return stubSerializer;
     }
 }
