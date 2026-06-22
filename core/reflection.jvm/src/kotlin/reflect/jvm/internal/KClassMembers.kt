@@ -59,7 +59,7 @@ internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable
 }
 
 internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> =
-    if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
+    if (useK1Implementation || isComplicatedBuiltinSubclass) {
         buildList {
             addAll(data.value.declaredMembers)
             addAll(getDescriptorBasedMembers(memberScope, INHERITED))

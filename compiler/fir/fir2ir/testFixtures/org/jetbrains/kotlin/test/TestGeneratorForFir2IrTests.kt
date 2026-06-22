@@ -56,11 +56,6 @@ fun main(args: Array<String>) {
                 model("boxJvm/reflection")
             }
 
-            testClass<AbstractNewReflectionFakeOverridesImplementationTest> {
-                model("box/reflection")
-                model("boxJvm/reflection")
-            }
-
             testClass<AbstractReflectionLoadMetadataDirectlyTest> {
                 model("box/reflection")
                 model("boxJvm/reflection")

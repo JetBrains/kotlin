@@ -180,7 +180,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
         private fun getNewKotlinReflectDumper(stdlibPathProvider: KotlinStandardLibrariesPathProvider): AlienInstance {
             newKotlinReflectDumper.get()?.let { return it }
             return RunInAlienClassLoader::class.java
-                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader())
+                .newInstanceInNewClassloader(stdlibPathProvider.getRuntimeAndReflectJarClassLoader())
                 .also { newKotlinReflectDumper = SoftReference(it) }
         }
     }

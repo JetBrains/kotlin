@@ -82,8 +82,6 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
                 "like how it eventually will work after the K1-based implementation is removed"
     )
 
-    val USE_NEW_REFLECTION_FAKE_OVERRIDE_IMPLEMENTATION by directive("Use new reflection fake override implementation")
-
     val IGNORED_ANNOTATIONS_FOR_BRIDGES by stringDirective("Ignored annotations for bridges")
 
     val KOTLIN_SCRIPT_DEFINITION by stringDirective("Add script definition to the classpath")
