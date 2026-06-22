@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.io.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.file
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
@@ -72,7 +71,7 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
     ) : KlibLayoutReader<KCL>() {
         override fun <T> readInPlace(readAction: (KCL) -> T): T =
             zipFileSystemAccessor.withZipFileSystem(klibArchive) { zipFileSystem ->
-                readAction(layoutBuilder(zipFileSystem.file("/")))
+                readAction(layoutBuilder(zipFileSystem.getPath("/")))
             }
 
         override fun readExtractingToTemp(readAction: (KCL) -> Path): Path = readInPlace { layout ->
