@@ -148,14 +148,14 @@ class FirCallResolver(
             if (candidate != null) {
                 if (!candidate.isFromCompanionObjectTypeScope) {
                     if (candidate.isSuccessful) {
-                        resolvedReceiver.unsetResolvedToCompanionIf(true)
+                        resolvedReceiver.unsetResolvedToCompanion()
                     } else {
                         resolvedReceiver.appendNonFatalDiagnostics(ConeResolvedToCompanionObjectWasRecentlyFixed)
                     }
                 }
             }
             // In case of implicit invoke on explicit companion `Foo.Companion()`, we haven't processed `Foo` yet and need to do it here.
-            resolvedReceiver.explicitParent?.unsetResolvedToCompanionIf(true)
+            resolvedReceiver.explicitParent?.unsetResolvedToCompanion()
         }
 
         val type = components.typeFromCallee(resultFunctionCall)
@@ -438,7 +438,7 @@ class FirCallResolver(
                 )
                 ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !basicResult.isSuccess }
                 ?.let {
-                    explicitReceiver.unsetResolvedToCompanionIf(true)
+                    explicitReceiver.unsetResolvedToCompanion()
                     return it.qualifier
                 }
         }

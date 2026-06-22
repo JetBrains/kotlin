@@ -399,7 +399,11 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
 }
 
 fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
-    if (condition && resolvedToCompanionObject) {
+    if (condition) unsetResolvedToCompanion()
+}
+
+fun FirResolvedQualifier.unsetResolvedToCompanion() {
+    if (resolvedToCompanionObject) {
         replaceResolvedToCompanionObject(false)
         replaceAccessedObjectSymbol(null)
     }
