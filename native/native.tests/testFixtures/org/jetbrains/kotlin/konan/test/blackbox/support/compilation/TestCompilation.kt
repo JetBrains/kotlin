@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptionWithValue
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeAssertsMode
-import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
+import org.jetbrains.kotlin.io.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -869,7 +869,7 @@ class StaticCacheCompilation(
         }
 
         // The following line adds "-Xembed-bitcode-marker" for certain iOS device targets:
-        add(home.properties.resolvablePropertyList("additionalCacheFlags", targets.testTarget.visibleName))
+        add(home.properties.resolvablePropertyList("additionalCacheFlags", suffix = targets.testTarget.visibleName))
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${expectedArtifact.cacheDir.path}",

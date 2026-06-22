@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.konan.test
 
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult

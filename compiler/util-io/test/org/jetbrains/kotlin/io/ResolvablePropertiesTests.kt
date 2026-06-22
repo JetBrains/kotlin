@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.properties
+package org.jetbrains.kotlin.io
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertThrows
+import java.util.Properties
 
 class ResolvablePropertiesTests {
 
@@ -16,16 +16,16 @@ class ResolvablePropertiesTests {
     fun `trivial symbol resolve`() {
         val props = propertiesOf(
             "key1" to "value1",
-            "key2" to "\$key1"
+            "key2" to $$"$key1"
         )
-        assertEquals("value1", props.resolvablePropertyString("key2"))
+        Assertions.assertEquals("value1", props.resolvablePropertyString("key2"))
     }
 
     @Test
     fun `trivial circular dependency`() {
         val props = propertiesOf(
-            "key1" to "\$key2",
-            "key2" to "\$key1"
+            "key1" to $$"$key2",
+            "key2" to $$"$key1"
         )
         assertThrows<IllegalStateException> {
             props.resolvablePropertyString("key2")
@@ -36,35 +36,35 @@ class ResolvablePropertiesTests {
     fun `list and string should have the same behavior`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "v2 \$k1"
+            "k2" to $$"v2 $k1"
         )
-        assertEquals("v2 v1", props.resolvablePropertyString("k2"))
-        assertEquals("v2 v1", props.resolvablePropertyList("k2").joinToString(separator = " "))
+        Assertions.assertEquals("v2 v1", props.resolvablePropertyString("k2"))
+        Assertions.assertEquals("v2 v1", props.resolvablePropertyList("k2").joinToString(separator = " "))
     }
 
     @Test
     fun `list expansion`() {
         val props = propertiesOf(
             "k1" to "v1 v2",
-            "k2" to "\$k1 v3",
-            "k3" to "\$k2"
+            "k2" to $$"$k1 v3",
+            "k3" to $$"$k2"
         )
-        assertEquals(listOf("v1", "v2", "v3"), props.resolvablePropertyList("k3"))
+        Assertions.assertEquals(listOf("v1", "v2", "v3"), props.resolvablePropertyList("k3"))
     }
 
     @Test
     fun `double list expansion`() {
         val props = propertiesOf(
             "k1" to "v1 v2",
-            "k2" to "\$k1 \$k1"
+            "k2" to $$"$k1 $k1"
         )
-        assertEquals(listOf("v1", "v2", "v1", "v2"), props.resolvablePropertyList("k2"))
+        Assertions.assertEquals(listOf("v1", "v2", "v1", "v2"), props.resolvablePropertyList("k2"))
     }
 
     @Test
     fun `self-reference`() {
         val props = propertiesOf(
-            "k1" to "\$k1"
+            "k1" to $$"$k1"
         )
         assertThrows<IllegalStateException> {
             props.resolvablePropertyString("k1")
@@ -75,35 +75,35 @@ class ResolvablePropertiesTests {
     fun `trivial relative path`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "\$k1/sysroot"
+            "k2" to $$"$k1/sysroot"
         )
-        assertEquals("v1/sysroot", props.resolvablePropertyString("k2"))
+        Assertions.assertEquals("v1/sysroot", props.resolvablePropertyString("k2"))
     }
 
     @Test
     fun `two-fold relative path`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "\$k1/toolchain",
-            "k3" to "\$k2/sysroot"
+            "k2" to $$"$k1/toolchain",
+            "k3" to $$"$k2/sysroot"
         )
-        assertEquals("v1/toolchain/sysroot", props.resolvablePropertyString("k3"))
+        Assertions.assertEquals("v1/toolchain/sysroot", props.resolvablePropertyString("k3"))
     }
 
     @Test
     fun `absolute path`() {
         val props = propertiesOf(
             "k1" to "/",
-            "k2" to "\$k1/bin"
+            "k2" to $$"$k1/bin"
         )
-        assertEquals("/bin", props.resolvablePropertyString("k2"))
+        Assertions.assertEquals("/bin", props.resolvablePropertyString("k2"))
     }
 
     @Test
     fun `incorrect relative path`() {
         val props = propertiesOf(
             "k1" to "v1 v2",
-            "k2" to "\$k1/sysroot"
+            "k2" to $$"$k1/sysroot"
         )
         assertThrows<IllegalStateException> {
             props.resolvablePropertyString("k2")
@@ -114,28 +114,28 @@ class ResolvablePropertiesTests {
     fun `simple prefix`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "--key=\$k1"
+            "k2" to $$"--key=$k1"
         )
-        assertEquals("--key=v1", props.resolvablePropertyString("k2"))
+        Assertions.assertEquals("--key=v1", props.resolvablePropertyString("k2"))
     }
 
     @Test
     fun `with prefix and relative`() {
         val props = propertiesOf(
             "absoluteTargetSysRoot" to "/",
-            "include" to "-I\$absoluteTargetSysRoot/usr/include/c++/4.9.4"
+            "include" to $$"-I$absoluteTargetSysRoot/usr/include/c++/4.9.4"
         )
-        assertEquals("-I/usr/include/c++/4.9.4", props.resolvablePropertyString("include"))
+        Assertions.assertEquals("-I/usr/include/c++/4.9.4", props.resolvablePropertyString("include"))
     }
 
     @Test
     fun `cascade resolve`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "v2-\${k1}",
-            "v2-\${k1}" to "test",
+            "k2" to $$"v2-${k1}",
+            $$"v2-${k1}" to "test",
         )
-        assertEquals(
+        Assertions.assertEquals(
             "test", props.resolvablePropertyString(
                 props.resolvablePropertyString("k2")!!
             )
@@ -146,27 +146,27 @@ class ResolvablePropertiesTests {
     fun `braced vars`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2" to "foo_\${k1}-bar",
+            "k2" to $$"foo_${k1}-bar",
         )
-        assertEquals("foo_v1-bar", props.resolvablePropertyString("k2"))
+        Assertions.assertEquals("foo_v1-bar", props.resolvablePropertyString("k2"))
     }
 
     @Test
     fun `vars in keys`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2.\$k1" to "v2.\$k1",
+            $$"k2.$k1" to $$"v2.$k1",
         )
-        assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
+        Assertions.assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
     }
 
     @Test
     fun `braces vars in keys`() {
         val props = propertiesOf(
             "k1" to "v1",
-            "k2.\${k1}" to "v2.\${k1}",
+            $$"k2.${k1}" to $$"v2.${k1}",
         )
-        assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
+        Assertions.assertEquals("v2.v1", props.resolvablePropertyString("k2.v1"))
     }
 
     companion object {

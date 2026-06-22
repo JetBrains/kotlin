@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.konan.properties.hasProperty
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -35,7 +34,7 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
                     fail("Expected metadata klib to not list dependencies. Found ${libraryFile.unresolvedDependencies}")
                 }
 
-                if (libraryFile.manifestProperties.hasProperty(KLIB_PROPERTY_DEPENDS)) {
+                if (KLIB_PROPERTY_DEPENDS in libraryFile.manifestProperties) {
                     fail(
                         "Expected metadata klib to not contain $KLIB_PROPERTY_DEPENDS. " +
                                 "Value: ${libraryFile.manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS)}"
