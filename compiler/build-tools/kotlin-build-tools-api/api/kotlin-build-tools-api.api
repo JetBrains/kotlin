@@ -1116,6 +1116,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_DWARF Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
+	public static final field X_WASM_IC_GENERATE_UNCHANGED_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_INCLUDED_MODULE_ONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;
 	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmCompilerLinkingArguments$WasmCompilerLinkingArgument;

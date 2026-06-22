@@ -79,6 +79,16 @@ public interface WasmCompilerLinkingArguments : WasmCompilerArguments,
         WasmCompilerLinkingArgument("X_WASM_DEBUG_FRIENDLY", KotlinReleaseVersion(2, 1, 20))
 
     /**
+     * Regenerate unchanged modules in multimodule IC.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_IC_GENERATE_UNCHANGED_MODULES: WasmCompilerLinkingArgument<Boolean> =
+        WasmCompilerLinkingArgument("X_WASM_IC_GENERATE_UNCHANGED_MODULES", KotlinReleaseVersion(2, 4, 20))
+
+    /**
      * Compile only a module passed using `-include` option.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

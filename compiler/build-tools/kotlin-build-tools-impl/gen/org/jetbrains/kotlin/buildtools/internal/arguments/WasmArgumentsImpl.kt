@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_DWARF
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_WAT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_IC_GENERATE_UNCHANGED_MODULES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INCLUDED_MODULE_ONLY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_INTERNAL_LOCAL_VARIABLE_PREFIX
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_KCLASS_FQN
@@ -142,6 +143,7 @@ internal class WasmArgumentsImpl(
     if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
+    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
@@ -171,6 +173,7 @@ internal class WasmArgumentsImpl(
     try { this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM] = arguments.wasm } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_IC_GENERATE_UNCHANGED_MODULES] = arguments.regenerateUnchangedModules } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
@@ -198,6 +201,7 @@ internal class WasmArgumentsImpl(
     if (X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE in this) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE in this) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)?.absolutePathStringOrThrow()}
     if (X_WASM in this) { arguments.wasm = get(X_WASM)}
+    if (X_WASM_IC_GENERATE_UNCHANGED_MODULES in this) { arguments.regenerateUnchangedModules = get(X_WASM_IC_GENERATE_UNCHANGED_MODULES)}
     if (X_WASM_DEBUG_FRIENDLY in this) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)}
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
@@ -257,6 +261,9 @@ internal class WasmArgumentsImpl(
         WasmArgument("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE")
 
     public val X_WASM: WasmArgument<Boolean> = WasmArgument("X_WASM")
+
+    public val X_WASM_IC_GENERATE_UNCHANGED_MODULES: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_IC_GENERATE_UNCHANGED_MODULES")
 
     public val X_WASM_DEBUG_FRIENDLY: WasmArgument<Boolean> = WasmArgument("X_WASM_DEBUG_FRIENDLY")
 

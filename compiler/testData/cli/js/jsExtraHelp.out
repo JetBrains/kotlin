@@ -31,6 +31,8 @@ where advanced options include:
                              Dump the IR size of each declaration into a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xwasm                     Use the WebAssembly compiler backend.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. Use kotlinc-wasm or the KotlinWasmCompiler class instead to compile to WebAssembly.
+  -Xwasm-IC-generate-unchanged-modules
+                             Regenerate unchanged modules in multimodule IC.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debugger-custom-formatters

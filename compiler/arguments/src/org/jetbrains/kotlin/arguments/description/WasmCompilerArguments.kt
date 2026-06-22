@@ -70,6 +70,18 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-IC-generate-unchanged-modules"
+        compilerName = "regenerateUnchangedModules"
+        description = "Regenerate unchanged modules in multimodule IC.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_4_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
         name = "Xwasm-included-module-only"
         description = "Compile only a module passed using `-include` option.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

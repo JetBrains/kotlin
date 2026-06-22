@@ -59,6 +59,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
         configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, arguments.wasmUseTrapsInsteadOfExceptions)
+        configuration.put(WasmConfigurationKeys.WASM_IC_GENERATE_UNCHANGED_MODULES, arguments.regenerateUnchangedModules)
 
         val wasmTarget = arguments.wasmTarget?.let(WasmTarget::fromName)
 

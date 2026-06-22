@@ -45,6 +45,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-IC-generate-unchanged-modules",
+        description = "Regenerate unchanged modules in multimodule IC.",
+    )
+    var regenerateUnchangedModules: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-debug-friendly",
         description = "Avoid optimizations that can break debugging.",
     )
