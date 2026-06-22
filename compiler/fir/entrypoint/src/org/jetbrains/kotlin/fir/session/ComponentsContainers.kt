@@ -42,6 +42,9 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.overloads.FirDeclarationOverloadabilityHelperImpl
+import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraph
+import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraphAnalyzer
+import org.jetbrains.kotlin.fir.resolve.dependencies.logic.DependencyGraphResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
@@ -249,4 +252,8 @@ fun FirSession.registerCliCompilerOnlyResolveComponents() {
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerModuleData(moduleData: FirModuleData) {
     register(FirModuleData::class, moduleData)
+    val dependencyGraph = DependencyGraph()
+    register(DependencyGraph::class, dependencyGraph)
+    register(DependencyGraphAnalyzer::class, DependencyGraphAnalyzer(dependencyGraph))
+    register(DependencyGraphResolver::class, DependencyGraphResolver(dependencyGraph))
 }
