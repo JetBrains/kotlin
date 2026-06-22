@@ -317,14 +317,14 @@ private val jvmFactories = KlibMetadataFactories(
 private fun getKlibModules(klibList: List<KotlinLibrary>, dependencyModule: ModuleDescriptorImpl?): List<ModuleDescriptorImpl> {
     val descriptorMap = mutableMapOf<String, ModuleDescriptorImpl>()
     return klibList.map { library ->
-        descriptorMap.getOrPut(library.location.path) { getModuleDescriptorByLibrary(library, descriptorMap, dependencyModule) }
+        descriptorMap.getOrPut(library.path.toString()) { getModuleDescriptorByLibrary(library, descriptorMap, dependencyModule) }
     }
 }
 
 @OptIn(K1Deprecation::class)
 private fun getModuleDescriptorByLibrary(
-    current: KotlinLibrary, mapping:
-    Map<String, ModuleDescriptorImpl>,
+    current: KotlinLibrary,
+    mapping: Map<String, ModuleDescriptorImpl>,
     dependencyModule: ModuleDescriptorImpl?
 ): ModuleDescriptorImpl {
     val module = jvmFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(

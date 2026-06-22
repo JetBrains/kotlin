@@ -67,6 +67,7 @@ data class LinkKlibsInput(
 )
 
 internal class LinkKlibsOutput(
+        // TODO (KT-87104): Use Path as a key, not String
         val irModules: Map<String, IrModuleFragment>,
         val irModule: IrModuleFragment,
         val irBuiltIns: IrBuiltIns,
@@ -235,10 +236,10 @@ internal fun LinkKlibsContext.linkKlibs(
     return if (libraryToCache == null) {
         LinkKlibsOutput(modules, mainModule, generatorContext.irBuiltIns, symbols, symbolTable, irDeserializer)
     } else {
-        val libraryName = libraryToCache.klib.location.path
-        val libraryModule = modules[libraryName] ?: error("No module for the library being cached: $libraryName")
+        val libraryPath = libraryToCache.klib.path.toString()
+        val libraryModule = modules[libraryPath] ?: error("No module for the library being cached: $libraryPath")
         LinkKlibsOutput(
-                irModules = modules.filterKeys { it != libraryName },
+                irModules = modules.filterKeys { it != libraryPath },
                 irModule = libraryModule,
                 irBuiltIns = generatorContext.irBuiltIns,
                 symbols = symbols,

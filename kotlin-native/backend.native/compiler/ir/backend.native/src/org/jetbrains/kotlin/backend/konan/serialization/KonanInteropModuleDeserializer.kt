@@ -780,7 +780,7 @@ internal class KonanInteropModuleDeserializer(
 
     // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
     private val definedPackageFqName: FqName = klib.manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)?.let(::FqName)
-            ?: error("Interop klib ${klib.location} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
+            ?: error("Interop klib ${klib.path} does not contain an expected manifest property: $KLIB_PROPERTY_PACKAGE")
     override fun getDefinedPackageNames(): Set<FqName> = setOf(definedPackageFqName)
 
     override val kind get() = IrModuleDeserializerKind.DESERIALIZED
@@ -992,7 +992,7 @@ internal class KonanInteropModuleDeserializer(
             val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
                 override val moduleHeaderData get() = metadataComponent.moduleHeaderData
                 override val metadataVersion = KlibMetadataVersion((klib.metadataVersion?.toArray()
-                        ?: error("No metadata version specified in ${klib.location}")))
+                        ?: error("No metadata version specified in ${klib.path}")))
 
                 override fun packageMetadata(fqName: String, partName: String) = metadataComponent.getPackageFragment(fqName, partName)
                 override fun packageMetadataParts(fqName: String) = metadataComponent.getPackageFragmentNames(fqName)

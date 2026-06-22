@@ -85,7 +85,7 @@ const val KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES = "poisonin
  */
 
 interface BaseKotlinLibrary {
-    /** This is the obsolete but still supported way to get the library "location". Please use [Klib.location] instead. */
+    /** This is the obsolete but still supported way to get the library "location". Please use [Klib.path] instead. */
     val libraryFile: File
 
     val versions: KotlinLibraryVersioning

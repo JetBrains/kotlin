@@ -152,7 +152,7 @@ internal class DependenciesTrackerImpl(
         }
         val library = libraryFile?.library ?: (origin as FileOrigin.EntireModule).library
         if (library !in allLibraries)
-            error("Library (${library.location}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.location.path }}")
+            error("Library (${library.path}) is used but not requested.\nRequested libraries: ${allLibraries.joinToString { it.path.toString() }}")
 
         var isNewDependency = usedBitcode.add(library)
         if (!onlyBitcode) {
@@ -263,7 +263,7 @@ internal class DependenciesTrackerImpl(
             val (library, kind) = dependency
             if (library in moduleDependencies) return
             val cachedDependency = context.config.cachedLibraries.getLibraryCache(library)
-                    ?: error("Library ${library.location} is expected to be cached")
+                    ?: error("Library ${library.path} is expected to be cached")
 
             when (kind) {
                 is DependenciesTracker.DependencyKind.WholeModule -> {

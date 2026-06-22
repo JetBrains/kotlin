@@ -101,7 +101,7 @@ internal class KotlinpBasedMetadataDumper(
             private val metadata = library.metadata
             override val moduleHeaderData get() = metadata.moduleHeaderData
             override val metadataVersion = KlibMetadataVersion((library.metadataVersion?.toArray()
-                    ?: error("No metadata version specified in ${library.location}")))
+                    ?: error("No metadata version specified in ${library.path}")))
             override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
             override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         }

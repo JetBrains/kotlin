@@ -133,13 +133,14 @@ class KonanIrLinker(
     @OptIn(K1Deprecation::class)
     private val String.isForwardDeclarationModuleName: Boolean get() = this == KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
+    // TODO (KT-87104): Use Path as a key, not String
     val modules: Map<String, IrModuleFragment>
         get() = mutableMapOf<String, IrModuleFragment>().apply {
             deserializersForModules
                 .filter { !it.key.isForwardDeclarationModuleName && it.value.moduleDescriptor !== currentModule }
                 .forEach {
                     val klib = it.value.klib
-                    this[klib.location.path] = it.value.moduleFragment
+                    this[klib.path.toString()] = it.value.moduleFragment
                 }
         }
 }

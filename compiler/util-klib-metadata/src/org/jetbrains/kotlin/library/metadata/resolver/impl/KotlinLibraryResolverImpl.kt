@@ -199,7 +199,7 @@ class KotlinLibraryResolverResultImpl(
                     val visited = mutableSetOf<KotlinResolvedLibrary>()
                     fun dfs(current: KotlinResolvedLibrary) {
                         if (current in visited) return
-                        if (current in visiting) error("Cyclic dependency in library graph for: ${current.library.location}")
+                        if (current in visiting) error("Cyclic dependency in library graph for: ${current.library.path}")
                         visiting.add(current)
                         current.resolvedDependencies.forEach(::dfs)
                         add(current)

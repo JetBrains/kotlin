@@ -38,7 +38,7 @@ internal class KlibImpl(
 
     init {
         val layoutReaderFactory = KlibLayoutReaderFactory(
-            klibFile = location,
+            klibFile = KlibFile(path),
             zipFileSystemAccessor = zipFileSystemAccessor
         )
 
@@ -59,7 +59,7 @@ internal class KlibImpl(
     override val libraryFile get() = location
 
     override fun toString() = listOfNotNull(
-        location.path,
+        path,
         versions.abiVersion?.let { "$KLIB_PROPERTY_ABI_VERSION=$it" },
         versions.metadataVersion?.let { "$KLIB_PROPERTY_METADATA_VERSION=$it" },
         builtInsPlatform?.let { "$KLIB_PROPERTY_BUILTINS_PLATFORM=${it.name}" },

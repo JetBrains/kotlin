@@ -77,7 +77,7 @@ inline val Klib.ir: KlibIrComponent?
  * Note: In case there is no main IR in the library, this method will throw an exception.
  */
 inline val Klib.irOrFail: KlibIrComponent
-    get() = ir ?: error("No 'ir' component in library ${this.location}")
+    get() = ir ?: error("No 'ir' component in library ${this.path}")
 
 /**
  * A shortcut for accessing the [KlibIrComponent] responsible for inlinable functions in the [Klib] instance.

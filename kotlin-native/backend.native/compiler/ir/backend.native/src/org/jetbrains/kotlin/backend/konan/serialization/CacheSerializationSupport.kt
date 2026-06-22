@@ -97,7 +97,7 @@ internal class InlineFunctionDeserializer(
 ) {
     private val inlineFunctionReferences: Map<IdSignature, SerializedInlineFunctionReference> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
-                ?: error("No cache for ${deserializer.klib.location}")
+                ?: error("No cache for ${deserializer.klib.path}")
         cache.serializedInlineFunctionBodies.associateBy {
             with(deserializer) {
                 val symbolDeserializer = it.file.deserializationState.declarationDeserializer.symbolDeserializer
@@ -161,7 +161,7 @@ internal class CachedEagerInitializedFiles(
 ) {
     val eagerInitializedFiles: List<IrFile> by lazy {
         val cache = cachedLibraries.getLibraryCache(klib, allowIncomplete = true)
-                ?: error("No cache for ${klib.location}") // KT-54668
+                ?: error("No cache for ${klib.path}") // KT-54668
         cache.serializedEagerInitializedFiles
                 .map { with(deserializer) { it.file.deserializationState.file } }
                 .distinct()
@@ -314,7 +314,7 @@ internal class ClassFieldsDeserializer(
 
     private val classesFields by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
-                ?: error("No cache for ${deserializer.klib.location}")
+                ?: error("No cache for ${deserializer.klib.path}")
         cache.serializedClassFields.associateBy {
             it.classSignature
         }
@@ -560,7 +560,7 @@ internal class TrivialGettersDeserializer(
 ) {
     val trivialGetterSignatures: Set<IdSignature> by lazy {
         val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
-                ?: error("No cache for ${deserializer.klib.location}")
+                ?: error("No cache for ${deserializer.klib.path}")
         cache.serializedTrivialGetters.mapTo(hashSetOf()) { it.getterSignature }
     }
 }
