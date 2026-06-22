@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.lombok.k2.AccessorNames
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Getter
@@ -32,8 +33,6 @@ import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.Setter
 import org.jetbrains.kotlin.lombok.k2.config.GlobalConfig
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.utils.AccessorNames
-import org.jetbrains.kotlin.lombok.utils.decapitalize
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf

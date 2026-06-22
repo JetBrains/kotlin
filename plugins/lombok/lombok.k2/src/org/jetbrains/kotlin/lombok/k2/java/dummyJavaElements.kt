@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.lombok.k2.java
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.k2.LombokNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
@@ -20,17 +25,23 @@ import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
-import org.jetbrains.kotlin.lombok.utils.AccessorNames
-import org.jetbrains.kotlin.lombok.utils.capitalize
+import org.jetbrains.kotlin.lombok.k2.AccessorNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-/*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
+fun String.capitalize(): String {
+    if (isEmpty()) return this
+    val firstChar = this[0]
+    return if (firstChar.isUpperCase()) this else firstChar.uppercase() + substring(1)
+}
+
+fun String.decapitalize(): String {
+    if (isEmpty()) return this
+    val firstChar = this[0]
+    return if (firstChar.isUpperCase()) firstChar.lowercase() + substring(1) else this
+}
 
 fun String.normalizeAndCapitalize(isPrimitiveBoolean: Boolean): String {
     return (if (isPrimitiveBoolean && isPrefixed(AccessorNames.IS)) {

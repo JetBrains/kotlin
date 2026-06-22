@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.createConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.initializeCompanionObjectIfNeeded
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.needsConstructorIfGeneratedCompanion
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.k2.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames

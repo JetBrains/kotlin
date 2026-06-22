@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.SuperBuilder
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.k2.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance

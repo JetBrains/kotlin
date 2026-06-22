@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
-import org.jetbrains.kotlin.lombok.utils.LombokNames
+import org.jetbrains.kotlin.lombok.k2.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 
 object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
