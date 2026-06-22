@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
-import org.jetbrains.kotlin.statistics.metrics.StringListMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import kotlin.test.Test
 
@@ -16,7 +15,7 @@ class KotlinBuildStatHandlerTest {
 
     @Test // Checks that all KonanTarget names are presented in MPP_PLATFORMS statistic's report validator
     fun mppPlatformsShouldContainAllKonanTargetsTest() {
-        val regex = Regex(StringListMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
+        val regex = Regex(StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
 
         val konanTargetsMissedInMppPlatforms = KonanTarget::class.sealedSubclasses
             .mapNotNull { sealedClass -> sealedClass.objectInstance }
@@ -29,7 +28,7 @@ class KotlinBuildStatHandlerTest {
 
     @Test // Checks that all KotlinPlatformType names are presented in MPP_PLATFORMS statistic's report validator
     fun mppPlatformsShouldContainAllKotlinPlatformTypeTest() {
-        val regex = Regex(StringListMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
+        val regex = Regex(StringMetrics.MPP_PLATFORMS.anonymization.validationRegexp())
 
         val kotlinPlatformTypesMissedInMppPlatforms = KotlinPlatformType.values()
             .map { platformType -> platformType.name }
@@ -44,7 +43,7 @@ class KotlinBuildStatHandlerTest {
     @Test // Checks that only values listed in KotlinPlatformType and KonanTarget are included in MPP_PLATFORMS
     fun mppPlatformsShouldContainOnlyKonanTargetsAndKotlinPlatformTypeTest() {
         val allowedMppValues =
-            (StringListMetrics.MPP_PLATFORMS.anonymization as StringAnonymizationPolicy.AllowedListAnonymizer)
+            (StringMetrics.MPP_PLATFORMS.anonymization as StringAnonymizationPolicy.AllowedListAnonymizer)
                 .allowedValues
 
         val kotlinPlatformTypesMissedInMppPlatforms = KotlinPlatformType.values()
