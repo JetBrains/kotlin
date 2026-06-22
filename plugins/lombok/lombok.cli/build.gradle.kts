@@ -13,7 +13,6 @@ dependencies {
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:ir.backend.common"))
 
-    implementation(project(":kotlin-lombok-compiler-plugin.common"))
     implementation(project(":kotlin-lombok-compiler-plugin.k2"))
 
     compileOnly(intellijCore())
