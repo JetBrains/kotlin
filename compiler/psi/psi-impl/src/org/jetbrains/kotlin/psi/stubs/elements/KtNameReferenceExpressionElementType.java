@@ -5,46 +5,30 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinNameReferenceExpressionStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinNameReferenceExpressionStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtNameReferenceExpressionElementType
         extends KtStubElementType<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> {
     public KtNameReferenceExpressionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtNameReferenceExpression.class, KotlinNameReferenceExpressionStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinNameReferenceExpressionStubImpl createStub(@NotNull KtNameReferenceExpression psi, StubElement parentStub) {
-        return new KotlinNameReferenceExpressionStubImpl(
-                parentStub,
-                StringRef.fromString(psi.getReferencedName()),
-                false
-        );
+    public StubElementFactory<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> getStubFactory() {
+        return KotlinNameReferenceExpressionStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinNameReferenceExpressionStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getReferencedName());
-        dataStream.writeBoolean(stub.isClassRef());
-    }
-
-    @NotNull
-    @Override
-    public KotlinNameReferenceExpressionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub)
-            throws IOException {
-        StringRef referencedName = dataStream.readName();
-        boolean isClassRef = dataStream.readBoolean();
-        return new KotlinNameReferenceExpressionStubImpl(parentStub, referencedName, isClassRef);
+    public StubSerializer<KotlinNameReferenceExpressionStubImpl> getStubSerializer() {
+        return KotlinNameReferenceExpressionStubSerializer.INSTANCE;
     }
 }
