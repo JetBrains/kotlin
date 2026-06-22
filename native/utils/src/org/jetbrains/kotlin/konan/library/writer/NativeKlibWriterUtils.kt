@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.konan.library.writer
 
+import org.jetbrains.kotlin.io.propertyList
 import org.jetbrains.kotlin.konan.library.impl.KlibBitcodeComponentWriterImpl
 import org.jetbrains.kotlin.konan.library.impl.KlibNativeIncludedBinariesComponentWriterImpl
-import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
