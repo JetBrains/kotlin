@@ -110,8 +110,8 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
         }
         includeMetadata(input.serializerOutput.serializedMetadata!!)
         includeIr(input.serializerOutput.serializedIr)
-        includeBitcode(target, config.nativeLibraries)
-        includeNativeIncludedBinaries(target, config.includeBinaries)
+        includeBitcode(target, config.nativeLibraries.map(::Path))
+        includeNativeIncludedBinaries(target, config.includeBinaries.map(::Path))
     }.writeTo(klibPath)
 
     loadSizeInfo(klibPath)?.flatten()?.let { stats ->

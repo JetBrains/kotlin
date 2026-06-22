@@ -18,7 +18,7 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 
 interface KlibBitcodeComponent : KlibComponent {
-    val bitcodeFilePaths: List<String>
+    val bitcodeFilePaths: List<Path>
 
     data class Kind(val target: KonanTarget) : KlibComponent.Kind<KlibBitcodeComponent, KlibBitcodeComponentLayout> {
         override fun createLayout(root: Path) = KlibBitcodeComponentLayout(target, root)
