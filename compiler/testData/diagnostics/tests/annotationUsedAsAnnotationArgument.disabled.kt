@@ -15,9 +15,9 @@ annotation class Ann2
 annotation class Ann3(val arg: Int, val s: String)
 
 <!WRONG_ANNOTATION_TARGET!>@Ann3(
-    @Ann3(
-        @Ann 5, ""
-    ) @Ann2 1, ""
+    <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Ann3(
+        <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Ann<!> 5, ""
+    )<!> <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Ann2<!> 1, ""
 )<!> val a = 0
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, integerLiteral, primaryConstructor, propertyDeclaration, stringLiteral */

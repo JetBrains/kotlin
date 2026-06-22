@@ -25,16 +25,16 @@ val noop = Unit
 @VarargAnno(1, 2, @Suppress("DEPRECATION") A_LOT)
 @VarargAnno(* @Suppress("DEPRECATION") [A_LOT, A_LOT, A_LOT])
 @VarargAnno(*[@Suppress("DEPRECATION") A_LOT, @Suppress("DEPRECATION") A_LOT, @Suppress("DEPRECATION") A_LOT])
-@SimpleAnno(@Suppress("DEPRECATION") A_LOT)
-@SimpleAnno(v = @Suppress("DEPRECATION") A_LOT)
+@SimpleAnno(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT)
+@SimpleAnno(v = <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT)
 @SimpleAnno(v = (@Suppress("DEPRECATION") A_LOT) + (@Suppress("DEPRECATION") A_LOT))
 @SimpleAnno(v = (@Suppress("DEPRECATION") A_LOT).toLong().toInt())
-@SimpleAnno(v = @Suppress("DEPRECATION") A_LOT.toLong().toInt())
-@ArrayAnno([@Suppress("DEPRECATION") A_LOT, 0, @Suppress("DEPRECATION") A_LOT])
-@ArrayAnno(@Suppress("DEPRECATION") [A_LOT, A_LOT + A_LOT, A_LOT])
+@SimpleAnno(v = <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT.toLong().toInt())
+@ArrayAnno([<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT, 0, <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT])
+@ArrayAnno(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> [A_LOT, A_LOT + A_LOT, A_LOT])
 fun suppression() {
     // fails with type mismatch without CollectionLiteralsBasedAnnotationResolution
-    @ArrayAnno(intArrayOf(0, * @Suppress("DEPRECATION") [A_LOT], @Suppress("DEPRECATION") A_LOT))
+    @ArrayAnno(intArrayOf(0, * <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> [A_LOT], <!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT))
     noop
 }
 
@@ -42,7 +42,7 @@ fun suppression() {
 @VarargAnno(<!DEPRECATION!>A_LOT<!> + @Suppress("DEPRECATION") A_LOT)
 fun missedSuppression() {
     // fails with type mismatch without CollectionLiteralsBasedAnnotationResolution
-    @ArrayAnno(intArrayOf(*[@Suppress("DEPRECATION") A_LOT, <!DEPRECATION!>A_LOT<!>]))
+    @ArrayAnno(intArrayOf(*[<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@Suppress("DEPRECATION")<!> A_LOT, <!DEPRECATION!>A_LOT<!>]))
     noop
 }
 

@@ -16,10 +16,10 @@ annotation class Marker
 @Marker
 class Marked
 
-@SimpleAnno(@OptIn(Marker::class) Marked::class)
+@SimpleAnno(<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@OptIn(Marker::class)<!> Marked::class)
 @SimpleAnno((@OptIn(Marker::class) Marked)::class)
 @VarargAnno(@OptIn(Marker::class) Marked::class, String::class, @OptIn(Marker::class) Marked::class)
-@ArrayAnno(arrayOf(String::class, *@OptIn(Marker::class)[String::class, Marked::class]))
+@ArrayAnno(arrayOf(String::class, *<!ANNOTATION_ON_ANNOTATION_ARGUMENT!>@OptIn(Marker::class)<!>[String::class, Marked::class]))
 fun test() = Unit
 
 @VarargAnno(@OptIn(Marker::class) String::class, <!OPT_IN_USAGE!>Marked<!>::class)

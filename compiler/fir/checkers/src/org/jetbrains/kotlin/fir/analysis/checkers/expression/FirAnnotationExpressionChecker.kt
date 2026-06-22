@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -57,7 +59,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
 
         checkAnnotationsWithVersion(fqName, expression)
         checkDeprecatedSinceKotlin(expression.source, fqName, expression.argumentMapping.mapping)
-        checkAnnotationsInsideAnnotationCall(expression)
+        checkAnnotationsInsideAnnotationCall(expression, LanguageFeature.AllowAnnotationsOnArgumentsOfAnnotations.isDisabled())
         checkNotAClass(expression)
         checkErrorSuppression(annotationClassId, expression.argumentMapping.mapping)
         checkContextFunctionTypeParams(expression.source, annotationClassId)
@@ -204,6 +206,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkAnnotationsInsideAnnotationCall(
         expression: FirCall,
+        reportAnnotationsOnAnnotationArguments: Boolean,
     ) {
         val args = expression.argumentList.arguments
         for (arg in args) {
@@ -215,13 +218,15 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 // That's why it's useful to have it.
                 FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
             } else {
-                FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT
+                FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT.takeIf { reportAnnotationsOnAnnotationArguments }
             }
-            for (ann in unwrappedErrorExpression.annotations) {
-                reporter.reportOn(ann.source, errorFactory)
+            if (errorFactory != null) {
+                for (ann in unwrappedErrorExpression.annotations) {
+                    reporter.reportOn(ann.source, errorFactory)
+                }
             }
             if (unwrappedErrorExpression is FirCollectionLiteral) {
-                checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression)
+                checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression, reportAnnotationsOnAnnotationArguments)
             }
         }
     }
