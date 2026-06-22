@@ -98,6 +98,10 @@ PassPluginLibraryInfo getKotlinPluginInfo() {
                     PM.addPass(RemoveRedundantSafepointsPass(*Param));
                     return true;
                   }
+                  if (parsePass(Name, "kotlin-calls-checker")) {
+                    PM.addPass(CallsCheckerPass());
+                    return true;
+                  }
                   return false;
                 });
           }};

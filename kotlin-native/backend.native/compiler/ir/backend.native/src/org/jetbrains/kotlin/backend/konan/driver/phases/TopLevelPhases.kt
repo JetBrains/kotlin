@@ -407,10 +407,6 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runPostCodegen() {
-    val checkExternalCalls = context.config.checkStateAtExternalCalls
-    if (checkExternalCalls) {
-        runAndMeasurePhase(CheckExternalCallsPhase)
-    }
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
