@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceLogger
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceLogger
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
@@ -19,21 +19,17 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.inferenceLogsFormats
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.utils.inferencelogs.FixationOnlyInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.FirInferenceLogsDumper
+import org.jetbrains.kotlin.test.utils.inferencelogs.FixationOnlyInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MarkdownInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MermaidInferenceLogsDumper
-import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
-import org.jetbrains.kotlin.test.utils.lfDisabledTestDataFile
-import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import org.jetbrains.kotlin.test.utils.withExtension
-import java.io.File
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirInferenceLogsHandler(
     testServices: TestServices
 ) : FirAnalysisHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = listOf(TestDumpDirectives, FirDiagnosticsDirectives)
 
     private val inferenceLoggers = mutableMapOf<FirSession, FirInferenceLogger>()
 
@@ -46,78 +42,18 @@ class FirInferenceLogsHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        ensureNoStrayDumps()
         if (FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS !in testServices.moduleStructure.allDirectives || inferenceLoggers.isEmpty()) return
 
+        val enabledFormats = testServices.moduleStructure.allDirectives.inferenceLogsFormats
         testServices.assertions.assertAll(
-            testServices.moduleStructure.allDirectives.inferenceLogsFormats.map { format ->
-                val dumper = format.dumper
-                val renderedDump = dumper.renderDump(inferenceLoggers)
-                val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
-                val originalDumpFile = originalFile.inferenceLogsFile(format)
-
-                if (testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION)) {
-                    val latestLVFile = originalFile.latestLVTestDataFile
-                    val latestLVDumpFile = latestLVFile.inferenceLogsFile(format)
-
-                    if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
-                        return@map {
-                            testServices.assertions.assertFileDoesntExist(latestLVDumpFile) { "No need for a separate inference dump for `latestLV`, deleting..." }
-                        }
-                    }
-
-                    return@map { testServices.assertions.assertEqualsToFile(latestLVDumpFile, renderedDump) }
+            InferenceLogsFormat.entries.map { format ->
+                return@map {
+                    val renderedDump = runIf(format in enabledFormats) { format.dumper.renderDump(inferenceLoggers) }
+                    assertEqualsToDump(format.fileExtension, renderedDump)
                 }
-
-                if (testServices.moduleStructure.allDirectives.contains(TESTED_LANGUAGE_FEATURE_DISABLED)) {
-                    val lfDisabledFile = originalFile.lfDisabledTestDataFile
-                    val lfDisabledDumpFile = lfDisabledFile.inferenceLogsFile(format)
-
-                    if (originalDumpFile.exists() && originalDumpFile.readText().sanitize() == renderedDump.sanitize()) {
-                        return@map {
-                            testServices.assertions.assertFileDoesntExist(lfDisabledDumpFile) { "No need for a separate inference dump for `disabled`, deleting..." }
-                        }
-                    }
-
-                    return@map { testServices.assertions.assertEqualsToFile(lfDisabledDumpFile, renderedDump) }
-                }
-
-                { testServices.assertions.assertEqualsToFile(originalDumpFile, renderedDump) }
             }
         )
     }
-
-    private fun String.sanitize() = trim().lines().joinToString("\n")
-
-    private fun ensureNoStrayDumps() {
-        val allowedFormats = testServices.moduleStructure.allDirectives.inferenceLogsFormats
-
-        for (format in InferenceLogsFormat.entries) {
-            if (format !in allowedFormats) {
-                testServices.assertions.assertFileDoesntExist(format.file) { "`$format` dump file detected but '${FirDiagnosticsDirectives.DUMP_INFERENCE_LOGS}' is not set to emit it." }
-            }
-        }
-    }
-
-    private val InferenceLogsFormat.file: File
-        get() {
-            // K1 doesn't support constraint dumps, no need to care about ".fir.inference.md"
-            val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
-            val additionalExtension = when {
-                testServices.moduleStructure.allDirectives.contains(USE_LATEST_LANGUAGE_VERSION) -> {
-                    ".latestLV"
-                }
-                testServices.moduleStructure.allDirectives.contains(TESTED_LANGUAGE_FEATURE_DISABLED) -> {
-                    ".disabled"
-                }
-                else -> {
-                    ""
-                }
-            }
-            return originalFile.withExtension(additionalExtension).inferenceLogsFile(this)
-        }
-
-    private fun File.inferenceLogsFile(format: InferenceLogsFormat): File = withExtension(format.fileExtension)
 
     private val InferenceLogsFormat.fileExtension: String
         get() = when (this) {

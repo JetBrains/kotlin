@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.kotlinp.Settings
 import org.jetbrains.kotlin.kotlinp.jvm.JvmKotlinp
 import org.jetbrains.kotlin.kotlinp.jvm.readKotlinClassHeader
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import kotlin.metadata.jvm.KotlinClassMetadata
@@ -31,6 +31,9 @@ class CompareMetadataHandler(
 ) : JvmBinaryArtifactHandler(testServices) {
     private val dumper = MultiModuleInfoDumper()
     private val dumper2 = MultiModuleInfoDumper()
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives)
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)
@@ -78,13 +81,7 @@ class CompareMetadataHandler(
         val dump = dumper.generateResultingDump()
 
         if (compareWithTxt) {
-            val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-            val defaultTxtFile = sourceFile.withExtension(extension)
-            val firTxtFile = sourceFile.withExtension(".fir$extension")
-            val isFir = testServices.defaultsProvider.frontendKind == FrontendKinds.FIR
-            val actualFile = firTxtFile.takeIf { isFir && it.exists() } ?: defaultTxtFile
-
-            assertions.assertEqualsToFile(actualFile, dump)
+            assertEqualsToDump(extension, dump)
         }
 
         if (!testServices.moduleStructure.allDirectives.contains(KotlinpTestDirectives.NO_READ_WRITE_COMPARE)) {

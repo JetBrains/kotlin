@@ -12,20 +12,20 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DONT_SORT_DECLARATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
 
@@ -58,13 +58,7 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val dumpFile = testServices.moduleStructure.originalTestDataFiles.first().withExtension(".txt")
-
-        if (multiModuleInfoDumper.isEmpty()) {
-            assertions.assertFileDoesntExist(dumpFile, CHECK_BYTECODE_LISTING)
-            return
-        }
-
-        assertions.assertEqualsToFile(dumpFile, multiModuleInfoDumper.generateResultingDump())
+        val actualDump = if (multiModuleInfoDumper.isEmpty()) null else multiModuleInfoDumper.generateResultingDump()
+        assertEqualsToDump(extension = ".txt", actualDump)
     }
 }
