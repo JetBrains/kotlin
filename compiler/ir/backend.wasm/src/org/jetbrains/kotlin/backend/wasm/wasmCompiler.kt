@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
@@ -82,11 +81,7 @@ data class LoweredIrWithExtraArtifacts(
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
 )
 
-fun linkIr(
-    irModuleInfo: IrModuleInfo,
-    configuration: CompilerConfiguration,
-    mainModule: MainModule,
-): Pair<List<IrModuleFragment>, WasmBackendContext> {
+fun linkIr(irModuleInfo: IrModuleInfo, configuration: CompilerConfiguration): Pair<List<IrModuleFragment>, WasmBackendContext> {
     (val moduleFragment = module, val moduleDependencies = dependencies, val irBuiltIns = bultins, val symbolTable, val irLinker = deserializer) = irModuleInfo
 
     val context = WasmBackendContext(
@@ -103,10 +98,7 @@ fun linkIr(
     // Sort dependencies after IR linkage.
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
 
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> error("Main module must be klib")
-        is MainModule.Klib -> sortedModuleDependencies.all
-    }
+    val allModules = sortedModuleDependencies.all
     allModules.forEach { it.patchDeclarationParents() }
 
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)

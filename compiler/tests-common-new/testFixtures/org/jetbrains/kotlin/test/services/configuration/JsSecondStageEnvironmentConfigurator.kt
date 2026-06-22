@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
 import org.jetbrains.kotlin.config.PartialLinkageLogLevel
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.name.Name
@@ -98,8 +97,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             .map { it.absolutePath }
 
         val klibArtifact = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
-        val mainModule = MainModule.Klib(klibArtifact.outputFile.absolutePath)
-        val mainPath = File(mainModule.libPath).canonicalPath
+        val mainPath = klibArtifact.outputFile.canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
         configuration.includes = mainPath
