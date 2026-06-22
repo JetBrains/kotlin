@@ -149,7 +149,6 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             return null
         }
 
-        override val location: KlibFile get() = KlibFile(".")
         override val path: Path get() = Paths.get(".")
         override val attributes: KlibAttributes get() = error("Not supported")
 

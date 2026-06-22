@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  * ```
  */
 interface Klib {
-    /** This is the obsolete but still supported way to get the library "location". Please use [Klib.path] instead. */
-    val location: KlibFile
-
     /**
      * The [Path] that points to the library location on the file system.
      *

@@ -31,8 +31,6 @@ internal class KlibImpl(
     manifestTransformer: KlibManifestTransformer?,
 ) : KotlinLibrary {
 
-    override val location get() = KlibFile(path)
-
     private val components: KlibComponentsCache
     override val manifestProperties: Properties
 
@@ -56,7 +54,7 @@ internal class KlibImpl(
 
     override val attributes = KlibAttributes()
 
-    override val libraryFile get() = location
+    override val libraryFile get() = KlibFile(path)
 
     override fun toString() = listOfNotNull(
         path,
