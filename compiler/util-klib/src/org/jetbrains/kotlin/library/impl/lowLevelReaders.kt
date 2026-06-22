@@ -110,6 +110,7 @@ val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 fun IrArrayReader.toArray(): Array<ByteArray> = Array(this.entryCount()) { i -> this.tableItemBytes(i) }
 
 fun File.javaFile(): java.io.File = java.io.File(path)
+fun File.javaPath(): java.nio.file.Path = java.nio.file.Paths.get(path)
 
 
 /******************************************************************************/

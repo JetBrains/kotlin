@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.metadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -30,6 +31,6 @@ fun buildKotlinMetadataLibrary(configuration: CompilerConfiguration, serializedM
             versions(versions)
             platformAndTargets(BuiltInsPlatform.COMMON)
         }
-        includeMetadata(serializedMetadata)
+        includeMetadata(serializedMetadata, configuration.fileMappingTracker?.toICMetadataMappingTracker())
     }.writeTo(destDir.absolutePath)
 }

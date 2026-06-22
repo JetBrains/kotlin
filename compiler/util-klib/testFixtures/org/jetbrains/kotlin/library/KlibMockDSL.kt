@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADA
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KlibIrComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
+import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
 import kotlin.random.Random
@@ -159,8 +160,8 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
-fun KlibMockDSL.metadata(metadata: SerializedMetadata) {
-    KlibMetadataComponentWriterImpl(metadata).writeTo(KlibFile(rootDir.path))
+fun KlibMockDSL.metadata(metadata: SerializedMetadata, fragmentTracker: KlibWrittenMetadataPackageFragmentTracker?) {
+    KlibMetadataComponentWriterImpl(metadata, fragmentTracker).writeTo(KlibFile(rootDir.path))
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)

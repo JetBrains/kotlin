@@ -9,12 +9,24 @@ import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.KlibIrComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
+import java.nio.file.Path
 
 /**
  * A [KlibWriter] DSL extension to include [SerializedMetadata] to the created library.
  */
-fun KlibWriterSpec.includeMetadata(metadata: SerializedMetadata) {
-    include(KlibMetadataComponentWriterImpl(metadata))
+fun KlibWriterSpec.includeMetadata(metadata: SerializedMetadata, fragmentTracker: KlibWrittenMetadataPackageFragmentTracker? = null) {
+    include(KlibMetadataComponentWriterImpl(metadata, fragmentTracker))
+}
+
+/**
+ * Receives the mapping between a serialized metadata fragment written to a klib and the source file it originates from.
+ */
+fun interface KlibWrittenMetadataPackageFragmentTracker {
+    /**
+     * Reports that the serialized metadata fragment [outputFile] was produced from [sourceFile].
+     * [sourceFile] is `null` when the fragment has no originating source file.
+     */
+    fun recordSourceFile(sourceFile: Path?, outputFile: Path)
 }
 
 /**

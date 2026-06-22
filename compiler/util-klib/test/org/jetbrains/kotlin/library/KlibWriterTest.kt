@@ -6,13 +6,21 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.library.KlibWriterTest.NewKlibWriterParameters
+import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.impl.javaPath
 import org.jetbrains.kotlin.library.writer.KlibWriter
+import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
 import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.Path
+import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
  * This is the test for the redesigned (new) KLIB writer API (as the opposite of the test for the legacy one: [LegacyKlibWriterTest]).
@@ -197,13 +205,51 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
         }.writeTo(createNewKlibDir().path)
     }
 
+    @Test
+    fun `Fragments source file reports`() {
+        val recordedMappings = mutableListOf<Pair<Path?, Path>>()
+        val tracker = KlibWrittenMetadataPackageFragmentTracker { sourceFile, outputFile -> recordedMappings += sourceFile to outputFile }
+
+        val content = ByteArray(10)
+        val klibDir = writeKlib(
+            NewKlibWriterParameters().apply {
+                fragmentTracker = tracker
+                metadata = SerializedMetadata(
+                    module = content,
+                    fragments = listOf(
+                        listOf(
+                            SerializedFragmentWithSource(content, "/src/a.kt"),
+                            SerializedFragment(content),
+                        ),
+                        listOf(
+                            SerializedFragmentWithSource(content, null),
+                        ),
+                    ),
+                    fragmentNames = listOf("", "foo.bar"),
+                    metadataVersion = MetadataVersion.INSTANCE.toArray(),
+                )
+            }
+        )
+
+        val layout = KlibMetadataComponentLayout(KlibFile(klibDir.path))
+        val expectedMappings = listOf(
+            Path("/src/a.kt") to layout.getPackageFragmentFile(packageFqName = "", partName = "0_").javaPath(),
+            null to layout.getPackageFragmentFile(packageFqName = "foo.bar", partName = "0_bar").javaPath(),
+        )
+
+        assertEquals(
+            expectedMappings.map { (source, output) -> source to output },
+            recordedMappings.map { (source, output) -> source to output },
+        )
+    }
+
     override fun writeKlib(parameters: NewKlibWriterParameters): File {
         val klibLocation = createNewKlibDir()
 
         KlibWriter {
             format(if (parameters.nopack) KlibFormat.Directory else KlibFormat.ZipArchive)
 
-            includeMetadata(parameters.metadata)
+            includeMetadata(parameters.metadata, parameters.fragmentTracker)
             includeIr(parameters.ir)
 
             manifest {
