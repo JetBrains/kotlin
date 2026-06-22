@@ -15,4 +15,5 @@ kotlin {
 
 kotlinxBenchmark {
     applicationName = "Ring"
+    compilerOpts = listOf("-Xauto-cache-from=${project.gradle.gradleUserHomeDir}")
 }
