@@ -1,5 +1,6 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR, NATIVE
+// WASM_IGNORE_FOR: mode=multi-module
 // ^^^ KT-86953 K2: Fake overrides are generated for inherited companion-block static members
 
 // MODULE: lib
