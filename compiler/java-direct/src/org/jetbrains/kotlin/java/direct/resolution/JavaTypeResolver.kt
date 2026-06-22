@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.java.direct.resolution
 
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -766,39 +767,10 @@ context(c: JavaResolutionContext)
 internal fun getImports(): JavaImports = c.fileContext.imports
 
 /**
- * Returns true if the import target for [simpleName] is resolvable as a Java class.
- *
- * Checks whether the import target exists in the Java source index or is available as a binary
- * (compiled) Java class on the classpath. This matches PSI behavior where only classes resolvable
- * through PSI/classpath indexes are eagerly resolved.
- *
- * Kotlin classes (builtins, source classes without light classes) are NOT resolvable through PSI
- * indexes, so this returns false for them. FIR handles such classes through its own symbol
- * provider instead. Returns true (conservative) when no class finder is available.
- */
-context(c: JavaResolutionContext)
-internal fun isImportTargetAvailableAsJavaClass(simpleName: String): Boolean {
-    // Consults both single-type and single-static buckets via the unified accessor:
-    // a static-single-import of a *type* is also resolvable as a Java class (JLS 6.4.1
-    // rank 4, same as a single-type-import); a static-single-import of a method/field
-    // simply fails the downstream `tryResolve`. Distinguishing the two costs nothing here
-    // because the consumer only needs a yes/no on "could this be a class?".
-    val importedFqn = c.fileContext.imports.getSingleImport(simpleName) ?: return false
-    val fqnStr = importedFqn.asString()
-    // Imports from kotlin.* packages point to Kotlin classes, not Java classes.
-    // PSI can't resolve Kotlin classes through its Java indexes (no light classes
-    // in K2 mode), so they appear as unresolved types. Match this behavior by
-    // not eagerly resolving kotlin.* imports.
-    if (fqnStr.startsWith("kotlin.") || fqnStr == "kotlin") return false
-    // All other imports (JDK, library, user-defined Java classes) are assumed
-    // to be resolvable as Java classes
-    return true
-}
-
-/**
  * Returns the first star import package that could contain a class with the given simple name.
  * Used for best-effort classId resolution when we can't call the symbol provider.
  */
+@TestOnly
 context(c: JavaResolutionContext)
 internal fun getFirstStarImportCandidate(simpleName: String): ClassId? {
     // Only type-import-on-demand makes sense for the `ClassId(pkg, simpleName)` shape:

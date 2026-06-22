@@ -15,6 +15,7 @@ import com.intellij.platform.syntax.parser.ProductionMarkerList
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.prepareProduction
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.annotations.TestOnly
 
 /**
  * Identifier for a node within a [JavaLightTree], encoded in a single Int.
@@ -397,6 +398,7 @@ private fun buildChildrenIndex(
  * Convenience: pretty-prints the subtree rooted at [node] for debugging. Each line prints the
  * node type and (newline-escaped) text, indented by depth.
  */
+@TestOnly
 fun JavaLightTree.dump(node: JavaLightNode = getRoot(), indent: String = ""): String {
     val sb = StringBuilder()
     sb.append(indent).append(getType(node)).append(": ").append(getText(node).toString().replace("\n", "\\n")).append("\n")
