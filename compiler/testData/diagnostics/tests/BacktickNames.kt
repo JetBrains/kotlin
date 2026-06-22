@@ -95,6 +95,10 @@ fun <!INVALID_CHARACTERS!>`foo:bar`<!>(<!INVALID_CHARACTERS!>`\arg`<!>: Int): In
     return `\arg`
 }
 
+enum class FooInputEnum {
+  <!INVALID_CHARACTERS!>`C.1`<!>
+}
+
 /* GENERATED_FIR_TAGS: anonymousFunction, classDeclaration, data, destructuringDeclaration, forLoop, functionDeclaration,
 functionalType, init, integerLiteral, lambdaLiteral, localFunction, localProperty, primaryConstructor,
 propertyDeclaration, rangeExpression, tryExpression */
