@@ -1116,13 +1116,18 @@ class CallAndReferenceGenerator(
             }
     }
 
+    private val FirCallableReferenceAccess.hasBoundReceiver: Boolean
+        get() = (dispatchReceiver != null || extensionReceiver != null) &&
+                calleeReference.toResolvedCallableSymbol()?.isStatic != true
+
+
     internal fun convertToGetObject(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?,
     ): IrExpression? {
         val classSymbol = qualifier.accessedObjectSymbol ?: return null
 
-        if (callableReferenceAccess?.isBound == false) {
+        if (callableReferenceAccess?.hasBoundReceiver == false) {
             return null
         }
 
