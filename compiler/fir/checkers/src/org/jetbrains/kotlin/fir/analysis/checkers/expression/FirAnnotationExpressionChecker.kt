@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isDisabled
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -59,7 +58,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
 
         checkAnnotationsWithVersion(fqName, expression)
         checkDeprecatedSinceKotlin(expression.source, fqName, expression.argumentMapping.mapping)
-        checkAnnotationsInsideAnnotationCall(expression, LanguageFeature.AllowAnnotationsOnArgumentsOfAnnotations.isDisabled())
+        checkArgumentsInsideAnnotationCall(expression.arguments, LanguageFeature.AllowAnnotationsOnArgumentsOfAnnotations.isDisabled())
         checkNotAClass(expression)
         checkErrorSuppression(annotationClassId, expression.argumentMapping.mapping)
         checkContextFunctionTypeParams(expression.source, annotationClassId)
@@ -204,14 +203,17 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAnnotationsInsideAnnotationCall(
-        expression: FirCall,
+    private fun checkArgumentsInsideAnnotationCall(
+        arguments: List<FirExpression>,
         reportAnnotationsOnAnnotationArguments: Boolean,
     ) {
-        val args = expression.argumentList.arguments
-        for (arg in args) {
+        for (arg in arguments) {
             val unwrapped = arg.unwrapArgument()
             val unwrappedErrorExpression = unwrapped.unwrapErrorExpression()
+            if (unwrappedErrorExpression is FirVarargArgumentsExpression) {
+                checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments = false)
+                continue
+            }
             val errorFactory = if (unwrapped is FirErrorExpression && unwrapped.expression == null) {
                 // The error is reported if only a syntax error is reported as well (empty element) that leads to some duplication.
                 // However, the `ANNOTATION_USED_AS_ANNOTATION_ARGUMENT` allows applying the `RemoveAtFromAnnotationArgument` quick-fix.
@@ -226,7 +228,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                 }
             }
             if (unwrappedErrorExpression is FirCollectionLiteral) {
-                checkAnnotationsInsideAnnotationCall(unwrappedErrorExpression, reportAnnotationsOnAnnotationArguments)
+                checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments)
             }
         }
     }

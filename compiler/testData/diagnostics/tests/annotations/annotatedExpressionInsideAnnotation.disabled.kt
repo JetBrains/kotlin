@@ -2,12 +2,15 @@
 // LANGUAGE_FEATURE_TOGGLED: AllowAnnotationsOnArgumentsOfAnnotations
 
 annotation class X(val value: Y, val y: Y)
+annotation class X2(vararg val values: Y)
 annotation class Y()
 
 @X(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>, y = Y())
+@X2(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>, Y(), <!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y<!><!SYNTAX!><!>)
 fun foo1() {
 }
 @X(<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>, y = <!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>)
+@X2(values = [<!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y<!><!SYNTAX!><!>, <!ANNOTATION_USED_AS_ANNOTATION_ARGUMENT!>@Y()<!><!SYNTAX!><!>])
 fun foo2() {
 }
 
