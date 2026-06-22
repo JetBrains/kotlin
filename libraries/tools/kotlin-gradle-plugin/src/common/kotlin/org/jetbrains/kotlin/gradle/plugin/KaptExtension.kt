@@ -36,6 +36,8 @@ open class KaptExtension : KaptExtensionConfig {
 
     override var stripMetadata: Boolean = false
 
+    override var stubGenerationScheme: String = "jtree"
+
     override var showProcessorStats: Boolean = false
 
     override var detectMemoryLeaks: String = "default"

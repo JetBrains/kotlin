@@ -139,6 +139,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun getShowProcessorStats ()Z
 	public abstract fun getStrictMode ()Z
 	public abstract fun getStripMetadata ()Z
+	public abstract fun getStubGenerationScheme ()Ljava/lang/String;
 	public abstract fun getUseBuildCache ()Z
 	public abstract fun getUseLightAnalysis ()Z
 	public abstract fun javacOptions (Lkotlin/jvm/functions/Function1;)V
@@ -152,6 +153,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptExtensionCon
 	public abstract fun setShowProcessorStats (Z)V
 	public abstract fun setStrictMode (Z)V
 	public abstract fun setStripMetadata (Z)V
+	public abstract fun setStubGenerationScheme (Ljava/lang/String;)V
 	public abstract fun setUseBuildCache (Z)V
 	public abstract fun setUseLightAnalysis (Z)V
 }

@@ -53,6 +53,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
     var mapDiagnosticLocations: Boolean = false
 
     @get:Input
+    var stubGenerationScheme: String = "jtree"
+
+    @get:Input
     abstract val annotationProcessorFqNames: ListProperty<String>
 
     @get:Input
@@ -149,6 +152,7 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             javacOptions.get(),
 
             kaptFlagsForWorker,
+            stubGenerationScheme,
 
             disableClassloaderCacheForProcessors
         )
@@ -353,6 +357,9 @@ private class KaptExecution @Inject constructor(
         val detectMemoryLeaksMode = classLoader.kaptClass("DetectMemoryLeaksMode")
             .enumConstants.single { (it as Enum<*>).name == "NONE" }
 
+        val stubGenerationSchemeEnum = classLoader.kaptClass("StubGenerationScheme")
+            .enumConstants.single { (it as Enum<*>).name == stubGenerationScheme.uppercase() }
+
         //in case cache was enabled and then disabled
         //or disabled for some modules
         val processingClassLoader =
@@ -386,6 +393,7 @@ private class KaptExecution @Inject constructor(
             flags,
             mode,
             detectMemoryLeaksMode,
+            stubGenerationSchemeEnum,
 
             processingClassLoader,
             disableClassloaderCacheForProcessors,
@@ -419,6 +427,7 @@ internal data class KaptOptionsForWorker(
     val javacOptions: Map<String, String>,
 
     val flags: Set<String>,
+    val stubGenerationScheme: String,
 
     val disableClassloaderCacheForProcessors: Set<String>
 ) : Serializable

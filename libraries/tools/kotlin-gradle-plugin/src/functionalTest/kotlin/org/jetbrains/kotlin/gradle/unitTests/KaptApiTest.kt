@@ -133,11 +133,21 @@ class KaptApiTest {
     @Test
     fun testKaptExtension() {
         plugin.kaptExtension.useBuildCache = false
-        plugin.kaptExtension.includeCompileClasspath = true
+        plugin.kaptExtension.includeCompileClasspath = false
+        plugin.kaptExtension.stubGenerationScheme = "direct"
 
         val task = configureKapt {}
         assertEquals(false, task.useBuildCache)
+        assertEquals(false, task.includeCompileClasspath.get())
+        assertEquals("direct", task.stubGenerationScheme)
+    }
+
+    @Test
+    fun testKaptExtensionDefaults() {
+        val task = configureKapt {}
+        assertEquals(true, task.useBuildCache)
         assertEquals(true, task.includeCompileClasspath.get())
+        assertEquals("jtree", task.stubGenerationScheme)
     }
 
     @Test
@@ -154,6 +164,8 @@ class KaptApiTest {
     fun testGenerateStubsOptions() {
         val stubsDir = tmpDir.resolve("stubsDir").also { it.mkdirs() }
         val kaptClasspath = setOf(tmpDir.resolve("kaptClasspath2").also { it.mkdirs() })
+        plugin.kaptExtension.stubGenerationScheme = "direct"
+
         val task = plugin.registerKaptGenerateStubsTask(
             GENERATE_STUBS,
             plugin.registerKotlinJvmCompileTask("customCompileKotlin", plugin.createCompilerJvmOptions()),
@@ -167,6 +179,13 @@ class KaptApiTest {
         }
         assertEquals(stubsDir, task.stubsDir.get().asFile)
         assertEquals(kaptClasspath, task.kaptClasspath.files)
+        assertEquals(
+            "direct",
+            task.pluginOptions.get()
+                .flatMap { it.allOptions()[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID].orEmpty() }
+                .single { it.key == "stubGenerationScheme" }
+                .value
+        )
     }
 
 

@@ -71,6 +71,17 @@ interface KaptExtensionConfig {
     var stripMetadata: Boolean
 
     /**
+     * Selects how kapt generates Java stubs.
+     *
+     * Possible values: "jtree", "direct".
+     * `jtree` is the historical scheme that uses javac AST and will be deprecated eventually.
+     * `direct` is a new experimental scheme that generates Java text directly.
+     *
+     * Default: `jtree`
+     */
+    var stubGenerationScheme: String
+
+    /**
      * Shows annotation processor statistics in the verbose kapt log output.
      *
      * Default: `false`
