@@ -83,7 +83,7 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
                 } else {
                     val psi = annotation.psi
                     val location = psi?.let { getLocation(it) }
-                    val text = psi?.text.orEmpty()
+                    val text = psi?.text?.replace(whitespaceRegex, " ").orEmpty()
                     logger.warn("Unknown annotation `$text` in $location")
                     logger.debug(
                         "Unknown annotation `$text` in ${location}\n" + Thread.currentThread().stackTrace.drop(1)
@@ -140,7 +140,7 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
                 else -> {
                     val psi = annotationValue.sourcePsi ?: containingAnnotation.psi
                     val location = psi?.let { getLocation(it) }
-                    logger.warn("Unknown annotation value `${psi?.text.orEmpty()}` in $location")
+                    logger.warn("Unknown annotation value `${psi?.text?.replace(whitespaceRegex, " ").orEmpty()}` in $location")
 
                     ClassValue(
                         type.toString(),
@@ -151,7 +151,7 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
             is KaAnnotationValue.UnsupportedValue -> {
                 val psi = annotationValue.sourcePsi ?: containingAnnotation.psi
                 val location = psi?.let { getLocation(it) }
-                logger.warn("Unsupported annotation value `${psi?.text.orEmpty()}` in $location")
+                logger.warn("Unsupported annotation value `${psi?.text?.replace(whitespaceRegex, " ").orEmpty()}` in $location")
 
                 ClassValue(
                     "<Unsupported Annotation Value>",
@@ -171,6 +171,8 @@ internal class AnnotationTranslator(private val logger: DokkaLogger) {
 
     companion object {
         val errorClassId = ClassId.fromString("<error>") // https://youtrack.jetbrains.com/issue/KT-84186/Unresolved-annotation-ClassId-returns-error
+
+        private val whitespaceRegex = Regex("\\s+")
 
         val mustBeDocumentedAnnotation = ClassId(StandardNames.ANNOTATION_PACKAGE_FQ_NAME, FqName("MustBeDocumented"), false)
         val parameterNameAnnotation = StandardNames.FqNames.parameterNameClassId
