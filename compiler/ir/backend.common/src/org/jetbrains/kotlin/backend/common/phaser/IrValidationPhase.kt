@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.expression.IrCrossFileFieldUs
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrTypeOperatorRedundancyChecker
 import org.jetbrains.kotlin.ir.validation.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.ir.validation.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 abstract class IrValidationPhase<Context : LoweringContext>(val context: Context) : ModuleLoweringPass {
@@ -68,7 +69,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
         get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
-            .withCheckers(IrVisibilityChecker.Relaxed)
+            .withCheckers(IrVisibilityChecker.Relaxed, IrTypeParameterScopeChecker)
             .withVarargChecks()
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
             .withCheckersByName(context.configuration.additionalIrCheckers, listOf(IrNestedOffsetRangeChecker))
