@@ -3,15 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.util.io.StringRef
+import com.intellij.psi.stubs.StubElementFactory
+import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinAnnotationUseSiteTargetStubFactory
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinAnnotationUseSiteTargetStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 
 class KtAnnotationUseSiteTargetElementType(debugName: String) :
@@ -20,20 +21,9 @@ class KtAnnotationUseSiteTargetElementType(debugName: String) :
         KtAnnotationUseSiteTarget::class.java,
         KotlinAnnotationUseSiteTargetStub::class.java,
     ) {
-    override fun createStub(
-        psi: KtAnnotationUseSiteTarget,
-        parentStub: StubElement<out PsiElement>,
-    ): KotlinAnnotationUseSiteTargetStubImpl {
-        val useSiteTarget = psi.getAnnotationUseSiteTarget().name
-        return KotlinAnnotationUseSiteTargetStubImpl(parentStub, StringRef.fromString(useSiteTarget)!!)
-    }
+    override fun getStubFactory(): StubElementFactory<KotlinAnnotationUseSiteTargetStubImpl, KtAnnotationUseSiteTarget> =
+        KotlinAnnotationUseSiteTargetStubFactory
 
-    override fun serialize(stub: KotlinAnnotationUseSiteTargetStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.useSiteTarget)
-    }
-
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>): KotlinAnnotationUseSiteTargetStubImpl {
-        val useSiteTarget = dataStream.readName()
-        return KotlinAnnotationUseSiteTargetStubImpl(parentStub, useSiteTarget!!)
-    }
+    override fun getStubSerializer(): StubSerializer<KotlinAnnotationUseSiteTargetStubImpl> =
+        KotlinAnnotationUseSiteTargetStubSerializer
 }
