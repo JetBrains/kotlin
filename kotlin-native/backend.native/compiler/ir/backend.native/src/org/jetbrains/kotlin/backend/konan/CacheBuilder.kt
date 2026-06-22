@@ -33,6 +33,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.io.canonicalPathString
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
     val allDependencies = mutableSetOf<KotlinLibrary>()
@@ -95,8 +96,11 @@ class CacheBuilder(
         override fun toString() = "${library.uniqueName}|$file"
     }
 
-    private val KotlinLibrary.isExternal
-        get() = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
+    private val KotlinLibrary.isExternal: Boolean
+        get() {
+            val libraryCanonicalPath = Path(path.canonicalPathString())
+            return autoCacheableFrom.any { libraryCanonicalPath.startsWith(Path(it.canonicalPath)) }
+        }
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()

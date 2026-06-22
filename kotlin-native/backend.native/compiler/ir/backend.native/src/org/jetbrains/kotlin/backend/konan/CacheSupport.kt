@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.K1Deprecation
+import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
@@ -73,7 +75,7 @@ class CacheSupport(
     private val allLibraries = resolvedLibraries.getFullList()
 
     // TODO: consider using [FeaturedLibraries.kt].
-    private val fileToLibrary = allLibraries.associateBy { it.libraryFile }
+    private val pathToLibrary = allLibraries.associateBy { it.path }
 
     private val autoCacheableFrom = configuration[NativeConfigurationKeys.AUTO_CACHEABLE_FROM]!!
             .map {
@@ -113,7 +115,7 @@ class CacheSupport(
         val explicitCacheFiles = configuration[NativeConfigurationKeys.CACHED_LIBRARIES]!!
 
         val explicitCaches = explicitCacheFiles.entries.associate { [libraryPath, cachePath] ->
-            val library = fileToLibrary[File(libraryPath)]
+            val library = pathToLibrary[Path(libraryPath)]
                     ?: configuration.reportCompilationErrorAndThrow("cache not applied: library $libraryPath in $cachePath")
 
             library to cachePath
@@ -134,18 +136,18 @@ class CacheSupport(
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
-                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(File(it)) },
+                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(Path(it)) },
         )
     }
 
-    private fun getLibrary(file: File) =
-            fileToLibrary[file] ?: error("library to cache\n" +
-                    "  ${file.absolutePath}\n" +
+    private fun getLibrary(path: Path) =
+            pathToLibrary[path] ?: error("library to cache\n" +
+                    "  ${path.absolutePathString()}\n" +
                     "not found among resolved libraries:\n  " +
                     allLibraries.joinToString("\n  ") { it.path.absolutePathString() })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
-        val libraryToAddToCacheFile = File(it)
+        val libraryToAddToCacheFile = Path(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
         if (libraryCache is CachedLibraries.Cache.Monolithic)

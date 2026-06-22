@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 
 @OptIn(K1Deprecation::class)
@@ -53,9 +54,9 @@ internal fun getExportedLibraries(
 
 @OptIn(K1Deprecation::class)
 internal fun getIncludedLibraries(
-    includedLibraryFiles: List<File>,
-    configuration: CompilerConfiguration,
-    resolvedLibraries: KotlinLibraryResolveResult
+        includedLibraryFiles: List<Path>,
+        configuration: CompilerConfiguration,
+        resolvedLibraries: KotlinLibraryResolveResult
 ): List<KotlinLibrary> = getFeaturedLibraries(
         includedLibraryFiles.toSet(),
         resolvedLibraries,
@@ -66,7 +67,7 @@ internal fun getIncludedLibraries(
 private sealed class FeaturedLibrariesReporter {
 
     abstract fun reportIllegalKind(library: KotlinLibrary)
-    abstract fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>)
+    abstract fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>)
 
     protected val KotlinLibrary.reportedKind: String
         get() = when {
@@ -78,7 +79,7 @@ private sealed class FeaturedLibrariesReporter {
 
     object Silent: FeaturedLibrariesReporter() {
         override fun reportIllegalKind(library: KotlinLibrary) {}
-        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {}
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>) {}
     }
 
     abstract class BaseReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
@@ -92,7 +93,7 @@ private sealed class FeaturedLibrariesReporter {
             )
         }
 
-        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>) {
             val message = buildString {
                 appendLine(notIncludedLibraryMessageTitle())
                 remainingFeaturedLibraries.forEach { appendLine(it) }
@@ -112,7 +113,7 @@ private sealed class FeaturedLibrariesReporter {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
         }
 
-        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<File>) {
+        override fun reportNotIncludedLibraries(includedLibraries: List<KotlinLibrary>, remainingFeaturedLibraries: Set<Path>) {
             error("An included library is not found among resolved libraries")
         }
     }
@@ -151,7 +152,7 @@ private fun getFeaturedLibraries(
         reporter: FeaturedLibrariesReporter,
         allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
-        featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).libraryFile }.toSet(),
+        featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).path }.toSet(),
         resolvedLibraries,
         reporter,
         allowDefaultLibs
@@ -159,20 +160,20 @@ private fun getFeaturedLibraries(
 
 @OptIn(K1Deprecation::class)
 private fun getFeaturedLibraries(
-    featuredLibraryFiles: Set<File>,
-    resolvedLibraries: KotlinLibraryResolveResult,
-    reporter: FeaturedLibrariesReporter,
-    allowDefaultLibs: Boolean
+        featuredLibraryPaths: Set<Path>,
+        resolvedLibraries: KotlinLibraryResolveResult,
+        reporter: FeaturedLibrariesReporter,
+        allowDefaultLibs: Boolean
 ) : List<KotlinLibrary> {
-    val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
+    val remainingFeaturedLibraries = featuredLibraryPaths.toMutableSet()
     val result = mutableListOf<KotlinLibrary>()
     //TODO: please add type checks before cast.
     val libraries = resolvedLibraries.getFullList()
 
     for (library in libraries) {
-        val libraryFile = library.libraryFile
-        if (libraryFile in featuredLibraryFiles) {
-            remainingFeaturedLibraries -= libraryFile
+        val libraryPath = library.path
+        if (libraryPath in featuredLibraryPaths) {
+            remainingFeaturedLibraries.remove(libraryPath)
             if (library.isCInteropLibrary() || (!allowDefaultLibs && library.isImplicitlyLoadedFromKotlinNativeDistribution)) {
                 reporter.reportIllegalKind(library)
             } else {
