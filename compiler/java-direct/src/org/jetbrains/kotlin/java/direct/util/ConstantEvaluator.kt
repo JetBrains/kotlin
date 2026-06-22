@@ -13,6 +13,7 @@ import com.intellij.platform.syntax.SyntaxElementType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.parse.JavaLightNode
 import org.jetbrains.kotlin.java.direct.resolution.findClassInCurrentScope
+import org.jetbrains.kotlin.java.direct.resolution.getStaticImport
 import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.java.direct.parse.JavaLightTree
 import org.jetbrains.kotlin.name.Name
@@ -160,15 +161,23 @@ class ConstantEvaluator(
 
         val lastDot = refText.lastIndexOf('.')
 
+        val className: String
+        val fieldName: String
         if (lastDot < 0) {
             val localValue = resolveFieldValue(containingClass, refText)
             if (localValue != null) return localValue
 
-            return resolveExternalReference?.invoke(null, refText)
+            val staticImportFqn = with(containingClass.resolutionContext) { getStaticImport(refText) }?.asString()
+            val importDot = staticImportFqn?.lastIndexOf('.') ?: -1
+            if (staticImportFqn == null || importDot < 0) {
+                return resolveExternalReference?.invoke(null, refText)
+            }
+            className = staticImportFqn.substring(0, importDot)
+            fieldName = staticImportFqn.substring(importDot + 1)
+        } else {
+            className = refText.substring(0, lastDot)
+            fieldName = refText.substring(lastDot + 1)
         }
-
-        val className = refText.substring(0, lastDot)
-        val fieldName = refText.substring(lastDot + 1)
 
         val targetClass = findLocalClass(className)
         if (targetClass != null) {
