@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesComponent
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.listDirectoryEntries
 
 internal class KlibNativeIncludedBinariesComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibNativeIncludedBinariesComponentLayout>
 ) : KlibNativeIncludedBinariesComponent {
     override val nativeIncludedBinaryFilePaths: List<String> by lazy {
-        layoutReader.readExtractingToTemp(KlibNativeIncludedBinariesComponentLayout::nativeIncludedBinariesDir).listFiles.map(KlibFile::absolutePath)
+        layoutReader.readExtractingToTemp(KlibNativeIncludedBinariesComponentLayout::nativeIncludedBinariesDir)
+            .listDirectoryEntries()
+            .map(Path::absolutePathString)
     }
 }

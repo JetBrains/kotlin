@@ -24,7 +24,7 @@ import kotlin.io.path.relativeTo
 // See also:
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=7001822
 // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6994161
-internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
+internal fun Path.zipFileSystem(create: Boolean = false): FileSystem {
     val attributes = hashMapOf("create" to create.toString())
 
     // There is no FileSystems.newFileSystem overload accepting the attribute map.
@@ -33,7 +33,7 @@ internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
         if (fileSystemProvider.scheme != "jar") return@firstNotNullOfOrNull null
 
         try {
-            fileSystemProvider.newFileSystem(this.toPath(), attributes)
+            fileSystemProvider.newFileSystem(this, attributes)
         } catch (e: Exception) {
             when (e) {
                 is UnsupportedOperationException, is IllegalArgumentException -> null
@@ -48,11 +48,10 @@ internal fun File.zipFileSystem(create: Boolean = false): FileSystem {
 
 fun FileSystem.file(file: File) = File(this.getPath(file.path))
 
-fun FileSystem.file(path: String) = File(this.getPath(path))
-
-private fun File.toPath() = Paths.get(this.path)
+fun FileSystem.file(path: String): Path = this.getPath(path)
 
 fun File.zipDirAs(zipFile: File): Unit = zipDirAsInternal(dirPath = this.javaPath, zipFilePath = zipFile.javaPath)
+fun Path.zipDirAs(zipFile: Path): Unit = zipDirAsInternal(dirPath = this, zipFilePath = zipFile)
 
 internal inline fun zipDirAsInternal(dirPath: Path, zipFilePath: Path, shuffle: (MutableList<Path>) -> Unit = {}) {
     val dirPathWithExpandedSymlinks: Path = dirPath.expandSymlinks()
@@ -160,10 +159,10 @@ fun Path.unzipTo(destinationDirectory: Path, fromSubdirectory: Path = Paths.get(
     File(this).unzipTo(File(destinationDirectory), File(fromSubdirectory), resetTimeAttributes)
 }
 
-fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T {
-    return this.zipFileSystem(create).use(action)
-}
+fun <T> Path.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T = this.zipFileSystem(create).use(action)
+fun <T> File.withZipFileSystem(create: Boolean, action: (FileSystem) -> T): T = this.javaPath.zipFileSystem(create).use(action)
 
+fun <T> Path.withZipFileSystem(action: (FileSystem) -> T): T = this.withZipFileSystem(false, action)
 fun <T> File.withZipFileSystem(action: (FileSystem) -> T): T = this.withZipFileSystem(false, action)
 
 private fun File.recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {

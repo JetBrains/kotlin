@@ -7,13 +7,22 @@ package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
 import java.io.StringWriter
+import java.nio.file.Path
+import kotlin.io.path.bufferedReader
+import kotlin.io.path.outputStream
 
 typealias Properties = java.util.Properties
 
 fun File.loadProperties(): Properties {
+    val properties = java.util.Properties()
+    this.bufferedReader().use { reader ->
+        properties.load(reader)
+    }
+    return properties
+}
+
+fun Path.loadProperties(): Properties {
     val properties = java.util.Properties()
     this.bufferedReader().use { reader ->
         properties.load(reader)
@@ -46,7 +55,24 @@ fun File.saveProperties(properties: Properties) {
     }
 }
 
+fun Path.saveProperties(properties: Properties) {
+    val rawData = StringWriter().apply {
+        properties.store(this, null)
+    }.toString()
+
+    val lines = rawData
+        .split(System.lineSeparator())
+        .filterNot { it.isEmpty() || it.startsWith("#") }
+        .sorted()
+
+    outputStream().use {
+        it.write(lines.joinToString("\n", postfix = "\n").toByteArray())
+    }
+}
+
 fun Properties.saveToFile(file: File) = file.saveProperties(this)
+
+fun Properties.saveToFile(file: Path) = file.saveProperties(this)
 
 fun Properties.propertyString(key: String, suffix: String? = null): String? = getProperty(key.suffix(suffix)) ?: this.getProperty(key)
 

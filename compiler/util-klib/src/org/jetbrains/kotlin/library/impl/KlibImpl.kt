@@ -36,7 +36,7 @@ internal class KlibImpl(
 
     init {
         val layoutReaderFactory = KlibLayoutReaderFactory(
-            klibFile = KlibFile(path),
+            klibFile = path,
             zipFileSystemAccessor = zipFileSystemAccessor
         )
 
@@ -64,7 +64,7 @@ internal class KlibImpl(
     ).joinToString("\n")
 }
 
-internal class KlibManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val manifestFile: KlibFile
-        get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(KLIB_MANIFEST_FILE_NAME)
+internal class KlibManifestComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val manifestFile: Path
+        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME).resolve(KLIB_MANIFEST_FILE_NAME)
 }

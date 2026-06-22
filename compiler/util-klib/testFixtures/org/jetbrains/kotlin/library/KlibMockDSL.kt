@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.library.impl.KlibMetadataComponentWriterImpl
 import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
+import kotlin.io.path.Path
 import kotlin.random.Random
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
@@ -161,7 +162,7 @@ fun KlibMockDSL.resources(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_RE
 fun KlibMockDSL.metadata(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_METADATA_FOLDER_NAME, init)
 
 fun KlibMockDSL.metadata(metadata: SerializedMetadata, fragmentTracker: KlibWrittenMetadataPackageFragmentTracker?) {
-    KlibMetadataComponentWriterImpl(metadata, fragmentTracker).writeTo(KlibFile(rootDir.path))
+    KlibMetadataComponentWriterImpl(metadata, fragmentTracker).writeTo(Path(rootDir.path))
 }
 
 fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER_NAME, init)
@@ -169,7 +170,7 @@ fun KlibMockDSL.ir(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_FOLDER
 fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = dir(KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME, init)
 
 fun KlibMockDSL.irModule(serializedIrModule: SerializedIrModule) {
-    val output = KlibFile(rootDir.path)
+    val output = Path(rootDir.path)
 
     KlibIrComponentWriterImpl.ForMainIr(serializedIrModule.files).writeTo(output)
     serializedIrModule.fileWithPreparedInlinableFunctions?.let { KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it).writeTo(output) }

@@ -9,18 +9,19 @@ import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_RESOURCES_FOLDER_NAME
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
 
 /**
  * This is the workaround to create an empty 'resources' directory that is expected inside a KLIB.
  */
 internal object KlibResourcesComponentWriterImpl : KlibComponentWriter {
-    override fun writeTo(root: KlibFile) {
-        KlibResourcesComponentLayout(root).resourcesDir.mkdirs()
+    override fun writeTo(root: Path) {
+        KlibResourcesComponentLayout(root).resourcesDir.createDirectories()
     }
 }
 
-private class KlibResourcesComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val resourcesDir: KlibFile
-        get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(KLIB_RESOURCES_FOLDER_NAME)
+private class KlibResourcesComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val resourcesDir: Path
+        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME).resolve(KLIB_RESOURCES_FOLDER_NAME)
 }

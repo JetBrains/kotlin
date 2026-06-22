@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.library.impl
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.components.KlibIrComponentLayout
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
 
 /**
  * An implementation of [KlibComponentWriter] that writes IR to the constructed Klib library.
  */
 internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
     class ForMainIr(private val irFiles: Collection<SerializedIrFile>) : KlibIrComponentWriterImpl() {
-        override fun writeTo(root: KlibFile) {
+        override fun writeTo(root: Path) {
             writeIrFiles(
                 irFiles = irFiles,
                 layout = KlibIrComponentLayout.createForMainIr(root)
@@ -24,7 +26,7 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
     }
 
     class ForInlinableFunctionsIr(private val inlinableFunctionsFile: SerializedIrFile) : KlibIrComponentWriterImpl() {
-        override fun writeTo(root: KlibFile) {
+        override fun writeTo(root: Path) {
             writeIrFiles(
                 irFiles = listOf(inlinableFunctionsFile),
                 layout = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
@@ -33,7 +35,7 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
     }
 
     protected fun writeIrFiles(irFiles: Collection<SerializedIrFile>, layout: KlibIrComponentLayout) {
-        layout.irDir.mkdirs()
+        layout.irDir.createDirectories()
 
         with(irFiles.sortedBy { it.path }) {
             serializeNonNullableEntities(SerializedIrFile::fileData, layout::irFilesFile)
@@ -49,12 +51,12 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
 
     private inline fun List<SerializedIrFile>.serializeNonNullableEntities(
         accessor: (SerializedIrFile) -> ByteArray,
-        destination: () -> KlibFile,
-    ): Unit = IrArrayWriter(map { accessor(it) }, false).writeIntoFile(destination().absolutePath)
+        destination: () -> Path,
+    ): Unit = IrArrayWriter(map { accessor(it) }, false).writeIntoFile(destination().absolutePathString())
 
     private inline fun List<SerializedIrFile>.serializeNullableEntries(
         accessor: (SerializedIrFile) -> ByteArray?,
-        destination: () -> KlibFile,
+        destination: () -> Path,
     ) {
         val nonNullEntries: List<ByteArray> = mapNotNull(accessor)
         if (nonNullEntries.isEmpty()) {
@@ -69,6 +71,6 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
                     "\nOnly ${nonNullEntries.size} out of $size serialized IR files have non-nullable values."
         }
 
-        IrArrayWriter(nonNullEntries, false).writeIntoFile(destination().absolutePath)
+        IrArrayWriter(nonNullEntries, false).writeIntoFile(destination().absolutePathString())
     }
 }
