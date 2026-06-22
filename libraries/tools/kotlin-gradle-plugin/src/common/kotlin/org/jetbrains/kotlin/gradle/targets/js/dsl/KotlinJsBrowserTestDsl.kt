@@ -36,7 +36,7 @@ interface BrowserTestRunnerConfigDsl {
      * Configure global timeout for how long tests allow to run.
      * On timeout browser will be closed, and the test run should finish with an error.
      *
-     * Default is 2 minutes.
+     * Default is 2 seconds.
      */
     val timeout: Property<Duration>
 
