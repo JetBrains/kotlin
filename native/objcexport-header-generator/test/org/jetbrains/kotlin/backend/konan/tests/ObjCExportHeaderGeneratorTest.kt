@@ -211,13 +211,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - receiverWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("receiverWithMustBeDocumentedAnnotation"))
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation`() {
         doTest(headersTestDataDir.resolve("dispatchAndExtensionReceiverWithMustBeDocumentedAnnotation"))
     }
