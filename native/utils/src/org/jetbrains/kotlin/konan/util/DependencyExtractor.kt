@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.konan.util
 
-import org.jetbrains.kotlin.konan.file.unzipTo
+import org.jetbrains.kotlin.io.unzipTo
 import java.io.File
 import java.util.concurrent.TimeUnit
 

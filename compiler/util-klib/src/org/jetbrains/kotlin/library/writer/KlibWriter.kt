@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.library.writer
 
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning

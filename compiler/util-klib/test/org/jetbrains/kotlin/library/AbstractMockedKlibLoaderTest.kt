@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.zipDirAs
+import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 abstract class AbstractMockedKlibLoaderTest(
     private val stdlibUniqueName: String,
@@ -67,9 +66,7 @@ abstract class AbstractMockedKlibLoaderTest(
 
     companion object {
         private fun File.zipDirAs(zipFile: File) {
-            toKlibFile().zipDirAs(zipFile.toKlibFile())
+            toPath().zipDirAs(zipFile.toPath())
         }
-
-        private fun File.toKlibFile() = KlibFile(absolutePath)
     }
 }
