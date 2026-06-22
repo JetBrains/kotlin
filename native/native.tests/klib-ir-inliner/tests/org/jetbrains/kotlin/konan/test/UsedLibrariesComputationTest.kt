@@ -22,8 +22,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.*
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.util.Properties
 
 class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
     @Test
@@ -151,7 +150,6 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
         override val attributes: KlibAttributes get() = error("Not supported")
 
         override val versions: KotlinLibraryVersioning get() = error("Not supported")
-        override val libraryFile: KlibFile get() = KlibFile(".")
 
         override val manifestProperties: Properties = Properties().apply {
             setProperty(KLIB_PROPERTY_UNIQUE_NAME, libName)

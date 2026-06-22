@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.io.propertyList
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -85,9 +84,6 @@ const val KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES = "poisonin
  */
 
 interface BaseKotlinLibrary {
-    /** This is the obsolete but still supported way to get the library "location". Please use [Klib.path] instead. */
-    val libraryFile: File
-
     val versions: KotlinLibraryVersioning
 
     val manifestProperties: Properties
