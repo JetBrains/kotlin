@@ -746,9 +746,12 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      * Enable experimental value classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.4.20.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES", KotlinReleaseVersion(1, 8, 20))
 

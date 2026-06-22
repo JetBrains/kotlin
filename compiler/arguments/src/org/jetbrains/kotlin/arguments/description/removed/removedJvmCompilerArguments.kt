@@ -107,7 +107,7 @@ val removedJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevel
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
-            removedVersion = KotlinReleaseVersion.v2_5_0,
+            removedVersion = KotlinReleaseVersion.v2_4_20,
         )
     }
 }
