@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 
@@ -30,9 +30,9 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     constructor(node: ASTNode) : super(node)
 
     @KtImplementationDetail
-    constructor(stub: KotlinConstructorStub<KtSecondaryConstructor>) : super(stub, KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR)
+    constructor(stub: KotlinConstructorStub<KtSecondaryConstructor>) : super(stub, KtNodeTypes.SECONDARY_CONSTRUCTOR)
 
-    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R = visitor.visitSecondaryConstructor(this, data)
 
     override fun getContainingClassOrObject(): KtClassOrObject = containingClassOrObject!!
 
@@ -71,4 +71,10 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     )
     fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): KtConstructorDelegationCall =
         KtPsiMutationService.getInstance().convertImplicitDelegationCallToExplicit(this, isThis)
+
+    companion object {
+        /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+        @JvmField
+        val EMPTY_ARRAY: Array<KtSecondaryConstructor> = emptyArray()
+    }
 }

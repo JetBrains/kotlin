@@ -37,6 +37,9 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <stubElementTypeHolder externalIdPrefix="kotlin." class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
+    <languageStubDefinition language="kotlin"
+                            implementationClass="org.jetbrains.kotlin.psi.stubs.KotlinLanguageStubDefinition"/>
+    <stubElementRegistryExtension implementation="org.jetbrains.kotlin.psi.stubs.KotlinStubRegistryExtension"/>
 
     <fileType name="ARCHIVE" extensions="klib"/>
 

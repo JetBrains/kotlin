@@ -1,16 +1,14 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.*;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IStubFileElementType;
+import com.intellij.psi.tree.IFileElementType;
 import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
@@ -18,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -76,15 +75,19 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
         return createStubDependingOnParent(node);
     }
 
-    private static boolean createStubDependingOnParent(ASTNode node) {
+    @KtImplementationDetail
+    public static boolean createStubDependingOnParent(ASTNode node) {
         ASTNode parent = node.getTreeParent();
         IElementType parentType = parent.getElementType();
-        if (parentType instanceof IStubElementType) {
-            return ((IStubElementType) parentType).shouldCreateStub(parent);
-        }
-        if (parentType instanceof IStubFileElementType) {
+        if (parentType instanceof IFileElementType) {
             return true;
         }
+
+        StubElementFactory<?, ?> stubFactory = StubElementRegistryService.getInstance().getStubFactory(parentType);
+        if (stubFactory != null) {
+            return stubFactory.shouldCreateStub(parent);
+        }
+
         return false;
     }
 
