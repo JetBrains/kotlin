@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.K1Deprecation
+import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 data class FileWithFqName(val filePath: String, val fqName: String)
@@ -141,7 +142,7 @@ class CacheSupport(
             fileToLibrary[file] ?: error("library to cache\n" +
                     "  ${file.absolutePath}\n" +
                     "not found among resolved libraries:\n  " +
-                    allLibraries.joinToString("\n  ") { it.libraryFile.absolutePath })
+                    allLibraries.joinToString("\n  ") { it.path.absolutePathString() })
 
     internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = File(it)

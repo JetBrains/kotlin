@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -225,7 +226,7 @@ class CachedLibraries(
             File(explicitPath).trySelectCacheFor(library)
                     ?: error("No cache found for library ${library.path} at $explicitPath")
         } else {
-            val libraryPath = library.libraryFile.canonicalPath
+            val libraryPath = library.path.canonicalPathString()
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPath) } }
                             ?.let {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunct
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -51,7 +52,7 @@ internal sealed class KlibToolCommand(
 
     protected fun checkLibraryHasIr(library: KotlinLibrary): Boolean {
         return if (library.ir == null) {
-            output.logError("Library ${library.libraryFile} is an IR-less library")
+            output.logError("Library ${library.path} is an IR-less library")
             false
         } else true
     }
@@ -61,7 +62,7 @@ internal sealed class KlibToolCommand(
             val supportedSignatureVersions = library.versions.irSignatureVersions
             if (this !in supportedSignatureVersions) {
                 output.logError(
-                    "Signature version ${this.number} is not supported in library ${library.libraryFile}." +
+                    "Signature version ${this.number} is not supported in library ${library.path}." +
                                         " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
                 )
                 return false
@@ -106,7 +107,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         val manifestProperties: SortedMap<String, String> = library.manifestProperties.entries
             .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
-        output.appendLine("Full path: ${library.libraryFile.canonicalPath}")
+        output.appendLine("Full path: ${library.path.canonicalPathString()}")
         output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
         output.appendLine("Non-empty package FQNs (${nonEmptyPackageFQNs.size}):")
         nonEmptyPackageFQNs.forEach { packageFQN ->
@@ -202,7 +203,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
 
         val inlinableFunctionsIr = library.inlinableFunctionsIr
         if (inlinableFunctionsIr == null) {
-            output.appendLine("// No inlinable functions in ${library.libraryFile}")
+            output.appendLine("// No inlinable functions in ${library.path}")
             return
         }
 
@@ -244,7 +245,7 @@ internal class DumpIrInlinableFunctions(output: KlibToolOutput, args: KlibToolAr
             irDumpFirstLine to irDump
         }.sortedBy { /* irDumpFirstLine */ it.first }.map { /* irDump */ it.second }
 
-        output.appendLine("// ${irDumps.size} inlinable functions in ${library.libraryFile}")
+        output.appendLine("// ${irDumps.size} inlinable functions in ${library.path}")
 
         for (irDump in irDumps) {
             output.appendLine(irDump)
@@ -283,7 +284,7 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
 
             if (abiSignatureVersion == null) {
                 output.logError(
-                    "There is no signature version that would be both supported in library ${library.libraryFile}" +
+                    "There is no signature version that would be both supported in library ${library.path}" +
                             " and by the KLIB ABI reader. Supported versions in the library:" +
                             " ${library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
                             ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
@@ -295,7 +296,7 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
         }
 
         LibraryAbiRenderer.render(
-            libraryAbi = LibraryAbiReader.readAbiInfo(File(library.libraryFile.absolutePath)),
+            libraryAbi = LibraryAbiReader.readAbiInfo(library.path.toFile()),
             output = output,
             settings = AbiRenderingSettings(
                 renderedSignatureVersion = abiSignatureVersion,

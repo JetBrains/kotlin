@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import kotlin.io.path.absolutePathString
 
 @OptIn(K1Deprecation::class)
 internal fun ModuleDescriptor.getExportedDependencies(config: NativeSecondStageCompilationConfig): List<ModuleDescriptor> =
@@ -97,7 +98,7 @@ private sealed class FeaturedLibrariesReporter {
                 remainingFeaturedLibraries.forEach { appendLine(it) }
                 appendLine()
                 appendLine("Included libraries:")
-                includedLibraries.forEach { appendLine(it.libraryFile) }
+                includedLibraries.forEach { appendLine(it.path.toString()) }
             }
 
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
@@ -107,7 +108,7 @@ private sealed class FeaturedLibrariesReporter {
     private class IncludedLibrariesReporter(val configuration: CompilerConfiguration) : FeaturedLibrariesReporter() {
         override fun reportIllegalKind(library: KotlinLibrary) = with(library) {
             val message = "$reportedKind library $path cannot be passed with -Xinclude " +
-                    "(library path: ${libraryFile.absolutePath})"
+                    "(library path: ${path.absolutePathString()})"
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, message)
         }
 

@@ -468,9 +468,9 @@ class CacheBuilder(
             config.configuration.konanHome?.let {
                 this.konanHome = it
             }
-            val libraryPath = library.libraryFile.absolutePath
-            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.libraryFile.absolutePath }
-            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.libraryFile.absolutePath to it.second }
+            val libraryPath = library.path.absolutePathString()
+            val libraries = dependencies.filter { it.isExplicitlySpecifiedByUserInCLIArgument }.map { it.path.absolutePathString() }
+            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.path.absolutePathString() to it.second }
             configuration.reportLog(
                     "-p static_cache -Xadd-cache=${library.path} \\\n" +
                             libraries.joinToString("\n") { "-library $it \\" } + "\n" +

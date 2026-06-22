@@ -31,7 +31,7 @@ object KonanLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChec
         super.libraryVersion(library) ?: Version.parseVersion(getCompilerVersionFromKonanProperties(library))
 
     fun getCompilerVersionFromKonanProperties(library: KotlinLibrary): String? {
-        val libraryPath = Paths.get(library.libraryFile.path)
+        val libraryPath = library.path
 
         if (!libraryPath.endsWith(KONAN_STDLIB_DIRECTORY)) return null
 

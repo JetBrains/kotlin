@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import kotlin.io.path.pathString
 
 // TODO (KT-76785): Handling of duplicated names in KLIBs is a workaround that needs to be removed in the future.
 @OptIn(MessageCollectorAccess::class) // write access
@@ -38,7 +39,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         for (strategy in DuplicatedUniqueNameStrategy.entries) {
             val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -66,7 +67,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -104,7 +105,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {
@@ -119,7 +120,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertFalse(resultOfElimination.hasProblems)
         assertEquals(
             listOf(libraryPaths[0], libraryPaths[1], libraryPaths[3]),
-            resultOfElimination.librariesStdlibFirst.map { it.libraryFile.path }
+            resultOfElimination.librariesStdlibFirst.map { it.path.pathString }
         )
 
         assertEquals(2, messageCollector.messages.size)
@@ -147,7 +148,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
-        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.libraryFile.path })
+        assertEquals(libraryPaths, resultOfLoading.librariesStdlibFirst.map { it.path.pathString })
 
         val messageCollector = MessageCollectorImpl()
         val compilerConfiguration = CompilerConfiguration.create().apply {

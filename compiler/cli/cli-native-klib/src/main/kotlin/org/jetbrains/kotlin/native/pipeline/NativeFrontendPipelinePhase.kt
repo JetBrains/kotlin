@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.native.NativeFirstStagePhaseContext
 import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
+import kotlin.io.path.absolutePathString
 
 object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
     name = "NativeFrontendPhase",
@@ -72,7 +73,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
             @OptIn(K1Deprecation::class)
             val [interopLibs, regularLibs] = config.loadedKlibs.all.partition { it.isCInteropLibrary() }
             defaultDependenciesSet(mainModuleName) {
-                dependencies(regularLibs.map { it.libraryFile.absolutePath })
+                dependencies(regularLibs.map { it.path.absolutePathString() })
                 friendDependencies(config.friendModuleFiles.map { it.absolutePath })
                 dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
             }
@@ -82,7 +83,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
                         Name.special("<regular interop dependencies of $mainModuleName>"),
                         FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
                     )
-                dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+                dependencies(interopModuleData, interopLibs.map { it.path.absolutePathString() })
             }
             // TODO: !!! dependencies module data?
         }

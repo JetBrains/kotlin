@@ -20,6 +20,7 @@ import java.nio.file.InvalidPathException
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 /**
  * Checks for existence of duplicated [uniqueName]s among [KlibLoaderResult.librariesStdlibFirst].
@@ -42,7 +43,7 @@ fun KlibLoaderResult.eliminateLibrariesWithDuplicatedUniqueNames(configuration: 
 
     for ([uniqueName, libraries] in librariesWithDuplicatedUniqueNames) {
         val message =
-            "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.libraryFile.path }}"
+            "KLIB loader: The same 'unique_name=$uniqueName' found in more than one library: ${libraries.joinToString { it.path.pathString }}"
 
         if (duplicatedUniqueNameStrategy == DuplicatedUniqueNameStrategy.DENY) {
             configuration.report(
@@ -114,7 +115,7 @@ fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List
 
     if (canonicalFriendLibraryPaths.isEmpty()) return emptyList()
 
-    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.libraryFile.canonicalPath }
+    val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.path.toFile().canonicalPath }
 
     return canonicalFriendLibraryPaths.mapNotNull { canonicalLibraryPathsToLibraries[it] }
 }

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.io.canonicalPathString
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -129,7 +130,7 @@ internal fun LinkKlibsContext.linkKlibs(
         // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
         val canonicalFriendPaths = config.friendModuleFiles.mapToSetOrEmpty { it.canonicalPath }
         val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile.canonicalPath in canonicalFriendPaths }
+                .filter { it.path.canonicalPathString() in canonicalFriendPaths }
                 .map { it.uniqueName }
 
         val friendModulesMap = (

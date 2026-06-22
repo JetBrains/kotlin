@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.utils.SmartList
-import java.nio.file.Paths
 
 class KlibBasedSymbolProvider(
     session: FirSession,
@@ -84,8 +83,7 @@ class KlibBasedSymbolProvider(
     }
 
     override fun moduleData(library: KotlinLibrary): FirModuleData? {
-        val libraryPath = Paths.get(library.libraryFile.path)
-        return moduleDataProvider.getModuleData(libraryPath)
+        return moduleDataProvider.getModuleData(library.path)
     }
 
     @OptIn(K1Deprecation::class)

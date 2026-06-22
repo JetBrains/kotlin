@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import kotlin.io.path.absolutePathString
 
 abstract class AbstractFir2IrResultsConverter(
     testServices: TestServices
@@ -154,7 +155,7 @@ abstract class AbstractFir2IrResultsConverter(
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
         fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl =
-            testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
+            testServices.libraryProvider.getOrCreateStdlibByPath(library.path.absolutePathString()) {
                 // TODO: check safety of the approach of creating a separate storage manager per library
                 val storageManager = LockBasedStorageManager("ModulesStructure")
 

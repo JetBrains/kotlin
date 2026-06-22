@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.cli.pipeline.web.WebLoadedIrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.js.JsIrLoadingPipelinePhase
+import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
@@ -45,7 +46,7 @@ class JsIrDeserializerFacade(
             )
             for (library in klibs.all) {
                 testServices.libraryProvider.setDescriptorAndLibraryByName(
-                    library.libraryFile.canonicalPath,
+                    library.path.canonicalPathString(),
                     modulesStructure.getModuleDescriptor(library),
                     library
                 )
