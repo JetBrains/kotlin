@@ -18,7 +18,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:ToStringExample modality:OPEN
     VALUE_PARAMETER FAKE_OVERRIDE kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
     overridden:
       public open fun hashCode (): kotlin.Int declared in kotlin.Any
-  FUN GENERATED[org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGeneratorKey] name:toString visibility:public modality:OPEN returnType:kotlin.String
-    VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGeneratorKey] kind:DispatchReceiver name:<this> index:0 type:<root>.ToStringExample
+  FUN GENERATED[org.jetbrains.kotlin.lombok.generators.kotlin.ToStringGeneratorKey] name:toString visibility:public modality:OPEN returnType:kotlin.String
+    VALUE_PARAMETER GENERATED[org.jetbrains.kotlin.lombok.generators.kotlin.ToStringGeneratorKey] kind:DispatchReceiver name:<this> index:0 type:<root>.ToStringExample
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Any

@@ -1,4 +1,4 @@
-description = "Lombok compiler plugin (K2)"
+description = "Lombok compiler plugin"
 
 plugins {
     kotlin("jvm")
