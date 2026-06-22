@@ -233,6 +233,9 @@ public:
     ParallelProcessor() = default;
 
     ~ParallelProcessor() {
+        // The shared mark queue must be fully drained before we tear it down. A non-empty queue here
+        // means a batch of live objects was stranded and would be swept while still reachable.
+        RuntimeAssert(sharedBatches_.empty(), "Shared mark queue stranded at end of mark epoch");
         RuntimeAssert(waitingWorkers_.load() == 0, "All the workers must terminate before dispatcher destruction");
     }
 

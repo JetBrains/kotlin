@@ -203,4 +203,8 @@ TEST(ParallelProcessorTest, ForceFlushWithOverflow) {
     // now can flush
     EXPECT_THAT(source.forceFlush(), true);
     EXPECT_THAT(source.retainsNoWork(), true);
+
+    // drain the shared pool so nothing is left stranded at teardown
+    while (overflower.tryPop() != nullptr) {}
+    EXPECT_THAT(overflower.retainsNoWork(), true);
 }

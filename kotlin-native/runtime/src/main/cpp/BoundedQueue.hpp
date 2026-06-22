@@ -98,6 +98,10 @@ public:
         return enqueuePos_.load();
     }
 
+    bool empty() const noexcept {
+        return enqueuePos_.load(std::memory_order_relaxed) == dequeuePos_.load(std::memory_order_relaxed);
+    }
+
 private:
     struct Cell {
         // TODO describe
