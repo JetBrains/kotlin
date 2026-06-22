@@ -3,17 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.IndexSink
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.KtExperimentalApi
+import com.intellij.psi.stubs.StubElementFactory
+import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinScriptStubFactory
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinScriptStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinScriptStubImpl
 
 class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStubImpl, KtScript>(
@@ -21,27 +20,7 @@ class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStu
     KtScript::class.java,
     KotlinScriptStub::class.java,
 ) {
-    override fun createStub(psi: KtScript, parentStub: StubElement<out PsiElement>): KotlinScriptStubImpl {
-        @OptIn(KtExperimentalApi::class)
-        return KotlinScriptStubImpl(
-            parentStub,
-            StringRef.fromString(psi.fqName.asString()),
-            isReplSnippet = psi.isReplSnippet,
-        )
-    }
+    override fun getStubFactory(): StubElementFactory<KotlinScriptStubImpl, KtScript> = KotlinScriptStubFactory
 
-    override fun serialize(stub: KotlinScriptStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.fqName.asString())
-        dataStream.writeBoolean(stub.isReplSnippet)
-    }
-
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>): KotlinScriptStubImpl {
-        val fqName = dataStream.readName()!!
-        val isReplSnippet = dataStream.readBoolean()
-        return KotlinScriptStubImpl(parentStub, fqName, isReplSnippet)
-    }
-
-    override fun indexStub(stub: KotlinScriptStubImpl, sink: IndexSink) {
-        StubIndexService.getInstance().indexScript(stub, sink)
-    }
+    override fun getStubSerializer(): StubSerializer<KotlinScriptStubImpl> = KotlinScriptStubSerializer
 }
