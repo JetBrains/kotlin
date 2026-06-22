@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.library.impl
 
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_ABI_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_BUILTINS_PLATFORM
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_METADATA_VERSION
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.library.builtInsPlatform
 import org.jetbrains.kotlin.library.loader.KlibManifestTransformer
 import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import java.nio.file.Path
+import java.util.Properties
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 internal class KlibImpl(
@@ -42,7 +42,7 @@ internal class KlibImpl(
 
         // Note: readInPlace() will fail in case there is no manifest file or the file is malformed.
         manifestProperties = layoutReaderFactory.createLayoutReader(::KlibManifestComponentLayout)
-            .readInPlace { layout -> layout.manifestFile.loadProperties() }
+            .readInPlace { layout -> layout.manifestFile.readProperties() }
             .let { properties -> manifestTransformer?.transform(properties) ?: properties }
 
         components = KlibComponentsCache(layoutReaderFactory)
