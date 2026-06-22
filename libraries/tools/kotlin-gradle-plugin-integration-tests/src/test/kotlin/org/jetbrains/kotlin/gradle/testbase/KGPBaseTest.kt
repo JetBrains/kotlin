@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.BrokenMacosTestInterceptor
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.exists
 
 /**
  * Base class for all Kotlin Gradle plugin integration tests.
@@ -42,6 +44,14 @@ abstract class KGPBaseTest {
 
     @TempDir
     lateinit var workingDir: Path
+
+    @BeforeEach
+    fun checkThatDefaultKonanDoesntExist() {
+        if (isTeamCityRun) {
+            val userHomeDir = System.getProperty("user.home")
+            assumeFalse(Paths.get("$userHomeDir/.konan").exists())
+        }
+    }
 
     @AfterEach
     fun checkThatDefaultKonanHasNotBeenCreated() {
