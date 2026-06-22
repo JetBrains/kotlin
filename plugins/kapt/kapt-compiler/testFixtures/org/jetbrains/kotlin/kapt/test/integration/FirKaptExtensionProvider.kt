@@ -148,9 +148,9 @@ class FirKaptExtensionForTests(
         this.savedStubs = stubs
             .map {
                 if (kaptContext.options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    it.content
+                    it.directFileContent
                 else
-                    it.file.prettyPrint(kaptContext.context)
+                    it.jtreeFile.prettyPrint(kaptContext.context)
             }
             .sorted()
             .joinToString(FILE_SEPARATOR)

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.kapt.base.javac.kaptError
 import org.jetbrains.kotlin.kapt.base.mapJList
 import org.jetbrains.kotlin.kapt.stubs.ErrorTypeCorrector.TypeKind.*
+import org.jetbrains.kotlin.kapt.util.joinPairedText
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
@@ -302,9 +303,8 @@ class ErrorTypeCorrector(
         ) to baseExpression.second + convertedArguments.toTypeArgumentsText()
     }
 
-    private fun Iterable<Pair<JCTree.JCExpression, String>>.toTypeArgumentsText(): String =
-        joinToString(prefix = "<", postfix = ">", separator = ", ") { it.second }
-
+    private fun List<Pair<JCTree.JCExpression, String>>.toTypeArgumentsText(): String =
+        joinPairedText(this, "<", ">")
 }
 
 fun KotlinType.containsErrorTypes(allowedDepth: Int = 10): Boolean {

@@ -143,8 +143,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
 
-    // Whether Kapt shall generate syntactically correct Java source code, or use generate incorrect (but good for the annotation
-    // processing) stubs. Currently, it is mostly a marker for known cases, but may be converted to a new Kapt flag eventually
+    // Whether Kapt shall generate syntactically correct Java source code, or may generate incorrect (but good for the annotation
+    // processing) stubs. Currently, it is mostly a marker for the known cases of potentially incorrect syntax rather than a public flag
     private val strictJavaMode = false
 
     val bindings: Map<String, KaptJavaFileObject>
@@ -154,7 +154,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
-    private val signatureParser = SignatureParser(treeMaker, kaptContext)
+    private val signatureParser = SignatureParser(treeMaker)
 
     private val kdocCommentKeeper = KaptDocCommentKeeper(kaptContext)
 
@@ -212,6 +212,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         if (generateNonExistentClass) {
             stubs += KaptStub(
                 generateNonExistentClass(),
+                NON_EXISTENT_CLASS_NAME.parent().asString(),
+                NON_EXISTENT_CLASS_NAME.shortName().asString(),
                 "package ${NON_EXISTENT_CLASS_NAME.parent().asString()};\n\n" +
                         "public final class ${NON_EXISTENT_CLASS_NAME.shortName().asString()} {\n}\n"
             )
@@ -251,7 +253,16 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return topLevel
     }
 
-    class KaptStub(val file: JCCompilationUnit, val content: String, private val kaptMetadata: ByteArray? = null) {
+    class KaptStub(
+        val jtreeFile: JCCompilationUnit,
+        val directPackageName: String,
+        val directSimpleClassName: String,
+        val directFileContent: String,
+        private val kaptMetadata: ByteArray? = null,
+    ) {
+        internal val directClassFilePathWithoutExtension: String
+            get() = if (directPackageName.isEmpty()) directSimpleClassName else "${directPackageName.replace('.', '/')}/$directSimpleClassName"
+
         fun writeMetadataIfNeeded(forSource: File, report: ((File) -> Unit)? = null) {
             if (kaptMetadata == null) {
                 return
@@ -281,7 +292,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val [classDeclaration, classText] = convertClass(clazz, lineMappings, packageName) ?: return null
 
-        val contentsBuilder = StringBuilder()
         val firFile = findFirFile(declaration)
         val [imports, importsText] = convertImports(firFile, classDeclaration)
 
@@ -290,12 +300,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
         topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
 
-        if (packageName.isNotEmpty()) {
-            contentsBuilder.append("package ").append(packageName).append(";\n\n")
+        val text = buildString {
+            if (packageName.isNotEmpty()) {
+                append("package ").append(packageName).append(";\n\n")
+            }
+            append(importsText)
+            append(classText)
         }
-
-        contentsBuilder.append(importsText)
-        contentsBuilder.append(classText)
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
@@ -304,7 +315,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         postProcess(topLevel)
 
-        return KaptStub(topLevel, contentsBuilder.toString(),lineMappings.serialize())
+        return KaptStub(topLevel, packageName, classDeclaration.simpleName.toString(), text, lineMappings.serialize())
     }
 
     private fun findFirFile(irClass: IrDeclaration): FirFile? =
@@ -451,13 +462,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             signatureParser.parseClassSignature(clazz.signature)
         else ClassGenericSignature(emptyList(), rawSuperClass, rawInterfaces)
 
-        val classKindText = when {
-            isEnum -> "enum"
-            isAnnotation -> "@interface"
-            clazz.isInterface() -> "interface"
-            else -> "class"
-        }
-
         class EnumValueData(val field: FieldNode, val innerClass: InnerClassNode?, val correspondingClass: ClassNode?)
 
         val enumValuesData = clazz.fields.filter { it.isEnumValue() }.map { field ->
@@ -488,8 +492,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }?.desc ?: "()Z")
 
             val args = constructorArguments.drop(2).mapNotNull {
-                val defaultValue = getDefaultValue(it)
-                convertLiteralExpressionValue(clazz, defaultValue, false)
+                convertLiteralExpressionValue(clazz, getDefaultValue(it), false)
             }
 
             val def = data.correspondingClass?.let { convertClass(it, lineMappings, packageFqName)?.first }
@@ -556,6 +559,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val text = buildString {
             appendKDocCommentIfNecessary(clazz)
             append(modifiers.second)
+            val classKindText = when {
+                isEnum -> "enum"
+                isAnnotation -> "@interface"
+                clazz.isInterface() -> "interface"
+                else -> "class"
+            }
             append(classKindText).append(" ").append(simpleName)
             clazz.isInterface()
             if (!isAnnotation || !strictJavaMode) {
@@ -879,8 +888,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         if (isFinal(field.access)) {
             val type = Type.getType(field.desc)
-            val defaultValue = getDefaultValue(type)
-            return convertLiteralExpressionValue(containingClass, defaultValue, false)
+            return convertLiteralExpressionValue(containingClass, getDefaultValue(type), false)
         }
 
         return null
@@ -1062,13 +1070,12 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         } else if (asmReturnType == Type.VOID_TYPE) {
             treeMaker.Block(0, JavacList.nil()) to ""
         } else {
-            val defaultValue = getDefaultValue(asmReturnType)
             val text = buildString {
                 append("return ")
-                appendConstantValue(containingClass, defaultValue, false)
+                appendConstantValue(containingClass, getDefaultValue(asmReturnType), false)
                 append(';')
             }
-            val returnStatement = treeMaker.Return(convertLiteralJExpression(containingClass, defaultValue))
+            val returnStatement = treeMaker.Return(convertLiteralJExpression(containingClass, getDefaultValue(asmReturnType)))
             treeMaker.Block(0, JavacList.of(returnStatement)) to text
         }
 
@@ -1247,7 +1254,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         }
 
         if (containsErrorTypes) {
-            val typeFromSource: KtTypeElement? = ktTypeProvider()?.typeElement
+            val typeFromSource = ktTypeProvider()?.typeElement
             val ktFile = typeFromSource?.containingKtFile
             if (ktFile != null) {
                 @Suppress("UNCHECKED_CAST")
@@ -1258,15 +1265,15 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val nonErrorType = ifNonError()
         val jcNonErrorType = nonErrorType?.first
 
-        val isTreeTypeNonExistentClass = jcNonErrorType is JCFieldAccess &&
+        val isJTreeTypeNonExistentClass = jcNonErrorType is JCFieldAccess &&
                 jcNonErrorType.name.toString() == NON_EXISTENT_CLASS_NAME.shortName().asString() &&
                 (jcNonErrorType.selected as? JCIdent)?.name.toString() == NON_EXISTENT_CLASS_NAME.parent().asString()
         val isDirectTypeNonExistentClass = nonErrorType != null && nonErrorType.second == NON_EXISTENT_CLASS_NAME.asString()
-        textGenerationRequire(isTreeTypeNonExistentClass == isDirectTypeNonExistentClass) {
+        textGenerationRequire(isJTreeTypeNonExistentClass == isDirectTypeNonExistentClass) {
             "Inconsistent non-existent class rendering between JCTree and Java text"
         }
 
-        if (isTreeTypeNonExistentClass) {
+        if (isJTreeTypeNonExistentClass) {
             @Suppress("UNCHECKED_CAST")
             return (treeMaker.FqName("java.lang.Object") to "java.lang.Object") as T
         }
@@ -1321,7 +1328,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }?.also {
                 seenAnnotations += it
             }
-            val annotationData = convertAnnotation(containingClass, annotation, packageFqName, irAnnotation) ?: return list
+            val annotationData = filterAndConvertAnnotation(containingClass, annotation, packageFqName, irAnnotation) ?: return list
             sb.append(annotationData.second).append("\n")
             return list.append(annotationData.first)
         }
@@ -1377,21 +1384,32 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         appendModifierIfPresent(Flags.DEFAULT, "default")
     }
 
+    private fun filterAndConvertAnnotation(
+        containingClass: ClassNode,
+        annotation: AnnotationNode,
+        packageFqName: String? = "",
+        irAnnotation: IrAnnotation? = null
+    ): Pair<JCAnnotation, String>? {
+        val annotationType = Type.getType(annotation.desc)
+        val fqName = treeMaker.getQualifiedName(annotationType)
+        val filterOut = BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) } ||
+            (stripMetadata && fqName == KOTLIN_METADATA_ANNOTATION)
+        if (filterOut) {
+            reportIfIllegalTypeUsage(containingClass, annotationType)
+            return null
+        }
+        return convertAnnotation(containingClass, annotation, packageFqName, irAnnotation)
+    }
+
     private fun convertAnnotation(
         containingClass: ClassNode,
         annotation: AnnotationNode,
         packageFqName: String? = "",
-        irAnnotation: IrAnnotation? = null,
-        filtered: Boolean = true,
-    ): Pair<JCAnnotation, String>? {
+        irAnnotation: IrAnnotation? = null
+    ): Pair<JCAnnotation, String> {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
         reportIfIllegalTypeUsage(containingClass, annotationType)
-
-        if (filtered) {
-            if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null
-            if (stripMetadata && fqName == KOTLIN_METADATA_ANNOTATION) return null
-        }
 
         val nameFromNode = if ('.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName) {
             // simple name is preferred
@@ -1560,13 +1578,13 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             arrayDimensions++
         }
         val result = convertFirNonArrayType(type) ?: return null
-        val arrayTextSuffix = "[]".repeat(arrayDimensions)
+        val text = result.second + "[]".repeat(arrayDimensions)
         var resultExpression = result.first
         while (arrayDimensions > 0) {
             resultExpression = treeMaker.TypeArray(resultExpression)
             arrayDimensions--
         }
-        return resultExpression to result.second + arrayTextSuffix
+        return resultExpression to text
     }
 
     private fun convertFirNonArrayType(type: ConeKotlinType): Pair<JCExpression, String>? {
@@ -1726,7 +1744,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
             }
 
-            is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null, filtered = false)!!.first
+            // FIXME looks like need to merge both paths in convertLiteralExpression. Otherwise there is a N^2 complexity for inner annotations
+            is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null).first
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
     }
@@ -1736,7 +1755,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun StringBuilder.appendConstantValue(containingClass: ClassNode, constValue: Any?, isInAnnotation: Boolean) {
         fun specialFpValueNumerator(value: Double): Double = if (value.isNaN()) 0.0 else 1.0 * value.sign
-        fun appendIterable(iterable: Iterable<*>) = appendIterableCustom(iterable, "{", "}") { appendConstantValue(containingClass, it, isInAnnotation) }
+        fun appendIterable(iterable: Iterable<*>) = appendIterableCustom(iterable, "{", "}") {
+            appendConstantValue(containingClass, it, isInAnnotation)
+        }
 
         when (constValue) {
             null -> append("null")
@@ -1791,8 +1812,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
 
             is AnnotationNode if isInAnnotation -> {
-                val nestedAnnotationText = convertAnnotation(containingClass, constValue, packageFqName = null, filtered = false)?.second ?:
-                    textGenerationError("Failed to convert nested AnnotationNode: $constValue")
+                val nestedAnnotationText = convertAnnotation(containingClass, constValue, packageFqName = null).second
                 append(nestedAnnotationText)
             }
 

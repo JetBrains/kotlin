@@ -33,9 +33,9 @@ abstract class BaseKaptHandler(testServices: TestServices) : AbstractKaptHandler
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->
             val content =
                 if (kaptContext.options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    stub.content
+                    stub.directFileContent
                 else
-                    stub.file.prettyPrint(kaptContext.context)
+                    stub.jtreeFile.prettyPrint(kaptContext.context)
             val sourceFile = module.createTempJavaFile("stub$index.java", content)
             stub.writeMetadataIfNeeded(forSource = sourceFile)
             sourceFile

@@ -30,7 +30,6 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
         val kaptContext = info.kaptContext
 
-        // TODO decide whether use JCTree here. Probably it is OK, as generated stubs are parsed here
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 
         val actualRaw = convertedFiles

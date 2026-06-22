@@ -248,7 +248,14 @@ open class FirKaptAnalysisHandlerExtension(
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
-        logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
+        logger.info {
+            "Stubs for Kotlin classes: " + kaptStubs.joinToString {
+                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
+                    it.directClassFilePathWithoutExtension + ".java"
+                else
+                    it.jtreeFile.sourcefile.name
+            }
+        }
 
         saveStubs(kaptContext, kaptStubs)
         saveIncrementalData(kaptContext, converter)
@@ -266,20 +273,29 @@ open class FirKaptAnalysisHandlerExtension(
         val sourceFiles = mutableListOf<String>()
 
         for (kaptStub in stubs) {
-            val stubFile = kaptStub.file
-            val className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+            val stubFile = kaptStub.jtreeFile
+            val className: String
+            val packageName: String
+            val classFilePathWithoutExtension: String
+            if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
+                className = kaptStub.directSimpleClassName
+                packageName = kaptStub.directPackageName
+                classFilePathWithoutExtension = kaptStub.directClassFilePathWithoutExtension
+            } else {
+                className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+                packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
+                classFilePathWithoutExtension = if (packageName.isEmpty()) {
+                    className
+                } else {
+                    "${packageName.replace('.', '/')}/$className"
+                }
+            }
 
-            val packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
             val packageDir =
                 if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
 
             val sourceFile = File(packageDir, "$className.java")
-            val classFilePathWithoutExtension = if (packageName.isEmpty()) {
-                className
-            } else {
-                "${packageName.replace('.', '/')}/$className"
-            }
 
             sourceFiles += classFilePathWithoutExtension
 
@@ -298,9 +314,9 @@ open class FirKaptAnalysisHandlerExtension(
             reportStubsOutputForIC(sourceFile)
             sourceFile.writeText(
                 if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    kaptStub.content
+                    kaptStub.directFileContent
                 else
-                    stubFile.prettyPrint(kaptContext.context)
+                    kaptStub.jtreeFile.prettyPrint(kaptContext.context)
             )
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
