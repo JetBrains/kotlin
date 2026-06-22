@@ -5,37 +5,29 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeProjectionStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeProjectionStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtTypeProjectionElementType extends KtStubElementType<KotlinTypeProjectionStubImpl, KtTypeProjection> {
     public KtTypeProjectionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtTypeProjection.class, KotlinTypeProjectionStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinTypeProjectionStubImpl createStub(@NotNull KtTypeProjection psi, StubElement parentStub) {
-        return new KotlinTypeProjectionStubImpl(parentStub, psi.getProjectionKind().ordinal());
+    public StubElementFactory<KotlinTypeProjectionStubImpl, KtTypeProjection> getStubFactory() {
+        return KotlinTypeProjectionStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinTypeProjectionStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeVarInt(stub.getProjectionKind().ordinal());
-    }
-
-    @NotNull
-    @Override
-    public KotlinTypeProjectionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        int projectionKindOrdinal = dataStream.readVarInt();
-        return new KotlinTypeProjectionStubImpl(parentStub, projectionKindOrdinal);
+    public StubSerializer<KotlinTypeProjectionStubImpl> getStubSerializer() {
+        return KotlinTypeProjectionStubSerializer.INSTANCE;
     }
 }
