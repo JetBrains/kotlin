@@ -5,29 +5,32 @@
 
 package org.jetbrains.kotlin.cli.klib
 
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.file.createTempDir
-import org.jetbrains.kotlin.konan.file.unzipTo
-import org.jetbrains.kotlin.konan.file.use
+import org.jetbrains.kotlin.io.unzipTo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.assertThrows
 import java.io.IOException
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
 import kotlin.io.path.outputStream
 
 class UnzipTest {
-    private lateinit var tmpDir: File
+    private lateinit var tmpDir: Path
 
     @BeforeEach
     fun setUp(testInfo: TestInfo) {
-        tmpDir = createTempDir(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
+        tmpDir = createTempDirectory(testInfo.testClass.get().simpleName + "_" + testInfo.testMethod.get().name)
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @AfterEach
     fun tearDown() {
         tmpDir.deleteRecursively()
@@ -36,33 +39,33 @@ class UnzipTest {
     @Test
     fun testZipSlip() {
         // https://security.snyk.io/research/zip-slip-vulnerability
-        val zipArchive = tmpDir.child("sneaky.klib")
+        val zipArchive = tmpDir.resolve("sneaky.klib")
 
         createMaliciousArchive(zipArchive)
 
         try {
-            zipArchive.unzipTo(tmpDir.child("unpacked"))
+            zipArchive.unzipTo(tmpDir.resolve("unpacked"))
         } catch (e: Exception) {
             if (e !is IOException && e.cause !is IOException) throw e
         }
 
-        assert(!tmpDir.child("definitelySafe.txt").exists) { "ZipSlip vulnerability found!" }
+        assert(!tmpDir.resolve("definitelySafe.txt").exists()) { "ZipSlip vulnerability found!" }
     }
 
     @Test
     fun testZipSlipValidation() {
-        val zipArchive = tmpDir.child("sneaky.klib")
+        val zipArchive = tmpDir.resolve("sneaky.klib")
 
         createMaliciousArchive(zipArchive)
 
         assertThrows<ZipException> {
-            zipArchive.unzipTo(tmpDir.child("unpacked"))
+            zipArchive.unzipTo(tmpDir.resolve("unpacked"))
         }
     }
 }
 
-private fun createMaliciousArchive(file: File) {
-    file.javaPath.outputStream().use { outputStream ->
+private fun createMaliciousArchive(file: Path) {
+    file.outputStream().use { outputStream ->
         ZipOutputStream(outputStream).use { zipOutputStream ->
             zipOutputStream.putNextEntry(ZipEntry("../definitelySafe.txt"))
             zipOutputStream.closeEntry()
