@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.js.testOld.klib
 
 import org.jetbrains.kotlin.test.klib.compatibility.StdlibSpecialCompatibilityChecksTest
+import java.nio.file.Path
 
 @Suppress("JUnitTestCaseWithNoTests")
 class JsStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = false
 
-    override val originalLibraryPath: String
+    override val originalLibraryPath: Path
         get() = patchedJsStdlibWithoutJarManifest
 
     override val libraryDisplayName: String
@@ -22,7 +23,7 @@ class JsStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksT
 class WasmStdlibSpecialCompatibilityChecksTest : StdlibSpecialCompatibilityChecksTest, WebLibrarySpecialCompatibilityChecksTest() {
     override val isWasm: Boolean = true
 
-    override val originalLibraryPath: String
+    override val originalLibraryPath: Path
         get() = patchedWasmStdlibWithoutJarManifest
 
     override val libraryDisplayName: String
