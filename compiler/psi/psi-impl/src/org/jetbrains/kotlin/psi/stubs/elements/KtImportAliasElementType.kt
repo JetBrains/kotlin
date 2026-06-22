@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.util.io.StringRef
+import com.intellij.psi.stubs.StubElementFactory
+import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinImportAliasStubFactory
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinImportAliasStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 
 class KtImportAliasElementType(debugName: String) :
@@ -19,17 +21,7 @@ class KtImportAliasElementType(debugName: String) :
         KtImportAlias::class.java,
         KotlinImportAliasStub::class.java,
     ) {
+    override fun getStubFactory(): StubElementFactory<KotlinImportAliasStubImpl, KtImportAlias> = KotlinImportAliasStubFactory
 
-    override fun createStub(psi: KtImportAlias, parentStub: StubElement<*>?): KotlinImportAliasStubImpl {
-        return KotlinImportAliasStubImpl(parentStub, StringRef.fromString(psi.name))
-    }
-
-    override fun serialize(stub: KotlinImportAliasStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.name)
-    }
-
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinImportAliasStubImpl {
-        val name = dataStream.readName()
-        return KotlinImportAliasStubImpl(parentStub, name)
-    }
+    override fun getStubSerializer(): StubSerializer<KotlinImportAliasStubImpl> = KotlinImportAliasStubSerializer
 }
