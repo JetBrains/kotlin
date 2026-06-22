@@ -5,40 +5,29 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtTypeParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeParameterStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeParameterStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtTypeParameterElementType extends KtStubElementType<KotlinTypeParameterStubImpl, KtTypeParameter> {
     public KtTypeParameterElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtTypeParameter.class, KotlinTypeParameterStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinTypeParameterStubImpl createStub(@NotNull KtTypeParameter psi, StubElement parentStub) {
-        return new KotlinTypeParameterStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(psi.getName())
-        );
+    public StubElementFactory<KotlinTypeParameterStubImpl, KtTypeParameter> getStubFactory() {
+        return KotlinTypeParameterStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinTypeParameterStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-    }
-
-    @NotNull
-    @Override
-    public KotlinTypeParameterStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        StringRef name = dataStream.readName();
-        return new KotlinTypeParameterStubImpl((StubElement<?>) parentStub, name);
+    public StubSerializer<KotlinTypeParameterStubImpl> getStubSerializer() {
+        return KotlinTypeParameterStubSerializer.INSTANCE;
     }
 }
