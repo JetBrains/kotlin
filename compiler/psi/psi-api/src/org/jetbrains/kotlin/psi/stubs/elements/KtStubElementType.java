@@ -20,7 +20,6 @@ import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -32,12 +31,11 @@ import java.lang.reflect.Constructor;
 /**
  * Base class for Kotlin stub element types.
  * <p>
- * As part of KT-78356, stub support is being decoupled from element types and moved into dedicated
- * {@link StubElementFactory}/{@link StubSerializer} implementations registered via {@code StubRegistryExtension}.
- * An element type opts into the decoupled API by returning its dedicated implementations from {@link #getStubFactory()}
- * and {@link #getStubSerializer()}; this base then forwards the {@link IStubElementType} contract to them. Element types
- * that have not been migrated yet return {@code null} from the two accessors (the default) and keep overriding the
- * stub methods directly, in which case this base keeps its legacy behavior.
+ * As part of KT-78356, stub support is decoupled from element types: stub creation and serialization live in dedicated
+ * {@link StubElementFactory}/{@link StubSerializer} implementations (registered via {@code StubRegistryExtension}), and
+ * each element type wires its own through {@link #getStubFactory()} and {@link #getStubSerializer()}. This base simply
+ * forwards the {@link IStubElementType} contract to them, so the legacy element-type path and the decoupled registry path
+ * share a single implementation.
  */
 @SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT extends KtElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
@@ -73,22 +71,14 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     }
 
     /**
-     * The {@link StubElementFactory} that owns this element type's stub creation, or {@code null} for element types that
-     * still implement stub creation directly (KT-78356).
+     * The {@link StubElementFactory} that owns this element type's stub creation (KT-78356).
      */
-    @Nullable
-    public StubElementFactory<StubT, PsiT> getStubFactory() {
-        return null;
-    }
+    public abstract StubElementFactory<StubT, PsiT> getStubFactory();
 
     /**
-     * The {@link StubSerializer} that owns this element type's stub serialization, or {@code null} for element types that
-     * still implement serialization directly (KT-78356).
+     * The {@link StubSerializer} that owns this element type's stub serialization (KT-78356).
      */
-    @Nullable
-    public StubSerializer<StubT> getStubSerializer() {
-        return null;
-    }
+    public abstract StubSerializer<StubT> getStubSerializer();
 
     @NotNull
     public PsiT createPsiFromAst(@NotNull ASTNode node) {
@@ -96,8 +86,8 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     }
 
     /**
-     * Creates the {@link PsiT} for the given {@code stub} via reflection. Exposed so that decoupled stub factories
-     * (KT-78356) can build PSI without naming the concrete PSI class (used by the generic ones, e.g. placeholders).
+     * Creates the {@link PsiT} for the given {@code stub} via reflection. Used by decoupled stub factories (KT-78356)
+     * to build PSI without naming the concrete PSI class (e.g. the generic placeholder factory).
      */
     @NotNull
     public PsiT createPsiFromStub(@NotNull StubT stub) {
@@ -116,44 +106,35 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     @NotNull
     @Override
     public StubT createStub(@NotNull PsiT psi, StubElement<? extends PsiElement> parentStub) {
-        return requireStubFactory().createStub(psi, parentStub);
+        return getStubFactory().createStub(psi, parentStub);
     }
 
     @Override
     @NotNull
     public PsiT createPsi(@NotNull StubT stub) {
-        StubElementFactory<StubT, PsiT> factory = getStubFactory();
-        if (factory != null) {
-            PsiT psi = factory.createPsi(stub);
-            if (psi != null) {
-                return psi;
-            }
-        }
         return createPsiFromStub(stub);
     }
 
     @NotNull
     @Override
     public String getExternalId() {
-        StubSerializer<StubT> serializer = getStubSerializer();
-        return serializer != null ? serializer.getExternalId() : getConventionalExternalId();
+        return getStubSerializer().getExternalId();
     }
 
     @Override
     public void serialize(@NotNull StubT stub, @NotNull StubOutputStream dataStream) throws IOException {
-        requireStubSerializer().serialize(stub, dataStream);
+        getStubSerializer().serialize(stub, dataStream);
     }
 
     @NotNull
     @Override
     public StubT deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return requireStubSerializer().deserialize(dataStream, parentStub);
+        return getStubSerializer().deserialize(dataStream, parentStub);
     }
 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
-        StubElementFactory<StubT, PsiT> factory = getStubFactory();
-        return factory != null ? factory.shouldCreateStub(node) : shouldCreateStubDependingOnParent(node);
+        return getStubFactory().shouldCreateStub(node);
     }
 
     /**
@@ -174,11 +155,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
 
     @Override
     public void indexStub(@NotNull StubT stub, @NotNull IndexSink sink) {
-        StubSerializer<StubT> serializer = getStubSerializer();
-        if (serializer != null) {
-            serializer.indexStub(stub, sink);
-        }
-        // else: not indexed by default; legacy element types override this method
+        getStubSerializer().indexStub(stub, sink);
     }
 
     @NotNull
@@ -191,25 +168,5 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
      */
     public boolean isExpression() {
         return isExpression;
-    }
-
-    @NotNull
-    private StubElementFactory<StubT, PsiT> requireStubFactory() {
-        StubElementFactory<StubT, PsiT> factory = getStubFactory();
-        if (factory == null) {
-            throw new IllegalStateException(
-                    "Element type " + this + " has no stub factory; legacy element types must override createStub");
-        }
-        return factory;
-    }
-
-    @NotNull
-    private StubSerializer<StubT> requireStubSerializer() {
-        StubSerializer<StubT> serializer = getStubSerializer();
-        if (serializer == null) {
-            throw new IllegalStateException(
-                    "Element type " + this + " has no stub serializer; legacy element types must override serialize/deserialize");
-        }
-        return serializer;
     }
 }
