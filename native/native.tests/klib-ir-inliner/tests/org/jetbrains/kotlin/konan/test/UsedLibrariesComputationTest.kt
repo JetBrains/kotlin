@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test
 
-import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
@@ -35,9 +36,8 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
 
         fun TestCompilationResult.Success<out KLIB>.assertDependencyNames(vararg expectedDependencyNamesInManifest: String) {
             val expectedDependencyNames = expectedDependencyNamesInManifest.toSet()
-            val actualDependencyNames = resultingArtifact.klibFile.resolve("default").resolve("manifest").bufferedReader().use { reader ->
-                Properties().apply { load(reader) }
-            }.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
+            val actualDependencyNames = resultingArtifact.klibFile.resolve("default").resolve("manifest").toPath()
+                .readProperties().propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).toSet()
 
             assertEquals(expectedDependencyNames, actualDependencyNames) {
                 "Dependency mismatch for module ${resultingArtifact.klibFile}: expected $expectedDependencyNames, got $actualDependencyNames"
