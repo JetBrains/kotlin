@@ -5,62 +5,29 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.io.StringRef;
+import com.intellij.psi.stubs.StubElementFactory;
+import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinParameterStubFactory;
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinParameterStubSerializer;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl;
 
-import java.io.IOException;
-
+@SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 public class KtParameterElementType extends KtStubElementType<KotlinParameterStubImpl, KtParameter> {
     public KtParameterElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtParameter.class, KotlinParameterStub.class);
     }
 
-    @NotNull
     @Override
-    public KotlinParameterStubImpl createStub(@NotNull KtParameter psi, StubElement parentStub) {
-        FqName fqName = psi.getFqName();
-        StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
-        return new KotlinParameterStubImpl(
-                (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null
-        );
+    public StubElementFactory<KotlinParameterStubImpl, KtParameter> getStubFactory() {
+        return KotlinParameterStubFactory.INSTANCE;
     }
 
     @Override
-    public void serialize(@NotNull KotlinParameterStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeName(stub.getName());
-        dataStream.writeBoolean(stub.isMutable());
-        dataStream.writeBoolean(stub.getHasValOrVar());
-        dataStream.writeBoolean(stub.getHasDefaultValue());
-        FqName name = stub.getFqName();
-        dataStream.writeName(name != null ? name.asString() : null);
-        dataStream.writeName(stub.getFunctionTypeParameterName());
-    }
-
-    @NotNull
-    @Override
-    public KotlinParameterStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        StringRef name = dataStream.readName();
-        boolean isMutable = dataStream.readBoolean();
-        boolean hasValOrValNode = dataStream.readBoolean();
-        boolean hasDefaultValue = dataStream.readBoolean();
-        StringRef fqName = dataStream.readName();
-
-        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue,
-                                           dataStream.readNameString());
-    }
-
-    @Override
-    public void indexStub(@NotNull KotlinParameterStubImpl stub, @NotNull IndexSink sink) {
-        StubIndexService.getInstance().indexParameter(stub, sink);
+    public StubSerializer<KotlinParameterStubImpl> getStubSerializer() {
+        return KotlinParameterStubSerializer.INSTANCE;
     }
 }
