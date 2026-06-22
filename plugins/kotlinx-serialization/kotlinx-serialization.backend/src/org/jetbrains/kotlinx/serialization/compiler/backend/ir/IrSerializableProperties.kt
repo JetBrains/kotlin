@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -30,6 +31,9 @@ class IrSerializableProperty(
     val genericIndex = type.genericIndex
     fun serializableWith(ctx: SerializationBaseContext) =
         ir.annotations.serializableWith() ?: analyzeSpecialSerializers(ctx, ir.annotations)
+
+    fun getSubstitutedType(serializableClass: IrClass, originalClass: IrClass): IrType =
+        type.remapTypeParameters(serializableClass, originalClass)
 
     override val optional = !ir.annotations.hasAnnotation(SerializationAnnotations.requiredAnnotationFqName) && declaresDefaultValue
     override val transient = ir.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName) || !hasBackingField

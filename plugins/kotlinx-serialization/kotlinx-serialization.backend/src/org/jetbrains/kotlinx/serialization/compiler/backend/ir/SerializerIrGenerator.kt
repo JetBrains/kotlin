@@ -233,7 +233,8 @@ open class SerializerIrGenerator(
                     this@SerializerIrGenerator,
                     irFun.dispatchReceiverParameter!!,
                     property,
-                    cachedChildSerializerByIndex(index)
+                    cachedChildSerializerByIndex(index),
+                    property.getTypeInScope()
                 )
             ) { "Property ${property.name} must have a serializer" }
         }
@@ -338,7 +339,8 @@ open class SerializerIrGenerator(
             val ir = localSerializersFieldsDescriptors[it]
             irGetField(irGet(dispatchReceiver), ir.backingField!!)
         },
-        returnTypeHint
+        returnTypeHint,
+        substitutedPropertyType = property.getTypeInScope(),
     )
 
     // returns null: Any? for boxed types and 0: <number type> for primitives
@@ -403,7 +405,7 @@ open class SerializerIrGenerator(
         // var local0 = null, local1 = null ...
         val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop }.associate { [i, serializableProp] ->
             val ir = serializableProp.ir
-            val [expr, type] = defaultValueAndType(ir, serializableProp.type)
+            val [expr, type] = defaultValueAndType(ir, serializableProp.getTypeInScope())
             ir to irTemporary(expr, "local$i", type, isMutable = true)
         }
         // var transient0 = null, transient1 = null ...
@@ -445,7 +447,7 @@ open class SerializerIrGenerator(
                                                              it.owner.name.asString() == "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}" &&
                                                                      it.owner.hasShape(dispatchReceiver = true, regularParameters = 2)
                                                          } to listOf(localSerialDesc.get(), irInt(index))
-                                                     }, cachedChildSerializerByIndex(index), returnTypeHint = property.type)
+                                                     }, cachedChildSerializerByIndex(index), returnTypeHint = property.getTypeInScope())
                     // local$i = localInput.decode...(...)
                     +irSet(
                         serialPropertiesMap.getValue(property.ir).symbol,
@@ -628,6 +630,8 @@ open class SerializerIrGenerator(
         }
     }
 
+    protected fun IrSerializableProperty.getTypeInScope() =
+        getSubstitutedType(serializableIrClass, irClass)
 
     companion object {
         @OptIn(ValueClassBackendAgnosticApi::class)
