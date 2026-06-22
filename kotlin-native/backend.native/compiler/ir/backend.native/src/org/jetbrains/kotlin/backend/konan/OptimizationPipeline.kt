@@ -420,6 +420,12 @@ class ModuleCallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager:
     override val passes = listOf("kotlin-calls-checker-module")
 }
 
+class CallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
+        LlvmOptimizationPipeline(config, performanceManager, logger) {
+    override val pipelineName = "llvm-calls-checker"
+    override val passes = listOf("function(kotlin-calls-checker)")
+}
+
 internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode

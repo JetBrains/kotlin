@@ -379,10 +379,6 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         cExportFiles: CExportFiles?,
 ) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
-    val checkExternalCalls = context.config.checkStateAtExternalCalls
-    if (checkExternalCalls) {
-        runAndMeasurePhase(CheckExternalCallsPhase)
-    }
     newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)

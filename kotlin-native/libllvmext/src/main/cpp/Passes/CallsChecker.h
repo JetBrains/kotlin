@@ -4,9 +4,32 @@
 
 #pragma once
 
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/PassManager.h"
 
 namespace llvm::kotlin {
+
+class CallsCheckerPass : public PassInfoMixin<CallsCheckerPass> {
+public:
+  PreservedAnalyses run(Function &F, FunctionAnalysisManager &AF);
+
+  bool run(Function &F);
+  bool run(BasicBlock &BB);
+  bool run(CallBase &C);
+
+private:
+  bool load(Module &M);
+  void loadIgnoredFunctions(Module &M);
+
+  bool Loaded = false; // Assumes there's a single module and no paralellism.
+  SmallPtrSet<Function *, 32> IgnoredFunctions;
+  FunctionCallee CheckStateAtExternalCall;
+  FunctionCallee GetMethodImpl;
+  FunctionCallee GetClass;
+  FunctionCallee GetSuperClass;
+};
 
 /// A module pass for external calls checker instrumentation.
 ///
