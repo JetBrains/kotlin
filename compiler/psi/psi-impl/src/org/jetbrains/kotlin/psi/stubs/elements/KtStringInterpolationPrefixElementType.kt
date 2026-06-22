@@ -3,14 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+
 package org.jetbrains.kotlin.psi.stubs.elements
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.psi.stubs.StubElementFactory
+import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtStringInterpolationPrefix
 import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinStringInterpolationPrefixStubFactory
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinStringInterpolationPrefixStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl
 
 class KtStringInterpolationPrefixElementType(debugName: String) :
@@ -19,30 +21,9 @@ class KtStringInterpolationPrefixElementType(debugName: String) :
         KtStringInterpolationPrefix::class.java,
         KotlinStringInterpolationPrefixStub::class.java,
     ) {
+    override fun getStubFactory(): StubElementFactory<KotlinStringInterpolationPrefixStubImpl, KtStringInterpolationPrefix> =
+        KotlinStringInterpolationPrefixStubFactory
 
-    override fun createStub(
-        psi: KtStringInterpolationPrefix,
-        parentStub: StubElement<out PsiElement?>?,
-    ): KotlinStringInterpolationPrefixStubImpl = KotlinStringInterpolationPrefixStubImpl(
-        parent = parentStub,
-        dollarSignCount = psi.interpolationPrefixElement?.textLength ?: 0,
-    )
-
-    override fun serialize(
-        stub: KotlinStringInterpolationPrefixStubImpl,
-        dataStream: StubOutputStream,
-    ) {
-        dataStream.writeVarInt(stub.dollarSignCount)
-    }
-
-    override fun deserialize(
-        dataStream: StubInputStream,
-        parentStub: StubElement<*>?,
-    ): KotlinStringInterpolationPrefixStubImpl {
-        val dollarSignCount = dataStream.readVarInt()
-        return KotlinStringInterpolationPrefixStubImpl(
-            parent = parentStub,
-            dollarSignCount = dollarSignCount,
-        )
-    }
+    override fun getStubSerializer(): StubSerializer<KotlinStringInterpolationPrefixStubImpl> =
+        KotlinStringInterpolationPrefixStubSerializer
 }
