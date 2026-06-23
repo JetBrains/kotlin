@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KotlinTargetWithKotlinArchiveSupport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
@@ -56,8 +57,7 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmJsTargetDsl,
-    KotlinWasmWasiTargetDsl,
+    KotlinWasmTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl,
     KotlinTargetWithKotlinArchiveSupport {
@@ -158,7 +158,7 @@ internal constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    internal fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -212,14 +212,19 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
+    internal open fun KotlinBrowserJsIr.bundleConfigurator() {
+        subTargetConfigurators.add(WebpackConfigurator(this))
+    }
+
     //region Browser
+
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            bundleConfigurator()
         }
     }
 
@@ -228,6 +233,7 @@ internal constructor(
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
+
     //endregion
 
     //region node.js
@@ -254,28 +260,6 @@ internal constructor(
     }
     //endregion
 
-    //region d8
-    @OptIn(ExperimentalWasmDsl::class)
-    private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
-            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
-        )
-
-        addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
-        }
-    }
-
-    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
-
-    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
-        body(d8)
-    }
-    //endregion
-
     //region wasmtime
     @OptIn(ExperimentalWasmDsl::class)
     private val wasmtimeLazyDelegate = lazy {
@@ -299,7 +283,7 @@ internal constructor(
     }
     //endregion
 
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
+    internal fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
 
