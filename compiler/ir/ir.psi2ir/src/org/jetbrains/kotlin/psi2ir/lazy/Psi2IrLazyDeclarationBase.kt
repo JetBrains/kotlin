@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslator
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.ReadWriteProperty
 

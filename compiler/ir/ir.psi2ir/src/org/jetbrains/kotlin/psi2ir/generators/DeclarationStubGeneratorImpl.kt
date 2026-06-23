@@ -38,7 +38,7 @@ class DeclarationStubGeneratorImpl(
 ) : DeclarationStubGenerator(moduleDescriptor, symbolTable, irBuiltins, extensions) {
     private val lazyTable = symbolTable.lazyWrapper
 
-    override val typeTranslator: TypeTranslator =
+    private val typeTranslator: TypeTranslator =
         TypeTranslatorImpl(
             lazyTable,
             irBuiltins.languageVersionSettings,
