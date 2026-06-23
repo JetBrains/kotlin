@@ -83,9 +83,9 @@ import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameter
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVersionRequirement
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.SerializerExtension
+import org.jetbrains.kotlin.serialization.VersionRequirementUtils
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
@@ -562,7 +562,10 @@ private class JvmSerializerExtension(
         if (DescriptorUtils.isInterface(classDescriptor)) {
             if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
                 builder.addVersionRequirement(
-                    writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+                    VersionRequirementUtils.writeVersionRequirement(
+                        major = 1, minor = 4, patch = 0,
+                        ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable
+                    )
                 )
             }
         }
@@ -668,18 +671,30 @@ private class JvmSerializerExtension(
         if (unifiedNullChecks) {
             // Since Kotlin 1.4, we generate a call to Intrinsics.checkNotNullParameter in inline functions which causes older compilers
             // (earlier than 1.3.50) to crash because a functional parameter in this position can't be inlined
-            add(writeVersionRequirement(1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+            add(
+                VersionRequirementUtils.writeVersionRequirement(
+                    1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this
+                )
+            )
         }
     }
 
     private fun MutableVersionRequirementTable.writeFunctionNameManglingForReturnTypeRequirement(add: (Int) -> Unit) {
         if (functionsWithInlineClassReturnTypesMangled) {
-            add(writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this))
+            add(
+                VersionRequirementUtils.writeVersionRequirement(
+                    1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this
+                )
+            )
         }
     }
 
     private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {
-        add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+        add(
+            VersionRequirementUtils.writeVersionRequirement(
+                1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this
+            )
+        )
     }
 
     private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =

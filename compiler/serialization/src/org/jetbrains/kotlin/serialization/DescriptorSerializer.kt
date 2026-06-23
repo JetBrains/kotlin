@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
-import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
@@ -839,30 +838,12 @@ class DescriptorSerializer private constructor(
             versionRequirementTable: MutableVersionRequirementTable
         ): Int {
             val languageVersion = languageFeature.sinceVersion!!
-            return writeVersionRequirement(
+            return VersionRequirementUtils.writeVersionRequirement(
                 languageVersion.major, languageVersion.minor, 0,
                 ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION,
                 versionRequirementTable
             )
         }
 
-        fun writeVersionRequirement(
-            major: Int,
-            minor: Int,
-            patch: Int,
-            versionKind: ProtoBuf.VersionRequirement.VersionKind,
-            versionRequirementTable: MutableVersionRequirementTable
-        ): Int {
-            val requirement = ProtoBuf.VersionRequirement.newBuilder().apply {
-                VersionRequirement.Version(major, minor, patch).encode(
-                    writeVersion = { version = it },
-                    writeVersionFull = { versionFull = it }
-                )
-                if (versionKind != defaultInstanceForType.versionKind) {
-                    this.versionKind = versionKind
-                }
-            }
-            return versionRequirementTable[requirement]
-        }
     }
 }
