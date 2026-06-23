@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -31,12 +31,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 
-fun generateIsCheck(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type
-) {
-    if (TypeUtils.isNullableType(kotlinType)) {
+fun generateIsCheck(v: InstructionAdapter, type: IrType, asmType: Type) {
+    if (type.isNullable()) {
         val nope = Label()
         val end = Label()
 
@@ -45,7 +41,7 @@ fun generateIsCheck(
 
             ifnull(nope)
 
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(this, type, asmType)
 
             goTo(end)
 
@@ -56,25 +52,19 @@ fun generateIsCheck(
             mark(end)
         }
     } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+        TypeIntrinsics.instanceOf(v, type, asmType)
     }
 }
 
-fun generateAsCast(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type,
-    isSafe: Boolean,
-    unifiedNullChecks: Boolean,
-) {
+fun generateAsCast(v: InstructionAdapter, type: IrType, asmType: Type, isSafe: Boolean, unifiedNullChecks: Boolean) {
     if (!isSafe) {
-        if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType, unifiedNullChecks)
+        if (!type.isNullable()) {
+            generateNullCheckForNonSafeAs(v, type, unifiedNullChecks)
         }
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
+            TypeIntrinsics.instanceOf(v, type, asmType)
             val ok = Label()
             ifne(ok)
             pop()
@@ -83,24 +73,16 @@ fun generateAsCast(
         }
     }
 
-    TypeIntrinsics.checkcast(v, kotlinType, asmType, isSafe)
+    TypeIntrinsics.checkcast(v, type, asmType, isSafe)
 }
 
-private fun generateNullCheckForNonSafeAs(
-    v: InstructionAdapter,
-    type: KotlinType,
-    unifiedNullChecks: Boolean,
-) {
+private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, unifiedNullChecks: Boolean) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
         val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
-        AsmUtil.genThrow(
-            v,
-            exceptionClass,
-            "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
-        )
+        AsmUtil.genThrow(v, exceptionClass, "null cannot be cast to non-null type ${type.render()}")
         mark(nonnull)
     }
 }

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -1063,7 +1062,6 @@ class ExpressionCodegen(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
         val typeOperand = expression.typeOperand
-        val kotlinType = typeOperand.toIrBasedKotlinType()
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.accept(this, data)
@@ -1080,7 +1078,7 @@ class ExpressionCodegen(
                     mv.checkcast(boxedRightType)
                 } else {
                     assert(expression.operator == IrTypeOperator.CAST) { "IrTypeOperator.SAFE_CAST should have been lowered." }
-                    TypeIntrinsics.checkcast(mv, kotlinType, boxedRightType, false)
+                    TypeIntrinsics.checkcast(mv, typeOperand, boxedRightType, false)
                 }
                 MaterialValue(this, boxedRightType, expression.type)
             }
@@ -1098,7 +1096,7 @@ class ExpressionCodegen(
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
                     mv.instanceOf(type)
                 } else {
-                    TypeIntrinsics.instanceOf(mv, kotlinType, type)
+                    TypeIntrinsics.instanceOf(mv, typeOperand, type)
                 }
                 expression.onStack
             }

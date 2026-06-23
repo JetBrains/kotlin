@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
@@ -65,8 +64,6 @@ class ReifiedTypeInliner(
         fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
 
         fun isMutableCollectionType(type: IrType): Boolean
-
-        fun toKotlinType(type: IrType): KotlinType
 
         fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType): FieldInsnNode?
 
@@ -234,15 +231,12 @@ class ReifiedTypeInliner(
         instructions: InsnList,
         type: IrType,
         asmType: Type,
-        safe: Boolean
+        safe: Boolean,
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(
-            InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType, safe,
-            intrinsicsSupport.config.unifiedNullChecks,
-        )
+        generateAsCast(InstructionAdapter(newMethodNode), type, asmType, safe, intrinsicsSupport.config.unifiedNullChecks)
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
@@ -261,12 +255,12 @@ class ReifiedTypeInliner(
         insn: MethodInsnNode,
         instructions: InsnList,
         type: IrType,
-        asmType: Type
+        asmType: Type,
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType)
+        generateIsCheck(InstructionAdapter(newMethodNode), type, asmType)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)
