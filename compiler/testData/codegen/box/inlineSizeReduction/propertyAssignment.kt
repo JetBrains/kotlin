@@ -1,7 +1,7 @@
 // FILE: lib.kt
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test except=SumHolder_getInstance
+// CHECK_CONTAINS_NO_CALLS: test except=SumHolder$getInstance
 // CHECK_VARS_COUNT: function=test count=2
 
 object SumHolder {
@@ -18,7 +18,7 @@ internal inline fun sum(x: Int, y: Int): Int {
 package foo
 import kotlin.test.*
 
-// CHECK_CONTAINS_NO_CALLS: test except=SumHolder_getInstance
+// CHECK_CONTAINS_NO_CALLS: test except=SumHolder$getInstance
 // CHECK_VARS_COUNT: function=test count=2
 
 internal fun test(x: Int, y: Int) {
