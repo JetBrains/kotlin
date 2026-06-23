@@ -117,7 +117,6 @@ class ClassCodegen private constructor(
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
-            irClass.psiElement,
             config.classFileVersion,
             irClass.getFlags(config.languageVersionSettings),
             signature.name,

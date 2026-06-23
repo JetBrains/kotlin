@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
@@ -87,7 +86,6 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
 
     @Override
     public void defineClass(
-            @Nullable PsiElement origin,
             int version,
             int access,
             @NotNull String name,
@@ -95,7 +93,7 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        getDelegate().defineClass(origin, version, access, name, signature, superName, interfaces);
+        getDelegate().defineClass(version, access, name, signature, superName, interfaces);
     }
 
     @Override

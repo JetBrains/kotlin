@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.extensions
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -43,21 +41,18 @@ class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorEx
             val classBuilder = interceptedFactory.newClassBuilder(origin)
             val irClass = origin.unwrapOrigin<IrClass>()
             return DelegatingClassBuilderAdapter(
-                extension.generateClass(
-                    ClassGeneratorAdapter(irClass, classBuilder),
-                    irClass
-                ),
+                extension.generateClass(ClassGeneratorAdapter(classBuilder), irClass),
                 classBuilder
             )
         }
     }
 }
 
-private class ClassGeneratorAdapter(val irClass: IrClass?, val builder: ClassBuilder) : ClassGenerator {
+private class ClassGeneratorAdapter(val builder: ClassBuilder) : ClassGenerator {
     override fun defineClass(
         version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
     ) {
-        builder.defineClass(irClass?.psiElement, version, access, name, signature, superName, interfaces)
+        builder.defineClass(version, access, name, signature, superName, interfaces)
     }
 
     override fun newField(
@@ -100,7 +95,7 @@ private class DelegatingClassBuilderAdapter(
     override fun getDelegate(): ClassBuilder = originalClassBuilder
 
     override fun defineClass(
-        origin: PsiElement?, version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>
+        version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>,
     ) {
         generator.defineClass(version, access, name, signature, superName, interfaces)
     }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
@@ -37,7 +36,6 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
 
     @Override
     public void defineClass(
-            @Nullable PsiElement origin,
             int version,
             int access,
             @NotNull String name,
@@ -45,7 +43,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @NotNull String superName,
             @NotNull String[] interfaces
     ) {
-        super.defineClass(origin, version, access, remapper.mapType(name), remapper.mapSignature(signature, false),
+        super.defineClass(version, access, remapper.mapType(name), remapper.mapSignature(signature, false),
                           remapper.mapType(superName), remapper.mapTypes(interfaces));
     }
 
