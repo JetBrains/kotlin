@@ -20,11 +20,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
-class KtTypeCodeFragment(
-    project: Project,
-    name: String,
-    text: CharSequence,
-    context: PsiElement?
-) : KtCodeFragment(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context) {
+class KtTypeCodeFragment : KtCodeFragment {
+    /**
+     * Creates a type code fragment from [text] with optional [context].
+     */
+    constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        context: PsiElement?
+    ) : super(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context)
+
+    internal constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        context: PsiElement?,
+        eventSystemEnabled: Boolean,
+    ) : super(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context, eventSystemEnabled)
+
     override fun getContentElement() = findChildByClass(KtTypeReference::class.java)
 }

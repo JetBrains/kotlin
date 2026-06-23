@@ -35,7 +35,22 @@ abstract class KtCodeFragment(
         elementType: IElementType,
         context: PsiElement?
     ) : this(
-        createFileViewProviderForLightFile(project, name, text),
+        createFileViewProviderForLightFile(project, name, text, eventSystemEnabled = true),
+        imports,
+        elementType,
+        context,
+    )
+
+    internal constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        elementType: IElementType,
+        context: PsiElement?,
+        eventSystemEnabled: Boolean,
+    ) : this(
+        createFileViewProviderForLightFile(project, name, text, eventSystemEnabled),
         imports,
         elementType,
         context,
@@ -228,11 +243,16 @@ abstract class KtCodeFragment(
 
         val FAKE_CONTEXT_FOR_JAVA_FILE: Key<Function0<KtElement>> = Key.create("FAKE_CONTEXT_FOR_JAVA_FILE")
 
-        internal fun createFileViewProviderForLightFile(project: Project, name: String, text: CharSequence): FileViewProvider {
+        internal fun createFileViewProviderForLightFile(
+            project: Project,
+            name: String,
+            text: CharSequence,
+            eventSystemEnabled: Boolean,
+        ): FileViewProvider {
             val psiManager = PsiManager.getInstance(project) as PsiManagerEx
             return psiManager.fileManager.createFileViewProvider(
                 LightVirtualFile(name, KotlinFileType.INSTANCE, text),
-                /* eventSystemEnabled = */true
+                eventSystemEnabled
             )
         }
 

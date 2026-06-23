@@ -607,15 +607,15 @@ class KtPsiFactory private constructor(
     fun createLabeledExpression(@NonNls labelName: String): KtLabeledExpression = createExpression("$labelName@ 1") as KtLabeledExpression
 
     fun createTypeCodeFragment(@NonNls text: String, context: PsiElement?): KtTypeCodeFragment {
-        return KtTypeCodeFragment(project, "fragment.kt", text, context)
+        return KtTypeCodeFragment(project, "fragment.kt", text, context, eventSystemEnabled)
     }
 
     fun createExpressionCodeFragment(@NonNls text: String, context: PsiElement?): KtExpressionCodeFragment {
-        return KtExpressionCodeFragment(project, "fragment.kt", text, null, context)
+        return KtExpressionCodeFragment(project, "fragment.kt", text, null, context, eventSystemEnabled)
     }
 
     fun createBlockCodeFragment(@NonNls text: String, context: PsiElement?): KtBlockCodeFragment {
-        return KtBlockCodeFragment(project, "fragment.kt", text, null, context)
+        return KtBlockCodeFragment(project, "fragment.kt", text, null, context, eventSystemEnabled)
     }
 
     fun createIf(condition: KtExpression, thenExpr: KtExpression, elseExpr: KtExpression? = null): KtIfExpression {

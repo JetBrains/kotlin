@@ -34,7 +34,20 @@ class KtBlockCodeFragment(
         imports: String?,
         context: PsiElement?
     ) : this(
-        createFileViewProviderForLightFile(project, name, text),
+        createFileViewProviderForLightFile(project, name, text, eventSystemEnabled = true),
+        imports,
+        context,
+    )
+
+    internal constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        context: PsiElement?,
+        eventSystemEnabled: Boolean,
+    ) : this(
+        createFileViewProviderForLightFile(project, name, text, eventSystemEnabled),
         imports,
         context,
     )

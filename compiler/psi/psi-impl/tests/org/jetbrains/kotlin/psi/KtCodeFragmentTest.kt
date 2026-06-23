@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisA
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.DummyAnalysisApiTestConfigurator
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class KtCodeFragmentTest : AbstractAnalysisApiBasedTest() {
     override val configurator: AnalysisApiTestConfigurator get() = DummyAnalysisApiTestConfigurator
@@ -71,6 +73,37 @@ class KtCodeFragmentTest : AbstractAnalysisApiBasedTest() {
 
         val textImports = codeFragment.importDirectives.map { it.text }
         assertEquals(listOf("import lib.foo", "import lib.bar", "import lib.baz"), textImports)
+    }
+
+    @Test
+    fun testFactoryCreatesCodeFragmentsWithDisabledEventSystem() = runCodeFragmentTest { project ->
+        val psiFactory = KtPsiFactory(project, markGenerated = true, eventSystemEnabled = false)
+
+        assertFalse(psiFactory.createTypeCodeFragment("String", context = null).isPhysical)
+        assertFalse(psiFactory.createExpressionCodeFragment("foo()", context = null).isPhysical)
+        assertFalse(psiFactory.createBlockCodeFragment("val a = 5", context = null).isPhysical)
+    }
+
+    @Test
+    fun testFactoryCreatesCodeFragmentsWithEnabledEventSystem() = runCodeFragmentTest { project ->
+        val psiFactory = KtPsiFactory(project, markGenerated = true, eventSystemEnabled = true)
+
+        assertTrue(psiFactory.createTypeCodeFragment("String", context = null).isPhysical)
+        assertTrue(psiFactory.createExpressionCodeFragment("foo()", context = null).isPhysical)
+        assertTrue(psiFactory.createBlockCodeFragment("val a = 5", context = null).isPhysical)
+    }
+
+    @Test
+    fun testAddImportsToBlockCodeFragmentWithDisabledEventSystem() = runCodeFragmentTest { project ->
+        val context = KtPsiFactory(project).createExpression("context")
+        val codeFragment = KtPsiFactory(project, markGenerated = true, eventSystemEnabled = false)
+            .createBlockCodeFragment("val a = 5", context)
+
+        assertFalse(codeFragment.isPhysical)
+
+        codeFragment.addImportsFromString("foo.bar")
+
+        assertEquals(listOf("import foo.bar"), codeFragment.importDirectives.map { it.text })
     }
 
     @Test

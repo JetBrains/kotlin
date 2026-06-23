@@ -20,13 +20,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
-class KtExpressionCodeFragment(
-    project: Project,
-    name: String,
-    text: CharSequence,
-    imports: String?,
-    context: PsiElement?
-) : KtCodeFragment(project, name, text, imports, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, context) {
+class KtExpressionCodeFragment : KtCodeFragment {
+    /**
+     * Creates an expression code fragment from [text] with optional [imports] and [context].
+     */
+    constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        context: PsiElement?
+    ) : super(project, name, text, imports, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, context)
+
+    internal constructor(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        imports: String?,
+        context: PsiElement?,
+        eventSystemEnabled: Boolean,
+    ) : super(project, name, text, imports, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, context, eventSystemEnabled)
 
     override fun getContentElement() = findChildByClass(KtExpression::class.java)
 }
