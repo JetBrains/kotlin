@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinDestructuringDeclarationStubFactory
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinDestructuringDeclarationStubSerializer
@@ -21,9 +22,11 @@ internal object KtDestructuringDeclarationElementType :
         /* psiClass = */ KtDestructuringDeclaration::class.java,
         /* stubClass = */ KotlinDestructuringDeclarationStub::class.java,
     ) {
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinDestructuringDeclarationStubImpl, KtDestructuringDeclaration> =
         KotlinDestructuringDeclarationStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinDestructuringDeclarationStubImpl> =
         KotlinDestructuringDeclarationStubSerializer
 }

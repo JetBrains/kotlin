@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinBlockStringTemplateEntryStubFactory
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinBlockStringTemplateEntryStubSerializer
@@ -22,9 +23,11 @@ class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
         KtBlockStringTemplateEntry::class.java,
         KotlinBlockStringTemplateEntryStub::class.java,
     ) {
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinBlockStringTemplateEntryStubImpl, KtBlockStringTemplateEntry> =
         KotlinBlockStringTemplateEntryStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinBlockStringTemplateEntryStubImpl> =
         KotlinBlockStringTemplateEntryStubSerializer
 }

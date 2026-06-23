@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinScriptStubFactory
@@ -20,7 +21,9 @@ class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStu
     KtScript::class.java,
     KotlinScriptStub::class.java,
 ) {
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinScriptStubImpl, KtScript> = KotlinScriptStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinScriptStubImpl> = KotlinScriptStubSerializer
 }

@@ -11,12 +11,14 @@ import com.intellij.psi.stubs.*
 import com.intellij.psi.util.childrenOfType
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinBlockStringTemplateEntryStubFactory :
     StubElementFactory<KotlinBlockStringTemplateEntryStubImpl, KtBlockStringTemplateEntry> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(

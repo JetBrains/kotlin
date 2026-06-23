@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinClassStubFactory
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinClassStubSerializer
@@ -19,7 +20,9 @@ internal object KtClassElementType : KtStubElementType<KotlinClassStubImpl, KtCl
     /* psiClass = */ KtClass::class.java,
     /* stubClass = */ KotlinClassStub::class.java,
 ) {
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinClassStubImpl, KtClass> = KotlinClassStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinClassStubImpl> = KotlinClassStubSerializer
 }

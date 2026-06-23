@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.StubUtils
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinTypeAliasStubFactory : StubElementFactory<KotlinTypeAliasStubImpl, KtTypeAlias> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtTypeAlias, parentStub: StubElement<out PsiElement>?): KotlinTypeAliasStubImpl {

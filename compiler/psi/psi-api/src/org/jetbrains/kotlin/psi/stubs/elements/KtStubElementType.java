@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.elements;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.IndexSink;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.stubs.StubElementFactory;
-import com.intellij.psi.stubs.StubInputStream;
-import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.psi.stubs.StubSerializer;
+import com.intellij.psi.stubs.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.ArrayFactory;
@@ -23,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -38,7 +33,8 @@ import java.lang.reflect.Constructor;
  * share a single implementation.
  */
 @SuppressWarnings("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
-public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT extends KtElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
+public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT extends KtElementImplStub<?>>
+        extends IStubElementType<StubT, PsiT> {
 
     @NotNull
     private final Constructor<PsiT> byNodeConstructor;
@@ -58,7 +54,8 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
             byStubConstructor = psiClass.getConstructor(stubClass);
         }
         catch (NoSuchMethodException e) {
-            throw new RuntimeException("Stub element type declaration for " + psiClass.getSimpleName() + " is missing required constructors",e);
+            throw new RuntimeException(
+                    "Stub element type declaration for " + psiClass.getSimpleName() + " is missing required constructors", e);
         }
         emptyArray = (PsiT[]) Array.newInstance(psiClass, 0);
         arrayFactory = count -> {
@@ -73,11 +70,13 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
     /**
      * The {@link StubElementFactory} that owns this element type's stub creation (KT-78356).
      */
+    @KtImplementationDetail
     public abstract StubElementFactory<StubT, PsiT> getStubFactory();
 
     /**
      * The {@link StubSerializer} that owns this element type's stub serialization (KT-78356).
      */
+    @KtImplementationDetail
     public abstract StubSerializer<StubT> getStubSerializer();
 
     @NotNull
@@ -89,6 +88,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
      * Creates the {@link PsiT} for the given {@code stub} via reflection. Used by decoupled stub factories (KT-78356)
      * to build PSI without naming the concrete PSI class (e.g. the generic placeholder factory).
      */
+    @KtImplementationDetail
     @NotNull
     public PsiT createPsiFromStub(@NotNull StubT stub) {
         return ReflectionUtil.createInstance(byStubConstructor, stub);
@@ -98,6 +98,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
      * The external id this element type uses by convention ({@code "kotlin." + debug name}). Decoupled stub serializers
      * (KT-78356) reuse it when their id is derived from the debug name rather than being a fixed literal.
      */
+    @KtImplementationDetail
     @NotNull
     public final String getConventionalExternalId() {
         return "kotlin." + getDebugName();
@@ -141,6 +142,7 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
      * Default {@code shouldCreateStub} policy shared with decoupled stub factories (KT-78356): a node is stubbed only
      * when its parent is stubbed.
      */
+    @KtImplementationDetail
     public static boolean shouldCreateStubDependingOnParent(ASTNode node) {
         ASTNode parent = node.getTreeParent();
         IElementType parentType = parent.getElementType();

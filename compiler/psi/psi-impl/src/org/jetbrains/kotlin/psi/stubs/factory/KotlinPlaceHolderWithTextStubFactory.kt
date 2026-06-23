@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import org.jetbrains.kotlin.psi.KtElementImplStub
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 
@@ -25,9 +26,11 @@ internal class KotlinPlaceHolderWithTextStubFactory<T : KtElementImplStub<*>>(
     }
 
     override fun createPsi(stub: KotlinPlaceHolderWithTextStubImpl<T>): T {
+        @OptIn(KtImplementationDetail::class)
         return elementType.createPsiFromStub(stub)
     }
 
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean {
         return KtStubElementType.shouldCreateStubDependingOnParent(node)
     }

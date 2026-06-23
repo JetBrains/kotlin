@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.*
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.StubUtils.readNullableMap
 import org.jetbrains.kotlin.psi.stubs.StubUtils.writeNullableMap
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.serializeConstantValue
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinAnnotationEntryStubFactory : StubElementFactory<KotlinAnnotationEntryStubImpl, KtAnnotationEntry> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtAnnotationEntry, parentStub: StubElement<out PsiElement>?): KotlinAnnotationEntryStubImpl {

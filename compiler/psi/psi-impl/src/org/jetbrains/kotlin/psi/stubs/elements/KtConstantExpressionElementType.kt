@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinConstantExpressionStubFactory
@@ -29,9 +30,11 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
     // each with its own external id, so the serializer is per-instance rather than a shared object (KT-78356).
     private val stubSerializer = KotlinConstantExpressionStubSerializer(this)
 
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinConstantExpressionStubImpl, KtConstantExpression> =
         KotlinConstantExpressionStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinConstantExpressionStubImpl> = stubSerializer
 
     companion object {

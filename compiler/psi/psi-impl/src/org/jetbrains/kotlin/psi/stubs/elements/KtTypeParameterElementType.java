@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElementFactory;
 import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtTypeParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeParameterStubFactory;
@@ -21,11 +22,13 @@ public class KtTypeParameterElementType extends KtStubElementType<KotlinTypePara
         super(debugName, KtTypeParameter.class, KotlinTypeParameterStub.class);
     }
 
+    @KtImplementationDetail
     @Override
     public StubElementFactory<KotlinTypeParameterStubImpl, KtTypeParameter> getStubFactory() {
         return KotlinTypeParameterStubFactory.INSTANCE;
     }
 
+    @KtImplementationDetail
     @Override
     public StubSerializer<KotlinTypeParameterStubImpl> getStubSerializer() {
         return KotlinTypeParameterStubSerializer.INSTANCE;

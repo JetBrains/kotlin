@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinTypeAliasStubFactory
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 
 class KtTypeAliasElementType(debugName: String) :
     KtStubElementType<KotlinTypeAliasStubImpl, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinTypeAliasStubImpl, KtTypeAlias> = KotlinTypeAliasStubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinTypeAliasStubImpl> = KotlinTypeAliasStubSerializer
 }

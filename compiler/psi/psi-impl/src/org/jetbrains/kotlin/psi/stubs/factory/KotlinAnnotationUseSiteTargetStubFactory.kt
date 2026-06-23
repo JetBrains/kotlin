@@ -10,12 +10,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinAnnotationUseSiteTargetStubFactory :
     StubElementFactory<KotlinAnnotationUseSiteTargetStubImpl, KtAnnotationUseSiteTarget> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElementFactory;
 import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinNameReferenceExpressionStubFactory;
@@ -22,11 +23,13 @@ public class KtNameReferenceExpressionElementType
         super(debugName, KtNameReferenceExpression.class, KotlinNameReferenceExpressionStub.class);
     }
 
+    @KtImplementationDetail
     @Override
     public StubElementFactory<KotlinNameReferenceExpressionStubImpl, KtNameReferenceExpression> getStubFactory() {
         return KotlinNameReferenceExpressionStubFactory.INSTANCE;
     }
 
+    @KtImplementationDetail
     @Override
     public StubSerializer<KotlinNameReferenceExpressionStubImpl> getStubSerializer() {
         return KotlinNameReferenceExpressionStubSerializer.INSTANCE;

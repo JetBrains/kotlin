@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.stubs.factory
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentElementType
@@ -25,9 +26,11 @@ internal class KotlinValueArgumentStubFactory<T : KtValueArgument>(
     }
 
     override fun createPsi(stub: KotlinValueArgumentStubImpl<T>): T {
+        @OptIn(KtImplementationDetail::class)
         return elementType.createPsiFromStub(stub)
     }
 
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean {
         return KtStubElementType.shouldCreateStubDependingOnParent(node)
     }

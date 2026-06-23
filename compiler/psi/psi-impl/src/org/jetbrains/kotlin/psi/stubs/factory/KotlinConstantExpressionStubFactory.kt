@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.psi.utils.toConstantValueKind
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinConstantExpressionStubFactory : StubElementFactory<KotlinConstantExpressionStubImpl, KtConstantExpression> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean {
         return StubUtils.isDeclaredInsideValueArgument(node) && KtStubElementType.shouldCreateStubDependingOnParent(node)
     }

@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.psi.stubs.factory
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtTypeProjection
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeProjectionStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinTypeProjectionStubFactory : StubElementFactory<KotlinTypeProjectionStubImpl, KtTypeProjection> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtTypeProjection, parentStub: StubElement<out PsiElement>?): KotlinTypeProjectionStubImpl {

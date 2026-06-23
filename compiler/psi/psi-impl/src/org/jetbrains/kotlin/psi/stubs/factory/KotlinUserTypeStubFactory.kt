@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.stubs.factory
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeClassTypeBean
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinUserTypeStubFactory : StubElementFactory<KotlinUserTypeStubImpl, KtUserType> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtUserType, parentStub: StubElement<out PsiElement>?): KotlinUserTypeStubImpl {

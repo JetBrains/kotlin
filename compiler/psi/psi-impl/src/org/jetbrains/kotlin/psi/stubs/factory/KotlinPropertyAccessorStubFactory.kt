@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinPropertyAccessorStubFactory : StubElementFactory<KotlinPropertyAccessorStubImpl, KtPropertyAccessor> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     @OptIn(KtImplementationDetail::class)

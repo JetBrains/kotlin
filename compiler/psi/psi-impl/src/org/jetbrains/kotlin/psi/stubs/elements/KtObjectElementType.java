@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElementFactory;
 import com.intellij.psi.stubs.StubSerializer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinObjectStubFactory;
@@ -21,11 +22,13 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
     }
 
+    @KtImplementationDetail
     @Override
     public StubElementFactory<KotlinObjectStubImpl, KtObjectDeclaration> getStubFactory() {
         return KotlinObjectStubFactory.INSTANCE;
     }
 
+    @KtImplementationDetail
     @Override
     public StubSerializer<KotlinObjectStubImpl> getStubSerializer() {
         return KotlinObjectStubSerializer.INSTANCE;

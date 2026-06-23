@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntryStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinEnumEntryStubFactory : StubElementFactory<KotlinEnumEntryStubImpl, KtEnumEntry> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtEnumEntry, parentStub: StubElement<out PsiElement>?): KotlinEnumEntryStubImpl {

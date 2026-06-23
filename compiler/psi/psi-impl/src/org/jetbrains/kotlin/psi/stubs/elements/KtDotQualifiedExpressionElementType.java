@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtImplementationDetail;
 import org.jetbrains.kotlin.psi.stubs.StubUtils;
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinPlaceHolderStubFactory;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl;
@@ -41,6 +42,7 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
         super(debugName, KtDotQualifiedExpression.class);
     }
 
+    @KtImplementationDetail
     @Override
     public StubElementFactory<KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>, KtDotQualifiedExpression> getStubFactory() {
         return stubFactory;

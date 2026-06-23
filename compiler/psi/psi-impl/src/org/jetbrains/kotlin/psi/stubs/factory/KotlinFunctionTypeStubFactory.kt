@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import org.jetbrains.kotlin.psi.KtFunctionType
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.deserializeClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.elements.serializeTypeBean
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionTypeStubImpl
 
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal object KotlinFunctionTypeStubFactory : StubElementFactory<KotlinFunctionTypeStubImpl, KtFunctionType> {
+    @OptIn(KtImplementationDetail::class)
     override fun shouldCreateStub(node: ASTNode): Boolean = KtStubElementType.shouldCreateStubDependingOnParent(node)
 
     override fun createStub(psi: KtFunctionType, parentStub: StubElement<out PsiElement>?): KotlinFunctionTypeStubImpl =

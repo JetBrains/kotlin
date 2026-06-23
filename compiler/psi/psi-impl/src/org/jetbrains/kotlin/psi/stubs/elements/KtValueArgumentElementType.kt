@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.psi.stubs.StubElementFactory
 import com.intellij.psi.stubs.StubSerializer
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinValueArgumentStubFactory
@@ -24,7 +25,9 @@ class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClas
     private val stubFactory = KotlinValueArgumentStubFactory(this)
     private val stubSerializer = KotlinValueArgumentStubSerializer(this)
 
+    @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinValueArgumentStubImpl<T>, T> = stubFactory
 
+    @KtImplementationDetail
     override fun getStubSerializer(): StubSerializer<KotlinValueArgumentStubImpl<T>> = stubSerializer
 }
