@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderEx
 import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
@@ -36,7 +35,7 @@ abstract class KaBaseSession(
     visibilityChecker: KaVisibilityChecker,
     typeCreator: KaTypeCreator,
     typeCreatorProvider: KaTypeCreatorProvider,
-    analysisScopeProvider: KaBaseAnalysisScopeProviderEx,
+    analysisScopeProvider: KaAnalysisScopeProvider,
     signatureSubstitutor: KaSignatureSubstitutor,
     resolveExtensionInfoProvider: KaResolveExtensionInfoProvider,
     compilerPluginGeneratedDeclarationsProvider: KaCompilerPluginGeneratedDeclarationsProvider,
@@ -66,7 +65,7 @@ abstract class KaBaseSession(
     KaVisibilityChecker by visibilityChecker,
     KaTypeCreator by typeCreator,
     KaTypeCreatorProvider by typeCreatorProvider,
-    KaBaseAnalysisScopeProviderEx by analysisScopeProvider,
+    KaAnalysisScopeProvider by analysisScopeProvider,
     KaSignatureSubstitutor by signatureSubstitutor,
     KaResolveExtensionInfoProvider by resolveExtensionInfoProvider,
     KaCompilerPluginGeneratedDeclarationsProvider by compilerPluginGeneratedDeclarationsProvider,

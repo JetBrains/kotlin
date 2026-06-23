@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 @KaImplementationDetail
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaInternals {
+    public val analysisScopeProvider: KaInternalsAnalysisScopeProvider
+
     public val evaluator: KaInternalsEvaluator
 
     public val expressionInformationProvider: KaInternalsExpressionInformationProvider

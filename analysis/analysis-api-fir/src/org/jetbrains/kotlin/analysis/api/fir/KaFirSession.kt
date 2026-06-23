@@ -73,7 +73,7 @@ private constructor(
     visibilityChecker = KaVisibilityCheckerBridge(analysisSessionProvider),
     typeCreator = KaFirTypeCreator(analysisSessionProvider),
     typeCreatorProvider = KaTypeCreatorProviderBridge(analysisSessionProvider),
-    analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),
+    analysisScopeProvider = KaAnalysisScopeProviderBridge(analysisSessionProvider),
     signatureSubstitutor = KaSignatureSubstitutorBridge(analysisSessionProvider),
     resolveExtensionInfoProvider = KaResolveExtensionInfoProviderBridge(analysisSessionProvider),
     compilerPluginGeneratedDeclarationsProvider = KaFirCompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider),
@@ -107,6 +107,9 @@ private constructor(
     override val evaluator: KaInternalsEvaluator = KaFirEvaluator(analysisSessionProvider)
 
     override val typeCreatorProvider: KaInternalsTypeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider)
+
+    override val analysisScopeProvider: KaInternalsAnalysisScopeProvider =
+        KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)

@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.getModule
-import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
+import org.jetbrains.kotlin.analysis.api.internals.KaInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
@@ -84,8 +84,8 @@ private val allowIllegalPsiAccess = ThreadLocal.withInitial { false }
 context(component: KaBaseSessionComponent<S>)
 fun <S : KaSession> PsiElement.checkValidity() {
     val session = component.analysisSession
-    val canBeAnalyzed = if (session is KaBaseSession) {
-        session.canBeAnalysedImpl(this)
+    val canBeAnalyzed = if (session is KaInternals) {
+        session.analysisScopeProvider.canBeAnalysedImpl(this)
     } else {
         // This `else` branch is a temporal workaround for the swift-export which creates its own KaSession implementation
         // It has to be removed after the swift-export dropped this API violation
