@@ -4,6 +4,8 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 dependencies {
@@ -38,10 +40,19 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
     compileOnly(libs.kotlinx.coroutines.core.jvm)
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
+}
+
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 optInToExperimentalCompilerApi()

@@ -491,7 +491,7 @@ private fun processCLib(
             }
 
             val serializedMetadata = stubIrOutput.metadata.write(ChunkedKlibModuleFragmentWriteStrategy(topLevelClassifierDeclarationsPerFile = 128)).run {
-                SerializedMetadata(header, fragments.map { it.map(::SerializedFragment) }, fragmentNames, metadataVersion.toArray())
+                SerializedMetadata(header, fragments, fragmentNames, metadataVersion.toArray())
             }
 
             createInteropLibrary(

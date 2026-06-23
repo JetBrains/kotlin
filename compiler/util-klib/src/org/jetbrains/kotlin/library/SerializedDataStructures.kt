@@ -7,26 +7,27 @@ package org.jetbrains.kotlin.library
 
 class SerializedMetadata(
     val module: ByteArray,
-    val fragments: List<List<SerializedFragment>>,
+    val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String>,
     val metadataVersion: IntArray,
 )
 
-sealed interface SerializedFragment {
-    val content: ByteArray
-}
+class SerializedFirMetadata(
+    val module: ByteArray,
+    val fragments: List<List<SerializedFirFile>>,
+    val fragmentNames: List<String>,
+    val metadataVersion: IntArray,
+)
 
-fun SerializedFragment(content: ByteArray): SerializedFragment = SerializedFragmentImpl(content)
-private class SerializedFragmentImpl(override val content: ByteArray) : SerializedFragment
-
-class SerializedFragmentWithSource(
-    override val content: ByteArray,
+class SerializedFirFile(
+    val name: String,
+    val content: ByteArray,
     /**
      * The path to the source file this fragment was generated from.
      * Can be null if the fragment was generated without a corresponding source file (e.g. for generated content).
      */
-    val sourceFilePath: String?,
-) : SerializedFragment
+    val path: String? = null,
+)
 
 class SerializedDeclaration(val id: Int, val bytes: ByteArray) {
     val size = bytes.size

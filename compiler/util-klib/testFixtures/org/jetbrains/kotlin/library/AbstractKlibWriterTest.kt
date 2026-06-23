@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest.Parameters
 import org.jetbrains.kotlin.library.AbstractKlibWriterTest.Parameters.KlibDependency
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.*
 import java.io.File
@@ -31,7 +30,6 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
 
         // Note: There is always some randomly generated metadata. Because there is no way to generate a klib without metadata.
         var metadata: SerializedMetadata = KlibMockDSL.generateRandomMetadata()
-        var fragmentTracker: KlibWrittenMetadataPackageFragmentTracker? = null
 
         class KlibDependency(val uniqueName: String, val path: String)
     }
@@ -121,7 +119,7 @@ abstract class AbstractKlibWriterTest<P : Parameters>(private val newParameters:
         val writtenKlib = writeKlib(parameters).unpackIfNecessary(parameters)
 
         val mockKlib = KlibMockDSL.mockKlib(createNewKlibDir()) {
-            metadata(parameters.metadata, parameters.fragmentTracker)
+            metadata(parameters.metadata)
             parameters.ir?.let { serializedIrModule ->
                 irModule(serializedIrModule)
             }
