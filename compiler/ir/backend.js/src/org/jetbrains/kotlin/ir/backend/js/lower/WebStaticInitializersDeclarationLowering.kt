@@ -143,14 +143,14 @@ abstract class WebStaticInitializersDeclarationLowering : FileLoweringPass {
 
         val initializers = buildList {
             for (declaration in container.declarations) {
-                // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
+                // Special handling of companion objects - if the static_init function is introduced, the Companion$getInstance
                 // body should be moved to the static_init body to preserve the correct order of initialization.
-                // _getInstance then calls static_init instead.
+                // $getInstance then calls static_init instead.
                 if (declaration is IrClass && declaration.isCompanion) {
                     declaration.objectGetInstanceFunction?.let { getInstance ->
                         val body = getInstance.body as? IrBlockBody ?: return@let
                         body.statements.let { statements ->
-                            // Relying on the fact that _getInstance always ends with IrReturn
+                            // Relying on the fact that $getInstance always ends with IrReturn
                             addAll(statements.dropLast(1))
                             val irReturn = statements.last()
                             statements.clear()
