@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
@@ -79,7 +78,7 @@ public interface KaVisibilityChecker : KaSessionComponent {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaUseSiteVisibilityChecker : KaLifetimeOwner {
+public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker {
     /**
      * Checks whether the [candidateSymbol] is visible at the current use-site.
      *
@@ -87,7 +86,7 @@ public interface KaUseSiteVisibilityChecker : KaLifetimeOwner {
      * @return `true` if the [candidateSymbol] is visible from the current use-site, `false` otherwise.
      */
     @KaExperimentalApi
-    public fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean
+    override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean
 }
 
 /**

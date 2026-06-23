@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker as createUseSiteVisibilityCheckerEndpoint
-import org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass as isVisibleInClassEndpoint
 import org.jetbrains.kotlin.analysis.api.visibility.isPublicApi as isPublicApiEndpoint
+import org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass as isVisibleInClassEndpoint
 
 /**
  * Routes the legacy [KaVisibilityChecker] surface through the new public `context(session: KaSession)` visibility endpoints, which in turn
@@ -34,7 +34,11 @@ internal class KaVisibilityCheckerBridge(
         receiverExpression: KtExpression?,
         position: PsiElement,
     ): KaUseSiteVisibilityChecker =
-        context(analysisSession) { createUseSiteVisibilityCheckerEndpoint(useSiteFile, receiverExpression, position) }
+        context(analysisSession) {
+            // The endpoint now returns the new visibility.KaUseSiteVisibilityChecker. Its only implementation also implements the legacy
+            // components.KaUseSiteVisibilityChecker, so narrowing the result back to the legacy surface is safe.
+            createUseSiteVisibilityCheckerEndpoint(useSiteFile, receiverExpression, position) as KaUseSiteVisibilityChecker
+        }
 
     override fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolean =
         context(analysisSession) { isVisibleInClassEndpoint(classSymbol) }

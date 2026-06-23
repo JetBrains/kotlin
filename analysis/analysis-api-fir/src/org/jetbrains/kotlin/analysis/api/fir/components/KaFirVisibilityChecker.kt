@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
-import org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPsiJavaClassSymbol
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
@@ -116,7 +116,7 @@ private class KaFirUseSiteVisibilityChecker(
     private val useSiteFile: KaFirFileSymbol,
     private val analysisSession: KaFirSession,
     override val token: KaLifetimeToken,
-) : KaUseSiteVisibilityChecker {
+) : org.jetbrains.kotlin.analysis.api.components.KaUseSiteVisibilityChecker {
     override fun isVisible(candidateSymbol: KaDeclarationSymbol): Boolean = withValidityAssertion {
         require(candidateSymbol is KaFirSymbol<*>)
 
