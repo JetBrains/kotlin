@@ -3,19 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.pipeline.jvm
+package org.jetbrains.kotlin.cli.pipeline.jvm.metadata
 
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibFileWriterPhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
 import org.jetbrains.kotlin.config.commonFragmentsOutputDir
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 
-object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
+internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmSerializeCommonMetadataPipelinePhase",
     preActions = setOf(PerformanceNotifications.KlibWritingStarted),
     postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
@@ -36,10 +36,9 @@ object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipeli
                 AllModulesFrontendOutput(listOf(output)),
                 configuration = configuration,
                 sourceFiles = input.sourceFiles,
-                isIncremental = true
             )
             val metadataInMemory = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
-            MetadataKlibFileWriterPhase.writeToDisc(
+            JvmMetadataKlibFileWriterPhase.writeToDisc(
                 metadataInMemory,
                 outputDir.resolve(output.session.moduleData.name.asStringStripSpecialMarkers())
             )

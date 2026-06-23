@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.metadata
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.config.fileMappingTracker
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -22,7 +21,6 @@ fun buildKotlinMetadataLibrary(
     configuration: CompilerConfiguration,
     serializedMetadata: SerializedMetadata,
     destDir: File,
-    isIncremental: Boolean,
 ) {
     val versions = KotlinLibraryVersioning(
         abiVersion = KotlinAbiVersion.CURRENT,
@@ -36,7 +34,6 @@ fun buildKotlinMetadataLibrary(
             versions(versions)
             platformAndTargets(BuiltInsPlatform.COMMON)
         }
-        allowIncrementalOverwriting(isIncremental)
-        includeMetadata(serializedMetadata, configuration.fileMappingTracker?.toICMetadataMappingTracker())
+        includeMetadata(serializedMetadata)
     }.writeTo(destDir.absolutePath)
 }

@@ -47,7 +47,7 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
     }
 
     private fun generateKlib(): String = mockKlib(tmpDir.resolve(generateRandomName(10))) {
-        metadata(generateRandomMetadata(), null)
+        metadata(generateRandomMetadata())
         resources()
         manifest(
             uniqueName = generateRandomName(20),

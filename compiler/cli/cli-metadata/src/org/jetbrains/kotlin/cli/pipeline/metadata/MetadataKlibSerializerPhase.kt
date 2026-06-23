@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.perfManager
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.SerializedFragment
-import org.jetbrains.kotlin.library.SerializedFragmentWithSource
-import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.util.metadataVersion
@@ -34,9 +30,9 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
-        (val firResult = frontendOutput, val configuration, val _ = sourceFiles, val isIncremental) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
         val metadataVersion = configuration.metadataVersion()
-        val fragments = mutableMapOf<String, MutableList<SerializedFragment>>()
+        val fragments = mutableMapOf<String, MutableList<SerializedFirFile>>()
 
         val analysisResult = firResult.outputs
         for (output in analysisResult) {
@@ -57,7 +53,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     languageVersionSettings,
                 )
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }
-                    .add(createSerializedFragment(isIncremental, packageFragment.toByteArray(), firFile))
+                    .add(SerializedFirFile(firFile.name, packageFragment.toByteArray(), firFile.sourceFile?.path))
             }
         }
 
@@ -69,7 +65,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         }
 
         val fragmentNames = mutableListOf<String>()
-        val fragmentParts = mutableListOf<List<SerializedFragment>>()
+        val fragmentParts = mutableListOf<List<SerializedFirFile>>()
 
         for ([fqName, fragment] in fragments.entries.sortedBy { it.key }) {
             fragmentNames += fqName
@@ -78,16 +74,9 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
         }
 
         val module = header.build().toByteArray()
-        val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
-        return MetadataInMemorySerializationArtifact(serializedMetadata, configuration, isIncremental)
+        val serializedMetadata = SerializedFirMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
+        return MetadataInMemorySerializationArtifact(serializedMetadata, configuration)
     }
-
-    private fun createSerializedFragment(isForIncrementalCompilation: Boolean, content: ByteArray, firFile: FirFile) =
-        if (isForIncrementalCompilation) {
-            SerializedFragmentWithSource(content, firFile.sourceFile?.path)
-        } else {
-            SerializedFragment(content)
-        }
 }
 
 object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
@@ -107,7 +96,7 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
     }
 
     fun writeToDisc(input: MetadataInMemorySerializationArtifact, destDir: java.io.File) {
-        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir, input.isIncremental)
+        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
 
         loadSizeInfo(destDir.toPath().absolute())?.flatten()?.let { stats ->
             input.configuration.perfManager?.registerKlibElementStats(stats)

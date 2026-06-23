@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.commonizer.konan
 
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.library.SerializedFragment
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
@@ -71,7 +70,7 @@ internal class DefaultModulesProvider private constructor(
         val fragmentNames = parseModuleHeader(moduleHeader).packageFragmentNameList.toSet()
         val fragments = fragmentNames.map { fragmentName ->
             val partNames = metadata.getPackageFragmentNames(fragmentName)
-            partNames.map { partName -> SerializedFragment(metadata.getPackageFragment(fragmentName, partName)) }
+            partNames.map { partName -> metadata.getPackageFragment(fragmentName, partName) }
         }
 
         return SerializedMetadata(

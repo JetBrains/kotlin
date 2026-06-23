@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.commonizer.tree.CirTreeRoot
 import org.jetbrains.kotlin.commonizer.tree.defaultCirTreeRootDeserializer
 import org.jetbrains.kotlin.commonizer.tree.mergeCirTree
 import org.jetbrains.kotlin.commonizer.utils.progress
-import org.jetbrains.kotlin.library.SerializedFragment
 import org.jetbrains.kotlin.library.SerializedMetadata
 
 fun runCommonization(parameters: CommonizerParameters) {
@@ -90,10 +89,9 @@ internal fun serializeTarget(
     CirTreeSerializer.serializeSingleTarget(commonized, commonized.indexOfCommon, parameters.statsCollector) { metadataModule ->
         val libraryName = metadataModule.name
         val serializedMetadata = with(metadataModule.write(ChunkedKlibModuleFragmentWriteStrategy())) {
-            val serializedFragments = fragments.map { fragment -> fragment.map { SerializedFragment(it) } }
             SerializedMetadata(
                 header,
-                serializedFragments,
+                fragments,
                 fragmentNames,
                 metadataVersion.toArray()
             )

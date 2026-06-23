@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
+import org.jetbrains.kotlin.cli.pipeline.jvm.metadata.JvmSerializeCommonMetadataPipelinePhase
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.util.PerformanceManager
