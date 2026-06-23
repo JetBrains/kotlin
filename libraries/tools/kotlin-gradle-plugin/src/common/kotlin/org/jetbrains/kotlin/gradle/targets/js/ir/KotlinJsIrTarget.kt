@@ -52,10 +52,8 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmJsTargetDsl,
-    KotlinWasmWasiTargetDsl,
-    KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl {
+    KotlinWasmTargetDsl,
+    KotlinJsSubTargetContainerDsl {
 
     @Deprecated("Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.")
     constructor(
@@ -142,7 +140,7 @@ internal constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    internal fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -196,14 +194,19 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
+    internal open fun KotlinBrowserJsIr.bundleConfigurator() {
+        subTargetConfigurators.add(WebpackConfigurator(this))
+    }
+
     //region Browser
+
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
+            bundleConfigurator()
         }
     }
 
@@ -212,6 +215,7 @@ internal constructor(
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
+
     //endregion
 
     //region node.js
@@ -238,29 +242,7 @@ internal constructor(
     }
     //endregion
 
-    //region d8
-    @OptIn(ExperimentalWasmDsl::class)
-    private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.rootProject) },
-            { WasmNodeJsRootPlugin.apply(project.rootProject) },
-        )
-
-        addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
-        }
-    }
-
-    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
-
-    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
-        body(d8)
-    }
-    //endregion
-
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
+    internal fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
 
