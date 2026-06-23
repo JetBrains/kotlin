@@ -1,4 +1,4 @@
-public abstract class Awd /* test.Awd*/ {
+public abstract class Awd /* test.Awd*/ extends kotlin.collections.AbstractMap<@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String> {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.lang.String toString();//  toString()
