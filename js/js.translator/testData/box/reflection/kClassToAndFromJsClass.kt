@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
+// LANGUAGE: +JsExportInterfacesInImplementableWay
 package foo
 
 import kotlin.reflect.KClass

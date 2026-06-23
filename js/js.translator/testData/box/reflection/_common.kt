@@ -1,3 +1,5 @@
+@file:JsExport
+
 package foo
 
 open class A
@@ -21,6 +23,7 @@ enum class E {
 @JsName("Q")
 class R
 
+@JsExport.Ignore
 fun check(x: Any, y: Any, shouldBeEqual: Boolean = true, shouldBeSame: Boolean = true) {
     assertNotEquals(null, x)
     assertNotEquals(null, y)
