@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.name.FqName
 /**
  * Direct-injection seam used to plug `java-direct` into the FIR JVM sessions through the
  * `createJavaFacade` lambda parameter on `FirJvmSessionFactory.createSourceSession` and
- * `FirJvmSessionFactory.createLibrarySession`. The production CLI populates the builder in
- * `JvmFrontendPipelinePhase.prepareJvmSessions`; test fixtures populate the equivalent
- * `JavaFacadeBuilderProvider` `TestService` via `JavaDirectFacadeBuilderProvider`.
+ * `FirJvmSessionFactory.createLibrarySession`. `JvmFrontendPipelinePhase.prepareJvmSessions`
+ * populates the builder when the `JvmAnalysisFlags.useJavaDirect` flag is set.
  *
  * The facade dispatches on the search scope:
  *

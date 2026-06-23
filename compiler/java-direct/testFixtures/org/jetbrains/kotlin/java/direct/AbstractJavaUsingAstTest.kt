@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.java.direct
 
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.frontend.fir.JavaFacadeBuilderProvider
 import org.jetbrains.kotlin.test.runners.AbstractFirPhasedDiagnosticTest
 
 abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
@@ -18,7 +17,6 @@ abstract class AbstractJavaUsingAstTest : AbstractFirPhasedDiagnosticTest(FirPar
                 ::OnlyTestsWithJavaSourcesMetaConfigurator
             )
             useConfigurators(::JavaDirectConfigurator)
-            useAdditionalService<JavaFacadeBuilderProvider>(::JavaDirectFacadeBuilderProvider)
         }
     }
 }
