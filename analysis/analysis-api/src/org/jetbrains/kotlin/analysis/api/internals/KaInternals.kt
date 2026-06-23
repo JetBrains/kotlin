@@ -30,6 +30,8 @@ public interface KaInternals {
 
     public val renderer: KaInternalsRenderer
 
+    public val resolveExtensionInfoProvider: KaInternalsResolveExtensionInfoProvider
+
     public val resolver: KaInternalsResolver
 
     public val signatureSubstitutor: KaInternalsSignatureSubstitutor

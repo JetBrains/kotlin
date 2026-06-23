@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.resolveExtensionInfoProvider
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.isResolveExtensionFile
-import org.jetbrains.kotlin.analysis.api.components.resolveExtensionNavigationElements
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.KtResolveExtensionTestSupport
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.resolve.extensions.getDescription
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.isResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionNavigationElements
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
