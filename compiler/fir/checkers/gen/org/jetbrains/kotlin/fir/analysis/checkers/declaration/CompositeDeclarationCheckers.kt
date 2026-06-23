@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
  * DO NOT MODIFY IT MANUALLY
  */
 
-class ComposedDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : DeclarationCheckers() {
+class CompositeDeclarationCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : DeclarationCheckers() {
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>

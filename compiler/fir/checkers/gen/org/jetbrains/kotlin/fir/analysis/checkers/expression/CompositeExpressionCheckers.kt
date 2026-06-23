@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
  * DO NOT MODIFY IT MANUALLY
  */
 
-class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : ExpressionCheckers() {
+class CompositeExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : ExpressionCheckers() {
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>

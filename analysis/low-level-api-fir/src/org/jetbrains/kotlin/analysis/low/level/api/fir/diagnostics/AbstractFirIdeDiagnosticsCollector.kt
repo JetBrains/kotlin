@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.*
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.CompositeDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FilteredDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.CompositeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckersDiagnosticComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FilteredExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.type.ComposedTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.type.CompositeTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.FilteredTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckersDiagnosticComponent
@@ -234,7 +234,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
     private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
         return when (declarationCheckers.size) {
             1 -> declarationCheckers.single()
-            else -> ComposedDeclarationCheckers { true }.apply {
+            else -> CompositeDeclarationCheckers { true }.apply {
                 declarationCheckers.forEach(::register)
             }
         }
@@ -248,7 +248,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
     private fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
         return when (expressionCheckers.size) {
             1 -> expressionCheckers.single()
-            else -> ComposedExpressionCheckers { true }.apply {
+            else -> CompositeExpressionCheckers { true }.apply {
                 expressionCheckers.forEach(::register)
             }
         }
@@ -262,7 +262,7 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
     private fun createTypeCheckers(typeCheckers: List<TypeCheckers>): TypeCheckers {
         return when (typeCheckers.size) {
             1 -> typeCheckers.single()
-            else -> ComposedTypeCheckers { true }.apply {
+            else -> CompositeTypeCheckers { true }.apply {
                 typeCheckers.forEach(::register)
             }
         }

@@ -128,14 +128,14 @@ class Generator(
         }
     }
 
-    private fun generateComposedComponent() {
-        val composedComponentName = "Composed$checkersComponentName"
-        val filename = "${composedComponentName}.kt"
+    private fun generateCompositeComponent() {
+        val compositeComponentName = "Composite$checkersComponentName"
+        val filename = "${compositeComponentName}.kt"
         generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports(true, MPP_CHECKER_KIND_FQN, MPP_CHECKER_WITH_KIND_FQN)
             printGeneratedMessage()
-            println("class $composedComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
+            println("class $compositeComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
             withIndent {
                 println("constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })")
                 println()
@@ -378,7 +378,7 @@ class Generator(
     fun generate() {
         generateAliases()
         generateAbstractCheckersComponent()
-        generateComposedComponent()
+        generateCompositeComponent()
         generateFilteredComponent()
         generateDiagnosticComponent()
     }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
  * DO NOT MODIFY IT MANUALLY
  */
 
-class ComposedTypeCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : TypeCheckers() {
+class CompositeTypeCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : TypeCheckers() {
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val typeRefCheckers: Set<FirTypeRefChecker>
