@@ -166,6 +166,10 @@ fun Project.enableCrossCompilation(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION, enabled.toString())
 }
 
+fun Project.enableKmpSeparateCompilation(enabled: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION, enabled.toString())
+}
+
 internal fun Project.setUklibResolutionStrategy(strategy: KmpResolutionStrategy) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_RESOLUTION_STRATEGY, strategy.propertyName)
 }

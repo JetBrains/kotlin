@@ -42,9 +42,10 @@ import javax.inject.Inject
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
     KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
-    return kotlinPropertiesProvider.enableCInteropCommonization
-        ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin
-        ?: false
+    return (kotlinPropertiesProvider.separateKmpCompilation.orNull ||
+            kotlinPropertiesProvider.enableCInteropCommonization
+            ?: kotlinPropertiesProvider.enableCInteropCommonizationSetByExternalPlugin
+            ?: false)
 }
 
 internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
