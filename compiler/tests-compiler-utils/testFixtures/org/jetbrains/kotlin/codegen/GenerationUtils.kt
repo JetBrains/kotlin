@@ -112,7 +112,7 @@ object GenerationUtils {
         )
         val backendInput = JvmIrCodegenFactory.BackendInput(
             moduleFragment, pluginContext.irBuiltIns, symbolTable, components.irProviders,
-            fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
+            debuggerExtensions = null, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
         )
         JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
         return generationState

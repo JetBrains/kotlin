@@ -97,7 +97,7 @@ internal fun generateCodeFromIr(
             input.pluginContext.irBuiltIns,
             input.symbolTable,
             input.components.irProviders,
-            input.extensions,
+            debuggerExtensions = null,
             FirJvmBackendExtension(
                 input.components,
                 input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()

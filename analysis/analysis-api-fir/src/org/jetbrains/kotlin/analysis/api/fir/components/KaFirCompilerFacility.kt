@@ -95,7 +95,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -868,7 +867,6 @@ internal class KaFirCompilerFacility(
         codegenFactory: JvmIrCodegenFactory,
         generateClassFilter: GenerationState.GenerateClassFilter,
         diagnosticsCollector: BaseDiagnosticsCollector,
-        jvmGeneratorExtensions: JvmGeneratorExtensions,
         compiledCodeProvider: CompiledCodeProvider,
     ): KaCompilationResult {
         val matchingClassNames = mutableSetOf<String>()
@@ -905,7 +903,7 @@ internal class KaFirCompilerFacility(
             fir2IrResult.pluginContext.irBuiltIns,
             fir2IrResult.symbolTable,
             fir2IrResult.components.irProviders,
-            CompilerFacilityJvmGeneratorExtensions(jvmGeneratorExtensions),
+            CompilerFacilityJvmDebuggerExtensions(),
             FirJvmBackendExtension(fir2IrResult.components, null),
             fir2IrResult.pluginContext,
         )
@@ -1055,7 +1053,6 @@ internal class KaFirCompilerFacility(
             codegenFactory,
             generateClassFilter,
             diagnosticsCollector,
-            baseFir2IrExtensions,
             compiledCodeProvider
         )
 
@@ -1301,9 +1298,7 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    private class CompilerFacilityJvmGeneratorExtensions(
-        private val delegate: JvmGeneratorExtensions
-    ) : StubGeneratorExtensions(), JvmGeneratorExtensions by delegate {
+    private class CompilerFacilityJvmDebuggerExtensions : JvmDebuggerExtensions {
         /**
          * This method is used from `org.jetbrains.kotlin.backend.jvm.lower.SpecialAccessLowering.visitCall`
          * (via generateReflectiveAccessForGetter) and it is called for the private access member lowered to the getter/setter call.

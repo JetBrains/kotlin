@@ -476,7 +476,7 @@ internal class SpecialAccessLowering(
         // It is not the case when we compile code fragment from the debugger, so we need to handle special cases here.
         return property.isNonPrivate
                 || property.isDelegated
-                || (context.generatorExtensions as StubGeneratorExtensions).isAccessorWithExplicitImplementation(accessor)
+                || context.debuggerExtensions?.isAccessorWithExplicitImplementation(accessor) == true
     }
 
     // Returns a pair of the _type_ containing the field and the _instance_ on

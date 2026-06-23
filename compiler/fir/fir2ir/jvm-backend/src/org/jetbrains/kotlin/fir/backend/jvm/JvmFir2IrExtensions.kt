@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.CachedFieldsForObjectInstances
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.overrides.IrJavaIncompatibilityRulesOverridabilityCondition
 import org.jetbrains.kotlin.descriptors.Modality
@@ -41,13 +39,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class JvmFir2IrExtensions : Fir2IrExtensions, JvmGeneratorExtensions {
+class JvmFir2IrExtensions : Fir2IrExtensions {
     override val parametersAreAssignable: Boolean get() = true
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
         get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
-
-    override val cachedFields: CachedFieldsForObjectInstances =
-        CachedFieldsForObjectInstances(IrFactoryImpl)
 
     private val kotlinIrInternalPackage =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)

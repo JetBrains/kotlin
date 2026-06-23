@@ -73,7 +73,7 @@ class JvmIrCodegenFactory(
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irProviders: List<IrProvider>,
-        val extensions: JvmGeneratorExtensions,
+        val debuggerExtensions: JvmDebuggerExtensions?,
         val backendExtension: JvmBackendExtension,
         val pluginContext: IrPluginContext?,
     )
@@ -109,11 +109,11 @@ class JvmIrCodegenFactory(
     }
 
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
-        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val extensions, val backendExtension, val irPluginContext = pluginContext) = input
+        (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val debuggerExtensions, val backendExtension, val irPluginContext = pluginContext) = input
 
         val evaluatorData = ideCodegenSettings.evaluatorData
         val context = JvmBackendContext(
-            state, irBuiltIns, symbolTable, extensions,
+            state, irBuiltIns, symbolTable, debuggerExtensions,
             backendExtension, irPluginContext, evaluatorData
         )
         val generationExtensions = state.configuration.filteredExtensions

@@ -259,7 +259,7 @@ class K1JvmIrCodegenFactory(
             psi2irContext.irBuiltIns,
             symbolTable,
             irProviders,
-            jvmGeneratorExtensions,
+            debuggerExtensions = null,
             K1JvmBackendExtension,
             pluginContext,
         )

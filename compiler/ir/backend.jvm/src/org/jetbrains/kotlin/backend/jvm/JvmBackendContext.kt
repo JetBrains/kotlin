@@ -41,7 +41,7 @@ class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    val generatorExtensions: JvmGeneratorExtensions,
+    val debuggerExtensions: JvmDebuggerExtensions?,
     val backendExtension: JvmBackendExtension,
     val irPluginContext: IrPluginContext?,
     val evaluatorData: JvmEvaluatorData?
@@ -64,7 +64,7 @@ class JvmBackendContext(
 
     override val innerClassesSupport: InnerClassesSupport = JvmInnerClassesSupport(irFactory)
     val cachedDeclarations = JvmCachedDeclarations(
-        this, generatorExtensions.cachedFields
+        this, CachedFieldsForObjectInstances(IrFactoryImpl)
     )
 
     override val diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
