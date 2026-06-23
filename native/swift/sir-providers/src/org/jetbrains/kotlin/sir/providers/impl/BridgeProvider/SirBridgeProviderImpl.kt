@@ -467,8 +467,8 @@ private class BridgeFunctionDescriptor(
 
             val returnBridge = returnType
             require(returnBridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
-            add("    val __result = $swiftBridgeName($callArgs)")
-            add("    return ${returnBridge.inKotlinSources.swiftToKotlin(typeNamer, "__result")}")
+            add("    val _result = $swiftBridgeName($callArgs)")
+            add("    return ${returnBridge.inKotlinSources.swiftToKotlin(typeNamer, "_result")}")
 
             add("}")
         }

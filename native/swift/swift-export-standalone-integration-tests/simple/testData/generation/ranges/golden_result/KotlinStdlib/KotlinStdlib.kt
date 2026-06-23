@@ -14,8 +14,8 @@ internal external fun kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optio
 public fun kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: kotlin.Comparable<kotlin.Any?>, other: kotlin.Any?): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __other = if (other == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(other)
-    val __result = kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __other)
-    return __result
+    val _result = kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __other)
+    return _result
 }
 
 @ImportedBridge("kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse_swift")
@@ -25,8 +25,8 @@ internal external fun kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU
 public fun kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse(self: kotlin.ranges.ClosedRange<kotlin.Comparable<kotlin.Any?>>, value: kotlin.Comparable<kotlin.Any?>): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __value = kotlin.native.internal.ref.createRetainedExternalRCRef(value)
-    val __result = kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse_swift(__self, __value)
-    return __result
+    val _result = kotlin_ranges_ClosedRange_contains__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_Comparable____reverse_swift(__self, __value)
+    return _result
 }
 
 @ImportedBridge("kotlin_ranges_ClosedRange_isEmpty__reverse_swift")
@@ -35,8 +35,8 @@ internal external fun kotlin_ranges_ClosedRange_isEmpty__reverse_swift(self: kot
 @BindReverseBridgeToMethod(kotlin.ranges.ClosedRange::class, "isEmpty")
 public fun kotlin_ranges_ClosedRange_isEmpty__reverse(self: kotlin.ranges.ClosedRange<kotlin.Comparable<kotlin.Any?>>): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_ranges_ClosedRange_isEmpty__reverse_swift(__self)
-    return __result
+    val _result = kotlin_ranges_ClosedRange_isEmpty__reverse_swift(__self)
+    return _result
 }
 
 @ExportedBridge("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")

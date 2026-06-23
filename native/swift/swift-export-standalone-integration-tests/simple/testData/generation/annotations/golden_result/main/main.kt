@@ -54,8 +54,8 @@ internal external fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction__
 @BindReverseBridgeToMethod(InterfaceWithDeprecatedMembers::class, "deprecatedWarningFunction")
 public fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse(self: InterfaceWithDeprecatedMembers): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("InterfaceWithDeprecatedMembers_regularFunction__reverse_swift")
@@ -64,8 +64,8 @@ internal external fun InterfaceWithDeprecatedMembers_regularFunction__reverse_sw
 @BindReverseBridgeToMethod(InterfaceWithDeprecatedMembers::class, "regularFunction")
 public fun InterfaceWithDeprecatedMembers_regularFunction__reverse(self: InterfaceWithDeprecatedMembers): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = InterfaceWithDeprecatedMembers_regularFunction__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift")
@@ -75,8 +75,8 @@ internal external fun KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_Strin
 public fun KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse(self: KotlinInterfaceC, swiftParamD: kotlin.String): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __swiftParamD = swiftParamD.objcPtr()
-    val __result = KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(__self, __swiftParamD)
-    return run<Unit> { __result }
+    val _result = KotlinInterfaceC_kotlinFunD__TypesOfArguments__Swift_String____reverse_swift(__self, __swiftParamD)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift")
@@ -86,8 +86,8 @@ internal external fun KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_Strin
 public fun KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse(self: KotlinInterfaceC, kotlinParamE: kotlin.String): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __kotlinParamE = kotlinParamE.objcPtr()
-    val __result = KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(__self, __kotlinParamE)
-    return run<Unit> { __result }
+    val _result = KotlinInterfaceC_kotlinFunE__TypesOfArguments__Swift_String____reverse_swift(__self, __kotlinParamE)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("NonDeprecatedInterface_bar__reverse_swift")
@@ -96,8 +96,8 @@ internal external fun NonDeprecatedInterface_bar__reverse_swift(self: kotlin.nat
 @BindReverseBridgeToMethod(NonDeprecatedInterface::class, "bar")
 public fun NonDeprecatedInterface_bar__reverse(self: NonDeprecatedInterface): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = NonDeprecatedInterface_bar__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = NonDeprecatedInterface_bar__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("PublicClassImplHiddenInterface_bar__reverse_swift")
@@ -106,8 +106,8 @@ internal external fun PublicClassImplHiddenInterface_bar__reverse_swift(self: ko
 @BindReverseBridgeToMethod(PublicClassImplHiddenInterface::class, "bar")
 public fun PublicClassImplHiddenInterface_bar__reverse(self: PublicClassImplHiddenInterface): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = PublicClassImplHiddenInterface_bar__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = PublicClassImplHiddenInterface_bar__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("PublicClassImplHiddenInterface_foo__reverse_swift")
@@ -116,8 +116,8 @@ internal external fun PublicClassImplHiddenInterface_foo__reverse_swift(self: ko
 @BindReverseBridgeToMethod(PublicClassImplHiddenInterface::class, "foo")
 public fun PublicClassImplHiddenInterface_foo__reverse(self: PublicClassImplHiddenInterface): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = PublicClassImplHiddenInterface_foo__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = PublicClassImplHiddenInterface_foo__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("SomeInterface_fooB__reverse_swift")
@@ -126,8 +126,8 @@ internal external fun SomeInterface_fooB__reverse_swift(self: kotlin.native.inte
 @BindReverseBridgeToMethod(SomeInterface::class, "fooB")
 public fun SomeInterface_fooB__reverse(self: SomeInterface): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = SomeInterface_fooB__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = SomeInterface_fooB__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("deprecatedT_deprecationInheritedF__reverse_swift")
@@ -136,8 +136,8 @@ internal external fun deprecatedT_deprecationInheritedF__reverse_swift(self: kot
 @BindReverseBridgeToMethod(deprecatedT::class, "deprecationInheritedF")
 public fun deprecatedT_deprecationInheritedF__reverse(self: deprecatedT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = deprecatedT_deprecationInheritedF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = deprecatedT_deprecationInheritedF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("deprecatedT_deprecationRestatedF__reverse_swift")
@@ -146,8 +146,8 @@ internal external fun deprecatedT_deprecationRestatedF__reverse_swift(self: kotl
 @BindReverseBridgeToMethod(deprecatedT::class, "deprecationRestatedF")
 public fun deprecatedT_deprecationRestatedF__reverse(self: deprecatedT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = deprecatedT_deprecationRestatedF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = deprecatedT_deprecationRestatedF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("normalT_deprecatedF__reverse_swift")
@@ -156,8 +156,8 @@ internal external fun normalT_deprecatedF__reverse_swift(self: kotlin.native.int
 @BindReverseBridgeToMethod(normalT::class, "deprecatedF")
 public fun normalT_deprecatedF__reverse(self: normalT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = normalT_deprecatedF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = normalT_deprecatedF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("normalT_deprecatedInFutureF__reverse_swift")
@@ -166,8 +166,8 @@ internal external fun normalT_deprecatedInFutureF__reverse_swift(self: kotlin.na
 @BindReverseBridgeToMethod(normalT::class, "deprecatedInFutureF")
 public fun normalT_deprecatedInFutureF__reverse(self: normalT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = normalT_deprecatedInFutureF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = normalT_deprecatedInFutureF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("normalT_normalF__reverse_swift")
@@ -176,8 +176,8 @@ internal external fun normalT_normalF__reverse_swift(self: kotlin.native.interna
 @BindReverseBridgeToMethod(normalT::class, "normalF")
 public fun normalT_normalF__reverse(self: normalT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = normalT_normalF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = normalT_normalF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("normalT_obsoletedInFutureF__reverse_swift")
@@ -186,8 +186,8 @@ internal external fun normalT_obsoletedInFutureF__reverse_swift(self: kotlin.nat
 @BindReverseBridgeToMethod(normalT::class, "obsoletedInFutureF")
 public fun normalT_obsoletedInFutureF__reverse(self: normalT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = normalT_obsoletedInFutureF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = normalT_obsoletedInFutureF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("normalT_removedInFutureF__reverse_swift")
@@ -196,8 +196,8 @@ internal external fun normalT_removedInFutureF__reverse_swift(self: kotlin.nativ
 @BindReverseBridgeToMethod(normalT::class, "removedInFutureF")
 public fun normalT_removedInFutureF__reverse(self: normalT): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = normalT_removedInFutureF__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = normalT_removedInFutureF__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ExportedBridge("ClassWithDeprecatedMembersFromInterface_deprecatedWarningFunction")

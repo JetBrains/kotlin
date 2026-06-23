@@ -19,8 +19,8 @@ internal external fun funinterface_FunctionalInterface_invoke__reverse_swift(sel
 @BindReverseBridgeToMethod(funinterface.FunctionalInterface::class, "invoke")
 public fun funinterface_FunctionalInterface_invoke__reverse(self: funinterface.FunctionalInterface): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface_FunctionalInterface_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface_FunctionalInterface_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift")
@@ -29,8 +29,8 @@ internal external fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation
 @BindReverseBridgeToMethod(funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation::class, "invoke")
 public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse(self: funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift")
@@ -39,8 +39,8 @@ internal external fun funinterface__123FunctionalInterfaceWithLeadingNumbers_inv
 @BindReverseBridgeToMethod(funinterface._123FunctionalInterfaceWithLeadingNumbers::class, "invoke")
 public fun funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse(self: funinterface._123FunctionalInterfaceWithLeadingNumbers): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift")
@@ -49,8 +49,8 @@ internal external fun funinterface__123XMLFunctionalInterfaceWithLeadingUndersco
 @BindReverseBridgeToMethod(funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation::class, "invoke")
 public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse(self: funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift")
@@ -59,8 +59,8 @@ internal external fun funinterface__FunctionalInterfaceWithLeadingUnderscore_inv
 @BindReverseBridgeToMethod(funinterface._FunctionalInterfaceWithLeadingUnderscore::class, "invoke")
 public fun funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse(self: funinterface._FunctionalInterfaceWithLeadingUnderscore): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift")
@@ -69,8 +69,8 @@ internal external fun funinterface_functionalInterfaceWithAlreadyLowercaseLeadin
 @BindReverseBridgeToMethod(funinterface.functionalInterfaceWithAlreadyLowercaseLeading::class, "invoke")
 public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse(self: funinterface.functionalInterfaceWithAlreadyLowercaseLeading): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(__self)
-    return __result
+    val _result = funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(__self)
+    return _result
 }
 
 @ExportedBridge("funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__")

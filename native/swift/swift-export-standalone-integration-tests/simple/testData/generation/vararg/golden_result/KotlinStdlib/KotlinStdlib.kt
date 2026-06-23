@@ -17,8 +17,8 @@ internal external fun kotlin_Number_toByte__reverse_swift(self: kotlin.native.in
 @BindReverseBridgeToMethod(kotlin.Number::class, "toByte")
 public fun kotlin_Number_toByte__reverse(self: kotlin.Number): Byte {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toByte__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toByte__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toChar__reverse_swift")
@@ -27,8 +27,8 @@ internal external fun kotlin_Number_toChar__reverse_swift(self: kotlin.native.in
 @BindReverseBridgeToMethod(kotlin.Number::class, "toChar")
 public fun kotlin_Number_toChar__reverse(self: kotlin.Number): Char {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toChar__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toChar__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toDouble__reverse_swift")
@@ -37,8 +37,8 @@ internal external fun kotlin_Number_toDouble__reverse_swift(self: kotlin.native.
 @BindReverseBridgeToMethod(kotlin.Number::class, "toDouble")
 public fun kotlin_Number_toDouble__reverse(self: kotlin.Number): Double {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toDouble__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toDouble__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toFloat__reverse_swift")
@@ -47,8 +47,8 @@ internal external fun kotlin_Number_toFloat__reverse_swift(self: kotlin.native.i
 @BindReverseBridgeToMethod(kotlin.Number::class, "toFloat")
 public fun kotlin_Number_toFloat__reverse(self: kotlin.Number): Float {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toFloat__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toFloat__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toInt__reverse_swift")
@@ -57,8 +57,8 @@ internal external fun kotlin_Number_toInt__reverse_swift(self: kotlin.native.int
 @BindReverseBridgeToMethod(kotlin.Number::class, "toInt")
 public fun kotlin_Number_toInt__reverse(self: kotlin.Number): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toInt__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toInt__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toLong__reverse_swift")
@@ -67,8 +67,8 @@ internal external fun kotlin_Number_toLong__reverse_swift(self: kotlin.native.in
 @BindReverseBridgeToMethod(kotlin.Number::class, "toLong")
 public fun kotlin_Number_toLong__reverse(self: kotlin.Number): Long {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toLong__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toLong__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_Number_toShort__reverse_swift")
@@ -77,8 +77,8 @@ internal external fun kotlin_Number_toShort__reverse_swift(self: kotlin.native.i
 @BindReverseBridgeToMethod(kotlin.Number::class, "toShort")
 public fun kotlin_Number_toShort__reverse(self: kotlin.Number): Short {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_Number_toShort__reverse_swift(__self)
-    return __result
+    val _result = kotlin_Number_toShort__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_collections_BooleanIterator_nextBoolean__reverse_swift")
@@ -87,8 +87,8 @@ internal external fun kotlin_collections_BooleanIterator_nextBoolean__reverse_sw
 @BindReverseBridgeToMethod(kotlin.collections.BooleanIterator::class, "nextBoolean")
 public fun kotlin_collections_BooleanIterator_nextBoolean__reverse(self: kotlin.collections.BooleanIterator): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(__self)
-    return __result
+    val _result = kotlin_collections_BooleanIterator_nextBoolean__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("kotlin_collections_IntIterator_nextInt__reverse_swift")
@@ -97,8 +97,8 @@ internal external fun kotlin_collections_IntIterator_nextInt__reverse_swift(self
 @BindReverseBridgeToMethod(kotlin.collections.IntIterator::class, "nextInt")
 public fun kotlin_collections_IntIterator_nextInt__reverse(self: kotlin.collections.IntIterator): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = kotlin_collections_IntIterator_nextInt__reverse_swift(__self)
-    return __result
+    val _result = kotlin_collections_IntIterator_nextInt__reverse_swift(__self)
+    return _result
 }
 
 @ExportedBridge("kotlin_BooleanArray_get__TypesOfArguments__Swift_Int32__")

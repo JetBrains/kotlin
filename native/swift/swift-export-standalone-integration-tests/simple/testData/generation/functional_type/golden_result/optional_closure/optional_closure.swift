@@ -69,7 +69,10 @@ extension optional_closure.MyInterface where Self : optional_closure.__MyInterfa
     ) -> Swift.Void {
         return { MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(self.__externalRCRef(), arg.map { it in {
             let originalBlock: () -> Swift.Void = it
-            return { return { originalBlock(); return true }() }
+            return {
+                let _result = originalBlock()
+                return { _result; return true }()
+            }
         }() } ?? nil); return () }()
     }
 }

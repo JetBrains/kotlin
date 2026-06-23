@@ -60,8 +60,8 @@ internal external fun Barable_bar__TypesOfArguments__anyU20main_Foeble____revers
 public fun Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse(self: Barable, arg: Foeble): Barable {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
-    val __result = Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as Barable
+    val _result = Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Barable
 }
 
 @ImportedBridge("Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")
@@ -71,8 +71,8 @@ internal external fun Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse
 public fun Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse(self: Foeble, arg: Foeble): Foeble {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __arg = kotlin.native.internal.ref.createRetainedExternalRCRef(arg)
-    val __result = Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
-    return kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as Foeble
+    val _result = Foeble_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift(__self, __arg)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foeble
 }
 
 @ExportedBridge("Bar_bar__TypesOfArguments__anyU20main_Foeble__")

@@ -16,8 +16,8 @@ internal external fun AbstractBase_abstractMethod__reverse_swift(self: kotlin.na
 @BindReverseBridgeToMethod(AbstractBase::class, "abstractMethod")
 public fun AbstractBase_abstractMethod__reverse(self: AbstractBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = AbstractBase_abstractMethod__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = AbstractBase_abstractMethod__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("AbstractBase_concreteMethod__reverse_swift")
@@ -26,8 +26,8 @@ internal external fun AbstractBase_concreteMethod__reverse_swift(self: kotlin.na
 @BindReverseBridgeToMethod(AbstractBase::class, "concreteMethod")
 public fun AbstractBase_concreteMethod__reverse(self: AbstractBase): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = AbstractBase_concreteMethod__reverse_swift(__self)
-    return __result
+    val _result = AbstractBase_concreteMethod__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("Base_count__reverse_swift")
@@ -36,8 +36,8 @@ internal external fun Base_count__reverse_swift(self: kotlin.native.internal.Nat
 @BindReverseBridgeToMethod(Base::class, "count")
 public fun Base_count__reverse(self: Base): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = Base_count__reverse_swift(__self)
-    return __result
+    val _result = Base_count__reverse_swift(__self)
+    return _result
 }
 
 @ImportedBridge("Base_greet__TypesOfArguments__Swift_String____reverse_swift")
@@ -47,8 +47,8 @@ internal external fun Base_greet__TypesOfArguments__Swift_String____reverse_swif
 public fun Base_greet__TypesOfArguments__Swift_String____reverse(self: Base, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    val __result = Base_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = Base_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift")
@@ -58,8 +58,8 @@ internal external fun GreeterBase_greet__TypesOfArguments__Swift_String____rever
 public fun GreeterBase_greet__TypesOfArguments__Swift_String____reverse(self: GreeterBase, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    val __result = GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = GreeterBase_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("GreeterBase_salutation__reverse_swift")
@@ -68,8 +68,8 @@ internal external fun GreeterBase_salutation__reverse_swift(self: kotlin.native.
 @BindReverseBridgeToMethod(GreeterBase::class, "salutation")
 public fun GreeterBase_salutation__reverse(self: GreeterBase): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = GreeterBase_salutation__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = GreeterBase_salutation__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("Greeter_greet__TypesOfArguments__Swift_String____reverse_swift")
@@ -79,8 +79,8 @@ internal external fun Greeter_greet__TypesOfArguments__Swift_String____reverse_s
 public fun Greeter_greet__TypesOfArguments__Swift_String____reverse(self: Greeter, name: kotlin.String): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __name = name.objcPtr()
-    val __result = Greeter_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = Greeter_greet__TypesOfArguments__Swift_String____reverse_swift(__self, __name)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ImportedBridge("Greeter_salutation__reverse_swift")
@@ -89,8 +89,8 @@ internal external fun Greeter_salutation__reverse_swift(self: kotlin.native.inte
 @BindReverseBridgeToMethod(Greeter::class, "salutation")
 public fun Greeter_salutation__reverse(self: Greeter): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = Greeter_salutation__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = Greeter_salutation__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ExportedBridge("AbstractBase_abstractMethod")

@@ -3,6 +3,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable____reverse_swift(void * self, void * result);
+
+_Bool Baz_foo__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * result);
+
 void * conflictingTypealiases_Bar_Conflict_init_allocate();
 
 _Bool conflictingTypealiases_Bar_Conflict_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

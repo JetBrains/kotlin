@@ -14,8 +14,8 @@ internal external fun weird_A_throws__reverse_swift(self: kotlin.native.internal
 @BindReverseBridgeToMethod(weird.A::class, "throws")
 public fun weird_A_throws__reverse(self: weird.A): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = weird_A_throws__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = weird_A_throws__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ExportedBridge("weird_A_bar_get")

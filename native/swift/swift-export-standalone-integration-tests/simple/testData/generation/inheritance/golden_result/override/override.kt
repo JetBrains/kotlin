@@ -16,8 +16,8 @@ internal external fun Base_g__TypesOfArguments__anyU20override_P____reverse_swif
 public fun Base_g__TypesOfArguments__anyU20override_P____reverse(self: Base, x: P): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __x = kotlin.native.internal.ref.createRetainedExternalRCRef(x)
-    val __result = Base_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
-    return run<Unit> { __result }
+    val _result = Base_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("P_f__reverse_swift")
@@ -26,8 +26,8 @@ internal external fun P_f__reverse_swift(self: kotlin.native.internal.NativePtr)
 @BindReverseBridgeToMethod(P::class, "f")
 public fun P_f__reverse(self: P): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = P_f__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = P_f__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("Sub_g__TypesOfArguments__anyU20override_P____reverse_swift")
@@ -37,8 +37,8 @@ internal external fun Sub_g__TypesOfArguments__anyU20override_P____reverse_swift
 public fun Sub_g__TypesOfArguments__anyU20override_P____reverse(self: Sub, x: P): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __x = kotlin.native.internal.ref.createRetainedExternalRCRef(x)
-    val __result = Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
-    return run<Unit> { __result }
+    val _result = Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(__self, __x)
+    return run<Unit> { _result }
 }
 
 @ExportedBridge("Base_g__TypesOfArguments__anyU20override_P__")

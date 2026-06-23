@@ -32,8 +32,8 @@ internal external fun Consumer_consume__TypesOfArguments__Swift_Optional_anyU20K
 public fun Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Consumer<kotlin.Any?>, item: kotlin.Any?): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __item = if (item == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(item)
-    val __result = Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __item)
-    return run<Unit> { __result }
+    val _result = Consumer_consume__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __item)
+    return run<Unit> { _result }
 }
 
 @ImportedBridge("Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
@@ -43,8 +43,8 @@ internal external fun Processor_process__TypesOfArguments__Swift_Optional_anyU20
 public fun Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Processor<kotlin.Any?, kotlin.Any?>, input: kotlin.Any?): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val __input = if (input == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(input)
-    val __result = Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __input)
-    return if (__result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.Any
+    val _result = Processor_process__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __input)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
 }
 
 @ImportedBridge("Producer_produce__reverse_swift")
@@ -53,8 +53,8 @@ internal external fun Producer_produce__reverse_swift(self: kotlin.native.intern
 @BindReverseBridgeToMethod(Producer::class, "produce")
 public fun Producer_produce__reverse(self: Producer<kotlin.Any?>): kotlin.Any? {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = Producer_produce__reverse_swift(__self)
-    return if (__result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(__result) as kotlin.Any
+    val _result = Producer_produce__reverse_swift(__self)
+    return if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as kotlin.Any
 }
 
 @ImportedBridge("StringProducer_produce__reverse_swift")
@@ -63,8 +63,8 @@ internal external fun StringProducer_produce__reverse_swift(self: kotlin.native.
 @BindReverseBridgeToMethod(StringProducer::class, "produce")
 public fun StringProducer_produce__reverse(self: StringProducer): kotlin.String {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = StringProducer_produce__reverse_swift(__self)
-    return interpretObjCPointer<kotlin.String>(__result)
+    val _result = StringProducer_produce__reverse_swift(__self)
+    return interpretObjCPointer<kotlin.String>(_result)
 }
 
 @ExportedBridge("A_foo_get")

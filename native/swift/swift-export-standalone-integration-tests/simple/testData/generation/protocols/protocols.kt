@@ -190,3 +190,9 @@ interface Foo {
 interface Bar: Foo {
     class Conflict
 }
+
+// FILE: special_names.kt
+
+interface Baz {
+    fun foo(result: Any)
+}

@@ -14,8 +14,8 @@ internal external fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32___
 @BindReverseBridgeToMethod(Cousin::class, "primitiveTypeFunc")
 public fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse(self: Cousin, arg: Int): Int {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(__self, arg)
-    return __result
+    val _result = Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32____reverse_swift(__self, arg)
+    return _result
 }
 
 @ExportedBridge("Cousin_finalOverrideFunc")

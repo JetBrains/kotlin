@@ -19,8 +19,8 @@ internal external fun InternalLibInterface_bar__reverse_swift(self: kotlin.nativ
 @BindReverseBridgeToMethod(InternalLibInterface::class, "bar")
 public fun InternalLibInterface_bar__reverse(self: InternalLibInterface): Unit {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __result = InternalLibInterface_bar__reverse_swift(__self)
-    return run<Unit> { __result }
+    val _result = InternalLibInterface_bar__reverse_swift(__self)
+    return run<Unit> { _result }
 }
 
 @ExportedBridge("ExperimentalLibClass_bar")
