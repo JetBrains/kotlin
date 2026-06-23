@@ -100,7 +100,6 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?>
         register(FirPlatformSpecificCastChecker::class, FirNativeCastChecker)
         register(PlatformConflictDeclarationsDiagnosticDispatcher::class, NativeConflictDeclarationsDiagnosticDispatcher)
         register(FirOverrideChecker::class, FirNativeOverrideChecker(this))
-        @OptIn(K1Deprecation::class)
         register(FirDefaultImportsProviderHolder.of(NativeDefaultImportsProvider))
     }
 }

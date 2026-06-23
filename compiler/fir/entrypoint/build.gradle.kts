@@ -9,6 +9,7 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors.jvm"))
     implementation(project(":compiler:frontend.java"))
+    implementation(project(":core:compiler.common.wasm"))
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:fir-native"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
