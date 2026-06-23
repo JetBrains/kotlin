@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import java.nio.file.Path
 
-public class CompilerPluginOption(public val key: String, public val value: String)
+public class CompilerPluginOption(public val key: String, public val value: String) {
+    override fun toString(): String {
+        return "CompilerPluginOption(key='$key', value='$value')"
+    }
+}
 
 public enum class CompilerPluginPartialOrderRelation {
     BEFORE,
@@ -24,5 +28,9 @@ public open class CompilerPlugin(
     public val classpath: List<Path>,
     public val rawArguments: List<CompilerPluginOption>,
     public val orderingRequirements: Set<CompilerPluginPartialOrder>,
-)
+) {
+    override fun toString(): String {
+        return "CompilerPlugin(pluginId='$pluginId', classpath=$classpath, rawArguments=$rawArguments, orderingRequirements=$orderingRequirements)"
+    }
+}
 

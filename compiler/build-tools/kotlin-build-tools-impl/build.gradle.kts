@@ -40,6 +40,7 @@ dependencies {
     embedded(project(":kotlin-metadata-jvm")) { isTransitive = false }
     embedded(libs.diff.utils) { isTransitive = false }
 
+    embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(intellijPlatformUtil())

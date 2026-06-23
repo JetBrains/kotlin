@@ -110,7 +110,7 @@ open class FirKaptAnalysisHandlerExtension(
         if (!options.mode.runAnnotationProcessing) return true
 
         createProcessorLoader().use { processorLoader ->
-            val processors = processorLoader.loadProcessors()
+            val processors = processorLoader.loadProcessors(FirKaptAnalysisHandlerExtension::class.java.classLoader)
             if (processors.processors.isEmpty()) return true
 
             val kaptContext = KaptContext(options, false, logger)

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kapt
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.importTracker
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSI
 class KaptCompilerPluginRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         doOpenInternalPackagesIfRequired()
+        configuration.importTracker
 
         FirExtensionRegistrar.registerExtension(FirKaptRegistrar())
         FirAnalysisHandlerExtension.registerExtension(FirKaptAnalysisHandlerExtension())

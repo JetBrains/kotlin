@@ -1786,6 +1786,116 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncre
 public class org/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationOptions$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode : java/lang/Enum {
+	public static final field APT_ONLY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode;
+	public static final field STUBS_AND_APT Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode;
+	public static final field STUBS_ONLY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptAptMode;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Companion;
+	public static final field DUMP_DEFAULT_PARAMETER_VALUES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;
+	public static final field INCREMENTAL_DATA_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;
+	public static final field INFO_AS_WARNINGS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;
+	public static final field TOOLS_JAR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;
+	public static final field VERBOSE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;)Ljava/lang/Object;
+	public abstract fun getAptPhase ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase;
+	public abstract fun getKaptClasspath ()Ljava/util/List;
+	public abstract fun getStubsPhase ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Builder;
+	public abstract fun toCompilerPlugin ()Lorg/jetbrains/kotlin/buildtools/api/arguments/CompilerPlugin;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase {
+	public static final field ANNOTATION_PROCESSORS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field ANNOTATION_PROCESSOR_CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field APT_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field CHANGED_FILES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field CLASSPATH_CHANGES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field CLASS_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field COMPILED_SOURCES_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field CORRECT_ERROR_TYPES Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Companion;
+	public static final field DETECT_MEMORY_LEAKS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field DUMP_FILE_READ_HISTORY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field DUMP_PROCESSOR_STATS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field INCLUDE_COMPILE_CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field INCREMENTAL_CACHE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field JAVAC_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field PROCESS_INCREMENTALLY Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field SHOW_PROCESSOR_STATS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public static final field SOURCE_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;)Ljava/lang/Object;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Builder {
+	public abstract fun aptPhaseBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase$Builder;
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;)Ljava/lang/Object;
+	public abstract fun getAptPhase ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase;
+	public abstract fun getKaptClasspath ()Ljava/util/List;
+	public abstract fun getStubsPhase ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option;Ljava/lang/Object;)V
+	public abstract fun setAptPhase (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$AptPhase;)V
+	public abstract fun setStubsPhase (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase;)V
+	public abstract fun stubsPhaseBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Builder;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Companion;
+	public static final field MAP_DIAGNOSTIC_LOCATIONS Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;
+	public static final field STRICT_MODE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;
+	public static final field STRIP_METADATA Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;
+	public static final field STUBS_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;)Ljava/lang/Object;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$StubsPhase$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode : java/lang/Enum {
+	public static final field DEFAULT Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode;
+	public static final field NONE Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode;
+	public static final field PARANOID Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptDetectMemoryLeaksMode;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation : org/jetbrains/kotlin/buildtools/api/BuildOperation {
 	public static final field COMPILER_MESSAGE_RENDERER Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Option;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/DiscoverScriptExtensionsOperation$Companion;
@@ -1851,6 +1961,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/operatio
 	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Builder;
 	public abstract fun getDestinationDirectory ()Ljava/nio/file/Path;
 	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun kaptCompilerPluginBuilder (Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/jvm/KaptCompilerPlugin$Builder;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Option;Ljava/lang/Object;)V
 	public abstract fun snapshotBasedIcConfigurationBuilder (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Builder;
 	public abstract fun snapshotBasedIcConfigurationBuilder (Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration$Builder;
