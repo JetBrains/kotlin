@@ -51,7 +51,7 @@ private fun IrClassifierSymbol.asString(): String {
         is IrTypeParameterSymbol -> this.owner.name.asString()
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
         is IrClassSymbol ->
-            owner.originalClassId
+            owner.originalClassId?.toString()
                 ?: owner.localClassName
                 ?: this.owner.fqNameWhenAvailable!!.asString()
     }
