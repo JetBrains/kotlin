@@ -70,16 +70,13 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, it))
             }
         }
-        if (config.omitFrameworkBinary && config.dumpObjcSelectorToSignatureMapping == null) {
+        if (config.omitFrameworkBinary) {
             return
         }
         val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
             }
-        }
-        if (config.omitFrameworkBinary) {
-            return
         }
 
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
