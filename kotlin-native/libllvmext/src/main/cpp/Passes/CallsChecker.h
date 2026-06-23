@@ -23,12 +23,16 @@ private:
   bool load(Module &M);
   void loadIgnoredFunctions(Module &M);
 
+  Value *placeCString(Module &M, StringRef S);
+
   bool Loaded = false; // Assumes there's a single module and no paralellism.
   SmallPtrSet<Function *, 32> IgnoredFunctions;
   FunctionCallee CheckStateAtExternalCall;
   FunctionCallee GetMethodImpl;
   FunctionCallee GetClass;
   FunctionCallee GetSuperClass;
+
+  StringMap<Value*> Strings;
 };
 
 /// A module pass for external calls checker instrumentation.

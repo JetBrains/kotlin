@@ -339,7 +339,7 @@ getPossiblyExternalCalledFunction(Value *V) {
     if (F->isIntrinsic()) {
       auto &Ctx = V->getContext();
       auto *Value =
-          ConstantInt::get(Type::getInt32Ty(Ctx), CALLED_LLVM_BUILTIN);
+          ConstantInt::get(Type::getInt64Ty(Ctx), CALLED_LLVM_BUILTIN);
       return ExternalCallInfo(
           F->getName(),
           ConstantExpr::getIntToPtr(Value, PointerType::getUnqual(Ctx)));
@@ -448,6 +448,8 @@ bool CallsCheckerPass::run(CallBase &C) {
     }
     Builder.SetInsertPoint(InsertPoint);
   }
+  // TODO: why?
+  Builder.SetCurrentDebugLocation(nullptr);
 
   SmallString<64> CallSiteDescription;
   std::optional<StringRef> CalledName;
@@ -458,7 +460,7 @@ bool CallsCheckerPass::run(CallBase &C) {
     if (C.getNumOperands() < 2)
       return false;
     CallSiteDescription =
-        formatv("{0} (over objc_msgSend)", C.getParent()->getName());
+        formatv("{0} (over objc_msgSend)", C.getFunction()->getName());
     CalledName = std::nullopt;
     auto *Obj = C.getArgOperand(0);
     auto *ObjClass = Builder.CreateCall(GetClass, {Obj});
@@ -468,7 +470,7 @@ bool CallsCheckerPass::run(CallBase &C) {
     auto *CalledPtrIfNotNil =
         Builder.CreateCall(GetMethodImpl, {ObjClass, Selector});
     auto *CalledPtrIfNil = ConstantExpr::getIntToPtr(
-        Builder.getInt32(MSG_SEND_TO_NULL), Builder.getPtrTy());
+        Builder.getInt64(MSG_SEND_TO_NULL), Builder.getPtrTy());
     CalledPtr = Builder.CreateSelect(IsNil, CalledPtrIfNil, CalledPtrIfNotNil);
   } else if (CalleeInfo->Name == "objc_msgSendSuper2") {
     // objc_msgSendSuper2 has wrong declaration in header, so generated wrapper
@@ -476,13 +478,12 @@ bool CallsCheckerPass::run(CallBase &C) {
     if (C.getNumOperands() < 2)
       return false;
     CallSiteDescription =
-        formatv("{0} (over objc_msgSendSuper2)", C.getParent()->getName());
+        formatv("{0} (over objc_msgSendSuper2)", C.getFunction()->getName());
     CalledName = std::nullopt;
     // This is
     // https://developer.apple.com/documentation/objectivec/objc_super?language=objc
     // We don't want to look this type up, so let's just use our own struct.
-    auto *SuperStructType = StructType::create(
-        Builder.getContext(), {Builder.getPtrTy(), Builder.getPtrTy()});
+    auto *SuperStructType = StructType::get(Builder.getPtrTy(), Builder.getPtrTy());
     auto *SuperStruct = C.getArgOperand(0);
     auto *SuperClassPtrPtr =
         Builder.CreateStructGEP(SuperStructType, SuperStruct, 1);
@@ -492,7 +493,7 @@ bool CallsCheckerPass::run(CallBase &C) {
     auto *Selector = C.getArgOperand(1);
     CalledPtr = Builder.CreateCall(GetMethodImpl, {ClassPtr, Selector});
   } else {
-    CallSiteDescription = C.getParent()->getName();
+    CallSiteDescription = C.getFunction()->getName();
     CalledName = CalleeInfo->Name;
     switch (CalleeInfo->CalledPtr->getType()->getTypeID()) {
     case Type::PointerTyID:
@@ -509,21 +510,11 @@ bool CallsCheckerPass::run(CallBase &C) {
     }
   }
 
-  auto *CallSiteDescriptionGlobalValue =
-      ConstantDataArray::getString(Builder.getContext(), CallSiteDescription);
-  auto *CallSiteDescriptionGlobal = new GlobalVariable(
-      *Builder.GetInsertBlock()->getModule(),
-      CallSiteDescriptionGlobalValue->getType(), true,
-      GlobalValue::PrivateLinkage, CallSiteDescriptionGlobalValue);
+  auto *CallSiteDescriptionGlobal = placeCString(*Builder.GetInsertBlock()->getModule(), CallSiteDescription);
 
   Value *CalledNameV = ConstantPointerNull::get(Builder.getPtrTy());
   if (CalledName) {
-    auto *CalledNameGlobalValue =
-        ConstantDataArray::getString(Builder.getContext(), *CalledName);
-    CalledNameV =
-        new GlobalVariable(*Builder.GetInsertBlock()->getModule(),
-                           CalledNameGlobalValue->getType(), true,
-                           GlobalValue::PrivateLinkage, CalledNameGlobalValue);
+    CalledNameV = placeCString(*Builder.GetInsertBlock()->getModule(), *CalledName);
   }
 
   Builder.CreateCall(CheckStateAtExternalCall,
@@ -578,6 +569,17 @@ void CallsCheckerPass::loadIgnoredFunctions(Module &M) {
       continue;
     IgnoredFunctions.insert(Target);
   }
+}
+
+Value *CallsCheckerPass::placeCString(Module &M, StringRef S) {
+  // TODO: built-in LLVM way?
+  auto [It, New] = Strings.try_emplace(S, nullptr);
+  if (New) {
+    auto *V = ConstantDataArray::getString(M.getContext(), S);
+    // TODO: private linkage
+    It->second = new GlobalVariable(M, V->getType(), true, GlobalValue::InternalLinkage, V);
+  }
+  return It->second;
 }
 
 PreservedAnalyses ModuleCallsCheckerPass::run(Module &M,
