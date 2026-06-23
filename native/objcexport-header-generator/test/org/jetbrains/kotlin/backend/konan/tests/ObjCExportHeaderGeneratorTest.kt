@@ -166,11 +166,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("classWithHidesFromObjCAnnotation"))
     }
 
-    /**
-     * Disabled because of init constructors order KT-70626
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - functionWithThrowsAnnotation`() {
         doTest(headersTestDataDir.resolve("functionWithThrowsAnnotation"))
     }
@@ -621,11 +617,7 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("varWithPrivateSetterTranslatedAsImmutableProperty"))
     }
 
-    /**
-     * Disabled because of init constructors order KT-70626
-     */
     @Test
-    @TodoAnalysisApi
     fun `test - mangle throws annotation`() {
         doTest(headersTestDataDir.resolve("mangleThrowsAnnotation"))
     }
