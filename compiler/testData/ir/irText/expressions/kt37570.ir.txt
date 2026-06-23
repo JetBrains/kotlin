@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/kt37570.kt
             TYPE_ARG T: kotlin.String
             ARG <this>: CALL 'public final fun a (): kotlin.String declared in <root>' type=kotlin.String origin=null
             ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
-              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit [companion]
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
                 VALUE_PARAMETER kind:ExtensionReceiver name:$this$apply index:0 type:kotlin.String
                 BLOCK_BODY
                   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
