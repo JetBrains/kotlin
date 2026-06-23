@@ -1922,6 +1922,36 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportUndeclaredCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(module: String, cinteropNames: List<String>) = build {
+            title("Swift Export Module With Undeclared Cinterops")
+                .description {
+                    "The Swift exported module '$module' has cinterop klibs that are not configured for re-export: " +
+                            cinteropNames.joinToString(", ") +
+                            "\nIf the exported API references types from these cinterops, Swift Export fails to translate it."
+                }
+                .solution {
+                    "If the exported API references cinterop types, declare the corresponding Objective-C module " +
+                            "with reexportCinterop(\"<cinterop name>\", \"<ObjC module name>\"). Otherwise, ignore this warning."
+                }
+        }
+    }
+
+    object SwiftExportCinteropResolutionError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(module: String, unresolvedCinterops: List<String>, availableCinterops: List<String>) = build {
+            title("Swift Export Cinterop Resolution Error")
+                .description {
+                    "The following cinterops declared with reexportCinterop() for module '$module' were not found: " +
+                            unresolvedCinterops.joinToString(", ") +
+                            if (availableCinterops.isEmpty()) "" else
+                                "\nAvailable cinterops: ${availableCinterops.joinToString(", ")}"
+                }
+                .solution {
+                    "Use the cinterop name as declared in the producing cinterops { } block."
+                }
+        }
+    }
+
     object SwiftPMLocalPackageDirectoryNotFound : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(resolvedPath: String, originalPath: String) = build {
             title("Local SwiftPM Package Directory Not Found")

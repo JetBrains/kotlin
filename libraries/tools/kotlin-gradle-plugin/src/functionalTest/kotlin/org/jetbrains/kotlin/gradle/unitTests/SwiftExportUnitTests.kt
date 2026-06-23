@@ -1238,6 +1238,20 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test reexported unknown host cinterop`() {
+        val project = swiftExportProject(
+            projectBuilder = { withName("shared") },
+            swiftExport = {
+                reexportCinterop("unknown", "FooKit")
+            }
+        )
+        project.evaluate()
+
+        assertTrue(project.reexportedCinteropModules().isEmpty())
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportCinteropResolutionError)
+    }
+
+    @Test
     fun `test reexported cinterop of exported project dependency`() {
         val project = buildProject(
             projectBuilder = { withName("shared") },
@@ -1261,6 +1275,52 @@ class SwiftExportUnitTests {
 
         assertEquals("FooKit", reexported.objCModuleName)
         assertEquals("dependency-cinterop-foo", reexported.artifact.name)
+    }
+
+    @Test
+    fun `test reexported unknown cinterop of exported project dependency`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val dependency = project.subProject("dependency") {
+            iosSimulatorArm64().compilations.getByName("main").cinterops.create("foo")
+        }
+        project.setupForSwiftExport(
+            multiplatform = { iosSimulatorArm64() },
+            swiftExport = {
+                export(dependency) {
+                    reexportCinterop("unknown", "FooKit")
+                }
+            }
+        )
+        project.evaluate()
+        dependency.evaluate()
+
+        assertTrue(project.reexportedCinteropModules().isEmpty())
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportCinteropResolutionError)
+    }
+
+    @Test
+    fun `test undeclared cinterop of exported project dependency`() {
+        val project = buildProject(
+            projectBuilder = { withName("shared") },
+            configureProject = { configureRepositoriesForTests() }
+        )
+        val dependency = project.subProject("dependency") {
+            iosSimulatorArm64().compilations.getByName("main").cinterops.create("foo")
+        }
+        project.setupForSwiftExport(
+            multiplatform = { iosSimulatorArm64() },
+            swiftExport = {
+                export(dependency)
+            }
+        )
+        project.evaluate()
+        dependency.evaluate()
+
+        assertTrue(project.reexportedCinteropModules().isEmpty())
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.SwiftExportUndeclaredCinterops)
     }
 
     @Test
@@ -1297,6 +1357,7 @@ private fun ProjectInternal.reexportedCinteropModules(): List<SwiftExportedModul
     tasks.withType(SwiftExportTask::class.java).single()
         .parameters.swiftModules.getOrElse(emptyList())
         .filterIsInstance<SwiftExportedModule.CinteropReexported>()
+
 
 private fun multiModuleSwiftExportProject(
     mainProjectName: String = "shared",

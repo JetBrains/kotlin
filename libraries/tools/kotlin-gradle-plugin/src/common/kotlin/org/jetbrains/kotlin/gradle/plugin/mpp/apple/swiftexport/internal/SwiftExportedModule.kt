@@ -247,20 +247,42 @@ private fun Project.findAndCreateSwiftExportedModules(
  * Matches the `reexportCinterop(...)` declarations of [explicitModule] against the cinterop klibs
  * resolved for [component].
  */
-private fun reexportedCinteropModules(
+private fun Project.reexportedCinteropModules(
     explicitModule: SwiftExportedDependency,
     component: ResolvedComponentArtifacts,
 ): List<SwiftExportedModule.CinteropReexported> {
     val declarations = explicitModule.reexportedCinterops.get()
-    if (declarations.isEmpty()) return emptyList()
+    if (declarations.isEmpty()) {
+        if (component.cinteropArtifacts.isNotEmpty()) {
+            // Not necessarily a problem: the cinterop types may not be referenced by the exported API.
+            // If they are, Swift Export fails on the missing symbols, so help with discoverability here.
+            reportDiagnostic(
+                KotlinToolingDiagnostics.SwiftExportUndeclaredCinterops(
+                    explicitModule.name,
+                    component.cinteropArtifacts.mapNotNull { it.cinteropName },
+                )
+            )
+        }
+        return emptyList()
+    }
 
     val cinteropsByName = component.cinteropArtifacts
         .mapNotNull { artifact -> artifact.cinteropName?.let { it to artifact } }
         .toMap()
 
+    val unresolvedDeclarations = declarations.keys - cinteropsByName.keys
+    if (unresolvedDeclarations.isNotEmpty()) {
+        reportDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportCinteropResolutionError(
+                explicitModule.name,
+                unresolvedDeclarations.toList(),
+                cinteropsByName.keys.toList(),
+            )
+        )
+    }
+
     return declarations.mapNotNull { (cinteropName, objCModuleName) ->
         val artifact = cinteropsByName[cinteropName] ?: return@mapNotNull null
-        if (objCModuleName.isEmpty()) return@mapNotNull null
         SwiftExportedModule.CinteropReexported(objCModuleName, artifact.file)
     }
 }

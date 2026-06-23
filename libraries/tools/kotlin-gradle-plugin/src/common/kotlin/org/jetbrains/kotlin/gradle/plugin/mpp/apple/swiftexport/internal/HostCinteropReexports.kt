@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import java.io.File
@@ -14,12 +17,12 @@ import java.io.File
  * Collects the host module's own cinterops declared for re-export with the top-level
  * `swiftExport { reexportCinterop(...) }` DSL.
  */
-internal fun collectReexportedHostCinterops(
+internal fun Project.collectReexportedHostCinterops(
     declarations: Provider<Map<String, String>>,
     mainCompilation: KotlinNativeCompilation,
 ): Provider<List<SwiftExportedModule>> = declarations.map { declared ->
     declared.mapNotNull { (cinteropName, objCModuleName) ->
-        val interop = mainCompilation.cinteropOrNull(cinteropName) ?: return@mapNotNull null
+        val interop = hostCinteropOrNull(cinteropName, mainCompilation) ?: return@mapNotNull null
         if (objCModuleName.isEmpty()) return@mapNotNull null
         val klib = mainCompilation.cinteropKlibFile(interop) ?: return@mapNotNull null
         SwiftExportedModule.CinteropReexported(objCModuleName, klib)
@@ -42,6 +45,23 @@ internal fun reexportedHostCinteropsSwiftcArgs(
 
 private fun KotlinNativeCompilation.cinteropOrNull(cinteropName: String): DefaultCInteropSettings? =
     cinterops.findByName(cinteropName)
+
+private fun Project.hostCinteropOrNull(
+    cinteropName: String,
+    mainCompilation: KotlinNativeCompilation,
+): DefaultCInteropSettings? {
+    val interop = mainCompilation.cinteropOrNull(cinteropName)
+    if (interop == null) {
+        reportDiagnostic(
+            KotlinToolingDiagnostics.SwiftExportCinteropResolutionError(
+                path,
+                listOf(cinteropName),
+                mainCompilation.cinterops.names.toList(),
+            )
+        )
+    }
+    return interop
+}
 
 /**
  * Locates the klib of [interop] among [KotlinNativeCompilation.cinteropOutputs] by KGP's own naming

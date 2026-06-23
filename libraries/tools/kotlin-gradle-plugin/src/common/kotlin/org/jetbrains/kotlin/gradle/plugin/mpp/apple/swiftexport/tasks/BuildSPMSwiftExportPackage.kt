@@ -16,6 +16,8 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
@@ -30,7 +32,7 @@ import javax.inject.Inject
 internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     providerFactory: ProviderFactory,
     objectFactory: ObjectFactory,
-) : DefaultTask() {
+) : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
         onlyIf { HostManager.hostIsMac }
     }
@@ -220,8 +222,7 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
     private fun outerXcodeBuildSearchPathArgs(): List<String> {
         if (dependencyCinteropModuleNames.get().isEmpty()) return emptyList()
 
-        val builtProductsDir = outerBuiltProductsDir.orNull ?: return emptyList()
-
+        val builtProductsDir = outerBuiltProductsDir.orNull
         return buildList {
             addAll(listOf("-F", builtProductsDir))
             addAll(listOf("-I", "$builtProductsDir/include"))
@@ -231,11 +232,9 @@ internal abstract class BuildSPMSwiftExportPackage @Inject constructor(
             // to the Clang importer so that `import <Name>` resolves.
             val objroot = outerObjroot.orNull
             val platformName = outerEffectivePlatformName.orNull
-            if (objroot != null && platformName != null) {
-                val moduleMapsDir = File(objroot, "GeneratedModuleMaps$platformName")
-                moduleMapsDir.listFiles { _, name -> name.endsWith(".modulemap") }?.forEach { moduleMap ->
-                    addAll(listOf("-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}"))
-                }
+            val moduleMapsDir = File(objroot, "GeneratedModuleMaps$platformName")
+            moduleMapsDir.listFiles { _, name -> name.endsWith(".modulemap") }?.forEach { moduleMap ->
+                addAll(listOf("-Xcc", "-fmodule-map-file=${moduleMap.absolutePath}"))
             }
         }
     }
