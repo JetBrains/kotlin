@@ -34,6 +34,13 @@ public interface KaEvaluator : KaSessionComponent {
  * possible.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.evaluation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.evaluate()",
+        "org.jetbrains.kotlin.analysis.api.evaluation.evaluate",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtExpression.evaluate(): KaConstantValue? {
@@ -48,6 +55,13 @@ public fun KtExpression.evaluate(): KaConstantValue? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.evaluation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.evaluateAsAnnotationValue()",
+        "org.jetbrains.kotlin.analysis.api.evaluation.evaluateAsAnnotationValue",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KtExpression.evaluateAsAnnotationValue(): KaAnnotationValue? {

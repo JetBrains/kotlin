@@ -540,6 +540,10 @@ public final class org/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity : ja
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/diagnostics/KaSeverity;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/evaluation/ExpressionEvaluationKt {
+	public static final fun evaluate (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/base/KaConstantValue;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionInformationKt {
 	public static final fun isImplicitReferenceToCompanion (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtSimpleNameExpression;)Z
 	public static final fun isUsedAsExpression (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
