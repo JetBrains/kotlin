@@ -7,21 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.components.*
-import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaTypeRelationCheckerBridge
-import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaKDocProviderBridge
-import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaRendererBridge
-import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaResolverBridge
-import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaVisibilityCheckerBridge
+import org.jetbrains.kotlin.analysis.api.fir.components.bridges.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsKDocProvider
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsRenderer
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker
-import org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker
+import org.jetbrains.kotlin.analysis.api.internals.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -74,7 +66,7 @@ private constructor(
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
     symbolInformationProvider = KaFirSymbolInformationProvider(analysisSessionProvider),
     typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
-    expressionInformationProvider = KaFirExpressionInformationProvider(analysisSessionProvider),
+    expressionInformationProvider = KaExpressionInformationProviderBridge(analysisSessionProvider),
     evaluator = KaFirEvaluator(analysisSessionProvider),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
     renderer = KaRendererBridge(analysisSessionProvider),
@@ -100,6 +92,9 @@ private constructor(
     override val kDocProvider: KaInternalsKDocProvider = KaFirKDocProvider(analysisSessionProvider)
 
     override val renderer: KaInternalsRenderer = KaRendererImpl(analysisSessionProvider)
+
+    override val expressionInformationProvider: KaInternalsExpressionInformationProvider =
+        KaFirExpressionInformationProvider(analysisSessionProvider)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)

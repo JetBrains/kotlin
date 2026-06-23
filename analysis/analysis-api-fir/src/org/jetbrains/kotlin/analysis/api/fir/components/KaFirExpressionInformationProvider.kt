@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionInformationProvider
 import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 import org.jetbrains.kotlin.analysis.api.resolution.symbols
@@ -34,38 +34,39 @@ import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
+@KaImplementationDetail
 internal class KaFirExpressionInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaExpressionInformationProvider, KaFirSessionComponent {
-    @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", replaceWith = ReplaceWith("resolveSymbol()"))
-    override val KtReturnExpression.targetSymbol: KaCallableSymbol?
-        get() = with(analysisSession) { resolveSymbol() }
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsExpressionInformationProvider, KaFirSessionComponent {
+    override fun targetSymbol(returnExpression: KtReturnExpression): KaCallableSymbol? =
+        with(analysisSession) { returnExpression.resolveSymbol() }
 
-    override fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> = withPsiValidityAssertion {
-        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
-        val compilerMissingCases = withSession(analysisSession.resolutionFacade.useSiteFirSession) {
-            FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+    override fun computeMissingCases(whenExpression: KtWhenExpression): List<KaWhenMissingCase> =
+        whenExpression.withPsiValidityAssertion {
+            val firWhenExpression =
+                whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
+            val compilerMissingCases = withSession(analysisSession.resolutionFacade.useSiteFirSession) {
+                FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
+            }
+            return compilerMissingCases.map { it.toKaWhenMissingCase() }
         }
-        return compilerMissingCases.map { it.toKaWhenMissingCase() }
-    }
 
-    override val KtExpression.isUsedAsExpression: Boolean
-        get() = withPsiValidityAssertion { isUsed(this, null) }
+    override fun isUsedAsExpression(expression: KtExpression): Boolean =
+        expression.withPsiValidityAssertion { isUsed(expression, null) }
 
-    override val KtExpression.isUsedAsResultOfLambda: Boolean
-        get() = withPsiValidityAssertion {
+    override fun isUsedAsResultOfLambda(expression: KtExpression): Boolean =
+        expression.withPsiValidityAssertion {
             val additionalInfoCollector = AdditionalInfoCollector()
-                .also { collector -> isUsed(this, collector) }
+                .also { collector -> isUsed(expression, collector) }
             additionalInfoCollector.isUsedAsResultOfLambda
         }
 
-    @KaExperimentalApi
-    override val KtExpression.isStableForSmartCasting: Boolean
-        get() = withPsiValidityAssertion {
-            val firFile = containingKtFile.getOrBuildFirFile(resolutionFacade)
-            val context = ContextCollector.process(resolutionFacade, firFile, targetElement = this)
-                ?: errorWithAttachment("Cannot find context for ${this::class}") {
-                    withPsiEntry("position", this@isStableForSmartCasting)
+    override fun isStableForSmartCasting(expression: KtExpression): Boolean =
+        expression.withPsiValidityAssertion {
+            val firFile = expression.containingKtFile.getOrBuildFirFile(resolutionFacade)
+            val context = ContextCollector.process(resolutionFacade, firFile, targetElement = expression)
+                ?: errorWithAttachment("Cannot find context for ${expression::class}") {
+                    withPsiEntry("position", expression)
                 }
 
             return context.expressionStability == SmartcastStability.STABLE_VALUE

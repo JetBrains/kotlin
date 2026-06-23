@@ -285,9 +285,7 @@ public val KtReturnExpression.targetSymbol: KaCallableSymbol?
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> {
     return with(session) {
