@@ -88,7 +88,7 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         value = "-Xwasm-enable-array-range-checks",
         description = "Turn on range checks for array access functions.",
     )
-    var wasmEnableArrayRangeChecks: Boolean = false
+    var wasmEnableArrayRangeChecks: Boolean = true
         set(value) {
             checkFrozen()
             field = value
