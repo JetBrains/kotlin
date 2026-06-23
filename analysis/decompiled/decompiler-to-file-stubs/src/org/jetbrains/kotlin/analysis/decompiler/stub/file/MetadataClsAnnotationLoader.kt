@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.psi.stubs.impl.createConstantValue
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.AbstractAnnotationLoader
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
-@OptIn(K1Deprecation::class)
 internal class MetadataClsAnnotationLoader(
     protocol: SerializerExtensionProtocol,
 ) : AbstractAnnotationLoader<AnnotationWithArgs>(protocol), ClsAnnotationLoader {

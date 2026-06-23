@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
-@K1Deprecation
 abstract class AbstractAnnotationLoader<out A : Any>(
     protected val protocol: SerializerExtensionProtocol,
 ) : AnnotationLoader<A> {
@@ -140,5 +138,5 @@ abstract class AbstractAnnotationLoader<out A : Any>(
         commonMetadataSource: List<ProtoBuf.Annotation>,
         extensionProtocolMetadataSource: List<ProtoBuf.Annotation>?,
         nameResolver: NameResolver,
-    ) = commonMetadataSource.ifEmpty { extensionProtocolMetadataSource.orEmpty() }.map { loadAnnotation(it, nameResolver) }
+    ): List<A> = commonMetadataSource.ifEmpty { extensionProtocolMetadataSource.orEmpty() }.map { loadAnnotation(it, nameResolver) }
 }

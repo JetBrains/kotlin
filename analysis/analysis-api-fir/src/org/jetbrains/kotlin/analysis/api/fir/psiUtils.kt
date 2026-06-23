@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasExternalModifier
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -92,7 +91,6 @@ fun FirBasedSymbol<*>.findPsi(scope: GlobalSearchScope): PsiElement? {
 }
 
 internal val KtDestructuringDeclarationEntry.entryName: Name
-    @OptIn(K1Deprecation::class)
     get() = if (isSingleUnderscore) SpecialNames.UNDERSCORE_FOR_UNUSED_VAR else nameAsSafeName
 
 internal val KtParameter.parameterName: Name
