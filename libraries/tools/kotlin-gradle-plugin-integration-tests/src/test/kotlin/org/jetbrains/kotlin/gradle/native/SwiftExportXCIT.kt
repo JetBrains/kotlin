@@ -98,4 +98,67 @@ class SwiftExportXCIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("run XCTests for a user-defined cinterop re-exported by Swift Export")
+    @GradleTest
+    fun testSwiftExportReexportsUserDefinedCinterop(
+        gradleVersion: GradleVersion,
+    ) {
+        XCTestHelpers().use {
+            val simulator = it.createSimulator().apply {
+                boot()
+            }
+
+            project(
+                "empty",
+                gradleVersion
+            ) {
+                // The fixture carries the consuming iosApp project and a user-defined Objective-C module
+                // `FooKit` (header + implementation + module map) that the build's cinterop wraps and Swift
+                // Export re-exports. The Xcode project finds `FooKit` via SWIFT_INCLUDE_PATHS and links its
+                // implementation by compiling FooKit/Foo.m into the app target.
+                embedDirectoryFromTestData("cinteropSwiftExport")
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosSimulatorArm64 {
+                            compilations.getByName("main").cinterops.create("fookit") { interop ->
+                                interop.definitionFile.set(
+                                    project.layout.projectDirectory.file("cinteropSwiftExport/cinterop/fookit.def")
+                                )
+                                interop.includeDirs(project.file("cinteropSwiftExport/FooKit"))
+                            }
+                        }
+
+                        with(swiftExport) {
+                            moduleName.set("Shared")
+                            flattenPackage.set("com.github.jetbrains.example")
+                            // The Objective-C module name is derived from the `modules` property of the def file.
+                            reexportCinterop("fookit", "FooKit")
+                        }
+
+                        sourceSets.getByName("iosSimulatorArm64Main").compileSource(
+                            """
+                            @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
+                            package com.github.jetbrains.example
+
+                            import fookit.Foo
+
+                            fun magicPlusOne(foo: Foo): Int = foo.magic() + 1
+                            """.trimIndent()
+                        )
+                    }
+                }
+
+                buildXcodeProject(
+                    xcodeproj = projectPath.resolve("cinteropSwiftExport/iosApp.xcodeproj"),
+                    destination = "platform=iOS Simulator,id=${simulator.udid}",
+                    action = XcodeBuildAction.Test
+                )
+            }
+        }
+    }
 }

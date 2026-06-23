@@ -1,0 +1,4 @@
+module FooKit {
+    header "Foo.h"
+    export *
+}
