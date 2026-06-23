@@ -12,10 +12,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
@@ -29,9 +27,11 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDep
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.dumpKlibMetadataSignatures
+import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
 import java.nio.file.Path
 import kotlin.io.path.*
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -837,6 +837,123 @@ open class CommonizerIT : KGPBaseTest() {
                     friendSourceDependency(":/linuxMain"),
                     friendSourceDependency(":/nativeMain"),
                 )
+            }
+        }
+    }
+
+    @DisplayName("KT-82398 - own cinterop is added to nativeMain fragment dependencies with separate compilation")
+    @GradleTest
+    @ParameterizedTest(name = "{0} - {1}: {displayName}")
+    @GradleTestExtraStringArguments("commonMain", "nativeMain", "linuxMain")
+    fun ownCInteropIsAddedToFragmentDependencies(
+        gradleVersion: GradleVersion,
+        commonSourceSetName: String,
+    ) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            gradleProperties.appendText(
+                """
+                |${PropertiesProvider.PropertyNames.KOTLIN_KMP_SEPARATE_COMPILATION}=true
+                |
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                val defFile = project.layout.projectDirectory.dir("src/nativeInterop/cinterop").file("mutex.def").asFile
+                defFile.parentFile.mkdirs()
+                defFile.writeText(
+                    """
+                    package=io.ktor.io.interop.mutex
+                    ---
+                    #include <stdio.h>
+                    #include <stdlib.h>
+                    #include <pthread.h>
+                    
+                    typedef struct ktor_lock_support {
+                        volatile int locked;
+                        pthread_mutex_t mutex;
+                        pthread_cond_t cond;
+                    } ktor_lock_support_t;
+                    
+                    typedef struct mutex_node {
+                        ktor_lock_support_t* mutex;
+                        struct mutex_node* next;
+                    } ktor_mutex_node_t;
+                    
+                    ktor_lock_support_t* ktor_lock_support_init() {
+                        ktor_lock_support_t * ls = (ktor_lock_support_t *) malloc(sizeof(ktor_lock_support_t));
+                        ls->locked = 0;
+                        pthread_mutex_init(&ls->mutex, NULL);
+                        pthread_cond_init(&ls->cond, NULL);
+                        return ls;
+                    }
+                                        
+                    ktor_mutex_node_t* ktor_mutex_node_init(ktor_mutex_node_t* mutexNode) {
+                        mutexNode->mutex = ktor_lock_support_init();
+                        mutexNode->next = NULL;
+                        return mutexNode;
+                    }
+                    
+                    void ktor_lock(ktor_lock_support_t* ls) {
+                        pthread_mutex_lock(&ls->mutex);
+                        while (ls->locked == 1) { // wait till locked are available
+                            pthread_cond_wait(&ls->cond, &ls->mutex);
+                        }
+                        ls->locked = 1;
+                        pthread_mutex_unlock(&ls->mutex);
+                    }
+                    
+                    void ktor_unlock(ktor_lock_support_t* ls) {
+                        pthread_mutex_lock(&ls->mutex);
+                        ls->locked = 0;
+                        pthread_cond_broadcast(&ls->cond);
+                        pthread_mutex_unlock(&ls->mutex);
+                    }
+                    """.trimIndent()
+                )
+
+                project.applyMultiplatform {
+                    applyDefaultHierarchyTemplate()
+                    listOf(linuxX64(), linuxArm64()).forEach { target ->
+                        target.compilations.getByName("main").cinterops.create("mutex") {
+                            it.definitionFile.set(defFile)
+                        }
+                    }
+                    sourceSets.getByName(commonSourceSetName).compileSource(
+                        """
+                            @file:OptIn(ExperimentalForeignApi::class)
+                            import io.ktor.io.interop.mutex.ktor_mutex_node_t
+                            import kotlinx.cinterop.CPointer
+                            import kotlinx.cinterop.ExperimentalForeignApi
+                            
+                            val mutex2: CPointer<ktor_mutex_node_t>? = null
+                            """.trimIndent()
+                    )
+                }
+            }
+
+            val fragmentDependencies: Map<String, List<String>> = providerBuildScriptReturn {
+                val target = kotlinMultiplatform.targets.getByName("linuxX64")
+                target.compilations.getByName("main").compileTaskProvider
+                    .map { task ->
+                        project.ignoreAccessViolations {
+                            (task as KotlinNativeCompile).createCompilerArguments()
+                                .fragmentDependencies
+                                .map { it.replace('\\', '/') }
+                                .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
+                        }
+                    }
+            }.buildAndReturn(
+                ":compileKotlinLinuxX64",
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+            )
+
+            val sharedSourceSetDeps = fragmentDependencies[commonSourceSetName].orEmpty()
+            assert(sharedSourceSetDeps.any { "commonizer" in it && "mutex" in it }) {
+                "Expected linuxMain fragment dependencies to contain commonized mutex cinterop klib, but got: $sharedSourceSetDeps"
             }
         }
     }

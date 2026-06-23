@@ -264,7 +264,9 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:processJvmMainResources",
                     ":library:transformCommonMainDependenciesMetadata",
                     ":library:transformLinuxMainDependenciesMetadata",
+                    ":library:transformLinuxMainCInteropDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
+                    ":library:transformNativeMainCInteropDependenciesMetadata",
                     ":library:downloadKotlinNativeDistribution",
                 )
                 val thisProjectTasks = setOf(
@@ -289,10 +291,14 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":transformCommonMainDependenciesMetadata",
                     ":transformCommonTestDependenciesMetadata",
                     ":transformLinuxMainDependenciesMetadata",
+                    ":transformLinuxMainCInteropDependenciesMetadata",
                     ":transformLinuxTestDependenciesMetadata",
+                    ":transformLinuxTestCInteropDependenciesMetadata",
                     ":transformNativeMainDependenciesMetadata",
+                    ":transformNativeMainCInteropDependenciesMetadata",
                     ":transformNativeTestDependenciesMetadata",
-                    ":downloadKotlinNativeDistribution"
+                    ":transformNativeTestCInteropDependenciesMetadata",
+                    ":downloadKotlinNativeDistribution",
                 )
                 assertExactTasksInGraph(
                     if (localRepository != null) {

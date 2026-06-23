@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.isSharedSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.retrieveExternalDependencies
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputLibraries
+import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.retrievePlatformDependenciesWithNativeDistribution
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
@@ -136,13 +140,18 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                             add(project.konanDistribution.stdlib)
                         }
                         val metadataCompilation = internalSourceSet.compilations.filterIsInstance<KotlinSharedNativeCompilation>()
-                            .find { it.name == sourceSet.name }
+                            .find { it.defaultSourceSet.name == sourceSet.name }
                         if (metadataCompilation != null) {
                             val nativePlatforms = internalSourceSet.awaitPlatformCompilations()
                                 .filterIsInstance<AbstractKotlinNativeCompilation>()
                                 .map { compilation -> compilation.konanTarget.name }.toSet()
                             if (mostCommonFragmentPerNativePlatforms[nativePlatforms] == fragmentName) {
                                 add(metadataCompilation.retrievePlatformDependenciesWithNativeDistribution())
+                            }
+
+                            commonizeCInteropTask()?.let { task ->
+                                val cinteropCommonizerDependent = CInteropCommonizerDependent.from(metadataCompilation) ?: return@let
+                                add(task.map { it.commonizedOutputLibraries(cinteropCommonizerDependent) })
                             }
                         }
                     }
