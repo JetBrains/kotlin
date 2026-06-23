@@ -55,3 +55,6 @@ public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V
 
   public void replaceAll(java.util.function.BiFunction<? super K, ? super V, ? extends V>);//  replaceAll(java.util.function.BiFunction<? super K, ? super V, ? extends V>)
 }
+
+public abstract interface RegularInterface /* RegularInterface*/ {
+}

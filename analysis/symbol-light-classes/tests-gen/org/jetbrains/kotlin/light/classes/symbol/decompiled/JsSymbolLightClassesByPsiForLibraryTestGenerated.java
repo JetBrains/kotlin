@@ -215,12 +215,6 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
-  @TestMetadata("implementingKotlinCollections.kt")
-  public void testImplementingKotlinCollections() {
-    run("implementingKotlinCollections.kt");
-  }
-
-  @Test
   @TestMetadata("importAliases.kt")
   public void testImportAliases() {
     run("importAliases.kt");
@@ -504,6 +498,24 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     }
 
     @Test
+    @TestMetadata("implementingKotlinCollections.kt")
+    public void testImplementingKotlinCollections() {
+      run("implementingKotlinCollections.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplementingMap.kt")
+    public void testImplementingMap() {
+      run("ImplementingMap.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplementingMutableSet.kt")
+    public void testImplementingMutableSet() {
+      run("ImplementingMutableSet.kt");
+    }
+
+    @Test
     @TestMetadata("indirectInheritanceStubs.kt")
     public void testIndirectInheritanceStubs() {
       run("indirectInheritanceStubs.kt");
@@ -513,6 +525,18 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
     @TestMetadata("multipleCollectionSupertypes.kt")
     public void testMultipleCollectionSupertypes() {
       run("multipleCollectionSupertypes.kt");
+    }
+
+    @Test
+    @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
+    public void testSuperTypeWithBoundKotlinCollection() {
+      run("SuperTypeWithBoundKotlinCollection.kt");
+    }
+
+    @Test
+    @TestMetadata("TwoOverridesOfIteratorMethod.kt")
+    public void testTwoOverridesOfIteratorMethod() {
+      run("TwoOverridesOfIteratorMethod.kt");
     }
 
     @Nested
