@@ -263,7 +263,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val configuration = input.configuration
         val firResult = input.frontendOutput
         val diagnosticsReporter = configuration.diagnosticsCollector
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
+        val fir2IrExtensions = JvmFir2IrExtensions()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
 
         val fir2IrResult = firResult.convertToIrAndActualize(

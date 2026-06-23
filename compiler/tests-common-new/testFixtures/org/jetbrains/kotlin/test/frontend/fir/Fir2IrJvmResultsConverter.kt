@@ -39,7 +39,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
     override fun createIrMangler(): KotlinMangler.IrMangler = JvmIrMangler
 
     override fun createFir2IrExtensions(compilerConfiguration: CompilerConfiguration): JvmFir2IrExtensions {
-        return JvmFir2IrExtensions(compilerConfiguration)
+        return JvmFir2IrExtensions()
     }
 
     override fun createFir2IrVisibilityConverter(): Fir2IrVisibilityConverter {

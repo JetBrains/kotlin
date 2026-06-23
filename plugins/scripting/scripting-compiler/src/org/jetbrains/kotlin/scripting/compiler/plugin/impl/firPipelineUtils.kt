@@ -45,7 +45,7 @@ internal fun convertAnalyzedFirToIr(
     frontendOutput: AllModulesFrontendOutput,
     environment: ModuleCompilerEnvironment
 ): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(configuration)
+    val extensions = JvmFir2IrExtensions()
 
     (
         val moduleFragment = irModuleFragment,

@@ -91,7 +91,7 @@ object GenerationUtils {
             FirParser.Psi,
         )
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration)
+        val fir2IrExtensions = JvmFir2IrExtensions()
         val diagnosticReporter = DiagnosticsCollectorImpl()
         firAnalyzerFacade.runResolution()
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)

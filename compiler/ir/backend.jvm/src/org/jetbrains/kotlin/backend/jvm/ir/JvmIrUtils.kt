@@ -266,12 +266,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     return parentClassOrNull?.isFileClass == false || annotations.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
 }
 
-// On the IR backend we represent raw types as star projected types with a special synthetic annotation.
-// See `TypeTranslator.translateTypeAnnotations`.
-private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotation()!!
-
-fun IrClass.rawType(context: JvmBackendContext): IrType =
-    defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
+fun IrClass.rawType(): IrType =
+    defaultType.addAnnotations(listOf(JvmIrSpecialAnnotationSymbolProvider.generateRawTypeAnnotation()))
 
 fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)

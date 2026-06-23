@@ -42,10 +42,10 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
-        typeOperand.erasedUpperBound.rawType(context as JvmBackendContext)
+        typeOperand.erasedUpperBound.rawType()
 
     override fun getWrappedFunctionType(klass: IrClass): IrType =
-        klass.rawType(context as JvmBackendContext)
+        klass.rawType()
 
     override fun getSuspendFunctionWithoutContinuation(function: IrSimpleFunction): IrSimpleFunction =
         function.suspendFunctionOriginal()
