@@ -5,21 +5,27 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.DummyAnalysisApiTestConfigurator
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
-class KtCodeFragmentTest : KotlinTestWithEnvironment() {
-    fun testSingleImportDirectiveWithoutContext() {
+class KtCodeFragmentTest : AbstractAnalysisApiBasedTest() {
+    override val configurator: AnalysisApiTestConfigurator get() = DummyAnalysisApiTestConfigurator
+
+    @Test
+    fun testSingleImportDirectiveWithoutContext() = runCodeFragmentTest { project ->
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "lib.foo", context = null)
 
         val textImports = codeFragment.importDirectives.map { it.text }
         assertEquals(emptyList<String>(), textImports)
     }
 
-    fun testSingleImportDirective() {
+    @Test
+    fun testSingleImportDirective() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "lib.foo", context)
 
@@ -27,7 +33,8 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.foo"), textImports)
     }
 
-    fun testSingleImportDirectiveExplicitImportKeyword() {
+    @Test
+    fun testSingleImportDirectiveExplicitImportKeyword() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "import lib.foo", context)
 
@@ -35,7 +42,8 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.foo"), textImports)
     }
 
-    fun testMultipleImportDirectives() {
+    @Test
+    fun testMultipleImportDirectives() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val importString = "lib.foo" + KtCodeFragment.IMPORT_SEPARATOR + "lib.bar"
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", importString, context)
@@ -44,7 +52,8 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.foo", "import lib.bar"), textImports)
     }
 
-    fun testMultipleImportDirectives2() {
+    @Test
+    fun testMultipleImportDirectives2() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val importString = "lib.bar" + KtCodeFragment.IMPORT_SEPARATOR + "lib.foo"
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", importString, context)
@@ -53,7 +62,8 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.bar", "import lib.foo"), textImports)
     }
 
-    fun testMultipleImportDirectivesAdding() {
+    @Test
+    fun testMultipleImportDirectivesAdding() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "lib.foo", context)
         codeFragment.addImportsFromString("lib.bar")
@@ -63,7 +73,8 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.foo", "import lib.bar", "import lib.baz"), textImports)
     }
 
-    fun testClone() {
+    @Test
+    fun testClone() = runCodeFragmentTest { project ->
         val context = KtPsiFactory(project).createNameIdentifier("context")
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "import lib.foo", context)
         val codeFragmentClone = codeFragment.copy() as KtCodeFragment
@@ -78,12 +89,9 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         assertEquals(listOf("import lib.foo", "import lib.baz"), textImportsClone)
     }
 
-    @OptIn(CoreEnvironmentDeprecation::class)
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(
-            testRootDisposable,
-            KotlinTestUtils.newConfiguration(),
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
+    private fun runCodeFragmentTest(action: (Project) -> Unit) {
+        runTest("compiler/psi/psi-impl/testData/codeFragment/context.kt") { testServices ->
+            action(testServices.environmentManager.getProject())
+        }
     }
 }
