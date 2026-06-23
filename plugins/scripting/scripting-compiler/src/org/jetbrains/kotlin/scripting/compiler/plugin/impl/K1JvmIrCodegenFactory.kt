@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
-import org.jetbrains.kotlin.backend.common.ir.ExpectSymbolTransformer
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
@@ -36,19 +35,30 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
@@ -806,5 +816,91 @@ private class JvmSignatureSerializerImpl(stringTable: StringTable) : JvmSignatur
         val classifier = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
         val classId = classifier.classId
         return if (classId == null) null else ClassMapperLite.mapClass(classId.asString())
+    }
+}
+
+/**
+ * [ExpectSymbolTransformer] replaces `expect` symbols in expressions with `actual` symbols. An `actual` symbol must be provided by
+ * overriding [getActualClass], [getActualProperty], [getActualConstructor], and [getActualFunction].
+ */
+@OptIn(ObsoleteDescriptorBasedAPI::class, UnsafeDuringIrConstructionAPI::class)
+abstract class ExpectSymbolTransformer : IrVisitorVoid() {
+
+    protected abstract fun getActualClass(descriptor: ClassDescriptor): IrClassSymbol?
+
+    protected data class ActualPropertyResult(
+        val propertySymbol: IrPropertySymbol,
+        val getterSymbol: IrSimpleFunctionSymbol?,
+        val setterSymbol: IrSimpleFunctionSymbol?,
+    )
+
+    protected abstract fun getActualProperty(descriptor: PropertyDescriptor): ActualPropertyResult?
+
+    protected abstract fun getActualConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol?
+
+    protected abstract fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol?
+
+    /**
+     * [isTargetDeclaration] can be overridden to customize if an element referring to [declaration] should be transformed. This check
+     * precedes [getActualClass], [getActualProperty], and so on.
+     */
+    protected open fun isTargetDeclaration(declaration: IrDeclaration): Boolean = declaration.isExpect
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildren(this, null)
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall) {
+        super.visitConstructorCall(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+        super.visitDelegatingConstructorCall(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
+    }
+
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) {
+        super.visitEnumConstructorCall(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        expression.symbol = getActualConstructor(expression.symbol.descriptor) ?: return
+    }
+
+    override fun visitCall(expression: IrCall) {
+        super.visitCall(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        expression.symbol = getActualFunction(expression.symbol.descriptor) ?: return
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference) {
+        super.visitPropertyReference(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        (val newSymbol = propertySymbol, val newGetter = getterSymbol, val newSetter = setterSymbol) = getActualProperty(expression.symbol.descriptor)
+            ?: return
+        expression.symbol = newSymbol
+        expression.getter = newGetter
+        expression.setter = newSetter
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference) {
+        super.visitFunctionReference(expression)
+        if (!isTargetDeclaration(expression.symbol.owner)) return
+
+        expression.symbol = getActualFunction(expression.symbol.descriptor) ?: return
+    }
+
+    override fun visitClassReference(expression: IrClassReference) {
+        super.visitClassReference(expression)
+        val oldSymbol = expression.symbol as? IrClassSymbol ?: return
+        if (!isTargetDeclaration(oldSymbol.owner)) return
+
+        expression.symbol = getActualClass(oldSymbol.descriptor) ?: return
     }
 }
