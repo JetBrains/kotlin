@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionGenerationContext
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
+import org.jetbrains.kotlin.backend.konan.llvm.node
 import org.jetbrains.kotlin.backend.konan.llvm.theUnitInstanceRef
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -199,8 +200,17 @@ internal class HairToBitcode(
             else LLVMBuildFMul(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
-        // TODO divs
-        // TODO shifts
+        override fun visitDiv(node: Div): LLVMValueRef = emit {
+            if (node.type.isIntegral) LLVMBuildSDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+            else LLVMBuildFDiv(builder, node.lhs.value(), node.rhs.value(), "")!!
+        }
+
+        override fun visitRem(node: Rem): LLVMValueRef = emit {
+            if (node.type.isIntegral) LLVMBuildSRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+            else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
+        }
+
+        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.value(), "")!! }
 
         override fun visitAnd(node: And): LLVMValueRef = emit { and(node.lhs.value(), node.rhs.value()) }
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
@@ -208,6 +218,10 @@ internal class HairToBitcode(
 
         override fun visitNot(node: Not): LLVMValueRef =
                 adaptToHair(emit { not(adaptFromHair(node.operand.value(), llvm.int1Type)) })
+
+        override fun visitShl(node: Shl): LLVMValueRef = emit { LLVMBuildShl(builder, node.lhs.value(), node.rhs.value(), "")!! }
+        override fun visitShr(node: Shr): LLVMValueRef = emit { LLVMBuildAShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
+        override fun visitUshr(node: Ushr): LLVMValueRef = emit { LLVMBuildLShr(builder, node.lhs.value(), node.rhs.value(), "")!! }
 
         override fun visitCmp(node: Cmp): LLVMValueRef {
             val lhs = node.lhs.value()
