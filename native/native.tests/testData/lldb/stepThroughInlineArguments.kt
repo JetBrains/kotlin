@@ -3,6 +3,9 @@
 // INPUT_DATA_FILE: stepThroughInlineArguments.in
 // OUTPUT_DATA_FILE: stepThroughInlineArguments.out
 // FILE: main.kt
+
+
+
 fun bar(x: Int): Int {
     val res = foo(
         x * 2,
@@ -16,6 +19,9 @@ fun main() {
 }
 
 // FILE: lib.kt
+
+
+
 inline fun foo(x: Int, y: Int): Int {
     return x +
             y
