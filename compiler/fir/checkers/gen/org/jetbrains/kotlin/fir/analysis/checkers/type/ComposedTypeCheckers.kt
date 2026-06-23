@@ -18,24 +18,19 @@ class ComposedTypeCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : 
     constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
 
     override val typeRefCheckers: Set<FirTypeRefChecker>
-        get() = _typeRefCheckers
+        field: MutableSet<FirTypeRefChecker> = mutableSetOf()
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
-        get() = _resolvedTypeRefCheckers
+        field: MutableSet<FirResolvedTypeRefChecker> = mutableSetOf()
     override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker>
-        get() = _functionTypeRefCheckers
+        field: MutableSet<FirFunctionTypeRefChecker> = mutableSetOf()
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker>
-        get() = _intersectionTypeRefCheckers
-
-    private val _typeRefCheckers: MutableSet<FirTypeRefChecker> = mutableSetOf()
-    private val _resolvedTypeRefCheckers: MutableSet<FirResolvedTypeRefChecker> = mutableSetOf()
-    private val _functionTypeRefCheckers: MutableSet<FirFunctionTypeRefChecker> = mutableSetOf()
-    private val _intersectionTypeRefCheckers: MutableSet<FirIntersectionTypeRefChecker> = mutableSetOf()
+        field: MutableSet<FirIntersectionTypeRefChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     fun register(checkers: TypeCheckers) {
-        checkers.typeRefCheckers.filterTo(_typeRefCheckers, predicate)
-        checkers.resolvedTypeRefCheckers.filterTo(_resolvedTypeRefCheckers, predicate)
-        checkers.functionTypeRefCheckers.filterTo(_functionTypeRefCheckers, predicate)
-        checkers.intersectionTypeRefCheckers.filterTo(_intersectionTypeRefCheckers, predicate)
+        checkers.typeRefCheckers.filterTo(typeRefCheckers, predicate)
+        checkers.resolvedTypeRefCheckers.filterTo(resolvedTypeRefCheckers, predicate)
+        checkers.functionTypeRefCheckers.filterTo(functionTypeRefCheckers, predicate)
+        checkers.intersectionTypeRefCheckers.filterTo(intersectionTypeRefCheckers, predicate)
     }
 }

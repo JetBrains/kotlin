@@ -144,23 +144,14 @@ class Generator(
                 for ([alias, _] in configuration.aliases.values) {
                     println("override ${alias.valDeclaration}")
                     withIndent {
-                        println("get() = _${alias.fieldName}")
+                        println("field: ${alias.mutableSetType} = mutableSetOf()")
                     }
                 }
                 for ([fieldName, classFqn] in configuration.additionalCheckers) {
                     println("override val $fieldName: ${classFqn.simpleName.setType}")
                     withIndent {
-                        println("get() = _$fieldName")
+                        println("field: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
                     }
-                }
-                println()
-
-                // private mutable delegates
-                for ([alias, _] in configuration.aliases.values) {
-                    println("private val _${alias.fieldName}: ${alias.mutableSetType} = mutableSetOf()")
-                }
-                for ([fieldName, classFqn] in configuration.additionalCheckers) {
-                    println("private val _$fieldName: ${classFqn.simpleName.mutableSetType} = mutableSetOf()")
                 }
                 println()
 
@@ -169,10 +160,10 @@ class Generator(
                 println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
                     for ([alias, _] in configuration.aliases.values) {
-                        println("checkers.${alias.fieldName}.filterTo(_${alias.fieldName}, predicate)")
+                        println("checkers.${alias.fieldName}.filterTo(${alias.fieldName}, predicate)")
                     }
                     for (fieldName in configuration.additionalCheckers.keys) {
-                        println("checkers.$fieldName.filterTo(_$fieldName, predicate)")
+                        println("checkers.$fieldName.filterTo($fieldName, predicate)")
                     }
                 }
                 println("}")
