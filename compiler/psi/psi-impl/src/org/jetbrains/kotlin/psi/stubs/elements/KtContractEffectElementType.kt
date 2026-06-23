@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.psi.stubs.factory.KotlinContractEffectStubFactory
 import org.jetbrains.kotlin.psi.stubs.factory.KotlinContractEffectStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
 
-class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractEffect>) :
-    KtStubElementType<KotlinContractEffectStubImpl, KtContractEffect>(
-        debugName,
-        psiClass,
-        KotlinContractEffectStub::class.java,
-    ) {
+object KtContractEffectElementType : KtStubElementType<KotlinContractEffectStubImpl, KtContractEffect>(
+    "CONTRACT_EFFECT",
+    KtContractEffect::class.java,
+    KotlinContractEffectStub::class.java,
+) {
     @KtImplementationDetail
     override fun getStubFactory(): StubElementFactory<KotlinContractEffectStubImpl, KtContractEffect> =
         KotlinContractEffectStubFactory

@@ -109,8 +109,7 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
             new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
 
-    KtContractEffectElementType CONTRACT_EFFECT =
-            new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);
+    KtContractEffectElementType CONTRACT_EFFECT = KtContractEffectElementType.INSTANCE;
 
     KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
             new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
