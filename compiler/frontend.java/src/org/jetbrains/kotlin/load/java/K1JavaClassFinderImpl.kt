@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiPackage
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
@@ -29,17 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import javax.inject.Inject
 
 @K1Deprecation
-fun Project.createJavaClassFinder(
-    scope: GlobalSearchScope,
-    annotationProvider: JavaAnnotationProvider?
-): JavaClassFinder =
-    JavaClassFinderImpl(annotationProvider).apply {
-        setProjectInstance(this@createJavaClassFinder)
-        setScope(scope)
-    }
-
-@K1Deprecation
-class JavaClassFinderImpl(private val annotationProvider: JavaAnnotationProvider?) : AbstractJavaClassFinder() {
+class K1JavaClassFinderImpl(private val annotationProvider: JavaAnnotationProvider?) : AbstractJavaClassFinder() {
     private lateinit var javaFacade: KotlinJavaPsiFacade
 
     @Inject

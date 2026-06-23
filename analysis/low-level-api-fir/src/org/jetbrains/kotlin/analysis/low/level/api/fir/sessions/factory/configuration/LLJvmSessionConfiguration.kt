@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 
@@ -50,7 +49,6 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
 
     override fun createBinaryLibrarySymbolProviders(session: LLFirSession, scope: GlobalSearchScope): List<FirSymbolProvider> =
         createSymbolProvidersWithOptionalAnnotationClassesProvider(session, scope) { packagePartProvider ->
-            @OptIn(K1Deprecation::class)
             val javaClassFinder = project.createJavaClassFinder(scope, session.javaAnnotationProvider)
             val firJavaFacade = LLFirJavaFacadeForBinaries(session, javaClassFinder)
 
