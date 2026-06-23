@@ -2855,10 +2855,10 @@ public fun UShortArray.isSorted(): Boolean {
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UIntArray.isSortedBy(selector: (UInt) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2883,10 +2883,10 @@ public inline fun <R : Comparable<R>> UIntArray.isSortedBy(selector: (UInt) -> R
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> ULongArray.isSortedBy(selector: (ULong) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2911,10 +2911,10 @@ public inline fun <R : Comparable<R>> ULongArray.isSortedBy(selector: (ULong) ->
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UByteArray.isSortedBy(selector: (UByte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2939,10 +2939,10 @@ public inline fun <R : Comparable<R>> UByteArray.isSortedBy(selector: (UByte) ->
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UShortArray.isSortedBy(selector: (UShort) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2968,10 +2968,10 @@ public inline fun <R : Comparable<R>> UShortArray.isSortedBy(selector: (UShort) 
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UIntArray.isSortedByDescending(selector: (UInt) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -2997,10 +2997,10 @@ public inline fun <R : Comparable<R>> UIntArray.isSortedByDescending(selector: (
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> ULongArray.isSortedByDescending(selector: (ULong) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -3026,10 +3026,10 @@ public inline fun <R : Comparable<R>> ULongArray.isSortedByDescending(selector: 
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UByteArray.isSortedByDescending(selector: (UByte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -3055,10 +3055,10 @@ public inline fun <R : Comparable<R>> UByteArray.isSortedByDescending(selector: 
 @ExperimentalUnsignedTypes
 public inline fun <R : Comparable<R>> UShortArray.isSortedByDescending(selector: (UShort) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true

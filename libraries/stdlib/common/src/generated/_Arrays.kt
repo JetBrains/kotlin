@@ -5757,10 +5757,10 @@ public fun CharArray.isSorted(): Boolean {
 @SinceKotlin("2.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.isSortedBy(selector: (T) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5784,10 +5784,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.isSortedBy(selector: (T) -
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ByteArray.isSortedBy(selector: (Byte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5811,10 +5811,10 @@ public inline fun <R : Comparable<R>> ByteArray.isSortedBy(selector: (Byte) -> R
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ShortArray.isSortedBy(selector: (Short) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5838,10 +5838,10 @@ public inline fun <R : Comparable<R>> ShortArray.isSortedBy(selector: (Short) ->
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> IntArray.isSortedBy(selector: (Int) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5865,10 +5865,10 @@ public inline fun <R : Comparable<R>> IntArray.isSortedBy(selector: (Int) -> R?)
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> LongArray.isSortedBy(selector: (Long) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5892,10 +5892,10 @@ public inline fun <R : Comparable<R>> LongArray.isSortedBy(selector: (Long) -> R
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> FloatArray.isSortedBy(selector: (Float) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5919,10 +5919,10 @@ public inline fun <R : Comparable<R>> FloatArray.isSortedBy(selector: (Float) ->
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> DoubleArray.isSortedBy(selector: (Double) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5946,10 +5946,10 @@ public inline fun <R : Comparable<R>> DoubleArray.isSortedBy(selector: (Double) 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> BooleanArray.isSortedBy(selector: (Boolean) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -5973,10 +5973,10 @@ public inline fun <R : Comparable<R>> BooleanArray.isSortedBy(selector: (Boolean
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> CharArray.isSortedBy(selector: (Char) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) > 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -6001,10 +6001,10 @@ public inline fun <R : Comparable<R>> CharArray.isSortedBy(selector: (Char) -> R
 @SinceKotlin("2.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.isSortedByDescending(selector: (T) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6029,10 +6029,10 @@ public inline fun <T, R : Comparable<R>> Array<out T>.isSortedByDescending(selec
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ByteArray.isSortedByDescending(selector: (Byte) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6057,10 +6057,10 @@ public inline fun <R : Comparable<R>> ByteArray.isSortedByDescending(selector: (
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> ShortArray.isSortedByDescending(selector: (Short) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6085,10 +6085,10 @@ public inline fun <R : Comparable<R>> ShortArray.isSortedByDescending(selector: 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> IntArray.isSortedByDescending(selector: (Int) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6113,10 +6113,10 @@ public inline fun <R : Comparable<R>> IntArray.isSortedByDescending(selector: (I
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> LongArray.isSortedByDescending(selector: (Long) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6141,10 +6141,10 @@ public inline fun <R : Comparable<R>> LongArray.isSortedByDescending(selector: (
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> FloatArray.isSortedByDescending(selector: (Float) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6169,10 +6169,10 @@ public inline fun <R : Comparable<R>> FloatArray.isSortedByDescending(selector: 
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> DoubleArray.isSortedByDescending(selector: (Double) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6197,10 +6197,10 @@ public inline fun <R : Comparable<R>> DoubleArray.isSortedByDescending(selector:
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> BooleanArray.isSortedByDescending(selector: (Boolean) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
@@ -6225,10 +6225,10 @@ public inline fun <R : Comparable<R>> BooleanArray.isSortedByDescending(selector
 @SinceKotlin("2.4")
 public inline fun <R : Comparable<R>> CharArray.isSortedByDescending(selector: (Char) -> R?): Boolean {
     if (size < 2) return true
-    var previousValue = selector(this[0])
-    for (i in 1..lastIndex) {
+    var previousValue: R? = null
+    for (i in indices) {
         val currentValue = selector(this[i])
-        if (compareValues(previousValue, currentValue) < 0) return false
+        if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
         previousValue = currentValue
     }
     return true
