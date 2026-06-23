@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.IrProvider
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
@@ -34,7 +32,6 @@ abstract class DeclarationStubGenerator(
         get() = symbolTable.lock
 
     abstract var unboundSymbolGeneration: Boolean
-    abstract val typeTranslator: TypeTranslator
     abstract val descriptorFinder: DescriptorByIdSignatureFinder
 
     abstract fun generateOrGetEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment
