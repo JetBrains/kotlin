@@ -39,8 +39,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITHOUT_COMPATIBILITY_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.VersionRequirementUtils
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -169,12 +168,9 @@ open class FirJvmSerializerExtension(
     ) {
         if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
             if (jvmDefaultMode == JvmDefaultMode.NO_COMPATIBILITY) {
-                @OptIn(K1Deprecation::class)
                 builder.addVersionRequirement(
-                    DescriptorSerializer.writeVersionRequirement(
-                        1,
-                        4,
-                        0,
+                    VersionRequirementUtils.writeVersionRequirement(
+                        major = 1, minor = 4, patch = 0,
                         ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
                         versionRequirementTable
                     )
@@ -265,8 +261,13 @@ open class FirJvmSerializerExtension(
         if (unifiedNullChecks) {
             // Since Kotlin 1.4, we generate a call to Intrinsics.checkNotNullParameter in inline functions which causes older compilers
             // (earlier than 1.3.50) to crash because a functional parameter in this position can't be inlined
-            @OptIn(K1Deprecation::class)
-            add(DescriptorSerializer.writeVersionRequirement(1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+            add(
+                VersionRequirementUtils.writeVersionRequirement(
+                    major = 1, minor = 3, patch = 50,
+                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
+                    versionRequirementTable = this
+                )
+            )
         }
     }
 
