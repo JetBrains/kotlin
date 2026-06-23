@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -25,7 +24,6 @@ import java.io.ByteArrayOutputStream
 import java.io.EOFException
 import java.io.PrintStream
 
-@OptIn(K1Deprecation::class)
 class JvmPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
     private val scope: GlobalSearchScope
