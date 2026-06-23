@@ -32,6 +32,8 @@ public interface KaInternals {
 
     public val resolver: KaInternalsResolver
 
+    public val signatureSubstitutor: KaInternalsSignatureSubstitutor
+
     public val sourceProvider: KaInternalsSourceProvider
 
     public val typeRelationChecker: KaInternalsTypeRelationChecker

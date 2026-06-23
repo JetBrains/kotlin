@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signat
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.asSignature
 import org.jetbrains.kotlin.analysis.api.components.buildSubstitutor
-import org.jetbrains.kotlin.analysis.api.components.substitute
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
+import org.jetbrains.kotlin.analysis.api.signatures.asSignature
+import org.jetbrains.kotlin.analysis.api.signatures.substitute
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest

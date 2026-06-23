@@ -70,6 +70,13 @@ public interface KaSignatureSubstitutor : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.substitute(substitutor)",
+        "org.jetbrains.kotlin.analysis.api.signatures.substitute",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCallableSignature<S> {
@@ -87,6 +94,13 @@ public fun <S : KaCallableSymbol> S.substitute(substitutor: KaSubstitutor): KaCa
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.substitute(substitutor)",
+        "org.jetbrains.kotlin.analysis.api.signatures.substitute",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFunctionSignature<S> {
@@ -104,6 +118,13 @@ public fun <S : KaFunctionSymbol> S.substitute(substitutor: KaSubstitutor): KaFu
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.substitute(substitutor)",
+        "org.jetbrains.kotlin.analysis.api.signatures.substitute",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVariableSignature<S> {
@@ -119,6 +140,13 @@ public fun <S : KaVariableSymbol> S.substitute(substitutor: KaSubstitutor): KaVa
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.asSignature()",
+        "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
@@ -132,6 +160,13 @@ public fun <S : KaCallableSymbol> S.asSignature(): KaCallableSignature<S> {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.asSignature()",
+        "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
@@ -145,6 +180,13 @@ public fun <S : KaFunctionSymbol> S.asSignature(): KaFunctionSignature<S> {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.signatures' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.asSignature()",
+        "org.jetbrains.kotlin.analysis.api.signatures.asSignature",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <S : KaVariableSymbol> S.asSignature(): KaVariableSignature<S> {
