@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -127,9 +129,14 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
             function.inline(target, boundArguments + arguments)
 
         is IrInvokable -> {
-            val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
+            val functionClass = invokable.type.getClass()!!
+            val invoke = functionClass.functions.single { it.name == OperatorNameConventions.INVOKE }
+            val returnType = IrTypeSubstitutor(
+                functionClass.typeParameters.map { it.symbol },
+                (invokable.type as IrSimpleType).arguments,
+            ).substitute(invoke.returnType)
             IrCallImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, returnType, invoke.symbol,
                 typeArgumentsCount = 0,
             ).apply {
                 val newArguments = (listOf(invokable) + arguments).map { arg ->
