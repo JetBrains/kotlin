@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 
@@ -27,7 +26,6 @@ private fun createIncrementalCompilationScope(
     }
 }
 
-@OptIn(K1Deprecation::class)
 fun prepareIncrementalCompilationContextAndLibrariesScope(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,

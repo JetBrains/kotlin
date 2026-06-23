@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
+    implementation(project(":compiler:frontend.common.jvm"))
 
     compileOnly(toolsJarApi())
     compileOnly(intellijCore())
