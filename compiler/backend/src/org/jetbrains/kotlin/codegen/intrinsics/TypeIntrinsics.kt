@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -69,33 +70,32 @@ object TypeIntrinsics {
     }
 
     private fun iconstNode(value: Int): AbstractInsnNode =
-            if (value >= -1 && value <= 5) {
-                InsnNode(Opcodes.ICONST_0 + value)
-            }
-            else if (value >= java.lang.Byte.MIN_VALUE && value <= java.lang.Byte.MAX_VALUE) {
-                IntInsnNode(Opcodes.BIPUSH, value)
-            }
-            else if (value >= java.lang.Short.MIN_VALUE && value <= java.lang.Short.MAX_VALUE) {
-                IntInsnNode(Opcodes.SIPUSH, value)
-            }
-            else {
-                LdcInsnNode(value)
-            }
+        when (value) {
+            in -1..5 -> InsnNode(Opcodes.ICONST_0 + value)
+            in Byte.MIN_VALUE..Byte.MAX_VALUE -> IntInsnNode(Opcodes.BIPUSH, value)
+            in Short.MIN_VALUE..Short.MAX_VALUE -> IntInsnNode(Opcodes.SIPUSH, value)
+            else -> LdcInsnNode(value)
+        }
 
-    @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, type: IrType, asmType: Type) {
+    @JvmStatic
+    fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, type: IrType, asmType: Type) {
         val functionTypeArity = getFunctionTypeArity(type)
         if (functionTypeArity >= 0) {
             instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
-            instructions.insertBefore(instanceofInsn,
-                                      typeIntrinsicNode(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR))
+            instructions.insertBefore(
+                instanceofInsn,
+                typeIntrinsicNode(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR),
+            )
             instructions.remove(instanceofInsn)
             return
         }
 
         val isMutableCollectionMethodName = getIsMutableCollectionMethodName(type)
         if (isMutableCollectionMethodName != null) {
-            instructions.insertBefore(instanceofInsn,
-                                      typeIntrinsicNode(isMutableCollectionMethodName, IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR))
+            instructions.insertBefore(
+                instanceofInsn,
+                typeIntrinsicNode(isMutableCollectionMethodName, IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR),
+            )
             instructions.remove(instanceofInsn)
             return
         }
@@ -103,13 +103,16 @@ object TypeIntrinsics {
         instanceofInsn.desc = asmType.internalName
     }
 
-    @JvmStatic fun checkcast(
-            v: InstructionAdapter,
-            type: IrType, asmType: Type,
-            // This parameter is just for sake of optimization:
-            // when we generate 'as?' we do necessary intrinsic checks
-            // when calling TypeIntrinsics.instanceOf, so here we can just make checkcast
-            safe: Boolean) {
+    @JvmStatic
+    fun checkcast(
+        v: InstructionAdapter,
+        type: IrType,
+        asmType: Type,
+        // This parameter is just for sake of optimization:
+        // when we generate 'as?' we do necessary intrinsic checks
+        // when calling TypeIntrinsics.instanceOf, so here we can just make checkcast
+        safe: Boolean,
+    ) {
         if (safe) {
             v.checkcast(asmType)
             return
@@ -132,13 +135,12 @@ object TypeIntrinsics {
         v.checkcast(asmType)
     }
 
-    private val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
+    private const val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
 
-    private val IS_FUNCTON_OF_ARITY_METHOD_NAME = "isFunctionOfArity"
+    private const val IS_FUNCTON_OF_ARITY_METHOD_NAME = "isFunctionOfArity"
 
     private val IS_FUNCTON_OF_ARITY_DESCRIPTOR =
-            Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
-
+        Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
 
     private val MUTABLE_COLLECTION_TYPE_FQ_NAMES = setOf(
         FqNames.mutableIterator,
@@ -148,7 +150,7 @@ object TypeIntrinsics {
         FqNames.mutableListIterator,
         FqNames.mutableMap,
         FqNames.mutableSet,
-        FqNames.mutableMapEntry
+        FqNames.mutableMapEntry,
     )
 
     private fun getMutableCollectionMethodName(prefix: String, type: IrType): String? {
@@ -163,7 +165,7 @@ object TypeIntrinsics {
     private fun getAsMutableCollectionMethodName(type: IrType): String? = getMutableCollectionMethodName("as", type)
 
     private val IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR =
-            Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
+        Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"))
 
     private val KOTLIN_FUNCTION_INTERFACE_REGEX = Regex("^kotlin\\.Function([0-9]+)$")
     private val KOTLIN_SUSPEND_FUNCTION_INTERFACE_REGEX = Regex("^kotlin\\.coroutines\\.SuspendFunction([0-9]+)$")
@@ -186,20 +188,17 @@ object TypeIntrinsics {
         getFunctionTypeArityByRegex(type, KOTLIN_SUSPEND_FUNCTION_INTERFACE_REGEX)
 
     private fun typeIntrinsicNode(methodName: String, methodDescriptor: String): MethodInsnNode =
-            MethodInsnNode(Opcodes.INVOKESTATIC, INTRINSICS_CLASS, methodName, methodDescriptor, false)
+        MethodInsnNode(Opcodes.INVOKESTATIC, INTRINSICS_CLASS, methodName, methodDescriptor, false)
 
     private fun InstructionAdapter.typeIntrinsic(methodName: String, methodDescriptor: String) {
         invokestatic(INTRINSICS_CLASS, methodName, methodDescriptor, false)
     }
 
-
-    private val OBJECT_TYPE = Type.getObjectType("java/lang/Object")
-
     private fun getAsMutableCollectionDescriptor(asmType: Type): String =
-            Type.getMethodDescriptor(asmType, OBJECT_TYPE)
+        Type.getMethodDescriptor(asmType, OBJECT_TYPE)
 
-    private val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY = "beforeCheckcastToFunctionOfArity"
+    private const val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY = "beforeCheckcastToFunctionOfArity"
 
     private val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR =
-            Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.INT_TYPE)
+        Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.INT_TYPE)
 }
