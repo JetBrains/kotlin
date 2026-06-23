@@ -1,4 +1,3 @@
-// p1.TypeHierarchyMap
 package p1
 
 class TypeHierarchyMap<TValue> : Map<Class<*>, TValue> {

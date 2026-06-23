@@ -26,15 +26,17 @@ public final class SmartSet /* SmartSet*/<T>  implements java.util.Set<T>, kotli
 
   public void setSize(int);//  setSize(int)
 
-  public static final class Companion /* SmartSet.Companion*/ {
-    @<error>()
-    @org.jetbrains.annotations.NotNull()
-    public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create();// <T>  create()
+  class Companion ...
+}
 
-    @<error>()
-    @org.jetbrains.annotations.NotNull()
-    public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>)
+public static final class Companion /* SmartSet.Companion*/ {
+  @<error>()
+  @org.jetbrains.annotations.NotNull()
+  public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create();// <T>  create()
 
-    private  Companion();//  .ctor()
-  }
+  @<error>()
+  @org.jetbrains.annotations.NotNull()
+  public final <T> @org.jetbrains.annotations.NotNull() SmartSet<T> create(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>)
+
+  private  Companion();//  .ctor()
 }

@@ -24,5 +24,8 @@ public abstract class SmartSet /* SmartSet*/<T>  {
   @java.lang.Override()
   public boolean add(T);//  add(T)
 
+  @java.lang.Override()
+  public boolean contains(T);//  contains(T)
+
   private  SmartSet();//  .ctor()
 }

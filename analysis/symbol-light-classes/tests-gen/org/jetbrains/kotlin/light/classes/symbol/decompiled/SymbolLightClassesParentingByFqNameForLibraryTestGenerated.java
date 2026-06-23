@@ -467,12 +467,6 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
   }
 
   @Test
-  @TestMetadata("SuperTypeWithBoundKotlinCollection.kt")
-  public void testSuperTypeWithBoundKotlinCollection() {
-    run("SuperTypeWithBoundKotlinCollection.kt");
-  }
-
-  @Test
   @TestMetadata("SuspendFunctionTypeAsAnnotationArgument.kt")
   public void testSuspendFunctionTypeAsAnnotationArgument() {
     run("SuspendFunctionTypeAsAnnotationArgument.kt");
@@ -875,18 +869,6 @@ public class SymbolLightClassesParentingByFqNameForLibraryTestGenerated extends 
     @TestMetadata("ImplementingCharSequenceAndNumber.kt")
     public void testImplementingCharSequenceAndNumber() {
       run("ImplementingCharSequenceAndNumber.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMap.kt")
-    public void testImplementingMap() {
-      run("ImplementingMap.kt");
-    }
-
-    @Test
-    @TestMetadata("ImplementingMutableSet.kt")
-    public void testImplementingMutableSet() {
-      run("ImplementingMutableSet.kt");
     }
 
     @Test

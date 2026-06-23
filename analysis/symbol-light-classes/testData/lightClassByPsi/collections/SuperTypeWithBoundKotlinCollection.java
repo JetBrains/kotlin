@@ -37,3 +37,6 @@ public abstract class KotlinClass /* KotlinClass*/<K extends RegularInterface, V
 
   public  KotlinClass();//  .ctor()
 }
+
+public abstract interface RegularInterface /* RegularInterface*/ {
+}
