@@ -1499,3 +1499,7 @@ public final class org/jetbrains/kotlin/analysis/api/types/TypeUtilsKt {
 	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/visibility/SymbolVisiblityKt {
+	public static final fun isPublicApi (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;)Z
+}
+

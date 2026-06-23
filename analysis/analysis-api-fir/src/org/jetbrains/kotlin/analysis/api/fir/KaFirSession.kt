@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaTypeRelationCheckerBridge
 import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaResolverBridge
+import org.jetbrains.kotlin.analysis.api.fir.components.bridges.KaVisibilityCheckerBridge
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsResolver
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeRelationChecker
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValid
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -72,7 +74,7 @@ private constructor(
     evaluator = KaFirEvaluator(analysisSessionProvider),
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
     renderer = KaRendererImpl(analysisSessionProvider),
-    visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider),
+    visibilityChecker = KaVisibilityCheckerBridge(analysisSessionProvider),
     typeCreator = KaFirTypeCreator(analysisSessionProvider),
     typeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider),
     analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),
@@ -88,6 +90,8 @@ private constructor(
     override val resolver: KaInternalsResolver = KaFirResolver(analysisSessionProvider)
 
     override val typeRelationChecker: KaInternalsTypeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider)
+
+    override val visibilityChecker: KaInternalsVisibilityChecker = KaFirVisibilityChecker(analysisSessionProvider)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)
