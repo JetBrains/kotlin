@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.isExpect
@@ -13,12 +13,8 @@ import org.jetbrains.kotlin.ir.util.isExpect
 /**
  * Removes `expect` declarations from the module fragment.
  */
-internal class JvmExpectDeclarationRemover(private val context: JvmBackendContext) : ExpectDeclarationRemover(context.symbolTable, true) {
+internal class JvmExpectDeclarationRemover(@Suppress("unused") context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (context.config.useFir) {
-            irFile.declarations.removeIf { it.isExpect }
-        } else {
-            super.lower(irFile)
-        }
+        irFile.declarations.removeIf { it.isExpect }
     }
 }
