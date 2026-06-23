@@ -1,0 +1,12 @@
+KT element: KtPrefixExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unaryIntLiteralInUnresolvedInfixCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        IntegerLiteral(-1).<Unresolved name: unknownInfix>#(Int(2))
+    }
