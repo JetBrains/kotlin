@@ -65,8 +65,8 @@ class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass 
 }
 
 
-private fun createEntryAccessorName(enumName: String, enumEntry: IrEnumEntry) =
-    "${enumName}_${enumEntry.name.identifier}_getInstance"
+private fun createEntryAccessorName(enumEntry: IrEnumEntry) =
+    "${enumEntry.name}$${ObjectDeclarationLowering.GET_INSTANCE_METHOD_NAME}"
 
 private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irClass).defaultType
 
@@ -308,10 +308,8 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
     }
 
     private fun createEnumEntryInstanceVariable(irClass: IrClass, enumEntry: IrEnumEntry): IrField {
-        val enumName = irClass.name.identifier
-
         val result = context.irFactory.buildField {
-            name = Name.identifier("${enumName}_${enumEntry.name.identifier}_instance")
+            name = Name.identifier("${enumEntry.name}$${ObjectDeclarationLowering.INSTANCE_FIELD_NAME}")
             type = enumEntry.getType(irClass).makeNullable()
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY
             isStatic = true
@@ -361,11 +359,9 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
                 // Create entry instance getters. These are used to lower `IrGetEnumValue`.
                 val entryGetInstanceFun = createGetEntryInstanceFun(irClass, declaration)
 
-                // TODO prettify
-                entryGetInstanceFun.parent = irClass.parent
-                (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
+                irClass.declarations += entryGetInstanceFun
 
-                return listOf(declaration) // TODO not null?
+                return null
             }
         }
 
@@ -377,7 +373,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
     ): IrSimpleFunction =
         enumEntry::getInstanceFun.getOrSetIfNull {
             context.irFactory.buildFun {
-                name = Name.identifier(createEntryAccessorName(irClass.name.identifier, enumEntry))
+                name = Name.identifier(createEntryAccessorName(enumEntry))
                 returnType = enumEntry.getType(irClass)
                 origin = JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
             }.apply {
@@ -392,7 +388,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
         }
 }
 
-private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
+private val ENTRIES_FIELD_NAME = Name.identifier("ENTRIES")
 
 /**
  * Implements `valueOf, `values` and `entries` for enum classes.
@@ -449,7 +445,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 
     private fun IrClass.buildEntriesField(): IrField = with(context) {
         addField {
-            name = Name.identifier(ENTRIES_FIELD_NAME)
+            name = ENTRIES_FIELD_NAME
             type = context.symbols.enumEntries.defaultType
             visibility = PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES

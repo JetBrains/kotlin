@@ -112,11 +112,6 @@ abstract class WebStaticInitializersUsageLowering(
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
         for (declaration in container.declarations) {
             when (declaration) {
-                is IrEnumEntry -> {
-                    declaration.getInstanceFun?.let { getInstance ->
-                        builder.insertCall(getInstance, staticInitFunction)
-                    }
-                }
                 // Do not insert call to a static_init into static_init itself
                 is IrSimpleFunction if declaration == staticInitFunction -> continue
                 // Do not insert a call to a static_init into an enum constructor, since it would be only accessible from static_init.
