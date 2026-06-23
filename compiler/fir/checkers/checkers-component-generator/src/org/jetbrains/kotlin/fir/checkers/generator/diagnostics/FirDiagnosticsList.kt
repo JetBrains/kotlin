@@ -1714,6 +1714,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement> {
             parameter<Symbol>("declaration")

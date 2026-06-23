@@ -194,6 +194,9 @@ val FirProperty.isDelegatedProperty: Boolean
 val FirPropertySymbol.isDelegatedProperty: Boolean
     get() = fir.isDelegatedProperty
 
+val FirProperty.hasExposedBackingField: Boolean
+    get() = hasBackingField && !(isVal && isLateInit)
+
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean
     get() {
@@ -223,6 +226,12 @@ val FirPropertySymbol.hasBackingField: Boolean
     get() {
         lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return fir.hasBackingField
+    }
+
+val FirPropertySymbol.hasExposedBackingField: Boolean
+    get() {
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return fir.hasExposedBackingField
     }
 
 fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstraint> {
