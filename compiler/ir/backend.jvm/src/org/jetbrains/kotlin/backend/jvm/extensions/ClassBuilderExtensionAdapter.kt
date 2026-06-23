@@ -39,7 +39,7 @@ class ClassGeneratorExtensionAdapterImpl(private val extension: ClassGeneratorEx
     ): ClassBuilderFactory = object : DelegatingClassBuilderFactory(interceptedFactory) {
         override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
             val classBuilder = interceptedFactory.newClassBuilder(origin)
-            val irClass = origin.unwrapOrigin<IrClass>()
+            val irClass = origin.declaration as? IrClass
             return DelegatingClassBuilderAdapter(
                 extension.generateClass(ClassGeneratorAdapter(classBuilder), irClass),
                 classBuilder
@@ -103,12 +103,12 @@ private class DelegatingClassBuilderAdapter(
     override fun newField(
         origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, value: Any?
     ): FieldVisitor =
-        generator.newField(origin.unwrapOrigin(), access, name, desc, signature, value)
+        generator.newField(origin.declaration as? IrField, access, name, desc, signature, value)
 
     override fun newMethod(
         origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?
     ): MethodVisitor =
-        generator.newMethod(origin.unwrapOrigin(), access, name, desc, signature, exceptions)
+        generator.newMethod(origin.declaration as? IrFunction, access, name, desc, signature, exceptions)
 
     override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor =
         generator.newRecordComponent(name, desc, signature)
@@ -132,9 +132,6 @@ private class DelegatingClassBuilderAdapter(
         generator.done(generateSmapCopyToAnnotation)
     }
 }
-
-private inline fun <reified T : IrDeclaration> JvmDeclarationOrigin.unwrapOrigin(): T? =
-    (this as? JvmIrDeclarationOrigin)?.declaration as? T
 
 private fun IrDeclaration?.wrapToOrigin(): JvmDeclarationOrigin =
     this?.descriptorOrigin ?: JvmDeclarationOrigin.NO_ORIGIN

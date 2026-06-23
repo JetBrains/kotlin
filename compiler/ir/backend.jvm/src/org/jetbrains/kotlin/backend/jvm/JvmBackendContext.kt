@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -106,12 +107,16 @@ class JvmBackendContext(
         }
 
         state.reportDuplicateClassNameError = { origin1, internalName, origin2 ->
-            val declaration1 = (origin1 as JvmIrDeclarationOrigin).declaration as IrClass
-            val declaration2 = (origin2 as JvmIrDeclarationOrigin).declaration as IrClass
+            val declaration1 = origin1.declaration as IrClass
+            val declaration2 = origin2.declaration as IrClass
             diagnosticReporter.at(declaration1).report(
                 JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName,
                 listOf(declaration1, declaration2).joinToString { it.name.asString() },
             )
+        }
+
+        state.isDeclarationGeneratedForCompilerPlugin = { declaration ->
+            declaration.fileOrNull?.fileForTopLevelPluginDeclarations == true
         }
     }
 

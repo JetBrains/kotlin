@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.reflect.InvocationTargetException
 
@@ -91,6 +92,8 @@ class GenerationState(
     lateinit var mapInlineClass: (ClassDescriptor) -> Type
 
     lateinit var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, JvmDeclarationOrigin) -> Unit
+
+    lateinit var isDeclarationGeneratedForCompilerPlugin: (IrDeclaration) -> Boolean
 
     @OptIn(K1Deprecation::class)
     val typeApproximator: TypeApproximator = TypeApproximator(module.builtIns, config.languageVersionSettings)

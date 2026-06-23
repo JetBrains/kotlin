@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.kapt.stubs
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-class KaptIrOrigin(backendOrigin: JvmIrDeclarationOrigin) {
-    val declaration: IrDeclaration = backendOrigin.declaration
-    val element: PsiElement? = backendOrigin.declaration.findPsiElementForDeclarationOrigin()
+class KaptIrOrigin(val declaration: IrDeclaration) {
+    val element: PsiElement? = declaration.findPsiElementForDeclarationOrigin()
 
     override fun toString(): String = declaration.render()
 }

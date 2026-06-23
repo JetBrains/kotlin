@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
@@ -42,11 +43,8 @@ class ClassFileFactory(
     fun newVisitor(origin: JvmDeclarationOrigin, asmType: Type, sourceFiles: List<File>): ClassBuilder {
         val answer = builderFactory.newClassBuilder(origin)
         val classFileName = asmType.internalName + ".class"
-        generators.put(
-            classFileName,
-            ClassBuilderAndSourceFileList(answer, sourceFiles)
-        )
-        if (origin.generatedForCompilerPlugin) {
+        generators[classFileName] = ClassBuilderAndSourceFileList(answer, sourceFiles)
+        if (origin.declaration?.let(generationState.isDeclarationGeneratedForCompilerPlugin) == true) {
             generatedForCompilerPluginSources.addAll(sourceFiles)
         }
         return answer

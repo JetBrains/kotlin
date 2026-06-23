@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler
-import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
@@ -40,7 +39,7 @@ class KaClassBuilderFactory private constructor(
             override fun defineClass(
                 version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String?>,
             ) {
-                val element = (origin as? JvmIrDeclarationOrigin)?.declaration?.let(PsiSourceManager::findPsiElement)
+                val element = origin.declaration?.let(PsiSourceManager::findPsiElement)
                 compiledClassHandler.handleClassDefinition(element?.containingFile, name)
                 super.defineClass(version, access, name, signature, superName, interfaces)
             }
