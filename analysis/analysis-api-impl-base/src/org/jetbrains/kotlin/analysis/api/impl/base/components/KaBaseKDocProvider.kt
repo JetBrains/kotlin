@@ -8,14 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertyAccessorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsKDocProvider
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.api.KDocCommentDescriptor
@@ -31,45 +25,46 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @KaImplementationDetail
 @OptIn(KtNonPublicApi::class, KtImplementationDetail::class)
-abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaKDocProvider {
-    override fun KtDeclaration.findKDoc(): KDocCommentDescriptor? = this.lookupOwnedKDoc() ?: this.lookupKDocInParent()
+abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), KaInternalsKDocProvider {
+    override fun findKDoc(declaration: KtDeclaration): KDocCommentDescriptor? =
+        declaration.lookupOwnedKDoc() ?: declaration.lookupKDocInParent()
 
-    override fun KaDeclarationSymbol.findKDoc(): KDocCommentDescriptor? = with(analysisSession) {
-        val ktElement = psi?.navigationElement as? KtDeclaration
-        ktElement?.findKDoc()?.let { return it }
+    override fun findKDoc(symbol: KaDeclarationSymbol): KDocCommentDescriptor? = with(analysisSession) {
+        val ktElement = symbol.psi?.navigationElement as? KtDeclaration
+        ktElement?.let { findKDoc(it) }?.let { return it }
 
-        if (origin == KaSymbolOrigin.LIBRARY) {
-            findDeserializedKdocText(this@findKDoc)
+        if (symbol.origin == KaSymbolOrigin.LIBRARY) {
+            findDeserializedKdocText(symbol)
                 ?.let(::constructCommentDescriptor)
                 ?.let { return it }
         }
 
-        if (this@findKDoc is KaCallableSymbol) {
-            allOverriddenSymbols.forEach { overrider ->
-                overrider.findKDoc()?.let {
+        if (symbol is KaCallableSymbol) {
+            symbol.allOverriddenSymbols.forEach { overrider ->
+                findKDoc(overrider)?.let {
                     return it
                 }
             }
         }
 
-        if (this@findKDoc is KaValueParameterSymbol) {
-            val containingSymbol = containingDeclaration as? KaNamedFunctionSymbol
+        if (symbol is KaValueParameterSymbol) {
+            val containingSymbol = symbol.containingDeclaration as? KaNamedFunctionSymbol
             if (containingSymbol != null) {
-                val idx = containingSymbol.valueParameters.indexOf(this@findKDoc)
+                val idx = containingSymbol.valueParameters.indexOf(symbol)
                 containingSymbol.getExpectsForActual().filterIsInstance<KaNamedFunctionSymbol>()
                     .firstNotNullOfOrNull { expectFunction ->
-                        expectFunction.valueParameters[idx].findKDoc()
+                        findKDoc(expectFunction.valueParameters[idx])
                     }?.let { return it }
             }
         }
 
-        if (this@findKDoc is KaPropertyAccessorSymbol) {
-            val containingProperty = containingDeclaration as? KaPropertySymbol
-            containingProperty?.findKDoc()?.let { return it }
+        if (symbol is KaPropertyAccessorSymbol) {
+            val containingProperty = symbol.containingDeclaration as? KaPropertySymbol
+            containingProperty?.let { findKDoc(it) }?.let { return it }
         }
 
-        getExpectsForActual().firstNotNullOfOrNull { expectSymbol ->
-            expectSymbol.findKDoc()?.let {
+        symbol.getExpectsForActual().firstNotNullOfOrNull { expectSymbol ->
+            findKDoc(expectSymbol)?.let {
                 return it
             }
         }
