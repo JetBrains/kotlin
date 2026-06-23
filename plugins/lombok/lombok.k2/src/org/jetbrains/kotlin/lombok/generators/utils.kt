@@ -32,15 +32,11 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun String.capitalize(): String {
-    if (isEmpty()) return this
-    val firstChar = this[0]
-    return if (firstChar.isUpperCase()) this else firstChar.uppercase() + substring(1)
+    return if (isEmpty()) this else this[0].uppercaseChar() + substring(1)
 }
 
 fun String.decapitalize(): String {
-    if (isEmpty()) return this
-    val firstChar = this[0]
-    return if (firstChar.isUpperCase()) firstChar.lowercase() + substring(1) else this
+    return if (isEmpty()) this else this[0].lowercaseChar() + substring(1)
 }
 
 fun String.normalizeAndCapitalize(isPrimitiveBoolean: Boolean): String {
