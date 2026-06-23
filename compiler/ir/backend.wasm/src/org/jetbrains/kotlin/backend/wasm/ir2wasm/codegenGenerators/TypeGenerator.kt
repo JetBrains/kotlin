@@ -35,7 +35,7 @@ class TypeGenerator(
 
         // Generate function type
         val resultType = when (declaration) {
-            // Unit_getInstance returns true Unit reference instead of "void"
+            // Unit$getInstance returns true Unit reference instead of "void"
             unitGetInstanceFunction, unitPrimaryConstructor -> wasmModuleTypeTransformer.transformType(declaration.returnType)
             else -> wasmModuleTypeTransformer.transformResultType(declaration.returnType)
         }

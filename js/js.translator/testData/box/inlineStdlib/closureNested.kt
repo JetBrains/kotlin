@@ -1,6 +1,6 @@
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: test except=Unit$getInstance
 
 internal fun test(a: Int, b: Int): Int {
     var res = 0

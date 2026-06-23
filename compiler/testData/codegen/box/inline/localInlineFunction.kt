@@ -4,7 +4,7 @@
 package foo
 import kotlin.test.*
 
-// CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit$getInstance
 // CHECK_CONTAINS_NO_CALLS: localWithoutCapture
 
 internal inline fun repeatAction(times: Int, action: () -> Unit) {
@@ -17,7 +17,7 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
 package foo
 import kotlin.test.*
 
-// CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: localWithCapture except=Unit$getInstance
 // CHECK_CONTAINS_NO_CALLS: localWithoutCapture
 // CHECK_BREAKS_COUNT: function=localWithoutCapture count=0
 // CHECK_LABELS_COUNT: function=localWithoutCapture name=$l$block count=0

@@ -59,8 +59,8 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
                     }
                 }
 
-                if (expression is JsInvocation && expression.name?.ident == "Unit_getInstance" && expression.arguments.isEmpty()) {
-                    testServices.assertions.fail { "Unit_getInstance() statements should be eliminated" }
+                if (expression is JsInvocation && expression.name?.ident == $$"Unit$getInstance" && expression.arguments.isEmpty()) {
+                    testServices.assertions.fail { $$"Unit$getInstance() statements should be eliminated" }
                 }
 
                 super.visitExpressionStatement(x)

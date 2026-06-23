@@ -55,6 +55,6 @@ function captureValueClassVar$lambda($any, $byte, $short, $int, $long, $float, $
     $double._v = new DoubleWrapper(_DoubleWrapper___init__impl__um2ad3(106.0));
     $char._v = new CharWrapper(_CharWrapper___init__impl__iwctd0(_Char___init__impl__6a9atx(98)));
     $boolean._v = new BooleanWrapper(_BooleanWrapper___init__impl__qaxidm(false));
-    return Unit_getInstance();
+    return Unit$getInstance();
   };
 }
