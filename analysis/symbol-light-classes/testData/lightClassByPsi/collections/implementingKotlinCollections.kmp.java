@@ -16,7 +16,7 @@ public abstract class MySet /* MySet*/<T>  implements ASet<T> {
   public  MySet();//  .ctor()
 }
 
-public abstract class SmartSet /* SmartSet*/<T>  {
+public abstract class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractMutableSet<T> {
   @java.lang.Override()
   @org.jetbrains.annotations.NotNull()
   public @org.jetbrains.annotations.NotNull() java.util.Iterator<T> iterator();//  iterator()

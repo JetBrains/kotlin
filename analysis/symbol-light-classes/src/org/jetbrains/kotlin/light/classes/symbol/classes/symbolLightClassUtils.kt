@@ -584,12 +584,19 @@ internal fun KaSession.createInheritanceList(
                 if (mappedToNoCollectionAsIs != null &&
                     mappedType.canonicalText != mappedToNoCollectionAsIs.canonicalText
                 ) {
+                    // The Kotlin collection type is mapped to a Java collection (e.g. `kotlin.collections.List` -> `java.util.List`).
+                    // Drop the Kotlin collection supertype and add the Java one instead.
+
                     // Add java supertype
                     listBuilder.addReference(mappedToNoCollectionAsIs)
                     // Add marker interface
                     if (superType is KaClassType) {
                         listBuilder.addMarkerInterfaceIfNeeded(superType.classId)
                     }
+                } else {
+                    // A real `kotlin.collections` class without a dedicated Java mapping (e.g. `kotlin.collections.AbstractMap`).
+                    // Just add it as a supertype.
+                    listBuilder.addReference(mappedType)
                 }
             } else {
                 listBuilder.addReference(mappedType)
