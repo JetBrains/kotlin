@@ -13,12 +13,19 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.effects
 import org.jetbrains.kotlin.ir.backend.js.setMaxEffects
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrConstantValue
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -41,6 +48,14 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
     class BodyVisitor : IrVisitor<Unit, IrFunction>() {
         val alreadyVisited = hashSetOf<IrFunction>()
 
+        private fun isLocal(expression: IrExpression, owner: IrDeclaration): Boolean {
+            return when (expression) {
+                is IrGetValue -> expression.symbol.owner == owner
+                is IrConstantValue -> true
+                else -> false
+            }
+        }
+
         fun visit(owner: IrFunction) {
             if (alreadyVisited.contains(owner)) return
             alreadyVisited.add(owner)
@@ -49,6 +64,32 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
 
         override fun visitElement(element: IrElement, data: IrFunction) {
             element.acceptChildren(this, data)
+        }
+
+        override fun visitExpression(expression: IrExpression, data: IrFunction) {
+            super.visitExpression(expression, data)
+            if (isLocal(expression, data)) return
+            data.setMaxEffects(EffectsKind.READ)
+        }
+
+        override fun visitSetField(expression: IrSetField, data: IrFunction) {
+            if (data is IrConstructor) {
+                val receiver = expression.receiver
+                if (receiver is IrGetValue) {
+                    if (receiver.symbol == data.dispatchReceiverParameter!!.symbol) {
+                        return
+                    }
+                }
+            }
+            data.setMaxEffects(EffectsKind.WRITE)
+        }
+
+        override fun visitSetValue(expression: IrSetValue, data: IrFunction) {
+            if (expression.symbol.owner.parent != data) {
+                data.setMaxEffects(EffectsKind.WRITE)
+                return
+            }
+            super.visitSetValue(expression, data)
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction) {
