@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.extensions
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -14,7 +13,7 @@ import org.jetbrains.org.objectweb.asm.*
 
 /**
  * An extension to the Kotlin/JVM compiler backend which allows to change how IR is generated into the class files.
- * It's preferable for compiler plugins to use [IrGenerationExtension] to implement IR-based logic. This extension point is more low-level.
+ * It's preferable for compiler plugins to use `IrGenerationExtension` to implement IR-based logic. This extension point is more low-level.
  */
 interface ClassGeneratorExtension {
     companion object : ExtensionPointDescriptor<ClassGeneratorExtension>(
