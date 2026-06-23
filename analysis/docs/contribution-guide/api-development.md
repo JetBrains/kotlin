@@ -793,12 +793,12 @@ so it is accessible within the `analyze` function without polluting the dispatch
 context(session: KaSession)
 public fun KaType.isSubtypeOf(supertype: KaType): Boolean = session.withValidityAssertion {
     @OptIn(KaImplementationDetail::class)
-    session.internals.typeRelationChecker.isSubtypeOf(this, supertype)
+    internals.typeRelationChecker.isSubtypeOf(this, supertype)
 }
 ```
 
 `KaSession` itself is a clean marker — `interface KaSession : KaLifetimeOwner`. The implementation is hidden behind an internal facade,
-`KaInternals` (`@KaImplementationDetail`), which an endpoint reaches through the module-private `session.internals` cast.
+`KaInternals` (`@KaImplementationDetail`), which an endpoint reaches through the module-private `internals` cast.
 Clients only ever see the endpoint; the proxy it delegates to is an implementation detail.
 
 Every top-level endpoint wraps its body in `session.withValidityAssertion { … }`. Performing the
@@ -817,7 +817,7 @@ rather than creating a parallel home for it:
 context(session: KaSession)
 public val KaType.directSupertypes: Sequence<KaType>
     get() = session.withValidityAssertion {
-        session.internals.typeProvider.directSupertypes(this)
+        internals.typeProvider.directSupertypes(this)
     }
 ```
 
@@ -1208,7 +1208,7 @@ These APIs are intended to only be used in a specific project, or a group of pro
       These APIs exist on the public surface due to architectural constraints but should never be used outside Analysis API implementation
       modules.
     - The `KaInternals` facade and its per-capability proxies are the canonical example: they back the public endpoints (which delegate via
-      `session.internals`) but carry no compatibility guarantees themselves.
+      `internals`) but carry no compatibility guarantees themselves.
 
 ### Unstable Dependency Markers
 
