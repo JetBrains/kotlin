@@ -1374,10 +1374,6 @@ internal class KaFirCompilerFacility(
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
             shouldStubAndNotLinkUnboundSymbols = true,
 
-            // Because the file to compile may be contained in a "common" multiplatform module, an `expect` declaration doesn't necessarily
-            // have an obvious associated `actual` symbol. `shouldStubOrphanedExpectSymbols` generates stubs for such `expect` declarations.
-            shouldStubOrphanedExpectSymbols = true,
-
             // Compilation state acts as an in-out container for captured type parameter and local function mappings
             evaluatorData = evaluatorData
         )
