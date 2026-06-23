@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.psi.stubs.elements
@@ -12,12 +12,10 @@ import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParser
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinFileStubSerializer
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
-@OptIn(KtImplementationDetail::class)
 object KtFileElementType : IStubFileElementType<KotlinFileStubImpl>(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
     internal const val NAME = "kotlin.FILE"
 
@@ -30,16 +28,15 @@ object KtFileElementType : IStubFileElementType<KotlinFileStubImpl>(KtFileElemen
     }
 
     override fun getExternalId(): String {
-        return NAME
+        return KotlinFileStubSerializer.externalId
     }
 
     override fun serialize(stub: KotlinFileStubImpl, dataStream: StubOutputStream) {
-        KotlinFileStubKindImpl.serialize(stub.kind, dataStream)
+        KotlinFileStubSerializer.serialize(stub, dataStream)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFileStubImpl {
-        val kind = KotlinFileStubKindImpl.deserialize(dataStream)
-        return KotlinFileStubImpl(file = null, kind = kind)
+        return KotlinFileStubSerializer.deserialize(dataStream, parentStub)
     }
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {
@@ -50,6 +47,6 @@ object KtFileElementType : IStubFileElementType<KotlinFileStubImpl>(KtFileElemen
     }
 
     override fun indexStub(stub: PsiFileStub<*>, sink: IndexSink) {
-        StubIndexService.getInstance().indexFile(stub as KotlinFileStubImpl, sink)
+        KotlinFileStubSerializer.indexStub(stub as KotlinFileStubImpl, sink)
     }
 }

@@ -10,6 +10,7 @@ import com.intellij.psi.stubs.StubRegistryExtension
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinFileStubSerializer
 
 /**
  * Associates Kotlin stub serializers and factories with their element types, decoupling stub support from the
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
 internal class KotlinStubRegistryExtension : StubRegistryExtension {
     override fun register(registry: StubRegistry) {
-        registry.registerStubSerializer(KtFileElementType, KotlinFileStubSerializer())
+        registry.registerStubSerializer(KtFileElementType, KotlinFileStubSerializer)
 
         for (field in KtStubElementTypes::class.java.fields) {
             val elementType = field.get(null) as? KtStubElementType<*, *> ?: continue

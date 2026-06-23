@@ -3,13 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi.stubs.registry
+package org.jetbrains.kotlin.psi.stubs.factory
 
-import com.intellij.psi.stubs.IndexSink
-import com.intellij.psi.stubs.StubElement
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import com.intellij.psi.stubs.StubSerializer
+import com.intellij.psi.stubs.*
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
@@ -20,7 +16,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
  * Serializes the Kotlin file stub independently of the element type.
  */
 @OptIn(KtImplementationDetail::class)
-internal class KotlinFileStubSerializer : StubSerializer<KotlinFileStubImpl> {
+internal object KotlinFileStubSerializer : StubSerializer<KotlinFileStubImpl> {
     override fun getExternalId(): String = KtFileElementType.NAME
 
     override fun serialize(stub: KotlinFileStubImpl, dataStream: StubOutputStream) {
