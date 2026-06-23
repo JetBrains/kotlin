@@ -131,10 +131,7 @@ public actual open class AssertionError : Error {
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
 
-@Suppress(
-        "ACTUAL_WITHOUT_EXPECT", // todo KT-77420 can be dropped after bootstrap update
-        "EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY"
-)
+@Suppress("EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY")
 internal actual open class NoWhenBranchMatchedException : RuntimeException {
 
     actual constructor() : super()
@@ -146,10 +143,7 @@ internal actual open class NoWhenBranchMatchedException : RuntimeException {
     actual constructor(cause: Throwable?) : super(cause)
 }
 
-@Suppress(
-        "ACTUAL_WITHOUT_EXPECT", // todo KT-77420 can be dropped after bootstrap update
-        "EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY"
-)
+@Suppress("EXPECT_ACTUAL_INCOMPATIBLE_VISIBILITY")
 internal actual open class UninitializedPropertyAccessException : RuntimeException {
 
     actual constructor() : super()
