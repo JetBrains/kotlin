@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.gradle.api.NamedDomainObjectProvider
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencySet
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.testing.Test
@@ -35,16 +35,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
  * ```
  */
 
-private fun Test.configurationElements(
-    name: String,
-    dependencies: DependencySet.() -> Unit,
+private fun Project.detachedNonTransitiveConfiguration(
+    vararg dependencies: ProjectDependency,
     attributes: AttributeContainer.() -> Unit = {},
-): NamedDomainObjectProvider<out Configuration> {
-    val conf = project.configurations.dependencyScopeNamedOrRegister(name) {
-        dependencies(this.dependencies)
-    }
-    return project.configurations.resolvableNamedOrRegister(name + "Classpath") {
-        extendsFrom(conf)
+): Configuration {
+    return configurations.detachedConfiguration(*dependencies).apply {
         isTransitive = false
         this.attributes(attributes)
     }
@@ -52,10 +47,11 @@ private fun Test.configurationElements(
 
 @KotlinCompilerDistUsage
 fun Test.withDist() {
-    val dist = configurationElements("distForTests", dependencies = {
-        add(project.dependencies.project(path = ":kotlin-compiler", configuration = "distElements"))
-    })
-    addClasspathProperty(dist, TestCompilePaths.KOTLIN_DIST_PATH)
+    addClasspathProperty(
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(path = ":kotlin-compiler", configuration = "distElements")
+        ), TestCompilePaths.KOTLIN_DIST_PATH
+    )
 }
 
 fun Test.withThirdPartyAnnotations() {
@@ -109,90 +105,76 @@ fun Test.withMockJdkAnnotationsJar() {
 
 fun Test.withJvmStdlibAndReflect() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib")) }
-        ), TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
+        project.detachedNonTransitiveConfiguration(project.dependencies.project(":kotlin-stdlib")),
+        TestCompilePaths.KOTLIN_FULL_STDLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "stdlibMinimalRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib-jvm-minimal-for-test")) }
-        ), TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
+        project.detachedNonTransitiveConfiguration(project.dependencies.project(":kotlin-stdlib-jvm-minimal-for-test")),
+        TestCompilePaths.KOTLIN_MINIMAL_STDLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "kotlinReflectJarForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-reflect")) }
-        ), TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
+        project.detachedNonTransitiveConfiguration(project.dependencies.project(":kotlin-reflect")),
+        TestCompilePaths.KOTLIN_REFLECT_JAR_PATH
     )
 }
 
 fun Test.withJvmStdlibSources() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibRuntimeSourcesForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "distSources")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "distSources")
         ), TestCompilePaths.KOTLIN_FULL_STDLIB_SOURCES_PATH
     )
 }
 
 fun Test.withStdlibCommon() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibCommonRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "commonMainMetadataElements")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "commonMainMetadataElements")
         ), TestCompilePaths.KOTLIN_COMMON_STDLIB_PATH
     )
 }
 
 fun Test.withScriptRuntime() {
     addClasspathProperty(
-        configurationElements(
-            "scriptRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-script-runtime")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-script-runtime")
         ), TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH
     )
 }
 
 fun Test.withTestJar() {
     addClasspathProperty(
-        configurationElements(
-            "kotlinTestJarForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-test")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-test")
         ), TestCompilePaths.KOTLIN_TEST_JAR_PATH
     )
 }
 
 fun Test.withAnnotations() {
     addClasspathProperty(
-        configurationElements(
-            "kotlinAnnotationsForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-annotations-jvm")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-annotations-jvm")
         ), TestCompilePaths.KOTLIN_ANNOTATIONS_PATH
     )
 }
 
 fun Test.withStdlibWeb() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibWebRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "webMainMetadataElements")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "webMainMetadataElements")
         ), TestCompilePaths.KOTLIN_WEB_STDLIB_KLIB_PATH
     )
 }
 
 fun Test.withJsRuntime() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "distJsKlib")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "distJsKlib")
         ), TestCompilePaths.KOTLIN_JS_STDLIB_KLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "stdlibJsMinimalRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements")) },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements"),
             attributes = {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
@@ -200,18 +182,16 @@ fun Test.withJsRuntime() {
         ), TestCompilePaths.KOTLIN_JS_REDUCED_STDLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "testJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-test", "jsRuntimeElements")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-test", "jsRuntimeElements")
         ), TestCompilePaths.KOTLIN_JS_KOTLIN_TEST_KLIB_PATH
     )
 }
 
 fun Test.withWasmRuntime() {
     addClasspathProperty(
-        configurationElements(
-            "stdlibWasmJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "wasmJsRuntimeElements")) },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "wasmJsRuntimeElements"),
             attributes = {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
@@ -219,9 +199,8 @@ fun Test.withWasmRuntime() {
         ), TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "stdlibWasmWasiRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-stdlib", "wasmWasiRuntimeElements")) },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-stdlib", "wasmWasiRuntimeElements"),
             attributes = {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
@@ -229,9 +208,8 @@ fun Test.withWasmRuntime() {
         ), TestCompilePaths.KOTLIN_WASM_WASI_STDLIB_KLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "testWasmJsRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-test", "wasmJsRuntimeElements")) },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-test", "wasmJsRuntimeElements"),
             attributes = {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
@@ -239,9 +217,8 @@ fun Test.withWasmRuntime() {
         ), TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "testWasmWasiRuntimeForTests",
-            dependencies = { add(project.dependencies.project(":kotlin-test", "wasmWasiRuntimeElements")) },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-test", "wasmWasiRuntimeElements"),
             attributes = {
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 attributes.attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging::class.java, KlibPackaging.NON_PACKED))
@@ -252,40 +229,32 @@ fun Test.withWasmRuntime() {
 
 fun Test.withScriptingPlugin() {
     addClasspathProperty(
-        configurationElements(
-            "scriptingPluginForTests",
-            dependencies = {
-                add(project.dependencies.project(":kotlin-scripting-compiler"))
-                add(project.dependencies.project(":kotlin-scripting-compiler-impl"))
-                add(project.dependencies.project(":kotlin-scripting-common"))
-                add(project.dependencies.project(":kotlin-scripting-jvm"))
-            }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-scripting-compiler"),
+            project.dependencies.project(":kotlin-scripting-compiler-impl"),
+            project.dependencies.project(":kotlin-scripting-common"),
+            project.dependencies.project(":kotlin-scripting-jvm")
         ), TestCompilePaths.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH
     )
 }
 
 fun Test.withTestScriptDefinition() {
     addClasspathProperty(
-        configurationElements(
-            "testScriptDefinitionForTests",
-            dependencies = { add(project.dependencies.project(":plugins:scripting:test-script-definition", "testFixturesApiElements")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":plugins:scripting:test-script-definition", "testFixturesApiElements")
         ), TestCompilePaths.KOTLIN_TEST_SCRIPT_DEFINITION_CLASSPATH
     )
 }
 
 fun Test.withPluginSandboxAnnotations() {
     addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsJar",
-            dependencies = { add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations")
         ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JAR_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsJsKlib",
-            dependencies = { add(
-                project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements")
-            )},
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "jsRuntimeElements"),
             attributes = {
                 attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
@@ -293,11 +262,8 @@ fun Test.withPluginSandboxAnnotations() {
         ), TestCompilePaths.PLUGIN_SANDBOX_ANNOTATIONS_JS_KLIB_PATH
     )
     addClasspathProperty(
-        configurationElements(
-            "pluginSandboxAnnotationsWasmKlib",
-            dependencies = {
-                add(project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "wasmJsRuntimeElements"))
-            },
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":plugins:plugin-sandbox:plugin-annotations", "wasmJsRuntimeElements"),
             attributes = {
                 attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_RUNTIME))
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
@@ -308,54 +274,48 @@ fun Test.withPluginSandboxAnnotations() {
 
 fun Test.withPluginSandboxJar() {
     addClasspathProperty(
-        configurationElements(
-            "pluginSandboxJar",
-            dependencies = { add(project.dependencies.project(":plugins:plugin-sandbox")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":plugins:plugin-sandbox")
         ), TestCompilePaths.PLUGIN_SANDBOX_JAR_PATH
     )
 }
 
 fun Test.withLombokCompilerPluginJar() {
     addClasspathProperty(
-        configurationElements(
-            "lombokCompilerPluginJar",
-            dependencies = { add(project.dependencies.project(":kotlin-lombok-compiler-plugin")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-lombok-compiler-plugin")
         ), TestCompilePaths.LOMBOK_COMPILER_PLUGIN_JAR_PATH
     )
 }
 
 fun Test.withAllOpenCompilerPluginJar() {
     addClasspathProperty(
-        configurationElements(
-            "allOpenCompilerPluginJar",
-            dependencies = { add(project.dependencies.project(":kotlin-allopen-compiler-plugin")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-allopen-compiler-plugin")
         ), TestCompilePaths.ALLOPEN_COMPILER_PLUGIN_JAR_PATH
     )
 }
 
 fun Test.withNoArgCompilerPluginJar() {
     addClasspathProperty(
-        configurationElements(
-            "noArgCompilerPluginJar",
-            dependencies = { add(project.dependencies.project(":kotlin-noarg-compiler-plugin")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-noarg-compiler-plugin")
         ), TestCompilePaths.NOARG_COMPILER_PLUGIN_JAR_PATH
     )
 }
 
 fun Test.withMainKtsJar() {
     addClasspathProperty(
-        configurationElements(
-            "mainKtsJar",
-            dependencies = { add(project.dependencies.project(":kotlin-main-kts")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-main-kts")
         ), TestCompilePaths.MAIN_KTS_JAR_PATH
     )
 }
 
 fun Test.withReflectShadowJar() {
     addClasspathProperty(
-        configurationElements(
-            "reflectShadowJar",
-            dependencies = { add(project.dependencies.project(":kotlin-reflect", "shadowJar")) }
+        project.detachedNonTransitiveConfiguration(
+            project.dependencies.project(":kotlin-reflect", "shadowJar")
         ), TestCompilePaths.KOTLIN_REFLECT_SHADOW_JAR_PATH
     )
 }

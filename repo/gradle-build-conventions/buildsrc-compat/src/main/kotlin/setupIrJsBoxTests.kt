@@ -18,28 +18,23 @@ fun Test.useJsIrBoxTests(
         setupV8()
     }
 
-    val stdLibJsClasses = project.configurations.maybeCreate("stdLibJsClasses").apply {
+    val stdLibJsClasses = project.configurations.detachedConfiguration(project.dependencies.project(":kotlin-stdlib", "jsRuntimeElements")).apply {
         isTransitive = false
         attributes {
             attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
         }
     }
-    val jsDomApiCompatClasses = project.configurations.maybeCreate("jsDomApiCompatClasses").apply {
+    val jsDomApiCompatClasses = project.configurations.detachedConfiguration(project.dependencies.project(":kotlin-dom-api-compat", "jsRuntimeElements")).apply {
         isTransitive = false
         attributes {
             attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
         }
     }
-    val stdlibJsIrMinimalForTestClasses = project.configurations.maybeCreate("stdlibJsIrMinimalForTestClasses").apply {
+    val stdlibJsIrMinimalForTestClasses = project.configurations.detachedConfiguration(project.dependencies.project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements")).apply {
         isTransitive = false
         attributes {
             attribute(KlibPackaging.ATTRIBUTE, project.objects.named(KlibPackaging.NON_PACKED))
         }
-    }
-    project.dependencies {
-        add(stdLibJsClasses.name, project(":kotlin-stdlib", "jsRuntimeElements"))
-        add(jsDomApiCompatClasses.name, project(":kotlin-dom-api-compat", "jsRuntimeElements"))
-        add(stdlibJsIrMinimalForTestClasses.name, project(":kotlin-stdlib-js-ir-minimal-for-test", "jsRuntimeElements"))
     }
     addClasspathProperty(stdLibJsClasses, "kotlin.js.full.stdlib.path")
     addClasspathProperty(jsDomApiCompatClasses, "kotlin.js.dom.api.compat")
