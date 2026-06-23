@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -361,18 +359,12 @@ private var IrClass.interfaceCompanionFieldForObjectInstance: IrField? by irAttr
 /*
     This class keeps track of singleton fields for instances of object classes.
  */
-class CachedFieldsForObjectInstances(
-    private val irFactory: IrFactory,
-    private val languageVersionSettings: LanguageVersionSettings,
-) {
+class CachedFieldsForObjectInstances(private val irFactory: IrFactory) {
     fun getFieldForObjectInstance(singleton: IrClass): IrField =
         singleton::fieldForObjectInstance.getOrSetIfNull {
             val originalVisibility = singleton.visibility
             val isNotMappedCompanion = singleton.isCompanion && !singleton.isMappedIntrinsicCompanionObject()
-            val useProperVisibilityForCompanion =
-                languageVersionSettings.supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField)
-                        && singleton.isCompanion
-                        && !singleton.parentAsClass.isInterface
+            val useProperVisibilityForCompanion = singleton.isCompanion && !singleton.parentAsClass.isInterface
             irFactory.buildField {
                 name = if (isNotMappedCompanion) singleton.name else Name.identifier(JvmAbi.INSTANCE_FIELD)
                 type = singleton.defaultType
