@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -75,6 +76,7 @@ abstract class AbstractSimpleFileBenchmark {
 
     @Setup(Level.Trial)
     fun setUp() {
+        @OptIn(CoreEnvironmentDeprecation::class)
         env = KotlinCoreEnvironment.createForTests(
             myDisposable,
             newConfiguration(),

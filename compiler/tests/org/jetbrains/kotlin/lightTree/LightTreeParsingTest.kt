@@ -9,6 +9,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Ref
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -27,6 +28,8 @@ class LightTreeParsingTest : KtPlatformLiteFixture() {
 
     override fun setUp() {
         super.setUp()
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = createForTests(
             testRootDisposable, CompilerConfiguration.create(),
             EnvironmentConfigFiles.JVM_CONFIG_FILES

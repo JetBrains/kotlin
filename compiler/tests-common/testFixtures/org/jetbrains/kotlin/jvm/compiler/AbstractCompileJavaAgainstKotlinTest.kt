@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForMultifileCompilerTests
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -109,6 +110,8 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
             KtTestUtil.getAnnotationsJar(), out)
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         setupLanguageVersionSettingsForCompilerTests(ktFile.readText(), environment)
 

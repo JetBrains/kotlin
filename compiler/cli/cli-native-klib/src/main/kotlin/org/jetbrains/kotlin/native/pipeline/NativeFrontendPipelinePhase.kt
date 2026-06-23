@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.*
-import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -39,7 +38,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         val config = createFirstStageCompilationConfig(configuration)
         val phaseContext = NativeFirstStagePhaseContext(config)
 
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForProduction(
             rootDisposable,
             configuration,
@@ -54,7 +53,6 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
         )
     }
 
-    @OptIn(SessionConfiguration::class, ExperimentalCompilerApi::class)
     private inline fun <F> NativeFirstStagePhaseContext.firFrontend(
         configuration: CompilerConfiguration,
         files: List<F>,

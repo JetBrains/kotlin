@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.setupKlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.extensionsStorage
@@ -63,12 +64,16 @@ open class CompilerConfigurationProviderImpl(
     protected open fun createKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         val platform = module.targetPlatform(testServices)
         val configFiles = platform.platformToEnvironmentConfigFiles()
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(
             testRootDisposable,
             CompilerConfiguration.create()
         )
         val configuration = getCompilerConfiguration(module, CompilationStage.FIRST)
         val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(testRootDisposable, applicationEnvironment, configuration)
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             projectEnv,
             configuration,

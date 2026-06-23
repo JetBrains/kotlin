@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -69,6 +70,8 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, usePsiClassFilesReading)
 
         updateConfiguration(configuration)
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         return createForTests(testRootDisposable, configuration, getEnvironmentConfigFiles())
     }
 

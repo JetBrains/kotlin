@@ -12,3 +12,9 @@ const val K1_DEPRECATION_WARNING = "This declaration is part of K1 API which is 
     level = RequiresOptIn.Level.ERROR,
 )
 annotation class K1Deprecation
+
+@RequiresOptIn(
+    message = "This declaration is part of KotlinCoreEnvironment API, which is planned to be reworked.",
+    level = RequiresOptIn.Level.ERROR,
+)
+annotation class CoreEnvironmentDeprecation

@@ -16,6 +16,7 @@ import com.intellij.psi.PsiPackageStatement
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -82,6 +83,8 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         if (InTextDirectivesUtils.isDirectiveDefined(content, "FOREIGN_ANNOTATIONS")) {
             classpath.addAll(createJarWithForeignAnnotations())
         }
+
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             newConfiguration(

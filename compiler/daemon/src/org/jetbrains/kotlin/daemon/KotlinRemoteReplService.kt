@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -70,6 +71,7 @@ abstract class KotlinJvmReplServiceBase(
             val projectEnvironment =
                 KotlinCoreEnvironment.ProjectEnvironment(
                     disposable,
+                    @OptIn(CoreEnvironmentDeprecation::class)
                     KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(disposable, configuration),
                     configuration,
                 )
