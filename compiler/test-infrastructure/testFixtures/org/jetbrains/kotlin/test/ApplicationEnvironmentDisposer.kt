@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.services.ApplicationDisposableProvider
 import org.junit.platform.launcher.TestExecutionListener
@@ -18,7 +18,7 @@ class ApplicationEnvironmentDisposer : TestExecutionListener {
         val ROOT_DISPOSABLE: Disposable = Disposer.newDisposable("${ApplicationEnvironmentDisposer::class.simpleName}.ROOT_DISPOSABLE")
     }
 
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     override fun testPlanExecutionFinished(testPlan: TestPlan) {
         KotlinCoreEnvironment.disposeApplicationEnvironment()
         Disposer.dispose(ROOT_DISPOSABLE)

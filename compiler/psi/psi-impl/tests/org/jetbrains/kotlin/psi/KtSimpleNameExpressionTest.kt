@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -27,7 +27,7 @@ class KtSimpleNameExpressionTest : KotlinTestWithEnvironment() {
         Assert.assertEquals(expected, expression.operationReference.getReceiverExpression()!!.text)
     }
 
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES

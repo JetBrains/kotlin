@@ -30,7 +30,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.ListenerDescriptor
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
@@ -79,7 +79,7 @@ object StandaloneProjectFactory {
         applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration.create(),
     ): KotlinCoreProjectEnvironment {
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
             projectDisposable = projectDisposable,
             compilerConfiguration,
@@ -181,7 +181,7 @@ object StandaloneProjectFactory {
     ) {
         val project = environment.project
 
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         KotlinCoreEnvironment.registerProjectExtensionPoints(project.extensionArea)
 
         project.registerService(SmartTypePointerManager::class.java, SmartTypePointerManagerImpl::class.java)

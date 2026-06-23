@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -44,6 +45,7 @@ class JvmCliScriptEvaluationExtension : AbstractScriptEvaluationExtension() {
         projectEnvironment: KotlinCoreEnvironment.ProjectEnvironment,
         configuration: CompilerConfiguration
     ): KotlinCoreEnvironment {
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -141,6 +142,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(
             listOf(ForTestCompileRuntime.transformTestDataPath("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
             outputDirectory,
+            @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
                 KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory).apply {
@@ -161,6 +163,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
     private fun loadModule(): ModuleDescriptor {
         @Suppress("DEPRECATION_ERROR")
         return JvmResolveUtil.analyze(
+            @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
                 KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir).also {

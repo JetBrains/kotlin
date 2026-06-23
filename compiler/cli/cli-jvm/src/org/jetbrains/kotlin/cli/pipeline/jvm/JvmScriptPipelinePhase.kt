@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.SCRIPTING_WARNING
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.expressionToEvaluate
 
 object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmScriptPipelineArtifact>(
@@ -37,7 +37,7 @@ object JvmScriptPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, Jvm
         val projectEnvironment by lazy(LazyThreadSafetyMode.NONE) {
             KotlinCoreEnvironment.ProjectEnvironment(
                 rootDisposable,
-                @OptIn(K1Deprecation::class)
+                @OptIn(CoreEnvironmentDeprecation::class)
                 KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration),
                 configuration
             ).also {

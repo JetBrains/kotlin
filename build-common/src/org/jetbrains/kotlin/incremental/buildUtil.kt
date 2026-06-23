@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -301,7 +301,7 @@ fun withSubtypes(
 
 fun clearJarCaches() {
     ZipHandler.clearFileAccessorCache()
-    @OptIn(K1Deprecation::class)
+    @OptIn(CoreEnvironmentDeprecation::class)
     KotlinCoreEnvironment.applicationEnvironment?.apply {
         (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
         (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()

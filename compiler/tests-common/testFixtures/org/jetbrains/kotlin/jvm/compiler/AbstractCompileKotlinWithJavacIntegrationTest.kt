@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -73,6 +74,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
         )
         if (!compiledSuccessfully) return
 
+        @OptIn(CoreEnvironmentDeprecation::class)
         val environment = KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             newConfiguration(
