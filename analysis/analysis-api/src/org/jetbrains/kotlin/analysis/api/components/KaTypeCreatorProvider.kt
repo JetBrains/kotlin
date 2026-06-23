@@ -8,17 +8,11 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.types.KaCapturedType
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaDefinitelyNotNullType
-import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.analysis.api.types.KaUsualClassType
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaCapturedTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaDefinitelyNotNullTypeBuilder
-import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFlexibleTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaFunctionTypeBuilder
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeParameterTypeBuilder
@@ -118,6 +112,10 @@ public interface KaTypeCreatorProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
+    replaceWith = ReplaceWith("typeCreator", "org.jetbrains.kotlin.analysis.api.types.typeCreation.typeCreator"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val typeCreator: KaTypeCreator
@@ -141,6 +139,10 @@ public val typeCreator: KaTypeCreator
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
+    replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun <T : KaClassType> T.copy(init: KaClassTypeBuilder.() -> Unit): KaClassType {
@@ -169,6 +171,10 @@ public fun <T : KaClassType> T.copy(init: KaClassTypeBuilder.() -> Unit): KaClas
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
+    replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualClassType {
@@ -197,6 +203,10 @@ public fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualCl
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
+    replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFunctionType {
@@ -225,6 +235,10 @@ public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFuncti
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
+    replaceWith = ReplaceWith("this.copy(init)", "org.jetbrains.kotlin.analysis.api.types.typeCreation.copy"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaTypeParameterType.copy(init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
