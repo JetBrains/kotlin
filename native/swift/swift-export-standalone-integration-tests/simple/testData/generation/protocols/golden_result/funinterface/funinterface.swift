@@ -139,7 +139,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers
     }
     public static func _123xmlFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation(
@@ -147,7 +150,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation
     }
     public static func _functionalInterfaceWithLeadingUnderscore(
@@ -155,7 +161,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore
     }
     public static func functionalInterface(
@@ -163,7 +172,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface.FunctionalInterface {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface.FunctionalInterface
     }
     public static func functionalInterfaceWithAlreadyLowercaseLeadingFromFunction(
@@ -171,7 +183,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
     }
     public static func xmlFunctionalInterfaceWithLeadingAbbreviation(
@@ -179,7 +194,10 @@ extension ExportedKotlinPackages.funinterface {
     ) -> any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
             let originalBlock: () -> Swift.Int32 = function
-            return { return originalBlock() }
+            return {
+                let _result = originalBlock()
+                return _result
+            }
         }())) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
     }
 }

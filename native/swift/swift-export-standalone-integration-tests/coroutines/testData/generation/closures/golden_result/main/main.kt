@@ -4,17 +4,37 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("__root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__")
+public fun __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_StringU2920asyncU20throwsU202D_U20Swift_Int32__(block: kotlin.native.internal.NativePtr): Int {
+    val __block = run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
+        suspend { ctx0: kotlin.String ->
+            suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+                val _ctx0 = ctx0.objcPtr()
+                val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+                val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+                val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+                val _result = kotlinFun(_ctx0, _continuation, _exception, _cancellation)
+                run<Unit> { _result }
+            }
+        }
+    }
+    val _result = run { accept_suspend_fun_with_context(__block) }
+    return _result
+}
+
 @ExportedBridge("__root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__")
 public fun __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(block: kotlin.native.internal.NativePtr): Int {
     val __block = run {
-        val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(block);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
         suspend {
-           suspendSwiftCoroutine<Int> { __continuation, __exception, __cancellation ->
-               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-               originalBlock(__continuationPtr, __exceptionPtr, __cancellationPtr)
-           }
+            suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+                val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+                val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+                val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+                val _result = kotlinFun(_continuation, _exception, _cancellation)
+                run<Unit> { _result }
+            }
         }
     }
     val _result = run { accept_suspend_function_type(__block) }

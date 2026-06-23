@@ -315,7 +315,11 @@ public func customFilter(
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
     return __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, {
         let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool = predicate
-        return { (arg0: Swift.UnsafeMutableRawPointer?) in return originalBlock({ switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()) }
+        return { (arg0: Swift.UnsafeMutableRawPointer?) in
+            let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+            let _result = originalBlock(_arg0)
+            return _result
+        }
     }()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
 public func foo(
@@ -329,7 +333,11 @@ public func produceBoxUpperBound(
 ) -> Swift.Void {
     return { __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
         let originalBlock: (main.Box) -> Swift.Void = box
-        return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.Box.__createClassWrapper(externalRCRef: arg0)); return true }() }
+        return { (arg0: Swift.UnsafeMutableRawPointer) in
+            let _arg0: main.Box = main.Box.__createClassWrapper(externalRCRef: arg0)
+            let _result = originalBlock(_arg0)
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func returnBFun() -> main.BFun {
@@ -370,7 +378,10 @@ public func takeBoxUpperBoundClosure(
 ) -> Swift.Void {
     return { __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__({
         let originalBlock: () -> main.Box = box
-        return { return originalBlock().__externalRCRef() }
+        return {
+            let _result = originalBlock()
+            return _result.__externalRCRef()
+        }
     }()); return () }()
 }
 extension main.A where Self : main.__A {

@@ -9,7 +9,8 @@ public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Byte)->Byte>(block);
         { arg0: Byte ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             _result
         }
     }
@@ -22,7 +23,8 @@ public fun __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt3
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(UInt)->UInt>(block);
         { arg0: UInt ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             _result
         }
     }

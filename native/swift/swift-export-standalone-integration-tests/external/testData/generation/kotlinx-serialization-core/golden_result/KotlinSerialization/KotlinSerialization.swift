@@ -566,7 +566,12 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
             { kotlinx_serialization_internal_ElementMarker_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U20Swift_Int32U29202D_U20Swift_Bool__(__kt, descriptor.__externalRCRef(), {
                 let originalBlock: (any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, Swift.Int32) -> Swift.Bool = readIfAbsent
-                return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.Int32) in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor, arg1) }
+                return { (arg0: Swift.UnsafeMutableRawPointer, arg1: Swift.Int32) in
+                    let _arg0: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
+                    let _arg1: Swift.Int32 = arg1
+                    let _result = originalBlock(_arg0, _arg1)
+                    return _result
+                }
             }()); return () }()
         }
         package override init(
@@ -1097,7 +1102,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
     ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         return ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule.__createClassWrapper(externalRCRef: kotlinx_serialization_modules_SerializersModule__TypesOfArguments__U28ExportedKotlinPackages_kotlinx_serialization_modules_SerializersModuleBuilderU29202D_U20Swift_Void__({
             let originalBlock: (ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder) -> Swift.Void = builderAction
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder.__createClassWrapper(externalRCRef: arg0)); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder = ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleBuilder.__createClassWrapper(externalRCRef: arg0)
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()))
     }
     public static func overwriteWith(
@@ -1968,7 +1977,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_buildClassSerialDescriptor__TypesOfArguments__Swift_String_Swift_Array_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__Vararg__U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, typeParameters, {
             let originalBlock: (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void = builderAction
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__createClassWrapper(externalRCRef: arg0)); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder = ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__createClassWrapper(externalRCRef: arg0)
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi) @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -1980,7 +1993,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_descriptors_buildSerialDescriptor__TypesOfArguments__Swift_String_ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialKind_Swift_Array_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__Vararg__U28ExportedKotlinPackages_kotlinx_serialization_descriptors_ClassSerialDescriptorBuilderU29202D_U20Swift_Void__(serialName, kind.__externalRCRef(), typeParameters, {
             let originalBlock: (ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder) -> Swift.Void = builder
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__createClassWrapper(externalRCRef: arg0)); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder = ExportedKotlinPackages.kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder.__createClassWrapper(externalRCRef: arg0)
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }())) as! any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
@@ -2760,7 +2777,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlinx_serialization_encoding_decodeStructure__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoderU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(receiver.__externalRCRef(), descriptor.__externalRCRef(), {
             let originalBlock: (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = block
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder).map { it in it.__externalRCRef() } ?? nil }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder
+                let _result = originalBlock(_arg0)
+                return _result.map { it in it.__externalRCRef() } ?? nil
+            }
         }()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
     public static func encodeCollection(
@@ -2771,7 +2792,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     ) -> Swift.Void {
         return { kotlinx_serialization_encoding_encodeCollection__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoderU29202D_U20Swift_Void__(receiver.__externalRCRef(), descriptor.__externalRCRef(), collectionSize, {
             let originalBlock: (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()); return () }()
     }
     public static func encodeStructure(
@@ -2781,7 +2806,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     ) -> Swift.Void {
         return { kotlinx_serialization_encoding_encodeStructure__TypesOfArgumentsE__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_U28anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeEncoderU29202D_U20Swift_Void__(receiver.__externalRCRef(), descriptor.__externalRCRef(), {
             let originalBlock: (any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder) -> Swift.Void = block
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()); return () }()
     }
 }
@@ -3005,7 +3034,11 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding.ChunkedDecoder w
     ) -> Swift.Void {
         return { kotlinx_serialization_encoding_ChunkedDecoder_decodeStringChunked__TypesOfArguments__U28Swift_StringU29202D_U20Swift_Void__(self.__externalRCRef(), {
             let originalBlock: (Swift.String) -> Swift.Void = consumeChunk
-            return { (arg0: Swift.String) in return { originalBlock(arg0); return true }() }
+            return { (arg0: Swift.String) in
+                let _arg0: Swift.String = arg0
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()); return () }()
     }
 }

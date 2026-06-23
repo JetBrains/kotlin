@@ -13,7 +13,12 @@ public func barIn(
 ) -> Swift.Void {
     return { __root___barIn__TypesOfArguments__U28Swift_String_U20Swift_VoidU29202D_U20Swift_Void__({
         let originalBlock: (Swift.String, Swift.Void) -> Swift.Void = block
-        return { (arg0: Swift.String, arg1: Swift.Bool) in return { originalBlock(arg0, { arg1; return () }()); return true }() }
+        return { (arg0: Swift.String, arg1: Swift.Bool) in
+            let _arg0: Swift.String = arg0
+            let _arg1: Swift.Void = { arg1; return () }()
+            let _result = originalBlock(_arg0, _arg1)
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func baz() -> (@escaping (Swift.String, Swift.Void) -> Swift.Void) -> Swift.Void {
@@ -21,7 +26,12 @@ public func baz() -> (@escaping (Swift.String, Swift.Void) -> Swift.Void) -> Swi
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___baz(), options: .asBestFittingWrapper)!
         return { _1 in return { unit_param_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_String_U20Swift_VoidU29202D_U20Swift_Void__(pointerToBlock.__externalRCRef()!, {
         let originalBlock: (Swift.String, Swift.Void) -> Swift.Void = _1
-        return { (arg0: Swift.String, arg1: Swift.Bool) in return { originalBlock(arg0, { arg1; return () }()); return true }() }
+        return { (arg0: Swift.String, arg1: Swift.Bool) in
+            let _arg0: Swift.String = arg0
+            let _arg1: Swift.Void = { arg1; return () }()
+            let _result = originalBlock(_arg0, _arg1)
+            return { _result; return true }()
+        }
     }()); return () }() }
     }()
 }
@@ -36,6 +46,10 @@ public func fooIn(
 ) -> Swift.Void {
     return { __root___fooIn__TypesOfArguments__U28Swift_VoidU29202D_U20Swift_Void__({
         let originalBlock: (Swift.Void) -> Swift.Void = block
-        return { (arg0: Swift.Bool) in return { originalBlock({ arg0; return () }()); return true }() }
+        return { (arg0: Swift.Bool) in
+            let _arg0: Swift.Void = { arg0; return () }()
+            let _result = originalBlock(_arg0)
+            return { _result; return true }()
+        }
     }()); return () }()
 }

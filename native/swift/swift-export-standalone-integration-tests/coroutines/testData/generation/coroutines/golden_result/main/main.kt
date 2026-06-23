@@ -17,14 +17,16 @@ public fun FunctionalInterfaceWithSuspendFunction_emit(self: kotlin.native.inter
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -50,14 +52,15 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 @ExportedBridge("__root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__")
 public fun __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(function);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
         suspend {
-           suspendSwiftCoroutine<Unit> { __continuation, __exception, __cancellation ->
-               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-               originalBlock(__continuationPtr, __exceptionPtr, __cancellationPtr)
-           }
+            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+                val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+                val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+                val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+                val _result = kotlinFun(_continuation, _exception, _cancellation)
+                run<Unit> { _result }
+            }
         }
     }
     val _result = run { FunctionalInterfaceWithSuspendFunction(__function) }
@@ -67,14 +70,15 @@ public fun __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U2
 @ExportedBridge("__root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__")
 public fun __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(block);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
         suspend {
-           suspendSwiftCoroutine<Int> { __continuation, __exception, __cancellation ->
-               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-               originalBlock(__continuationPtr, __exceptionPtr, __cancellationPtr)
-           }
+            suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+                val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+                val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+                val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+                val _result = kotlinFun(_continuation, _exception, _cancellation)
+                run<Unit> { _result }
+            }
         }
     }
     val _result = run { accept_suspend_function_type(__block) }
@@ -86,14 +90,16 @@ public fun __root___alwaysFails(continuation: kotlin.native.internal.NativePtr, 
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Nothing ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -108,7 +114,8 @@ public fun __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCor
     val __i = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(i);
         { arg0: kotlinx.coroutines.flow.Flow<Foo> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -170,14 +177,16 @@ public fun __root___produce_function_typealias(continuation: kotlin.native.inter
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: Function1<Float, Int> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -192,14 +201,16 @@ public fun __root___produce_suspend_function(continuation: kotlin.native.interna
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.coroutines.SuspendFunction1<Double, Int> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -214,14 +225,16 @@ public fun __root___produce_suspend_function_typealias(continuation: kotlin.nati
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.coroutines.SuspendFunction1<Float, Long> ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -236,14 +249,16 @@ public fun __root___retunsListOfSuspend(continuation: kotlin.native.internal.Nat
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.collections.List<kotlin.coroutines.SuspendFunction0<Unit>> ->
-            val _result = kotlinFun(arg0.map { __element -> kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr())
+            val _arg0 = arg0.map { __element -> kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr()
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -258,14 +273,16 @@ public fun __root___returnSuspendGeneric(continuation: kotlin.native.internal.Na
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.Any ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -286,14 +303,16 @@ public fun __root___returnUnit(continuation: kotlin.native.internal.NativePtr, e
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -308,14 +327,16 @@ public fun __root___returnsList(continuation: kotlin.native.internal.NativePtr, 
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.collections.List<kotlin.String> ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -330,14 +351,16 @@ public fun __root___returnsListOfSuspendNullables(continuation: kotlin.native.in
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
         { arg0: kotlin.collections.List<kotlin.coroutines.SuspendFunction0<Unit>?> ->
-            val _result = kotlinFun(arg0.map { __element -> if (__element == null) 0L else kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr())
+            val _arg0 = arg0.map { __element -> if (__element == null) 0L else kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr()
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -354,14 +377,16 @@ public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments_
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Int)->Boolean>(continuation);
         { arg0: Int ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -386,14 +411,16 @@ public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments_
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Int)->Boolean>(continuation);
         { arg0: Int ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -410,14 +437,16 @@ public fun main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments_
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Long)->Boolean>(continuation);
         { arg0: Long ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -449,14 +478,16 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }

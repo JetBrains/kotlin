@@ -487,7 +487,10 @@ public var block: main.closure {
     set {
         return { __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
             let originalBlock: () -> Swift.Void = newValue
-            return { return { originalBlock(); return true }() }
+            return {
+                let _result = originalBlock()
+                return { _result; return true }()
+            }
         }()); return () }()
     }
 }
@@ -496,7 +499,10 @@ public func consume_closure(
 ) -> Swift.Void {
     return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock: () -> Swift.Void = block
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }()); return () }()
 }
 public func deeper_closure_typealiase(
@@ -505,7 +511,10 @@ public func deeper_closure_typealiase(
     return {
         let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
         let originalBlock: () -> Swift.Void = block
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }()), options: .asBestFittingWrapper)!
         return { return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
     }()

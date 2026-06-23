@@ -50,7 +50,8 @@ public fun __root___nothingClosureParam__TypesOfArguments__U28Swift_NeverU29202D
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->kotlin.native.internal.NativePtr>(block);
         { arg0: Nothing ->
-            val _result = kotlinFun(arg0)
+            val _arg0 = arg0
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.String>(_result)
         }
     }
@@ -88,7 +89,8 @@ public fun __root___nothingOptClosureParam__TypesOfArguments__U28Swift_Optional_
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->kotlin.native.internal.NativePtr>(block);
         { arg0: Nothing? ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.String>(_result)
         }
     }

@@ -227,7 +227,11 @@ public fun __root___contextBlockA__TypesOfArguments__U2828main_ContextA_U20main_
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, Int, kotlin.native.internal.NativePtr)->Boolean>(block);
         { ctx0: ContextA, ctx1: ContextB, arg0: Int, arg1: kotlin.String ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(ctx0), kotlin.native.internal.ref.createRetainedExternalRCRef(ctx1), arg0, arg1.objcPtr())
+            val _ctx0 = kotlin.native.internal.ref.createRetainedExternalRCRef(ctx0)
+            val _ctx1 = kotlin.native.internal.ref.createRetainedExternalRCRef(ctx1)
+            val _arg0 = arg0
+            val _arg1 = arg1.objcPtr()
+            val _result = kotlinFun(_ctx0, _ctx1, _arg0, _arg1)
             run<Unit> { _result }
         }
     }
@@ -246,7 +250,9 @@ public fun __root___contextBlockC__TypesOfArguments__U28main_Context_U20Swift_St
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
         { ctx0: Context, arg0: kotlin.String ->
-            val _result = kotlinFun(kotlin.native.internal.ref.createRetainedExternalRCRef(ctx0), arg0.objcPtr())
+            val _ctx0 = kotlin.native.internal.ref.createRetainedExternalRCRef(ctx0)
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_ctx0, _arg0)
             run<Unit> { _result }
         }
     }

@@ -95,7 +95,11 @@ public var functionalTypePropertyA: (main.MyOptInClass) -> Swift.Void {
     set {
         return { __root___functionalTypePropertyA_set__TypesOfArguments__U28main_MyOptInClassU29202D_U20Swift_Void__({
             let originalBlock: (main.MyOptInClass) -> Swift.Void = newValue
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(main.MyOptInClass.__createClassWrapper(externalRCRef: arg0)); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: main.MyOptInClass = main.MyOptInClass.__createClassWrapper(externalRCRef: arg0)
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()); return () }()
     }
 }
@@ -112,7 +116,11 @@ public var functionalTypePropertyB: (any lib.InternalLibInterface) -> Swift.Void
     set {
         return { __root___functionalTypePropertyB_set__TypesOfArguments__U28anyU20lib_InternalLibInterfaceU29202D_U20Swift_Void__({
             let originalBlock: (any lib.InternalLibInterface) -> Swift.Void = newValue
-            return { (arg0: Swift.UnsafeMutableRawPointer) in return { originalBlock(KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any lib.InternalLibInterface); return true }() }
+            return { (arg0: Swift.UnsafeMutableRawPointer) in
+                let _arg0: any lib.InternalLibInterface = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: arg0) as! any lib.InternalLibInterface
+                let _result = originalBlock(_arg0)
+                return { _result; return true }()
+            }
         }()); return () }()
     }
 }
@@ -122,7 +130,10 @@ public func callbackFunction(
 ) -> Swift.Void {
     return { __root___callbackFunction__TypesOfArguments__U2829202D_U20main_MyOptInClass__({
         let originalBlock: () -> main.MyOptInClass = action
-        return { return originalBlock().__externalRCRef() }
+        return {
+            let _result = originalBlock()
+            return _result.__externalRCRef()
+        }
     }()); return () }()
 }
 @_spi(MyOptInApi)

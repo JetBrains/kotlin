@@ -9,7 +9,8 @@ public fun __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optio
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(arg);
         { arg0: Function0<kotlin.String>? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -37,12 +38,12 @@ public fun __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optio
         {
             val _result = kotlinFun()
             if (_result == kotlin.native.internal.NativePtr.NULL) null else run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
-        {
-            val _result = kotlinFun()
-            run<Unit> { _result }
-        }
-    }
+                val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(_result);
+                {
+                    val _result = kotlinFun()
+                    run<Unit> { _result }
+                }
+            }
         }
     }
     val _result = run { consume_producing_opt_closure(__arg) }

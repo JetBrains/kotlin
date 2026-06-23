@@ -69,14 +69,16 @@ public fun KotlinxCoroutinesCore_internal_functional_type_caller_SwiftU2EVoid__T
 @ExportedBridge("kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__")
 public fun kotlinx_coroutines_flow_FlowCollector__TypesOfArguments__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U2920asyncU20throwsU202D_U20Swift_Void__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val originalBlock = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Unit>(function);
+        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
         suspend { arg0: kotlin.Any? ->
-           suspendSwiftCoroutine<Unit> { __continuation, __exception, __cancellation ->
-               val __cancellationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__cancellation)
-               val __continuationPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__continuation)
-               val __exceptionPtr = kotlin.native.internal.ref.createRetainedExternalRCRef(__exception)
-               originalBlock(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0), __continuationPtr, __exceptionPtr, __cancellationPtr)
-           }
+            suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<platform.Foundation.NSError, Unit>, cancellation: SwiftJob ->
+                val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+                val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
+                val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
+                val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
+                val _result = kotlinFun(_arg0, _continuation, _exception, _cancellation)
+                run<Unit> { _result }
+            }
         }
     }
     val _result = run { kotlinx.coroutines.flow.FlowCollector<kotlin.Any?>(__function) }
@@ -90,14 +92,16 @@ public fun kotlinx_coroutines_flow_FlowCollector_emit__TypesOfArguments__Swift_O
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
@@ -114,14 +118,16 @@ public fun kotlinx_coroutines_flow_MutableSharedFlow_emit__TypesOfArguments__Swi
     val __continuation = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
         { arg0: Unit ->
-            val _result = kotlinFun(run { arg0; true })
+            val _arg0 = run { arg0; true }
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
         { arg0: kotlin.Any? ->
-            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = kotlinFun(_arg0)
             run<Unit> { _result }
         }
     }

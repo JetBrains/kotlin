@@ -503,7 +503,7 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     allParameters.forEach {
         val parameterName = "__${it.name}".kotlinIdentifier
-        add("${indent}val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier)}")
+        add("val $parameterName = ${it.bridge.inKotlinSources.swiftToKotlin(typeNamer, it.name.kotlinIdentifier)}".prependIndent(indent))
     }
     val callSite = buildCallSite()
     val resultName = "_result"

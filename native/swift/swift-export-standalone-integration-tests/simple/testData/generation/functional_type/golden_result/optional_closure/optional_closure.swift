@@ -7,10 +7,14 @@ public func consume_consuming_opt_closure(
 ) -> Swift.Void {
     return { __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___(arg.map { it in {
         let originalBlock: (Swift.Optional<() -> Swift.String>) -> Swift.Void = it
-        return { (arg0: Swift.UnsafeMutableRawPointer?) in return { originalBlock(arg0.map { it in {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: it, options: .asBestFittingWrapper)!
-        return { return optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!) }
-    }() }); return true }() }
+        return { (arg0: Swift.UnsafeMutableRawPointer?) in
+            let _arg0: Swift.Optional<() -> Swift.String> = arg0.map { it in {
+                let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: it, options: .asBestFittingWrapper)!
+                return { return optional_closure_internal_functional_type_caller_SwiftU2EString__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!) }
+            }() }
+            let _result = originalBlock(_arg0)
+            return { _result; return true }()
+        }
     }() } ?? nil); return () }()
 }
 public func consume_opt_closure(
@@ -18,7 +22,10 @@ public func consume_opt_closure(
 ) -> Swift.Void {
     return { __root___consume_opt_closure__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(arg.map { it in {
         let originalBlock: () -> Swift.Void = it
-        return { return { originalBlock(); return true }() }
+        return {
+            let _result = originalBlock()
+            return { _result; return true }()
+        }
     }() } ?? nil); return () }()
 }
 public func consume_producing_opt_closure(
@@ -26,10 +33,16 @@ public func consume_producing_opt_closure(
 ) -> Swift.Void {
     return { __root___consume_producing_opt_closure__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Optional_U2829202D_U20Swift_Void____(arg.map { it in {
         let originalBlock: () -> Swift.Optional<() -> Swift.Void> = it
-        return { return originalBlock().map { it in {
-        let originalBlock: () -> Swift.Void = it
-        return { return { originalBlock(); return true }() }
-    }() } ?? nil }
+        return {
+            let _result = originalBlock()
+            return _result.map { it in {
+                let originalBlock: () -> Swift.Void = it
+                return {
+                    let _result = originalBlock()
+                    return { _result; return true }()
+                }
+            }() } ?? nil
+        }
     }() } ?? nil); return () }()
 }
 public func produce_opt_closure(

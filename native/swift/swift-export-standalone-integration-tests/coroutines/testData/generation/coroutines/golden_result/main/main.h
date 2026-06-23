@@ -9,9 +9,9 @@ void * __root___Foo_init_allocate();
 
 _Bool __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void * __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(void (^function)(void *, void *, void *));
+void * __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(_Bool (^function)(void *, void *, void *));
 
-_Bool __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(void (^block)(void *, void *, void *));
+_Bool __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(_Bool (^block)(void *, void *, void *));
 
 _Bool __root___alwaysFails(_Bool (^continuation)(_Bool), _Bool (^exception)(void * _Nullable ), void * cancellation);
 

@@ -9,7 +9,8 @@ public fun __root___consume_block_with_string_id__TypesOfArguments__U28Swift_Str
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: kotlin.String ->
-            val _result = kotlinFun(arg0.objcPtr())
+            val _arg0 = arg0.objcPtr()
+            val _result = kotlinFun(_arg0)
             interpretObjCPointer<kotlin.String>(_result)
         }
     }
