@@ -498,6 +498,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("implementingKotlinAbstractMap.kt")
+    public void testImplementingKotlinAbstractMap() {
+      run("implementingKotlinAbstractMap.kt");
+    }
+
+    @Test
     @TestMetadata("implementingKotlinCollections.kt")
     public void testImplementingKotlinCollections() {
       run("implementingKotlinCollections.kt");
