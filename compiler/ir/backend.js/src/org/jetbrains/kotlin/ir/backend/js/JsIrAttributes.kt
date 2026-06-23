@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.name.ClassId
 
 var IrClass.localClassName: String? by irAttribute(copyByDefault = true)
 
-var IrClass.originalClassId: String? by irAttribute(copyByDefault = true)
+var IrClass.originalClassId: ClassId? by irAttribute(copyByDefault = true)
 
 /**
  * Whether the class's ES6 constructor requires an additional `box` value parameter.
