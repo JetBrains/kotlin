@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 public interface KaInternals {
     public val kDocProvider: KaInternalsKDocProvider
 
+    public val renderer: KaInternalsRenderer
+
     public val resolver: KaInternalsResolver
 
     public val typeRelationChecker: KaInternalsTypeRelationChecker
