@@ -98,6 +98,13 @@ public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.
  * @see KaUseSiteVisibilityChecker
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "createUseSiteVisibilityChecker(useSiteFile, receiverExpression, position)",
+        "org.jetbrains.kotlin.analysis.api.visibility.createUseSiteVisibilityChecker",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -119,6 +126,13 @@ public fun createUseSiteVisibilityChecker(
  * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isVisibleInClass(classSymbol)",
+        "org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -137,6 +151,13 @@ public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolea
  * and explicit return types are required for such symbols.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "symbol.isPublicApi",
+        "org.jetbrains.kotlin.analysis.api.visibility.isPublicApi",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun isPublicApi(symbol: KaDeclarationSymbol): Boolean {
