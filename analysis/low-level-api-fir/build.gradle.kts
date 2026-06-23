@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -27,6 +28,7 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     implementation(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-jvm"))
+    implementation(project(":core:compiler.common.native"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:cli-base"))
