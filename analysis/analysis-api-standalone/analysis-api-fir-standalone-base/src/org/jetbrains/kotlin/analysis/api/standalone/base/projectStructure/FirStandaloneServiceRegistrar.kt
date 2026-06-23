@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreFileTypeRegistry
 import com.intellij.diagnostic.PluginException
 import com.intellij.diagnostic.PluginProblemReporter
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
@@ -21,6 +23,8 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.compiled.ClassFileDecompiler
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.BinaryFileStubBuilders
+import com.intellij.psi.stubs.StubElementRegistryService
+import com.intellij.psi.stubs.StubElementRegistryServiceImpl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
@@ -34,12 +38,28 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
     private const val PLUGIN_RELATIVE_PATH = "/META-INF/analysis-api/analysis-api-fir-standalone-base.xml"
 
+    @Suppress("UnstableApiUsage")
     override fun registerApplicationServices(application: MockApplication, disposable: Disposable) {
         with(FileTypeRegistry.getInstance() as CoreFileTypeRegistry) {
             registerFileType(KlibMetaFileType, KLIB_METADATA_FILE_EXTENSION)
             registerFileType(KotlinBuiltInFileType, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION)
             registerFileType(KotlinBuiltInFileType, METADATA_FILE_EXTENSION)
         }
+
+        // CoreApplicationEnvironment doesn't have it
+        val languageStubDefinitionEpName = "com.intellij.languageStubDefinition"
+        val extensionArea = application.extensionArea
+        if (!extensionArea.hasExtensionPoint(languageStubDefinitionEpName)) {
+            CoreApplicationEnvironment.registerExtensionPoint(
+                extensionArea,
+                languageStubDefinitionEpName,
+                LanguageExtensionPoint::class.java,
+            )
+        }
+
+        // Re-registration is required due to IJPL-237691
+        application.registerService(StubElementRegistryService::class.java, StubElementRegistryServiceImpl::class.java)
+
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
 
         for (fileType in listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KlibMetaFileType)) {
@@ -49,7 +69,6 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
         }
 
         // To properly handle exceptions from the stub builder
-        @Suppress("UnstableApiUsage")
         application.registerService(
             PluginProblemReporter::class.java,
             PluginProblemReporter { errorMessage, cause, _ ->

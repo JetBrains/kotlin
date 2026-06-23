@@ -159,6 +159,11 @@ object PluginStructureProvider {
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",
         "com.intellij.psi.classFileDecompiler",
+
+        // KT-78356: decoupled stub support — register the Kotlin file stub definition and the stub
+        // factory/serializer registry so Standalone resolves stubs without `IStubFileElementType`.
+        "com.intellij.languageStubDefinition",
+        "com.intellij.stubElementRegistryExtension",
     )
 
     private val MockComponentManager.classLoader

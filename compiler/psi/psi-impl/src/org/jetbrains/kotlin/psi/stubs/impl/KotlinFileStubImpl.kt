@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.stubs.ObjectStubSerializer
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
+import org.jetbrains.kotlin.psi.stubs.factory.KotlinFileStubSerializer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 @OptIn(KtImplementationDetail::class)
@@ -29,7 +32,11 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
     val facadeFqName: FqName?
         get() = (kind as? KotlinFileStubKind.WithPackage.Facade)?.facadeFqName
 
-    override fun getType(): KtFileElementType = KtFileElementType
+    @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+    override fun getElementType(): IElementType = KtFileElementType
+
+    @Suppress("UnstableApiUsage") // KT-78356: the platform stub-decoupling API is still @ApiStatus.Experimental
+    override fun getStubSerializer(): ObjectStubSerializer<*, *> = KotlinFileStubSerializer
 
     override fun toString(): String = "${STUB_TO_STRING_PREFIX}FILE[kind=$kind]"
 

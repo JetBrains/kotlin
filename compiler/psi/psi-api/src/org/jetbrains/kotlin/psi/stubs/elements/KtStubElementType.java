@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.*;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IStubFileElementType;
+import com.intellij.psi.tree.IFileElementType;
 import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
@@ -149,9 +149,11 @@ public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT exten
         if (parentType instanceof IStubElementType) {
             return ((IStubElementType<?, ?>) parentType).shouldCreateStub(parent);
         }
-        if (parentType instanceof IStubFileElementType) {
+
+        if (parentType instanceof IFileElementType) {
             return true;
         }
+
         return false;
     }
 

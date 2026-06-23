@@ -93,9 +93,9 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 ): S {
     buffer.reset()
 
-    @Suppress("DEPRECATION") // KT-78356
+    @Suppress("DEPRECATION", "UnstableApiUsage") // KT-78356
     val serializer = if (originalStub is PsiFileStub<*>) {
-        originalStub.type
+        originalStub.stubSerializer
     } else {
         originalStub.stubType
     }
