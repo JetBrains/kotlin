@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.originalClassId
 import org.jetbrains.kotlin.ir.backend.js.localClassName
+import org.jetbrains.kotlin.ir.backend.js.originalClassId
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -18,36 +17,36 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
-import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-fun IrType.asString(context: JsIrBackendContext): String = when (this) {
+fun IrType.asString(): String = when (this) {
     // TODO: should each IrErrorType have own string representation?
     is IrErrorType -> "\$ErrorType\$"
     // TODO: should we prohibit user classes called dynamic?
     is IrDynamicType -> "dynamic"
     is IrSimpleType ->
-        classifier.asString(context) +
+        classifier.asString() +
                 when (nullability) {
                     SimpleTypeNullability.MARKED_NULLABLE -> "?"
                     SimpleTypeNullability.NOT_SPECIFIED -> ""
                     SimpleTypeNullability.DEFINITELY_NOT_NULL -> if (classifier is IrTypeParameterSymbol) " & Any" else ""
                 } +
                 (arguments.ifNotEmpty {
-                    joinToString(separator = ",", prefix = "<", postfix = ">") { it.asString(context) }
+                    joinToString(separator = ",", prefix = "<", postfix = ">") { it.asString() }
                 } ?: "")
 }
 
-private fun IrTypeArgument.asString(context: JsIrBackendContext): String = when (this) {
+private fun IrTypeArgument.asString(): String = when (this) {
     is IrStarProjection -> "*"
-    is IrTypeProjection -> variance.label + (if (variance != Variance.INVARIANT) " " else "") + type.asString(context)
+    is IrTypeProjection -> variance.label + (if (variance != Variance.INVARIANT) " " else "") + type.asString()
 }
 
-private fun IrClassifierSymbol.asString(context: JsIrBackendContext): String {
+private fun IrClassifierSymbol.asString(): String {
     return when (this) {
         is IrTypeParameterSymbol -> this.owner.name.asString()
         is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()

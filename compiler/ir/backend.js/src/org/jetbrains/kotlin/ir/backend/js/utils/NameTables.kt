@@ -41,11 +41,11 @@ fun Int.toJsIdentifier(): String {
     }
 }
 
-private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
+private fun List<IrType>.joinTypes(): String {
     if (isEmpty()) {
         return ""
     }
-    return joinToString("$", "$") { superType -> superType.asString(context) }
+    return joinToString("$", "$") { superType -> superType.asString() }
 }
 
 private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
@@ -85,7 +85,7 @@ fun calculateJsFunctionSignature(
     declaration.typeParameters.ifNotEmpty {
         nameBuilder.append("_\$t")
         forEach { typeParam ->
-            nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes(context))
+            nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes())
         }
     }
 
@@ -102,8 +102,8 @@ fun calculateJsFunctionSignature(
                 nameBuilder.append("_")
             }
         }
-        nameBuilder.append(parameter.type.asString(context))
-        nameBuilder.append(parameter.type.superTypes().joinTypes(context))
+        nameBuilder.append(parameter.type.asString())
+        nameBuilder.append(parameter.type.superTypes().joinTypes())
         if (parameter.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) {
             nameBuilder.append("?")
         }
@@ -112,7 +112,7 @@ fun calculateJsFunctionSignature(
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
         if (context.inlineClassesUtils.isTypeInlined(it) || it.isUnit()) {
-            nameBuilder.append("_ret$${it.asString(context)}")
+            nameBuilder.append("_ret$${it.asString()}")
         }
     }
 
