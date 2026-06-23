@@ -611,7 +611,7 @@ enum class LanguageFeature(
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     StrictEquals(sinceVersion = null, testOnly = true, issue = "KT-83683"),
     CallableReferencesToContextual(sinceVersion = null, testOnly = true, issue = "KT-54594", enabledInLatestLVTests = true),
-    JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
+    JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318"),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
 
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
