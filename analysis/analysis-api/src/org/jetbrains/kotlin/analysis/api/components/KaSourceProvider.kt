@@ -29,6 +29,13 @@ public interface KaSourceProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.klibSourceFileName",
+        "org.jetbrains.kotlin.analysis.api.symbols.klibSourceFileName",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaDeclarationSymbol.klibSourceFileName: String?

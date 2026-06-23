@@ -32,6 +32,8 @@ public interface KaInternals {
 
     public val resolver: KaInternalsResolver
 
+    public val sourceProvider: KaInternalsSourceProvider
+
     public val typeRelationChecker: KaInternalsTypeRelationChecker
 
     public val visibilityChecker: KaInternalsVisibilityChecker
