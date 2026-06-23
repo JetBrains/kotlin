@@ -6838,6 +6838,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             token,
         )
     }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL) { firDiagnostic ->
+        LateinitIntrinsicCallOnLateinitValImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.LOCAL_EXTENSION_PROPERTY) { firDiagnostic ->
         LocalExtensionPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,

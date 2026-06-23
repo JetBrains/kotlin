@@ -3998,6 +3998,11 @@ internal class LateinitIntrinsicCallOnNonLateinitImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LateinitIntrinsicCallOnNonLateinit
 
+internal class LateinitIntrinsicCallOnLateinitValImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LateinitIntrinsicCallOnLateinitVal
+
 internal class LateinitIntrinsicCallInInlineFunctionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -3333,6 +3333,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = LateinitIntrinsicCallOnNonLateinit::class
     }
 
+    interface LateinitIntrinsicCallOnLateinitVal : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnLateinitVal::class
+    }
+
     interface LateinitIntrinsicCallInInlineFunction : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = LateinitIntrinsicCallInInlineFunction::class
     }

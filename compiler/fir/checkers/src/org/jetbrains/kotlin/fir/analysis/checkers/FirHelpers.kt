@@ -698,7 +698,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
     val annotated =
         if (container is FirBackingField) {
             when {
-                !container.propertySymbol.hasBackingField -> container.propertyIfBackingField
+                !container.propertySymbol.hasExposedBackingField -> container.propertyIfBackingField
                 container.propertySymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS -> {
                     @OptIn(AnnotationTargetListForDeprecation::class)
                     return TargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION
@@ -736,15 +736,23 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
-                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionMember = false)
+                        TargetLists.T_MEMBER_PROPERTY(
+                            backingField = annotated.hasExposedBackingField,
+                            delegate = annotated.delegate != null,
+                            isCompanionMember = false,
+                        )
                     }
                 annotated.isCompanionBlockMember -> TargetLists.T_MEMBER_PROPERTY(
-                    backingField = annotated.hasBackingField,
+                    backingField = annotated.hasExposedBackingField,
                     delegate = annotated.delegate != null,
-                    isCompanionMember = true
+                    isCompanionMember = true,
                 )
                 else ->
-                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionExtension = annotated.isCompanionExtension)
+                    TargetLists.T_TOP_LEVEL_PROPERTY(
+                        backingField = annotated.hasExposedBackingField,
+                        delegate = annotated.delegate != null,
+                        isCompanionExtension = annotated.isCompanionExtension,
+                    )
             }
         }
         is FirValueParameter -> {
