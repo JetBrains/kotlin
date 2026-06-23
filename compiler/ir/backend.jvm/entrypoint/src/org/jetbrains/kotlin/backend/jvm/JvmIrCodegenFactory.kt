@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
@@ -59,12 +58,9 @@ class JvmIrCodegenFactory(
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
      * process in the debugger or "Android LiveEdit plugin".
      * When enabled, this option disables the linkage process and generates stubs for all unbound symbols.
-     * @param shouldStubOrphanedExpectSymbols is K1 only and should be removed
      */
     data class IdeCodegenSettings(
         val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
-        @property:K1Deprecation
-        val shouldStubOrphanedExpectSymbols: Boolean = false,
         val evaluatorData: JvmEvaluatorData? = null,
     )
 
