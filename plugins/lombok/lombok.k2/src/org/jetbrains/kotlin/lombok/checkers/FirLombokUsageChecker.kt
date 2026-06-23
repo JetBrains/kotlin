@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.config.FlagUsageValue
 import org.jetbrains.kotlin.lombok.config.lombokService
 
-object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService

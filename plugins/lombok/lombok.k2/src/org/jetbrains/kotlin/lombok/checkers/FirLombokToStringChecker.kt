@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lombok.generators.isToString
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 
-object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     private val functionNames = setOf(ToStringGenerator.TO_STRING_NAME)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

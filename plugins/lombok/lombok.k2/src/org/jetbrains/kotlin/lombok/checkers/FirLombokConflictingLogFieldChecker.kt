@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * Mirrors the Java Lombok behaviour: "Field 'log' already exists."
  */
-object FirLombokConflictingLogFieldChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokConflictingLogFieldChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val lombokService = context.session.lombokService

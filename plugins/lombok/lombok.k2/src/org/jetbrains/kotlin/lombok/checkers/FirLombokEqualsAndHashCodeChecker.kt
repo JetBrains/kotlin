@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 
-object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     private val functionNames = setOf(EQUALS_NAME, HASHCODE_NAME)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     private class ImplementedAnnotationsInfo(
         val allowedTargetsMap: Set<KotlinTarget>,
         val unsupportedArguments: Set<Name> = emptySet(),

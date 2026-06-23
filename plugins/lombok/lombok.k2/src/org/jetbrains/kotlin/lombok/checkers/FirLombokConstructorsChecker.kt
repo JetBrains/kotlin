@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.config.lombokService
 
-object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirLombokConstructorsChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
         val toStringAnnInfo = context.session.lombokService.getNoArgsConstructor(declaration.symbol) ?: return
