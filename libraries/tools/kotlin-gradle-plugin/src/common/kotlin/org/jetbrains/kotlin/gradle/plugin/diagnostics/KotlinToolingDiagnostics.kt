@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSe
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.utils.appendLine
@@ -2546,6 +2548,31 @@ internal object KotlinToolingDiagnostics {
                 }
                 .solution { "Please specify at least one browser runner explicitly" }
                 .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    internal object BrowserBundlerAlreadyDefined : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(
+            targetName: String,
+            definedBundler: KotlinBrowserBundler,
+            requestedBundler: KotlinBrowserBundler,
+        ) = build {
+            title { "Browser bundler is already defined in the '$targetName' target" }
+                .description {
+                    """
+                    The '$definedBundler' bundler is already defined for the browser execution environment of the '$targetName' target,
+                    so it can't be changed to '$requestedBundler'.
+                    The bundler is chosen when the 'browser { }' block is configured for the first time and can't be changed afterwards,
+                    because the corresponding bundler tasks are already registered.
+                    """.trimIndent()
+                }
+                .solution {
+                    "Please declare the same bundler in all 'browser { }' blocks of the '$targetName' target"
+                }
         }
     }
 

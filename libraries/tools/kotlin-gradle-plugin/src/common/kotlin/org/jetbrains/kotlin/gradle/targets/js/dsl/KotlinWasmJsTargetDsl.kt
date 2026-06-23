@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTargetWithBinary
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8Exec
+import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmJsBrowserDsl
 import org.jetbrains.kotlin.gradle.utils.withType
 
 /**
@@ -60,20 +61,14 @@ interface KotlinWasmSubTargetContainerDsl : KotlinTarget {
 }
 
 /**
- * Base configuration options for the compilation of Kotlin WasmJS targets.
+ * Provides configuration options for a Kotlin/Wasm/JS target.
  *
- * ```
- * kotlin {
- *     wasmJs { // Creates WasmJS target
- *         // Configure WasmJS target specifics here
- *     }
- * }
- * ```
+ * This DSL combines the configuration capabilities of [KotlinWasmTargetDsl] and [KotlinJsTargetDsl],
+ * and offers additional functionality specific to the Wasm/JS combination for setting
+ * up execution environments like d8 and browsers.
  *
- * To learn more see:
- * - [Get started with Kotlin/Wasm and Compose Multiplatform](https://kotl.in/kotlin-wasm-js-setup).
- *
- * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ * This interface is used to configure Kotlin projects targeting WebAssembly or JavaScript,
+ * utilizing execution environments like browsers or d8 for script runtime and testing.
  */
 interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
 
@@ -108,6 +103,83 @@ interface KotlinWasmJsTargetDsl : KotlinWasmTargetDsl, KotlinJsTargetDsl {
         d8 {
             fn.execute(this)
         }
+    }
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The [bundler] parameter selects the bundler / development server used for the
+     * browser execution environment. The bundler is chosen when the `browser { }` block
+     * is configured for the first time and cannot be changed afterwards.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    @ExperimentalWasmDsl
+    fun browser(bundler: KotlinBrowserBundler) = browser(bundler) { }
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The [bundler] parameter selects the bundler / development server used for the
+     * browser execution environment. The bundler is chosen when the `browser { }` block
+     * is configured for the first time and cannot be changed afterwards.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    @ExperimentalWasmDsl
+    fun browser(bundler: KotlinBrowserBundler, body: KotlinWasmJsBrowserDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [browser] with a [bundler] parameter above.
+     */
+    @ExperimentalWasmDsl
+    fun browser(bundler: KotlinBrowserBundler, fn: Action<KotlinWasmJsBrowserDsl>) {
+        browser(bundler) {
+            fn.execute(this)
+        }
+    }
+
+    /**
+     * Configures the browser execution environment for Kotlin JS or Wasm targets with [KotlinBrowserBundler.WEBPACK] bundler
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
+        super.browser(body)
+    }
+
+    /**
+     * Configures the browser execution environment for Kotlin JS or Wasm targets with [KotlinBrowserBundler.WEBPACK] bundler
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    override fun browser() {
+        super.browser()
+    }
+
+    /**
+     * Configures the browser execution environment for Kotlin JS or Wasm targets with [KotlinBrowserBundler.WEBPACK] bundler
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    override fun browser(fn: Action<KotlinJsBrowserDsl>) {
+        super.browser(fn)
     }
 }
 
