@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
@@ -42,12 +45,11 @@ class ReificationArgument(
         )
 }
 
-class ReifiedTypeInliner<KT : KotlinTypeMarker>(
-    private val parametersMapping: TypeParameterMappings<KT>?,
-    private val intrinsicsSupport: IntrinsicsSupport<KT>,
+class ReifiedTypeInliner(
+    private val parametersMapping: TypeParameterMappings?,
+    private val intrinsicsSupport: IntrinsicsSupport,
     private val typeSystem: TypeSystemCommonBackendContext,
-    private val languageVersionSettings: LanguageVersionSettings,
-    private val unifiedNullChecks: Boolean,
+    private val irBuiltIns: IrBuiltIns,
 ) {
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF, CATCH;
@@ -55,19 +57,18 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         val id: Int get() = ordinal
     }
 
-
-    interface IntrinsicsSupport<KT : KotlinTypeMarker> {
+    interface IntrinsicsSupport {
         val config: JvmBackendConfig
 
-        fun putClassInstance(v: InstructionAdapter, type: KT)
+        fun putClassInstance(v: InstructionAdapter, type: IrType)
 
         fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
 
-        fun isMutableCollectionType(type: KT): Boolean
+        fun isMutableCollectionType(type: IrType): Boolean
 
-        fun toKotlinType(type: KT): KotlinType
+        fun toKotlinType(type: IrType): KotlinType
 
-        fun generateExternalEntriesForEnumTypeIfNeeded(type: KT): FieldInsnNode?
+        fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType): FieldInsnNode?
 
         fun reportSuspendTypeUnsupported()
         fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
@@ -76,7 +77,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
             v: InstructionAdapter,
             reifiedInsn: AbstractInsnNode,
             instructions: InsnList,
-            type: KT
+            type: IrType,
         ): Boolean =
             false
     }
@@ -207,26 +208,23 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return mapping.reifiedTypeParametersUsages
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun KT.reify(argument: ReificationArgument): KT =
-        with(typeSystem) {
-            val withArrays = arrayOf(argument.arrayDepth)
+    private fun IrType.reify(argument: ReificationArgument): IrType =
+        arrayOf(argument.arrayDepth).let { withArrays ->
             if (argument.nullable) withArrays.makeNullable() else withArrays
-        } as KT
+        }
 
     private fun Type.reify(argument: ReificationArgument): Type =
         Type.getType("[".repeat(argument.arrayDepth) + this)
 
-    private fun KotlinTypeMarker.arrayOf(arrayDepth: Int): KotlinTypeMarker {
+    private fun IrType.arrayOf(arrayDepth: Int): IrType {
         var currentType = this
 
         repeat(arrayDepth) {
-            currentType = typeSystem.arrayType(currentType)
+            currentType = irBuiltIns.arrayClass.typeWith(currentType)
         }
 
         return currentType
     }
-
 
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
         processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
@@ -234,14 +232,17 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private fun processAs(
         insn: MethodInsnNode,
         instructions: InsnList,
-        type: KT,
+        type: IrType,
         asmType: Type,
         safe: Boolean
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType, safe, unifiedNullChecks)
+        generateAsCast(
+            InstructionAdapter(newMethodNode), intrinsicsSupport.toKotlinType(type), asmType, safe,
+            intrinsicsSupport.config.unifiedNullChecks,
+        )
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
@@ -259,7 +260,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private fun processIs(
         insn: MethodInsnNode,
         instructions: InsnList,
-        type: KT,
+        type: IrType,
         asmType: Type
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
         if (stubInstanceOf !is TypeInsnNode) return false
@@ -278,7 +279,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private fun processTypeOf(
         insn: MethodInsnNode,
         instructions: InsnList,
-        type: KT
+        type: IrType,
     ): Boolean = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
         val newMethodNode = newMethodNodeWithCorrectStackSize {
             typeSystem.generateTypeOf(it, type, intrinsicsSupport)
@@ -317,7 +318,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    private fun processPlugin(insn: MethodInsnNode, instructions: InsnList, type: KT): Boolean {
+    private fun processPlugin(insn: MethodInsnNode, instructions: InsnList, type: IrType): Boolean {
         val reifiedInsn = insn.next ?: return false
         val newMethodNode = newMethodNodeWithCorrectStackSize {
             if (!intrinsicsSupport.rewritePluginDefinedOperationMarker(
@@ -372,7 +373,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    private fun processSpecialEnumFunction(insn: MethodInsnNode, instructions: InsnList, type: KT, parameter: Type): Boolean {
+    private fun processSpecialEnumFunction(insn: MethodInsnNode, instructions: InsnList, type: IrType, parameter: Type): Boolean {
         val next1 = insn.next ?: return false
         val next2 = next1.next ?: return false
         if (next1.opcode == Opcodes.ACONST_NULL && next2.opcode == Opcodes.ALOAD) {
@@ -432,13 +433,13 @@ val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
             ReifiedTypeInliner.OperationKind.entries.getOrNull(it)
         }
 
-class TypeParameterMappings<KT : KotlinTypeMarker>(
+class TypeParameterMappings(
     typeSystem: TypeSystemCommonBackendContext,
-    typeArguments: Map<out TypeParameterMarker, KT>,
+    typeArguments: Map<out TypeParameterMarker, IrType>,
     allReified: Boolean,
-    mapType: (KT, BothSignatureWriter) -> Type
+    mapType: (IrType, BothSignatureWriter) -> Type
 ) {
-    private val mappingsByName = hashMapOf<String, TypeParameterMapping<KT>>()
+    private val mappingsByName = hashMapOf<String, TypeParameterMapping<IrType>>()
 
     init {
         with(typeSystem) {
@@ -454,11 +455,11 @@ class TypeParameterMappings<KT : KotlinTypeMarker>(
         }
     }
 
-    operator fun get(name: String): TypeParameterMapping<KT>? = mappingsByName[name]
+    operator fun get(name: String): TypeParameterMapping<IrType>? = mappingsByName[name]
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 
-    internal inline fun forEach(block: (String, TypeParameterMapping<KT>) -> Unit) =
+    internal inline fun forEach(block: (String, TypeParameterMapping<IrType>) -> Unit) =
         mappingsByName.entries.forEach { [name, mapping] -> block(name, mapping) }
 }
 

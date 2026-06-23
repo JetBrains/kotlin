@@ -62,7 +62,7 @@ class TypeRemapper private constructor(
 
     companion object {
         @JvmStatic
-        fun createRoot(formalTypeParameters: TypeParameterMappings<*>): TypeRemapper {
+        fun createRoot(formalTypeParameters: TypeParameterMappings): TypeRemapper {
             return TypeRemapper(HashMap()).apply {
                 formalTypeParameters.forEach(::registerTypeParameter)
             }

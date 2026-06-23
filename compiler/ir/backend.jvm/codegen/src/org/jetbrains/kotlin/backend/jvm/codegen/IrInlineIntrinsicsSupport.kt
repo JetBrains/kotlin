@@ -38,7 +38,7 @@ class IrInlineIntrinsicsSupport(
     private val classCodegen: ClassCodegen,
     private val reportErrorsOn: IrElement,
     private val containingFile: IrFile,
-) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
+) : ReifiedTypeInliner.IntrinsicsSupport {
     override val config: JvmBackendConfig
         get() = classCodegen.context.config
 

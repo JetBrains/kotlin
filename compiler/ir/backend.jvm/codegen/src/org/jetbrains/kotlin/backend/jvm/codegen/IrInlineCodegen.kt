@@ -44,9 +44,9 @@ class IrInlineCodegen(
     private val state: GenerationState,
     private val function: IrFunction,
     private val jvmSignature: JvmMethodSignature,
-    private val typeParameterMappings: TypeParameterMappings<IrType>,
+    private val typeParameterMappings: TypeParameterMappings,
     private val sourceCompiler: SourceCompilerForInline,
-    private val reifiedTypeInliner: ReifiedTypeInliner<IrType>,
+    private val reifiedTypeInliner: ReifiedTypeInliner,
     private val markInlinedSuspensionPointAsUnitReturning: Boolean,
 ) : IrInlineCallGenerator {
 

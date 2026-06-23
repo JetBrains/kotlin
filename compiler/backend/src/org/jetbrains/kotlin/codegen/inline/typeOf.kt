@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -35,12 +36,14 @@ private inline fun InstructionAdapter.unrollArrayIfFewerThan(n: Int, limit: Int,
     return arrayOf(AsmUtil.getArrayType(type))
 }
 
-fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
-    v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
-) = generateTypeOf(v, type, intrinsicsSupport, isTypeParameterBound = false)
+fun TypeSystemCommonBackendContext.generateTypeOf(
+    v: InstructionAdapter, type: IrType, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport
+) {
+    generateTypeOf(v, type, intrinsicsSupport, isTypeParameterBound = false)
+}
 
-private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
-    v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>, isTypeParameterBound: Boolean
+private fun TypeSystemCommonBackendContext.generateTypeOf(
+    v: InstructionAdapter, type: IrType, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport, isTypeParameterBound: Boolean
 ) {
     val typeParameter = type.typeConstructor().getTypeParameterClassifier()
     val methodArguments = if (typeParameter == null) {
@@ -81,16 +84,15 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         if (type.isFlexible()) {
             // If this is a flexible type, we've just generated its lower bound and have it on the stack.
             // Let's generate the upper bound now and call the method that takes lower and upper bound and constructs a flexible KType.
-            @Suppress("UNCHECKED_CAST")
-            generateTypeOf(v, type.upperBoundIfFlexible() as KT, intrinsicsSupport, isTypeParameterBound)
+            generateTypeOf(v, type.upperBoundIfFlexible() as IrType, intrinsicsSupport, isTypeParameterBound)
 
             v.invokestatic(REFLECTION, "platformType", Type.getMethodDescriptor(K_TYPE, K_TYPE, K_TYPE), false)
         }
     }
 }
 
-private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonReifiedTypeParameter(
-    v: InstructionAdapter, typeParameter: TypeParameterMarker, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
+private fun TypeSystemCommonBackendContext.generateNonReifiedTypeParameter(
+    v: InstructionAdapter, typeParameter: TypeParameterMarker, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport
 ) {
     intrinsicsSupport.generateTypeParameterContainer(v, typeParameter)
 
@@ -112,8 +114,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateNonRe
 
     v.dup()
     val argumentsForBounds = v.unrollArrayIfFewerThan(typeParameter.upperBoundCount(), 2, K_TYPE) { i ->
-        @Suppress("UNCHECKED_CAST")
-        generateTypeOf(v, typeParameter.getUpperBound(i) as KT, intrinsicsSupport, isTypeParameterBound = true)
+        generateTypeOf(v, typeParameter.getUpperBound(i) as IrType, intrinsicsSupport, isTypeParameterBound = true)
     }
     v.invokestatic(
         REFLECTION, "setUpperBounds", Type.getMethodDescriptor(Type.VOID_TYPE, K_TYPE_PARAMETER, *argumentsForBounds),
@@ -141,10 +142,10 @@ private fun TypeSystemCommonBackendContext.typeReferencesParameterWithRecursiveB
     return false
 }
 
-private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOfArgument(
+private fun TypeSystemCommonBackendContext.generateTypeOfArgument(
     v: InstructionAdapter,
     projection: TypeArgumentMarker,
-    intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>,
+    intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport,
     isTypeParameterBound: Boolean,
 ) {
     if (projection.isStarProjection()) {
@@ -152,8 +153,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         return
     }
 
-    @Suppress("UNCHECKED_CAST")
-    generateTypeOf(v, projection.getType() as KT, intrinsicsSupport, isTypeParameterBound)
+    generateTypeOf(v, projection.getType() as IrType, intrinsicsSupport, isTypeParameterBound)
     val methodName = when (projection.getVariance()) {
         TypeVariance.INV -> "invariant"
         TypeVariance.IN -> "contravariant"

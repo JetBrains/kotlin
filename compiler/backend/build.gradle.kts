@@ -17,11 +17,14 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:serialization"))
     implementation(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:ir.tree"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
     compileOnly(libs.guava)
 }
+
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {
