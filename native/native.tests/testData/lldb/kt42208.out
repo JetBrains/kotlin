@@ -12,10 +12,8 @@ Process <process id> stopped
 (lldb) bt
 * thread #<thread id>, stop reason = breakpoint 1.1
   * frame #0: <frame pc> lldb_kt42208.kexe`ThrowException
-    frame #1: <frame pc> lldb_kt42208.kexe`kfun:main$lambda$0#internal at kt42208-2.kt:12:18
-    frame #2: <frame pc> lldb_kt42208.kexe`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.invoke#internal(_this=[]) at kt42208-2.kt:11:20
-    frame #3: <frame pc> lldb_kt42208.kexe`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.$<bridge-DNN>invoke(_this=[]){}kotlin.Nothing#internal at kt42208-2.kt:11:20
-    frame #4: <frame pc> lldb_kt42208.kexe`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
-    frame #5: <frame pc> lldb_kt42208.kexe`kfun:#main(){} at kt42208-1.kt:7:5
+    frame #1: <frame pc> lldb_kt42208.kexe`kfun:main$$inlined$foo$1.invoke#internal(_this=main$$inlined$foo$1<value id>) at kt42208-2.kt:15:11
+    frame #2: <frame pc> lldb_kt42208.kexe`kfun:main$$inlined$foo$1.$<bridge-DN>invoke(_this=main$$inlined$foo$1<value id>){}kotlin.Nothing#internal at kt42208-2.kt:14:20
+    frame #3: <frame pc> lldb_kt42208.kexe`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
+    frame #4: <frame pc> lldb_kt42208.kexe`kfun:#main(){} at kt42208-1.kt:10:5
 (lldb) q
-

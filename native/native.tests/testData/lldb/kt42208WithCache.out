@@ -12,8 +12,8 @@ Process <process id> stopped
 (lldb) bt
 * thread #<thread id>, stop reason = breakpoint 1.1
   * frame #0: <frame pc> lldb_kt42208WithCache.kexe`ThrowException
-    frame #1: <frame pc> lldb_kt42208WithCache.kexe`kfun:main$$inlined$foo$1.main$$inlined$foo$1#invoke(_this=main$$inlined$foo$1@ccac8){}kotlin.Nothing at kt42208-2.kt:18:11
-    frame #2: <frame pc> lldb_kt42208WithCache.kexe`kfun:main$$inlined$foo$1.main$$inlined$foo$1#$<bridge-DN>invoke(_this=main$$inlined$foo$1@ccac8){}kotlin.Nothing(){}kotlin.Any? at kt42208-2.kt:17:20
+    frame #1: <frame pc> lldb_kt42208WithCache.kexe`kfun:main$$inlined$foo$1.main$$inlined$foo$1#invoke(_this=main$$inlined$foo$1<value id>){}kotlin.Nothing at kt42208-2.kt:18:11
+    frame #2: <frame pc> lldb_kt42208WithCache.kexe`kfun:main$$inlined$foo$1.main$$inlined$foo$1#$<bridge-DN>invoke(_this=main$$inlined$foo$1<value id>){}kotlin.Nothing(){}kotlin.Any? at kt42208-2.kt:17:20
     frame #3: <frame pc> lldb_kt42208WithCache.kexe`kfun:kotlin.Function0#invoke(){}1:0-trampoline at [K][Suspend]Functions:1:1
     frame #4: <frame pc> lldb_kt42208WithCache.kexe`kfun:#main(){} at kt42208-1.kt:13:5
 (lldb) q
