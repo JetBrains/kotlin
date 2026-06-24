@@ -575,7 +575,7 @@ enum class LanguageFeature(
 
     // Disabled for indefinite time. Forces K2 report errors (instead of warnings) for incompatible
     // equality & identity operators in cases where K1 would report warnings or would not report anything.
-    ReportErrorsForComparisonOperators(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
+    ReportErrorsForComparisonOperators(sinceVersion = null, enabledInProgressiveMode = true, "KT-57779"),
 
     // Disabled for indefinite time.
     // Disables reporting of new errors (see KT-55055, KT-55056, KT-55079) in DiagnosticReporterByTrackingStrategy.
@@ -608,7 +608,7 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ProhibitComparisonOfIncompatibleClasses(sinceVersion = null, enabledInProgressiveMode = true, NO_ISSUE_SPECIFIED),
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, NO_ISSUE_SPECIFIED),
-    FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
+    FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, "KT-73894"),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     StrictEquals(sinceVersion = null, testOnly = true, issue = "KT-83683"),
     CallableReferencesToContextual(sinceVersion = null, testOnly = true, issue = "KT-54594", enabledInLatestLVTests = true),
