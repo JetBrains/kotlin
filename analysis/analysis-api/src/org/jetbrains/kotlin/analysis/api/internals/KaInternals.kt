@@ -44,6 +44,8 @@ public interface KaInternals {
 
     public val sourceProvider: KaInternalsSourceProvider
 
+    public val substitutorProvider: KaInternalsSubstitutorProvider
+
     public val symbolInformationProvider: KaInternalsSymbolInformationProvider
 
     public val symbolProvider: KaInternalsSymbolProvider
