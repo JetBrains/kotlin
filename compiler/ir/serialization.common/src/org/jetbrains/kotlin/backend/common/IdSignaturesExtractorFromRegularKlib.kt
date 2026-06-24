@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes.Companion.extensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -48,21 +49,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as Pro
  * Note: [extractOnlyTopLevelPublicSignatures] is written in way to do even lesser amount of IO reads. So, it's
  * supposed to be even more robust than [extractAllPublicSignatures].
  */
-class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) {
+class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) : IdSignaturesExtractor {
     private val interner = IrInterningService()
     private val ir = library.irOrFail
-
-    /**
-     * The two sets of extracted signatures:
-     *
-     * @property declaredSignatures The signatures of public declarations that belong to the current library.
-     * @property importedSignatures The signatures of public declarations that belong to other libraries,
-     *   but are referenced/called in the current library. I.e. "imports".
-     */
-    data class ExtractedSignatures(
-        val declaredSignatures: Set<IdSignature>,
-        val importedSignatures: Set<IdSignature>,
-    )
 
     private inner class IdSignatureExtractorFromIrFile(
         private val fileIndex: Int,
@@ -217,7 +206,7 @@ class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) {
      * Note: This endpoint is useful when we need to see all contents of a KLIB.
      * E.g. for running investigations, debugging, etc.
      */
-    fun extractAllPublicSignatures(): ExtractedSignatures {
+    override fun extractAllPublicSignatures(): ExtractedSignatures {
         val allKnownSignatures: MutableSet<IdSignature> = hashSetOf()
         val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
 
@@ -243,7 +232,7 @@ class IdSignaturesExtractorFromRegularKlib(library: KotlinLibrary) {
      * Note: This endpoint can be helpful for e.g. understanding the DAG of dependencies between libraries.
      * Also, it is written in way to do even lesser amount of IO reads than [extractAllPublicSignatures] for even better performance.
      */
-    fun extractOnlyTopLevelPublicSignatures(): ExtractedSignatures {
+    override fun extractOnlyTopLevelPublicSignatures(): ExtractedSignatures {
         val allKnownSignatures: MutableSet<IdSignature> = hashSetOf()
         val ownDeclarationSignatures: MutableSet<IdSignature> = hashSetOf()
 
