@@ -138,6 +138,11 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                 "CODE_SIGN_IDENTITY=",
                 "COMPILER_INDEX_STORE_ENABLE=NO",
                 "SWIFT_INDEX_STORE_ENABLE=NO",
+                /**
+                 * FIXME: KT-87196 - In Xcode 27 swift-build now picks the driver dynamically instead of always using clang. LINKER_DRIVER
+                 * is a temporary workaround until we adapt the ld dump.
+                 */
+                "LINKER_DRIVER=clang",
             )
 
             args.addAll(parameters.additionalXcodeArgs.get())
