@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,6 @@ import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionCompo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsJavaInteroperabilityComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -90,7 +90,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 internal class KaFirJavaInteroperabilityComponent(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaJavaInteroperabilityComponent, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsJavaInteroperabilityComponent, KaFirSessionComponent {
     private val jvmTypeMapper: FirJvmTypeMapper by lazy {
         when {
             analysisSession.targetPlatform.has<JvmPlatform>() -> rootModuleSession.jvmTypeMapper
@@ -106,7 +106,8 @@ internal class KaFirJavaInteroperabilityComponent(
      * [useSitePosition] is used as pure psi, so there is no need to validate it.
      * Also, it might represent some complex expressions like light classes or UAST
      */
-    override fun KaType.asPsiType(
+    override fun asPsiType(
+        type: KaType,
         useSitePosition: PsiElement,
         allowErrorTypes: Boolean,
         mode: KaTypeMappingMode,
@@ -115,7 +116,7 @@ internal class KaFirJavaInteroperabilityComponent(
         preserveAnnotations: Boolean,
         allowNonJvmPlatforms: Boolean,
     ): PsiType? = withValidityAssertion {
-        val coneType = this.coneType
+        val coneType = type.coneType
 
         with(rootModuleSession.typeContext) {
             if (!allowErrorTypes && coneType.contains { it.isError() }) {
@@ -131,7 +132,7 @@ internal class KaFirJavaInteroperabilityComponent(
             return PsiTypes.voidType()
         }
 
-        val mappingMode = mode.toTypeMappingMode(this, isAnnotationMethod, suppressWildcards)
+        val mappingMode = mode.toTypeMappingMode(type, isAnnotationMethod, suppressWildcards)
         val typeElement = coneType.simplifyType(rootModuleSession, useSitePosition).asPsiTypeElement(
             mode = mappingMode,
             useSitePosition = useSitePosition,
@@ -144,7 +145,7 @@ internal class KaFirJavaInteroperabilityComponent(
         return with(analysisSession) {
             annotateByKtType(
                 psiType = psiType,
-                ktType = this@asPsiType,
+                ktType = type,
                 annotationParent = typeElement,
                 inferNullabilityForTypeArguments = !mappingMode.ignoreTypeArgumentsBounds,
             )
@@ -225,9 +226,9 @@ internal class KaFirJavaInteroperabilityComponent(
      * [useSitePosition] is used as pure psi, so there is no need to validate it.
      * Also, it might represent some complex expressions like light classes or UAST
      */
-    override fun PsiType.asKaType(useSitePosition: PsiElement): KaType? = withValidityAssertion {
+    override fun asKaType(psiType: PsiType, useSitePosition: PsiElement): KaType? = withValidityAssertion {
         val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
-        val javaType = JavaTypeImpl.create(this, javaElementSourceFactory.createTypeSource(this))
+        val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
         val javaTypeRef = buildJavaTypeRef {
             // Annotations are unused during `resolveIfJavaType`, so there is no need to provide something
@@ -284,75 +285,71 @@ internal class KaFirJavaInteroperabilityComponent(
         return coneKotlinType.asKaType()
     }
 
-    override fun KaType.mapToJvmTypeDescriptor(): String {
-        return jvmTypeMapper.mapType(coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
+    override fun mapToJvmTypeDescriptor(type: KaType): String {
+        return jvmTypeMapper.mapType(type.coneType, TypeMappingMode.DEFAULT, sw = null, unresolvedQualifierRemapper = null).descriptor
     }
 
-    @Deprecated("Use 'mapToJvmTypeDescriptor' instead.", level = DeprecationLevel.HIDDEN)
-    override fun KaType.mapToJvmType(mode: TypeMappingMode): Type = withValidityAssertion {
-        return jvmTypeMapper.mapType(coneType, mode, sw = null, unresolvedQualifierRemapper = null)
+    override fun mapToJvmType(type: KaType, mode: TypeMappingMode): Type = withValidityAssertion {
+        return jvmTypeMapper.mapType(type.coneType, mode, sw = null, unresolvedQualifierRemapper = null)
     }
 
-    override val KaType.isPrimitiveBacked: Boolean
-        get() = withValidityAssertion {
-            if (analysisSession.targetPlatform.has<JvmPlatform>()) {
-                return jvmTypeMapper.isPrimitiveBacked(coneType)
-            }
+    override fun isPrimitiveBacked(type: KaType): Boolean = withValidityAssertion {
+        if (analysisSession.targetPlatform.has<JvmPlatform>()) {
+            return jvmTypeMapper.isPrimitiveBacked(type.coneType)
+        }
 
-            with(analysisSession) {
-                if (!isNullable) {
-                    if (isPrimitive) {
+        with(analysisSession) {
+            if (!type.isNullable) {
+                if (type.isPrimitive) {
+                    return true
+                }
+
+                val classSymbol = type.symbol
+                if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
+                    val onlyProperty = classSymbol.memberScope.callables
+                        .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor }
+
+                    if (onlyProperty != null && isPrimitiveBacked(onlyProperty.returnType)) {
                         return true
-                    }
-
-                    val classSymbol = symbol
-                    if (classSymbol is KaNamedClassSymbol && classSymbol.isInline) {
-                        val onlyProperty = classSymbol.memberScope.callables
-                            .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor }
-
-                        if (onlyProperty != null && onlyProperty.returnType.isPrimitiveBacked) {
-                            return true
-                        }
                     }
                 }
             }
-
-            return false
         }
 
-    override val PsiClass.namedClassSymbol: KaNamedClassSymbol?
-        get() = withPsiValidityAssertion {
-            if (this is PsiTypeParameter) return null
-            if (this is KtLightElement<*, *>) return null
-            if (qualifiedName == null) return null
+        return false
+    }
 
-            if (isKotlinCompiledClass()) return null
-            if (isLocalClass()) return null
+    override fun namedClassSymbol(psiClass: PsiClass): KaNamedClassSymbol? = psiClass.withPsiValidityAssertion {
+        if (psiClass is PsiTypeParameter) return null
+        if (psiClass is KtLightElement<*, *>) return null
+        if (psiClass.qualifiedName == null) return null
 
-            return KaFirPsiJavaClassSymbol(this, analysisSession)
-        }
+        if (psiClass.isKotlinCompiledClass()) return null
+        if (psiClass.isLocalClass()) return null
+
+        return KaFirPsiJavaClassSymbol(psiClass, analysisSession)
+    }
 
     private fun PsiClass.isKotlinCompiledClass() =
         this is ClsElementImpl && hasAnnotation(JvmAnnotationNames.METADATA_FQ_NAME.asString())
 
-    override val PsiMember.callableSymbol: KaCallableSymbol?
-        get() = withPsiValidityAssertion {
-            if (this !is PsiMethod && this !is PsiField) return null
-            if (this is KtLightElement<*, *>) return null
+    override fun callableSymbol(psiMember: PsiMember): KaCallableSymbol? = psiMember.withPsiValidityAssertion {
+        if (psiMember !is PsiMethod && psiMember !is PsiField) return null
+        if (psiMember is KtLightElement<*, *>) return null
 
-            val containingClass = containingClass ?: return null
-            val classSymbol = containingClass.namedClassSymbol ?: return null
-            return with(analysisSession) {
-                val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
-                if ((this@callableSymbol as? PsiMethod)?.isConstructor == true) {
-                    combinedMemberScope.constructors.firstOrNull { it.psi == this@callableSymbol }
-                } else {
-                    val name = name?.let(Name::identifier) ?: return null
-                    combinedMemberScope.callables(name).firstOrNull { it.psi == this@callableSymbol }
-                        ?: findJavaAccessorMethodBySyntheticProperty(this@callableSymbol, name, combinedMemberScope)
-                }
+        val containingClass = psiMember.containingClass ?: return null
+        val classSymbol = namedClassSymbol(containingClass) ?: return null
+        return with(analysisSession) {
+            val combinedMemberScope = classSymbol.combinedDeclaredMemberScope
+            if ((psiMember as? PsiMethod)?.isConstructor == true) {
+                combinedMemberScope.constructors.firstOrNull { it.psi == psiMember }
+            } else {
+                val name = psiMember.name?.let(Name::identifier) ?: return null
+                combinedMemberScope.callables(name).firstOrNull { it.psi == psiMember }
+                    ?: findJavaAccessorMethodBySyntheticProperty(psiMember, name, combinedMemberScope)
             }
         }
+    }
 
     /**
      * Finds a [KaCallableSymbol] for a Java accessor method that implements a Kotlin property.
@@ -368,69 +365,64 @@ internal class KaFirJavaInteroperabilityComponent(
         }
     }
 
-    override val KaCallableSymbol.containingJvmClassName: String?
-        get() = withValidityAssertion {
-            val symbol = this@containingJvmClassName
+    override fun containingJvmClassName(symbol: KaCallableSymbol): String? = withValidityAssertion {
+        if (symbol.origin == KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR) return null
 
-            if (symbol.origin == KaSymbolOrigin.TYPEALIASED_CONSTRUCTOR) return null
+        with(analysisSession) {
+            val platform = symbol.containingModule.targetPlatform
+            if (!platform.has<JvmPlatform>()) return null
 
-            with(analysisSession) {
-                val platform = symbol.containingModule.targetPlatform
-                if (!platform.has<JvmPlatform>()) return null
-
-                val containingSymbolOrSelf = when (symbol) {
-                    is KaParameterSymbol -> symbol.containingDeclaration as? KaCallableSymbol ?: symbol
-                    is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
-                    is KaBackingFieldSymbol -> symbol.owningProperty
-                    else -> symbol
-                }
-
-                val firSymbol = containingSymbolOrSelf.firSymbol
-
-                firSymbol.jvmClassNameIfDeserialized()?.let {
-                    return it.fqNameForClassNameWithoutDollars.asString()
-                }
-
-                return if (containingSymbolOrSelf.isTopLevel) {
-                    (firSymbol.fir.getContainingFile()?.psi as? KtFile)
-                        ?.takeUnless { it.isScript() }
-                        ?.javaFileFacadeFqName?.asString()
-                } else {
-                    val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
-                        ?: containingSymbolOrSelf.callableId?.classId
-                    classId?.takeUnless { it.shortClassName.isSpecial }
-                        ?.asFqNameString()
-                }
-            }
-        }
-
-    override val KaPropertySymbol.javaGetterName: Name
-        get() = withValidityAssertion {
-            require(this is KaFirSymbol<*>)
-            if (this is KaFirSyntheticJavaPropertySymbol) {
-                return javaGetterSymbol.name
+            val containingSymbolOrSelf = when (symbol) {
+                is KaParameterSymbol -> symbol.containingDeclaration as? KaCallableSymbol ?: symbol
+                is KaPropertyAccessorSymbol -> symbol.containingDeclaration as? KaPropertySymbol ?: symbol
+                is KaBackingFieldSymbol -> symbol.owningProperty
+                else -> symbol
             }
 
-            val firProperty = firSymbol.fir
-            requireIsInstance<FirProperty>(firProperty)
+            val firSymbol = containingSymbolOrSelf.firSymbol
 
-            return getJvmName(firProperty, isSetter = false)
-        }
-
-    override val KaPropertySymbol.javaSetterName: Name?
-        get() = withValidityAssertion {
-            require(this is KaFirSymbol<*>)
-            if (this is KaFirSyntheticJavaPropertySymbol) {
-                return javaSetterSymbol?.name
+            firSymbol.jvmClassNameIfDeserialized()?.let {
+                return it.fqNameForClassNameWithoutDollars.asString()
             }
 
-            val firProperty = firSymbol.fir
-            requireIsInstance<FirProperty>(firProperty)
-
-            if (firProperty.isVal) return null
-
-            return getJvmName(firProperty, isSetter = true)
+            return if (containingSymbolOrSelf.isTopLevel) {
+                (firSymbol.fir.getContainingFile()?.psi as? KtFile)
+                    ?.takeUnless { it.isScript() }
+                    ?.javaFileFacadeFqName?.asString()
+            } else {
+                val classId = (containingSymbolOrSelf as? KaConstructorSymbol)?.containingClassId
+                    ?: containingSymbolOrSelf.callableId?.classId
+                classId?.takeUnless { it.shortClassName.isSpecial }
+                    ?.asFqNameString()
+            }
         }
+    }
+
+    override fun javaGetterName(symbol: KaPropertySymbol): Name = withValidityAssertion {
+        require(symbol is KaFirSymbol<*>)
+        if (symbol is KaFirSyntheticJavaPropertySymbol) {
+            return symbol.javaGetterSymbol.name
+        }
+
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
+        return getJvmName(firProperty, isSetter = false)
+    }
+
+    override fun javaSetterName(symbol: KaPropertySymbol): Name? = withValidityAssertion {
+        require(symbol is KaFirSymbol<*>)
+        if (symbol is KaFirSyntheticJavaPropertySymbol) {
+            return symbol.javaSetterSymbol?.name
+        }
+
+        val firProperty = symbol.firSymbol.fir
+        requireIsInstance<FirProperty>(firProperty)
+
+        if (firProperty.isVal) return null
+
+        return getJvmName(firProperty, isSetter = true)
+    }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
         if (property.backingField?.symbol?.hasAnnotation(JvmStandardClassIds.Annotations.JvmField, analysisSession.firSession) == true) {

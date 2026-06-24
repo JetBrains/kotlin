@@ -574,6 +574,11 @@ public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionTypes
 	public static final fun isDefinitelyNull (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/javaInterop/JavaInteroperabilityKt {
+	public static final fun getCallableSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiMember;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
+	public static final fun getNamedClassSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiClass;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getToken ()Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
 }

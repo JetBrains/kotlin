@@ -34,6 +34,8 @@ public interface KaInternals {
 
     public val expressionTypeProvider: KaInternalsExpressionTypeProvider
 
+    public val javaInteroperabilityComponent: KaInternalsJavaInteroperabilityComponent
+
     public val kDocProvider: KaInternalsKDocProvider
 
     public val renderer: KaInternalsRenderer

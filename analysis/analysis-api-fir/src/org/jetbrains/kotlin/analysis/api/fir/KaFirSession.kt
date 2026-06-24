@@ -63,7 +63,7 @@ private constructor(
     typeProvider = KaTypeProviderBridge(analysisSessionProvider),
     typeInformationProvider = KaTypeInformationProviderBridge(analysisSessionProvider),
     symbolProvider = KaSymbolProviderBridge(analysisSessionProvider),
-    javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
+    javaInteroperabilityComponent = KaJavaInteroperabilityComponentBridge(analysisSessionProvider),
     symbolInformationProvider = KaSymbolInformationProviderBridge(analysisSessionProvider),
     typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
     expressionInformationProvider = KaExpressionInformationProviderBridge(analysisSessionProvider),
@@ -86,6 +86,9 @@ private constructor(
     override val resolver: KaInternalsResolver = KaFirResolver(analysisSessionProvider)
 
     override val typeRelationChecker: KaInternalsTypeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider)
+
+    override val javaInteroperabilityComponent: KaInternalsJavaInteroperabilityComponent =
+        KaFirJavaInteroperabilityComponent(analysisSessionProvider)
 
     override val visibilityChecker: KaInternalsVisibilityChecker = KaFirVisibilityChecker(analysisSessionProvider)
 
