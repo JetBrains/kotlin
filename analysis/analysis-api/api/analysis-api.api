@@ -1337,6 +1337,38 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol
 	public abstract fun isVal ()Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/symbols/SymbolByPsiKt {
+	public static final fun getClassSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtClassOrObject;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
+	public static final fun getNamedClassSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtClassOrObject;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtBackingField;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtClassInitializer;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassInitializerSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtConstructor;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaConstructorSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDeclaration;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDestructuringDeclaration;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaDestructuringDeclarationSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtEnumEntry;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaEnumEntrySymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtFile;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaFileSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtFunctionLiteral;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaAnonymousFunctionSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtNamedFunction;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaFunctionSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtObjectDeclaration;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtObjectLiteralExpression;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaAnonymousObjectSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtParameter;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtProperty;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtPropertyAccessor;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaPropertyAccessorSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtScript;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaScriptSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtTypeAlias;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaTypeAliasSymbol;
+	public static final fun getSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtTypeParameter;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaTypeParameterSymbol;
+}
+
+public final class org/jetbrains/kotlin/analysis/api/symbols/SymbolSearchKt {
+	public static final fun findClass (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;
+	public static final fun findClassLike (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;
+	public static final fun findPackage (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol;
+	public static final fun findTopLevelCallables (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/FqName;Lorg/jetbrains/kotlin/name/Name;)Lkotlin/sequences/Sequence;
+	public static final fun findTypeAlias (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/name/ClassId;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaTypeAliasSymbol;
+	public static final fun getRootPackageSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaPackageSymbol;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/symbols/markers/KaAnnotatedSymbol : org/jetbrains/kotlin/analysis/api/annotations/KaAnnotated, org/jetbrains/kotlin/analysis/api/symbols/KaSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }

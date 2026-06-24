@@ -62,7 +62,7 @@ private constructor(
     expressionTypeProvider = KaFirExpressionTypeProvider(analysisSessionProvider),
     typeProvider = KaFirTypeProvider(analysisSessionProvider),
     typeInformationProvider = KaFirTypeInformationProvider(analysisSessionProvider),
-    symbolProvider = KaFirSymbolProvider(analysisSessionProvider, resolutionFacade.useSiteFirSession.symbolProvider),
+    symbolProvider = KaSymbolProviderBridge(analysisSessionProvider),
     javaInteroperabilityComponent = KaFirJavaInteroperabilityComponent(analysisSessionProvider),
     symbolInformationProvider = KaFirSymbolInformationProvider(analysisSessionProvider),
     typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
@@ -113,6 +113,9 @@ private constructor(
 
     override val completionCandidateChecker: KaInternalsCompletionCandidateChecker =
         KaFirCompletionCandidateChecker(analysisSessionProvider)
+
+    override val symbolProvider: KaInternalsSymbolProvider =
+        KaFirSymbolProvider(analysisSessionProvider, resolutionFacade.useSiteFirSession.symbolProvider)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)
