@@ -119,10 +119,6 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-enable-array-range-checks"
         description = "Turn on range checks for array access functions.".asReleaseDependent()
         valueType = BooleanType(
-            isNullable = ReleaseDependent(
-                true,
-                KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_4_0 to false,
-            ),
             defaultValue = ReleaseDependent(
                 true,
                 KotlinReleaseVersion.v2_1_20..KotlinReleaseVersion.v2_4_0 to false,
