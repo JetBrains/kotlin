@@ -82,9 +82,14 @@ private val debugProbes: Array<DebugProbes> = run {
  */
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
+    fun slowPath(completion: Continuation<T>): Continuation<T> = if (debugProbes.size == 1) {
+        debugProbes[0].probeCoroutineCreated(completion)
+    } else {
+        debugProbes.foldRight(completion) { probe, acc -> probe.probeCoroutineCreated(acc) }
+    }
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return completion
-    return debugProbes.foldRight(completion) { probe, acc -> probe.probeCoroutineCreated(acc) }
+    return slowPath(completion)
 }
 
 /**
@@ -102,9 +107,14 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
+    fun slowPath(completion: Continuation<*>): Unit = if (debugProbes.size == 1) {
+        debugProbes[0].probeCoroutineResumed(completion)
+    } else {
+        debugProbes.forEach { it.probeCoroutineResumed(frame) }
+    }
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return
-    debugProbes.forEach { it.probeCoroutineResumed(frame) }
+    slowPath(frame)
 }
 
 /**
@@ -120,7 +130,12 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @SinceKotlin("1.3")
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
+    fun slowPath(completion: Continuation<*>): Unit = if (debugProbes.size == 1) {
+        debugProbes[0].probeCoroutineSuspended(completion)
+    } else {
+        debugProbes.forEach { it.probeCoroutineSuspended(frame) }
+    }
     /** implementation of this function can be replaced by debugger */
     if (hasNoProbes) return
-    debugProbes.forEach { it.probeCoroutineSuspended(frame) }
+    slowPath(frame)
 }
