@@ -204,12 +204,10 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
-        val firSymbol = symbol.firSymbol
-        if (firSymbol is FirPropertySymbol && firSymbol.isForeignValue) {
-            return false
+        return when (symbol) {
+            is KaKotlinPropertySymbol, is KaLocalVariableSymbol -> symbol.firSymbol.origin != FirDeclarationOrigin.ForeignValue
+            else -> true
         }
-
-        return true
     }
 
     private fun getContainingDeclarationByPsi(symbol: KaSymbol): KaDeclarationSymbol? {
