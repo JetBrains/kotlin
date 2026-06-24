@@ -29,13 +29,11 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo.FileReadingException
 import java.io.File
 
-@OptIn(K1Deprecation::class)
 class CliJavaModuleFinder(
     private val jdkHome: File?,
     private val configuration: CompilerConfiguration,

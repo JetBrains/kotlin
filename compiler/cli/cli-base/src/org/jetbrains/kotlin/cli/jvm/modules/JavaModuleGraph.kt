@@ -17,11 +17,9 @@
 package org.jetbrains.kotlin.cli.jvm.modules
 
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-@OptIn(K1Deprecation::class)
 class JavaModuleGraph(finder: JavaModuleFinder) {
     private val module: (String) -> JavaModule? =
         LockBasedStorageManager.NO_LOCKS.createMemoizedFunctionWithNullableValues(finder::findModule)

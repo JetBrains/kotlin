@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 
-@OptIn(K1Deprecation::class)
 fun JavaModule.getJavaModuleRoots(): List<JavaRoot> =
     moduleRoots.map { (val root = file, val isBinary, val isBinarySignature) ->
         val type = when {
@@ -24,7 +22,6 @@ fun JavaModule.getJavaModuleRoots(): List<JavaRoot> =
 /**
  * Computes the JDK's default root modules. See [JEP 261: Module System](http://openjdk.java.net/jeps/261).
  */
-@OptIn(K1Deprecation::class)
 fun CliJavaModuleFinder.computeDefaultRootModules(): List<String> {
     val result = arrayListOf<String>()
 

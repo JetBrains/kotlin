@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
@@ -50,7 +49,6 @@ import java.util.jar.Attributes
 import java.util.jar.Manifest
 import kotlin.LazyThreadSafetyMode.NONE
 
-@OptIn(K1Deprecation::class)
 class ClasspathRootsResolver(
     private val psiManager: PsiManager,
     private val configuration: CompilerConfiguration,
