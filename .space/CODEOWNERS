@@ -111,6 +111,7 @@
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2NativeCompilerArgumentsCopyGenerated.kt "Kotlin Native"
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArguments.kt "Kotlin Wasm"
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2WasmCompilerArgumentsCopyGenerated.kt "Kotlin Wasm"
+/compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/KotlinWasmCompilerArguments.kt "Kotlin Wasm"
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArguments.kt "Kotlin JS"
 /compiler/cli/cli-base/gen/org/jetbrains/kotlin/cli/common/arguments/K2JSCompilerArgumentsCopyGenerated.kt "Kotlin JS"
 /compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/common/arguments/K2JKlibCompilerArguments.kt "JKlib"
