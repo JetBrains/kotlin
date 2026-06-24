@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.IrConstantValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
-import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
@@ -76,7 +76,7 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
             if (data is IrConstructor) {
                 val receiver = expression.receiver
                 if (receiver is IrGetValue) {
-                    if (receiver.symbol == data.dispatchReceiverParameter!!.symbol) {
+                    if (receiver.symbol == data.constructedClass.thisReceiver!!.symbol) {
                         return
                     }
                 }
