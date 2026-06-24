@@ -11,5 +11,5 @@ public class JavaBaseClass {
 // FILE: test.kt
 
 fun test() {
-    val javaBaseClass = JavaBaseClass.builder().<!UNRESOLVED_REFERENCE!>x<!>("base").build()
+    val javaBaseClass = JavaBaseClass.<!UNRESOLVED_REFERENCE!>builder<!>().x("base").build()
 }

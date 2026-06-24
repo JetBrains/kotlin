@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -165,15 +166,26 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
             val entityClassId = entitySymbol.classId
-            val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
-            val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
+            val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+            val builderClassId = entityClassId.createNestedClassId(builderClassName)
 
             val existingFunctionNames = context.getExistingFunctionNames()
 
-            fun createBuilderTypeRef(typeParameterSymbols: List<FirTypeParameterSymbol>): FirResolvedTypeRef {
-                return builderClassId
-                    .constructClassLikeType((typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()).toTypedArray())
-                    .toFirResolvedTypeRef()
+            var existingBuilder: FirClassSymbol<*>? = null
+            context?.declaredScope?.processClassifiersByName(builderClassName) {
+                if (existingBuilder == null && it is FirClassSymbol<*>) {
+                    existingBuilder = it
+                }
+            }
+
+            fun createBuilderTypeRef(typeParameterSymbols: List<FirTypeParameterSymbol>): FirResolvedTypeRef? {
+                val newTypeArguments = typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()
+                val existingBuilderTypeArguments = existingBuilder?.defaultType()?.typeArguments
+
+                // Don't create the return type if it doesn't conform to the existing builder to meet compiler expectation and to avoid crashing.
+                return runIf(existingBuilderTypeArguments == null || existingBuilderTypeArguments.size == newTypeArguments.size) {
+                    builderClassId.constructClassLikeType(newTypeArguments.toTypedArray()).toFirResolvedTypeRef()
+                }
             }
 
             addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
@@ -182,32 +194,36 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
                 val methodTypeParameters = builderDeclaration.initializeTypeParametersMapping(methodSymbol).values
 
-                entitySymbol.createJavaMethod(
-                    name,
-                    valueParameters = emptyList(),
-                    returnTypeRef = createBuilderTypeRef(methodTypeParameters.map { it.symbol }),
-                    visibility = visibility,
-                    modality = Modality.FINAL,
-                    dispatchReceiverType = if (isStatic) null else builderDeclaration.dispatchReceiverType,
-                    isStatic = isStatic,
-                    methodSymbol = methodSymbol,
-                    methodTypeParameters = methodTypeParameters,
-                )
+                createBuilderTypeRef(methodTypeParameters.map { it.symbol })?.let { returnType ->
+                    entitySymbol.createJavaMethod(
+                        name,
+                        valueParameters = emptyList(),
+                        returnTypeRef = returnType,
+                        visibility = visibility,
+                        modality = Modality.FINAL,
+                        dispatchReceiverType = if (isStatic) null else builderDeclaration.dispatchReceiverType,
+                        isStatic = isStatic,
+                        methodSymbol = methodSymbol,
+                        methodTypeParameters = methodTypeParameters,
+                    )
+                }
             }
 
             if (builder.requiresToBuilder) {
                 addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
-                    entitySymbol.createJavaMethod(
-                        name,
-                        valueParameters = emptyList(),
-                        // toBuilder() is always an instance method, so the class type parameters are
-                        // already provided by the dispatch receiver. The method must not introduce its
-                        // own independent type parameters — otherwise call-site inference would fail.
-                        returnTypeRef = createBuilderTypeRef(entitySymbol.typeParameterSymbols),
-                        visibility = visibility,
-                        modality = Modality.FINAL,
-                        methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name)),
-                    )
+                    // toBuilder() is always an instance method, so the class type parameters are
+                    // already provided by the dispatch receiver. The method must not introduce its
+                    // own independent type parameters — otherwise call-site inference would fail.
+                    createBuilderTypeRef(entitySymbol.typeParameterSymbols)?.let { returnType ->
+                        entitySymbol.createJavaMethod(
+                            name,
+                            valueParameters = emptyList(),
+                            returnTypeRef = returnType,
+                            visibility = visibility,
+                            modality = Modality.FINAL,
+                            methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name)),
+                        )
+                    }
                 }
             }
         }
