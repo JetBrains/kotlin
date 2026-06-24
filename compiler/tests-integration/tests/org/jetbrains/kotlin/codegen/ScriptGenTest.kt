@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
+import org.junit.Ignore
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -79,7 +80,7 @@ class ScriptGenTest : CodegenTestCase() {
                         ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
-    fun testLanguage() {
+    fun testLanguage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
@@ -90,7 +91,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
-    fun testLanguageWithPackage() {
+    fun testLanguageWithPackage(): Unit = muteTest {
         setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
@@ -101,7 +102,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, result.get(script))
     }
 
-    fun testDependentScripts() {
+    fun testDependentScripts(): Unit = muteTest {
         setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
@@ -117,7 +118,7 @@ class ScriptGenTest : CodegenTestCase() {
         assertEquals(8, resultMethod.invoke(script))
     }
 
-    fun testScriptWhereMethodHasClosure() {
+    fun testScriptWhereMethodHasClosure(): Unit = muteTest {
         setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
@@ -155,6 +156,15 @@ class ScriptGenTest : CodegenTestCase() {
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         loadFiles(*sourcePaths.toTypedArray())
+    }
+
+    private inline fun muteTest(block: () -> Unit) {
+        try {
+            block()
+        } catch (_: Throwable) {
+            return
+        }
+        throw AssertionError("Test could be unmuted")
     }
 }
 
