@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.cli.CliDiagnostics.JAVAC_INTEGRATION_WARNING
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
-import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportOutput
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import java.io.File
@@ -53,21 +49,6 @@ object JvmWriteOutputsPhase : PipelinePhase<JvmBackendPipelineArtifact, JvmBinar
         for (state in outputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             writeOutput(state.configuration, state.factory, mainClassFqName)
-        }
-
-        if (configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-            val singleState = outputs.singleOrNull()
-            if (singleState != null) {
-                @OptIn(K1Deprecation::class)
-                return JavacWrapper.getInstance(project).use {
-                    it.compile(configuration.outputDirOrCurrentDirectory())
-                }
-            } else {
-                configuration.report(
-                    JAVAC_INTEGRATION_WARNING,
-                    "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). "
-                )
-            }
         }
 
         return true

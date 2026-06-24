@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
@@ -222,9 +221,6 @@ internal object KotlinToJVMBytecodeCompiler {
             }
 
             KotlinJavaPsiFacade.getInstance(environment.project).clearPackageCaches()
-
-            val javaClassesTracker = configuration[JAVA_CLASSES_TRACKER]
-            javaClassesTracker?.clear()
 
             val lookupTracker = configuration[LOOKUP_TRACKER]
             lookupTracker?.clear()

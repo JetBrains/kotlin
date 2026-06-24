@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.K1_DEPRECATION_WARNING
-import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -227,7 +226,7 @@ object TopDownAnalyzerFacadeForJVM {
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
             configureJavaClassFinder = configureJavaClassFinder,
-            javaClassTracker = configuration[ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER],
+            javaClassTracker = null,
             implicitsResolutionFilter = implicitsResolutionFilter
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()

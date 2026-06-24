@@ -126,8 +126,6 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         enumWhenTracker = services[EnumWhenTracker::class.java]
         fileMappingTracker = services[ICFileMappingTracker::class.java]
         incrementalCompilationComponents = services[IncrementalCompilationComponents::class.java]
-        @OptIn(K1Deprecation::class)
-        putIfNotNull(ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER, services[JavaClassesTracker::class.java])
     }
 
     private fun CompilerConfiguration.setupModuleChunk(arguments: K2JVMCompilerArguments) {
