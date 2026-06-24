@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType, -ForbidExposingPackagePrivateInInternal
+// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
 
 // FILE: test/Internal.java
 

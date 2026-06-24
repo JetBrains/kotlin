@@ -1669,15 +1669,6 @@ internal class ExposedTypeParameterBoundDeprecationWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExposedTypeParameterBoundDeprecationWarning
 
-internal class ExposedPackagePrivateTypeFromInternalWarningImpl(
-    override val elementVisibility: EffectiveVisibility,
-    override val restrictingDeclaration: KaClassLikeSymbol,
-    override val relationToType: RelationToType,
-    override val restrictingVisibility: EffectiveVisibility,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ExposedPackagePrivateTypeFromInternalWarning
-
 internal class RepeatedModifierImpl(
     override val modifier: KtModifierKeywordToken,
     firDiagnostic: KtPsiDiagnostic,
