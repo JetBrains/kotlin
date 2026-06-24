@@ -83,7 +83,6 @@ fun serializeSingleFirFile(
     )
 }
 
-@OptIn(K1Deprecation::class)
 class FirElementAwareSerializableStringTable : FirElementAwareStringTable, SerializableStringTable() {
     override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId = StandardClassIds.Any
 }

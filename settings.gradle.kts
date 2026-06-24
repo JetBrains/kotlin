@@ -156,6 +156,7 @@ include(
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",
     ":compiler:resolution",
+    ":compiler:serialization.common",
     ":compiler:serialization",
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",

@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
-import org.jetbrains.kotlin.serialization.StringTableImpl
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmBackendExtension(
@@ -52,9 +51,10 @@ class FirJvmBackendExtension(
     }
 
     override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
-        @OptIn(K1Deprecation::class)
-        override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
-
+        override fun serializeOptionalAnnotationClass(
+            metadata: MetadataSource.Class,
+            stringTable: SerializableStringTable
+        ): ProtoBuf.Class {
             require(metadata is FirMetadataSource.Class) { "Metadata is expected to be ${FirMetadataSource.Class::class.simpleName}" }
 
             val session = components.session
@@ -69,7 +69,7 @@ class FirJvmBackendExtension(
                 localDelegatedProperties = emptyList(),
                 typeApproximator,
                 components,
-                object : FirElementAwareStringTable {
+                stringTable = object : FirElementAwareStringTable {
                     override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =
                         stringTable.getQualifiedClassNameIndex(className, isLocal)
 

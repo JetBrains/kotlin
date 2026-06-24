@@ -17,6 +17,7 @@ val commonCompilerModules = descriptorsCompilerModules + arrayOf(
     ":compiler:util",
     ":compiler:config",
     ":compiler:config.jvm",
+    ":compiler:serialization.common",
     ":compiler:compiler.version",
     ":compiler:resolution.common",
     ":compiler:resolution.common.jvm",

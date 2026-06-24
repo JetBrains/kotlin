@@ -8,15 +8,11 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
-import org.jetbrains.kotlin.codegen.JvmOptionalAnnotationSerializerExtension
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.StringTableImpl
-import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendExtension {
@@ -35,15 +31,14 @@ interface JvmBackendExtension {
             return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
         }
 
-        override fun createModuleMetadataSerializer(context: JvmBackendContext) = object : ModuleMetadataSerializer {
-            @OptIn(K1Deprecation::class)
-            override fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class {
-                require(metadata is DescriptorMetadataSource.Class)
-                return DescriptorSerializer.createTopLevel(
-                    JvmOptionalAnnotationSerializerExtension(stringTable), context.state.config.languageVersionSettings,
-                ).classProto(metadata.descriptor).build()
+        override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
+                override fun serializeOptionalAnnotationClass(
+                    metadata: MetadataSource.Class,
+                    stringTable: SerializableStringTable,
+                ): ProtoBuf.Class {
+                    error("K1 mode is no longer supported")
+                }
             }
-        }
 
         override fun createBuiltinsSerializer() = error("JVM backend builtins serialization is not supported in K1")
     }
@@ -54,6 +49,5 @@ interface JvmBackendExtension {
 }
 
 interface ModuleMetadataSerializer {
-    @OptIn(K1Deprecation::class)
-    fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: StringTableImpl): ProtoBuf.Class
+    fun serializeOptionalAnnotationClass(metadata: MetadataSource.Class, stringTable: SerializableStringTable): ProtoBuf.Class
 }

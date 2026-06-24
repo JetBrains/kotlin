@@ -160,6 +160,7 @@
 /compiler/resolution/ "Kotlin Frontend"
 /compiler/resolution.common/ "Kotlin Frontend"
 /compiler/resolution.common.jvm/ "Kotlin Frontend"
+/compiler/serialization.common/ "Kotlin Frontend"
 /compiler/serialization/ "Kotlin Frontend"
 /compiler/test-infrastructure/ "Kotlin Frontend"
 /compiler/test-infrastructure-utils/ "Kotlin Frontend"

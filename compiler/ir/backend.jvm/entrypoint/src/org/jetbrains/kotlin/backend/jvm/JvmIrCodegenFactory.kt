@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
+import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
@@ -482,10 +483,9 @@ class JvmIrCodegenFactory(
         }
     }
 
-    @OptIn(K1Deprecation::class)
     private fun generateModuleMetadata(backendContext: JvmBackendContext) {
         val builder = JvmModuleProtoBuf.Module.newBuilder()
-        val stringTable = StringTableImpl()
+        val stringTable = SerializableStringTable()
 
         backendContext.state.loadCompiledModule()?.moduleData?.run {
             // In incremental compilation scenario, we might already have some serialized optionalAnnotations from the previous run
