@@ -840,7 +840,7 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
 
-            unsetResolvedToCompanionIf(subCandidate.isSuccessful && !subCandidate.isFromCompanionObjectTypeScope)
+            markNotUsedAsExpressionIf(!isUsedAsExpressionReceiverIn(subCandidate))
         }
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)

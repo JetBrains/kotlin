@@ -1738,7 +1738,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // see e.g. uselessCastLeadsToRecursiveProblem.kt
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {
-                lhs.unsetResolvedToCompanion()
+                lhs.markNotUsedAsExpression()
                 val symbol = lhs.qualifierSymbol
                 val typeArguments: Array<ConeTypeProjection> =
                     if (lhs.typeArguments.isNotEmpty()) {

@@ -147,15 +147,15 @@ class FirCallResolver(
         if (resolvedReceiver is FirResolvedQualifier) {
             if (candidate != null) {
                 if (!candidate.isFromCompanionObjectTypeScope) {
-                    if (candidate.isSuccessful) {
-                        resolvedReceiver.unsetResolvedToCompanion()
-                    } else {
-                        resolvedReceiver.appendNonFatalDiagnostics(ConeResolvedToCompanionObjectWasRecentlyFixed)
-                    }
+                    resolvedReceiver.appendNonFatalDiagnostics(ConeResolvedToCompanionObjectWasRecentlyFixed)
                 }
+                resolvedReceiver.markNotUsedAsExpressionIf(
+                    candidate.isSuccessful &&
+                            !resolvedReceiver.isUsedAsExpressionReceiverIn(candidate)
+                )
             }
             // In case of implicit invoke on explicit companion `Foo.Companion()`, we haven't processed `Foo` yet and need to do it here.
-            resolvedReceiver.explicitParent?.unsetResolvedToCompanion()
+            resolvedReceiver.explicitParent?.markNotUsedAsExpression()
         }
 
         val type = components.typeFromCallee(resultFunctionCall)
@@ -438,7 +438,7 @@ class FirCallResolver(
                 )
                 ?.takeIf { it.applicability == CandidateApplicability.RESOLVED || !basicResult.isSuccess }
                 ?.let {
-                    explicitReceiver.unsetResolvedToCompanion()
+                    explicitReceiver.markNotUsedAsExpression()
                     return it.qualifier
                 }
         }
@@ -508,9 +508,11 @@ class FirCallResolver(
             else -> null
         }
 
-        (qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.unsetResolvedToCompanionIf(
-            reducedCandidates.isEmpty() || !reducedCandidates.all { it.isFromCompanionObjectTypeScope }
-        )
+        (qualifiedAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.run {
+            markNotUsedAsExpressionIf(
+                reducedCandidates.isEmpty() || !reducedCandidates.all { isUsedAsExpressionReceiverIn(it) }
+            )
+        }
 
         when (referencedSymbol) {
             is FirClassLikeSymbol<*> -> {

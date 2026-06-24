@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -398,15 +398,18 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     }.build()
 }
 
-fun FirResolvedQualifier.unsetResolvedToCompanionIf(condition: Boolean) {
-    if (condition) unsetResolvedToCompanion()
+fun FirResolvedQualifier.markNotUsedAsExpressionIf(condition: Boolean) {
+    if (condition) markNotUsedAsExpression()
 }
 
-fun FirResolvedQualifier.unsetResolvedToCompanion() {
-    if (resolvedToCompanionObject) {
-        replaceResolvedToCompanionObject(false)
-        replaceAccessedObjectSymbol(null)
-    }
+fun FirResolvedQualifier.markNotUsedAsExpression() {
+    replaceResolvedToCompanionObject(false)
+    replaceAccessedObjectSymbol(null)
+}
+
+fun FirResolvedQualifier.isUsedAsExpressionReceiverIn(candidate: Candidate): Boolean {
+    return candidate.dispatchReceiverExpression()?.unwrapSmartcastExpression() == this && (candidate.symbol as? FirCallableSymbol)?.isStatic != true ||
+            candidate.chosenExtensionReceiverExpression()?.unwrapSmartcastExpression() == this
 }
 
 internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
@@ -423,7 +426,7 @@ internal fun FirRegularClassSymbol.toImplicitResolvedQualifierReceiver(
             initTypeAndObjectAccess()
         }
     }.apply {
-        unsetResolvedToCompanionIf(definitelyNotCompanion)
+        markNotUsedAsExpressionIf(definitelyNotCompanion && resolvedToCompanionObject)
     }
     return resolvedQualifier
 }
