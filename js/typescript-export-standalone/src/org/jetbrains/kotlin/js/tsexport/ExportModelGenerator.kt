@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
-import org.jetbrains.kotlin.analysis.api.components.containingFileAnnotations
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.defaultType

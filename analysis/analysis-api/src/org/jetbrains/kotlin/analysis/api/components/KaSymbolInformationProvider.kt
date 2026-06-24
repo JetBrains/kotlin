@@ -255,7 +255,6 @@ public sealed class KaReturnValueStatus(public val name: String) {
  */
 @Deprecated("Use 'applicableAnnotationTargets' instead", level = DeprecationLevel.HIDDEN)
 @KaExperimentalApi
-@KaContextParameterApi
 @KaCustomContextParameterBridge
 context(session: KaSession)
 public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
@@ -274,6 +273,10 @@ public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.deprecation", "org.jetbrains.kotlin.analysis.api.symbols.deprecation"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.deprecation: KaDeprecation?
@@ -286,6 +289,10 @@ public val KaSymbol.deprecation: KaDeprecation?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.isDeprecated", "org.jetbrains.kotlin.analysis.api.symbols.isDeprecated"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.isDeprecated: Boolean
@@ -316,6 +323,10 @@ public val KaSymbol.isDeprecated: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.canBeOperator", "org.jetbrains.kotlin.analysis.api.symbols.canBeOperator"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaNamedFunctionSymbol.canBeOperator: Boolean
@@ -326,6 +337,10 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.applicableAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
@@ -338,6 +353,10 @@ public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.isInline", "org.jetbrains.kotlin.analysis.api.symbols.isInline"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaKotlinPropertySymbol.isInline: Boolean
@@ -348,6 +367,10 @@ public val KaKotlinPropertySymbol.isInline: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.importableFqName", "org.jetbrains.kotlin.analysis.api.symbols.importableFqName"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.importableFqName: FqName?
@@ -367,6 +390,10 @@ public val KaSymbol.importableFqName: FqName?
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.defaultAnnotationTargets", "org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
@@ -378,6 +405,10 @@ public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.returnValueStatus", "org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
@@ -391,6 +422,10 @@ public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
+    replaceWith = ReplaceWith("this.containingFileAnnotations", "org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?

@@ -17,13 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedClassSymbolBase
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaKotlinPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -34,8 +28,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
-import org.jetbrains.kotlin.analysis.api.symbols.canBeOperator as canBeOperatorEndpoint
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation as KaEndpointDeprecation
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel as KaEndpointDeprecationLevel
+import org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus as KaEndpointReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.symbols.applicableAnnotationTargets as applicableAnnotationTargetsEndpoint
+import org.jetbrains.kotlin.analysis.api.symbols.canBeOperator as canBeOperatorEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.containingFileAnnotations as containingFileAnnotationsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.defaultAnnotationTargets as defaultAnnotationTargetsEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.deprecation as deprecationEndpoint
@@ -43,9 +40,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.importableFqName as importableF
 import org.jetbrains.kotlin.analysis.api.symbols.isDeprecated as isDeprecatedEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.isInline as isInlineEndpoint
 import org.jetbrains.kotlin.analysis.api.symbols.returnValueStatus as returnValueStatusEndpoint
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation as KaEndpointDeprecation
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel as KaEndpointDeprecationLevel
-import org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus as KaEndpointReturnValueStatus
 
 /**
  * Routes the legacy [KaSymbolInformationProvider] surface through the new public `context(session: KaSession)` endpoints in
