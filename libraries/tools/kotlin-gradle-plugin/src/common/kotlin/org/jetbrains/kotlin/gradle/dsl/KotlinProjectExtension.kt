@@ -148,6 +148,8 @@ abstract class KotlinProjectExtension @Inject constructor(
 
     override var explicitApi: ExplicitApiMode? = null
 
+    override var groovyKotlinJointCompilation: Boolean = false
+
     override fun explicitApi() {
         explicitApi = ExplicitApiMode.Strict
     }

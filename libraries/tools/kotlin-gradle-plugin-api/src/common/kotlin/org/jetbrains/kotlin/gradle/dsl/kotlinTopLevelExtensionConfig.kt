@@ -54,6 +54,21 @@ interface KotlinTopLevelExtensionConfig {
      * Sets [explicitApi] option to report issues as warnings.
      */
     fun explicitApiWarning()
+
+    /**
+     * Enables joint compilation of Groovy and Kotlin sources by automatically adding
+     * `compileKotlin` output to the `compileGroovy` task classpath.
+     *
+     * This allows Groovy classes to reference Kotlin classes in the same source set.
+     *
+     * **Note:** Do not enable this if you have already configured joint compilation manually,
+     * as it will create a circular task dependency between `compileGroovy` and `compileKotlin`.
+     *
+     * Default: `false`
+     *
+     * @since 2.4.20
+     */
+    var groovyKotlinJointCompilation: Boolean
 }
 
 /**

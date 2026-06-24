@@ -546,8 +546,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelEx
 	public abstract fun explicitApiWarning ()V
 	public abstract fun getCoreLibrariesVersion ()Ljava/lang/String;
 	public abstract fun getExplicitApi ()Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;
+	public abstract fun getGroovyKotlinJointCompilation ()Z
 	public abstract fun setCoreLibrariesVersion (Ljava/lang/String;)V
 	public abstract fun setExplicitApi (Lorg/jetbrains/kotlin/gradle/dsl/ExplicitApiMode;)V
+	public abstract fun setGroovyKotlinJointCompilation (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enum {
