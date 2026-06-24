@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 description = "Embeddable JAR of Kotlin/Native compiler"
@@ -111,6 +112,8 @@ open class ProjectTestArgumentProvider @Inject constructor(
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     testTask(jUnitMode = JUnitMode.JUnit4) {
         /**
          * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
@@ -123,5 +126,9 @@ projectTests {
             nativeDistributionRoot.set(project.nativeDistribution.map { it.root })
             dependsOn(":kotlin-native:distRuntime")
         })
+        dependsOn(":kotlin-native:distInvalidateStaleCaches")
+        testInputsCheck {
+            isNative.set(true)
+        }
     }
 }
