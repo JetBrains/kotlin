@@ -798,6 +798,9 @@ object LightTreePositioningStrategies {
             }
 
             when {
+                node.tokenType == KtNodeTypes.OBJECT_LITERAL -> {
+                    return DEFAULT.mark(node, startOffset, endOffset, tree)
+                }
                 node.tokenType == KtNodeTypes.BINARY_EXPRESSION && tree.findDescendantByType(node, EQ, followFunctions = false) != null -> {
                     // Look for reference in LHS of variable assignment.
                     tree.findExpressionDeep(node)?.let {
