@@ -29,13 +29,8 @@ import kotlin.io.path.writeText
 import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
-// remove after KTI-3326 Allow kotlin teamcity agents to run playwright browsers
-@OsCondition(
-    supportedOn = [OS.MAC],
-    enabledOnCI = [OS.MAC]
-)
 @OptIn(ExperimentalJsTestDsl::class)
-@JsGradlePluginTests
+@JsBrowserGradlePluginTests
 class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy().disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
