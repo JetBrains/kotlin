@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirEnumEntrySymb
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.impl.base.util.callableId
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -73,8 +74,7 @@ internal class KaFirEnumEntrySymbol private constructor(
             else
                 firSymbol.getCallableId()
         }
-
-    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
+    override val initializer: KaAnonymousObjectSymbol?
         get() = withValidityAssertion {
             if (firSymbol.fir.initializer == null) {
                 return@withValidityAssertion null
@@ -88,7 +88,17 @@ internal class KaFirEnumEntrySymbol private constructor(
             }
 
             val classifierBuilder = analysisSession.firSymbolBuilder.classifierBuilder
-            classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol) as? KaFirEnumEntryInitializerSymbol
+            classifierBuilder.buildAnonymousObjectSymbol(initializerExpression.anonymousObject.symbol)
+        }
+
+    @Deprecated("Use 'initializer' instead. See KT-87199", replaceWith = ReplaceWith("initializer"))
+    override val enumEntryInitializer: KaFirEnumEntryInitializerSymbol?
+        get() = withValidityAssertion {
+            if (firSymbol.fir.initializer == null) {
+                return@withValidityAssertion null
+            }
+
+            initializer as? KaFirEnumEntryInitializerSymbol
                 ?: error("The anonymous object symbol for an enum entry initializer should be a ${KaFirEnumEntryInitializerSymbol::class.simpleName}")
         }
 

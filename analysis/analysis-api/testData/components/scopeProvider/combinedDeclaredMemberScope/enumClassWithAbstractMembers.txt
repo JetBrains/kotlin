@@ -2,7 +2,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.A
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -30,7 +30,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: test/E.B
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false

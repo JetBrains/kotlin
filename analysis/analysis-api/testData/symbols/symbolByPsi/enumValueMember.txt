@@ -279,7 +279,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /Style.SHEET
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false

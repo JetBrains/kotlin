@@ -90,7 +90,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.FirstEntry
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -268,7 +268,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.SecondEntry
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -418,7 +418,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /MyEnumClass.ThirdEntry
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false

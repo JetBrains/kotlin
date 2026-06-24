@@ -800,7 +800,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumE.EnumA
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -828,7 +828,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumE.EnumB
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -892,7 +892,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /EnumNotExternal.EnumA2
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
   isDelegated: false

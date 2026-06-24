@@ -97,7 +97,7 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
             }
             ?: error("Cannot find a symbol for the enum entry `$enumEntryId`.")
 
-        val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
+        val initializerSymbol = enumEntrySymbol.initializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
         listOf(initializerSymbol)
     }
 

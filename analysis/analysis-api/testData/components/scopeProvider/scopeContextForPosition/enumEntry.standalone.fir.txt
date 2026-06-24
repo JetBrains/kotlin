@@ -650,7 +650,7 @@ scopes:
         annotations: []
         callableId: /E.A
         contextReceivers: []
-        enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+        initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
         isActual: false
         isCompanion: true
         isDelegated: false

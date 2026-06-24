@@ -2,7 +2,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /Regular.Entry1
   contextReceivers: []
-  enumEntryInitializer: null
+  initializer: null
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -817,7 +817,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /Regular.EntryWithBody
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -2017,7 +2017,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /WithConstructor.Entry
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false
@@ -2045,7 +2045,7 @@ KaEnumEntrySymbol:
   annotations: []
   callableId: /WithConstructor.WithBody
   contextReceivers: []
-  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  initializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
   isDelegated: false

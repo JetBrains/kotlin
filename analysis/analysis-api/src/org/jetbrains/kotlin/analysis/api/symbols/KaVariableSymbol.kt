@@ -142,8 +142,27 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     /**
+     * The enum entry's [initializer](https://kotlinlang.org/docs/enum-classes.html#anonymous-classes),
+     * or `null` if the enum entry doesn't have a body.
+     *
+     * ### Example:
+     * ```kotlin
+     * enum class MyEnum {
+     *     A
+     *     {                       //
+     *         val x: String = ""  // Anonymous initializer for MyEnum.A
+     *     },                      //
+     *     B // Enum entry without initializer
+     * }
+     * ```
+     */
+    public abstract val initializer: KaAnonymousObjectSymbol?
+
+    /**
      * The enum entry's initializer, or `null` if the enum entry doesn't have a body.
      */
+    @Deprecated("Use 'initializer' instead. See KT-87199", ReplaceWith("initializer"))
+    @Suppress("DEPRECATION")
     public abstract val enumEntryInitializer: KaEnumEntryInitializerSymbol?
 
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
@@ -190,8 +209,10 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
  * The initializer of `A` declares a member `x: Int`, which is inaccessible outside the initializer. Still, the corresponding
  * [KaEnumEntryInitializerSymbol] can be used to get a declared member scope that contains `x`.
  */
+@Deprecated("Use 'KaAnonymousObjectSymbol' instead. See KT-87199", ReplaceWith("KaAnonymousObjectSymbol"))
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaEnumEntryInitializerSymbol : KaDeclarationContainerSymbol {
+    @Suppress("DEPRECATION")
     override fun createPointer(): KaSymbolPointer<KaEnumEntryInitializerSymbol>
 }
 

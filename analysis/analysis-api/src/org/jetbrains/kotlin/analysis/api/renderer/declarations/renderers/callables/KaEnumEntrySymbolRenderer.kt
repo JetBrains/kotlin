@@ -34,7 +34,16 @@ public interface KaEnumEntrySymbolRenderer {
             " ".separated(
                 { renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer) },
                 { declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer) },
-                { symbol.enumEntryInitializer?.let { declarationRenderer.classifierBodyRenderer.renderBody(analysisSession, it, declarationRenderer, printer) } },
+                {
+                    symbol.initializer?.let {
+                        declarationRenderer.classifierBodyRenderer.renderBody(
+                            analysisSession,
+                            it,
+                            declarationRenderer,
+                            printer
+                        )
+                    }
+                },
             )
         }
     }

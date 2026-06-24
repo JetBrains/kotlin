@@ -109,7 +109,7 @@ internal class SymbolLightClassForEnumEntry(
             val result = mutableListOf<PsiField>()
 
             // Then, add instance fields: properties from parameters, and then member properties
-            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+            enumEntrySymbol.initializer?.let { initializer ->
                 addPropertyBackingFields(
                     this@SymbolLightClassForEnumEntry,
                     result,
@@ -131,7 +131,7 @@ internal class SymbolLightClassForEnumEntry(
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
             val result = mutableListOf<PsiMethod>()
 
-            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+            enumEntrySymbol.initializer?.let { initializer ->
                 val declaredMemberScope = initializer.declaredMemberScope
                 val visibleDeclarations = declaredMemberScope.callables
 
