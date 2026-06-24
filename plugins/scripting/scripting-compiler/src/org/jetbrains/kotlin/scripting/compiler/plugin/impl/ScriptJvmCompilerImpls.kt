@@ -281,11 +281,11 @@ private fun doCompile(
         diagnosticReporter = diagnosticsReporter,
     )
 
-    val codegenFactory = JvmIrCodegenFactory(context.environment.configuration)
+    val codegenFactory = K1JvmIrCodegenFactory(context.environment.configuration)
 
     val backendInput = codegenFactory.convertToIr(generationState, ktFiles, analysisResult.bindingContext)
 
-    codegenFactory.generateModule(generationState, backendInput)
+    codegenFactory.normalFactory.generateModule(generationState, backendInput)
 
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
         diagnosticsReporter,

@@ -46,6 +46,7 @@ dependencies {
     compileOnly(project(":compiler:container"))
     compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":compiler:resolution"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
     implementation(project(":kotlin-power-assert-compiler-plugin")) // TODO: KT-74787
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

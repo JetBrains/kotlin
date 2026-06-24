@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmIrCodegenFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.scriptResultFieldDataAttr
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
@@ -118,7 +119,7 @@ open class GenericReplCompiler(
                     override fun getPreviousScripts() =
                         compilerState.history.map { compilerState.symbolTable.descriptorExtension.referenceScript(it.item) }
                 }
-            val codegenFactory = JvmIrCodegenFactory(
+            val codegenFactory = K1JvmIrCodegenFactory(
                 environment.configuration,
                 compilerState.mangler, compilerState.symbolTable, generatorExtensions
             )
@@ -127,7 +128,7 @@ open class GenericReplCompiler(
                 generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
             )
 
-            codegenFactory.generateModule(generationState, irBackendInput)
+            codegenFactory.normalFactory.generateModule(generationState, irBackendInput)
 
             compilerState.history.push(LineId(codeLine.no, 0, codeLine.hashCode()), scriptDescriptor)
 

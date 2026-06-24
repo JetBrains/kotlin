@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.components.*
@@ -1383,18 +1382,6 @@ internal class KaFirCompilerFacility(
     }
 
     private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, evaluatorData: JvmEvaluatorData?): JvmIrCodegenFactory {
-        val jvmGeneratorExtensions = object : JvmGeneratorExtensionsImpl(configuration) {
-            override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
-                // Stubbed top-level function IR symbols (from other source files in the module) require a parent facade class to be
-                // generated, which requires a container source to be provided. Without a facade class, function IR symbols will have
-                // an `IrExternalPackageFragment` parent, which trips up code generation during IR lowering.
-                @OptIn(K1Deprecation::class)
-                val psiSourceFile =
-                    descriptor.toSourceElement.containingFile as? PsiSourceFile ?: return super.getContainerSource(descriptor)
-                return FacadeClassSourceShimForFragmentCompilation(psiSourceFile)
-            }
-        }
-
         val ideCodegenSettings = JvmIrCodegenFactory.IdeCodegenSettings(
             shouldStubAndNotLinkUnboundSymbols = true,
 
@@ -1406,10 +1393,8 @@ internal class KaFirCompilerFacility(
             evaluatorData = evaluatorData
         )
 
-        @OptIn(K1Deprecation::class)
         return JvmIrCodegenFactory(
             configuration,
-            jvmGeneratorExtensions = jvmGeneratorExtensions,
             ideCodegenSettings = ideCodegenSettings,
         )
     }

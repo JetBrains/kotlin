@@ -6,24 +6,17 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.isBytecodeGenerationSuppressed
 import org.jetbrains.kotlin.backend.common.ir.isJvmBuiltin
-import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
-import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.codegen.addCompiledPartsAndSort
 import org.jetbrains.kotlin.codegen.loadCompiledModule
@@ -32,37 +25,21 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaserState
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
-import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
-import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorForNotFoundClasses
-import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
@@ -75,9 +52,6 @@ import java.util.concurrent.TimeUnit
 
 class JvmIrCodegenFactory(
     private val configuration: CompilerConfiguration,
-    private val externalMangler: JvmDescriptorMangler? = null,
-    private val externalSymbolTable: SymbolTable? = null,
-    private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) {
     /**
@@ -85,10 +59,11 @@ class JvmIrCodegenFactory(
      * must be `true` only if current compilation is done in the context of the "Evaluate Expression"
      * process in the debugger or "Android LiveEdit plugin".
      * When enabled, this option disables the linkage process and generates stubs for all unbound symbols.
-     * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
+     * @param shouldStubOrphanedExpectSymbols is K1 only and should be removed
      */
     data class IdeCodegenSettings(
         val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
+        @property:K1Deprecation
         val shouldStubOrphanedExpectSymbols: Boolean = false,
         val evaluatorData: JvmEvaluatorData? = null,
     )
@@ -111,175 +86,9 @@ class JvmIrCodegenFactory(
         val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
     )
 
-    fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        val backendInput = convertToIr(state, files, bindingContext)
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        generateModule(state, backendInput)
-    }
-
-    fun convertToIr(state: GenerationState, files: Collection<KtFile>, bindingContext: BindingContext): BackendInput = with(state) {
-        convertToIr(
-            files, configuration, module, diagnosticReporter, bindingContext, config.languageVersionSettings, ignoreErrors,
-            skipBodies = !classBuilderMode.generateBodies
-        )
-    }
-
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
         get() = this.getCompilerExtensions(IrGenerationExtension)
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
-    fun convertToIr(
-        files: Collection<KtFile>,
-        configuration: CompilerConfiguration,
-        module: ModuleDescriptor,
-        diagnosticReporter: DiagnosticReporter,
-        bindingContext: BindingContext,
-        languageVersionSettings: LanguageVersionSettings,
-        ignoreErrors: Boolean,
-        skipBodies: Boolean,
-    ): BackendInput {
-        val enableIdSignatures =
-            configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
-                    configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
-        val [mangler, symbolTable] =
-            if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
-            else {
-                val mangler = JvmDescriptorMangler(MainFunctionDetector(bindingContext, languageVersionSettings))
-                val signaturer =
-                    if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
-                    else DisabledIdSignatureDescriptor
-                val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
-                mangler to symbolTable
-            }
-        val psi2ir = Psi2IrTranslator(
-            languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors, skipBodies),
-            configuration::checkNoUnboundSymbols
-        )
-        val psi2irContext = psi2ir.createGeneratorContext(
-            module,
-            bindingContext,
-            configuration,
-            symbolTable,
-            jvmGeneratorExtensions,
-            fragmentContext = null,
-        )
-
-        // Built-ins deduplication must be enabled immediately so that there is no chance for duplicate built-in symbols to occur. For
-        // example, the creation of `IrPluginContextImpl` might already lead to duplicate built-in symbols via `BuiltinSymbolsBase`.
-        if (symbolTable is SymbolTableWithBuiltInsDeduplication) {
-            symbolTable.bindBuiltIns(psi2irContext.moduleDescriptor.builtIns)
-        }
-
-        val stubGenerator =
-            DeclarationStubGeneratorImpl(
-                psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns,
-                DescriptorByIdSignatureFinderImpl(psi2irContext.moduleDescriptor, mangler),
-                jvmGeneratorExtensions
-            )
-
-        val irProvider = if (enableIdSignatures) {
-            JvmIrLinker(
-                psi2irContext.moduleDescriptor,
-                configuration,
-                JvmIrTypeSystemContext(psi2irContext.irBuiltIns),
-                symbolTable,
-                stubGenerator,
-                mangler,
-            )
-        } else {
-            stubGenerator
-        }
-
-        SourceDeclarationsPreprocessor(psi2irContext).run(files)
-
-        // The plugin context contains unbound symbols right after construction and has to be
-        // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
-        val pluginContext = IrPluginContextImpl(
-            psi2irContext.moduleDescriptor,
-            psi2irContext.languageVersionSettings,
-            symbolTable,
-            psi2irContext.irBuiltIns,
-            irProvider,
-            @OptIn(MessageCollectorAccess::class) // deprecated in IrPluginContext
-            configuration.messageCollector,
-            diagnosticReporter
-        )
-        for (extension in configuration.filteredExtensions) {
-            if (!psi2irContext.configuration.generateBodies &&
-                !@OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
-            ) continue
-
-            psi2ir.addPostprocessingStep { module ->
-                val old = stubGenerator.unboundSymbolGeneration
-                try {
-                    stubGenerator.unboundSymbolGeneration = true
-                    extension.generate(module, pluginContext)
-                } finally {
-                    stubGenerator.unboundSymbolGeneration = old
-                }
-            }
-        }
-
-        val dependencies = if (irProvider !is KotlinIrLinker) {
-            emptyList()
-        } else {
-            psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
-                val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
-                irProvider.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
-            }
-        }
-
-        val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
-            listOf(stubGenerator)
-        } else {
-            val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
-            listOf(irProvider, stubGeneratorForMissingClasses)
-        }
-
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders)
-
-        if (irProvider is KotlinIrLinker) {
-            irProvider.postProcess(psi2irContext.irBuiltIns, inOrAfterLinkageStep = true)
-            irProvider.clear()
-        }
-
-        stubGenerator.unboundSymbolGeneration = true
-
-        // We need to compile all files we reference in Klibs
-        irModuleFragment.files.addAll(dependencies.flatMap { it.files })
-
-        if (ideCodegenSettings.shouldStubOrphanedExpectSymbols) {
-            irModuleFragment.stubOrphanedExpectSymbols(stubGenerator)
-        }
-
-        if (!configuration.getBoolean(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT) && files.none { it.isScript() }) {
-            if (bindingContext !is CleanableBindingContext) {
-                error("BindingContext should be cleanable in JVM IR to avoid leaking memory: $bindingContext")
-            }
-            bindingContext.clear()
-        }
-        return BackendInput(
-            irModuleFragment,
-            psi2irContext.irBuiltIns,
-            symbolTable,
-            irProviders,
-            jvmGeneratorExtensions,
-            JvmBackendExtension.Default,
-            pluginContext,
-        )
-    }
-
-    private fun ModuleDescriptor.collectAllDependencyModulesTransitively(): List<ModuleDescriptor> {
-        val result = LinkedHashSet<ModuleDescriptor>()
-        fun collectImpl(descriptor: ModuleDescriptor) {
-            val dependencies = descriptor.allDependencyModules
-            dependencies.forEach { if (result.add(it)) collectImpl(it) }
-        }
-        collectImpl(this)
-        return result.toList()
-    }
 
     // Extracts a part of the BackendInput which corresponds only to the specified source files.
     // This is needed to support cyclic module dependencies, which are allowed in JPS, where frontend and psi2ir is run on sources of all

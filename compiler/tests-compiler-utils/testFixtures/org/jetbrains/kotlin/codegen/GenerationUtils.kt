@@ -9,14 +9,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.runAnalysisHandlerExtensions
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -29,13 +27,8 @@ import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.FirParser
 import java.io.File
 
@@ -51,25 +44,22 @@ object GenerationUtils {
     fun compileFiles(
         files: List<KtFile>,
         environment: KotlinCoreEnvironment,
-        classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace(environment.project)
+        classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST
     ): GenerationState =
-        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
+        compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider)
 
     @JvmStatic
-    @JvmOverloads
     fun compileFiles(
         files: List<KtFile>,
         configuration: CompilerConfiguration,
         classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = NoScopeRecordCliBindingTrace(files.first().project)
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         val project = files.first().project
         return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
             compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
         } else {
-            compileFilesUsingStandardMode(project, files, configuration, classBuilderFactory, packagePartProvider, trace).first
+            error("K1 compilation is no longer supported")
         }
     }
 
@@ -125,40 +115,5 @@ object GenerationUtils {
         )
         JvmIrCodegenFactory(configuration).generateModule(generationState, backendInput)
         return generationState
-    }
-
-    private fun compileFilesUsingStandardMode(
-        project: Project,
-        files: List<KtFile>,
-        configuration: CompilerConfiguration,
-        classBuilderFactory: ClassBuilderFactory,
-        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace
-    ): Pair<GenerationState, BindingContext> {
-        val klibs: List<KotlinLibrary> = loadJvmKlibs(configuration).all
-
-        @Suppress("DEPRECATION_ERROR")
-        val analysisResult =
-            JvmResolveUtil.analyzeAndCheckForErrors(
-                project, files, configuration, packagePartProvider, trace,
-                klibList = klibs
-            )
-        analysisResult.throwIfError()
-
-        return generateFiles(project, files, configuration, classBuilderFactory, analysisResult) to analysisResult.bindingContext
-    }
-
-    private fun generateFiles(
-        project: Project,
-        files: List<KtFile>,
-        configuration: CompilerConfiguration,
-        classBuilderFactory: ClassBuilderFactory,
-        analysisResult: AnalysisResult,
-    ): GenerationState {
-        val state = GenerationState(project, analysisResult.moduleDescriptor, configuration, classBuilderFactory)
-        if (analysisResult.shouldGenerateCode) {
-            JvmIrCodegenFactory(configuration).convertAndGenerate(files, state, analysisResult.bindingContext)
-        }
-        return state
     }
 }

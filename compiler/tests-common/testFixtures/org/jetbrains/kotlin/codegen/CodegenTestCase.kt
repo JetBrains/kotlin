@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -234,8 +233,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
 
         try {
             val generationState = GenerationUtils.compileFiles(
-                myFiles!!.psiFiles, myEnvironment!!, ClassBuilderFactories.TEST,
-                NoScopeRecordCliBindingTrace(myEnvironment!!.project)
+                myFiles!!.psiFiles, myEnvironment!!, ClassBuilderFactories.TEST
             )
             classFileFactory = generationState.factory
 
