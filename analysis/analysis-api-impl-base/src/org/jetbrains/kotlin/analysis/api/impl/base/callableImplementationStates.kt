@@ -9,12 +9,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState
+import org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState as KaLegacyCallableImplementationState
 
 @KaImplementationDetail
 data class KaCallableExplicitImplementationStateImpl(
     override val isComplete: Boolean,
-) : KaCallableImplementationState.Explicit {
+) : KaCallableImplementationState.Explicit, KaLegacyCallableImplementationState.Explicit {
     override fun toString(): String {
         return "Explicit(isComplete=$isComplete)"
     }
@@ -24,13 +25,13 @@ data class KaCallableExplicitImplementationStateImpl(
 data class KaCallableInheritedImplementationStateImpl(
     override val isAmbiguous: Boolean,
     override val isOverridable: Boolean,
-) : KaCallableImplementationState.Inherited {
+) : KaCallableImplementationState.Inherited, KaLegacyCallableImplementationState.Inherited {
     override fun toString(): String {
         return "Inherited(isAmbiguous=$isAmbiguous, isOverridable=$isOverridable)"
     }
 }
 
 @KaImplementationDetail
-object KaCallableMissingImplementationStateImpl : KaCallableImplementationState.Missing {
+object KaCallableMissingImplementationStateImpl : KaCallableImplementationState.Missing, KaLegacyCallableImplementationState.Missing {
     override fun toString(): String = "Missing"
 }
