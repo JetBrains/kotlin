@@ -130,7 +130,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
             return if (configuration.languageVersionSettings.languageVersion.usesK2) {
                 K2CompilerFacade(environment)
             } else {
-                K1CompilerFacade(environment)
+                error("K1 is no longer supported")
             }
         }
     }
