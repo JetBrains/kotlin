@@ -503,6 +503,11 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public abstract fun withNullability (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaTypeProviderKt {
+	public static final fun collectImplicitReceiverTypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)Ljava/util/List;
+	public static final fun getDispatchReceiverType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeRelationChecker : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassLikeSymbol;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
 	public abstract fun isSubtypeOf (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/components/KaSubtypingErrorTypePolicy;)Z
