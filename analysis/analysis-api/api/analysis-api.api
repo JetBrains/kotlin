@@ -562,6 +562,14 @@ public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionInfor
 	public static final fun isUsedAsExpression (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/expressions/ExpressionTypesKt {
+	public static final fun getExpectedType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getExpressionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getFunctionType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtFunction;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun isDefinitelyNotNull (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
+	public static final fun isDefinitelyNull (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Z
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 	public abstract fun getToken ()Lorg/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeToken;
 }

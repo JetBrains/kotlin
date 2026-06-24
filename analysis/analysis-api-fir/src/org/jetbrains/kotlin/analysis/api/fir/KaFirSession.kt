@@ -59,7 +59,7 @@ private constructor(
     diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider),
     completionCandidateChecker = KaCompletionCandidateCheckerBridge(analysisSessionProvider),
-    expressionTypeProvider = KaFirExpressionTypeProvider(analysisSessionProvider),
+    expressionTypeProvider = KaExpressionTypeProviderBridge(analysisSessionProvider),
     typeProvider = KaTypeProviderBridge(analysisSessionProvider),
     typeInformationProvider = KaTypeInformationProviderBridge(analysisSessionProvider),
     symbolProvider = KaSymbolProviderBridge(analysisSessionProvider),
@@ -95,6 +95,9 @@ private constructor(
 
     override val expressionInformationProvider: KaInternalsExpressionInformationProvider =
         KaFirExpressionInformationProvider(analysisSessionProvider)
+
+    override val expressionTypeProvider: KaInternalsExpressionTypeProvider =
+        KaFirExpressionTypeProvider(analysisSessionProvider)
 
     override val sourceProvider: KaInternalsSourceProvider = KaFirSourceProvider(analysisSessionProvider)
 
