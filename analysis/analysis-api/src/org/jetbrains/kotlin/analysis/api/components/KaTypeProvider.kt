@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
@@ -361,54 +360,54 @@ public interface KaTypeProvider : KaSessionComponent {
 }
 
 @SubclassOptInRequired(KaImplementationDetail::class)
-public abstract class KaBuiltinTypes : KaLifetimeOwner {
+public abstract class KaBuiltinTypes : org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes {
     /** The [Int] class type. */
-    public abstract val int: KaType
+    public abstract override val int: KaType
 
     /** The [Long] class type. */
-    public abstract val long: KaType
+    public abstract override val long: KaType
 
     /** The [Short] class type. */
-    public abstract val short: KaType
+    public abstract override val short: KaType
 
     /** The [Byte] class type. */
-    public abstract val byte: KaType
+    public abstract override val byte: KaType
 
     /** The [Float] class type. */
-    public abstract val float: KaType
+    public abstract override val float: KaType
 
     /** The [Double] class type. */
-    public abstract val double: KaType
+    public abstract override val double: KaType
 
     /** The [Boolean] class type. */
-    public abstract val boolean: KaType
+    public abstract override val boolean: KaType
 
     /** The [Char] class type. */
-    public abstract val char: KaType
+    public abstract override val char: KaType
 
     /** The [String] class type. */
-    public abstract val string: KaType
+    public abstract override val string: KaType
 
     /** The [Unit] class type. */
-    public abstract val unit: KaType
+    public abstract override val unit: KaType
 
     /** The [Nothing] class type. */
-    public abstract val nothing: KaType
+    public abstract override val nothing: KaType
 
     /** The [Any] class type. */
-    public abstract val any: KaType
+    public abstract override val any: KaType
 
     /** The [Throwable] class type. */
-    public abstract val throwable: KaType
+    public abstract override val throwable: KaType
 
     /** The `Any?` type. */
-    public abstract val nullableAny: KaType
+    public abstract override val nullableAny: KaType
 
     /** The `Nothing?` type. */
-    public abstract val nullableNothing: KaType
+    public abstract override val nullableNothing: KaType
 
     /** The [Annotation] type. */
-    public abstract val annotationType: KaType
+    public abstract override val annotationType: KaType
 }
 
 /**

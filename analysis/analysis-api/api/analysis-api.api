@@ -196,7 +196,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaA
 	public abstract fun getAnalysisScope ()Lcom/intellij/psi/search/GlobalSearchScope;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/components/KaBuiltinTypes : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+public abstract class org/jetbrains/kotlin/analysis/api/components/KaBuiltinTypes : org/jetbrains/kotlin/analysis/api/types/KaBuiltinTypes {
 	public fun <init> ()V
 	public abstract fun getAnnotationType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun getAny ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
@@ -1412,6 +1412,25 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPo
 	public static final fun symbolPointerDelegator (Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaBuiltinTypes : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+	public abstract fun getAnnotationType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getAny ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getBoolean ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getByte ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getChar ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getDouble ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getFloat ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getInt ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getLong ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getNothing ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getNullableAny ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getNullableNothing ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getShort ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getString ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getThrowable ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun getUnit ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+}
+
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaCapturedType : org/jetbrains/kotlin/analysis/api/types/KaType {
 	public fun <init> ()V
 	public abstract fun getProjection ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeProjection;
@@ -1542,6 +1561,24 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaUnreso
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaUsualClassType : org/jetbrains/kotlin/analysis/api/types/KaClassType {
 	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/types/TypeProviderKt {
+	public static final fun allSupertypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lkotlin/sequences/Sequence;
+	public static final fun directSupertypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lkotlin/sequences/Sequence;
+	public static final fun getAllSupertypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
+	public static final fun getArrayElementType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getBuiltinTypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Lorg/jetbrains/kotlin/analysis/api/types/KaBuiltinTypes;
+	public static final fun getCommonSupertype (Lorg/jetbrains/kotlin/analysis/api/KaSession;Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getCommonSupertype (Lorg/jetbrains/kotlin/analysis/api/KaSession;[Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getDefaultType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getDirectSupertypes (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lkotlin/sequences/Sequence;
+	public static final fun getReceiverType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDoubleColonExpression;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtTypeReference;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun hasCommonSubtypeWith (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun lowerBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun upperBoundIfFlexible (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun withNullability (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Z)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeRelationsKt {

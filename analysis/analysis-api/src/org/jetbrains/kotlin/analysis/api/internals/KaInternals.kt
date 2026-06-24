@@ -52,6 +52,8 @@ public interface KaInternals {
 
     public val typeCreatorProvider: KaInternalsTypeCreatorProvider
 
+    public val typeProvider: KaInternalsTypeProvider
+
     public val typeRelationChecker: KaInternalsTypeRelationChecker
 
     public val visibilityChecker: KaInternalsVisibilityChecker
