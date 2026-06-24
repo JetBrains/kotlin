@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -113,7 +116,6 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun createExtensionCandidateChecker(
     originalFile: KtFile,

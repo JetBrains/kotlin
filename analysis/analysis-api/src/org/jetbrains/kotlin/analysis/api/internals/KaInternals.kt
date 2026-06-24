@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 public interface KaInternals {
     public val analysisScopeProvider: KaInternalsAnalysisScopeProvider
 
+    public val completionCandidateChecker: KaInternalsCompletionCandidateChecker
+
     public val evaluator: KaInternalsEvaluator
 
     public val expressionInformationProvider: KaInternalsExpressionInformationProvider
