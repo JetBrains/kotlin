@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaCustomContextParameterBridge
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNoContextParameterBridgeRequired
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
@@ -338,47 +333,47 @@ public interface KaTypeInformationProvider : KaSessionComponent {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaFunctionTypeFamily {
+public interface KaFunctionTypeFamily : org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily {
     /**
      * Whether this family represents reflection function types (`KFunction`, `KSuspendFunction`).
      */
-    public val isReflect: Boolean
+    public override val isReflect: Boolean
 
     /**
      * Whether this family represents suspend function types (`SuspendFunction`, `KSuspendFunction`).
      */
-    public val isSuspend: Boolean
+    public override val isSuspend: Boolean
 
     /**
      * Whether function types in this family can be inlined by the compiler.
      *
      * For built-in families, `Function` and `SuspendFunction` are inlinable, while `KFunction` and `KSuspendFunction` are not.
      */
-    public val isInlinable: Boolean
+    public override val isInlinable: Boolean
 
     /**
      * The maximum number of parameters supported by function types in this family.
      */
-    public val maxArity: Int
+    public override val maxArity: Int
 
     /**
      * Whether function references with a simple function type (e.g., `Function0`, `KFunction0`) can be converted to this family.
      */
-    public val supportsConversionFromSimpleFunctionType: Boolean
+    public override val supportsConversionFromSimpleFunctionType: Boolean
 
     /**
      * The class name prefix shared by all types in this family.
      *
      * For example, `"Function"` for the `Function` family, `"SuspendFunction"` for the `SuspendFunction` family.
      */
-    public val nameBase: String
+    public override val nameBase: String
 
     /**
      * Returns the [ClassId] of the function type interface for the given [arity].
      *
      * For example, `classId(2)` on the `Function` family returns the [ClassId] for `kotlin.Function2`.
      */
-    public fun classId(arity: Int): ClassId
+    public override fun classId(arity: Int): ClassId
 }
 
 /**
@@ -388,30 +383,30 @@ public interface KaFunctionTypeFamily {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaBuiltinFunctionTypeFamilies {
+public interface KaBuiltinFunctionTypeFamilies : org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies {
     /**
      * The `Function` family representing regular function types
      * (e.g., `Function0`, `Function1`, ..., `FunctionN`).
      */
-    public val function: KaFunctionTypeFamily
+    public override val function: KaFunctionTypeFamily
 
     /**
      * The `SuspendFunction` family representing suspend function types
      * (e.g., `SuspendFunction0`, `SuspendFunction1`, ..., `SuspendFunctionN`).
      */
-    public val suspendFunction: KaFunctionTypeFamily
+    public override val suspendFunction: KaFunctionTypeFamily
 
     /**
      * The `KFunction` family representing reflection types for regular functions
      * (e.g., `KFunction0`, `KFunction1`, ..., `KFunctionN`).
      */
-    public val kFunction: KaFunctionTypeFamily
+    public override val kFunction: KaFunctionTypeFamily
 
     /**
      * The `KSuspendFunction` family representing reflection types for suspend functions
      * (e.g., `KSuspendFunction0`, `KSuspendFunction1`, ..., `KSuspendFunctionN`).
      */
-    public val kSuspendFunction: KaFunctionTypeFamily
+    public override val kSuspendFunction: KaFunctionTypeFamily
 }
 
 /**

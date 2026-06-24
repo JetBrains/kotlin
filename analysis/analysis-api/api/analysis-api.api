@@ -1498,6 +1498,24 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaResolv
 	public abstract fun getSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassifierSymbol;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/types/KaStandardTypeClassIds {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/types/KaStandardTypeClassIds;
+	public final fun getANY ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBOOLEAN ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getBYTE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCHAR ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getCHAR_SEQUENCE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getDOUBLE ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getFLOAT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getINT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getLONG ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getNOTHING ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getPRIMITIVES ()Ljava/util/Set;
+	public final fun getSHORT ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getSTRING ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getUNIT ()Lorg/jetbrains/kotlin/name/ClassId;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaStarTypeProjection : org/jetbrains/kotlin/analysis/api/types/KaTypeProjection {
 	public fun getType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
@@ -1566,6 +1584,36 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/types/KaUnreso
 
 public abstract class org/jetbrains/kotlin/analysis/api/types/KaUsualClassType : org/jetbrains/kotlin/analysis/api/types/KaClassType {
 	public fun <init> ()V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/types/TypeInformationKt {
+	public static final fun getExpandedSymbol (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;
+	public static final fun getFullyExpandedType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public static final fun getHasFlexibleNullability (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isAnyType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isArrayOrPrimitiveArray (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isBooleanType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isByteType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isCharSequenceType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isCharType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isDenotable (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isDoubleType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isFloatType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isFunctionalInterface (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isIntType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isLongType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isMarkedNullable (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isNestedArray (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isNothingType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isNullable (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isPrimitive (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isShortType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isStringType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isUByteType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isUIntType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isULongType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isUShortType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
+	public static final fun isUnitType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 }
 
 public final class org/jetbrains/kotlin/analysis/api/types/TypeProviderKt {

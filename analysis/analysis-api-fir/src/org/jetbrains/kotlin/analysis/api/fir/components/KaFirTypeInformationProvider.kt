@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,59 +18,51 @@ import org.jetbrains.kotlin.fir.types.*
 internal class KaFirTypeInformationProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseTypeInformationProvider<KaFirSession>(), KaFirSessionComponent {
-    override val KaType.isFunctionalInterface: Boolean
-        get() = withValidityAssertion {
-            val coneType = (this as KaFirType).coneType
-            val firSession = analysisSession.firSession
-            val samResolver = FirSamResolver(
-                firSession,
-                analysisSession.getScopeSessionFor(firSession),
-            )
-            return samResolver.isSamType(coneType)
-        }
+    override fun isFunctionalInterface(type: KaType): Boolean = type.withValidityAssertion {
+        val coneType = (type as KaFirType).coneType
+        val firSession = analysisSession.firSession
+        val samResolver = FirSamResolver(
+            firSession,
+            analysisSession.getScopeSessionFor(firSession),
+        )
+        return samResolver.isSamType(coneType)
+    }
 
     override fun computeFunctionTypeKind(type: KaType): FunctionTypeKind? {
         return (type as KaFirType).coneType.functionTypeKind(analysisSession.firSession)
     }
 
-    override val KaType.isNullable: Boolean
-        get() = withValidityAssertion {
-            (this as KaFirType).coneType.canBeNull(analysisSession.firSession)
-        }
+    override fun isNullable(type: KaType): Boolean = type.withValidityAssertion {
+        (type as KaFirType).coneType.canBeNull(analysisSession.firSession)
+    }
 
-    override val KaType.isMarkedNullable: Boolean
-        get() = withValidityAssertion {
-            (this as KaFirType).coneType.isMarkedNullable
-        }
+    override fun isMarkedNullable(type: KaType): Boolean = type.withValidityAssertion {
+        (type as KaFirType).coneType.isMarkedNullable
+    }
 
-    override val KaType.hasFlexibleNullability: Boolean
-        get() = withValidityAssertion {
-            val coneType = this.coneType
-            coneType.hasFlexibleMarkedNullability || coneType is ConeErrorType && coneType.nullable == null
-        }
+    override fun hasFlexibleNullability(type: KaType): Boolean = type.withValidityAssertion {
+        val coneType = (type as KaFirType).coneType
+        coneType.hasFlexibleMarkedNullability || coneType is ConeErrorType && coneType.nullable == null
+    }
 
-    override val KaType.isDenotable: Boolean
-        get() = withValidityAssertion {
-            with(analysisSession) {
-                approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
-            }
+    override fun isDenotable(type: KaType): Boolean = type.withValidityAssertion {
+        with(analysisSession) {
+            type.approximateToDenotableSupertype(allowLocalDenotableTypes = true) == null
         }
+    }
 
-    override val KaType.isArrayOrPrimitiveArray: Boolean
-        get() = withValidityAssertion {
-            require(this is KaFirType)
-            return coneType.isArrayOrPrimitiveArray
-        }
+    override fun isArrayOrPrimitiveArray(type: KaType): Boolean = type.withValidityAssertion {
+        require(type is KaFirType)
+        return type.coneType.isArrayOrPrimitiveArray
+    }
 
-    override val KaType.isNestedArray: Boolean
-        get() = withValidityAssertion {
-            if (!isArrayOrPrimitiveArray) return false
-            require(this is KaFirType)
-            return coneType.arrayElementType()?.isArrayOrPrimitiveArray == true
-        }
+    override fun isNestedArray(type: KaType): Boolean = type.withValidityAssertion {
+        if (!isArrayOrPrimitiveArray(type)) return false
+        require(type is KaFirType)
+        return type.coneType.arrayElementType()?.isArrayOrPrimitiveArray == true
+    }
 
-    override val KaType.fullyExpandedType: KaType
-        get() = withValidityAssertion {
-            coneType.fullyExpandedType(analysisSession.firSession).asKaType()
-        }
+    override fun fullyExpandedType(type: KaType): KaType = type.withValidityAssertion {
+        (type as KaFirType).coneType.fullyExpandedType(analysisSession.firSession).asKaType()
+    }
 }
