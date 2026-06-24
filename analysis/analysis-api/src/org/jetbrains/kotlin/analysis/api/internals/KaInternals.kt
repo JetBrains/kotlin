@@ -38,6 +38,8 @@ public interface KaInternals {
 
     public val kDocProvider: KaInternalsKDocProvider
 
+    public val legacyTypeCreator: KaInternalsTypeCreator
+
     public val renderer: KaInternalsRenderer
 
     public val resolveExtensionInfoProvider: KaInternalsResolveExtensionInfoProvider

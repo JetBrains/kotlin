@@ -71,7 +71,7 @@ private constructor(
     referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
     renderer = KaRendererBridge(analysisSessionProvider),
     visibilityChecker = KaVisibilityCheckerBridge(analysisSessionProvider),
-    typeCreator = KaFirTypeCreator(analysisSessionProvider),
+    typeCreator = KaTypeCreatorBridge(analysisSessionProvider),
     typeCreatorProvider = KaTypeCreatorProviderBridge(analysisSessionProvider),
     analysisScopeProvider = KaAnalysisScopeProviderBridge(analysisSessionProvider),
     signatureSubstitutor = KaSignatureSubstitutorBridge(analysisSessionProvider),
@@ -113,6 +113,8 @@ private constructor(
     override val evaluator: KaInternalsEvaluator = KaFirEvaluator(analysisSessionProvider)
 
     override val typeCreatorProvider: KaInternalsTypeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider)
+
+    override val legacyTypeCreator: KaInternalsTypeCreator = KaFirTypeCreator(analysisSessionProvider)
 
     override val analysisScopeProvider: KaInternalsAnalysisScopeProvider =
         KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
