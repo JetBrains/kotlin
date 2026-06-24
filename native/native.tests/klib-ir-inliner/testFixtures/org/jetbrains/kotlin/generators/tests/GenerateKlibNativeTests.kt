@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxCoreTest
 import org.jetbrains.kotlin.konan.test.diagnostics.*
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpIrTest
-import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataSignaturesTest
 import org.jetbrains.kotlin.konan.test.dump.AbstractNativeKlibDumpMetadataTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibComparisonTest
 import org.jetbrains.kotlin.konan.test.headerklib.AbstractNativeHeaderKlibCompilationTest
@@ -99,7 +98,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        // Dump KLIB IR signatures tests
+        // Dump KLIB signatures tests
         testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
             testClass<AbstractNativeKlibDumpIrSignaturesTest>(
                 annotations = listOf(
@@ -107,17 +106,6 @@ fun main(args: Array<String>) {
                 )
             ) {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
-            }
-        }
-
-        // Dump KLIB metadata signatures tests
-        testGroup(testsRoot, "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
-                annotations = listOf(
-                    provider<UseDummyTestCaseGroupProvider>(),
-                )
-            ) {
-                model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
 

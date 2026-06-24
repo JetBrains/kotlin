@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -59,8 +60,8 @@ internal sealed class KlibToolCommand(
             val supportedSignatureVersions = library.versions.irSignatureVersions
             if (this !in supportedSignatureVersions) {
                 output.logError(
-                    "Signature version ${this.number} is not supported in library ${library.path}." +
-                                        " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
+                        "Signature version ${this.number} is not supported in library ${library.path}." +
+                                " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}"
                 )
                 return false
             }
@@ -99,7 +100,7 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
         }.sorted()
 
         val manifestProperties: SortedMap<String, String> = args.library.manifestProperties.entries
-            .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
+                .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${args.library.path.toRealPath()}")
         output.appendLine("Module name (metadata): ${metadataHeader.moduleName}")
@@ -172,14 +173,14 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
 
         val dumpOptions = DumpIrTreeOptions(
-            printSignatures = true,
-            filePathRenderer = { _, fullPath ->
-                // Similar to logic in IrFileEntryPathRelativizer.getRelativePath()
-                args.relativePathBases.firstNotNullOfOrNull { pathPrefix ->
-                    runIf(fullPath.startsWith(pathPrefix)) { fullPath.removePrefix(pathPrefix) }
-                } ?: fullPath
-            },
-            referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
+                printSignatures = true,
+                filePathRenderer = { _, fullPath ->
+                    // Similar to logic in IrFileEntryPathRelativizer.getRelativePath()
+                    args.relativePathBases.firstNotNullOfOrNull { pathPrefix ->
+                        runIf(fullPath.startsWith(pathPrefix)) { fullPath.removePrefix(pathPrefix) }
+                    } ?: fullPath
+                },
+                referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
         output.append(irFragment.dump(dumpOptions))
@@ -255,8 +256,8 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
             val abiSignatureVersion = AbiSignatureVersion.resolveByVersionNumber(signatureVersion.number)
             if (!abiSignatureVersion.isSupportedByAbiReader) {
                 output.logError(
-                    "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
-                            " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                        "Signature version ${signatureVersion.number} is not supported by the KLIB ABI reader." +
+                                " Supported versions: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -264,19 +265,19 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
             abiSignatureVersion
         } ?: run {
             val versionsSupportedByAbiReader: Map<Int, AbiSignatureVersion> = AbiSignatureVersion.allSupportedByAbiReader
-                .associateBy { it.versionNumber }
+                    .associateBy { it.versionNumber }
 
             val abiSignatureVersion = args.library.versions.irSignatureVersions
-                .map { it.number }
-                .sortedDescending()
-                .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
+                    .map { it.number }
+                    .sortedDescending()
+                    .firstNotNullOfOrNull { versionsSupportedByAbiReader[it] }
 
             if (abiSignatureVersion == null) {
                 output.logError(
-                    "There is no signature version that would be both supported in library ${args.library.path}" +
-                            " and by the KLIB ABI reader. Supported versions in the library:" +
-                            " ${args.library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
-                            ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
+                        "There is no signature version that would be both supported in library ${args.library.path}" +
+                                " and by the KLIB ABI reader. Supported versions in the library:" +
+                                " ${args.library.versions.irSignatureVersions.joinToString { it.number.toString() }}" +
+                                ". Supported versions by the KLIB ABI reader: ${AbiSignatureVersion.allSupportedByAbiReader.joinToString { it.versionNumber.toString() }}"
                 )
                 return
             }
@@ -285,15 +286,15 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
         }
 
         LibraryAbiRenderer.render(
-            libraryAbi = LibraryAbiReader.readAbiInfo(args.library.path.absolute().toFile()),
-            output = output,
-            settings = AbiRenderingSettings(
-                renderedSignatureVersion = abiSignatureVersion,
-                renderManifest = false,
-                renderDeclarations = true,
-                indentationString = "    ",
+                libraryAbi = LibraryAbiReader.readAbiInfo(args.library.path.absolute().toFile()),
+                output = output,
+                settings = AbiRenderingSettings(
+                        renderedSignatureVersion = abiSignatureVersion,
+                        renderManifest = false,
+                        renderDeclarations = true,
+                        indentationString = "    ",
 
-                )
+                        )
         )
     }
 }
@@ -304,28 +305,25 @@ internal class DumpMetadata(output: KlibToolOutput, args: ParsedArguments) : Kli
     }
 }
 
-internal class DumpMetadataSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
-    override fun execute() {
-        // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
-
-        val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
-
-        val module = ModuleDescriptorLoader(output).load(args.library) ?: return
-
-        DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
-    }
-}
-
 internal class DumpIrSignatures(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        if (!checkLibraryHasIr(args.library) || !args.signatureVersion.checkSupportedInLibrary(args.library)) return
-
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        val signatures = with(IrSignaturesExtractor(args.library)) {
-            if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
-        }
+        if (args.library.isCInteropLibrary()) {
+            // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
 
-        IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
+            val module = ModuleDescriptorLoader(output).load(args.library) ?: return
+            DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
+        } else if (args.library.ir != null) {
+            if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
+
+            val signatures = with(IrSignaturesExtractor(args.library)) {
+                if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
+            }
+
+            IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
+        } else {
+            output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+        }
     }
 }
