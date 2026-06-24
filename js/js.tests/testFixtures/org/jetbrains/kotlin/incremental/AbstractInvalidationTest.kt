@@ -40,17 +40,18 @@ import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
 import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
-import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
@@ -368,6 +369,7 @@ abstract class AbstractInvalidationTest(
             val isCommon = sourceFile.parentFile.name == "common"
             addKotlinSourceRoot(sourceFile.absolutePath, isCommon)
             val ktFile = environment.createPsiFile(sourceFile)
+            @OptIn(KtImplementationDetail::class)
             ktFile.isCommonSource = isCommon
             ktSources.add(ktFile)
         }

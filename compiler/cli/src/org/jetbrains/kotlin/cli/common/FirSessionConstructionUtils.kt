@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.hmppModuleName
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 
-@OptIn(K1Deprecation::class)
+@OptIn(KtImplementationDetail::class)
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 
-@OptIn(K1Deprecation::class)
+@OptIn(KtImplementationDetail::class)
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
 
 val GroupedKtSources.isCommonSourceForLt: (KtSourceFile) -> Boolean

@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.isCommonSource
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
@@ -56,6 +57,7 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
             // a single module
             if (actuals.all { it.module != module }) return
         } else { // backend specific compiler
+            @OptIn(KtImplementationDetail::class)
             if (declaration.containingKtFile.isCommonSource == true) return
         }
 
