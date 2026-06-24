@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
-import org.jetbrains.kotlin.buildtools.internal.classloading.ClassLoadersCache
+import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
@@ -28,7 +28,7 @@ import java.util.concurrent.*
 internal class KotlinToolchainsImpl() : KotlinToolchains {
     val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
-    val classloadersCache = ClassLoadersCache(10, this::class.java.classLoader)
+    val classloadersCache = LruClassLoadersCache(10, this::class.java.classLoader)
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")

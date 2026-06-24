@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.components.ClassloadersCache
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -82,6 +83,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         configuration.allowNoSourceFiles = arguments.allowNoSourceFiles
         configuration.setupJvmSpecificArguments(arguments)
         configuration.setupIncrementalCompilationServices(arguments, services)
+        configuration.classloadersCache = services[ClassloadersCache::class.java]
 
         configuration.phaseConfig = createPhaseConfig(arguments, jvmPhases).also {
             if (arguments.listPhases) it.list(jvmPhases)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.components.ClassloadersCache
 import org.jetbrains.kotlin.util.ServiceLoaderLite
 import java.io.File
 import java.net.URL
@@ -23,12 +24,12 @@ import java.util.concurrent.ConcurrentMap
 /**
  * LRU cache for [ClassLoader]s by class path.
  */
-public class ClassLoadersCache(
+public class LruClassLoadersCache(
     size: Int,
     private val parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader(),
     ttl: Duration = Duration.ofHours(1),
     private val logger: KotlinLogger = DefaultKotlinLogger,
-) : AutoCloseable {
+) : ClassloadersCache, AutoCloseable {
 
     private val cache: ConcurrentMap<CacheKey, URLClassLoader> =
         CacheBuilder
@@ -43,7 +44,7 @@ public class ClassLoadersCache(
             .build<CacheKey, URLClassLoader>()
             .asMap()
 
-    public fun getForClassPath(files: List<File>): URLClassLoader = getForClassPath(files, parentClassLoader)
+    public override fun getForClassPath(files: List<File>): URLClassLoader = getForClassPath(files, parentClassLoader)
 
     private fun getForClassPath(files: List<File>, parent: ClassLoader): URLClassLoader {
         val key = makeKey(files)
@@ -87,30 +88,30 @@ public class ClassLoadersCache(
         return CacheKey(entries)
     }
 
-    @OptIn(ExperimentalCompilerApi::class)
-    public fun asPluginsLoader(): PluginCliParser.PluginsLoader = object : PluginCliParser.PluginsLoader {
-        override fun loadCompilerPluginRegistrars(
-            pluginClasspaths: Collection<String>,
-            parentDisposable: Disposable,
-        ): List<CompilerPluginRegistrar> {
-            return ServiceLoaderLite.loadImplementations(
-                CompilerPluginRegistrar::class.java,
-                getForClassPath(pluginClasspaths.map { File(it) })
-            )
-        }
-
-        override fun loadCommandLineProcessors(
-            pluginClasspaths: Collection<String>,
-            parentDisposable: Disposable,
-        ): List<CommandLineProcessor> {
-            return ServiceLoaderLite.loadImplementations(
-                CommandLineProcessor::class.java,
-                getForClassPath(pluginClasspaths.map { File(it) })
-            )
-        }
-    }
-
     private data class ClasspathEntry(val path: URL, val modificationTimestamp: Long)
 
     private data class CacheKey(val entries: List<ClasspathEntry>)
+}
+
+@OptIn(ExperimentalCompilerApi::class)
+public fun ClassloadersCache.asPluginsLoader(): PluginCliParser.PluginsLoader = object : PluginCliParser.PluginsLoader {
+    override fun loadCompilerPluginRegistrars(
+        pluginClasspaths: Collection<String>,
+        parentDisposable: Disposable,
+    ): List<CompilerPluginRegistrar> {
+        return ServiceLoaderLite.loadImplementations(
+            CompilerPluginRegistrar::class.java,
+            getForClassPath(pluginClasspaths.map { File(it) })
+        )
+    }
+
+    override fun loadCommandLineProcessors(
+        pluginClasspaths: Collection<String>,
+        parentDisposable: Disposable,
+    ): List<CommandLineProcessor> {
+        return ServiceLoaderLite.loadImplementations(
+            CommandLineProcessor::class.java,
+            getForClassPath(pluginClasspaths.map { File(it) })
+        )
+    }
 }

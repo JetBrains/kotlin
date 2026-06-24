@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.config
  */
 
 import java.io.File
+import org.jetbrains.kotlin.components.ClassloadersCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 
@@ -178,6 +179,10 @@ object JVMConfigurationKeys {
     // Path to outputs of common fragments metadata for KMP JVM IC
     @JvmField
     val COMMON_FRAGMENTS_OUTPUT_DIR = CompilerConfigurationKey.create<File>("COMMON_FRAGMENTS_OUTPUT_DIR")
+
+    // Cache for classloaders used in K2JVMCompiler, e.g. by Kapt
+    @JvmField
+    val CLASSLOADERS_CACHE = CompilerConfigurationKey.create<ClassloadersCache>("CLASSLOADERS_CACHE")
 
 }
 
@@ -372,4 +377,8 @@ var CompilerConfiguration.ignoredAnnotationsForBridges: List<String>
 var CompilerConfiguration.commonFragmentsOutputDir: File?
     get() = get(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR)
     set(value) { putIfNotNull(JVMConfigurationKeys.COMMON_FRAGMENTS_OUTPUT_DIR, value) }
+
+var CompilerConfiguration.classloadersCache: ClassloadersCache?
+    get() = get(JVMConfigurationKeys.CLASSLOADERS_CACHE)
+    set(value) { putIfNotNull(JVMConfigurationKeys.CLASSLOADERS_CACHE, value) }
 

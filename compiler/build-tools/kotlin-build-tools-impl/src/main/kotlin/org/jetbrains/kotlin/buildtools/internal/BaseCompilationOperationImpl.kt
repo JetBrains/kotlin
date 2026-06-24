@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
+import org.jetbrains.kotlin.buildtools.internal.classloading.asPluginsLoader
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
