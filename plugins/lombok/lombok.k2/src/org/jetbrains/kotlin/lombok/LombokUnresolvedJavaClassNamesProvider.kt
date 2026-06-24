@@ -15,8 +15,8 @@ import kotlin.reflect.KClass
 
 class LombokUnresolvedJavaClassNamesProvider(session: FirSession) :
     FirExtensionSessionComponent(session),
-    FirUnresolvedJavaClassNamesProvider
-{
+    FirUnresolvedJavaClassNamesProvider {
+
     private val registry = ConcurrentHashMap<Name, ClassId>()
 
     override fun findClassIdBySimpleName(simpleName: Name): ClassId? = registry[simpleName]
@@ -30,8 +30,6 @@ class LombokUnresolvedJavaClassNamesProvider(session: FirSession) :
         get() = FirUnresolvedJavaClassNamesProvider::class as KClass<out FirExtensionSessionComponent>
 
     companion object {
-        val Factory: FirExtensionSessionComponent.Factory = FirExtensionSessionComponent.Factory {
-            LombokUnresolvedJavaClassNamesProvider(it)
-        }
+        val Factory: Factory = Factory { LombokUnresolvedJavaClassNamesProvider(it) }
     }
 }

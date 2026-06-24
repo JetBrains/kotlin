@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -246,7 +247,10 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
+            val qualifiedName = this.classifierQualifiedName
+            val simpleName = Name.identifier(qualifiedName.substringAfterLast('.'))
+            val redirectClassId = session.unresolvedJavaClassNamesProvider?.findClassIdBySimpleName(simpleName)
+            val classId = redirectClassId ?: ClassId.topLevel(FqName(qualifiedName))
             classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
         }
 

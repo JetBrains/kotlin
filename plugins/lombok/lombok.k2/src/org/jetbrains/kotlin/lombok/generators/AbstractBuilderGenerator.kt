@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.unresolvedJavaClassNamesProvider
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
@@ -226,6 +227,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             val builderClassId = entityClassId.createNestedClassId(builderClassName)
 
             val existingFunctionNames = context.getExistingFunctionNames()
+
+            // Register alias eagerly so JavaTypeConversion can find Lombok-generated builder classes
+            // by simple name when PSI cannot resolve them (they are absent from Java source).
+            // This must happen before Java type enhancement, hence registration here rather than in
+            // createAndInitializeBuilders (which may be invoked after enhancement).
+            session.unresolvedJavaClassNamesProvider?.registerSimpleNameAlias(builderClassName, builderClassId)
 
             var existingBuilder: FirClassSymbol<*>? = null
             context?.declaredScope?.processClassifiersByName(builderClassName) {
@@ -708,4 +715,3 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
 fun JavaType.makeNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.Nullable)
 fun JavaType.makeNotNullable(): JavaType = withAnnotations(annotations + NullabilityJavaAnnotation.NotNull)
-

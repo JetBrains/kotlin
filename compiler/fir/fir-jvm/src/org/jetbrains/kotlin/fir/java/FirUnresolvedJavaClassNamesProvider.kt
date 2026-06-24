@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Allows compiler plugins to register simple-name → [ClassId] mappings for classes that Java PSI cannot resolve
+ * Allows compiler plugins to register simple-name to [ClassId] mappings for classes that Java PSI cannot resolve
  * (e.g., Lombok-generated builder classes that do not appear in Java source).
  *
- * Used by [JavaTypeConversion] to recover the correct nested [ClassId] when [JavaClassifierType.classifier] is null.
+ * Used by JavaTypeConversion to recover the correct nested ClassId when the PSI classifier is null.
  */
 interface FirUnresolvedJavaClassNamesProvider : FirSessionComponent {
     fun findClassIdBySimpleName(simpleName: Name): ClassId?

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.lombok.generators.*
 
 class FirLombokJavaRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
+        +LombokUnresolvedJavaClassNamesProvider.Factory
         +::AccessorGenerator
         +::WithGenerator
         +::BuilderGenerator
