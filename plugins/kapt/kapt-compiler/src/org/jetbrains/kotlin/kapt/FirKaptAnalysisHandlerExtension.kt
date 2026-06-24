@@ -77,6 +77,7 @@ open class FirKaptAnalysisHandlerExtension(
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
+            processingClassLoader = configuration.classloadersCache?.getForClassPath(processingClasspath)
         }
 
         optionsBuilder.checkOptions(logger, configuration)?.let { return it }
@@ -109,7 +110,7 @@ open class FirKaptAnalysisHandlerExtension(
         if (!options.mode.runAnnotationProcessing) return true
 
         createProcessorLoader().use { processorLoader ->
-            val processors = processorLoader.loadProcessors()
+            val processors = processorLoader.loadProcessors(FirKaptAnalysisHandlerExtension::class.java.classLoader)
             if (processors.processors.isEmpty()) return true
 
             val kaptContext = KaptContext(options, false, logger)
