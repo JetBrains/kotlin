@@ -24,9 +24,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 /**
  * This class behaviour is the same as [MessageCollector.report] in [AnalyzerWithCompilerReport.reportDiagnostic].
  */
+@K1Deprecation
 class DefaultDiagnosticReporter(override val messageCollector: MessageCollector) : MessageCollectorBasedReporter
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
     val messageCollector: MessageCollector
 
@@ -38,5 +39,5 @@ interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
     )
 }
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 internal fun Diagnostic.factoryNameOrNull(): String? = factory.nameOrNull

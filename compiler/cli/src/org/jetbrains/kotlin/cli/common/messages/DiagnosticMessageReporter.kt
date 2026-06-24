@@ -20,7 +20,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
+@K1Deprecation
 interface DiagnosticMessageReporter {
-    @OptIn(K1Deprecation::class)
     fun report(diagnostic: Diagnostic, file: PsiFile, render: String)
 }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 object CompilerEnvironment : TargetEnvironment("Compiler") {
     override fun configure(container: StorageComponentContainer) {
         configureCompilerEnvironment(container)
