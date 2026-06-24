@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
-import org.jetbrains.kotlin.backend.jvm.metadata.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -20,28 +19,6 @@ interface JvmBackendExtension {
         context: JvmBackendContext, klass: IrClass, type: Type, bindings: JvmSerializationBindings, parentSerializer: MetadataSerializer?
     ): MetadataSerializer
 
-    object Default : JvmBackendExtension {
-        override fun createSerializer(
-            context: JvmBackendContext,
-            klass: IrClass,
-            type: Type,
-            bindings: JvmSerializationBindings,
-            parentSerializer: MetadataSerializer?
-        ): MetadataSerializer {
-            return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
-        }
-
-        override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
-                override fun serializeOptionalAnnotationClass(
-                    metadata: MetadataSource.Class,
-                    stringTable: SerializableStringTable,
-                ): ProtoBuf.Class {
-                    error("K1 mode is no longer supported")
-                }
-            }
-
-        override fun createBuiltinsSerializer() = error("JVM backend builtins serialization is not supported in K1")
-    }
 
     fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer
 

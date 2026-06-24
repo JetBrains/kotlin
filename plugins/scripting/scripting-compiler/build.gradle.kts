@@ -32,6 +32,9 @@ dependencies {
     compileOnly(project(":core:reflection.common.jvm"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend.jvm.entrypoint"))
+    compileOnly(project(":compiler:backend.common.jvm"))
+    compileOnly(project(":compiler:serialization.common"))
+    compileOnly(project(":compiler:serialization"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
@@ -39,6 +42,7 @@ dependencies {
     api(kotlinStdlib())
     api(commonDependency("org.jline", "jline"))
     compileOnly(intellijCore())
+    compileOnly(libs.intellij.asm)
 
     compileOnly(project(":core:descriptors"))
     compileOnly(project(":core:descriptors.jvm"))
