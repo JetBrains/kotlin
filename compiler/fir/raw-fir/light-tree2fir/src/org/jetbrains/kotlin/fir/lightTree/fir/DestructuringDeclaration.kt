@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder
 import org.jetbrains.kotlin.fir.builder.DestructuringContext
+import org.jetbrains.kotlin.fir.builder.DestructuringKind
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.addDestructuringVariables
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val isNameBased: Boolean,
+    val kind: DestructuringKind,
     val entries: List<DestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
@@ -107,7 +108,7 @@ fun AbstractRawFirBuilder<*>.addDestructuringStatements(
             moduleData,
             container,
             entries = multiDeclaration.entries,
-            isNameBased = multiDeclaration.isNameBased,
+            kind = multiDeclaration.kind,
             isTmpVariable = isTmpVariable,
             forceLocal = forceLocal,
             configure,

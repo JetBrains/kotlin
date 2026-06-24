@@ -1,5 +1,4 @@
-// LATEST_LV_DIFFERENCE
-// LANGUAGE: +FullValueClasses, -EnableNameBasedDestructuringShortForm
+// LANGUAGE: +FullValueClasses +NameBasedDestructuring -EnableNameBasedDestructuringShortForm
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 
@@ -64,7 +63,7 @@ value class OverridingOld(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>C<!
 
 fun main() {
     A(2).<!UNRESOLVED_REFERENCE!>copy<!>()
-    val (x) = <!COMPONENT_FUNCTION_MISSING!>A(2)<!>
+    val (x) = A(2)
 }
 
 

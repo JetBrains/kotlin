@@ -294,12 +294,16 @@ fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVari
 fun FirVariable.toComponentCall(
     entrySource: KtSourceElement?,
     index: Int,
+    initializerName: Name,
+    isShortFormWithParentheses: Boolean,
 ): FirComponentCall {
     return buildComponentCall {
         val componentCallSource = entrySource?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
         source = componentCallSource
         explicitReceiver = generateResolvedAccessExpression(componentCallSource, this@toComponentCall)
         componentIndex = index + 1
+        this.initializerName = initializerName
+        this.isShortFormWithParentheses = isShortFormWithParentheses
     }
 }
 

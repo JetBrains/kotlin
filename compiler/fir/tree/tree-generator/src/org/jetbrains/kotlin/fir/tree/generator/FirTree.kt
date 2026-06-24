@@ -1186,6 +1186,8 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("explicitReceiver", expression)
         +field("componentIndex", int)
+        +field("initializerName", nameType)
+        +field("isShortFormWithParentheses", StandardTypes.boolean)
     }
 
     val smartCastExpression: Element by element(Expression) {

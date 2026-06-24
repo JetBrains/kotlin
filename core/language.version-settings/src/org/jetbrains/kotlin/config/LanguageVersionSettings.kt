@@ -660,7 +660,12 @@ enum class LanguageFeature(
     JvmLoadAnnotationsOnAnnotationProperties(sinceVersion = null, "KT-22463"),
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
-    FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true),
+    FullValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-84904", enabledInLatestLVTests = true) {
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkEnabledNotEarlierThan(NameBasedDestructuring)
+        }
+    },
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188"),
 
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = true),

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.componentCall]
@@ -37,6 +38,8 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val origin: FirFunctionCallOrigin
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
+    abstract val initializerName: Name
+    abstract val isShortFormWithParentheses: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitComponentCall(this, data)
