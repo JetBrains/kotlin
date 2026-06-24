@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -61,8 +60,6 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorForNotFoundClasses
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
-import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
@@ -81,8 +78,6 @@ class JvmIrCodegenFactory(
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
-    @OptIn(K1Deprecation::class)
-    private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val ideCodegenSettings: IdeCodegenSettings = IdeCodegenSettings(),
 ) {
     /**
@@ -168,7 +163,7 @@ class JvmIrCodegenFactory(
             configuration,
             symbolTable,
             jvmGeneratorExtensions,
-            fragmentContext = if (evaluatorFragmentInfoForPsi2Ir != null) FragmentContext() else null,
+            fragmentContext = null,
         )
 
         // Built-ins deduplication must be enabled immediately so that there is no chance for duplicate built-in symbols to occur. For
@@ -243,7 +238,7 @@ class JvmIrCodegenFactory(
             listOf(irProvider, stubGeneratorForMissingClasses)
         }
 
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, evaluatorFragmentInfoForPsi2Ir)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders)
 
         if (irProvider is KotlinIrLinker) {
             irProvider.postProcess(psi2irContext.irBuiltIns, inOrAfterLinkageStep = true)
@@ -307,7 +302,7 @@ class JvmIrCodegenFactory(
     fun invokeLowerings(state: GenerationState, input: BackendInput): CodegenInput {
         (val irModuleFragment, val irBuiltIns, val symbolTable, val irProviders, val extensions, val backendExtension, val irPluginContext = pluginContext) = input
 
-        val evaluatorData = ideCodegenSettings.evaluatorData ?: computePsiBasedEvaluatorData(irModuleFragment)
+        val evaluatorData = ideCodegenSettings.evaluatorData
         val context = JvmBackendContext(
             state, irBuiltIns, symbolTable, extensions,
             backendExtension, irPluginContext, evaluatorData
@@ -335,25 +330,6 @@ class JvmIrCodegenFactory(
         }
 
         return CodegenInput(state, context, irModuleFragment, allBuiltins, generationExtensions)
-    }
-
-    @OptIn(K1Deprecation::class)
-    private fun computePsiBasedEvaluatorData(irModuleFragment: IrModuleFragment): JvmEvaluatorData? {
-        val evaluatorFragmentInfoForPsi2Ir = evaluatorFragmentInfoForPsi2Ir ?: return null
-
-        // In K1 CodeFragment metadata is attributed to IrClass, but in K2 it is attributed IrFile
-        val fragmentFile = irModuleFragment.files.single { it.metadata is MetadataSource.CodeFragment }
-        val generatedClass = fragmentFile.declarations.single() as IrClass
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        val evaluationEntryPoint = generatedClass.functions
-            .single { it.descriptor == evaluatorFragmentInfoForPsi2Ir.methodDescriptor }
-
-        return JvmEvaluatorData(
-            JvmBackendContext.SharedLocalDeclarationsData(),
-            evaluationEntryPoint,
-            evaluatorFragmentInfoForPsi2Ir.typeArgumentsMap
-        )
     }
 
     fun invokeCodegen(input: CodegenInput) {
