@@ -6,15 +6,21 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.EffectsKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.computeEffectsKind
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.mainFunctionWrapper
 import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -46,6 +52,26 @@ fun eliminateDeadDeclarations(
         module.files.forEach {
             it.acceptVoid(uselessDeclarationsProcessor)
             context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarationProcessor.usefulPolyfilledDeclarations)
+        }
+    }
+
+    val setFieldRemover = object : IrElementTransformerVoid() {
+        override fun visitSetField(expression: IrSetField): IrExpression {
+            if (expression.symbol.owner !in usefulDeclarations) {
+                val effects = expression.value.computeEffectsKind()
+                return if (effects == EffectsKind.WRITE) {
+                    expression.value
+                } else {
+                    IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type, expression.origin)
+                }
+            }
+            return super.visitSetField(expression)
+        }
+    }
+
+    modules.forEach { module ->
+        module.files.forEach {
+            it.transform(setFieldRemover, null)
         }
     }
 }

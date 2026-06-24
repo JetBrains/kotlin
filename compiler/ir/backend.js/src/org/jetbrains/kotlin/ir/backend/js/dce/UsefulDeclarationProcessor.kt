@@ -58,8 +58,8 @@ abstract class UsefulDeclarationProcessor(
             inlinedBlock.inlinedFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
         }
 
-        override fun visitFieldAccess(expression: IrFieldAccessExpression, data: IrDeclaration) {
-            super.visitFieldAccess(expression, data)
+        override fun visitGetField(expression: IrGetField, data: IrDeclaration) {
+            super.visitGetField(expression, data)
 
             val field = expression.symbol.owner.apply { enqueue(data, "field access") }
             val correspondingProperty = field.correspondingPropertySymbol?.owner ?: return
