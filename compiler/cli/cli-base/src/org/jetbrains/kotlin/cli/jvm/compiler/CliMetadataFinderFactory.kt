@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
-@OptIn(K1Deprecation::class)
 class CliMetadataFinderFactory(private val fileFinderFactory: CliVirtualFileFinderFactory) : MetadataFinderFactory {
     override fun create(scope: GlobalSearchScope): KotlinMetadataFinder =
         fileFinderFactory.create(scope)
