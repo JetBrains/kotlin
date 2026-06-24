@@ -474,6 +474,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 	public fun isUnitType (Lorg/jetbrains/kotlin/analysis/api/types/KaType;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaTypeInformationProviderKt {
+	public static final fun isClassType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/name/ClassId;)Z
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeParameterTypeBuilder : org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder {
 	public abstract fun getNullability ()Lorg/jetbrains/kotlin/analysis/api/types/KaTypeNullability;
 	public abstract fun isMarkedNullable ()Z
