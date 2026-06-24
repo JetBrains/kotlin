@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
@@ -17,10 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.KotlinType
@@ -111,28 +107,6 @@ private fun generateNullCheckForNonSafeAs(
 
 fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String? =
     valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
-
-fun CallableDescriptor.isJvmStaticInObjectOrClassOrInterface(): Boolean =
-    isJvmStaticIn {
-        DescriptorUtils.isNonCompanionObject(it) ||
-                // This is necessary because for generation of @JvmStatic methods from companion of class A
-                // we create a synthesized descriptor containing in class A
-                DescriptorUtils.isClassOrEnumClass(it) || isJvmInterface(it)
-    }
-
-fun CallableDescriptor.isJvmStaticInCompanionObject(): Boolean =
-    isJvmStaticIn { DescriptorUtils.isCompanionObject(it) }
-
-@OptIn(K1Deprecation::class)
-private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
-    when (this) {
-        is PropertyAccessorDescriptor -> {
-            val propertyDescriptor = correspondingProperty
-            predicate(propertyDescriptor.containingDeclaration) &&
-                    (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
-        }
-        else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
-    }
 
 class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
 

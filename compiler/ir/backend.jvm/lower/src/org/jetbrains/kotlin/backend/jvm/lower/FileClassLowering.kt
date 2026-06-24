@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import com.intellij.lang.jvm.JvmPackage
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
@@ -34,11 +33,7 @@ import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -47,9 +42,8 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME_SHORT
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
@@ -84,13 +78,11 @@ internal class FileClassLowering(val context: JvmBackendContext) : FileLoweringP
         val fileEntry = irFile.fileEntry
         val fileClassInfo = irFile.getFileClassInfo()
         val isMultifilePart = fileClassInfo.withJvmMultifileClass
-
-        @OptIn(K1Deprecation::class)
         val onlyPrivateDeclarationsAndFeatureIsEnabled =
             context.config.languageVersionSettings.supportsFeature(LanguageFeature.PackagePrivateFileClassesWithAllPrivateMembers) && fileClassMembers
                 .all {
                     val isPrivate = it is IrDeclarationWithVisibility && DescriptorVisibilities.isPrivate(it.visibility)
-                    val isInlineOnly = it.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+                    val isInlineOnly = it.hasAnnotation(StandardClassIds.Annotations.InlineOnly)
                     isPrivate || isInlineOnly
                 }
 

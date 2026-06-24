@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 /**
  * Makes `@JvmStatic` functions in non-companion objects static and replaces all call sites in the module.
@@ -46,11 +45,10 @@ internal class JvmStaticInCompanionLowering(val context: JvmBackendContext) : Fi
         irFile.transformChildrenVoid(CompanionObjectJvmStaticTransformer(context))
 }
 
-@OptIn(K1Deprecation::class)
 private fun IrDeclaration.isJvmStaticDeclaration(): Boolean =
-    hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
-            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true ||
-            (this as? IrProperty)?.getter?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true
+    hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic) ||
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic) == true ||
+            (this as? IrProperty)?.getter?.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic) == true
 
 private fun IrDeclaration.isJvmStaticInCompanion(): Boolean =
     isJvmStaticDeclaration() && (parent as? IrClass)?.isCompanion == true

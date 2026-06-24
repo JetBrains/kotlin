@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 
 @K1Deprecation
@@ -19,11 +19,6 @@ object InlineClassDescriptorResolver {
 
     @JvmField
     val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
-
-    val BOXING_VALUE_PARAMETER_NAME = Name.identifier("v")
-
-    val SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME = Name.identifier("p1")
-    val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
 
     @JvmStatic
     fun isSynthesizedBoxMethod(descriptor: CallableMemberDescriptor) =

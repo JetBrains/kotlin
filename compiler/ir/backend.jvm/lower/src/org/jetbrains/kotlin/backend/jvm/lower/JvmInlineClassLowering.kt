@@ -15,14 +15,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.INLINE_CLASS_CONSTRUCTOR_SYNTHETIC_PARAMETER
-import org.jetbrains.kotlin.backend.jvm.ir.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromJvmExposeBoxedAnnotation
-import org.jetbrains.kotlin.backend.jvm.ir.inlineClassRepresentation
-import org.jetbrains.kotlin.backend.jvm.ir.isNonExposedConstructorOfOrdinaryClass
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
-import org.jetbrains.kotlin.backend.jvm.ir.isSingleFieldValueClass
-import org.jetbrains.kotlin.backend.jvm.ir.shouldBeExposedByAnnotationOrFlag
-import org.jetbrains.kotlin.backend.jvm.ir.upperBound
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -47,8 +40,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -114,12 +105,13 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
 
     // If a property is annotated with @JvmStatic, we generate static accessors.
     // Thus, we should expose the accessors. The easiest way to do so is to copy @JvmStatic annotation.
-    @OptIn(K1Deprecation::class)
     private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrAnnotation> {
         if (!isPropertyAccessor) return emptyList()
-        if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
-        if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
-        return propertyIfAccessor.annotations.filter { it.isAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) }.map { it.deepCopyWithSymbols() }
+        if (hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic)) return emptyList()
+        if (!propertyIfAccessor.hasAnnotation(JvmStandardClassIds.Annotations.JvmStatic)) return emptyList()
+        return propertyIfAccessor.annotations
+            .filter { it.isAnnotation(JvmStandardClassIds.Annotations.JvmStatic) }
+            .map { it.deepCopyWithSymbols() }
     }
 
     override fun visitClassNew(declaration: IrClass): IrClass {

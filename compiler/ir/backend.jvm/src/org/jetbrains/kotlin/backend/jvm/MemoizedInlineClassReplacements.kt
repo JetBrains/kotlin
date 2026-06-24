@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -15,11 +13,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
@@ -34,9 +28,8 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 
@@ -168,8 +161,7 @@ class MemoizedInlineClassReplacements(
                 (it.parent as? IrClass)?.isSingleFieldValueClass == true ->
                     when {
                         it.isValueClassTypedEquals -> createStaticReplacement(it).also {
-                            @OptIn(K1Deprecation::class)
-                            it.name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+                            it.name = InlinedEqualsNames.SPECIALIZED_EQUALS_NAME
                             specializedEqualsCache.computeIfAbsent(it.parentAsClass) { it }
                         }
 
@@ -221,8 +213,7 @@ class MemoizedInlineClassReplacements(
                 parent = irClass
                 copyTypeParametersFrom(irClass)
                 addValueParameter {
-                    @OptIn(K1Deprecation::class)
-                    name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
+                    name = InlinedEqualsNames.BOXING_VALUE_PARAMETER_NAME
                     type = irClass.inlineClassRepresentation!!.underlyingType
                 }
             }
@@ -250,8 +241,7 @@ class MemoizedInlineClassReplacements(
         require(irClass.isSingleFieldValueClass)
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
-                @OptIn(K1Deprecation::class)
-                name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
+                name = InlinedEqualsNames.SPECIALIZED_EQUALS_NAME
                 // TODO: Revisit this once we allow user defined equals methods in inline classes.
                 origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
                 returnType = irBuiltIns.booleanType
@@ -261,13 +251,11 @@ class MemoizedInlineClassReplacements(
                 val typeArgument =
                     IrSimpleTypeImpl(irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
                 addValueParameter {
-                    @OptIn(K1Deprecation::class)
-                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
+                    name = InlinedEqualsNames.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
                     type = typeArgument
                 }
                 addValueParameter {
-                    @OptIn(K1Deprecation::class)
-                    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
+                    name = InlinedEqualsNames.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME
                     type = typeArgument
                 }
             }
@@ -413,14 +401,11 @@ class MemoizedInlineClassReplacements(
 private fun IrFunction.fromStdlib(): Boolean {
     if (!getPackageFragment().packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
     // Since there can be libraries, which use -Xallow-kotlin-package, check, that the top-level declaration has @SinceKotlin
-    @OptIn(K1Deprecation::class)
-    if (hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
     var cursor: IrDeclaration = this
-    while (true) {
-        @OptIn(K1Deprecation::class)
-        if (cursor.hasAnnotation(SINCE_KOTLIN_FQ_NAME)) return true
+    do {
+        if (cursor.hasAnnotation(StandardClassIds.Annotations.SinceKotlin)) return true
         cursor = cursor.parentClassOrNull ?: return false
-    }
+    } while (true)
 }
 
 fun List<IrAnnotation>.withoutJvmExposeBoxedAnnotation(): List<IrAnnotation> =
@@ -457,4 +442,11 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
         arguments[0] = jvmName?.deepCopyWithSymbols()
             ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }
+}
+
+private object InlinedEqualsNames {
+    val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
+    val BOXING_VALUE_PARAMETER_NAME = Name.identifier("v")
+    val SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME = Name.identifier("p1")
+    val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
 }

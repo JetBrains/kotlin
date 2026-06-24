@@ -315,7 +315,8 @@ fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = own
 @UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
-fun filterOutAnnotations(fqName: FqName, annotations: List<IrAnnotation>): List<IrAnnotation> {
+fun filterOutAnnotations(classId: ClassId, annotations: List<IrAnnotation>): List<IrAnnotation> {
+    val fqName = classId.asSingleFqName()
     return annotations.filterNot { it.isAnnotationWithEqualFqName(fqName) }
 }
 

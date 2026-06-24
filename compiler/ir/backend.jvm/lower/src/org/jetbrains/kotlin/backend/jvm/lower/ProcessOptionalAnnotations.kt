@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
 /**
@@ -57,12 +58,11 @@ class ProcessOptionalAnnotations(private val context: JvmBackendContext) : FileL
         }
     }
 
-    @OptIn(K1Deprecation::class)
     private fun IrClass.processClassFir() {
         val classMetadata = metadata
         require(classMetadata is MetadataSource.Class?) { "IrClass has unexpected metadata: ${classMetadata!!::class.simpleName}" }
 
-        if (classMetadata != null && isAnnotationClass && isExpect && hasAnnotation(OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME)) {
+        if (classMetadata != null && isAnnotationClass && isExpect && hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)) {
             context.optionalAnnotations += classMetadata
         }
     }

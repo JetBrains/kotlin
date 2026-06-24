@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun IrValueParameter.isInlineParameter(): Boolean =
     kind == IrParameterKind.Regular && !isNoinline && (type.isFunction() || type.isSuspendFunction()) &&
@@ -68,11 +69,10 @@ fun IrStatement.unwrapRichInlineLambda(): IrRichFunctionReference? = when (this)
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext): Boolean =
     (!context.config.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor())
 
-@OptIn(K1Deprecation::class)
 fun IrDeclaration.isInlineOnly(): Boolean =
     this is IrFunction && (
-            (isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)) ||
-                    (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true)
+            (isInline && hasAnnotation(StandardClassIds.Annotations.InlineOnly)) ||
+                    (this is IrSimpleFunction && correspondingPropertySymbol?.owner?.hasAnnotation(StandardClassIds.Annotations.InlineOnly) == true)
             )
 
 fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
