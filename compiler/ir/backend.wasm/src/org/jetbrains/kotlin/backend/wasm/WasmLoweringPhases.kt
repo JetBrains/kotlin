@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.inline.*
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 
 private fun createValidateIrAfterInliningOnlyPrivateFunctionsPhase(context: LoweringContext): IrValidationAfterInliningOnlyPrivateFunctionsPhase<*> {
     return IrValidationAfterInliningOnlyPrivateFunctionsPhase(
@@ -97,7 +95,7 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
 private fun createConstEvaluationPhase(context: CommonBackendContext): ConstEvaluationLowering {
-    return ConstEvaluationLowering(context, isFloatingPointOptimizationDisabled = true)
+    return ConstEvaluationLowering(context, isFloatingPointOptimizationEnabled = false)
 }
 
 fun wasmLoweringsOfTheFirstPhase(

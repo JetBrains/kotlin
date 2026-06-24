@@ -8,16 +8,10 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.backend.common.ir.evaluation.evaluate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
 
 /**
  * Evaluates the same functions that [FirExpressionEvaluator] does, but inside bodies.
@@ -27,7 +21,7 @@ import org.jetbrains.kotlin.platform.isWasm
  */
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
-    private val isFloatingPointOptimizationDisabled: Boolean = false
+    private val isFloatingPointOptimizationEnabled: Boolean = true
 ) : FileLoweringPass {
     private val inlineConstTracker = context.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
 
@@ -40,7 +34,7 @@ class ConstEvaluationLowering(
                     irFile,
                     context.irBuiltIns,
                     inlineConstTracker,
-                    isFloatingPointOptimizationDisabled = isFloatingPointOptimizationDisabled
+                    isFloatingPointOptimizationEnabled = isFloatingPointOptimizationEnabled
                 )
                 return evaluateResult ?: superResult
             }

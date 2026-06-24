@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.constants.evaluate.CompileTimeType
 import org.jetbrains.kotlin.resolve.constants.evaluate.canEvalOp
 import org.jetbrains.kotlin.resolve.constants.evaluate.evalBinaryOp
@@ -47,16 +46,16 @@ fun evaluate(
     irFile: IrFile,
     irBuiltIns: IrBuiltIns,
     inlineConstTracker: InlineConstTracker?,
-    isFloatingPointOptimizationDisabled: Boolean,
+    isFloatingPointOptimizationEnabled: Boolean,
 ): IrExpression? {
-    return expression.accept(IrExpressionEvaluator(irFile, irBuiltIns, inlineConstTracker, isFloatingPointOptimizationDisabled), null)
+    return expression.accept(IrExpressionEvaluator(irFile, irBuiltIns, inlineConstTracker, isFloatingPointOptimizationEnabled), null)
 }
 
 private class IrExpressionEvaluator(
     private val irFile: IrFile,
     private val irBuiltIns: IrBuiltIns,
     private val inlineConstTracker: InlineConstTracker?,
-    private val isFloatingPointOptimizationDisabled: Boolean,
+    private val isFloatingPointOptimizationEnabled: Boolean,
 ) : IrVisitor<IrExpression?, Nothing?>() {
     private fun IrExpression.evaluateAsConst(): IrConst? = this.accept(this@IrExpressionEvaluator, null) as? IrConst
 
@@ -97,7 +96,7 @@ private class IrExpressionEvaluator(
         val builder = StringBuilder()
         for (argument in expression.arguments) {
             val const = argument.evaluateAsConst() ?: return null
-            if (isFloatingPointOptimizationDisabled && const.type.isFloatOrDouble()) return null
+            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
             builder.append(const.getCastedValue() ?: return null)
         }
         return builder.toString().toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)
@@ -109,7 +108,7 @@ private class IrExpressionEvaluator(
         val operands = expression.arguments.mapNotNull { argument ->
             if (argument == null) return@mapNotNull null
             val const = argument.evaluateAsConst() ?: return null
-            if (isFloatingPointOptimizationDisabled && const.type.isFloatOrDouble()) return null
+            if (!isFloatingPointOptimizationEnabled && const.type.isFloatOrDouble()) return null
             const
         }
 
@@ -137,7 +136,7 @@ private class IrExpressionEvaluator(
 
         if (computed == null) return null
         return computed.toIrConstOrNull(expression.type, expression.startOffset, expression.endOffset)?.takeUnless {
-            isFloatingPointOptimizationDisabled && it.type.isFloatOrDouble()
+            !isFloatingPointOptimizationEnabled && it.type.isFloatOrDouble()
         }
     }
 
