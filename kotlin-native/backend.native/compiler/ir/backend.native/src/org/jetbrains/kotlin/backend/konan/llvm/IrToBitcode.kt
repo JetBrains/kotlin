@@ -1317,10 +1317,38 @@ internal class CodeGeneratorVisitor(
 
     private fun generateVariable(variable: IrVariable) {
         context.log { "generateVariable               : ${ir2string(variable)}" }
-        val value = variable.initializer?.let { initializer ->
-            evaluateExpression(initializer)
-        }
+        val stackAllocAnnotation = variable.getAnnotation(InteropFqNames.stackAlloc)
+        val value = stackAllocAnnotation?.let { generateStackAlloc(variable, it) }
+                ?: variable.initializer?.let { evaluateExpression(it) }
         currentCodeContext.genDeclareVariable(variable, value)
+    }
+
+    private fun generateStackAlloc(variable: IrVariable, annotation: IrAnnotation): LLVMValueRef {
+        val elementCount = (annotation.arguments[0] as? IrConst)?.value as? Int
+                ?: error("Array size expected for ${variable.name}")
+        val clear = (annotation.arguments[1] as? IrConst)?.value as? Boolean ?: true
+        check(elementCount > 0) { "Array size must be positive, got $elementCount on ${variable.name}" }
+        val elementLlvmType = rawArrayElementLlvmType(variable, annotation)
+        val arrayType = LLVMArrayType2(elementLlvmType, elementCount.toLong())!!
+        return with(functionGenerationContext) {
+            val slot = alloca(arrayType, isObjectType = false, name = variable.name.asString())
+            if (clear) {
+                val sizeInBytes = LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayType).toInt() / 8
+                memset(slot, 0, sizeInBytes)
+            }
+            slot
+        }
+    }
+
+    private fun rawArrayElementLlvmType(variable: IrVariable, annotation: IrAnnotation): LLVMTypeRef {
+        val annotationName = annotation.classSymbol.owner.name
+        val pointerType = variable.type as? IrSimpleType
+                ?: error("$annotationName variable's type must be CPointer<T>, got ${variable.type.render()}")
+        val wrapper = pointerType.arguments.firstOrNull()?.typeOrNull as? IrSimpleType
+                ?: error("$annotationName variable's type must be CPointer<T> with a concrete T, got ${variable.type.render()}")
+        val element = wrapper.arguments.firstOrNull()?.typeOrNull
+                ?: error("$annotationName element type must be a cinterop wrapper like `FloatVarOf<Float>`, got ${wrapper.render()}")
+        return element.toLLVMType(llvm)
     }
 
     private fun CodeContext.genDeclareVariable(

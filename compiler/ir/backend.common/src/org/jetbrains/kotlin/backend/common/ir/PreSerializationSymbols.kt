@@ -210,6 +210,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val interopCPointer: IrClassSymbol
     val interopCValuesRef: IrClassSymbol
     val interopCEnumVar: IrClassSymbol
+    val interopStackAlloc: IrClassSymbol
     val immutableBlobOf: IrSimpleFunctionSymbol
     val createCleaner: IrSimpleFunctionSymbol
 
@@ -241,6 +242,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val interopCPointer = ClassIds.interopCPointer.classSymbol()
         override val interopCValuesRef = ClassIds.interopCValuesRef.classSymbol()
         override val interopCEnumVar = ClassIds.interopCEnumVar.classSymbol()
+        override val interopStackAlloc = ClassIds.interopStackAlloc.classSymbol()
         override val immutableBlobOf by CallableIds.immutableBlobOf.functionSymbol()
         override val createCleaner by CallableIds.createCleaner.functionSymbol()
 
@@ -297,6 +299,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
                 val interopCValuesRef = NativeStandardInteropNames.cValuesRef.interopClassId
                 val interopCPointer = NativeStandardInteropNames.cPointer.interopClassId
                 val interopCEnumVar = NativeStandardInteropNames.cEnumVar.interopClassId
+                val interopStackAlloc = NativeStandardInteropNames.stackAlloc.interopClassId
             }
         }
     }

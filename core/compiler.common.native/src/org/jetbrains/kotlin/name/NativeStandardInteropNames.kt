@@ -51,4 +51,5 @@ object NativeStandardInteropNames {
     const val cValue = "CValue"
     const val cValuesRef = "CValuesRef"
     const val cEnumVar = "CEnumVar"
+    const val stackAlloc = "StackAlloc"
 }

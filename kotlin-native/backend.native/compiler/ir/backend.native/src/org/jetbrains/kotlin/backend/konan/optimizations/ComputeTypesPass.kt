@@ -81,6 +81,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
 
     private fun leastCommonAncestor(types: List<IrType>): IrType? {
         if (types.isEmpty()) return null
+        if (types.size == 1) return types[0]
         val isNullable = types.any { it.isNullable() }
         val classes = types.map { it.erasedUpperBound }
         // Since the analysis is local, nothing we can do about interfaces: if an interface is written to a variable,

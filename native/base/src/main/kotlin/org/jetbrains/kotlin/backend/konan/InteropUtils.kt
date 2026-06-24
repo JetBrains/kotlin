@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 object InteropFqNames {
@@ -93,6 +94,7 @@ object InteropFqNames {
 
     val interopStubs = packageName.child(interopStubsName)
     val managedType = packageName.child(managedTypeName)
+    val stackAlloc = packageName.child(NativeStandardInteropNames.stackAlloc)
 
     val cToKotlinBridge = internalPackageName.child(cToKotlinBridgeName)
     val kotlinToCBridge = internalPackageName.child(kotlinToCBridgeName)
