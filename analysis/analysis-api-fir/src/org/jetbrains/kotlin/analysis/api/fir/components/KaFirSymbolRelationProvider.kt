@@ -261,7 +261,11 @@ internal class KaFirSymbolRelationProvider(
 
     override val KaSymbol.containingModule: KaModule
         get() = withValidityAssertion {
-            getContainingKtModule(analysisSession.resolutionFacade)
+            when (this) {
+                is KaFirSymbol<*> -> firSymbol.getContainingKtModule(resolutionFacade)
+                is KaReceiverParameterSymbol -> owningCallableSymbol.containingModule
+                else -> TODO("${this::class}")
+            }
         }
 
     private fun getContainingPsi(symbol: KaSymbol): KtDeclaration? {
@@ -641,7 +645,7 @@ internal class KaFirSymbolRelationProvider(
 
     private inline fun <reified P : KaSymbol, R : KaSymbol> KaDeclarationSymbol.getExpectsForActualParent(
         actualParent: P?,
-        transformer: (P) -> R?
+        transformer: (P) -> R?,
     ): List<R> {
         return with(analysisSession) { (actualParent as? KaDeclarationSymbol)?.getExpectsForActual() }
             .orEmpty()
@@ -652,7 +656,7 @@ internal class KaFirSymbolRelationProvider(
     private fun computeExpectsForLibraryClass(
         actualSymbol: FirClassLikeSymbol<*>,
         actualModule: KaModule,
-        expectDeclarationProvider: KotlinDeclarationProvider
+        expectDeclarationProvider: KotlinDeclarationProvider,
     ): List<FirClassLikeSymbol<*>> {
         val implementingPlatform = actualModule.targetPlatform
 
@@ -678,7 +682,7 @@ internal class KaFirSymbolRelationProvider(
     private fun computeExpectsForLibraryCallable(
         actualSymbol: FirCallableSymbol<*>,
         actualModule: KaModule,
-        expectDeclarationProvider: KotlinDeclarationProvider
+        expectDeclarationProvider: KotlinDeclarationProvider,
     ): List<FirCallableSymbol<*>> {
         @OptIn(ClassIdBasedLocality::class)
         val callableId = actualSymbol.callableId?.takeUnless { it.isLocal } ?: return emptyList()

@@ -5,18 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -51,10 +45,4 @@ internal fun FirBasedSymbol<*>.getContainingKtModule(resolutionFacade: LLResolut
         else -> this
     }
     return target.llFirModuleData.ktModule
-}
-
-internal fun KaSymbol.getContainingKtModule(resolutionFacade: LLResolutionFacade): KaModule = when (this) {
-    is KaFirSymbol<*> -> firSymbol.getContainingKtModule(resolutionFacade)
-    is KaReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(resolutionFacade)
-    else -> TODO("${this::class}")
 }
