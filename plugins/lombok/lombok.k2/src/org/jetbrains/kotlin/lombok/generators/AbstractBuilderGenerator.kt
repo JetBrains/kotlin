@@ -450,17 +450,22 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }
     }
 
-    /* Lombok doesn't add a generated method if a class already has a method with the same name.
-       The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
-       "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
+    /**
+     *  Lombok doesn't add a generated method if a class already has a method with the same name.
+     *  The number and types of parameters don't matter, see https://projectlombok.org/features/Builder#overview
+     *  "Each listed generated element will be silently skipped if that element already exists (disregarding parameter counts and looking only at names)"
+     *  Also, allow returning nullable `FirJavaMethod` for cases when the method can't be created because of some reason.
+     *  For instance, if it doesn't conform to needed requirements or if it needs a symbol that can't be resolved because of missing dependencies.
      */
     protected inline fun MutableMap<Name, FirJavaMethod>.addIfNonClashing(
         functionName: Name,
         existingFunctionNames: Set<Name>,
-        createJavaMethod: (name: Name) -> FirJavaMethod
+        createJavaMethod: (name: Name) -> FirJavaMethod?
     ) {
-        if (functionName !in existingFunctionNames) {
-            getOrPut(functionName) { createJavaMethod(functionName) }
+        if (functionName !in existingFunctionNames && !containsKey(functionName)) {
+            createJavaMethod(functionName)?.let {
+                this[functionName] = it
+            }
         }
     }
 
