@@ -67,7 +67,6 @@ import org.jetbrains.kotlin.psi2ir.preprocessing.SourceDeclarationsPreprocessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.serialization.SerializableStringTable
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
@@ -92,29 +91,12 @@ class JvmIrCodegenFactory(
      * process in the debugger or "Android LiveEdit plugin".
      * When enabled, this option disables the linkage process and generates stubs for all unbound symbols.
      * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
-     * @param shouldReferenceUndiscoveredExpectSymbols See [referenceUndiscoveredExpectSymbols].
-     * @param shouldDeduplicateBuiltInSymbols See [SymbolTableWithBuiltInsDeduplication].
-     * @param doNotLoadDependencyModuleHeaders
-     * must be `true` only if current compilation is done in the context of the "Evaluate Expression" process in the debugger.
-     * When enabled, this option disables all compiler plugins.
      */
     data class IdeCodegenSettings(
         val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
         val shouldStubOrphanedExpectSymbols: Boolean = false,
-        val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
-        val shouldDeduplicateBuiltInSymbols: Boolean = false,
-        val doNotLoadDependencyModuleHeaders: Boolean = false,
         val evaluatorData: JvmEvaluatorData? = null,
-    ) {
-        init {
-            if (shouldDeduplicateBuiltInSymbols && !shouldStubAndNotLinkUnboundSymbols) {
-                throw IllegalStateException(
-                    "`shouldDeduplicateBuiltInSymbols` depends on `shouldStubAndNotLinkUnboundSymbols` being enabled. Deduplication of" +
-                            " built-in symbols hasn't been tested without stubbing and there is currently no use case for it without stubbing."
-                )
-            }
-        }
-    }
+    )
 
     data class BackendInput(
         val irModuleFragment: IrModuleFragment,
@@ -134,13 +116,6 @@ class JvmIrCodegenFactory(
         val intrinsicExtensions: List<JvmIrIntrinsicExtension>,
     )
 
-    /**
-     * If the extension is marked with this marker, it is applied even on expression evaluation in the IDE
-     *
-     * see [convertToIr] for implementation details
-     */
-    interface IrGeneratorExtensionMarkerForExpressionEvaluation
-
     fun convertAndGenerate(files: Collection<KtFile>, state: GenerationState, bindingContext: BindingContext) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         val backendInput = convertToIr(state, files, bindingContext)
@@ -157,7 +132,6 @@ class JvmIrCodegenFactory(
 
     private val CompilerConfiguration.filteredExtensions: List<IrGenerationExtension>
         get() = this.getCompilerExtensions(IrGenerationExtension)
-            .filter { !ideCodegenSettings.doNotLoadDependencyModuleHeaders || it is IrGeneratorExtensionMarkerForExpressionEvaluation }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class, K1Deprecation::class)
     fun convertToIr(
@@ -180,10 +154,7 @@ class JvmIrCodegenFactory(
                 val signaturer =
                     if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
                     else DisabledIdSignatureDescriptor
-                val symbolTable = when {
-                    ideCodegenSettings.shouldDeduplicateBuiltInSymbols -> SymbolTableWithBuiltInsDeduplication(signaturer, IrFactoryImpl)
-                    else -> SymbolTable(signaturer, IrFactoryImpl)
-                }
+                val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable
             }
         val psi2ir = Psi2IrTranslator(
@@ -256,7 +227,7 @@ class JvmIrCodegenFactory(
             }
         }
 
-        val dependencies = if (ideCodegenSettings.doNotLoadDependencyModuleHeaders || irProvider !is KotlinIrLinker) {
+        val dependencies = if (irProvider !is KotlinIrLinker) {
             emptyList()
         } else {
             psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
@@ -270,10 +241,6 @@ class JvmIrCodegenFactory(
         } else {
             val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
             listOf(irProvider, stubGeneratorForMissingClasses)
-        }
-
-        if (ideCodegenSettings.shouldReferenceUndiscoveredExpectSymbols) {
-            symbolTable.referenceUndiscoveredExpectSymbols(files, bindingContext)
         }
 
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, evaluatorFragmentInfoForPsi2Ir)
