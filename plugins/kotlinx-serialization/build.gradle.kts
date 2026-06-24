@@ -90,13 +90,13 @@ dependencies {
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.backend"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
-    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
-    coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") { isTransitive = false }
-    jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3") { isTransitive = false }
-    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3") { isTransitive = false }
-    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3") { isTransitive = false }
+    coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") { isTransitive = false }
+    jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") { isTransitive = false }
+    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") { isTransitive = false }
+    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0") { isTransitive = false }
     serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
@@ -113,8 +113,8 @@ dependencies {
         "iossimulatorarm64",
         "mingwx64"
     ).forEach {
-        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.7.3")
-        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.7.3")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.9.0")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.9.0")
     }
 }
 

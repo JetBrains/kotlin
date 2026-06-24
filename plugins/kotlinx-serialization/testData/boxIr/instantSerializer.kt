@@ -2,28 +2,6 @@
 // API_VERSION: LATEST
 // OPT_IN: kotlin.time.ExperimentalTime
 
-// FILE: serializer.kt
-
-package kotlinx.serialization.internal
-
-import kotlin.time.*
-import kotlinx.serialization.*
-import kotlinx.serialization.encoding.*
-import kotlinx.serialization.descriptors.*
-
-// TODO: delete when serialization runtime is updated to 1.9.0
-internal object InstantSerializer : KSerializer<Instant> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("kotlin.time.Instant", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Instant) {
-        encoder.encodeString(value.toString())
-    }
-
-    override fun deserialize(decoder: Decoder): Instant {
-        return Instant.parse(decoder.decodeString())
-    }
-}
-
 // FILE: test.kt
 
 package a
