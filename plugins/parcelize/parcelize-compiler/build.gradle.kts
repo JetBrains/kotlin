@@ -146,6 +146,11 @@ projectTests {
             systemProperty("robolectric.offline", "true")
             systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile.relativeTo(projectDir.asFile))
         }
+
+        jvmArgs(
+            // additions for SDK 261
+            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
+        )
     }
 
     testGenerator("org.jetbrains.kotlin.parcelize.test.TestGeneratorKt", generateTestsInBuildDirectory = true)

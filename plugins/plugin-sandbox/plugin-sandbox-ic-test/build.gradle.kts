@@ -47,6 +47,10 @@ projectTests {
             setupNodeJs(nodejsVersion)
         }
         addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
+        jvmArgs(
+            // additions for SDK 261
+            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
+        )
     }
 
     testGenerator("org.jetbrains.kotlin.incremental.TestGeneratorForPluginSandboxICTestsKt")

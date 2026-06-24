@@ -71,6 +71,10 @@ projectTests {
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
             includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
         }
+        jvmArgs(
+            // additions for SDK 261
+            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
+        )
     }
 
 
