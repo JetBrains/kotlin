@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:config"))
     implementation(project(":compiler:container"))
+    api(project(":core:deserialization.common"))
     api(project(":compiler:plugin-api"))
     compileOnly(intellijCore())
     compileOnly(libs.guava)

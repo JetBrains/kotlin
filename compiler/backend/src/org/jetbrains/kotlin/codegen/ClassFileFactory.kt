@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.org.objectweb.asm.Type
@@ -153,8 +152,7 @@ class ClassFileFactory(
             when (relativePath.extension) {
                 "class" -> answer.append(file.asText())
                 "kotlin_module" -> try {
-                    @OptIn(K1Deprecation::class)
-                    val mapping = ModuleMapping.Companion.loadModuleMapping(
+                    val mapping = ModuleMapping.loadModuleMapping(
                         file.asByteArray(), relativePath.path,
                         DeserializationConfiguration.Default
                     ) { version: MetadataVersion? ->

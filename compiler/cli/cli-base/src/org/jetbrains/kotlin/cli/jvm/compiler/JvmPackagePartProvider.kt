@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.CliDiagnostics.JAVA_MODULE_RESOLUTION_ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import java.io.ByteArrayOutputStream
 import java.io.EOFException
@@ -64,7 +64,6 @@ class JvmPackagePartProvider(
     }
 }
 
-@OptIn(K1Deprecation::class)
 fun tryLoadModuleMapping(
     getModuleBytes: () -> ByteArray,
     debugName: String,

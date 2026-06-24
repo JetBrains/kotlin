@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.K1Deprecation
 
 fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
@@ -42,7 +41,6 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
         }
 }
 
-@OptIn(K1Deprecation::class)
 fun GenerationState.loadCompiledModule(): ModuleMapping? {
     val moduleMappingData = incrementalCacheForThisTarget?.getModuleMappingData() ?: return null
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.languageVersionSettings)
