@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import kotlin.reflect.KFunction1
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
     @JvmOverloads
@@ -307,12 +307,13 @@ object TopDownAnalyzerFacadeForJVM {
 
 // From serialization.js....klib.kt
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 private val jvmFactories = KlibMetadataFactories(
     { storageManager -> JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES) },
     NullFlexibleTypeDeserializer
 )
 
+@K1Deprecation
 private fun getKlibModules(klibList: List<KotlinLibrary>, dependencyModule: ModuleDescriptorImpl?): List<ModuleDescriptorImpl> {
     val descriptorMap = mutableMapOf<String, ModuleDescriptorImpl>()
     return klibList.map { library ->
@@ -320,7 +321,7 @@ private fun getKlibModules(klibList: List<KotlinLibrary>, dependencyModule: Modu
     }
 }
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 private fun getModuleDescriptorByLibrary(
     current: KotlinLibrary,
     mapping: Map<String, ModuleDescriptorImpl>,

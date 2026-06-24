@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.StandardFileSystems.FILE_PROTOCOL
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope.getLibrariesScope
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createLibraryListForJvm
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.test.checkTestInfrastructure
 
 open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
@@ -148,7 +147,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val ktFiles = testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project)
         val moduleBasedSession = FirJvmSessionFactory.createSourceSession(
             moduleData = moduleData,
-            javaSourcesScope = PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles.values)),
+            javaSourcesScope = PsiBasedProjectFileSearchScope(FirFrontendFacade.newModuleSearchScope(project, ktFiles.values)),
             createIncrementalCompilationSymbolProviders = { null },
             extensionRegistrars = replCompilationEnvironment.extensionRegistrars,
             configuration = compilerConfiguration,

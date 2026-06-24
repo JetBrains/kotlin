@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.CompilerConfigurationCreationKt;
-import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -206,28 +204,6 @@ public class KotlinTestUtils {
         JvmContentRootsKt.configureJdkClasspathRoots(configuration);
 
         return configuration;
-    }
-
-    @SuppressWarnings("deprecation")
-    public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
-        if (roots.isEmpty()) return;
-        List<KtFile> ktFiles = new ArrayList<>();
-        for (KotlinSourceRoot root : roots) {
-            File file = new File(root.getPath());
-            if (file.isFile()) {
-                ktFiles.add(loadKtFile(environment.getProject(), file));
-            }
-            else {
-                //noinspection ConstantConditions
-                for (File childFile : file.listFiles()) {
-                    if (childFile.getName().endsWith(".kt") || childFile.getName().endsWith(".kts")) {
-                        ktFiles.add(loadKtFile(environment.getProject(), childFile));
-                    }
-                }
-            }
-        }
-        JvmResolveUtil.analyze(ktFiles, environment);
     }
 
     public static JavaCompilationResult compileKotlinWithJava(

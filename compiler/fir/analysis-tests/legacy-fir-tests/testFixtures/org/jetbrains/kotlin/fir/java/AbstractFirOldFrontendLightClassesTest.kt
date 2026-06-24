@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFa
 import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnosticFactory
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.PsiBasedProjectFileSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -126,10 +127,10 @@ abstract class AbstractFirOldFrontendLightClassesTest :
 
         val configToSession = modules.mapValues { [config, info] ->
             val moduleFiles = groupedByModule.getValue(config)
-            val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
+            val scope = GlobalSearchScope.filesScope(
                 project,
-                moduleFiles.mapNotNull { it.ktFile }
-            )
+                moduleFiles.mapNotNull { it.ktFile?.virtualFile }.toSet()
+            ).uniteWith(AllJavaSourcesInProjectScope(project))
             val projectEnvironment = environment.toVfsBasedProjectEnvironment()
 
             val configuration = CompilerConfiguration.create().apply {
