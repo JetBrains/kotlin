@@ -35,7 +35,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
     postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
-        (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
+        (val firResult = frontendOutput, val configuration, val _ = sourceFiles, val isIncremental) = input
         val metadataVersion = configuration.metadataVersion()
         val fragments = mutableMapOf<String, MutableList<SerializedFragment>>()
 
@@ -58,7 +58,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     languageVersionSettings,
                 )
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }
-                    .add(createSerializedFragment(input.isForIncrementalCompilation, packageFragment.toByteArray(), firFile))
+                    .add(createSerializedFragment(isIncremental, packageFragment.toByteArray(), firFile))
             }
         }
 
@@ -81,7 +81,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 
         val module = header.build().toByteArray()
         val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames, metadataVersion.toArray())
-        return MetadataInMemorySerializationArtifact(serializedMetadata, configuration)
+        return MetadataInMemorySerializationArtifact(serializedMetadata, configuration, isIncremental)
     }
 
     private fun createSerializedFragment(isForIncrementalCompilation: Boolean, content: ByteArray, firFile: FirFile) =
@@ -109,7 +109,7 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
     }
 
     fun writeToDisc(input: MetadataInMemorySerializationArtifact, destDir: java.io.File) {
-        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir)
+        buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir, input.isIncremental)
 
         loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
             input.configuration.perfManager?.registerKlibElementStats(stats)

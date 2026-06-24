@@ -17,7 +17,7 @@ data class MetadataFrontendPipelineArtifact(
     override val frontendOutput: AllModulesFrontendOutput,
     override val configuration: CompilerConfiguration,
     val sourceFiles: List<KtSourceFile>,
-    val isForIncrementalCompilation: Boolean = false,
+    val isIncremental: Boolean = false,
 ) : FrontendPipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataFrontendPipelineArtifact {
@@ -32,6 +32,7 @@ data class MetadataFrontendPipelineArtifact(
 data class MetadataInMemorySerializationArtifact(
     val metadata: SerializedMetadata,
     override val configuration: CompilerConfiguration,
+    val isIncremental: Boolean = false,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): MetadataInMemorySerializationArtifact {

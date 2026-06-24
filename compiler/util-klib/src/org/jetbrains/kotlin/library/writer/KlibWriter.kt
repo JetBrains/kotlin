@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl
 import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl.Companion.NON_CUSTOMIZED_PROPERTY_NAMES
 import org.jetbrains.kotlin.library.impl.KlibManifestComponentWriterImpl.Companion.getPropertyNameForListOfTargetNames
 import org.jetbrains.kotlin.library.impl.KlibResourcesComponentWriterImpl
-import java.util.Properties
+import java.util.*
 import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.konan.file.File as KlibFile
  */
 class KlibWriter(init: KlibWriterSpec.() -> Unit) {
     private var format: KlibFormat = KlibFormat.Directory
+    private var allowIncrementalOverwriting: Boolean = false
     private val componentWriters = mutableListOf<KlibComponentWriter>()
 
     private var moduleName: String? = null
@@ -45,6 +46,10 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
             override fun format(format: KlibFormat) {
                 this@KlibWriter.format = format
+            }
+
+            override fun allowIncrementalOverwriting(allowed: Boolean) {
+                this@KlibWriter.allowIncrementalOverwriting = allowed
             }
 
             override fun include(vararg writers: KlibComponentWriter) {
@@ -82,6 +87,10 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
     }
 
     fun writeTo(destinationPath: String) {
+        check(!allowIncrementalOverwriting || format != KlibFormat.ZipArchive) {
+            "Writing a KLIB in ZIP format if `allowIncrementalOverwriting` is set to `true` is not supported."
+        }
+
         val allComponentWriters: List<KlibComponentWriter> = buildList {
             this += componentWriters
 
@@ -94,10 +103,13 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
         val destination = KlibFile(destinationPath).absoluteFile
 
-        if (destination.exists) {
-            destination.deleteRecursively()
-        } else {
-            destination.parentFile.mkdirs()
+        when {
+            !destination.exists -> {
+                destination.parentFile.mkdirs()
+            }
+            !allowIncrementalOverwriting -> {
+                destination.deleteRecursively()
+            }
         }
 
         when (format) {
@@ -157,6 +169,7 @@ class KlibWriter(init: KlibWriterSpec.() -> Unit) {
 
 interface KlibWriterSpec {
     fun format(format: KlibFormat)
+    fun allowIncrementalOverwriting(allowed: Boolean)
     fun include(vararg writers: KlibComponentWriter)
     fun include(writers: Collection<KlibComponentWriter>)
     fun manifest(init: KlibManifestWriterSpec.() -> Unit)
