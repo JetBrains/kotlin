@@ -77,6 +77,7 @@ open class FirKaptAnalysisHandlerExtension(
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
+            processingClassLoader = configuration.classloadersCache?.getForClassPath(processingClasspath)
         }
 
         optionsBuilder.checkOptions(logger, configuration)?.let { return it }
