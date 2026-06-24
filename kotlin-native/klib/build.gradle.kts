@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-abi"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":tools:kotlinp-klib"))
+    implementation(project(":native:cinterop.deserialization"))
     implementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     implementation(project(":kotlin-metadata")) { isTransitive = false }
 }

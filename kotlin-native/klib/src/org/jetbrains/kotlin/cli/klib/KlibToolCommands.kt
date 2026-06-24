@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
+import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.hasAbi
+import org.jetbrains.kotlin.library.loadSizeInfo
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
@@ -309,21 +312,23 @@ internal class DumpIrSignatures(output: KlibToolOutput, args: ParsedArguments) :
     override fun execute() {
         val idSignatureRenderer = args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
 
-        if (args.library.isCInteropLibrary()) {
+        val signaturesExtractor = if (args.library.isCInteropLibrary()) {
             // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
 
-            val module = ModuleDescriptorLoader(output).load(args.library) ?: return
-            DescriptorSignaturesRenderer(output, idSignatureRenderer).render(module)
+            IdSignaturesExtractorFromCInteropKlib(args.library)
         } else if (args.library.ir != null) {
             if (!args.signatureVersion.checkSupportedInLibrary(args.library)) return
 
-            val signatures = with(IdSignaturesExtractorFromRegularKlib(args.library)) {
-                if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
-            }
-
-            IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
+            IdSignaturesExtractorFromRegularKlib(args.library)
         } else {
             output.logError("This library does not have IR and is not a C-interop library: ${args.library.path}")
+            return
         }
+
+        val signatures = with(signaturesExtractor) {
+            if (args.onlyTopLevelSignatures) extractOnlyTopLevelPublicSignatures() else extractAllPublicSignatures()
+        }
+
+        IrSignaturesRenderer(output, idSignatureRenderer).render(signatures)
     }
 }

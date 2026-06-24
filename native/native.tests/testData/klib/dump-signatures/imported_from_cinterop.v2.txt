@@ -1,4 +1,5 @@
 Module: cinterop
+// Declared signatures: 18
 imported_from_cinterop.lib/Base.<init>|objc:init#Constructor[100]
 imported_from_cinterop.lib/Base.Companion|null[100]
 imported_from_cinterop.lib/Base.init|objc:init[100]
@@ -17,6 +18,8 @@ imported_from_cinterop.lib/Base.setOverriddenProperty|objc:setOverriddenProperty
 imported_from_cinterop.lib/BaseMeta.<init>|<init>(){}[100]
 imported_from_cinterop.lib/BaseMeta|null[100]
 imported_from_cinterop.lib/Base|null[100]
+
+// Imported signatures: 0
 
 Module: main
 // Declared signatures: 5
