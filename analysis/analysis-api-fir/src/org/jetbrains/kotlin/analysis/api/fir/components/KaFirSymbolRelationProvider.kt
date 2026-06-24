@@ -263,8 +263,10 @@ internal class KaFirSymbolRelationProvider(
         get() = withValidityAssertion {
             when (this) {
                 is KaFirSymbol<*> -> firSymbol.getContainingKtModule(resolutionFacade)
-                is KaReceiverParameterSymbol -> owningCallableSymbol.containingModule
-                else -> TODO("${this::class}")
+                is KaPackageSymbol -> analysisSession.useSiteModule
+                else -> errorWithAttachment("Unsupported symbol type: ${this::class.simpleName}") {
+                    withSymbolAttachment("symbol", analysisSession, this@containingModule)
+                }
             }
         }
 
