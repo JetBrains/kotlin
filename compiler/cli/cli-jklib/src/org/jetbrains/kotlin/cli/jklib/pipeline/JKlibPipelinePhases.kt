@@ -60,11 +60,18 @@ import java.io.File
 
 
 val JKLIB_OUTPUT_DESTINATION = CompilerConfigurationKey.create<String>("jklib output destination")
+val JKLIB_COMPILE_IR = CompilerConfigurationKey.create<Boolean>("jklib compile ir")
 
 var CompilerConfiguration.jklibOutputDestination: String?
     get() = get(JKLIB_OUTPUT_DESTINATION)
     set(value) {
         putIfNotNull(JKLIB_OUTPUT_DESTINATION, value)
+    }
+
+var CompilerConfiguration.jklibCompileIr: Boolean
+    get() = get(JKLIB_COMPILE_IR) ?: false
+    set(value) {
+        put(JKLIB_COMPILE_IR, value)
     }
 
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
@@ -168,6 +175,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
+        configuration.jklibCompileIr = arguments.compileIr
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
     }
 }
@@ -344,7 +352,8 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         )
 
         KlibWriter {
-            format(KlibFormat.ZipArchive)
+            // Skip ZIP archive creation and write directly to a directory for better performance when the generated Klib will be immediately deserialized.
+            format(if (configuration.jklibCompileIr) KlibFormat.Directory else KlibFormat.ZipArchive)
             manifest {
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
