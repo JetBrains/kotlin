@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 class CliTraceHolder(val project: Project) : JvmCodeAnalyzerInitializer() {
     lateinit var bindingContext: BindingContext
         private set

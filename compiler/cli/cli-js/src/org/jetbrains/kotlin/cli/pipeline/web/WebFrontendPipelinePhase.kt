@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter
 import org.jetbrains.kotlin.cli.extensionsStorage
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.js.platformChecker
@@ -159,7 +159,7 @@ object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, W
         useWasmPlatform: Boolean,
     ): AllModulesFrontendOutput {
         for (ktFile in ktFiles) {
-            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, diagnosticsReporter)
+            SyntaxErrorReporter.reportSyntaxErrors(ktFile, diagnosticsReporter)
         }
         val output = compileModuleToAnalyzedFir(
             moduleStructure,

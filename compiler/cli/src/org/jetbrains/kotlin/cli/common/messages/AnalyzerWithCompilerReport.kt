@@ -16,31 +16,35 @@
 
 package org.jetbrains.kotlin.cli.common.messages
 
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiModifierListOwner
 import com.intellij.psi.util.PsiFormatUtil
-import org.jetbrains.kotlin.KtPsiSourceFile
-import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.messages.SyntaxErrorReporter.SyntaxErrorReport
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.MessageCollectorAccess
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.checkers.OptInUsageChecker
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
-@OptIn(K1Deprecation::class)
+@K1Deprecation
 class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguration) : AbstractAnalyzerWithCompilerReport {
     override val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
@@ -100,8 +104,6 @@ class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguratio
             reportSyntaxErrors(file, messageCollector)
         }
     }
-
-    class SyntaxErrorReport(val isHasErrors: Boolean, val isAllErrorsAtEof: Boolean)
 
     override fun hasErrors(): Boolean = CheckDiagnosticCollector.checkHasErrors(configuration)
 
@@ -168,114 +170,21 @@ class AnalyzerWithCompilerReport(private val configuration: CompilerConfiguratio
             renderInternalDiagnosticName: Boolean
         ): Boolean {
             return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName).also {
-                reportSpecialErrors(
+                SyntaxErrorReporter.reportSpecialErrors(
                     diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS },
                     diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS },
                     diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
-                    messageCollector,
-                )
-            }
-        }
-
-        fun reportSpecialErrors(
-            hasIncompatibleClasses: Boolean,
-            hasPrereleaseClasses: Boolean,
-            hasUnstableClasses: Boolean,
-            messageCollector: MessageCollector,
-        ) {
-            if (hasIncompatibleClasses) {
-                messageCollector.report(
-                    ERROR,
-                    "Incompatible classes were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors"
-                )
-            }
-
-            if (hasPrereleaseClasses) {
-                messageCollector.report(
-                    ERROR,
-                    "Pre-release declarations were found in dependencies. Please exclude the dependencies with such declarations " +
-                            "and recompile with a release compiler, or use '-Xskip-prerelease-check' to suppress errors. " +
-                            "Note that in the latter case the compiled declarations will also be marked as pre-release."
-                )
-            }
-
-            if (hasUnstableClasses) {
-                messageCollector.report(
-                    ERROR,
-                    "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
+                    messageCollector
                 )
             }
         }
 
         // Reports K1 diagnostics ([org.jetbrains.kotlin.diagnostics.SimpleDiagnostic])
         fun reportSyntaxErrors(file: PsiElement, reporter: DiagnosticMessageReporter): SyntaxErrorReport {
-            return reportSyntaxErrors(file) { element, message ->
+            return SyntaxErrorReporter.reportSyntaxErrors(file) { element, message ->
                 val diagnostic = MyDiagnostic(element, SYNTAX_ERROR_FACTORY, message)
-                AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter, renderDiagnosticName = false)
+                reportDiagnostic(diagnostic, reporter, renderDiagnosticName = false)
             }
-        }
-
-        // Reports K2 diagnostics ([org.jetbrains.kotlin.diagnostics.KtDiagnostic])
-        fun reportSyntaxErrors(file: PsiElement, diagnosticCollector: BaseDiagnosticsCollector): SyntaxErrorReport {
-            return reportSyntaxErrors(file) { element, message ->
-                @OptIn(InternalDiagnosticFactoryMethod::class)
-                val diagnostic = FirSyntaxErrors.SYNTAX.on(
-                    KtRealPsiSourceElement(element),
-                    message,
-                    positioningStrategy = null,
-                    DiagnosticContext.Default, // syntax errors couldn't be suppressed anyway
-                )
-                val context = object : DiagnosticContext {
-                    override val containingFile: KtSourceFile
-                        get() = KtPsiSourceFile(file.containingFile)
-
-                    override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
-                        return false
-                    }
-
-                    override val languageVersionSettings: LanguageVersionSettings
-                        get() = LanguageVersionSettingsImpl.DEFAULT
-                }
-                diagnosticCollector.report(diagnostic, context)
-            }
-        }
-
-        private fun reportSyntaxErrors(
-            file: PsiElement,
-            createAndReportSyntaxError: (PsiErrorElement, message: String) -> Unit,
-        ): SyntaxErrorReport {
-            class ErrorReportingVisitor : AnalyzingUtils.PsiErrorElementVisitor() {
-                var hasErrors = false
-                var allErrorsAtEof = true
-
-                private fun PsiElement.isAtEof(): Boolean {
-                    var element = this
-                    while (true) {
-                        element = element.nextSibling ?: return true
-                        if (element !is PsiWhiteSpace || element !is PsiComment) return false
-                    }
-                }
-
-                override fun visitErrorElement(element: PsiErrorElement) {
-                    val description = element.errorDescription
-                    if (allErrorsAtEof && !element.isAtEof()) {
-                        allErrorsAtEof = false
-                    }
-                    hasErrors = true
-                    createAndReportSyntaxError(
-                        element,
-                        if (StringUtil.isEmpty(description)) "Syntax error" else description
-                    )
-                }
-            }
-
-            val visitor = ErrorReportingVisitor()
-
-            file.accept(visitor)
-
-            return SyntaxErrorReport(visitor.hasErrors, visitor.allErrorsAtEof)
         }
 
         fun reportSyntaxErrors(file: PsiElement, messageCollector: MessageCollector): SyntaxErrorReport {
