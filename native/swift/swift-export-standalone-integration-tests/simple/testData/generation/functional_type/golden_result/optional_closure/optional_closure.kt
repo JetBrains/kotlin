@@ -1,8 +1,23 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_MyInterface")
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ExportedBridge("MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___")
+public fun MyInterface_foo__TypesOfArguments__Swift_Optional_U2829202D_U20Swift_Void___(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else run {
+        val kotlinFun = convertBlockPtrToKotlinFunction<()->Boolean>(arg);
+        {
+            val _result = kotlinFun()
+            run<Unit> { _result }
+        }
+    }
+    val _result = run { __self.foo(__arg) }
+    return run { _result; true }
+}
 
 @ExportedBridge("__root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___")
 public fun __root___consume_consuming_opt_closure__TypesOfArguments__Swift_Optional_U28Swift_Optional_U2829202D_U20Swift_String_U29202D_U20Swift_Void___(arg: kotlin.native.internal.NativePtr): Boolean {
