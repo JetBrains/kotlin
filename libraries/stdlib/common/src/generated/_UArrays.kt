@@ -2856,9 +2856,9 @@ public fun UShortArray.isSorted(): Boolean {
 public inline fun <R : Comparable<R>> UIntArray.isSortedBy(selector: (UInt) -> R?): Boolean {
     if (size < 2) return true
     var previousValue: R? = null
-    for (i in indices) {
-        val currentValue = selector(this[i])
-        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
+    for (element in this) {
+        val currentValue = selector(element)
+        if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2884,9 +2884,9 @@ public inline fun <R : Comparable<R>> UIntArray.isSortedBy(selector: (UInt) -> R
 public inline fun <R : Comparable<R>> ULongArray.isSortedBy(selector: (ULong) -> R?): Boolean {
     if (size < 2) return true
     var previousValue: R? = null
-    for (i in indices) {
-        val currentValue = selector(this[i])
-        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
+    for (element in this) {
+        val currentValue = selector(element)
+        if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2912,9 +2912,9 @@ public inline fun <R : Comparable<R>> ULongArray.isSortedBy(selector: (ULong) ->
 public inline fun <R : Comparable<R>> UByteArray.isSortedBy(selector: (UByte) -> R?): Boolean {
     if (size < 2) return true
     var previousValue: R? = null
-    for (i in indices) {
-        val currentValue = selector(this[i])
-        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
+    for (element in this) {
+        val currentValue = selector(element)
+        if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true
@@ -2940,9 +2940,9 @@ public inline fun <R : Comparable<R>> UByteArray.isSortedBy(selector: (UByte) ->
 public inline fun <R : Comparable<R>> UShortArray.isSortedBy(selector: (UShort) -> R?): Boolean {
     if (size < 2) return true
     var previousValue: R? = null
-    for (i in indices) {
-        val currentValue = selector(this[i])
-        if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
+    for (element in this) {
+        val currentValue = selector(element)
+        if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
     }
     return true

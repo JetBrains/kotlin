@@ -833,12 +833,10 @@ object Ordering : TemplateGroupBase() {
             var element = iterator.next()
             if (!iterator.hasNext()) return true
             var previousValue: R? = null
-            var isFirst = true
             while (true) {
                 val currentValue = selector(element)
-                if (!isFirst && compareValues(previousValue, currentValue) > 0) return false
+                if (compareValues(previousValue, currentValue) > 0) return false
                 previousValue = currentValue
-                isFirst = false
                 if (!iterator.hasNext()) break
                 element = iterator.next()
             }
@@ -849,9 +847,9 @@ object Ordering : TemplateGroupBase() {
             """
             if (size < 2) return true
             var previousValue: R? = null
-            for (i in indices) {
-                val currentValue = selector(this[i])
-                if (i > 0 && compareValues(previousValue, currentValue) > 0) return false
+            for (element in this) {
+                val currentValue = selector(element)
+                if (compareValues(previousValue, currentValue) > 0) return false
                 previousValue = currentValue
             }
             return true

@@ -1034,12 +1034,10 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.isSortedBy(selector: (T) ->
     var element = iterator.next()
     if (!iterator.hasNext()) return true
     var previousValue: R? = null
-    var isFirst = true
     while (true) {
         val currentValue = selector(element)
-        if (!isFirst && compareValues(previousValue, currentValue) > 0) return false
+        if (compareValues(previousValue, currentValue) > 0) return false
         previousValue = currentValue
-        isFirst = false
         if (!iterator.hasNext()) break
         element = iterator.next()
     }
