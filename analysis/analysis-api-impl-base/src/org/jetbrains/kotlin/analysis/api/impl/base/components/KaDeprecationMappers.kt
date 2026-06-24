@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 @KaImplementationDetail

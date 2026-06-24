@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
-import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList
@@ -42,9 +39,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
-import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFirSymbolInformationProvider(
@@ -54,45 +48,26 @@ internal class KaFirSymbolInformationProvider(
         private val OBSOLETE_SYMBOL_DEPRECATION = KaBaseDeprecation(KaDeprecationLevel.HIDDEN, isPropagatedToOverrides = true)
     }
 
-    override val KaSymbol.deprecation: KaDeprecation?
-        get() = withValidityAssertion {
-            if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
-            require(this is KaFirSymbol<*>) { "${this::class}" }
+    override fun deprecation(symbol: KaSymbol): KaDeprecation? = withValidityAssertion {
+        if (symbol is KaFirPackageSymbol || symbol is KaReceiverParameterSymbol) return null
+        require(symbol is KaFirSymbol<*>) { "${symbol::class}" }
 
-            // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
-            if (this is KaFirPsiJavaClassSymbol && !mayHaveDeprecation()) {
-                return null
-            }
-
-            val firSymbol = this.firSymbol
-
-            // A symbol exists for compatibility reasons and should never be referenced in user code
-            val isObsoleteSymbol = (firSymbol.fir as? FirCallableDeclaration)?.hiddenEverywhereBesideSuperCallsStatus != null
-                    || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
-
-            if (isObsoleteSymbol) {
-                return OBSOLETE_SYMBOL_DEPRECATION
-            }
-
-            return firSymbol.computeDeprecationInfo()?.toKaDeprecation()
+        // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
+        if (symbol is KaFirPsiJavaClassSymbol && !symbol.mayHaveDeprecation()) {
+            return null
         }
 
-    @Deprecated("Use 'deprecation' instead", level = DeprecationLevel.HIDDEN)
-    override val KaSymbol.deprecationStatus: DeprecationInfo?
-        get() = withValidityAssertion { computeDeprecationInfo() }
+        val firSymbol = symbol.firSymbol
 
-    private fun KaSymbol.computeDeprecationInfo(): DeprecationInfo? {
-        val deprecation = deprecation ?: return null
-        return SimpleDeprecationInfo(
-            deprecationLevel = when (deprecation.level) {
-                KaDeprecationLevel.ERROR -> DeprecationLevelValue.ERROR
-                KaDeprecationLevel.WARNING -> DeprecationLevelValue.WARNING
-                KaDeprecationLevel.HIDDEN -> DeprecationLevelValue.HIDDEN
-                else -> error("Unexpected deprecation level: ${deprecation.level}")
-            },
-            propagatesToOverrides = deprecation.isPropagatedToOverrides,
-            message = null
-        )
+        // A symbol exists for compatibility reasons and should never be referenced in user code
+        val isObsoleteSymbol = (firSymbol.fir as? FirCallableDeclaration)?.hiddenEverywhereBesideSuperCallsStatus != null
+                || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
+
+        if (isObsoleteSymbol) {
+            return OBSOLETE_SYMBOL_DEPRECATION
+        }
+
+        return firSymbol.computeDeprecationInfo()?.toKaDeprecation()
     }
 
     private fun FirBasedSymbol<*>.computeDeprecationInfo(): FirDeprecationInfo? {
@@ -120,16 +95,14 @@ internal class KaFirSymbolInformationProvider(
         }
     }
 
-    override val KaNamedFunctionSymbol.canBeOperator: Boolean
-        get() = withValidityAssertion {
-            val functionFir = this@canBeOperator.firSymbol.fir as? FirNamedFunction ?: return false
-            return OperatorFunctionChecks.isOperator(
-                functionFir,
-                analysisSession.firSession,
-                analysisSession.getScopeSessionFor(analysisSession.firSession)
-            ).isSuccess
-        }
-
+    override fun canBeOperator(symbol: KaNamedFunctionSymbol): Boolean = withValidityAssertion {
+        val functionFir = symbol.firSymbol.fir as? FirNamedFunction ?: return false
+        return OperatorFunctionChecks.isOperator(
+            functionFir,
+            analysisSession.firSession,
+            analysisSession.getScopeSessionFor(analysisSession.firSession)
+        ).isSuccess
+    }
 
     private fun KaFirPsiJavaClassSymbol.mayHaveDeprecation(): Boolean {
         if (!hasAnnotations) return false
@@ -141,40 +114,8 @@ internal class KaFirSymbolInformationProvider(
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
-    @Deprecated("Use 'deprecation()' instead", level = DeprecationLevel.HIDDEN)
-    override fun KaSymbol.deprecationStatus(annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? = withValidityAssertion {
-        if (this is KaReceiverParameterSymbol) return null
-
-        require(this is KaFirSymbol<*>)
-        return if (annotationUseSiteTarget != null) {
-            firSymbol.getDeprecationForCallSite(analysisSession.firSession, annotationUseSiteTarget)
-        } else {
-            firSymbol.getDeprecationForCallSite(analysisSession.firSession)
-        }?.toDeprecationInfo()
-    }
-
-    @Deprecated("Use 'deprecation' directly instead", replaceWith = ReplaceWith("this.getter?.deprecation"))
-    override val KaPropertySymbol.getterDeprecationStatus: DeprecationInfo?
-        get() = withValidityAssertion {
-            this.getter?.computeDeprecationInfo()
-        }
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Use 'deprecation' directly instead", replaceWith = ReplaceWith("this.setter?.deprecation"))
-    override val KaPropertySymbol.setterDeprecationStatus: DeprecationInfo?
-        get() = withValidityAssertion {
-            this.setter?.computeDeprecationInfo()
-        }
-
     private fun FirDeprecationInfo.toKaDeprecation(): KaDeprecation {
         return KaBaseDeprecation(deprecationLevel.toKaLevel(), propagatesToOverrides)
-    }
-
-    private fun FirDeprecationInfo.toDeprecationInfo(): DeprecationInfo {
-        // We pass null as the message, otherwise we can trigger a contract violation
-        // as getMessage will call lazyResolveToPhase(ANNOTATION_ARGUMENTS)
-        // TODO(KT-67823) stop exposing compiler internals, as the message isn't actually required by the callers.
-        return SimpleDeprecationInfo(deprecationLevel, propagatesToOverrides, null)
     }
 
     override fun computeAnnotationApplicableTargets(symbol: KaClassSymbol): Set<KotlinTarget>? {
@@ -183,76 +124,72 @@ internal class KaFirSymbolInformationProvider(
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.firSession)
     }
 
-    override val KaSymbol.importableFqName: FqName?
-        get() = withValidityAssertion {
-            when (this) {
-                is KaClassLikeSymbol -> classId?.asSingleFqName()
-                is KaConstructorSymbol -> containingClassId?.takeIf {
-                    context(analysisSession) {
-                        when (val containingDeclaration = containingDeclaration) {
-                            is KaNamedClassSymbol -> !containingDeclaration.isInner
-                            is KaTypeAliasSymbol -> true
-                            else -> false
-                        }
+    override fun importableFqName(symbol: KaSymbol): FqName? = withValidityAssertion {
+        when (symbol) {
+            is KaClassLikeSymbol -> symbol.classId?.asSingleFqName()
+            is KaConstructorSymbol -> symbol.containingClassId?.takeIf {
+                context(analysisSession) {
+                    when (val containingDeclaration = symbol.containingDeclaration) {
+                        is KaNamedClassSymbol -> !containingDeclaration.isInner
+                        is KaTypeAliasSymbol -> true
+                        else -> false
                     }
-                }?.asSingleFqName()
+                }
+            }?.asSingleFqName()
 
-                is KaCallableSymbol -> {
-                    val callableId = callableId ?: return null
-                    if (callableId.classId == null) {
-                        // no containing class -> top level callable
-                        return callableId.asSingleFqName()
-                    }
-
-                    val containingClass = context(analysisSession) { containingDeclaration as? KaNamedClassSymbol } ?: return null
-                    val canBeImported = when (containingClass.classKind) {
-                        KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> isCompanion
-                        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
-                        KaClassKind.ANONYMOUS_OBJECT -> errorWithAttachment("Anonymous object is not expected here since it cannot have ClassId") {
-                            withSymbolAttachment("symbol", analysisSession, this@importableFqName)
-                            withSymbolAttachment("containingClass", analysisSession, containingClass)
-                        }
-                    }
-
-                    if (canBeImported) callableId.asSingleFqName() else null
+            is KaCallableSymbol -> {
+                val callableId = symbol.callableId ?: return null
+                if (callableId.classId == null) {
+                    // no containing class -> top level callable
+                    return callableId.asSingleFqName()
                 }
 
-                else -> null
-            }
-        }
+                val containingClass = context(analysisSession) { symbol.containingDeclaration as? KaNamedClassSymbol } ?: return null
+                val canBeImported = when (containingClass.classKind) {
+                    KaClassKind.CLASS, KaClassKind.ENUM_CLASS, KaClassKind.INTERFACE, KaClassKind.ANNOTATION_CLASS -> symbol.isCompanion
+                    KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> true
+                    KaClassKind.ANONYMOUS_OBJECT -> errorWithAttachment("Anonymous object is not expected here since it cannot have ClassId") {
+                        withSymbolAttachment("symbol", analysisSession, symbol)
+                        withSymbolAttachment("containingClass", analysisSession, containingClass)
+                    }
+                }
 
-    override val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
-        get() = withValidityAssertion {
-            val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
-            return getActualTargetList(firSymbol, rootModuleSession)
-                .defaultTargets
-                .mapNotNullTo(mutableSetOf()) { it.toKaAnnotationTarget() }
-        }
-
-    override val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
-        get() = withValidityAssertion {
-            when (firSymbol.resolvedStatus.returnValueStatus) {
-                ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
-                ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
-                ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
-            }
-        }
-
-    override val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList
-        get() = withValidityAssertion {
-            if (!isTopLevel) {
-                return KaBaseEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
+                if (canBeImported) callableId.asSingleFqName() else null
             }
 
-            val containingFile = with(analysisSession) { containingFile }
-            if (containingFile != null) {
-                return KaFirAnnotationListForDeclaration.create(containingFile.firSymbol, analysisSession.firSymbolBuilder)
-            }
-
-            /**
-             * TODO Once KT-85997 is implemented, [org.jetbrains.kotlin.analysis.api.KaSession.containingFile] will be available also
-             * for libraries, making this branch (as well as the entire [containingFileAnnotations] endpoint) obsolete.
-             */
-            return KaKlibDecompiledFileAnnotationList.create(firSymbol.klibFileAnnotations, analysisSession.firSymbolBuilder)
+            else -> null
         }
+    }
+
+    override fun defaultAnnotationTargets(symbol: KaSymbol): Set<KaAnnotationTarget>? = withValidityAssertion {
+        val firSymbol = symbol.firSymbol.fir as? FirAnnotationContainer ?: return null
+        return getActualTargetList(firSymbol, rootModuleSession)
+            .defaultTargets
+            .mapNotNullTo(mutableSetOf()) { it.toKaAnnotationTarget() }
+    }
+
+    override fun returnValueStatus(symbol: KaNamedFunctionSymbol): KaReturnValueStatus = withValidityAssertion {
+        when (symbol.firSymbol.resolvedStatus.returnValueStatus) {
+            ReturnValueStatus.MustUse -> KaReturnValueStatus.MustUse
+            ReturnValueStatus.ExplicitlyIgnorable -> KaReturnValueStatus.ExplicitlyIgnorable
+            ReturnValueStatus.Unspecified -> KaReturnValueStatus.Unspecified
+        }
+    }
+
+    override fun containingFileAnnotations(symbol: KaDeclarationSymbol): KaAnnotationList = withValidityAssertion {
+        if (!symbol.isTopLevel) {
+            return KaBaseEmptyAnnotationList(analysisSession.firSymbolBuilder.token)
+        }
+
+        val containingFile = with(analysisSession) { symbol.containingFile }
+        if (containingFile != null) {
+            return KaFirAnnotationListForDeclaration.create(containingFile.firSymbol, analysisSession.firSymbolBuilder)
+        }
+
+        /**
+         * TODO Once KT-85997 is implemented, [org.jetbrains.kotlin.analysis.api.KaSession.containingFile] will be available also
+         * for libraries, making this branch (as well as the entire [containingFileAnnotations] endpoint) obsolete.
+         */
+        return KaKlibDecompiledFileAnnotationList.create(symbol.firSymbol.klibFileAnnotations, analysisSession.firSymbolBuilder)
+    }
 }

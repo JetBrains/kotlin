@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
-import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation
+import org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel
 
 @KaImplementationDetail
 @KaExperimentalApi
