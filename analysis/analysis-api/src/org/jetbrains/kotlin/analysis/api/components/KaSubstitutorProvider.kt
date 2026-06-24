@@ -306,6 +306,13 @@ public class KaSubstitutorBuilder
  * @see KaSubstitutor
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "createSubstitutor(mappings)",
+        "org.jetbrains.kotlin.analysis.api.types.createSubstitutor",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -339,6 +346,13 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
  * - `createInheritanceTypeSubstitutor(A, C)` returns `KaSubstitutor { X -> T, Y -> Int } and then KaSubstitutor { T -> String }`
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "createInheritanceTypeSubstitutor(subClass, superClass)",
+        "org.jetbrains.kotlin.analysis.api.types.createInheritanceTypeSubstitutor",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -392,7 +406,6 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  * @see KaUnificationSubstitutorPolicy.UNIVERSAL
  * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
@@ -456,7 +469,6 @@ public fun createUnificationSubstitutor(
  * @see KaUnificationSubstitutorPolicy.UNIVERSAL
  * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
