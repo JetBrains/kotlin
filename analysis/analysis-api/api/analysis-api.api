@@ -263,6 +263,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaE
 	public abstract fun isDefinitelyNull (Lorg/jetbrains/kotlin/psi/KtExpression;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaExpressionTypeProviderKt {
+	public static final fun getReturnType (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtDeclarationWithReturnType;)Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaImplicitReceiver : org/jetbrains/kotlin/analysis/api/components/KaScopeImplicitReceiverValue {
 	public abstract fun getOwnerSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;
 	public abstract fun getScopeIndexInTower ()I
