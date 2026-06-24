@@ -168,6 +168,7 @@ private fun compileWholeProgramModeToWasmIr(
         typeScriptFragment = typeScriptFragment,
         baseFileName = configuration.outputName!!,
         multimoduleOptions = null,
+        defaultExportNames = loweredIr.defaultExportNames,
     )
 }
 
@@ -278,6 +279,7 @@ private fun compileSingleModuleToWasmIr(
         typeScriptFragment = loweredIr.typeScriptFragment,
         baseFileName = mainModuleFragment.outputFileName,
         multimoduleOptions = multimoduleOptions,
+        defaultExportNames = loweredIr.defaultExportNames,
     )
 }
 

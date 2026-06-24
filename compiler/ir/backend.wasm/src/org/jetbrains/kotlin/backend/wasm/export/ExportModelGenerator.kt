@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getDeprecated
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isExplicitlyExported
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportDefault
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -390,5 +391,6 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
 private fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
     declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
+    if (declaration.isJsExportDefault()) attributes.add(ExportedAttribute.DefaultExport)
     return this
 }

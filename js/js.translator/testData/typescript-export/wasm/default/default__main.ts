@@ -1,5 +1,4 @@
-import {
-    produceUByte,
+import produceUByte, {
     produceUInt,
     produceUShort
 } from "./index.mjs"

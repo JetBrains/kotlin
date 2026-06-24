@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedAttribute
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedFunction
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedMemberName
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.isString
@@ -80,6 +83,7 @@ data class LoweredIrWithExtraArtifacts(
     val backendContext: WasmBackendContext,
     val typeScriptFragment: TypeScriptFragment?,
     val moduleDependencies: (IrModuleFragment) -> Set<IrModuleFragment>,
+    val defaultExportNames: Set<String> = emptySet(),
 )
 
 fun linkIr(
@@ -137,12 +141,21 @@ fun compileToLoweredIr(
         }
     }
 
-    val typeScriptFragment = runIf(configuration.generateDts) {
-        val exportModel = ExportModelGenerator(context).generateExport(allModules)
+    val exportModel = runIf(context.isWasmJsTarget) {
+        ExportModelGenerator(context).generateExport(allModules)
+    }
+
+    val typeScriptFragment = runIf(configuration.generateDts && exportModel != null) {
         val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
-        val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
+        val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel!!.declarations)
         TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
     }
+
+    val defaultExportNames = exportModel?.declarations
+        ?.filter { ExportedAttribute.DefaultExport in it.attributes }
+        ?.filterIsInstance<ExportedFunction>()
+        ?.mapNotNull { (it.name as? ExportedMemberName.Identifier)?.value }
+        ?.toSet() ?: emptySet()
 
     lowerPreservingTags(
         allModules,
@@ -162,7 +175,8 @@ fun compileToLoweredIr(
         loweredIr = allModules,
         backendContext = context,
         typeScriptFragment = typeScriptFragment,
-        moduleDependencies = dependencyTracker::getAllDependencies
+        moduleDependencies = dependencyTracker::getAllDependencies,
+        defaultExportNames = defaultExportNames,
     )
 }
 
@@ -211,6 +225,7 @@ class WasmIrModuleConfiguration(
     val baseFileName: String,
     val typeScriptFragment: TypeScriptFragment?,
     val multimoduleOptions: MultimoduleCompileOptions?,
+    val defaultExportNames: Set<String> = emptySet(),
 )
 
 fun linkWasmIr(moduleConfiguration: WasmIrModuleConfiguration): WasmModule {
@@ -361,7 +376,8 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
             isStdlibModule = isStdlibModule,
             wholeProgramMode = wholeProgramMode,
             wasmStartFunctionDefined = wasmStartFunctionDefined,
-            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined
+            wasmInitializeFunctionDefined = wasmInitializeFunctionDefined,
+            defaultExportNames = moduleConfiguration.defaultExportNames,
         )
 
     } else {
@@ -655,7 +671,8 @@ fun generateWebAssemblyJsInstanceInitializer(
     isStdlibModule: Boolean,
     wholeProgramMode: Boolean,
     wasmStartFunctionDefined: Boolean,
-    wasmInitializeFunctionDefined: Boolean
+    wasmInitializeFunctionDefined: Boolean,
+    defaultExportNames: Set<String> = emptySet(),
 ): String {
 
     val commonStdlibExports = if (isStdlibModule) ", getCachedJsObject, __TAG as wasmTag" else ""
@@ -731,7 +748,7 @@ const exports = wasmInstance.exports
 setWasmExports(exports);
 $mainFunctionCall
 
-${generateExports(exports, wholeProgramMode, isStdlibModule)}
+${generateExports(exports, wholeProgramMode, isStdlibModule, defaultExportNames)}
 """
 }
 
@@ -784,12 +801,15 @@ fun generateExports(
     exports: List<WasmExport<*>>,
     wholeProgramMode: Boolean,
     isStdlibModule: Boolean,
+    defaultExportNames: Set<String> = emptySet(),
 ): String {
     // TODO: necessary to move export check onto common place
     val exportNames = exports
         .filterNot { it.isWasmInternalUsageExport }
 
-    val [validIdentifiers, notValidIdentifiers] = exportNames.partition { it.name.isValidES5Identifier() }
+    val (defaultExports, namedExports) = exportNames.partition { it.name in defaultExportNames }
+
+    val [validIdentifiers, notValidIdentifiers] = namedExports.partition { it.name.isValidES5Identifier() }
     val regularlyExportedVariables = validIdentifiers
         .ifNotEmpty {
             """
@@ -818,6 +838,14 @@ fun generateExports(
         }
         .orEmpty()
 
+    val defaultExportStatements = defaultExports
+        .joinToString("\n") { export ->
+            if (export.name.isValidES5Identifier())
+                "export default exports.${export.name};"
+            else
+                "export default exports['${export.name.replace("'", "\\'")}'];"
+        }
+
     val commonStdlibExports =
         if (isStdlibModule)
             """
@@ -840,6 +868,7 @@ ${if (!wholeProgramMode) exportsStructureSingleModule else ""}
 
 $regularlyExportedVariables
 $escapedExportedVariables
+$defaultExportStatements
 """
 }
 
