@@ -8,7 +8,6 @@ package kotlinx.metadata.klib.impl
 import kotlin.metadata.internal.WriteContext
 import kotlinx.metadata.klib.KlibHeader
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.serialization.StringTableImpl
 
 private fun wrapModuleName(moduleName: String): String =
     moduleName
@@ -17,10 +16,7 @@ private fun wrapModuleName(moduleName: String): String =
 
 internal fun KlibHeader.writeHeader(context: WriteContext): KlibMetadataProtoBuf.Header.Builder =
     KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
-        val [strings, qualifiedNames] = (context.strings as StringTableImpl).buildProto()
         proto.moduleName = wrapModuleName(moduleName)
-        proto.qualifiedNames = qualifiedNames
-        proto.strings = strings
         proto.addAllPackageFragmentName(packageFragmentName)
         proto.addAllEmptyPackage(emptyPackage)
     }

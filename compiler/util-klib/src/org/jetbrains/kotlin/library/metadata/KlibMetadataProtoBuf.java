@@ -71,24 +71,6 @@ public final class KlibMetadataProtoBuf {
     int getFlags();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    boolean hasStrings();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStrings();
-
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    boolean hasQualifiedNames();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNames();
-
-    /**
      * <code>repeated string package_fragment_name = 7;</code>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -187,46 +169,20 @@ public final class KlibMetadataProtoBuf {
               flags_ = input.readInt32();
               break;
             }
-            case 34: {
-              org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000004) == 0x00000004)) {
-                subBuilder = strings_.toBuilder();
-              }
-              strings_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(strings_);
-                strings_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000004;
-              break;
-            }
-            case 42: {
-              org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                subBuilder = qualifiedNames_.toBuilder();
-              }
-              qualifiedNames_ = input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(qualifiedNames_);
-                qualifiedNames_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000008;
-              break;
-            }
             case 58: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
                 packageFragmentName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000010;
+                mutable_bitField0_ |= 0x00000004;
               }
               packageFragmentName_.add(bs);
               break;
             }
             case 66: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 emptyPackage_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000008;
               }
               emptyPackage_.add(bs);
               break;
@@ -239,10 +195,10 @@ public final class KlibMetadataProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = packageFragmentName_.getUnmodifiableView();
         }
-        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
         }
         try {
@@ -336,36 +292,6 @@ public final class KlibMetadataProtoBuf {
       return flags_;
     }
 
-    public static final int STRINGS_FIELD_NUMBER = 4;
-    private org.jetbrains.kotlin.metadata.ProtoBuf.StringTable strings_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    public boolean hasStrings() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    public org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStrings() {
-      return strings_;
-    }
-
-    public static final int QUALIFIED_NAMES_FIELD_NUMBER = 5;
-    private org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable qualifiedNames_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    public boolean hasQualifiedNames() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNames() {
-      return qualifiedNames_;
-    }
-
     public static final int PACKAGE_FRAGMENT_NAME_FIELD_NUMBER = 7;
     private org.jetbrains.kotlin.protobuf.LazyStringList packageFragmentName_;
     /**
@@ -427,8 +353,6 @@ public final class KlibMetadataProtoBuf {
     private void initFields() {
       moduleName_ = "";
       flags_ = 0;
-      strings_ = org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance();
-      qualifiedNames_ = org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance();
       packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
@@ -442,12 +366,6 @@ public final class KlibMetadataProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (hasQualifiedNames()) {
-        if (!getQualifiedNames().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -460,12 +378,6 @@ public final class KlibMetadataProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, flags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeMessage(4, strings_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(5, qualifiedNames_);
       }
       for (int i = 0; i < packageFragmentName_.size(); i++) {
         output.writeBytes(7, packageFragmentName_.getByteString(i));
@@ -489,14 +401,6 @@ public final class KlibMetadataProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, flags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(4, strings_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(5, qualifiedNames_);
       }
       {
         int dataSize = 0;
@@ -614,14 +518,10 @@ public final class KlibMetadataProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         flags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        strings_ = org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00000004);
-        qualifiedNames_ = org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00000008);
         packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000004);
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -653,22 +553,14 @@ public final class KlibMetadataProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.flags_ = flags_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.strings_ = strings_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.qualifiedNames_ = qualifiedNames_;
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = packageFragmentName_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.packageFragmentName_ = packageFragmentName_;
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.emptyPackage_ = emptyPackage_;
         result.bitField0_ = to_bitField0_;
@@ -685,16 +577,10 @@ public final class KlibMetadataProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasStrings()) {
-          mergeStrings(other.getStrings());
-        }
-        if (other.hasQualifiedNames()) {
-          mergeQualifiedNames(other.getQualifiedNames());
-        }
         if (!other.packageFragmentName_.isEmpty()) {
           if (packageFragmentName_.isEmpty()) {
             packageFragmentName_ = other.packageFragmentName_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000004);
           } else {
             ensurePackageFragmentNameIsMutable();
             packageFragmentName_.addAll(other.packageFragmentName_);
@@ -704,7 +590,7 @@ public final class KlibMetadataProtoBuf {
         if (!other.emptyPackage_.isEmpty()) {
           if (emptyPackage_.isEmpty()) {
             emptyPackage_ = other.emptyPackage_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000008);
           } else {
             ensureEmptyPackageIsMutable();
             emptyPackage_.addAll(other.emptyPackage_);
@@ -720,12 +606,6 @@ public final class KlibMetadataProtoBuf {
         if (!hasModuleName()) {
           
           return false;
-        }
-        if (hasQualifiedNames()) {
-          if (!getQualifiedNames().isInitialized()) {
-            
-            return false;
-          }
         }
         return true;
       }
@@ -873,131 +753,11 @@ public final class KlibMetadataProtoBuf {
         return this;
       }
 
-      private org.jetbrains.kotlin.metadata.ProtoBuf.StringTable strings_ = org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance();
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public boolean hasStrings() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.StringTable getStrings() {
-        return strings_;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder setStrings(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        strings_ = value;
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder setStrings(
-          org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.Builder builderForValue) {
-        strings_ = builderForValue.build();
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder mergeStrings(org.jetbrains.kotlin.metadata.ProtoBuf.StringTable value) {
-        if (((bitField0_ & 0x00000004) == 0x00000004) &&
-            strings_ != org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance()) {
-          strings_ =
-            org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.newBuilder(strings_).mergeFrom(value).buildPartial();
-        } else {
-          strings_ = value;
-        }
-
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder clearStrings() {
-        strings_ = org.jetbrains.kotlin.metadata.ProtoBuf.StringTable.getDefaultInstance();
-
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-
-      private org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable qualifiedNames_ = org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance();
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public boolean hasQualifiedNames() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable getQualifiedNames() {
-        return qualifiedNames_;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder setQualifiedNames(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        qualifiedNames_ = value;
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder setQualifiedNames(
-          org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.Builder builderForValue) {
-        qualifiedNames_ = builderForValue.build();
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder mergeQualifiedNames(org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable value) {
-        if (((bitField0_ & 0x00000008) == 0x00000008) &&
-            qualifiedNames_ != org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance()) {
-          qualifiedNames_ =
-            org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.newBuilder(qualifiedNames_).mergeFrom(value).buildPartial();
-        } else {
-          qualifiedNames_ = value;
-        }
-
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder clearQualifiedNames() {
-        qualifiedNames_ = org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.getDefaultInstance();
-
-        bitField0_ = (bitField0_ & ~0x00000008);
-        return this;
-      }
-
       private org.jetbrains.kotlin.protobuf.LazyStringList packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensurePackageFragmentNameIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(packageFragmentName_);
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000004;
          }
       }
       /**
@@ -1068,7 +828,7 @@ public final class KlibMetadataProtoBuf {
        */
       public Builder clearPackageFragmentName() {
         packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000004);
         
         return this;
       }
@@ -1088,9 +848,9 @@ public final class KlibMetadataProtoBuf {
 
       private org.jetbrains.kotlin.protobuf.LazyStringList emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureEmptyPackageIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(emptyPackage_);
-          bitField0_ |= 0x00000020;
+          bitField0_ |= 0x00000008;
          }
       }
       /**
@@ -1161,7 +921,7 @@ public final class KlibMetadataProtoBuf {
        */
       public Builder clearEmptyPackage() {
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000008);
         
         return this;
       }

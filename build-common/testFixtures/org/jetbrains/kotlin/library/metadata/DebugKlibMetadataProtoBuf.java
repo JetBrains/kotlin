@@ -71,32 +71,6 @@ public final class DebugKlibMetadataProtoBuf {
     int getFlags();
 
     /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    boolean hasStrings();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable getStrings();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder getStringsOrBuilder();
-
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    boolean hasQualifiedNames();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable getQualifiedNames();
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNamesOrBuilder();
-
-    /**
      * <code>repeated string package_fragment_name = 7;</code>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -197,46 +171,20 @@ public final class DebugKlibMetadataProtoBuf {
               flags_ = input.readInt32();
               break;
             }
-            case 34: {
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000004) == 0x00000004)) {
-                subBuilder = strings_.toBuilder();
-              }
-              strings_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(strings_);
-                strings_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000004;
-              break;
-            }
-            case 42: {
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder subBuilder = null;
-              if (((bitField0_ & 0x00000008) == 0x00000008)) {
-                subBuilder = qualifiedNames_.toBuilder();
-              }
-              qualifiedNames_ = input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(qualifiedNames_);
-                qualifiedNames_ = subBuilder.buildPartial();
-              }
-              bitField0_ |= 0x00000008;
-              break;
-            }
             case 58: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
                 packageFragmentName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000010;
+                mutable_bitField0_ |= 0x00000004;
               }
               packageFragmentName_.add(bs);
               break;
             }
             case 66: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 emptyPackage_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000008;
               }
               emptyPackage_.add(bs);
               break;
@@ -249,10 +197,10 @@ public final class DebugKlibMetadataProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = packageFragmentName_.getUnmodifiableView();
         }
-        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
@@ -352,48 +300,6 @@ public final class DebugKlibMetadataProtoBuf {
       return flags_;
     }
 
-    public static final int STRINGS_FIELD_NUMBER = 4;
-    private org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable strings_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    public boolean hasStrings() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    public org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable getStrings() {
-      return strings_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-     */
-    public org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder getStringsOrBuilder() {
-      return strings_;
-    }
-
-    public static final int QUALIFIED_NAMES_FIELD_NUMBER = 5;
-    private org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable qualifiedNames_;
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    public boolean hasQualifiedNames() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    public org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable getQualifiedNames() {
-      return qualifiedNames_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-     */
-    public org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNamesOrBuilder() {
-      return qualifiedNames_;
-    }
-
     public static final int PACKAGE_FRAGMENT_NAME_FIELD_NUMBER = 7;
     private org.jetbrains.kotlin.protobuf.LazyStringList packageFragmentName_;
     /**
@@ -455,8 +361,6 @@ public final class DebugKlibMetadataProtoBuf {
     private void initFields() {
       moduleName_ = "";
       flags_ = 0;
-      strings_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.getDefaultInstance();
-      qualifiedNames_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
       packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
@@ -470,12 +374,6 @@ public final class DebugKlibMetadataProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      if (hasQualifiedNames()) {
-        if (!getQualifiedNames().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -488,12 +386,6 @@ public final class DebugKlibMetadataProtoBuf {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, flags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeMessage(4, strings_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeMessage(5, qualifiedNames_);
       }
       for (int i = 0; i < packageFragmentName_.size(); i++) {
         output.writeBytes(7, packageFragmentName_.getByteString(i));
@@ -517,14 +409,6 @@ public final class DebugKlibMetadataProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(2, flags_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(4, strings_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(5, qualifiedNames_);
       }
       {
         int dataSize = 0;
@@ -653,8 +537,6 @@ public final class DebugKlibMetadataProtoBuf {
       }
       private void maybeForceBuilderInitialization() {
         if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-          getStringsFieldBuilder();
-          getQualifiedNamesFieldBuilder();
         }
       }
       private static Builder create() {
@@ -667,22 +549,10 @@ public final class DebugKlibMetadataProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         flags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
-        if (stringsBuilder_ == null) {
-          strings_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.getDefaultInstance();
-        } else {
-          stringsBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000004);
-        if (qualifiedNamesBuilder_ == null) {
-          qualifiedNames_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
-        } else {
-          qualifiedNamesBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000008);
         packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000004);
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -719,30 +589,14 @@ public final class DebugKlibMetadataProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.flags_ = flags_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        if (stringsBuilder_ == null) {
-          result.strings_ = strings_;
-        } else {
-          result.strings_ = stringsBuilder_.build();
-        }
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        if (qualifiedNamesBuilder_ == null) {
-          result.qualifiedNames_ = qualifiedNames_;
-        } else {
-          result.qualifiedNames_ = qualifiedNamesBuilder_.build();
-        }
-        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = packageFragmentName_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000010);
+          bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.packageFragmentName_ = packageFragmentName_;
-        if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000020);
+          bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.emptyPackage_ = emptyPackage_;
         result.bitField0_ = to_bitField0_;
@@ -769,16 +623,10 @@ public final class DebugKlibMetadataProtoBuf {
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
-        if (other.hasStrings()) {
-          mergeStrings(other.getStrings());
-        }
-        if (other.hasQualifiedNames()) {
-          mergeQualifiedNames(other.getQualifiedNames());
-        }
         if (!other.packageFragmentName_.isEmpty()) {
           if (packageFragmentName_.isEmpty()) {
             packageFragmentName_ = other.packageFragmentName_;
-            bitField0_ = (bitField0_ & ~0x00000010);
+            bitField0_ = (bitField0_ & ~0x00000004);
           } else {
             ensurePackageFragmentNameIsMutable();
             packageFragmentName_.addAll(other.packageFragmentName_);
@@ -788,7 +636,7 @@ public final class DebugKlibMetadataProtoBuf {
         if (!other.emptyPackage_.isEmpty()) {
           if (emptyPackage_.isEmpty()) {
             emptyPackage_ = other.emptyPackage_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000008);
           } else {
             ensureEmptyPackageIsMutable();
             emptyPackage_.addAll(other.emptyPackage_);
@@ -803,12 +651,6 @@ public final class DebugKlibMetadataProtoBuf {
         if (!hasModuleName()) {
           
           return false;
-        }
-        if (hasQualifiedNames()) {
-          if (!getQualifiedNames().isInitialized()) {
-            
-            return false;
-          }
         }
         return true;
       }
@@ -956,243 +798,11 @@ public final class DebugKlibMetadataProtoBuf {
         return this;
       }
 
-      private org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable strings_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.getDefaultInstance();
-      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder> stringsBuilder_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public boolean hasStrings() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable getStrings() {
-        if (stringsBuilder_ == null) {
-          return strings_;
-        } else {
-          return stringsBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder setStrings(org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable value) {
-        if (stringsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          strings_ = value;
-          onChanged();
-        } else {
-          stringsBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder setStrings(
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder builderForValue) {
-        if (stringsBuilder_ == null) {
-          strings_ = builderForValue.build();
-          onChanged();
-        } else {
-          stringsBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder mergeStrings(org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable value) {
-        if (stringsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004) &&
-              strings_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.getDefaultInstance()) {
-            strings_ =
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.newBuilder(strings_).mergeFrom(value).buildPartial();
-          } else {
-            strings_ = value;
-          }
-          onChanged();
-        } else {
-          stringsBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000004;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public Builder clearStrings() {
-        if (stringsBuilder_ == null) {
-          strings_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.getDefaultInstance();
-          onChanged();
-        } else {
-          stringsBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder getStringsBuilder() {
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return getStringsFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder getStringsOrBuilder() {
-        if (stringsBuilder_ != null) {
-          return stringsBuilder_.getMessageOrBuilder();
-        } else {
-          return strings_;
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.StringTable strings = 4;</code>
-       */
-      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder> 
-          getStringsFieldBuilder() {
-        if (stringsBuilder_ == null) {
-          stringsBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.StringTableOrBuilder>(
-                  getStrings(),
-                  getParentForChildren(),
-                  isClean());
-          strings_ = null;
-        }
-        return stringsBuilder_;
-      }
-
-      private org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable qualifiedNames_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
-      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder> qualifiedNamesBuilder_;
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public boolean hasQualifiedNames() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable getQualifiedNames() {
-        if (qualifiedNamesBuilder_ == null) {
-          return qualifiedNames_;
-        } else {
-          return qualifiedNamesBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder setQualifiedNames(org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable value) {
-        if (qualifiedNamesBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          qualifiedNames_ = value;
-          onChanged();
-        } else {
-          qualifiedNamesBuilder_.setMessage(value);
-        }
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder setQualifiedNames(
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder builderForValue) {
-        if (qualifiedNamesBuilder_ == null) {
-          qualifiedNames_ = builderForValue.build();
-          onChanged();
-        } else {
-          qualifiedNamesBuilder_.setMessage(builderForValue.build());
-        }
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder mergeQualifiedNames(org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable value) {
-        if (qualifiedNamesBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008) &&
-              qualifiedNames_ != org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.getDefaultInstance()) {
-            qualifiedNames_ =
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.newBuilder(qualifiedNames_).mergeFrom(value).buildPartial();
-          } else {
-            qualifiedNames_ = value;
-          }
-          onChanged();
-        } else {
-          qualifiedNamesBuilder_.mergeFrom(value);
-        }
-        bitField0_ |= 0x00000008;
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public Builder clearQualifiedNames() {
-        if (qualifiedNamesBuilder_ == null) {
-          qualifiedNames_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.getDefaultInstance();
-          onChanged();
-        } else {
-          qualifiedNamesBuilder_.clear();
-        }
-        bitField0_ = (bitField0_ & ~0x00000008);
-        return this;
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder getQualifiedNamesBuilder() {
-        bitField0_ |= 0x00000008;
-        onChanged();
-        return getQualifiedNamesFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      public org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder getQualifiedNamesOrBuilder() {
-        if (qualifiedNamesBuilder_ != null) {
-          return qualifiedNamesBuilder_.getMessageOrBuilder();
-        } else {
-          return qualifiedNames_;
-        }
-      }
-      /**
-       * <code>optional .org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;</code>
-       */
-      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-          org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder> 
-          getQualifiedNamesFieldBuilder() {
-        if (qualifiedNamesBuilder_ == null) {
-          qualifiedNamesBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
-              org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTable.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.QualifiedNameTableOrBuilder>(
-                  getQualifiedNames(),
-                  getParentForChildren(),
-                  isClean());
-          qualifiedNames_ = null;
-        }
-        return qualifiedNamesBuilder_;
-      }
-
       private org.jetbrains.kotlin.protobuf.LazyStringList packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensurePackageFragmentNameIsMutable() {
-        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
           packageFragmentName_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(packageFragmentName_);
-          bitField0_ |= 0x00000010;
+          bitField0_ |= 0x00000004;
          }
       }
       /**
@@ -1263,7 +873,7 @@ public final class DebugKlibMetadataProtoBuf {
        */
       public Builder clearPackageFragmentName() {
         packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -1283,9 +893,9 @@ public final class DebugKlibMetadataProtoBuf {
 
       private org.jetbrains.kotlin.protobuf.LazyStringList emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       private void ensureEmptyPackageIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
           emptyPackage_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(emptyPackage_);
-          bitField0_ |= 0x00000020;
+          bitField0_ |= 0x00000008;
          }
       }
       /**
@@ -1356,7 +966,7 @@ public final class DebugKlibMetadataProtoBuf {
        */
       public Builder clearEmptyPackage() {
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -1704,80 +1314,77 @@ public final class DebugKlibMetadataProtoBuf {
       "toBuf.debug.proto\022%org.jetbrains.kotlin." +
       "library.metadata\032&core/metadata/src/meta" +
       "data.debug.proto\032)core/metadata/src/ext_" +
-      "options.debug.proto\"\353\001\n\006Header\022\023\n\013module" +
-      "_name\030\001 \002(\t\022\r\n\005flags\030\002 \001(\005\022;\n\007strings\030\004 " +
-      "\001(\0132*.org.jetbrains.kotlin.metadata.Stri" +
-      "ngTable\022J\n\017qualified_names\030\005 \001(\01321.org.j" +
-      "etbrains.kotlin.metadata.QualifiedNameTa" +
-      "ble\022\035\n\025package_fragment_name\030\007 \003(\t\022\025\n\rem",
-      "pty_package\030\010 \003(\t:@\n\017package_fq_name\022&.o" +
-      "rg.jetbrains.kotlin.metadata.Package\030\253\001 " +
-      "\001(\005:j\n\020class_annotation\022$.org.jetbrains." +
-      "kotlin.metadata.Class\030\252\001 \003(\0132).org.jetbr" +
-      "ains.kotlin.metadata.Annotation:?\n\nclass" +
-      "_file\022$.org.jetbrains.kotlin.metadata.Cl" +
-      "ass\030\257\001 \001(\005B\004\200\265\030\001:?\n\nclass_kdoc\022$.org.jet" +
-      "brains.kotlin.metadata.Class\030\260\001 \001(\tB\004\200\265\030" +
-      "\001:v\n\026constructor_annotation\022*.org.jetbra" +
-      "ins.kotlin.metadata.Constructor\030\252\001 \003(\0132)",
-      ".org.jetbrains.kotlin.metadata.Annotatio" +
-      "n:K\n\020constructor_kdoc\022*.org.jetbrains.ko" +
-      "tlin.metadata.Constructor\030\255\001 \001(\tB\004\200\265\030\001:p" +
-      "\n\023function_annotation\022\'.org.jetbrains.ko" +
-      "tlin.metadata.Function\030\252\001 \003(\0132).org.jetb" +
-      "rains.kotlin.metadata.Annotation:\203\001\n&fun" +
-      "ction_extension_receiver_annotation\022\'.or" +
-      "g.jetbrains.kotlin.metadata.Function\030\253\001 " +
-      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
-      "tation:E\n\rfunction_file\022\'.org.jetbrains.",
-      "kotlin.metadata.Function\030\254\001 \001(\005B\004\200\265\030\001:E\n" +
-      "\rfunction_kdoc\022\'.org.jetbrains.kotlin.me" +
-      "tadata.Function\030\256\001 \001(\tB\004\200\265\030\001:p\n\023property" +
-      "_annotation\022\'.org.jetbrains.kotlin.metad" +
-      "ata.Property\030\252\001 \003(\0132).org.jetbrains.kotl" +
-      "in.metadata.Annotation:w\n\032property_gette" +
-      "r_annotation\022\'.org.jetbrains.kotlin.meta" +
-      "data.Property\030\261\001 \003(\0132).org.jetbrains.kot" +
-      "lin.metadata.Annotation:w\n\032property_sett" +
-      "er_annotation\022\'.org.jetbrains.kotlin.met",
-      "adata.Property\030\262\001 \003(\0132).org.jetbrains.ko" +
-      "tlin.metadata.Annotation:~\n!property_bac" +
-      "king_field_annotation\022\'.org.jetbrains.ko" +
-      "tlin.metadata.Property\030\265\001 \003(\0132).org.jetb" +
-      "rains.kotlin.metadata.Annotation:\200\001\n#pro" +
-      "perty_delegated_field_annotation\022\'.org.j" +
-      "etbrains.kotlin.metadata.Property\030\266\001 \003(\013" +
-      "2).org.jetbrains.kotlin.metadata.Annotat" +
-      "ion:\203\001\n&property_extension_receiver_anno" +
-      "tation\022\'.org.jetbrains.kotlin.metadata.P",
-      "roperty\030\267\001 \003(\0132).org.jetbrains.kotlin.me" +
-      "tadata.Annotation:~\n\022compile_time_value\022" +
-      "\'.org.jetbrains.kotlin.metadata.Property" +
-      "\030\255\001 \001(\01328.org.jetbrains.kotlin.metadata." +
-      "Annotation.Argument.Value:E\n\rproperty_fi" +
-      "le\022\'.org.jetbrains.kotlin.metadata.Prope" +
-      "rty\030\260\001 \001(\005B\004\200\265\030\001:E\n\rproperty_kdoc\022\'.org." +
-      "jetbrains.kotlin.metadata.Property\030\264\001 \001(" +
-      "\tB\004\200\265\030\001:s\n\025enum_entry_annotation\022(.org.j" +
-      "etbrains.kotlin.metadata.EnumEntry\030\252\001 \003(",
+      "options.debug.proto\"b\n\006Header\022\023\n\013module_" +
+      "name\030\001 \002(\t\022\r\n\005flags\030\002 \001(\005\022\035\n\025package_fra" +
+      "gment_name\030\007 \003(\t\022\025\n\rempty_package\030\010 \003(\t:" +
+      "@\n\017package_fq_name\022&.org.jetbrains.kotli" +
+      "n.metadata.Package\030\253\001 \001(\005:j\n\020class_annot" +
+      "ation\022$.org.jetbrains.kotlin.metadata.Cl",
+      "ass\030\252\001 \003(\0132).org.jetbrains.kotlin.metada" +
+      "ta.Annotation:?\n\nclass_file\022$.org.jetbra" +
+      "ins.kotlin.metadata.Class\030\257\001 \001(\005B\004\200\265\030\001:?" +
+      "\n\nclass_kdoc\022$.org.jetbrains.kotlin.meta" +
+      "data.Class\030\260\001 \001(\tB\004\200\265\030\001:v\n\026constructor_a" +
+      "nnotation\022*.org.jetbrains.kotlin.metadat" +
+      "a.Constructor\030\252\001 \003(\0132).org.jetbrains.kot" +
+      "lin.metadata.Annotation:K\n\020constructor_k" +
+      "doc\022*.org.jetbrains.kotlin.metadata.Cons" +
+      "tructor\030\255\001 \001(\tB\004\200\265\030\001:p\n\023function_annotat",
+      "ion\022\'.org.jetbrains.kotlin.metadata.Func" +
+      "tion\030\252\001 \003(\0132).org.jetbrains.kotlin.metad" +
+      "ata.Annotation:\203\001\n&function_extension_re" +
+      "ceiver_annotation\022\'.org.jetbrains.kotlin" +
+      ".metadata.Function\030\253\001 \003(\0132).org.jetbrain" +
+      "s.kotlin.metadata.Annotation:E\n\rfunction" +
+      "_file\022\'.org.jetbrains.kotlin.metadata.Fu" +
+      "nction\030\254\001 \001(\005B\004\200\265\030\001:E\n\rfunction_kdoc\022\'.o" +
+      "rg.jetbrains.kotlin.metadata.Function\030\256\001" +
+      " \001(\tB\004\200\265\030\001:p\n\023property_annotation\022\'.org.",
+      "jetbrains.kotlin.metadata.Property\030\252\001 \003(" +
       "\0132).org.jetbrains.kotlin.metadata.Annota" +
-      "tion:E\n\022enum_entry_ordinal\022(.org.jetbrai" +
-      "ns.kotlin.metadata.EnumEntry\030\253\001 \001(\005:w\n\024p" +
-      "arameter_annotation\022-.org.jetbrains.kotl" +
-      "in.metadata.ValueParameter\030\252\001 \003(\0132).org." +
-      "jetbrains.kotlin.metadata.Annotation:h\n\017" +
-      "type_annotation\022#.org.jetbrains.kotlin.m" +
-      "etadata.Type\030\252\001 \003(\0132).org.jetbrains.kotl" +
-      "in.metadata.Annotation:{\n\031type_parameter" +
-      "_annotation\022,.org.jetbrains.kotlin.metad",
-      "ata.TypeParameter\030\252\001 \003(\0132).org.jetbrains" +
-      ".kotlin.metadata.Annotation:A\n\010is_empty\022" +
-      "..org.jetbrains.kotlin.metadata.PackageF" +
-      "ragment\030\254\001 \001(\010:@\n\007fq_name\022..org.jetbrain" +
-      "s.kotlin.metadata.PackageFragment\030\255\001 \001(\t" +
-      ":G\n\nclass_name\022..org.jetbrains.kotlin.me" +
-      "tadata.PackageFragment\030\256\001 \003(\005B\002\020\001B\033B\031Deb" +
-      "ugKlibMetadataProtoBuf"
+      "tion:w\n\032property_getter_annotation\022\'.org" +
+      ".jetbrains.kotlin.metadata.Property\030\261\001 \003" +
+      "(\0132).org.jetbrains.kotlin.metadata.Annot" +
+      "ation:w\n\032property_setter_annotation\022\'.or" +
+      "g.jetbrains.kotlin.metadata.Property\030\262\001 " +
+      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
+      "tation:~\n!property_backing_field_annotat" +
+      "ion\022\'.org.jetbrains.kotlin.metadata.Prop",
+      "erty\030\265\001 \003(\0132).org.jetbrains.kotlin.metad" +
+      "ata.Annotation:\200\001\n#property_delegated_fi" +
+      "eld_annotation\022\'.org.jetbrains.kotlin.me" +
+      "tadata.Property\030\266\001 \003(\0132).org.jetbrains.k" +
+      "otlin.metadata.Annotation:\203\001\n&property_e" +
+      "xtension_receiver_annotation\022\'.org.jetbr" +
+      "ains.kotlin.metadata.Property\030\267\001 \003(\0132).o" +
+      "rg.jetbrains.kotlin.metadata.Annotation:" +
+      "~\n\022compile_time_value\022\'.org.jetbrains.ko" +
+      "tlin.metadata.Property\030\255\001 \001(\01328.org.jetb",
+      "rains.kotlin.metadata.Annotation.Argumen" +
+      "t.Value:E\n\rproperty_file\022\'.org.jetbrains" +
+      ".kotlin.metadata.Property\030\260\001 \001(\005B\004\200\265\030\001:E" +
+      "\n\rproperty_kdoc\022\'.org.jetbrains.kotlin.m" +
+      "etadata.Property\030\264\001 \001(\tB\004\200\265\030\001:s\n\025enum_en" +
+      "try_annotation\022(.org.jetbrains.kotlin.me" +
+      "tadata.EnumEntry\030\252\001 \003(\0132).org.jetbrains." +
+      "kotlin.metadata.Annotation:E\n\022enum_entry" +
+      "_ordinal\022(.org.jetbrains.kotlin.metadata" +
+      ".EnumEntry\030\253\001 \001(\005:w\n\024parameter_annotatio",
+      "n\022-.org.jetbrains.kotlin.metadata.ValueP" +
+      "arameter\030\252\001 \003(\0132).org.jetbrains.kotlin.m" +
+      "etadata.Annotation:h\n\017type_annotation\022#." +
+      "org.jetbrains.kotlin.metadata.Type\030\252\001 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion:{\n\031type_parameter_annotation\022,.org." +
+      "jetbrains.kotlin.metadata.TypeParameter\030" +
+      "\252\001 \003(\0132).org.jetbrains.kotlin.metadata.A" +
+      "nnotation:A\n\010is_empty\022..org.jetbrains.ko" +
+      "tlin.metadata.PackageFragment\030\254\001 \001(\010:@\n\007",
+      "fq_name\022..org.jetbrains.kotlin.metadata." +
+      "PackageFragment\030\255\001 \001(\t:G\n\nclass_name\022..o" +
+      "rg.jetbrains.kotlin.metadata.PackageFrag" +
+      "ment\030\256\001 \003(\005B\002\020\001B\033B\031DebugKlibMetadataProt" +
+      "oBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1798,7 +1405,7 @@ public final class DebugKlibMetadataProtoBuf {
     internal_static_org_jetbrains_kotlin_library_metadata_Header_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_library_metadata_Header_descriptor,
-        new java.lang.String[] { "ModuleName", "Flags", "Strings", "QualifiedNames", "PackageFragmentName", "EmptyPackage", });
+        new java.lang.String[] { "ModuleName", "Flags", "PackageFragmentName", "EmptyPackage", });
     packageFqName.internalInit(descriptor.getExtensions().get(0));
     classAnnotation.internalInit(descriptor.getExtensions().get(1));
     classFile.internalInit(descriptor.getExtensions().get(2));
