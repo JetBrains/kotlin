@@ -49,21 +49,113 @@ class KotlinNativeBundleTarExtractionSecurityTest : WithTemporaryFolder {
         assertFalse(escapedFile.exists(), "Entry escaped targetDir: $escapedFile")
     }
 
-    // CWE-59: symlink target points outside targetDir.
+    // KT-87190: symlinks pointing outside targetBase (e.g. xcode-addon bin/altool)
+    // must extract without error — creating one doesn't write data outside.
     @Test
-    fun `escaping symlink is rejected`() {
+    fun `escaping symlink is allowed`() {
         val targetDir = temporaryFolder.resolve("target").createDirectories()
-        temporaryFolder.resolve("outside").createDirectories()
-        val symlink = targetDir.resolve("kotlin-native/link")
+        val outside = temporaryFolder.resolve("outside").createDirectories()
         val archive = createTarGz {
-            directory("kotlin-native/")
-            symlink("kotlin-native/link", "../../outside")
+            directory("bin/")
+            symlink("bin/altool", "../../../outside/altoolShim")
+        }
+
+        archive.toPath().unzipTarGz(targetDir)
+
+        val symlink = targetDir.resolve("bin/altool")
+        assertTrue(
+            Files.exists(symlink, LinkOption.NOFOLLOW_LINKS),
+            "Symlink should have been created inside targetDir: $symlink"
+        )
+        assertFalse(
+            outside.resolve("altoolShim").exists(),
+            "Nothing should have been written outside targetDir"
+        )
+    }
+
+    // CWE-59: a regular-file entry at the same path as a previously extracted
+    // escaping symlink must be rejected — FileOutputStream follows the link.
+    @Test
+    fun `file entry overwriting leaf escaping symlink is rejected`() {
+        val targetDir = temporaryFolder.resolve("target").createDirectories()
+        val outside = temporaryFolder.resolve("outside").createDirectories()
+        val victim = outside.resolve("victim.txt")
+        victim.writeText("original")
+        val archive = createTarGz {
+            directory("bin/")
+            symlink("bin/evil", "../outside/victim.txt") // escaping but allowed
+            file("bin/evil", "PWNED")                   // same path — must be rejected
         }
 
         assertThrows<TarExtractionSecurityException> {
             archive.toPath().unzipTarGz(targetDir)
         }
-        assertFalse(Files.exists(symlink, LinkOption.NOFOLLOW_LINKS), "Escaping symlink was created: $symlink")
+        assertEquals("original", victim.toFile().readText(), "victim.txt must not be overwritten")
+    }
+
+    // CWE-59: file entry whose path goes through an escaping directory symlink.
+    @Test
+    fun `file written through escaping symlink is rejected`() {
+        val targetDir = temporaryFolder.resolve("target").createDirectories()
+        val outside = temporaryFolder.resolve("outside").createDirectories()
+        val archive = createTarGz {
+            directory("bin/")
+            symlink("bin/link", "../../outside")
+            file("bin/link/payload.txt", "evil")
+        }
+
+        assertThrows<TarExtractionSecurityException> {
+            archive.toPath().unzipTarGz(targetDir)
+        }
+        assertFalse(
+            outside.resolve("payload.txt").exists(),
+            "File must not have been written outside targetDir via symlink"
+        )
+    }
+
+    // CWE-59: a symlink entry whose path goes through an escaping directory symlink.
+    // Creating the symlink would land it outside targetDir via the escaping ancestor.
+    @Test
+    fun `symlink created through escaping symlink is rejected`() {
+        val targetDir = temporaryFolder.resolve("target").createDirectories()
+        val outside = temporaryFolder.resolve("outside").createDirectories()
+        val archive = createTarGz {
+            directory("bin/")
+            symlink("bin/link", "../../outside")
+            symlink("bin/link/evil", "/anything")
+        }
+
+        assertThrows<TarExtractionSecurityException> {
+            archive.toPath().unzipTarGz(targetDir)
+        }
+        assertFalse(
+            outside.resolve("evil").exists(),
+            "Symlink must not have been created outside targetDir via symlink"
+        )
+    }
+
+    // CWE-59: hardlink whose location goes through an escaping symlink.
+    // The hardlink target is inside targetBase and passes validateHardlinkTarget,
+    // but the link itself would land outside.
+    @Test
+    fun `hardlink written through escaping symlink is rejected`() {
+        val targetDir = temporaryFolder.resolve("target").createDirectories()
+        val outside = temporaryFolder.resolve("outside").createDirectories()
+        val source = targetDir.resolve("source.txt")
+        source.toFile().writeText("data")
+        val archive = createTarGz {
+            directory("bin/")
+            symlink("bin/link", "../../outside")
+            hardlink("bin/link/payload.txt", "source.txt")
+        }
+
+        assertThrows<TarExtractionSecurityException> {
+            archive.toPath().unzipTarGz(targetDir)
+        }
+        assertFalse(
+            outside.resolve("payload.txt").exists(),
+            "Hardlink must not have been created outside targetDir via symlink"
+        )
     }
 
     // CWE-59: hardlink target resolves outside targetDir.

@@ -11,6 +11,7 @@ import java.io.BufferedInputStream
 import java.io.IOException
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
@@ -20,6 +21,10 @@ import kotlin.io.use
 
 internal fun Path.unzipTarGz(destinationDirectory: Path) {
     val targetBase = destinationDirectory.normalize().toAbsolutePath()
+    Files.createDirectories(targetBase)
+    val targetBaseReal = targetBase.toRealPath()
+    val verifiedAncestors = HashSet<Path>()
+
     GZIPInputStream(BufferedInputStream(inputStream())).use { gzipInputStream ->
         val hardLinks = HashMap<Path, Path>()
 
@@ -28,19 +33,22 @@ internal fun Path.unzipTarGz(destinationDirectory: Path) {
                 tarInputStream.nextEntry
             }.forEach { entry: TarArchiveEntry ->
                 val outputPath = validateOutputPath(targetBase, entry.name)
-                val outputFile = outputPath.toFile()
                 if (entry.isDirectory) {
-                    outputFile.mkdirs()
+                    requireRealPathInsideTarget(targetBase, targetBaseReal, outputPath, verifiedAncestors)
+                    Files.createDirectories(outputPath)
                 } else {
                     if (entry.isSymbolicLink) {
-                        validateSymlinkTarget(targetBase, outputPath, entry.linkName)
-                        outputFile.parentFile?.mkdirs()
+                        // The link may point outside targetBase (e.g. xcode-addon), but it must
+                        // be created inside it, not through an escaping ancestor symlink.
+                        requireRealPathInsideTarget(targetBase, targetBaseReal, outputPath, verifiedAncestors)
+                        Files.createDirectories(outputPath.parent)
                         Files.createSymbolicLink(outputPath, Paths.get(entry.linkName))
                     } else if (entry.isLink) {
                         hardLinks[outputPath] = validateHardlinkTarget(targetBase, entry.linkName)
                     } else {
-                        outputFile.parentFile?.mkdirs()
-                        outputFile.outputStream().use {
+                        requireRealPathInsideTarget(targetBase, targetBaseReal, outputPath, verifiedAncestors)
+                        Files.createDirectories(outputPath.parent)
+                        Files.newOutputStream(outputPath).use {
                             tarInputStream.copyTo(it)
                         }
                         if (supportsPosixFilePermissions) {
@@ -50,8 +58,10 @@ internal fun Path.unzipTarGz(destinationDirectory: Path) {
                 }
             }
         }
-        hardLinks.forEach {
-            Files.createLink(it.key, it.value)
+        hardLinks.forEach { (linkPath, targetPath) ->
+            requireRealPathInsideTarget(targetBase, targetBaseReal, linkPath, verifiedAncestors)
+            requireRealPathInsideTarget(targetBase, targetBaseReal, targetPath, verifiedAncestors)
+            Files.createLink(linkPath, targetPath)
         }
     }
 }
@@ -68,11 +78,43 @@ private fun validateOutputPath(targetBase: Path, entryName: String): Path {
     return outputPath
 }
 
-private fun validateSymlinkTarget(targetBase: Path, outputPath: Path, linkName: String) {
-    val targetPath = requireNotNull(outputPath.parent) {
-        "Symlink '${outputPath.fileName}' has no parent"
-    }.resolve(linkName).normalize()
-    requireInsideTarget(targetBase, targetPath, "Symlink '${outputPath.fileName}' -> '$linkName'")
+/**
+ * Rejects CWE-59 write-through before writing to [outputPath], when:
+ * - [outputPath] is itself a symlink, so the write would follow it; or
+ * - an ancestor is an escaping symlink (e.g. `bin/link -> ../../outside`), so the
+ *   deepest existing ancestor's real path lands outside [realTargetBase].
+ *
+ * Also used for symlink entries: the link may point outside, but it must be created
+ * inside [realTargetBase].
+ */
+private fun requireRealPathInsideTarget(
+    targetBase: Path,
+    realTargetBase: Path,
+    outputPath: Path,
+    verifiedAncestors: MutableSet<Path>
+) {
+    // A write to an existing symlink would follow it.
+    if (Files.isSymbolicLink(outputPath)) {
+        throw TarExtractionSecurityException(
+            "Entry '${targetBase.relativize(outputPath)}' would overwrite an existing symlink"
+        )
+    }
+
+    // Check the real path of the deepest existing ancestor.
+    var ancestor: Path? = outputPath.parent
+    while (ancestor != null && !Files.exists(ancestor, LinkOption.NOFOLLOW_LINKS)) {
+        ancestor = ancestor.parent
+    }
+    if (ancestor == null) return
+    if (ancestor in verifiedAncestors) return
+
+    val realAncestor = ancestor.toRealPath()
+    if (!realAncestor.startsWith(realTargetBase)) {
+        throw TarExtractionSecurityException(
+            "Entry '${targetBase.relativize(outputPath)}' would be written outside target directory via symlink"
+        )
+    }
+    verifiedAncestors.add(ancestor)
 }
 
 // TAR hardlink targets are archive-root-relative, not link-location-relative.
