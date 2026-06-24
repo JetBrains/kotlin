@@ -26,11 +26,9 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import java.io.File
 import javax.inject.Inject
 import org.gradle.api.tasks.Optional
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
 internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
@@ -194,22 +192,6 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
                 params.syntheticLockFile.set(syntheticLockFile)
                 params.workspaceStateJson.set(workspaceStateJson)
             }
-
-//            val errorFile = swiftPMImportError.get().asFile
-//            errorFile.delete()
-            // set errorFile and ideaSyncParans
-//            if (ideaSyncEnabled.get()) {
-//                try {
-//                    resolve()
-//                } catch (t: Throwable) {
-//                    val errorText = "Warning: Failed to resolve SwiftPM packages for ${path}: ${t.message ?: ""}"
-//                    logger.warn(errorText, t)
-//                    errorFile.writeText(errorText)
-//                    return
-//                }
-//            } else {
-//                resolve()
-//            }
         }
     }
 

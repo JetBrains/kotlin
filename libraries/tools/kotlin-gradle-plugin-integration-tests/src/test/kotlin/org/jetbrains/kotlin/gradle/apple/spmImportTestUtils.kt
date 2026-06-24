@@ -305,7 +305,7 @@ fun createLocalSwiftPackageWithBinaryTarget(
 internal fun createSwiftPmGitRepoWithTags(
     reposRoot: Path,
     packageName: String,
-    source: String,
+    source: String? = null,
     tags: List<String>,
     products: List<String> = listOf(packageName),
     fileByTag: Map<String, Map<String, String>> = emptyMap(),
@@ -327,12 +327,25 @@ internal fun createSwiftPmGitRepoWithTags(
 
     writePackageManifest(repoDir, packageName, products = products)
 
-    products.forEach { product ->
-        repoDir.resolve("Sources/$product").createDirectories()
-        repoDir.resolve("Sources/$product/$product.swift").writeText(
-            source
-        )
+    if(source != null){
+        products.forEach { product ->
+            repoDir.resolve("Sources/$product").createDirectories()
+            repoDir.resolve("Sources/$product/$product.swift").writeText(
+                source
+            )
+        }
+    }else{
+        products.forEach { product ->
+            repoDir.resolve("Sources/$product").createDirectories()
+            repoDir.resolve("Sources/$product/$product.swift").writeText(
+                "public struct $product { public static let v = \"seed\" }\n"
+            )
+        }
+
     }
+
+
+
 
     runGit("add", ".", repoDir = repoDir)
     runGit("commit", "--quiet", "-m", "init", repoDir = repoDir)
@@ -734,7 +747,7 @@ internal fun LockFileTestFixture.createRepo(
     name: String,
     tags: List<String>,
     @Language("Swift")
-    source: String = "public struct $name { public static let v = \"seed\" }\n"
+    source: String = "public struct $name { public static let v = \"seed\" }\n",
     products: List<String> = listOf(name),
 ): Path {
     return createSwiftPmGitRepoWithTags(

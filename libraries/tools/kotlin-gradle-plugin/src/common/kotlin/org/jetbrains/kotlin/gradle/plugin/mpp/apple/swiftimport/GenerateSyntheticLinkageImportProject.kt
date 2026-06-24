@@ -188,7 +188,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     ) {
 
         failOnNonIdempotentChangesIfNeeded {
-            val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
+            val packageRoot = syntheticImportProjectRoot.normalizedAbsoluteFile()
             val binaryTarget = if (xcframeworkPath.isPresent) BinaryTarget(
                 name = xcframeworkPath.get().nameWithoutExtension,
                 relativePath = xcframeworkPath.get().toRelativeString(packageRoot)

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency.Platform
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.XcodebuildDefFileUtils.DUMP_FILE_ARGS_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -184,12 +183,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
     val syncSyntheticPackageResolvedToPersisted = project.locateOrRegisterTask<SyncPackageResolvedTask>(
         SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
-    )
-
-    val syntheticImportTasks = listOf(
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-        syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
-        syntheticImportProjectGenerationTaskForLinkageForCli,
     )
 
     val fingerprintCoordinationService = SwiftImportFingerprintedCoordinationService.registerIfAbsent(
@@ -514,9 +507,9 @@ internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = pro
      * FIXME: KT-83873 This linkage configuration is not correct in general
      */
     if (hasDynamicFrameworks) {
-        SyntheticProductType.DYNAMIC
+        GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.DYNAMIC
     } else {
-        SyntheticProductType.INFERRED
+        GenerateSyntheticLinkageImportProject.Companion.SyntheticProductType.INFERRED
     }
 }
 
@@ -904,7 +897,6 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
         it.xcodebuildSdk.set(targetSdk)
         it.discoverModulesImplicitly.set(discoverModulesImplicitly)
         it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies())
-        it.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         it.ideaSyncEnabled.set(project.isInIdeaSync)
     }
 }
