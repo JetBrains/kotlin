@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     application
+    id("test-inputs-check")
 }
 
 group = "org.jetbrains.kdumputil"

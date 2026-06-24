@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 sourceSets {
@@ -23,9 +24,9 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
+    testData(isolated, "testData")
 
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         val testProjectKlib = configurations.create("testProjectKlib") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))

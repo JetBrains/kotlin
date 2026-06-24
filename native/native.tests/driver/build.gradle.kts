@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
@@ -20,6 +21,8 @@ sourceSets {
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     nativeTestTask(
         "test",
         allowParallelExecution = false, // Driver tests run Native compiler from CLI. This is resource-intensive and should be done isolated.

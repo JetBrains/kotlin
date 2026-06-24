@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -43,5 +44,8 @@ projectTests {
         allowUnsafe = true, // KT-85212
     ) {
         smokeTestConfig = SmokeTestConfig.RunAllTests
+        testInputsCheck {
+            allowFlightRecorder = true
+        }
     }
 }

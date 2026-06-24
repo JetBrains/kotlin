@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.tools.lib
 plugins {
     id("native-interop-plugin")
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {

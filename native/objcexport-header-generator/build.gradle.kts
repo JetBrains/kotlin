@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("project-tests-convention")
     id("java-test-fixtures")
+    id("test-inputs-check")
 }
 
 sourceSets {
@@ -62,6 +63,8 @@ tasks.test.configure {
 }
 
 projectTests {
+    testData(isolated, "testData")
+
     objCExportHeaderGeneratorTestTask("testK1", testDisplayNameTag = "K1") {
         classpath += k1TestRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
@@ -74,6 +77,9 @@ projectTests {
     ) {
         classpath += analysisApiRuntimeClasspath
         exclude("**/ObjCExportIntegrationTest.class")
+        testInputsCheck {
+            allowFlightRecorder = true
+        }
     }
 }
 
@@ -85,6 +91,9 @@ projectTests {
         classpath += k1TestRuntimeClasspath
         classpath += analysisApiRuntimeClasspath
         include("**/ObjCExportIntegrationTest.class")
+        testInputsCheck {
+            allowFlightRecorder = true
+        }
     }
 }
 
