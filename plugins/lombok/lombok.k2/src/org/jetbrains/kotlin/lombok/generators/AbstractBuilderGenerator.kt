@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
+import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -277,6 +280,23 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     ) {
         val entityJavaClass = entitySymbol.fir as FirJavaClass
 
+        val nestedClassifierScope = entitySymbol.fir.scopeProvider.getNestedClassifierScope(entitySymbol.fir, session, ScopeSession())
+        var builderSymbolAlreadyExists = false // TODO: distinguish explicit/generated builders via origin, KT-79778
+        nestedClassifierScope?.processClassifiersByName(builderSymbol.name) {
+            builderSymbolAlreadyExists = true
+        }
+
+        val builderFir = builderSymbol.fir as? FirJavaClass
+        if (builderSymbolAlreadyExists && builderFir != null) {
+            // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
+            // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
+            // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
+            val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol, existingDeclaration = true)
+            for ([key, value] in typeParametersMapping) {
+                builderFir.classJavaTypeParameterStack.addParameter(key, value.symbol)
+            }
+        }
+
         val existingFunctionNames = context.getExistingFunctionNames()
 
         addSpecialBuilderMethods(builder, builderSymbol, builderDeclaration, existingFunctionNames)
@@ -498,7 +518,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     /**
      * Given the following generic class with `@Builder`:
      *
-     * ```kt
+     * ```java
      * @lombok.Builder
      * public class C<T> {
      *     private final T value;
@@ -507,7 +527,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      *
      * That has the following generated builder:
      *
-     * ```kt
+     * ```java
      * import lombok.Generated;
      *
      * public class C<T> {
@@ -553,7 +573,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      *
      * We have to initialize the new type parameters for static `builder` (T -> T2) to make Java resolve robust:
      *
-     * ```kt
+     * ```java
      * public static <T2> CBuilder<T2> builder() {
      *     return new CBuilder<T2>();
      * }
@@ -561,7 +581,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      *
      * And new type parameters for `CBuilder<T>` with its `build` method (T -> T3);
      *
-     * ```kt
+     * ```java
      * public static class CBuilder<T3> {
      *     ...
      *     @Generated
@@ -577,10 +597,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * }
      * ```
      *
+     * The function also handles type parameters on explicitly declared declarations.
+     *
      * @return a map used for remapping type parameters on a Java stack
      */
     @OptIn(SymbolInternals::class)
-    private fun FirDeclaration.initializeTypeParametersMapping(newContainingDeclarationSymbol: FirBasedSymbol<*>): Map<JavaTypeParameter, FirTypeParameter> {
+    private fun FirDeclaration.initializeTypeParametersMapping(
+        newContainingDeclarationSymbol: FirBasedSymbol<*>,
+        existingDeclaration: Boolean = false,
+    ): Map<JavaTypeParameter, FirTypeParameter> {
         val typeParameters: List<FirTypeParameter> = when (this) {
             is FirJavaClass -> typeParameters.map { it.symbol.fir }
             is FirJavaMethod -> typeParameters
@@ -588,11 +613,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             else -> emptyList() // Use the fallback just in case, although it's normally unreachable
         }
         return buildMap {
-            for (typeParameter in typeParameters) {
+            for ([index, typeParameter] in typeParameters.withIndex()) {
                 // Normally it's always `FirJavaTypeParameter` but check just in case to avoid potential exceptions.
                 if (typeParameter !is FirJavaTypeParameter) continue
 
-                this[typeParameter.javaTypeParameter] = buildTypeParameterCopy(typeParameter.symbol.fir) {
+                this[typeParameter.javaTypeParameter] = runIf(existingDeclaration) {
+                    newContainingDeclarationSymbol.typeParameterSymbols?.getOrNull(index)?.fir
+                } ?: buildTypeParameterCopy(typeParameter.symbol.fir) {
                     symbol = FirTypeParameterSymbol()
                     containingDeclarationSymbol = newContainingDeclarationSymbol
                 }
