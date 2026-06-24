@@ -109,6 +109,12 @@ fun collectTailRecursionCalls(
             }
         }
 
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
+            val isTailExpression = data.isTailExpression &&
+                    (expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
+            expression.acceptChildren(this, VisitorState(isTailExpression, data.inOtherFunction))
+        }
+
         override fun visitCall(expression: IrCall, data: VisitorState) {
             expression.acceptChildren(this, VisitorState(isTailExpression = false, data.inOtherFunction))
 
