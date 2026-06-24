@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,11 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.containingModule
-import org.jetbrains.kotlin.analysis.api.components.samConstructor
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
@@ -21,21 +17,16 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.*
-import org.jetbrains.kotlin.sir.util.SirSwiftConcurrencyModule
 import org.jetbrains.kotlin.sir.util.isUnavailable
+import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
-import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
-import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
-import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
-import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
-import org.jetbrains.sir.lightclasses.utils.translatedAttributes
-import org.jetbrains.sir.lightclasses.utils.translatedOptInAttributes
+import org.jetbrains.sir.lightclasses.utils.*
 
 internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,

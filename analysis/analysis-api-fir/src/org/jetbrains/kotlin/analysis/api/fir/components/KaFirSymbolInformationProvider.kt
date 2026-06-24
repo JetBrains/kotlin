@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.components.KaDeprecation
 import org.jetbrains.kotlin.analysis.api.components.KaDeprecationLevel
 import org.jetbrains.kotlin.analysis.api.components.KaReturnValueStatus
-import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KaKlibDecompiledFileAnnotationList

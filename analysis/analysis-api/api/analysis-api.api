@@ -422,6 +422,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 	public abstract fun isSubClassOf (Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;Lorg/jetbrains/kotlin/analysis/api/symbols/KaClassSymbol;)Z
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaSymbolRelationProviderKt {
+	public static final fun getContainingModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbol;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 }
 
