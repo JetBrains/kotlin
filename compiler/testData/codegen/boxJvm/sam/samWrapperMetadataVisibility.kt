@@ -45,7 +45,7 @@ fun box(): String {
         return "Fail: expected LOCAL visibility (5) for non-escaped SAM wrapper, got $visibility"
     }
     if (isPublicAbi(samWrapper::class.java)) {
-        return "Fail: expected non-escaped SAM wrapper to not be public ABI"
+        return "Fail: expected non-escaped SAM wrapper to NOT be public ABI"
     }
 
     val samWrapperInInlineClass = samWrapperInline {}

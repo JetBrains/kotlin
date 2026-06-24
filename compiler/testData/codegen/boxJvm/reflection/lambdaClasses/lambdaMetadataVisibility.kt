@@ -60,7 +60,7 @@ fun box(): String {
     }
 
     visibility = syntheticClassVisibility(privateLambdaInline())
-    if (visibility != LOCAL_VISIBILITY) { // Lambdas are still promoted to PUBLIC
+    if (visibility != LOCAL_VISIBILITY) {
         return "Fail: expected LOCAL visibility (5) for non-escaped lambda in private inline function, got $visibility"
     }
     if (isPublicAbi(privateLambdaInline())) {
