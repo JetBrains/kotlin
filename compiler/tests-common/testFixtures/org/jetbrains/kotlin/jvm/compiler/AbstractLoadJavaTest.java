@@ -26,10 +26,10 @@ public abstract class AbstractLoadJavaTest {
 
     public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Directives directives = KotlinTestUtils.parseDirectives(content);
-        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives, LanguageVersion.KOTLIN_1_9);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives, LanguageVersion.LATEST_STABLE);
         if (languageVersionSettings == null) {
             languageVersionSettings = new CompilerTestLanguageVersionSettings(
-                    Collections.emptyMap(), ApiVersion.KOTLIN_1_9, LanguageVersion.KOTLIN_1_9,
+                    Collections.emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE,
                     Collections.emptyMap()
             );
         }

@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase.convertToIrA
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.runAnalysisHandlerExtensions
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
@@ -56,7 +57,7 @@ object GenerationUtils {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
         val project = files.first().project
-        return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+        return if (configuration.useFir || configuration.languageVersionSettings.languageVersion.usesK2) {
             compileFilesUsingFrontendIR(project, files, configuration, classBuilderFactory, packagePartProvider)
         } else {
             error("K1 compilation is no longer supported")
