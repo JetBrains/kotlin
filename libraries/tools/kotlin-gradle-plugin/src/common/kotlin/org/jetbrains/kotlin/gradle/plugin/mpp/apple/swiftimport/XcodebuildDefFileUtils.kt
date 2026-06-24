@@ -227,10 +227,11 @@ internal object XcodebuildDefFileUtils {
         )
     }
 
-    fun clangArgsDumpScript(): String = argsDumpScript(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
-    fun ldArgsDumpScript(): String = argsDumpScript(KOTLIN_LD_ARGS_DUMP_FILE_ENV)
+    fun clangArgsDumpScript(): String = argsDumpScript("clang", KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
+    fun ldArgsDumpScript(): String = argsDumpScript("ld", KOTLIN_LD_ARGS_DUMP_FILE_ENV)
 
     private fun argsDumpScript(
+        targetCli: String,
         dumpPathEnv: String,
     ) = """
         #!/bin/bash
@@ -242,6 +243,6 @@ internal object XcodebuildDefFileUtils {
            echo -n "$DUMP_FILE_ARGS_SEPARATOR" >> "${'$'}{DUMP_FILE}"
         done
 
-        clang "$@"
+        $targetCli "$@"
     """.trimIndent()
 }

@@ -133,16 +133,11 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                 FetchSyntheticImportProjectPackages.XCODEBUILD_SWIFTPM_CHECKOUT_PATH_PARAMETER,
                 parameters.swiftPMDependenciesCheckout.getFile().path,
                 "CC=${clangArgsDumpScript.path}",
-                "LD=${ldArgsDumpScript.path}",
+                "ALTERNATE_LINKER=${ldArgsDumpScript.path}",
                 "ARCHS=${targetArchitectures.joinToString(" ")}",
                 "CODE_SIGN_IDENTITY=",
                 "COMPILER_INDEX_STORE_ENABLE=NO",
                 "SWIFT_INDEX_STORE_ENABLE=NO",
-                /**
-                 * FIXME: KT-87196 - In Xcode 27 swift-build now picks the driver dynamically instead of always using clang. LINKER_DRIVER
-                 * is a temporary workaround until we adapt the ld dump.
-                 */
-                "LINKER_DRIVER=clang",
             )
 
             args.addAll(parameters.additionalXcodeArgs.get())
@@ -209,7 +204,7 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
             }.filter {
                 val ldArgs = it.readLines().single()
                 ("@rpath/lib${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.dylib" in ldArgs || "@rpath/${GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB}.framework" in ldArgs)
-                        && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
+                        && "-arch${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}${DUMP_FILE_ARGS_SEPARATOR}" in ldArgs
             }
 
             val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
