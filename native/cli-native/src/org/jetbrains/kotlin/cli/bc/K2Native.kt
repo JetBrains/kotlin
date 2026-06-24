@@ -186,6 +186,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.pluginOrderConstraints,
                 configuration,
                 rootDisposable,
+                pluginsLoader = null,
             )
             if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 

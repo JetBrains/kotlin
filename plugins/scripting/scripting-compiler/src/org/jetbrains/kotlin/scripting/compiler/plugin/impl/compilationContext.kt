@@ -330,7 +330,8 @@ private fun createInitialCompilerConfiguration(
                 pluginConfigurations,
                 pluginOrderConstraints,
                 this,
-                parentDisposable
+                parentDisposable,
+                pluginsLoader = null,
             )
         } else {
             loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
