@@ -186,7 +186,6 @@ public fun KaType.mapToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT):
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun KaType.asPsiType(
     useSitePosition: PsiElement,
@@ -222,6 +221,10 @@ public fun KaType.asPsiType(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.asKaType(useSitePosition)", "org.jetbrains.kotlin.analysis.api.javaInterop.asKaType"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
@@ -239,6 +242,10 @@ public fun PsiType.asKaType(useSitePosition: PsiElement): KaType? {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.mapToJvmTypeDescriptor()", "org.jetbrains.kotlin.analysis.api.javaInterop.mapToJvmTypeDescriptor"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaType.mapToJvmTypeDescriptor(): String {
@@ -252,6 +259,10 @@ public fun KaType.mapToJvmTypeDescriptor(): String {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.isPrimitiveBacked", "org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaType.isPrimitiveBacked: Boolean
@@ -262,6 +273,10 @@ public val KaType.isPrimitiveBacked: Boolean
  * [PsiClass]es), and Kotlin light classes.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.namedClassSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.namedClassSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
@@ -271,6 +286,10 @@ public val PsiClass.namedClassSymbol: KaNamedClassSymbol?
  * A [KaCallableSymbol] for the given [PsiMember] method or field, or `null` for local declarations and Kotlin light classes.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.callableSymbol", "org.jetbrains.kotlin.analysis.api.javaInterop.callableSymbol"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val PsiMember.callableSymbol: KaCallableSymbol?
@@ -287,6 +306,10 @@ public val PsiMember.callableSymbol: KaCallableSymbol?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.javaInterop' endpoint instead.",
+    replaceWith = ReplaceWith("this.containingJvmClassName", "org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName"),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.containingJvmClassName: String?
@@ -298,7 +321,6 @@ public val KaCallableSymbol.containingJvmClassName: String?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.javaGetterName: Name
     get() = with(session) { javaGetterName }
@@ -309,7 +331,6 @@ public val KaPropertySymbol.javaGetterName: Name
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public val KaPropertySymbol.javaSetterName: Name?
     get() = with(session) { javaSetterName }

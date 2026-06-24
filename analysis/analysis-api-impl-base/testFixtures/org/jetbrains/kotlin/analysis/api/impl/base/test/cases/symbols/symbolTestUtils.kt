@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.containingJvmClassName
+import org.jetbrains.kotlin.analysis.api.javaInterop.containingJvmClassName
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
