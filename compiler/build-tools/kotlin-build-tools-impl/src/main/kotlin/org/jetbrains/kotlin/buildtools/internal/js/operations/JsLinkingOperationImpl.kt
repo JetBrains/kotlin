@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.classloading.ClassLoadersCache
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -27,21 +28,21 @@ internal class JsLinkingOperationImpl private constructor(
     override val klib: Path,
     override val destination: Path,
     compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+    kotlinToolchains: KotlinToolchainsImpl,
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments, kotlinToolchains),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
     constructor(
         klib: Path,
         destination: Path,
         compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
+        kotlinToolchains: KotlinToolchainsImpl,
     ) : this(
         options = Options(JsKlibCompilationOperation::class),
         klib = klib,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile
+        kotlinToolchains = kotlinToolchains,
     ) {
         initializeOptions(this::class, options)
     }
@@ -54,7 +55,7 @@ internal class JsLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
+            kotlinToolchains,
         )
     }
 

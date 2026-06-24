@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.net.URLClassLoader
@@ -51,7 +51,7 @@ import java.rmi.RemoteException
 
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
     override val compilerArguments: BtaCompilerArgs,
-    protected val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    protected val kotlinToolchains: KotlinToolchainsImpl,
 ) : CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
 
     @UseFromImplModuleRestricted
@@ -148,7 +148,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
-        val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
+        val sessionIsAliveFlagFile = kotlinToolchains.buildIdToSessionFlagFile.computeIfAbsent(projectId) {
             createSessionIsAliveFlagFile()
         }
 
@@ -289,6 +289,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             get(IMPORT_TRACKER)?.let { tracker: CompilerImportTracker ->
                 register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
             }
+            register(PluginCliParser.PluginsLoader::class.java, kotlinToolchains.classloadersCache.asPluginsLoader())
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()

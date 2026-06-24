@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.classloading.ClassLoadersCache
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
@@ -25,20 +26,18 @@ import java.io.File
 import java.util.concurrent.*
 
 internal class KotlinToolchainsImpl() : KotlinToolchains {
-    private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
+    val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
+    val classloadersCache = ClassLoadersCache(10, this::class.java.classLoader)
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return toolchains.computeIfAbsent(type) { type ->
             when (type) {
-                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(getCompilerVersion(), buildIdToSessionFlagFile)
-                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(
-                    getCompilerVersion(),
-                    buildIdToSessionFlagFile
-                )
+                JvmPlatformToolchain::class.java -> JvmPlatformToolchainImpl(this)
+                JsPlatformToolchain::class.java -> JsPlatformToolchainImpl(this)
+                WasmPlatformToolchain::class.java -> WasmPlatformToolchainImpl(this)
+                KotlinMetadataPlatformToolchain::class.java -> KotlinMetadataPlatformToolchainImpl(this)
                 CriToolchain::class.java -> CriToolchainImpl()
                 AbiValidationToolchain::class.java -> AbiValidationToolchainImpl()
                 else -> error("Unsupported platform toolchain type: $type.")
@@ -63,10 +62,10 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         return BuildSessionImpl(this, RandomProjectUUID(), buildIdToSessionFlagFile)
     }
 
-    private class BuildSessionImpl(
+    internal class BuildSessionImpl(
         override val kotlinToolchains: KotlinToolchains,
         override val projectId: ProjectId,
-        private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+        val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
     ) : KotlinToolchains.BuildSession {
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()

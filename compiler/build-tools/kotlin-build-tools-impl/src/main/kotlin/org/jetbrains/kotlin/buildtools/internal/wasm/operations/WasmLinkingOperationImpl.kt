@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.classloading.ClassLoadersCache
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
@@ -25,21 +26,24 @@ internal class WasmLinkingOperationImpl private constructor(
     override val klib: Path,
     override val destination: Path,
     compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments, buildIdToSessionFlagFile),
+    kotlinToolchains: KotlinToolchainsImpl,
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(
+    compilerArguments,
+    kotlinToolchains,
+),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
     constructor(
         klib: Path,
         destination: Path,
         compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-        buildIdToSessionFlagFile: MutableMap<ProjectId, java.io.File>,
+        kotlinToolchains: KotlinToolchainsImpl,
     ) : this(
         options = Options(WasmLinkingOperation::class),
         klib = klib,
         destination = destination,
         compilerArguments = compilerArguments,
-        buildIdToSessionFlagFile = buildIdToSessionFlagFile
+        kotlinToolchains = kotlinToolchains,
     ) {
         initializeOptions(this::class, options)
     }
@@ -52,7 +56,7 @@ internal class WasmLinkingOperationImpl private constructor(
             klib,
             destination,
             compilerArguments.deepCopy(),
-            buildIdToSessionFlagFile,
+            kotlinToolchains,
         )
     }
 
