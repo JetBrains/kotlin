@@ -1,5 +1,7 @@
 // ISSUE: KT-60855
 // DISABLE_IR_TYPE_PARAMETER_SCOPE_CHECKS: ANY
+// DISABLE_NATIVE
+// Reason: type-parameter-scope directive is not respected by some K/N test runners.
 /* ATTENTION:
  * this test monitors an unfixed compiler bug;
  * if the behavior of the test changes, please consult with the linked YT ticket
