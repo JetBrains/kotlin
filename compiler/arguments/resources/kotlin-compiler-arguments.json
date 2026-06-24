@@ -12529,7 +12529,13 @@
                                                     },
                                                     "defaultValue": {
                                                         "current": true,
-                                                        "valueInVersions": []
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.4.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "valueDescription": {
@@ -12550,7 +12556,13 @@
                                                     },
                                                     "defaultValue": {
                                                         "current": true,
-                                                        "valueInVersions": []
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.4.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "deprecatedMessage": null
@@ -14563,7 +14575,13 @@
                                                     },
                                                     "defaultValue": {
                                                         "current": true,
-                                                        "valueInVersions": []
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.4.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "valueDescription": {
@@ -14584,7 +14602,13 @@
                                                     },
                                                     "defaultValue": {
                                                         "current": true,
-                                                        "valueInVersions": []
+                                                        "valueInVersions": [
+                                                            {
+                                                                "minReleaseVersion": "2.1.20",
+                                                                "maxReleaseVersion": "2.4.0",
+                                                                "value": false
+                                                            }
+                                                        ]
                                                     }
                                                 },
                                                 "deprecatedMessage": null
