@@ -1492,11 +1492,18 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/S
 	public final fun linkTask (Lkotlin/jvm/functions/Function1;)V
 	public final fun linkTask (Lorg/gradle/api/Action;)V
 	public static synthetic fun linkTask$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public fun reexportCinterop (Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata {
 	public abstract fun getFlattenPackage ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+	public abstract fun getReexportedCinterops ()Lorg/gradle/api/provider/MapProperty;
+	public abstract fun reexportCinterop (Ljava/lang/String;Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata$DefaultImpls {
+	public static fun reexportCinterop (Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftexport/SwiftExportedModuleMetadata;Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/apple/swiftimport/PackageResolvedSynchronization {
