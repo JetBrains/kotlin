@@ -137,6 +137,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
                         pointer = safePointer(symbol),
                         rendered = when (symbol) {
                             is KaReceiverParameterSymbol -> KaDebugRenderer().render(useSiteSession, symbol)
+                            is KaPackageSymbol -> "package ${symbol.fqName}"
                             is KaDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KaFileSymbol -> prettyPrint {
                                 printCollection(symbol.fileScope.declarations.asIterable(), separator = "\n\n") {
@@ -189,9 +190,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
 
             val containingFileSymbol = symbol.containingFile
             when {
-                symbol is KaFileSymbol -> {
+                symbol is KaFileSymbol || symbol is KaPackageSymbol -> {
                     testServices.assertions.assertEquals(null, containingFileSymbol) {
-                        "'containingFile' for ${KaFileSymbol::class.simpleName} should be 'null'"
+                        "'containingFile' for ${symbol::class.simpleName} should be 'null'"
                     }
                 }
 

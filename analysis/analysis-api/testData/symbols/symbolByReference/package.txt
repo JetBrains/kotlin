@@ -1,0 +1,9 @@
+KaPackageSymbol:
+  fqName: one.two
+  location: TOP_LEVEL
+  origin: SOURCE
+  getContainingFileSymbol: null
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: class org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirPackageSymbol
+
+  deprecation: null
+  importableFqName: null
