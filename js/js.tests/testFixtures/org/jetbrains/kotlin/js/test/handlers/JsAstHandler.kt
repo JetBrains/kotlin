@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.ModuleKind
+import org.jetbrains.kotlin.js.config.moduleKind
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.js.test.ast.JsAstDirectives
 import org.jetbrains.kotlin.js.test.ast.directives.JsAstDirective
 import org.jetbrains.kotlin.js.translate.utils.name
@@ -19,10 +23,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.JsIrArtifact
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.services.*
 import java.io.File
 
 class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
@@ -56,7 +57,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
             ComposedRegisteredDirectives(moduleDirectives + fileDirectives),
         )
 
-        jsProgram.verifyAst()
+        jsProgram.verifyAst(testServices.compilerConfigurationProvider.getCompilerConfiguration(module),)
     }
 
     private fun processDirectives(ast: JsNode, sourceFile: File, targetBackend: TargetBackend, registeredDirectives: RegisteredDirectives) {
@@ -72,8 +73,30 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         )
     }
 
-    private fun JsProgram.verifyAst() {
+    private fun JsProgram.verifyAst(configuration: CompilerConfiguration) {
         accept(object : RecursiveJsVisitor() {
+            override fun visitVars(x: JsVars) {
+                when (x.variant) {
+                    JsVars.Variant.Var if configuration.useEs6ConstLet -> {
+                        // In plain module system, we ALWAYS generate the top-level module variable as a 'var',
+                        // because it has the following form:
+                        //   var main = function (_) {
+                        //     ...
+                        //   }(typeof main === 'undefined' ? {} : main)
+                        //
+                        // So, we reference `main` before it is declared. This is forbidden for 'const' and 'let', but allowed for 'var'.
+                        if (!(configuration.moduleKind == ModuleKind.PLAIN && x in this@verifyAst.globalBlock.statements)) {
+                            testServices.assertions.fail { "$x: encountered a 'var' in generated code, expected 'let' or 'const'" }
+                        }
+                    }
+                    JsVars.Variant.Const if x.vars.any { it.initExpression == null } -> {
+                        testServices.assertions.fail { "$x: 'const' variables must be initialized immediately" }
+                    }
+                    else -> {}
+                }
+                super.visitVars(x)
+            }
+
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val expression = x.expression
 

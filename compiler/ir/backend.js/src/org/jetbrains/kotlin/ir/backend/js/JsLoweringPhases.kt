@@ -239,6 +239,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::ES6SyntheticPrimaryConstructorLowering,
     ::ES6ConstructorLowering,
     ::ES6ConstructorCallLowering,
+    ::ES6ConstLetPreparationLowering,
     ::CallsLowering,
     ::EscapedIdentifiersLowering,
     ::MainFunctionCallWrapperLowering,

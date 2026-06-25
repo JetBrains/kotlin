@@ -16,19 +16,15 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.ModuleKind
-import org.jetbrains.kotlin.js.config.WebArtifactConfiguration
-import org.jetbrains.kotlin.js.config.artifactConfigurations
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.test.tools.SwcRunner
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.wrapWithModuleEmulationMarkers
 import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
-import org.jetbrains.kotlin.test.checkTestInfrastructure
-import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -36,6 +32,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.finalizePath
 import org.jetbrains.kotlin.test.services.configuration.minifyPathForWindowsIfNeeded
 import org.jetbrains.kotlin.test.services.defaultsProvider
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
@@ -87,6 +84,7 @@ class JsIrLoweringFacade(
                     artifactConfiguration = it,
                     sourceMapsInfo = SourceMapsInfo.from(configuration),
                     caches = testServices.jsIrIncrementalDataProvider.getCaches(),
+                    configuration.useEs6ConstLet,
                 )
                 jsExecutableProducer.buildExecutable(true).compilationOut
             },
