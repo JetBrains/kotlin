@@ -4,6 +4,20 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/pla
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KaEngineService {
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KaSessionListener {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KaSessionListener$Companion;
+	public fun afterAcquiringSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun afterLeavingAnalysis (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun beforeAcquiringSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun beforeEnteringAnalysis (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun onAnalysisException (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;Ljava/lang/Throwable;)V
+	public fun onSessionAcquisitionException (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;Ljava/lang/Throwable;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/platform/KaSessionListener$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/platform/KotlinAnalysisInWriteActionListener {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/platform/KotlinAnalysisInWriteActionListener$Companion;
 	public abstract fun afterLeavingAnalysisInWriteAction ()V
