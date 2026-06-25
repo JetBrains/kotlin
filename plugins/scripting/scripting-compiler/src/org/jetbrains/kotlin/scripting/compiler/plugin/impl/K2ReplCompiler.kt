@@ -219,7 +219,8 @@ class K2ReplCompilationState(
     internal var snippetCompilationObserver:
             ((firSnippet: org.jetbrains.kotlin.fir.declarations.FirReplSnippet,
               session: FirSession,
-              generationState: org.jetbrains.kotlin.codegen.state.GenerationState) -> Unit)? = null
+              generationState: org.jetbrains.kotlin.codegen.state.GenerationState,
+              resultFieldName: String?) -> Unit)? = null
 
     /**
      * Internal early-capture hook fired by the stateless prototype right after the per-snippet
@@ -532,7 +533,16 @@ private fun compileImpl(
                 firFile.declarations.firstIsInstanceOrNull<org.jetbrains.kotlin.fir.declarations.FirReplSnippet>()
             }
             if (capturedFirSnippet != null) {
-                observer(capturedFirSnippet, session, generationStateOrNull)
+                // Resolve the *actual* JVM result-field name from the generated IR. The snippet's
+                // result is stored in a field named `<resultFieldPrefix><snippetId>` (e.g. `res2`),
+                // not the `resultField` config default (`$$result`) — so the sidecar must record the
+                // emitted name for a stateless evaluator to read the result back. `extractResultFields`
+                // tags only the snippet wrapper class (`ReplState`/earlier-snippet stubs carry no
+                // result-field attribute), so a single-snippet compile yields at most one entry.
+                val resultFieldName = irInputOrNull?.let { irIn ->
+                    extractResultFields(irIn.irModuleFragment).values.firstOrNull()?.fieldName?.asString()
+                }
+                observer(capturedFirSnippet, session, generationStateOrNull, resultFieldName)
             }
         }
     }

@@ -149,10 +149,41 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
         symbol: FirBasedSymbol<*>, parentClassOrSnippet: IrClass, irSnippet: IrReplSnippet
     ): IrClass =
         symbol.getContainingClassSymbol()?.let {
-            if (it is FirRegularClassSymbol && it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass)
+            if (it is FirRegularClassSymbol &&
+                it.origin != FirDeclarationOrigin.Synthetic.ReplContainerClass &&
+                !it.isReconstructedSnippetContainerFor(symbol)
+            )
                 createClassFromOtherSnippet(it, parentClassOrSnippet, irSnippet)
             else null
         } ?: parentClassOrSnippet
+
+    /**
+     * Recognises a **stateless**-reconstructed REPL snippet wrapper as a snippet container.
+     *
+     * In the stateful path the snippet wrapper carries
+     * [FirDeclarationOrigin.Synthetic.ReplContainerClass], so the `origin` check in
+     * [getOrBuildActualParent] already treats a top-level snippet declaration's container as the
+     * snippet and parents the reconstructed declaration directly on the earlier-snippet IR class.
+     *
+     * In the stateless path the wrapper is **deserialized** from a prior snippet's
+     * `.kotlin_metadata`, so its origin is [FirDeclarationOrigin.Library] — indistinguishable by
+     * `origin` from a regular user class declared *inside* a prior snippet (e.g. `class Foo`).
+     * Treating the wrapper like such a user class makes `createClassFromOtherSnippet` re-nest the
+     * declaration under a freshly-built `Wrapper$Wrapper` class that is never emitted, surfacing at
+     * eval time as `NoClassDefFoundError: <Wrapper>$<Wrapper>`.
+     *
+     * The discriminator is identity: [ArtifactBackedFirReplHistoryProvider] tags every reconstructed
+     * top-level snippet declaration with [originalReplSnippetSymbol], whose `snippetClass` *is* the
+     * wrapper. So [accessedSymbol] is a direct member of the wrapper iff its
+     * `originalReplSnippetSymbol`'s snippet-class symbol equals `this`. A member of a user class
+     * declared inside a snippet (`Foo.bar`) has `Foo` as its container, which never equals the
+     * wrapper — so such accesses still nest correctly.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun FirRegularClassSymbol.isReconstructedSnippetContainerFor(accessedSymbol: FirBasedSymbol<*>): Boolean {
+        val ownerSnippetClassSymbol = accessedSymbol.fir.originalReplSnippetSymbol?.fir?.snippetClass?.symbol
+        return ownerSnippetClassSymbol == this
+    }
 
     @OptIn(SymbolInternals::class, DelicateDeclarationStorageApi::class)
     private fun Fir2IrComponents.createClassFromOtherSnippet(

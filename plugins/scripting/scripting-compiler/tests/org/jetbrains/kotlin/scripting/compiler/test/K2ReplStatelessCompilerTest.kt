@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplStatelessCompil
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactJsonCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
@@ -28,6 +29,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -103,6 +105,55 @@ class K2ReplStatelessCompilerTest {
                     classKeys.any { it.endsWith("/${sidecar2.snippetClassInternalName.substringAfterLast('/')}") },
             "snippet 2 wrapper class `${sidecar2.snippetClassInternalName}` must be among classfile keys $classKeys"
         )
+    }
+
+    @Test
+    fun testStatelessReplExecutesMultiSnippetSequence() {
+        if (!isK2) return
+
+        val compiler = K2ReplStatelessCompiler()
+
+        // Compile a 3-snippet session, threading each produced artifact into the next compile as a
+        // prior snippet — exactly as a real stateless host would.
+        //   s1: `val x = 42`
+        //   s2: `val y = x + 1`   (cross-snippet declaration reference)
+        //   s3: `x + y`           (cross-snippet expression — produces a result field)
+        val a1 = compileStateless(compiler, emptyList(), "val x = 42", "s1.repl.kts")
+            .valueOrThrowExplained("snippet 1 compile failed")
+        val a2 = compileStateless(compiler, listOf(a1), "val y = x + 1", "s2.repl.kts")
+            .valueOrThrowExplained("snippet 2 compile failed")
+        val a3 = compileStateless(compiler, listOf(a1, a2), "x + y", "s3.repl.kts")
+            .valueOrThrowExplained("snippet 3 compile failed")
+
+        // Replay the whole session: materialise every snippet's class bytes onto one in-memory
+        // classloader and invoke each `$$eval` in history order. A correct run proves the artifacts
+        // are *runnable*, not merely diagnostically equivalent — and that cross-snippet state
+        // (`x`, `y`) actually propagates at runtime.
+        val evalResult = SnippetArtifactEvaluator().evaluate(listOf(a1, a2, a3))
+
+        assertEquals(3, evalResult.snippetInstances.size, "all three snippets must have been instantiated + run")
+
+        // s1 introduced `x = 42`; reading its backing field on the snippet-1 instance must show 42.
+        assertEquals(42, evalResult.readDeclaredField(0, "x"), "snippet 1 `x` must hold 42 after eval")
+
+        // s2 introduced `y = x + 1`; the cross-snippet read of `x` must have resolved to 42 at
+        // runtime, yielding `y == 43`.
+        assertEquals(43, evalResult.readDeclaredField(1, "y"), "snippet 2 `y` must hold x+1 == 43 after eval")
+
+        // s3 is an expression `x + y`; its value is captured in the REPL result field named by the
+        // sidecar's `resultPropertyName`. For a REPL snippet that is `res<snippetId>` (e.g. `res2`,
+        // the `resultFieldPrefix`+id form), not the `$$result` config default — the sidecar must
+        // therefore record the *emitted* field name for the value to be readable. 42 + 43 == 85
+        // proves both prior snippets contributed at runtime.
+        val resultFieldName = assertNotNull(
+            evalResult.resultFieldName,
+            "expression snippet must record a result-field name in its sidecar"
+        )
+        assertTrue(
+            resultFieldName.startsWith("res"),
+            "REPL result field should be a `res<id>` field, was `$resultFieldName`"
+        )
+        assertEquals(85, evalResult.lastResultValue, "snippet 3 expression result `x + y` must be 85")
     }
 
     @Test

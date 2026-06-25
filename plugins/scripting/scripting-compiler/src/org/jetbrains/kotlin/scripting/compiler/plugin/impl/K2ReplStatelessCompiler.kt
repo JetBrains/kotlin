@@ -206,10 +206,10 @@ class K2ReplStatelessCompiler {
                 sessionRef.set(session)
                 debug("sourceSessionReadyObserver: captured FirSession for snippet=${snippet.name}")
             }
-            val capturedRef = AtomicReference<Triple<FirReplSnippet, FirSession, GenerationState>?>()
-            state.snippetCompilationObserver = { firSnippet, session, generationState ->
+            val capturedRef = AtomicReference<CapturedCompile?>()
+            state.snippetCompilationObserver = { firSnippet, session, generationState, resultFieldName ->
                 sessionRef.set(session)
-                capturedRef.set(Triple(firSnippet, session, generationState))
+                capturedRef.set(CapturedCompile(firSnippet, session, generationState, resultFieldName))
             }
 
             // 7. Drive the compile.
@@ -222,19 +222,20 @@ class K2ReplStatelessCompiler {
             // best-effort mode (i.e. compile returned [ResultWithDiagnostics.Failure] but
             // codegen still emitted usable bytes) — see `compileImpl` in `K2ReplCompiler.kt`.
             val captured = capturedRef.get()
-            val artifactOrNull: SnippetArtifact? = captured?.let { [firSnippet, session, generationState] ->
-                val classFileCount = generationState.factory.asList().size
+            val artifactOrNull: SnippetArtifact? = captured?.let { cap ->
+                val classFileCount = cap.generationState.factory.asList().size
                 if (classFileCount == 0) {
                     debug("compile(): capture hook fired but codegen produced 0 class files — best-effort artifact unavailable")
                     null
                 } else {
                     buildSnippetArtifactFromCompile(
-                        firSnippet = firSnippet,
-                        session = session,
-                        generationState = generationState,
+                        firSnippet = cap.firSnippet,
+                        session = cap.session,
+                        generationState = cap.generationState,
                         scriptCompilationConfiguration = augmentedConfig,
                         hostConfiguration = statelessHostConfiguration,
                         historyIndex = priorSnippets.size,
+                        resultFieldName = cap.resultFieldName,
                     ).also {
                         debug(
                             "compile(): produced artifact with ${it.classFiles.size} class file(s), " +
@@ -270,6 +271,15 @@ class K2ReplStatelessCompiler {
             // disposable is disposed by withMessageCollectorAndDisposable
         }
     }
+
+    /** Snapshot captured by [K2ReplCompilationState.snippetCompilationObserver] for one compile. */
+    private class CapturedCompile(
+        val firSnippet: FirReplSnippet,
+        val session: FirSession,
+        val generationState: GenerationState,
+        /** Actual emitted JVM result-field name (e.g. `res2`), or `null` if the snippet has no result. */
+        val resultFieldName: String?,
+    )
 
     @OptIn(kotlin.io.path.ExperimentalPathApi::class)
     private fun writeClassFiles(tempDir: Path, artifact: SnippetArtifact, sidecar: SnippetArtifactSidecar) {

@@ -156,6 +156,18 @@ internal class ArtifactBackedFirReplHistoryProvider(
     }
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean {
+        // The snippet currently being compiled is never part of our reconstructed prior-history
+        // list (we only materialise priors 1..N-1). So when there are no priors, the snippet being
+        // asked about is necessarily the *first* snippet of the session.
+        //
+        // This matters for codegen: `Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet`
+        // only generates the shared REPL state object (`ReplState`, the `HashMap` singleton every
+        // subsequent snippet references) for the first snippet. Returning `false` here for the
+        // empty-priors case (the previous behaviour) made the first stateless snippet *reference* a
+        // `ReplState` class that was never emitted into its artifact — surfacing at eval time as
+        // `NoClassDefFoundError: ReplState`. The stateless diagnostics corpus never caught this
+        // because it checks compile-time diagnostics only, not execution.
+        if (priorSnippets.isEmpty()) return true
         val list = cached ?: return false
         return list.firstOrNull() === symbol
     }

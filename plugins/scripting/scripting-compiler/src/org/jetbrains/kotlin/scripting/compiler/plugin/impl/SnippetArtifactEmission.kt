@@ -56,6 +56,10 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.replStateObjectFq
  * @param hostConfiguration host configuration; used to record `stateObjectFqName`.
  * @param historyIndex the position of this snippet in the REPL history (0-based; should equal
  *   `priorSnippets.size` at the time of compile).
+ * @param resultFieldName the **actual** JVM result-field name emitted for this snippet (e.g. `res2`),
+ *   as extracted from the generated IR. When `null` the sidecar falls back to the `resultField`
+ *   compilation-configuration value; the emitted name is preferred because for REPL snippets it is
+ *   `<resultFieldPrefix><snippetId>`, not the `resultField` default (`$$result`).
  */
 internal fun buildSnippetArtifactFromCompile(
     firSnippet: FirReplSnippet,
@@ -64,6 +68,7 @@ internal fun buildSnippetArtifactFromCompile(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     historyIndex: Int,
+    resultFieldName: String? = null,
 ): SnippetArtifact {
     val classFiles: Map<String, ByteArray> = generationState.factory.asList()
         .associate { it.relativePath.removeSuffix(".class") to it.asByteArray() }
@@ -74,6 +79,7 @@ internal fun buildSnippetArtifactFromCompile(
         scriptCompilationConfiguration = scriptCompilationConfiguration,
         hostConfiguration = hostConfiguration,
         historyIndex = historyIndex,
+        resultFieldName = resultFieldName,
     )
 
     return sidecar.toArtifact(classFiles)
@@ -86,6 +92,7 @@ private fun buildSidecar(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     hostConfiguration: ScriptingHostConfiguration,
     historyIndex: Int,
+    resultFieldName: String?,
 ): SnippetArtifactSidecar {
     val snippetClassId = firSnippet.snippetClass.symbol.classId
     val packageFqName = snippetClassId.packageFqName.asString()
@@ -141,7 +148,11 @@ private fun buildSidecar(
         }
 
     val stateObjectFqName = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName].orEmpty()
-    val resultPropertyName = scriptCompilationConfiguration[ScriptCompilationConfiguration.resultField]
+    // Prefer the *actual* emitted result-field name (e.g. `res2`); only fall back to the
+    // `resultField` compilation-configuration default (`$$result`) when the producer could not
+    // extract it from the generated IR (e.g. best-effort backend with no IR).
+    val resultPropertyName =
+        resultFieldName ?: scriptCompilationConfiguration[ScriptCompilationConfiguration.resultField]
     val isSynthetic = scriptCompilationConfiguration[ScriptCompilationConfiguration.repl._isSyntheticSnippet] == true
     // For the prototype, `isImplicit` mirrors `isSynthetic`: today the only known producer of
     // implicit snippets is the `prependSyntheticSnippets` callback (Option D, Q10 umbrella),
