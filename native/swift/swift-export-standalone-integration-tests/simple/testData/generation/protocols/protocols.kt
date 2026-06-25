@@ -211,3 +211,16 @@ interface InterfaceB : InterfaceA {
 abstract class ClassC : InterfaceB {
     fun baz() = Unit
 }
+
+// FILE: extension_receiver.kt
+
+import conflictingTypealiases.Foo
+
+interface SomeInterface {
+    fun String.repeat(count: Int): List<String>
+    context(_: Baz, _: Foo)
+    fun String.repeatWithContext(count: Int): List<String>
+    var String.something: Int
+    context(_: Baz, _: Foo)
+    var String.somethingWithContext: Int
+}

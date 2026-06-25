@@ -586,6 +586,13 @@ private class BridgeFunctionDescriptor(
                 val bridge = param.bridge
                 require(bridge is BidirectionalBridge) { "Parameter bridge must be bidirectional" }
                 bridge.inSwiftSources.kotlinToSwift(typeNamer, param.name.swiftIdentifier)
+            }.let { exprs ->
+                val contextParamCount = contextParameters.size
+                if (contextParamCount == 0) return@let exprs
+                buildList {
+                    add(exprs.takeLast(contextParamCount).joinToString(prefix = "(", postfix = ")"))
+                    addAll(exprs.dropLast(contextParamCount))
+                }
             }
 
             if (selfBridge != null) {
