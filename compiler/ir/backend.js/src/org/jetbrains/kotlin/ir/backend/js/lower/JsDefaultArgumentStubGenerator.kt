@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -152,16 +152,10 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         defaultFunStub.annotations = exportAnnotations
 
         if (isOriginalFunctionExported) {
-            originalFun.excludeFromExport()
+            originalFun.excludeFromJsExport(context)
         }
 
         return listOf(originalFun, defaultFunStub)
-    }
-
-    private fun IrDeclaration.excludeFromExport() {
-        val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
-        val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor.symbol)
     }
 
     override fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 internal fun IrClass.exportability(): Exportability {
     if (isJsImplicitExport()) {
@@ -393,4 +394,11 @@ internal fun IrClass.forEachExportedMember(
         if (candidate.isFakeOverride && isInterface) continue
         action(candidate, declaration)
     }
+}
+
+
+internal fun IrDeclaration.excludeFromJsExport(context: JsIrBackendContext) {
+    val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
+    val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
+    annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor.symbol)
 }

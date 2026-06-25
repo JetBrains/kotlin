@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.PrepareExportedDefaultImplementationsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.EXPORTED_SUSPEND_FUNCTION_BRIDGE
@@ -180,7 +181,6 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     private val jsClassFunctionSymbol = context.symbols.jsClass
     private val jsEqeqeqFunctionSymbol = context.symbols.jsEqeqeq
     private val promisifyFunctionSymbol = context.symbols.promisifyFunctionSymbol
-    private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
     private val jsPrototypeFunctionSymbol = context.symbols.jsPrototypeOfSymbol
     private val jsIsFunction = context.symbols.jsIsFunction
     private val jsMethodReference = context.symbols.jsMethodReference
@@ -409,13 +409,11 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             }
 
             bridgeFunc.parent = originalFunc.parent
+            bridgeFunc.annotations = originalFunc.annotations.filter {
+                !it.isAnnotation(JsAnnotations.jsNameFqn) && !it.isAnnotation(JsAnnotations.jsStatic)
+            }
 
-            bridgeFunc.annotations = buildList {
-                add(JsIrBuilder.buildAnnotation(jsExportIgnoreAnnotation.symbol))
-                originalFunc.annotations.filterTo(this) {
-                    !it.isAnnotation(JsAnnotations.jsNameFqn) && !it.isAnnotation(JsAnnotations.jsStatic)
-                }
-            }.compactIfPossible()
+            bridgeFunc.excludeFromJsExport(context)
 
             bridgeFunc.parameters.forEach {
                 if (it.defaultValue != null) {
@@ -558,14 +556,10 @@ class ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall(private val contex
  **/
 @PhasePrerequisites(PrepareSuspendFunctionsForExportLowering::class, ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall::class)
 class IgnoreOriginalSuspendFunctionsThatWereExportedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
-
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction && declaration.isExportedSuspendFunction(context)) {
-            declaration.annotations =
-                declaration.annotations.filter { !it.isAnnotation(JsAnnotations.jsNameFqn) } memoryOptimizedPlus JsIrBuilder.buildAnnotation(
-                    jsExportIgnoreAnnotation.symbol
-                )
+            declaration.annotations = declaration.annotations.filter { !it.isAnnotation(JsAnnotations.jsNameFqn) }
+            declaration.excludeFromJsExport(context)
         }
 
         return null

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.constructorFactory
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.originalConstructor
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 val ES6_CONSTRUCTOR_REPLACEMENT by IrDeclarationOriginImpl.Regular
@@ -246,7 +246,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             factory.annotations = annotations
 
             if (irClass.isExported(context) && constructor.isPrimary) {
-                factory.excludeFromExport()
+                factory.excludeFromJsExport(context)
             }
 
             factory.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -380,11 +380,5 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
 
     private fun getCurrentConstructorReference(currentFactoryFunction: IrSimpleFunction): IrExpression {
         return JsIrBuilder.buildGetValue(currentFactoryFunction.dispatchReceiverParameter!!.symbol)
-    }
-
-    private fun IrDeclaration.excludeFromExport() {
-        val jsExportIgnoreClass = context.symbols.jsExportIgnoreAnnotationSymbol.owner
-        val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildAnnotation(jsExportIgnoreCtor.symbol)
     }
 }

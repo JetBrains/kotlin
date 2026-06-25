@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.copyFunctionSignatureAsStaticFrom
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
@@ -87,7 +86,6 @@ import kotlin.getValue
  */
 class PrepareValueClassesToBeExportedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val jsObjectCreateSymbol = context.symbols.jsObjectCreateSymbol
-    private val jsExportIgnoreAnnotation = context.symbols.jsExportIgnoreAnnotationSymbol.owner.constructors.single()
 
     companion object {
         private val EXPORTED_VALUE_CLASS_BOX_FUNCTION by IrDeclarationOriginImpl.Regular
@@ -115,8 +113,8 @@ class PrepareValueClassesToBeExportedLowering(private val context: JsIrBackendCo
             endOffset = UNDEFINED_OFFSET
         }.also { boxFunction ->
             boxFunction.parent = parent
+            boxFunction.excludeFromJsExport(context)
             boxFunction.copyFunctionSignatureAsStaticFrom(primaryConstructor, typeParametersFromContext = typeParameters)
-            boxFunction.annotations += JsIrBuilder.buildAnnotation(jsExportIgnoreAnnotation.symbol)
             boxFunction.body = context.createIrBuilder(boxFunction.symbol)
                 .irBlockBody(boxFunction) {
                     val valueParameter = boxFunction.parameters.single { it.kind == IrParameterKind.Regular }

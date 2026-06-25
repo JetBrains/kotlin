@@ -9,17 +9,15 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.excludeFromJsExport
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 
 /**
  * Excludes synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`.
@@ -29,10 +27,10 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.shouldBeExcludedFromExport()) {
             if (declaration is IrSimpleFunction) {
-                declaration.correspondingPropertySymbol?.owner?.excludeFromJsExport()
+                declaration.correspondingPropertySymbol?.owner?.excludeFromJsExport(context)
             }
 
-            declaration.excludeFromJsExport()
+            declaration.excludeFromJsExport(context)
         }
 
         return null
@@ -59,14 +57,6 @@ class ExcludeSyntheticDeclarationsFromExportLowering(val context: JsIrBackendCon
 
     private fun IrDeclaration.isVersionOverloadWrapper(): Boolean {
         return this.origin == IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
-    }
-
-    private fun IrDeclaration.excludeFromJsExport() {
-        annotations += generateJsExportIgnoreAnnotation()
-    }
-
-    private fun generateJsExportIgnoreAnnotation(): IrAnnotation {
-        return JsIrBuilder.buildAnnotation(context.symbols.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
     }
 
     private fun IrSimpleFunction.getOriginalFunction(): IrSimpleFunction {

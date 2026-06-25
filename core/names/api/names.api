@@ -325,6 +325,7 @@ public final class org/jetbrains/kotlin/name/StandardClassIds$Annotations {
 	public final fun getJsExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportDefault ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsExportIgnore ()Lorg/jetbrains/kotlin/name/ClassId;
+	public final fun getJsImplicitExport ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoDispatchReceiver ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJsNoRuntime ()Lorg/jetbrains/kotlin/name/ClassId;
 	public final fun getJvmBuiltin ()Lorg/jetbrains/kotlin/name/ClassId;
