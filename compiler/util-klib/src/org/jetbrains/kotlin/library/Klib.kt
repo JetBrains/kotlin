@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import java.nio.file.Path
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
  * [Klib] represents an instance of Kotlin library (Klib) that can be read by the compiler or any other tools.
@@ -61,7 +60,7 @@ interface KlibComponent {
         /**
          * Create an instance [KlibComponentLayout] for the current component.
          */
-        fun createLayout(root: KlibFile): KCL
+        fun createLayout(root: Path): KCL
 
         /**
          * Create an instance of the component.
@@ -80,4 +79,4 @@ interface KlibComponent {
  * In this case [root] points to the root of the virtual file system inside the archive, whereas [Klib.path] points
  * to the archive file itself. So, it is highly important to compute paths exactly based on [root].
  */
-abstract class KlibComponentLayout(val root: KlibFile)
+abstract class KlibComponentLayout(val root: Path)

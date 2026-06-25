@@ -38,9 +38,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.moveTo
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 // See KT-59030.
+@OptIn(ExperimentalPathApi::class)
 @Tag("partial-linkage")
 @EnforcedHostTarget
 @UsePartialLinkage(UsePartialLinkage.Mode.ERROR)
@@ -104,12 +109,12 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
         originalLibraryFile.unzipTo(originalLibraryTmpDir)
 
         // Drop the metadata from the original library.
-        val originalLibraryMetadataDir = KlibMetadataComponentLayout(originalLibraryTmpDir.path).metadataDir
+        val originalLibraryMetadataDir = KlibMetadataComponentLayout(Path(originalLibraryTmpDir.path)).metadataDir
         originalLibraryMetadataDir.deleteRecursively()
 
         // Copy the metadata from the patched library.
-        val patchedLibraryMetadataDir = KlibMetadataComponentLayout(patchedLibraryTmpDir.path).metadataDir
-        patchedLibraryMetadataDir.renameTo(originalLibraryMetadataDir)
+        val patchedLibraryMetadataDir = KlibMetadataComponentLayout(Path(patchedLibraryTmpDir.path)).metadataDir
+        patchedLibraryMetadataDir.moveTo(originalLibraryMetadataDir)
 
         // Zip the resulting library.
         originalLibraryTmpDir.zipDirAs(patchedLibraryFile)

@@ -121,7 +121,7 @@ internal class Info(output: KlibToolOutput, args: KlibToolArguments) : KlibToolC
         manifestProperties.entries.forEach { [key, value] ->
             output.appendLine("  $key=$value")
         }
-        loadSizeInfo(library.libraryFile)?.renderTo(output)
+        loadSizeInfo(library.path)?.renderTo(output)
     }
 
     companion object {

@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTra
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.writeBytes
 
 /**
  * An implementation of [KlibComponentWriter] that writes [SerializedMetadata] to the constructed Klib library.
@@ -23,15 +25,15 @@ internal class KlibMetadataComponentWriterImpl(
     private val metadata: SerializedMetadata,
     private val fragmentTracker: KlibWrittenMetadataPackageFragmentTracker?,
 ) : KlibComponentWriter {
-    override fun writeTo(root: KlibFile) {
+    override fun writeTo(root: Path) {
         val layout = KlibMetadataComponentLayout(root)
-        layout.metadataDir.mkdirs()
+        layout.metadataDir.createDirectories()
 
         layout.moduleHeaderFile.writeBytes(metadata.module)
 
         metadata.fragmentNames.forEachIndexed { index, packageFqName ->
-            val packageFragmentDir: KlibFile = layout.getPackageFragmentsDir(packageFqName)
-            packageFragmentDir.mkdirs()
+            val packageFragmentDir: Path = layout.getPackageFragmentsDir(packageFqName)
+            packageFragmentDir.createDirectories()
 
             val shortPackageName: String = packageFqName.substringAfterLast(".")
             val (packageFragmentWithSourceParts, packageFragmentWithoutSourceParts) =
@@ -62,9 +64,9 @@ internal class KlibMetadataComponentWriterImpl(
         sourceFile: Path?,
     ) {
         val packageFragmentFile = getPackageFragmentFile(packageFqName = packageFqName, partName = partName)
-        check(packageFragmentFile.exists.not()) { "Duplicate package fragment name '${packageFragmentFile.path}'" }
+        check(!packageFragmentFile.exists()) { "Duplicate package fragment name '$packageFragmentFile'" }
         packageFragmentFile.writeBytes(content)
 
-        fragmentTracker?.recordSourceFile(sourceFile, packageFragmentFile.javaPath())
+        fragmentTracker?.recordSourceFile(sourceFile, packageFragmentFile)
     }
 }

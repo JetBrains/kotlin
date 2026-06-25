@@ -60,6 +60,9 @@ import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.absolute
+import kotlin.io.path.pathString
 
 
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
@@ -313,7 +316,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         val fir2IrResult = input.result
         val configuration = input.configuration
         val diagnosticsReporter = configuration.diagnosticsCollector
-        val destination = File(configuration.jklibOutputDestination ?: "result.klib")
+        val destination = Path(configuration.jklibOutputDestination ?: "result.klib").absolute()
 
         val serializerOutput = serializeModuleIntoKlib(
             moduleName = fir2IrResult.irModuleFragment.name.asString(),
@@ -352,11 +355,11 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             includeIr(serializerOutput.serializedIr)
-        }.writeTo(destination.absolutePath)
+        }.writeTo(destination)
 
 
         return JKlibSerializationArtifact(
-            destination.absolutePath,
+            destination.pathString,
             configuration,
             input.projectEnvironment,
             input.rootDisposable,

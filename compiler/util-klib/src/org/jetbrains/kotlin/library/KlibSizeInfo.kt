@@ -20,7 +20,12 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_F
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_TYPES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibNativeConstants.KLIB_TARGETS_FOLDER_NAME
-import org.jetbrains.kotlin.konan.file.File as KFile
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 /**
  * [size] is always in bytes.
@@ -55,41 +60,39 @@ class KlibElementWithSize private constructor(
     fun flatten(): List<Pair<String, Long>> = listOf(fullName to size) + children.flatMap { it.flatten() }
 }
 
-fun loadSizeInfo(klibFile: KFile): KlibElementWithSize? {
-    val libraryFile = klibFile.absoluteFile
-
+fun loadSizeInfo(klibPath: Path): KlibElementWithSize? {
     return when {
-        libraryFile.isFile -> KlibElementWithSize(
+        klibPath.isRegularFile() -> KlibElementWithSize(
             "KLIB file cumulative size",
-            libraryFile.withZipFileSystem { fs -> fs.file("/").collectTopLevelElements() }
+            klibPath.withZipFileSystem { fs -> fs.file("/").collectTopLevelElements() }
         )
 
-        !libraryFile.isDirectory -> null
+        !klibPath.isDirectory() -> null
 
         else -> KlibElementWithSize(
             "KLIB directory cumulative size",
-            libraryFile.collectTopLevelElements()
+            klibPath.collectTopLevelElements()
         )
     }
 }
 
-private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
-    var defaultEntry: KFile? = null
-    val otherTopLevelEntries = ArrayList<KFile>()
+private fun Path.collectTopLevelElements(): List<KlibElementWithSize> {
+    var defaultEntry: Path? = null
+    val otherTopLevelEntries = ArrayList<Path>()
 
-    for (entry in entries) {
+    for (entry: Path in entries) {
         // Expand the contents of the "default" directory, don't show the directory itself.
-        if (entry.name.normalizeEntryName() == "default" && entry.isDirectory) {
+        if (entry.name.normalizeEntryName() == "default" && entry.isDirectory()) {
             defaultEntry = entry
         } else {
-            otherTopLevelEntries += entry
+            otherTopLevelEntries.add(entry)
         }
     }
 
     // The contents of the "default" entry go the first, then everything else.
-    val topLevelEntries = buildList<KFile> {
-        this += defaultEntry?.entries?.sortedBy(KFile::name).orEmpty()
-        this += otherTopLevelEntries.sortedBy(KFile::name)
+    val topLevelEntries = buildList<Path> {
+        this += defaultEntry?.entries?.sortedBy(Path::name).orEmpty()
+        this += otherTopLevelEntries.sortedBy(Path::name)
     }
 
     return topLevelEntries.map { topLevelEntry ->
@@ -107,19 +110,19 @@ private fun KFile.collectTopLevelElements(): List<KlibElementWithSize> {
     }
 }
 
-private val KFile.entries: List<KFile> get() = listFiles
+private val Path.entries: List<Path> get() = listDirectoryEntries()
 
-private fun KFile.cumulativeSize(): Long = when {
-    isFile -> size
-    isDirectory -> entries.sumOf { it.cumulativeSize() }
+private fun Path.cumulativeSize(): Long = when {
+    isRegularFile() -> Files.size(this)
+    isDirectory() -> entries.sumOf { it.cumulativeSize() }
     else -> 0L
 }
 
-private fun buildElement(name: String, entry: KFile): KlibElementWithSize {
+private fun buildElement(name: String, entry: Path): KlibElementWithSize {
     return KlibElementWithSize(name, entry.cumulativeSize())
 }
 
-private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
+private fun buildIrElement(name: String, entry: Path): KlibElementWithSize {
     val nestedElements = ArrayList<KlibElementWithSize>()
 
     entry.entries.mapTo(nestedElements) { childEntry ->
@@ -142,8 +145,7 @@ private fun buildIrElement(name: String, entry: KFile): KlibElementWithSize {
     return KlibElementWithSize(name, nestedElements.sortedBy { it.name })
 }
 
-// On Windows, entry names start with an uppercase character and end with '/' that is not trimmed by `File.name` since the separator is `\`
-private fun String.normalizeEntryName() = if (isWindows) replaceFirstChar { it.lowercase() }.trimEnd('/') else this
-
-private val isWindows: Boolean
-    get() = System.getProperty("os.name").startsWith("Windows", ignoreCase = true)
+// Entry names start with an uppercase character and end with '/'.
+private fun String.normalizeEntryName(): String {
+    return replaceFirstChar { it.lowercase() }.trimEnd('/')
+}

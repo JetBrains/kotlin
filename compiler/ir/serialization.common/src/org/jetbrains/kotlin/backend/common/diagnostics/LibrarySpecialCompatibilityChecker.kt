@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.library.*
 import java.io.ByteArrayInputStream
+import java.nio.file.Path
 import java.util.jar.Manifest
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.readBytes
 
 /** See KT-68322 for details. */
 abstract class LibrarySpecialCompatibilityChecker {
@@ -161,14 +163,14 @@ private class JarManifestComponent(
         }
 
     object Kind : KlibComponent.Kind<JarManifestComponent, JarManifestComponentLayout> {
-        override fun createLayout(root: KlibFile) = JarManifestComponentLayout(root)
+        override fun createLayout(root: Path) = JarManifestComponentLayout(root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<JarManifestComponentLayout>) =
-            if (layoutReader.readInPlaceOrFallback(false) { it.jarManifestFile.isFile }) JarManifestComponent(layoutReader) else null
+            if (layoutReader.readInPlaceOrFallback(false) { it.jarManifestFile.isRegularFile() }) JarManifestComponent(layoutReader) else null
     }
 }
 
-private class JarManifestComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val jarManifestFile: KlibFile
-        get() = root.child(KLIB_JAR_MANIFEST_FILE)
+private class JarManifestComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val jarManifestFile: Path
+        get() = root.resolve(KLIB_JAR_MANIFEST_FILE)
 }

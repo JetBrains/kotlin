@@ -5,13 +5,23 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.createTempDir
-import org.jetbrains.kotlin.konan.file.createTempFile
 import org.jetbrains.kotlin.konan.file.file
 import java.io.IOException
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Files.createTempFile
+import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.zip.ZipException
+import kotlin.io.path.copyTo
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 /**
  * A class that allows reading from a specific [KlibComponent] using the corresponding [KlibComponentLayout].
@@ -26,7 +36,7 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
             fallbackValueInCaseOfException
         }
 
-    abstract fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile
+    abstract fun readExtractingToTemp(readAction: (KCL) -> Path): Path
 
     /**
      * Read from a directory on the file system.
@@ -35,10 +45,10 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
      * @param klibDir The Klib directory.
      * @param layoutBuilder A function that builds the [KlibComponentLayout].
      */
-    class FromDirectory<KCL : KlibComponentLayout>(klibDir: KlibFile, layoutBuilder: (KlibFile) -> KCL) : KlibLayoutReader<KCL>() {
+    class FromDirectory<KCL : KlibComponentLayout>(klibDir: Path, layoutBuilder: (Path) -> KCL) : KlibLayoutReader<KCL>() {
         private val layout = layoutBuilder(klibDir)
         override fun <T> readInPlace(readAction: (KCL) -> T): T = readAction(layout)
-        override fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile = readAction(layout)
+        override fun readExtractingToTemp(readAction: (KCL) -> Path): Path = readAction(layout)
     }
 
     /**
@@ -56,37 +66,56 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
      * @param layoutBuilder A function that builds the [KlibComponentLayout].
      */
     class FromZipArchive<KCL : KlibComponentLayout>(
-        private val klibArchive: KlibFile,
+        private val klibArchive: Path,
         private val zipFileSystemAccessor: ZipFileSystemAccessor,
-        private val layoutBuilder: (KlibFile) -> KCL
+        private val layoutBuilder: (Path) -> KCL
     ) : KlibLayoutReader<KCL>() {
         override fun <T> readInPlace(readAction: (KCL) -> T): T =
             zipFileSystemAccessor.withZipFileSystem(klibArchive) { zipFileSystem ->
                 readAction(layoutBuilder(zipFileSystem.file("/")))
             }
 
-        override fun readExtractingToTemp(readAction: (KCL) -> KlibFile): KlibFile = readInPlace { layout ->
+        override fun readExtractingToTemp(readAction: (KCL) -> Path): Path = readInPlace { layout ->
             val fileOrDirectory = readAction(layout)
             when {
-                fileOrDirectory.isDirectory -> {
-                    val tempDir = createTempDir(fileOrDirectory.name)
+                fileOrDirectory.isDirectory() -> {
+                    val tempDir = createTempDirectory(fileOrDirectory.name)
                     tempDir.deleteOnExitRecursively()
-                    fileOrDirectory.listFiles.forEach { file -> file.copyTo(tempDir.child(file.name)) }
+                    fileOrDirectory.listDirectoryEntries().forEach { file -> file.copyTo(tempDir.resolve(file.name)) }
                     tempDir
                 }
 
-                fileOrDirectory.isFile -> {
-                    val tempFile = createTempFile(fileOrDirectory.name)
+                fileOrDirectory.isRegularFile() -> {
+                    val tempFile = createTempFile(fileOrDirectory.name, null)
                     tempFile.deleteOnExitRecursively()
-                    fileOrDirectory.copyTo(tempFile)
+                    fileOrDirectory.copyTo(tempFile, overwrite = true)
                     tempFile
                 }
 
-                fileOrDirectory.exists -> throw ZipException("Non-existing file or directory in KLIB archive: $fileOrDirectory")
+                fileOrDirectory.exists() -> throw ZipException("Non-existing file or directory in KLIB archive: $fileOrDirectory")
 
                 else -> throw ZipException("Unsupported type of the file system object in KLIB archive: $fileOrDirectory")
             }
         }
+    }
+
+    companion object {
+        private fun Path.deleteOnExitRecursively() {
+            if (!exists()) return
+
+            Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+                override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    file.toFile().deleteOnExit()
+                    return FileVisitResult.CONTINUE
+                }
+
+                override fun preVisitDirectory(dir: Path, attrs: BasicFileAttributes): FileVisitResult {
+                    dir.toFile().deleteOnExit()
+                    return FileVisitResult.CONTINUE
+                }
+            })
+        }
+
     }
 }
 
@@ -94,10 +123,10 @@ sealed class KlibLayoutReader<KCL : KlibComponentLayout> {
  * The factory that allows creating instances of [KlibLayoutReader] for specific [KlibComponent]s.
  */
 class KlibLayoutReaderFactory(
-    private val klibFile: KlibFile,
+    private val klibFile: Path,
     private val zipFileSystemAccessor: ZipFileSystemAccessor,
 ) {
-    fun <KCL : KlibComponentLayout> createLayoutReader(layoutBuilder: (KlibFile) -> KCL): KlibLayoutReader<KCL> {
+    fun <KCL : KlibComponentLayout> createLayoutReader(layoutBuilder: (Path) -> KCL): KlibLayoutReader<KCL> {
         return when (KlibFormat.guessBy(klibFile)) {
             KlibFormat.ZipArchive -> KlibLayoutReader.FromZipArchive(
                 klibArchive = klibFile,

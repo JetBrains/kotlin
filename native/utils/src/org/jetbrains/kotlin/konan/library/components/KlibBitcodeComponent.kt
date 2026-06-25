@@ -14,28 +14,29 @@ import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 interface KlibBitcodeComponent : KlibComponent {
     val bitcodeFilePaths: List<String>
 
     data class Kind(val target: KonanTarget) : KlibComponent.Kind<KlibBitcodeComponent, KlibBitcodeComponentLayout> {
-        override fun createLayout(root: KlibFile) = KlibBitcodeComponentLayout(target, root)
+        override fun createLayout(root: Path) = KlibBitcodeComponentLayout(target, root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibBitcodeComponentLayout>): KlibBitcodeComponent? =
-            if (layoutReader.readInPlaceOrFallback(false) { it.bitcodeDir.exists }) KlibBitcodeComponentImpl(layoutReader) else null
+            if (layoutReader.readInPlaceOrFallback(false) { it.bitcodeDir.exists() }) KlibBitcodeComponentImpl(layoutReader) else null
     }
 }
 
 fun Klib.bitcode(target: KonanTarget): KlibBitcodeComponent? =
     getComponent(KlibBitcodeComponent.Kind(target))
 
-class KlibBitcodeComponentLayout(val target: KonanTarget, root: KlibFile) : KlibComponentLayout(root) {
-    val bitcodeDir: KlibFile
-        get() = root.child(KLIB_DEFAULT_COMPONENT_NAME)
-            .child(KLIB_TARGETS_FOLDER_NAME)
-            .child(target.visibleName)
-            .child(KLIB_BITCODE_FOLDER_NAME)
+class KlibBitcodeComponentLayout(val target: KonanTarget, root: Path) : KlibComponentLayout(root) {
+    val bitcodeDir: Path
+        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME)
+            .resolve(KLIB_TARGETS_FOLDER_NAME)
+            .resolve(target.visibleName)
+            .resolve(KLIB_BITCODE_FOLDER_NAME)
 }
 
 /** Constants for bitcode files stored in Native Klibs. */

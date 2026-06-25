@@ -8,19 +8,23 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponentLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import kotlin.io.path.Path
+import java.nio.file.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.name
 
 internal class KlibBitcodeComponentWriterImpl(
     private val target: KonanTarget,
     private val bitcodeFilePaths: Collection<String>,
 ) : KlibComponentWriter {
-    override fun writeTo(root: KlibFile) {
+    override fun writeTo(root: Path) {
         val layout = KlibBitcodeComponentLayout(target, root)
-        layout.bitcodeDir.mkdirs()
+        layout.bitcodeDir.createDirectories()
 
         for (filePath in bitcodeFilePaths) {
-            val file = KlibFile(filePath)
-            file.copyTo(layout.bitcodeDir.child(file.name))
+            val file = Path(filePath)
+            file.copyTo(layout.bitcodeDir.resolve(file.name), overwrite = true)
         }
     }
 }

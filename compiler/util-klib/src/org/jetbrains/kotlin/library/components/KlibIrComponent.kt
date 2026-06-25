@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_STRINGS_F
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILES_FILE_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FILE_ENTRIES_FILE_NAME
 import org.jetbrains.kotlin.library.impl.KlibIrComponentImpl
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 /**
  * This component that provides read access to Klib IR. It can be used for two purposes:
@@ -49,15 +50,15 @@ interface KlibIrComponent : KlibComponent {
 
     sealed class Kind : KlibComponent.Kind<KlibIrComponent, KlibIrComponentLayout> {
         object Main : Kind() {
-            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForMainIr(root)
+            override fun createLayout(root: Path) = KlibIrComponentLayout.createForMainIr(root)
         }
 
         object InlinableFunctions : Kind() {
-            override fun createLayout(root: KlibFile) = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
+            override fun createLayout(root: Path) = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
         }
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibIrComponentLayout>): KlibIrComponent? =
-            if (layoutReader.readInPlaceOrFallback(false) { it.irDir.exists }) KlibIrComponentImpl(layoutReader) else null
+            if (layoutReader.readInPlaceOrFallback(false) { it.irDir.exists() }) KlibIrComponentImpl(layoutReader) else null
     }
 }
 
@@ -87,18 +88,18 @@ inline val Klib.irOrFail: KlibIrComponent
 inline val Klib.inlinableFunctionsIr: KlibIrComponent?
     get() = getComponent(KlibIrComponent.Kind.InlinableFunctions)
 
-class KlibIrComponentLayout private constructor(root: KlibFile, private val irFolderName: String) : KlibComponentLayout(root) {
+class KlibIrComponentLayout private constructor(root: Path, private val irFolderName: String) : KlibComponentLayout(root) {
     /** The IR "home" directory. */
-    val irDir: KlibFile
-        get() = root.child(KLIB_DEFAULT_COMPONENT_NAME).child(irFolderName)
+    val irDir: Path
+        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME).resolve(irFolderName)
 
     /** The file with "IR files". */
-    val irFilesFile: KlibFile
-        get() = irDir.child(KLIB_IR_FILES_FILE_NAME)
+    val irFilesFile: Path
+        get() = irDir.resolve(KLIB_IR_FILES_FILE_NAME)
 
     /** The file with "IR file entries". */
-    val irFileEntriesFile: KlibFile
-        get() = irDir.child(KLIB_IR_FILE_ENTRIES_FILE_NAME)
+    val irFileEntriesFile: Path
+        get() = irDir.resolve(KLIB_IR_FILE_ENTRIES_FILE_NAME)
 
     /**
      * The file with all IR declarations.
@@ -108,34 +109,34 @@ class KlibIrComponentLayout private constructor(root: KlibFile, private val irFo
      *   load declarations without bodies when the compiler does not need them.
      * - Local declarations are stored together with functions bodies in [bodiesFile].
      */
-    val declarationsFile: KlibFile
-        get() = irDir.child(KLIB_IR_DECLARATIONS_FILE_NAME)
+    val declarationsFile: Path
+        get() = irDir.resolve(KLIB_IR_DECLARATIONS_FILE_NAME)
 
     /** The file with function bodies. */
-    val bodiesFile: KlibFile
-        get() = irDir.child(KLIB_IR_BODIES_FILE_NAME)
+    val bodiesFile: Path
+        get() = irDir.resolve(KLIB_IR_BODIES_FILE_NAME)
 
     /** The file with IR types. */
-    val typesFile: KlibFile
-        get() = irDir.child(KLIB_IR_TYPES_FILE_NAME)
+    val typesFile: Path
+        get() = irDir.resolve(KLIB_IR_TYPES_FILE_NAME)
 
     /** The file with IR signatures. */
-    val signaturesFile: KlibFile
-        get() = irDir.child(KLIB_IR_SIGNATURES_FILE_NAME)
+    val signaturesFile: Path
+        get() = irDir.resolve(KLIB_IR_SIGNATURES_FILE_NAME)
 
     /** The file with the supplementary (debug) information about IR signatures. */
-    val signaturesDebugInfoFile: KlibFile
-        get() = irDir.child(KLIB_IR_DEBUG_INFO_FILE_NAME)
+    val signaturesDebugInfoFile: Path
+        get() = irDir.resolve(KLIB_IR_DEBUG_INFO_FILE_NAME)
 
     /** The file with string literals. */
-    val stringLiteralsFile: KlibFile
-        get() = irDir.child(KLIB_IR_STRINGS_FILE_NAME)
+    val stringLiteralsFile: Path
+        get() = irDir.resolve(KLIB_IR_STRINGS_FILE_NAME)
 
     companion object {
-        fun createForMainIr(root: KlibFile): KlibIrComponentLayout =
+        fun createForMainIr(root: Path): KlibIrComponentLayout =
             KlibIrComponentLayout(root, KLIB_IR_FOLDER_NAME)
 
-        fun createForInlinableFunctionsIr(root: KlibFile): KlibIrComponentLayout =
+        fun createForInlinableFunctionsIr(root: Path): KlibIrComponentLayout =
             KlibIrComponentLayout(root, KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME)
     }
 }

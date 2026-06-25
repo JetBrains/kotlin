@@ -8,19 +8,23 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.components.KlibNativeIncludedBinariesComponentLayout
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.copyTo
+import kotlin.io.path.createDirectories
+import kotlin.io.path.name
 
 internal class KlibNativeIncludedBinariesComponentWriterImpl(
     private val target: KonanTarget,
     private val nativeIncludedBinaryFilePaths: Collection<String>,
 ) : KlibComponentWriter {
-    override fun writeTo(root: KlibFile) {
+    override fun writeTo(root: Path) {
         val layout = KlibNativeIncludedBinariesComponentLayout(target, root)
-        layout.nativeIncludedBinariesDir.mkdirs()
+        layout.nativeIncludedBinariesDir.createDirectories()
 
         for (filePath in nativeIncludedBinaryFilePaths) {
-            val file = KlibFile(filePath)
-            file.copyTo(layout.nativeIncludedBinariesDir.child(file.name))
+            val file = Path(filePath)
+            file.copyTo(layout.nativeIncludedBinariesDir.resolve(file.name), overwrite = true)
         }
     }
 }

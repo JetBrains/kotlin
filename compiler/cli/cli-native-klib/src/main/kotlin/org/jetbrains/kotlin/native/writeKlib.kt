@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.writer.includeIr
 import org.jetbrains.kotlin.library.writer.includeMetadata
 import org.jetbrains.kotlin.util.metadataVersion
 import java.util.Properties
+import kotlin.io.path.Path
 
 fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     val suffix = ".klib"
@@ -95,6 +96,8 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
             emptyList()
         } else listOf(target.visibleName)
 
+    val klibPath = Path(klibOutputFileName)
+
     KlibWriter {
         format(if (dontCompressKlib) KlibFormat.Directory else KlibFormat.ZipArchive)
         manifest {
@@ -109,9 +112,9 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
         includeIr(input.serializerOutput.serializedIr)
         includeBitcode(target, config.nativeLibraries)
         includeNativeIncludedBinaries(target, config.includeBinaries)
-    }.writeTo(klibOutputFileName)
+    }.writeTo(klibPath)
 
-    loadSizeInfo(File(klibOutputFileName))?.flatten()?.let { stats ->
+    loadSizeInfo(klibPath)?.flatten()?.let { stats ->
         performanceManager?.registerKlibElementStats(stats)
     }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.library.KlibWriterTest.NewKlibWriterParameters
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.javaPath
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.KlibWrittenMetadataPackageFragmentTracker
 import org.jetbrains.kotlin.library.writer.includeIr
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.assertThrows
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
 /**
  * This is the test for the redesigned (new) KLIB writer API (as the opposite of the test for the legacy one: [LegacyKlibWriterTest]).
@@ -231,11 +229,11 @@ class KlibWriterTest : AbstractKlibWriterTest<NewKlibWriterParameters>(::NewKlib
             }
         )
 
-        val layout = KlibMetadataComponentLayout(KlibFile(klibDir.path))
+        val layout = KlibMetadataComponentLayout(Path(klibDir.path))
         val expectedMappings = listOf(
-            null to layout.getPackageFragmentFile(packageFqName = "", partName = "0_").javaPath(),
-            Path("/src/a.kt") to layout.getPackageFragmentFile(packageFqName = "", partName = "a").javaPath(),
-            null to layout.getPackageFragmentFile(packageFqName = "foo.bar", partName = "0_bar").javaPath(),
+            null to layout.getPackageFragmentFile(packageFqName = "", partName = "0_"),
+            Path("/src/a.kt") to layout.getPackageFragmentFile(packageFqName = "", partName = "a"),
+            null to layout.getPackageFragmentFile(packageFqName = "foo.bar", partName = "0_bar"),
         )
 
         assertEquals(

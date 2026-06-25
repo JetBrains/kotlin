@@ -14,16 +14,17 @@ import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 interface KlibNativeIncludedBinariesComponent : KlibComponent {
     val nativeIncludedBinaryFilePaths: List<String>
 
     data class Kind(val target: KonanTarget) : KlibComponent.Kind<KlibNativeIncludedBinariesComponent, KlibNativeIncludedBinariesComponentLayout> {
-        override fun createLayout(root: KlibFile) = KlibNativeIncludedBinariesComponentLayout(target, root)
+        override fun createLayout(root: Path) = KlibNativeIncludedBinariesComponentLayout(target, root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<KlibNativeIncludedBinariesComponentLayout>): KlibNativeIncludedBinariesComponent? {
-            return if (layoutReader.readInPlaceOrFallback(false) { it.nativeIncludedBinariesDir.exists }) KlibNativeIncludedBinariesComponentImpl(layoutReader) else null
+            return if (layoutReader.readInPlaceOrFallback(false) { it.nativeIncludedBinariesDir.exists() }) KlibNativeIncludedBinariesComponentImpl(layoutReader) else null
         }
     }
 }
@@ -31,12 +32,12 @@ interface KlibNativeIncludedBinariesComponent : KlibComponent {
 fun Klib.nativeIncludedBinaries(target: KonanTarget): KlibNativeIncludedBinariesComponent? =
     getComponent(KlibNativeIncludedBinariesComponent.Kind(target))
 
-class KlibNativeIncludedBinariesComponentLayout(val target: KonanTarget, root: KlibFile) : KlibComponentLayout(root) {
-    val nativeIncludedBinariesDir: KlibFile
-        get() = root.child(KLIB_DEFAULT_COMPONENT_NAME)
-            .child(KLIB_TARGETS_FOLDER_NAME)
-            .child(target.visibleName)
-            .child(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
+class KlibNativeIncludedBinariesComponentLayout(val target: KonanTarget, root: Path) : KlibComponentLayout(root) {
+    val nativeIncludedBinariesDir: Path
+        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME)
+            .resolve(KLIB_TARGETS_FOLDER_NAME)
+            .resolve(target.visibleName)
+            .resolve(KLIB_NATIVE_INCLUDED_BINARIES_FOLDER_NAME)
 }
 
 /** Constants for included Native binary files stored in Klibs. */

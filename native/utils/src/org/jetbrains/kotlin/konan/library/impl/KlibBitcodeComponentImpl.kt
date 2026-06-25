@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.konan.library.impl
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponent
 import org.jetbrains.kotlin.konan.library.components.KlibBitcodeComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
-import org.jetbrains.kotlin.konan.file.File as KlibFile
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.listDirectoryEntries
 
 internal class KlibBitcodeComponentImpl(
     private val layoutReader: KlibLayoutReader<KlibBitcodeComponentLayout>
 ) : KlibBitcodeComponent {
     override val bitcodeFilePaths: List<String> by lazy {
-        layoutReader.readExtractingToTemp(KlibBitcodeComponentLayout::bitcodeDir).listFiles.map(KlibFile::absolutePath)
+        layoutReader.readExtractingToTemp(KlibBitcodeComponentLayout::bitcodeDir)
+            .listDirectoryEntries()
+            .map(Path::absolutePathString)
     }
 }

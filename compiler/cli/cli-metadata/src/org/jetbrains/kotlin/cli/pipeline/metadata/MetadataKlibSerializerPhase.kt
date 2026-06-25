@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.SerializedFragment
 import org.jetbrains.kotlin.library.SerializedFragmentWithSource
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.util.metadataVersion
+import kotlin.io.path.absolute
 
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
@@ -111,7 +111,7 @@ object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerialization
     fun writeToDisc(input: MetadataInMemorySerializationArtifact, destDir: java.io.File) {
         buildKotlinMetadataLibrary(input.configuration, input.metadata, destDir, input.isIncremental)
 
-        loadSizeInfo(File(destDir.absolutePath))?.flatten()?.let { stats ->
+        loadSizeInfo(destDir.toPath().absolute())?.flatten()?.let { stats ->
             input.configuration.perfManager?.registerKlibElementStats(stats)
         }
     }

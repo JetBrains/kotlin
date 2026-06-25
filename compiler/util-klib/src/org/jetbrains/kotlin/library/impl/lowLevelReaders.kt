@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.library.KlibComponentLayout
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.utils.readUnsignedLeb128
 import java.nio.ByteBuffer
+import java.nio.file.Path
+import kotlin.io.path.readBytes
 
 /******************************************************************************/
 /** [ByteArray] readers                                                       */
@@ -24,7 +26,7 @@ fun IrArrayReader(loadBytes: () -> ByteArray): IrArrayReader = IrArrayReader(Rea
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File,
+    crossinline getFile: KCL.() -> Path,
 ): IrArrayReader = IrArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class IrArrayReader(private val buffer: ReadByteBufferProvider) {
@@ -43,7 +45,7 @@ fun IrMultiArrayReader(loadBytes: () -> ByteArray): IrMultiArrayReader = IrMulti
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File,
+    crossinline getFile: KCL.() -> Path,
 ): IrMultiArrayReader = IrMultiArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class IrMultiArrayReader(private val buffer: ReadByteBufferProvider) {
@@ -89,7 +91,7 @@ fun DeclarationIdMultiTableReader(loadBytes: () -> ByteArray): DeclarationIdMult
 /** On-demand read from a file (potentially inside a KLIB archive file). */
 inline fun <KCL : KlibComponentLayout> DeclarationIdMultiTableReader(
     layoutReader: KlibLayoutReader<KCL>,
-    crossinline getFile: KCL.() -> File,
+    crossinline getFile: KCL.() -> Path,
 ): DeclarationIdMultiTableReader = DeclarationIdMultiTableReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 class DeclarationIdMultiTableReader(private val buffer: ReadByteBufferProvider) {

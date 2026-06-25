@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
+import java.nio.file.Path
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -272,7 +273,7 @@ fun serializeModuleIntoKlib(
     configuration: CompilerConfiguration,
     diagnosticReporter: IrDiagnosticReporter,
     metadataSerializer: KlibSingleFileMetadataSerializer<*>,
-    klibPath: String,
+    klibPath: Path,
     moduleFragment: IrModuleFragment,
     irBuiltIns: IrBuiltIns,
     cleanFiles: List<KotlinFileSerializedData>,

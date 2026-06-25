@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
-import org.jetbrains.kotlin.konan.file.createTempDir
 import org.jetbrains.kotlin.konan.file.zipDirAs
 import org.jetbrains.kotlin.library.TestComponentConstants.MANDATORY_COMPONENT_BASE_FOLDER_NAME
 import org.jetbrains.kotlin.library.TestComponentConstants.MANDATORY_COMPONENT_INT_VALUE_FILE_NAME
@@ -22,18 +21,31 @@ import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.fail
 import java.io.IOException
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Path
 import java.util.Collections.rotate
 import java.util.UUID
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.readBytes
+import kotlin.io.path.writeText
 import kotlin.random.Random
-import org.jetbrains.kotlin.konan.file.File as KlibFile
 
+@OptIn(ExperimentalPathApi::class)
 class KlibLayoutReaderTest {
-    private lateinit var tmpDir: KlibFile
+    private lateinit var tmpDir: Path
     private val random = Random(System.nanoTime())
 
     @BeforeEach
     fun setup(info: TestInfo) {
-        tmpDir = createTempDir(info.testClass.get().simpleName + "-" + info.testMethod.get().name)
+        tmpDir = createTempDirectory(info.testClass.get().simpleName + "-" + info.testMethod.get().name)
     }
 
     @AfterEach
@@ -55,11 +67,11 @@ class KlibLayoutReaderTest {
 
                 assertEquals(color, optionalComponent.stringValue)
 
-                val someUsefulFiles = optionalComponent.pathsOfExtractedFiles.map { KlibFile(it) }
+                val someUsefulFiles = optionalComponent.pathsOfExtractedFiles.map { Path(it) }
                 assertEquals(furnitureItems, someUsefulFiles.mapTo(hashSetOf()) { it.name })
 
                 someUsefulFiles.forEach { file ->
-                    val fileWasExtracted = !file.absolutePath.startsWith(lib.location.absolutePath)
+                    val fileWasExtracted = !file.absolutePathString().startsWith(lib.location.absolutePathString())
                     assertEquals(isFileExtractionExpected, fileWasExtracted)
                     assertEquals("$color ${file.name}", file.readText())
                 }
@@ -103,32 +115,32 @@ class KlibLayoutReaderTest {
         assertEquals(null, klibDir.compress().toTestLib().optionalComponent)
     }
 
-    private fun generateNewPlainKlib(intValue: Int, stringValue: String, fileNames: Collection<String>): KlibFile {
-        val klibDir = tmpDir.child(UUID.randomUUID().toString())
+    private fun generateNewPlainKlib(intValue: Int, stringValue: String, fileNames: Collection<String>): Path {
+        val klibDir = tmpDir.resolve(UUID.randomUUID().toString())
 
         val mandatoryComponentLayout = TestMandatoryComponentLayout(klibDir)
-        mandatoryComponentLayout.baseDir.mkdirs()
+        mandatoryComponentLayout.baseDir.createDirectories()
         mandatoryComponentLayout.intValueFile.writeText("$intValue")
 
         val optionalComponentLayout = TestOptionalComponentLayout(klibDir)
-        optionalComponentLayout.baseDir.mkdirs()
+        optionalComponentLayout.baseDir.createDirectories()
         optionalComponentLayout.stringValueFile.writeText(stringValue)
-        optionalComponentLayout.extractedFilesDir.mkdirs()
+        optionalComponentLayout.extractedFilesDir.createDirectories()
         for (fileName in fileNames) {
-            optionalComponentLayout.extractedFilesDir.child(fileName).writeText("$stringValue $fileName")
+            optionalComponentLayout.extractedFilesDir.resolve(fileName).writeText("$stringValue $fileName")
         }
 
         return klibDir
     }
 
-    private fun KlibFile.compress(): KlibFile {
-        val klibFile = KlibFile("$absolutePath.klib")
-        if (klibFile.exists) klibFile.delete()
+    private fun Path.compress(): Path {
+        val klibFile = Path("${absolutePathString()}.klib")
+        klibFile.deleteIfExists()
         zipDirAs(klibFile)
         return klibFile
     }
 
-    private fun KlibFile.toTestLib(): TestLib = TestLib(this)
+    private fun Path.toTestLib(): TestLib = TestLib(this)
 
     private fun getRandomColor(): String = COLORS.random(random)
 
@@ -145,7 +157,7 @@ class KlibLayoutReaderTest {
     }
 }
 
-private class TestLib(val location: KlibFile) {
+private class TestLib(val location: Path) {
     private val layoutReaderFactory = KlibLayoutReaderFactory(location, ZipFileSystemInPlaceAccessor)
     private val components = KlibComponentsCache(layoutReaderFactory)
 
@@ -156,7 +168,7 @@ private class TestLib(val location: KlibFile) {
     val optionalComponent: TestOptionalComponent?
         get() = components.getComponent(TestOptionalComponent.Kind)
 
-    override fun toString() = location.absolutePath
+    override fun toString() = location.absolutePathString()
 }
 
 /**
@@ -169,10 +181,10 @@ private interface TestOptionalComponent : KlibComponent {
     val pathsOfExtractedFiles: Collection<String>
 
     companion object Kind : KlibComponent.Kind<TestOptionalComponent, TestOptionalComponentLayout> {
-        override fun createLayout(root: KlibFile) = TestOptionalComponentLayout(root)
+        override fun createLayout(root: Path) = TestOptionalComponentLayout(root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<TestOptionalComponentLayout>) =
-            if (layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists }) TestOptionalComponentImpl(layoutReader) else null
+            if (layoutReader.readInPlaceOrFallback(false) { it.baseDir.exists() }) TestOptionalComponentImpl(layoutReader) else null
     }
 }
 
@@ -182,14 +194,14 @@ private class TestOptionalComponentImpl(private val layoutReader: KlibLayoutRead
     }
 
     override val pathsOfExtractedFiles: Collection<String> by lazy {
-        layoutReader.readExtractingToTemp { it.extractedFilesDir }.listFiles.map(KlibFile::absolutePath)
+        layoutReader.readExtractingToTemp { it.extractedFilesDir }.listDirectoryEntries().map(Path::absolutePathString)
     }
 }
 
-private class TestOptionalComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val baseDir: KlibFile get() = root.child(OPTIONAL_COMPONENT_BASE_FOLDER_NAME)
-    val stringValueFile: KlibFile get() = baseDir.child(OPTIONAL_COMPONENT_STRING_VALUE_FILE_NAME)
-    val extractedFilesDir: KlibFile get() = baseDir.child(OPTIONAL_COMPONENT_EXTRACTED_FILES_FOLDER_NAME)
+private class TestOptionalComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val baseDir: Path get() = root.resolve(OPTIONAL_COMPONENT_BASE_FOLDER_NAME)
+    val stringValueFile: Path get() = baseDir.resolve(OPTIONAL_COMPONENT_STRING_VALUE_FILE_NAME)
+    val extractedFilesDir: Path get() = baseDir.resolve(OPTIONAL_COMPONENT_EXTRACTED_FILES_FOLDER_NAME)
 }
 
 /**
@@ -202,7 +214,7 @@ private interface TestMandatoryComponent : KlibComponent {
     val intValue: Int
 
     companion object Kind : KlibComponent.Kind<TestMandatoryComponent, TestMandatoryComponentLayout> {
-        override fun createLayout(root: KlibFile) = TestMandatoryComponentLayout(root)
+        override fun createLayout(root: Path) = TestMandatoryComponentLayout(root)
 
         override fun createComponentIfDataInKlibIsAvailable(layoutReader: KlibLayoutReader<TestMandatoryComponentLayout>) =
             TestMandatoryComponentImpl(layoutReader)
@@ -215,9 +227,9 @@ private class TestMandatoryComponentImpl(private val layoutReader: KlibLayoutRea
     }
 }
 
-private class TestMandatoryComponentLayout(root: KlibFile) : KlibComponentLayout(root) {
-    val baseDir: KlibFile get() = root.child(MANDATORY_COMPONENT_BASE_FOLDER_NAME)
-    val intValueFile: KlibFile get() = baseDir.child(MANDATORY_COMPONENT_INT_VALUE_FILE_NAME)
+private class TestMandatoryComponentLayout(root: Path) : KlibComponentLayout(root) {
+    val baseDir: Path get() = root.resolve(MANDATORY_COMPONENT_BASE_FOLDER_NAME)
+    val intValueFile: Path get() = baseDir.resolve(MANDATORY_COMPONENT_INT_VALUE_FILE_NAME)
 }
 
 
@@ -232,4 +244,4 @@ private object TestComponentConstants {
     const val MANDATORY_COMPONENT_INT_VALUE_FILE_NAME = "int.txt"
 }
 
-private fun KlibFile.readText(): String = readBytes().toString(Charsets.UTF_8).trimEnd()
+private fun Path.readText(): String = readBytes().toString(Charsets.UTF_8).trimEnd()
