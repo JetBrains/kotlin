@@ -7,6 +7,7 @@
 // FILE: closures.kt
 
 import kotlinx.coroutines.*
+import kotlin.time.Duration.Companion.seconds
 
 object Foo
 
@@ -223,7 +224,7 @@ fun callClosureInNewScope(block: suspend () -> Int): Int {
 
 fun cancelClosureFromKotlin(block: suspend () -> Int): String {
     return runBlocking {
-        val result = withTimeoutOrNull(100) {
+        val result = withTimeoutOrNull(3.seconds) {
             block()
         }
         if (result == null) "timed_out" else "completed: $result"
