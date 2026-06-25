@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
-import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
-import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.*
@@ -185,6 +180,19 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
+        name = "Xes-const-let"
+        compilerName = "useEs6ConstLet"
+        description =
+            "Variables in generated JavaScript code are declared with 'let' or 'const' keywords instead of 'var'".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
