@@ -191,6 +191,13 @@ public class KaDataFlowExitPointSnapshot(
  * [Smart cast information][KaSmartCastInfo] for the given [KtExpression], or `null` if smart casts are not applied to it.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.smartCastInfo",
+        "org.jetbrains.kotlin.analysis.api.dataflow.smartCastInfo",
+    ),
+)
 @KaContextParameterApi
 context(session: KaSession)
 public val KtExpression.smartCastInfo: KaSmartCastInfo?
@@ -212,6 +219,13 @@ public val KtExpression.smartCastInfo: KaSmartCastInfo?
  * ```
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.implicitReceiverSmartCasts",
+        "org.jetbrains.kotlin.analysis.api.dataflow.implicitReceiverSmartCasts",
+    ),
+)
 @KaNonPublicApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -219,6 +233,13 @@ public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceive
     get() = with(session) { implicitReceiverSmartCasts }
 
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.dataflow' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "computeExitPointSnapshot(statements)",
+        "org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot",
+    ),
+)
 @KaNonPublicApi
 @KaContextParameterApi
 context(session: KaSession)
