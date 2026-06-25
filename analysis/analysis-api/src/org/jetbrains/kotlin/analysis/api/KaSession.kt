@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModuleProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider
@@ -171,8 +172,14 @@ public interface KaSession : KaLifetimeOwner,
  *
  * @see KaModuleProvider.getModule
  */
-public fun KaSession.getModule(element: PsiElement): KaModule =
-    KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)
+@Deprecated(
+    "Use `kaModule` instead",
+    ReplaceWith(
+        "element.kaModule",
+        imports = ["org.jetbrains.kotlin.analysis.api.projectStructure.kaModule"],
+    )
+)
+public fun KaSession.getModule(element: PsiElement): KaModule = element.kaModule
 
 /**
  * The [KaModule] from whose perspective the analysis is performed. The use-site module defines the resolution scope of the [KaSession],

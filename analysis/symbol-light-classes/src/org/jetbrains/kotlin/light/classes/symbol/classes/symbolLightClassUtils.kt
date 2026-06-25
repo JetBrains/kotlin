@@ -11,9 +11,9 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -622,7 +622,7 @@ internal fun KaSession.createInnerClasses(
         }
     }
 
-    val languageVersionSettings = classOrObject?.let { getModule(it) as? KaSourceModule }?.languageVersionSettings
+    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
         ?: LanguageVersionSettingsImpl.DEFAULT
 
     if (containingClass is SymbolLightClassForInterface &&

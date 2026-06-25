@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.processEqualsFunctions
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseResolver
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.resolution.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withPsiEntry
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.signatures.KaCallableSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KaFunctionSignature
@@ -1104,19 +1104,19 @@ internal class KaFirResolver(
             var explicitReceiverPsi = when (psi) {
                 is KtQualifiedExpression -> psi.selectorExpression
                     ?: errorWithAttachment("missing selectorExpression in PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                        withPsiEntry("psi", psi, analysisSession::getModule)
+                        withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                     }
 
                 is KtExpression -> psi
                 else -> errorWithAttachment("unexpected PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                    withPsiEntry("psi", psi, analysisSession::getModule)
+                    withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                 }
             }
 
             if (explicitReceiverPsi is KtCallExpression) {
                 explicitReceiverPsi = explicitReceiverPsi.calleeExpression
                     ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class.simpleName} for FirImplicitInvokeCall") {
-                        withPsiEntry("psi", psi, analysisSession::getModule)
+                        withPsiEntry("psi", psi) { context(analysisSession) { it.kaModule } }
                     }
             }
 
@@ -2477,7 +2477,7 @@ internal class KaFirResolver(
             "Error during resolving call ${element::class}",
             exception = e,
         ) {
-            withPsiEntry("psi", element, analysisSession::getModule)
+            withPsiEntry("psi", element) { context(analysisSession) { it.kaModule } }
             element.getOrBuildFir(resolutionFacade)?.let { withFirEntry("fir", it) }
         }
     }

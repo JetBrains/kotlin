@@ -694,6 +694,7 @@ public final class org/jetbrains/kotlin/analysis/api/projectStructure/KaModuleKt
 public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructure/KaModuleProvider {
 	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModuleProvider$Companion;
 	public abstract fun getModule (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public abstract fun module (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 }
 
 public final class org/jetbrains/kotlin/analysis/api/projectStructure/KaModuleProvider$Companion {
@@ -707,7 +708,8 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/projectStructu
 }
 
 public final class org/jetbrains/kotlin/analysis/api/projectStructure/ModuleProviderKt {
-	public static final fun getModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public static final fun getKaModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lcom/intellij/psi/PsiElement;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
+	public static final fun kaModule (Lcom/intellij/psi/PsiElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/resolution/KaAnnotationCall : org/jetbrains/kotlin/analysis/api/resolution/KaFunctionCall {

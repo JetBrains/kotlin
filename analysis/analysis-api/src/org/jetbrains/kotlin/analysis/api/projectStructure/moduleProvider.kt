@@ -10,10 +10,19 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 
 /**
- * Returns a [KaModule] for a given [element] in the context of the session's use-site module.
+ * Returns a [KaModule] for a given [this] in the context of the [useSiteModule].
  *
- * @see KaModuleProvider.getModule
+ * @see KaModuleProvider.module
+ */
+public fun PsiElement.kaModule(useSiteModule: KaModule?): KaModule {
+    return KaModuleProvider.getInstance(project).module(this, useSiteModule)
+}
+
+/**
+ * A [KaModule] for a given [this] in the context of the session's [useSiteModule].
+ *
+ * @see KaModuleProvider.module
  */
 context(session: KaSession)
-public fun getModule(element: PsiElement): KaModule =
-    KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)
+public val PsiElement.kaModule: KaModule
+    get() = kaModule(useSiteModule)
