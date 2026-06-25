@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
 
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.java.findJvmNameValue
 import org.jetbrains.kotlin.fir.propertyIfAccessor
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -64,8 +68,14 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
             }
         }
 
-        if (declaration is FirClass && declaration.isInterface) {
-            reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
+        if (declaration is FirClass) {
+            if (declaration.isInterface) {
+                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
+            }
+
+            if (declaration.effectiveVisibility.privateApi) {
+                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
+            }
         }
 
         if (declaration is FirCallableDeclaration) {
@@ -99,6 +109,10 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
 
             if (declaration.isLocalDeclaredInBlock) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS)
+            }
+
+            if (declaration.effectiveVisibility.privateApi) {
+                reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
             }
         }
     }

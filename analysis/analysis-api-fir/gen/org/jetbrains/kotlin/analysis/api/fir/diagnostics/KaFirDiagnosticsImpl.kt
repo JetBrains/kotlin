@@ -5901,6 +5901,11 @@ internal class JvmExposeBoxedCannotExposeReifiedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposeReified
 
+internal class JvmExposeBoxedCannotExposePrivateImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmExposeBoxedCannotExposePrivate
+
 internal class WrongTypeForJavaOverrideImpl(
     override val override: KaCallableSymbol,
     override val base: KaCallableSymbol,

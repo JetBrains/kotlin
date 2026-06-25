@@ -53,6 +53,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS by error<PsiElement>()
         val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_REIFIED by error<PsiElement>()
+        val JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE by error<PsiElement>()
 
         val WRONG_TYPE_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("override")
