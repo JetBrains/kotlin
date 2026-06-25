@@ -44,6 +44,8 @@ public interface KaInternals {
 
     public val legacyTypeCreator: KaInternalsTypeCreator
 
+    public val referenceShortener: KaInternalsReferenceShortener
+
     public val renderer: KaInternalsRenderer
 
     public val resolveExtensionInfoProvider: KaInternalsResolveExtensionInfoProvider

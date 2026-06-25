@@ -68,7 +68,7 @@ private constructor(
     typeRelationChecker = KaTypeRelationCheckerBridge(analysisSessionProvider),
     expressionInformationProvider = KaExpressionInformationProviderBridge(analysisSessionProvider),
     evaluator = KaEvaluatorBridge(analysisSessionProvider),
-    referenceShortener = KaFirReferenceShortener(analysisSessionProvider),
+    referenceShortener = KaReferenceShortenerBridge(analysisSessionProvider),
     renderer = KaRendererBridge(analysisSessionProvider),
     visibilityChecker = KaVisibilityCheckerBridge(analysisSessionProvider),
     typeCreator = KaTypeCreatorBridge(analysisSessionProvider),
@@ -113,6 +113,8 @@ private constructor(
         KaFirResolveExtensionInfoProvider(analysisSessionProvider)
 
     override val evaluator: KaInternalsEvaluator = KaFirEvaluator(analysisSessionProvider)
+
+    override val referenceShortener: KaInternalsReferenceShortener = KaFirReferenceShortener(analysisSessionProvider)
 
     override val typeCreatorProvider: KaInternalsTypeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider)
 
