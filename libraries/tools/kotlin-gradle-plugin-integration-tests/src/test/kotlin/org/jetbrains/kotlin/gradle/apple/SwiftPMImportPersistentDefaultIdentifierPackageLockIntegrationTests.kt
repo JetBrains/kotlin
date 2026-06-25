@@ -862,7 +862,7 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         swiftPMDependencies {
                             swiftPackage(
                                 url = url("https://github.com/RevenueCat/purchases-ios-spm.git"),
-                                version = exact("5.49.0"),
+                                version = exact("5.79.0"),
                                 products = listOf(product("RevenueCat")),
                             )
                         }

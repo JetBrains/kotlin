@@ -1304,6 +1304,7 @@ fun runApplication(projectPath: Path, appPath: Path): ApplicationRun {
 
 fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
     appPath: Path,
+    checkForObjCRuntimeWarnings: Boolean = true,
 ) {
     val result = runApplication(projectPath = projectPath, appPath = appPath)
     try {
@@ -1311,17 +1312,19 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
             result.exitCode,
             0,
         )
-        assertEquals(
-            "",
-            result.stderr.readLines().filter {
-                /**
-                 * Google Maps and some other libraries litter in stderr with logs we don't care about. We only need the objc message about
-                 * class duplication.
-                 * @see `org.jetbrains.kotlin.gradle.apple.SwiftPMImportDynamicLinkageTests.dynamic linkage with SwiftPM import - duplicates static binary during application linkage`
-                 */
-                "is implemented in both" in it
-            }.joinToString("\n"),
-        )
+        if (checkForObjCRuntimeWarnings) {
+            assertEquals(
+                "",
+                result.stderr.readLines().filter {
+                    /**
+                     * Google Maps and some other libraries litter in stderr with logs we don't care about. We only need the objc message about
+                     * class duplication.
+                     * @see `org.jetbrains.kotlin.gradle.apple.SwiftPMImportDynamicLinkageTests.dynamic linkage with SwiftPM import - duplicates static binary during application linkage`
+                     */
+                    "is implemented in both" in it
+                }.joinToString("\n"),
+            )
+        }
     } catch (e: Throwable) {
         throw AssertionError(
             listOf(
