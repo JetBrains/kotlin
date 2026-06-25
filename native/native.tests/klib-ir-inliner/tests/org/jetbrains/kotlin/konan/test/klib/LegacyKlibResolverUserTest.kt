@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
@@ -165,7 +164,7 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             knownIrProviders = knownIrProviders
         ) {
             override fun libraryComponentBuilder(file: KlibFile, isDefault: Boolean): List<KotlinLibrary> =
-                createKotlinLibraryComponents(file, isDefault, null as ZipFileSystemAccessor?)
+                createKotlinLibraryComponents(file, isDefault, null as org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor?)
         }
 
         val library = resolveSingleFileKlib(KlibFile(libraryFile.path).canonicalFile)
