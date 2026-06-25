@@ -249,11 +249,24 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 )
             }
 
-            is NameNotFound -> FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
-                rootCause.argument.source ?: source,
-                rootCause.argument.name.asString(),
-                session
-            )
+            is NameNotFound -> {
+                if (
+                    !session.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitContextArguments) &&
+                    rootCause.function.contextParameters.any { it.name == rootCause.argument.name }
+                ) {
+                    FirErrors.UNSUPPORTED_FEATURE.createOn(
+                        rootCause.argument.source ?: source,
+                        LanguageFeature.ExplicitContextArguments to session.languageVersionSettings,
+                        session
+                    )
+                } else {
+                    FirErrors.NAMED_PARAMETER_NOT_FOUND.createOn(
+                        rootCause.argument.source ?: source,
+                        rootCause.argument.name.asString(),
+                        session
+                    )
+                }
+            }
 
             is NameForAmbiguousParameter -> FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER.createOn(
                 rootCause.argument.source ?: source,
