@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm.metadata
 
+import org.jetbrains.kotlin.cli.common.metadataDestinationDirectory
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
+import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
@@ -37,7 +39,14 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
                 configuration = configuration,
                 sourceFiles = input.sourceFiles,
             )
-            val metadataInMemory = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
+
+            @OptIn(PipelineArtifact.CliPipelineInternals::class) val metadataInMemory =
+                JvmMetadataKlibHeaderMergerPhase.executePhase(
+                    MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase).withCompilerConfiguration(configuration.copy().apply {
+                        metadataDestinationDirectory = outputDir.resolve(output.session.moduleData.name.asStringStripSpecialMarkers())
+                    })
+                )
+
             JvmMetadataKlibFileWriterPhase.writeToDisc(
                 metadataInMemory,
                 outputDir.resolve(output.session.moduleData.name.asStringStripSpecialMarkers())
