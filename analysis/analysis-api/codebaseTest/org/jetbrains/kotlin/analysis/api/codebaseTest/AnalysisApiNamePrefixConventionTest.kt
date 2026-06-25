@@ -16,7 +16,7 @@ import java.io.File
 /**
  * The test enforces the name convention for the Analysis API Surface.
  */
-class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidationTest() {
+class AnalysisApiNamePrefixConventionTest : AbstractAnalysisApiSurfaceCodebaseValidationTest() {
     @Test
     fun testNameConvention() = doTest()
 
