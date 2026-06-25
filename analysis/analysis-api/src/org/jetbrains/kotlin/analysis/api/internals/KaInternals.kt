@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.internals
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 /**
  * An internal facade that aggregates the Analysis API implementation behind every public
@@ -71,6 +72,8 @@ public interface KaInternals {
     public val typeProvider: KaInternalsTypeProvider
 
     public val typeRelationChecker: KaInternalsTypeRelationChecker
+
+    public val useSiteModule: KaModule
 
     public val visibilityChecker: KaInternalsVisibilityChecker
 }
