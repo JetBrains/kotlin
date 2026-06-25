@@ -773,7 +773,9 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
                 }
             }
         """.trimIndent(),
-        isStatic = isStatic
+        isStatic = isStatic,
+        // FIXME: KT-87246 - remove this parameter after Xcode 27 is stable
+        checkForObjCRuntimeWarnings = Xcode.findCurrent().version.major < 27
     ) { _ ->
         swiftPackage(
             url = url("https://github.com/openid/AppAuth-iOS.git"),
