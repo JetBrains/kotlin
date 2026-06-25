@@ -532,6 +532,7 @@ enum class LanguageFeature(
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_5, issue = "KT-81684"),
     FixesForIntersectionTypesIn25(sinceVersion = KOTLIN_2_5, issue = "KT-86629"),
+    ProhibitScriptTopLevelInnerClasses(sinceVersion = KOTLIN_2_5, issue = "KT-87291"),
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),
@@ -583,11 +584,6 @@ enum class LanguageFeature(
     // When this feature is disabled, all these "lost" errors are reported properly.
     // When this feature is enabled, no such errors are reported.
     NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, NO_ISSUE_SPECIFIED),
-
-    // top-level script inner classes never made any sense, but used for some time to overcome the capturing logic limitations
-    // Now capturing logic works properly, therefore the warning is reported in K2
-    // this feature will eventually switch this warning to an error
-    ProhibitScriptTopLevelInnerClasses(sinceVersion = null, NO_ISSUE_SPECIFIED),
 
     // Only used for compiling the commonizer's support library with numeric expect classes.
     AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-69909"),
