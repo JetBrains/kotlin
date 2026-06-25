@@ -327,6 +327,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
                     "-Xdisable-ir-checkers=IrFieldVisibilityChecker", // triggered by kotlinx.coroutines 1.9.0
+                    "-Xdisable-ir-checkers=IrTypeParameterScopeChecker", // TODO(KT-87247)
                 )
             ),
             nominalPackageName = PackageName(testName),
