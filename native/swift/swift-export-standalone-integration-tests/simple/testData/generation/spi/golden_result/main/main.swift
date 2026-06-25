@@ -7,8 +7,40 @@ import KotlinRuntimeSupport
 public typealias MyAliasAlias = lib.InternalLibAlias
 @_spi(InternalLibApi)
 public typealias MyInterfaceAlias = any lib.InternalLibInterface
+public protocol MyInterface: KotlinRuntime.KotlinBase, main._MyInterface {
+    var foo: Swift.String {
+        get
+        set
+    }
+    @_spi(MyOptInApi)
+    var optInProp: Swift.String {
+        @_spi(MyOptInApi)
+        get
+        @_spi(MyOptInApi)
+        set
+    }
+    func bar() -> Swift.Void
+    @_spi(MyOptInApi)
+    func optInFun() -> Swift.Void
+}
+@objc(_MyInterface)
+public protocol _MyInterface {
+}
+public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
 @_spi(InternalLibApi)
 public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib._InternalLibInterface, lib.__InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public var experimentalProp: Swift.String {
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        get {
+            return MyImplementation_experimentalProp_get(self.__externalRCRef())
+        }
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        set {
+            return { MyImplementation_experimentalProp_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
     @_spi(InternalLibApi)
     public var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -18,6 +50,17 @@ public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibIn
         @_spi(InternalLibApi)
         set {
             return { MyImplementation_foo_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    @_spi(InternalLibApi)
+    public var internalProp: Swift.String {
+        @_spi(InternalLibApi)
+        get {
+            return MyImplementation_internalProp_get(self.__externalRCRef())
+        }
+        @_spi(InternalLibApi)
+        set {
+            return { MyImplementation_internalProp_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
         }
     }
     @_spi(InternalLibApi)
@@ -35,6 +78,14 @@ public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibIn
     @_spi(InternalLibApi)
     public func bar() -> Swift.Void {
         return { MyImplementation_bar(self.__externalRCRef()); return () }()
+    }
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public func experimentalFun() -> Swift.Void {
+        return { MyImplementation_experimentalFun(self.__externalRCRef()); return () }()
+    }
+    @_spi(InternalLibApi)
+    public func internalFun() -> Swift.Void {
+        return { MyImplementation_internalFun(self.__externalRCRef()); return () }()
     }
 }
 @_spi(MyOptInApi)
@@ -168,4 +219,66 @@ public func regularFunctionB() -> Swift.Void {
 }
 public func regularFunctionC() -> lib.RegularLibClass {
     return lib.RegularLibClass.__createClassWrapper(externalRCRef: __root___regularFunctionC())
+}
+extension main.MyInterface where Self : main.__MyInterface {
+    public var foo: Swift.String {
+        get {
+            return MyInterface_foo_get(self.__externalRCRef())
+        }
+        set {
+            return { MyInterface_foo_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    @_spi(MyOptInApi)
+    public var optInProp: Swift.String {
+        @_spi(MyOptInApi)
+        get {
+            return MyInterface_optInProp_get(self.__externalRCRef())
+        }
+        @_spi(MyOptInApi)
+        set {
+            return { MyInterface_optInProp_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    public func bar() -> Swift.Void {
+        return { MyInterface_bar(self.__externalRCRef()); return () }()
+    }
+    @_spi(MyOptInApi)
+    public func optInFun() -> Swift.Void {
+        return { MyInterface_optInFun(self.__externalRCRef()); return () }()
+    }
+}
+extension main.MyInterface {
+    @_spi(MyOptInApi)
+    public var optInProp: Swift.String {
+        @_spi(MyOptInApi)
+        get {
+            fatalError("'optInProp' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+        @_spi(MyOptInApi)
+        set {
+            fatalError("'optInProp' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(MyOptInApi)
+    public func optInFun() -> Swift.Void {
+        fatalError("'optInFun' is an @_spi requirement that must be implemented by Swift conformers")
+    }
+}
+extension KotlinRuntimeSupport._KotlinExistential: main.MyInterface, main.__MyInterface where Wrapped : main._MyInterface {
+}
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._MyInterface {
+}
+@_cdecl("MyInterface_bar__reverse_swift")
+package func MyInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
+}
+
+@_cdecl("MyInterface_optInFun__reverse_swift")
+package func MyInterface_optInFun__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any main.MyInterface
+    let _result: Swift.Void = _self.optInFun()
+    return { _result; return true }()
 }

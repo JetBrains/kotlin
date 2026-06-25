@@ -3193,6 +3193,41 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            fatalError("'annotations' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var elementsCount: Swift.Int32 {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            fatalError("'elementsCount' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var isNullable: Swift.Bool {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            fatalError("'isNullable' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var kind: ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialKind {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            fatalError("'kind' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+    public var serialName: Swift.String {
+        @_spi(kotlinx$serialization$ExperimentalSerializationApi)
+        get {
+            fatalError("'serialName' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public func getElementAnnotations(
         index: Swift.Int32
     ) -> [any ExportedKotlinPackages.kotlin.Annotation] {

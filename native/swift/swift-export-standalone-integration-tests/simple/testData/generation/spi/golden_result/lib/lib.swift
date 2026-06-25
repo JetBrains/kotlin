@@ -12,6 +12,13 @@ public protocol InterfaceTwo: KotlinRuntime.KotlinBase, lib._InterfaceTwo {
 }
 @_spi(InternalLibApi)
 public protocol InternalLibInterface: KotlinRuntime.KotlinBase, lib._InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    var experimentalProp: Swift.String {
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        get
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        set
+    }
     @_spi(InternalLibApi)
     var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -20,7 +27,18 @@ public protocol InternalLibInterface: KotlinRuntime.KotlinBase, lib._InternalLib
         set
     }
     @_spi(InternalLibApi)
+    var internalProp: Swift.String {
+        @_spi(InternalLibApi)
+        get
+        @_spi(InternalLibApi)
+        set
+    }
+    @_spi(InternalLibApi)
     func bar() -> Swift.Void
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    func experimentalFun() -> Swift.Void
+    @_spi(InternalLibApi)
+    func internalFun() -> Swift.Void
 }
 @objc(_InterfaceOne)
 public protocol _InterfaceOne {
@@ -218,6 +236,17 @@ extension lib.InterfaceTwo where Self : lib.__InterfaceTwo {
 extension lib.InterfaceTwo {
 }
 extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public var experimentalProp: Swift.String {
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        get {
+            return InternalLibInterface_experimentalProp_get(self.__externalRCRef())
+        }
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        set {
+            return { InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
     @_spi(InternalLibApi)
     public var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -230,11 +259,45 @@ extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {
         }
     }
     @_spi(InternalLibApi)
+    public var internalProp: Swift.String {
+        @_spi(InternalLibApi)
+        get {
+            return InternalLibInterface_internalProp_get(self.__externalRCRef())
+        }
+        @_spi(InternalLibApi)
+        set {
+            return { InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String__(self.__externalRCRef(), newValue); return () }()
+        }
+    }
+    @_spi(InternalLibApi)
     public func bar() -> Swift.Void {
         return { InternalLibInterface_bar(self.__externalRCRef()); return () }()
     }
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public func experimentalFun() -> Swift.Void {
+        return { InternalLibInterface_experimentalFun(self.__externalRCRef()); return () }()
+    }
+    @_spi(InternalLibApi)
+    public func internalFun() -> Swift.Void {
+        return { InternalLibInterface_internalFun(self.__externalRCRef()); return () }()
+    }
 }
 extension lib.InternalLibInterface {
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public var experimentalProp: Swift.String {
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        get {
+            fatalError("'experimentalProp' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+        @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+        set {
+            fatalError("'experimentalProp' is an @_spi requirement that must be implemented by Swift conformers")
+        }
+    }
+    @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
+    public func experimentalFun() -> Swift.Void {
+        fatalError("'experimentalFun' is an @_spi requirement that must be implemented by Swift conformers")
+    }
 }
 @_spi(InternalLibApi)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface, lib.__InternalLibInterface where Wrapped : lib._InternalLibInterface {
@@ -255,5 +318,19 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceTwo {
 package func InternalLibInterface_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any lib.InternalLibInterface
     let _result: Swift.Void = _self.bar()
+    return { _result; return true }()
+}
+
+@_cdecl("InternalLibInterface_experimentalFun__reverse_swift")
+package func InternalLibInterface_experimentalFun__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any lib.InternalLibInterface
+    let _result: Swift.Void = _self.experimentalFun()
+    return { _result; return true }()
+}
+
+@_cdecl("InternalLibInterface_internalFun__reverse_swift")
+package func InternalLibInterface_internalFun__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`) as! any lib.InternalLibInterface
+    let _result: Swift.Void = _self.internalFun()
     return { _result; return true }()
 }

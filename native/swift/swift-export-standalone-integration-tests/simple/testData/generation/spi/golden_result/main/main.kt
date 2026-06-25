@@ -4,16 +4,64 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(MyOptInClass::class, "4main12MyOptInClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MySubClass::class, "4main10MySubClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(MySubInterface::class, "4main14MySubInterfaceC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(MyInterface::class, "_MyInterface")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.objc.BindReverseBridgeToMethod
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
+import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+
+@ImportedBridge("MyInterface_bar__reverse_swift")
+internal external fun MyInterface_bar__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "bar")
+public fun MyInterface_bar__reverse(self: MyInterface): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = MyInterface_bar__reverse_swift(__self)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("MyInterface_optInFun__reverse_swift")
+internal external fun MyInterface_optInFun__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(MyInterface::class, "optInFun")
+public fun MyInterface_optInFun__reverse(self: MyInterface): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = MyInterface_optInFun__reverse_swift(__self)
+    return run<Unit> { _result }
+}
 
 @ExportedBridge("MyImplementation_bar")
 @OptIn(InternalLibApi::class)
 public fun MyImplementation_bar(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
     val _result = run { __self.bar() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyImplementation_experimentalFun")
+@OptIn(ExperimentalLibApi::class, InternalLibApi::class)
+public fun MyImplementation_experimentalFun(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val _result = run { __self.experimentalFun() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyImplementation_experimentalProp_get")
+@OptIn(ExperimentalLibApi::class, InternalLibApi::class)
+public fun MyImplementation_experimentalProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val _result = run { __self.experimentalProp }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyImplementation_experimentalProp_set__TypesOfArguments__Swift_String__")
+@OptIn(ExperimentalLibApi::class, InternalLibApi::class)
+public fun MyImplementation_experimentalProp_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.experimentalProp = __newValue }
     return run { _result; true }
 }
 
@@ -31,6 +79,78 @@ public fun MyImplementation_foo_set__TypesOfArguments__Swift_String__(self: kotl
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
     val _result = run { __self.foo = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyImplementation_internalFun")
+@OptIn(InternalLibApi::class)
+public fun MyImplementation_internalFun(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val _result = run { __self.internalFun() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyImplementation_internalProp_get")
+@OptIn(InternalLibApi::class)
+public fun MyImplementation_internalProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val _result = run { __self.internalProp }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyImplementation_internalProp_set__TypesOfArguments__Swift_String__")
+@OptIn(InternalLibApi::class)
+public fun MyImplementation_internalProp_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyImplementation
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.internalProp = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_bar")
+public fun MyInterface_bar(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.bar() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_foo_get")
+public fun MyInterface_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.foo }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyInterface_foo_set__TypesOfArguments__Swift_String__")
+public fun MyInterface_foo_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.foo = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_optInFun")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInFun(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.optInFun() }
+    return run { _result; true }
+}
+
+@ExportedBridge("MyInterface_optInProp_get")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val _result = run { __self.optInProp }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("MyInterface_optInProp_set__TypesOfArguments__Swift_String__")
+@OptIn(MyOptInApi::class)
+public fun MyInterface_optInProp_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as MyInterface
+    val __newValue = interpretObjCPointer<kotlin.String>(newValue)
+    val _result = run { __self.optInProp = __newValue }
     return run { _result; true }
 }
 

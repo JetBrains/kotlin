@@ -43,6 +43,18 @@ class ExperimentalLibClass {
 interface InternalLibInterface {
     var foo: String
     fun bar(): Unit
+
+    @InternalLibApi
+    fun internalFun(): Unit
+
+    @InternalLibApi
+    var internalProp: String
+
+    @ExperimentalLibApi
+    fun experimentalFun(): Unit
+
+    @ExperimentalLibApi
+    var experimentalProp: String
 }
 
 fun normalLibFunction(): Unit = TODO()
@@ -171,8 +183,31 @@ var functionalTypePropertyB: (InternalLibInterface) -> Unit
 class MyImplementation : InternalLibInterface {
     override var foo: String = TODO()
     override fun bar(): Unit = TODO()
+
+    @InternalLibApi
+    override fun internalFun(): Unit = TODO()
+
+    @InternalLibApi
+    override var internalProp: String = TODO()
+
+    @ExperimentalLibApi
+    override fun experimentalFun(): Unit = TODO()
+
+    @ExperimentalLibApi
+    override var experimentalProp: String = TODO()
 }
 
 class MySubClass : OpenClass(), InterfaceOne
 
 class MySubInterface : InterfaceTwo
+
+interface MyInterface {
+    var foo: String
+    fun bar(): Unit
+
+    @MyOptInApi
+    fun optInFun(): Unit
+
+    @MyOptInApi
+    var optInProp: String
+}

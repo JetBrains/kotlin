@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
+import org.jetbrains.kotlin.sir.builder.buildGetterCopy
+import org.jetbrains.kotlin.sir.builder.buildSetterCopy
 import org.jetbrains.kotlin.sir.builder.buildTypealias
+import org.jetbrains.kotlin.sir.builder.buildVariableCopy
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
@@ -538,20 +541,50 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         val protocolSpiGroups = targetProtocol.attributes
             .filterIsInstance<SirAttribute.SPI>()
             .mapTo(mutableSetOf()) { it.name }
-        val spiRequirementTraps = members
-            .filterIsInstance<SirFunction>()
-            .filter { function -> function.attributes.any { it is SirAttribute.SPI && it.name !in protocolSpiGroups } }
-            .map { function ->
-                buildFunctionCopy(function) {
-                    origin = SirOrigin.Trampoline(function)
-                    isOverride = false
-                    modality = SirModality.UNSPECIFIED
-                    bridges.clear() // pure Swift trap, no Kotlin bridge (avoids duplicating the witness's bridge)
-                    body = SirFunctionBody(listOf("fatalError(\"'${function.name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
-                }.also { it.parent = this }
-            }
+        val spiMembers = members.filter { function ->
+            function.attributes.any { it is SirAttribute.SPI && it.name !in protocolSpiGroups }
+        }
 
-        (typeAliases + spiRequirementTraps).toMutableList()
+        fun createSpiTrap(name: String) =
+            SirFunctionBody(listOf("fatalError(\"'${name}' is an @_spi requirement that must be implemented by Swift conformers\")"))
+
+        val spiFunctionTraps = spiMembers.filterIsInstance<SirFunction>().map { function ->
+            buildFunctionCopy(function) {
+                origin = SirOrigin.Trampoline(function)
+                isOverride = false
+                modality = SirModality.UNSPECIFIED
+                bridges.clear() // pure Swift trap, no Kotlin bridge (avoids duplicating the witness's bridge)
+                body = createSpiTrap(function.name)
+            }.also { it.parent = this }
+        }
+        val spiVariableTraps = spiMembers.filterIsInstance<SirVariable>().map { variable ->
+            buildVariableCopy(variable) {
+                origin = SirOrigin.Trampoline(variable)
+                isOverride = false
+                modality = SirModality.UNSPECIFIED
+                bridges.clear()
+                getter = variable.getter?.let { getter ->
+                    buildGetterCopy(getter) {
+                        origin = SirOrigin.Trampoline(getter)
+                        bridges.clear()
+                        body = createSpiTrap(variable.name)
+                    }
+                }
+                setter = variable.setter?.let { setter ->
+                    buildSetterCopy(setter) {
+                        origin = SirOrigin.Trampoline(setter)
+                        bridges.clear()
+                        body = createSpiTrap(variable.name)
+                    }
+                }
+            }.apply {
+                parent = this@SirAuxiliaryProtocolDeclarationsFromKtSymbol
+                getter?.parent = this
+                setter?.parent = this
+            }
+        }
+
+        (typeAliases + spiFunctionTraps + spiVariableTraps).toMutableList()
     }
 }
 

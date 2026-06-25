@@ -5,6 +5,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 _Bool InternalLibInterface_bar__reverse_swift(void * self);
 
+_Bool InternalLibInterface_experimentalFun__reverse_swift(void * self);
+
+_Bool InternalLibInterface_internalFun__reverse_swift(void * self);
+
 _Bool ExperimentalLibClass_bar(void * self);
 
 NSString * ExperimentalLibClass_foo_get(void * self);
@@ -13,9 +17,21 @@ _Bool ExperimentalLibClass_foo_set__TypesOfArguments__Swift_String__(void * self
 
 _Bool InternalLibInterface_bar(void * self);
 
+_Bool InternalLibInterface_experimentalFun(void * self);
+
+NSString * InternalLibInterface_experimentalProp_get(void * self);
+
+_Bool InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
 NSString * InternalLibInterface_foo_get(void * self);
 
 _Bool InternalLibInterface_foo_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
+
+_Bool InternalLibInterface_internalFun(void * self);
+
+NSString * InternalLibInterface_internalProp_get(void * self);
+
+_Bool InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String__(void * self, NSString * newValue);
 
 void * __root___ExperimentalLibClass_init_allocate();
 
