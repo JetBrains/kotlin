@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.DisplayName
+import kotlin.test.Ignore
 import kotlin.test.assertContains
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.toJavaDuration
 
 @JsGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
@@ -150,6 +154,64 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
                 // TODO: KT-86778 Add verification of test report
+            }
+        }
+    }
+
+    @DisplayName("KT-86958: Unclear error for js test failure on timeout")
+    @GradleTest
+    @Ignore("Currently fails due to missing infra on CI, see KTI-3326")
+    fun `prints clear error message when a test times out`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion = gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            with(test) {
+                                chromium {
+                                    it.timeout.set(1234.milliseconds.toJavaDuration())
+                                }
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                        }
+                    }
+
+                    sourceSets.commonTest.get().compileSource(
+                        """
+                        import kotlin.test.*
+                        
+                        class JsBrowserTimeoutTest {
+                            @Test
+                            fun test() {
+                                println("hello - sleeping 10 seconds")
+                                js(""${'"'}
+                                    var end = new Date().getTime() + 10000;
+                                    while (new Date().getTime() < end) {
+                                        // busy wait
+                                    }
+                                ""${'"'})
+                                println("done sleeping")
+                            }
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            buildAndFail("jsBrowserTest") {
+                assertTasksFailed(":jsBrowserTest")
+                assertOutputContains("chromium.JsBrowserTimeoutTest.test[js, browser] FAILED")
+                assertOutputContains("com.microsoft.playwright.TimeoutError: Timeout 1234ms exceeded")
             }
         }
     }
