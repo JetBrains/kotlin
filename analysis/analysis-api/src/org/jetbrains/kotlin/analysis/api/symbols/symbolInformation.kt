@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationTarget
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 /**
  * The deprecation status of the given symbol, or `null` if the symbol is not deprecated.
@@ -148,4 +149,16 @@ public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.symbolInformationProvider.containingFileAnnotations(this)
+    }
+
+/**
+ * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null` if the declaration is not located in
+ * a klib, or when the source file name is not available.
+ */
+@KaNonPublicApi
+context(session: KaSession)
+public val KaDeclarationSymbol.klibSourceFileName: String?
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.sourceProvider.klibSourceFileName(this)
     }
