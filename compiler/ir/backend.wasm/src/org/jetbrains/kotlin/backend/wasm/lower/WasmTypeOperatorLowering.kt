@@ -52,7 +52,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
 
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_CAST -> lowerCast(expression, isSafe = false)
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
@@ -364,7 +364,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
-        return if (shouldGenerateKotlinCast(expression.argument, expression.typeOperand)) {
+        return if (true) {
             lowerCast(
                 expression = expression,
                 isSafe = false
