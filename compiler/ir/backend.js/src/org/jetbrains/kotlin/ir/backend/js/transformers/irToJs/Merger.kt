@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ class Merger(
     private val crossModuleReferences: CrossModuleReferences,
     private val generateRegionComments: Boolean,
     private val generateCallToMain: Boolean,
+    private val useEs6ConstLet: Boolean,
 ) {
 
     private val isEsModules = moduleKind == ModuleKind.ES
@@ -66,7 +67,7 @@ class Merger(
 
         for ([tag, crossModuleJsImport] in crossModuleReferences.jsImports) {
             val importName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
-            importStatements.putIfAbsent(tag, crossModuleJsImport.renameImportedSymbolInternalName(importName))
+            importStatements.putIfAbsent(tag, crossModuleJsImport.renameImportedSymbolInternalName(importName, useEs6ConstLet))
         }
 
         importStatementsWithEffect.addAll(crossModuleReferences.jsImportsWithEffect)
@@ -335,7 +336,13 @@ class Merger(
         if (name == null) return this
 
         return when (this) {
-            is JsVars -> JsVars(JsVars.Variant.Var, JsVars.JsVar(name, vars.single().initExpression))
+            is JsVars -> JsVars(
+                // FIXME(KT-88343): We really should generate immutable variables, but currently `external var` is possible with `@file:JsModule`,
+                //   and mutating such a variable in non-ES module systems is possible and even result in an error, see
+                //   `js/js.translator/testData/box/jsModule/externalPackage.kt`
+                if (useEs6ConstLet) JsVars.Variant.Let else JsVars.Variant.Var,
+                JsVars.JsVar(name, vars.single().initExpression),
+            )
             is JsImport -> JsImport(
                 module,
                 when (target) {

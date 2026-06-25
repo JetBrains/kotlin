@@ -38,7 +38,7 @@ internal class MoveTemporaryVariableDeclarationToAssignment(private val body: Js
     private val varWithoutInitDeclarations = hashSetOf<JsName>()
     private val varBeforeAssignmentUsages = hashSetOf<JsName>()
 
-    private val removedVarDeclarations = hashMapOf<JsName, JsVars.JsVar>()
+    private val removedVarDeclarations = hashMapOf<JsName, Pair<JsVars.JsVar, JsVars.Variant>>()
     private val HasMetadata.couldBeMovedToAssignment: Boolean
         get() = synthetic || wasMovedFromItsDeclarationPlace
 
@@ -156,6 +156,8 @@ internal class MoveTemporaryVariableDeclarationToAssignment(private val body: Js
 
     private fun perform() {
         val visitor = object : JsVisitorWithContextImpl() {
+            private val varStack = mutableListOf<JsVars>()
+
             private fun canRemoveDeclarationWithoutInit(name: JsName): Boolean {
                 if (name !in varWithoutInitDeclarations || name in varBeforeAssignmentUsages) {
                     return false
@@ -171,7 +173,7 @@ internal class MoveTemporaryVariableDeclarationToAssignment(private val body: Js
             override fun endVisit(x: JsVars.JsVar, ctx: JsContext<*>) {
                 val name = x.name
                 if (name != null && canRemoveDeclarationWithoutInit(name)) {
-                    removedVarDeclarations[name] = x
+                    removedVarDeclarations[name] = x to varStack.last().variant
                     ctx.removeMe()
                     hasChanges = true
                 } else {
@@ -179,7 +181,13 @@ internal class MoveTemporaryVariableDeclarationToAssignment(private val body: Js
                 }
             }
 
+            override fun visit(x: JsVars, ctx: JsContext<*>): Boolean {
+                varStack.add(x)
+                return super.visit(x, ctx)
+            }
+
             override fun endVisit(x: JsVars, ctx: JsContext<*>) {
+                varStack.removeLast()
                 if (x.isEmpty) {
                     ctx.removeMe()
                     hasChanges = true
@@ -192,13 +200,12 @@ internal class MoveTemporaryVariableDeclarationToAssignment(private val body: Js
                 val assignment = JsAstUtils.decomposeAssignmentToVariable(x.expression)
                 if (assignment != null) {
                     val [name, initExpr] = assignment
-                    val removedVar = removedVarDeclarations.remove(name)
-                    if (removedVar != null) {
+                    removedVarDeclarations.remove(name)?.let { [removedVar, variant] ->
                         val varDeclarationWithInit = JsVars.JsVar(name, initExpr).apply {
                             synthetic = removedVar.synthetic
                             source = x.expression.source
                         }
-                        val vars = JsVars(JsVars.Variant.Var, varDeclarationWithInit).apply { synthetic = removedVar.synthetic }
+                        val vars = JsVars(variant, varDeclarationWithInit).apply { synthetic = removedVar.synthetic }
                         ctx.replaceMe(vars)
                     }
                     accept(initExpr)

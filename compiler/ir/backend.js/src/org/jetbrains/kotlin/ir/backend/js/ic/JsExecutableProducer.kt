@@ -20,6 +20,7 @@ class JsExecutableProducer(
     private val artifactConfiguration: WebArtifactConfiguration,
     private val sourceMapsInfo: SourceMapsInfo?,
     private val caches: List<JsModuleArtifact>,
+    private val useEs6ConstLet: Boolean,
 ) {
     data class BuildResult(val compilationOut: CompilationOutputs, val buildModules: List<String>)
 
@@ -47,6 +48,7 @@ class JsExecutableProducer(
             fragments = modules.flatMap { it.fragments },
             sourceMapsInfo = sourceMapsInfo,
             generateCallToMain = true,
+            useEs6ConstLet = useEs6ConstLet,
             outJsProgram = outJsProgram
         )
         return BuildResult(out, listOf(artifactConfiguration.moduleName))
@@ -61,7 +63,7 @@ class JsExecutableProducer(
         val cachedProgram = jsMultiArtifactCache.loadProgramHeadersFromCache()
 
         stopwatch.startNext("Cross module references resolving")
-        val resolver = CrossModuleDependenciesResolver(artifactConfiguration.moduleKind, cachedProgram.map { it.jsIrHeader })
+        val resolver = CrossModuleDependenciesResolver(artifactConfiguration.moduleKind, cachedProgram.map { it.jsIrHeader }, useEs6ConstLet)
         val crossModuleReferences = resolver.resolveCrossModuleDependencies()
 
         stopwatch.startNext("Loading JS IR modules with updated cross module references")
@@ -89,6 +91,7 @@ class JsExecutableProducer(
                 associatedModule.fragments,
                 sourceMapsInfo = sourceMapsInfo,
                 generateCallToMain = isMainModule,
+                useEs6ConstLet = useEs6ConstLet,
                 crossModuleReferences = crossRef,
                 outJsProgram = outJsProgram
             )

@@ -29,6 +29,14 @@ public abstract class JsContext<T extends JsNode> {
 
   public abstract <R extends T> void replaceMe(R node);
 
+  public final <R extends T> void replaceOrRemoveMe(@Nullable R node) {
+      if (node == null) {
+          removeMe();
+      } else {
+          replaceMe(node);
+      }
+  }
+
   @Nullable
   public abstract T getCurrentNode();
 }

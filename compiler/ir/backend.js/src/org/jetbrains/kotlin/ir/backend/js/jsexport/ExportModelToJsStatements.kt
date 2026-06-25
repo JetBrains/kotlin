@@ -45,7 +45,7 @@ class ExportModelToJsStatements(private val staticContext: JsStaticContext) {
                 val namespaceVariableName = JsName(declaration.name, true)
                 val namespaceRef = jsElementAccess(declaration.name, namespace)
                 val namespaceDeclaration = JsVars(
-                    JsVars.Variant.Var,
+                    staticContext.varVariant(isMutable = false),
                     JsVars.JsVar(
                         namespaceVariableName,
                         JsAstUtils.or(
@@ -96,13 +96,13 @@ class ExportModelToJsStatements(private val staticContext: JsStaticContext) {
                             JsExport(name.makeRef(), JsName(declaration.name, false))
                         }
 
-                        listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
+                        listOf(JsVars(staticContext.varVariant(isMutable = false), property), exportStatement)
                     }
                     declaration.isDefaultImplementation -> {
                         val property = declaration.generateTopLevelGetters()
                         val propertyName = property.name ?: error("Name is expected to bet set")
                         listOf(
-                            JsVars(JsVars.Variant.Var, property),
+                            JsVars(staticContext.varVariant(isMutable = false), property),
                             jsAssignment(jsElementAccess(declaration.name, namespace), propertyName.makeRef()).makeStmt()
                         )
                     }
@@ -235,7 +235,7 @@ class ExportModelToJsStatements(private val staticContext: JsStaticContext) {
 
         val blockStatements = mutableListOf<JsStatement>(
             JsVars(
-                JsVars.Variant.Var,
+                staticContext.varVariant(isMutable = false),
                 JsVars.JsVar(bindConstructor, innerClassRef.bindToThis(innerClassRef))
             )
         )
@@ -286,7 +286,7 @@ class ExportModelToJsStatements(private val staticContext: JsStaticContext) {
             is JsNameRef -> classRef.name!! to null
             else -> {
                 val stableName = JsName(makeValidES5Identifier(name), true)
-                stableName to JsVars(JsVars.Variant.Var, JsVars.JsVar(stableName, classRef))
+                stableName to JsVars(staticContext.varVariant(isMutable = false), JsVars.JsVar(stableName, classRef))
             }
         }
     }
