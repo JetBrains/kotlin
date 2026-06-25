@@ -441,8 +441,10 @@ class SwiftPMImportPopularSwiftPMDependenciesTests : KGPBaseTest() {
         expectedCinteropAPIs = mapOf(
             "socks5_tunnel" to """
         swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_file|hev_socks5_tunnel_main_from_file(kotlin.String?;kotlin.Int){}[1]
+        swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_file|hev_socks5_tunnel_main_from_file(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ByteVarOf<kotlin.Byte>>?;kotlin.Int){}[1]
         swiftPMImport.emptyxcode/hev_socks5_tunnel_main_from_str|hev_socks5_tunnel_main_from_str(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.UByteVarOf<kotlin.UByte>>?;kotlin.UInt;kotlin.Int){}[1]
         swiftPMImport.emptyxcode/hev_socks5_tunnel_main|hev_socks5_tunnel_main(kotlin.String?;kotlin.Int){}[1]
+        swiftPMImport.emptyxcode/hev_socks5_tunnel_main|hev_socks5_tunnel_main(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ByteVarOf<kotlin.Byte>>?;kotlin.Int){}[1]
         swiftPMImport.emptyxcode/hev_socks5_tunnel_quit|hev_socks5_tunnel_quit(){}[1]
         swiftPMImport.emptyxcode/hev_socks5_tunnel_stats|hev_socks5_tunnel_stats(kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?;kotlinx.cinterop.CValuesRef<kotlinx.cinterop.ULongVarOf<kotlin.ULong>>?){}[1]
     """.trimIndent(),
