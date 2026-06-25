@@ -277,19 +277,6 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaI
 	public abstract fun getType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCast : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
-	public abstract fun getKind ()Lorg/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind;
-	public abstract fun getType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind : java/lang/Enum {
-	public static final field DISPATCH Lorg/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind;
-	public static final field EXTENSION Lorg/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind;
-	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/components/KaImplicitReceiverSmartCastKind;
-}
-
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaJavaInteroperabilityComponent : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun getCallableSymbol (Lcom/intellij/psi/PsiMember;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol;
 	public abstract fun getNamedClassSymbol (Lcom/intellij/psi/PsiClass;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedClassSymbol;

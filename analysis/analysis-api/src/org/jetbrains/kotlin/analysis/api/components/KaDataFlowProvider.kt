@@ -68,6 +68,7 @@ public interface KaSmartCastInfo : KaLifetimeOwner {
  * Represents type information about an implicit receiver which has been smart-cast to a more specific type. An implicit smart cast is
  * applied to an implicit receiver, such as `substring()` called on an implicit `this` given an earlier smart cast `this is String`.
  */
+@KaNonPublicApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
     /**
@@ -84,6 +85,7 @@ public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
 /**
  * Represents the kind of implicit receiver affected by the smart cast.
  */
+@KaNonPublicApi
 public enum class KaImplicitReceiverSmartCastKind {
     /**
      * The cast is applied to the receiver of a member call.
