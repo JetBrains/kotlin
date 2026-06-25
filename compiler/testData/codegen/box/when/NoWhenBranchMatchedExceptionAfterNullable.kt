@@ -1,5 +1,6 @@
+// WITH_STDLIB
 // DUMP_IR
-// LANGUAGE: -NoWhenBranchMatchedExceptionWithMessage
+// LANGUAGE: +NoWhenBranchMatchedExceptionWithMessage
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ^ JS fails with Error loading module 'kotlin_m1'. Its dependency 'kotlin_m12' was not found
 // DONT_TARGET_EXACT_BACKEND: NATIVE
@@ -17,9 +18,10 @@ class K2 : S
 
 // MODULE: m2(m1)
 // FILE: m2.kt
-fun test(s: S): String {
+fun test(s: S?): String {
     return when (s) {
         is K -> ""
+        null -> ""
     }
 }
 
@@ -29,8 +31,8 @@ fun box(): String {
     try {
         test(K2())
     } catch (e: Exception) {
-        val m = e.message
-        if (m != null) return "wrong message: $m"
+        val m = e.message!!
+        if (!m.startsWith("No branch matched for subject: K2")) return "wrong message: $m"
         return "OK"
     }
     return "exception was expected"
