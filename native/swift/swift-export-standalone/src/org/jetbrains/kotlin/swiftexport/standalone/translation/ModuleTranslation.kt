@@ -48,7 +48,7 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
             symbolContainingModule?.let { libraryName ->
                 externalTypeDeclarationReferences
                     .getOrPut(libraryName) { mutableListOf() }
-                    .addIfNotNull(symbol.classId?.asSingleFqName())
+                    .addIfNotNull(symbol.translationRootFqName)
             }
         }
         buildSirSession(module.name, kaModules, config, module.config, externalTypeReferenceHandler).withSessions {
@@ -100,7 +100,7 @@ internal fun translateCrossReferencingModulesTransitively(
         analyze(kaModules.useSiteModule) {
             val libraryName = (symbol.containingModule as? KaLibraryModule)?.libraryName
             translationStates.find { it.kaModule.libraryName == libraryName }?.let {
-                val fqName = symbol.classId?.asSingleFqName()
+                val fqName = symbol.translationRootFqName
                     ?: return@analyze
                 if (fqName !in it.processedReferences && fqName !in it.currentlyProcessing) {
                     it.unprocessedReferences += fqName
@@ -149,6 +149,9 @@ internal fun translateCrossReferencingModulesTransitively(
         }
     }
 }
+
+private val KaClassLikeSymbol.translationRootFqName: FqName?
+    get() = classId?.let { generateSequence(it) { id -> id.outerClassId }.last().asSingleFqName() }
 
 context(sir: SirSession)
 private fun createTranslationResult(
