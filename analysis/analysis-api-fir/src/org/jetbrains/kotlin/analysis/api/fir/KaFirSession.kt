@@ -57,7 +57,7 @@ private constructor(
     resolver = KaResolverBridge(analysisSessionProvider),
     symbolRelationProvider = KaSymbolRelationProviderBridge(analysisSessionProvider),
     diagnosticProvider = KaDiagnosticProviderBridge(analysisSessionProvider),
-    scopeProvider = KaFirScopeProvider(analysisSessionProvider),
+    scopeProvider = KaScopeProviderBridge(analysisSessionProvider),
     completionCandidateChecker = KaCompletionCandidateCheckerBridge(analysisSessionProvider),
     expressionTypeProvider = KaExpressionTypeProviderBridge(analysisSessionProvider),
     typeProvider = KaTypeProviderBridge(analysisSessionProvider),
@@ -144,6 +144,8 @@ private constructor(
 
     override val compilerPluginGeneratedDeclarationsProvider: KaInternalsCompilerPluginGeneratedDeclarationsProvider =
         KaFirCompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider)
+
+    override val scopeProvider: KaInternalsScopeProvider = KaFirScopeProvider(analysisSessionProvider)
 
     override val dataFlowProvider: KaInternalsDataFlowProvider = KaFirDataFlowProvider(analysisSessionProvider)
 

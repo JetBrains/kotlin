@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseCompositeTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.KaTypeScope
@@ -55,7 +56,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirScopeProvider(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaScopeProvider, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsScopeProvider, KaFirSessionComponent {
     private fun getScopeSession(): ScopeSession {
         return analysisSession.getScopeSessionFor(analysisSession.firSession)
     }
@@ -70,9 +71,9 @@ internal class KaFirScopeProvider(
         )
     }
 
-    override val KaDeclarationContainerSymbol.memberScope: KaScope
-        get() = withValidityAssertion {
-            val firScope = getFirForScope().unsubstitutedScope(
+    override fun memberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            val firScope = symbol.getFirForScope().unsubstitutedScope(
                 analysisSession.firSession,
                 getScopeSession(),
                 withForcedTypeCalculator = false,
@@ -81,28 +82,33 @@ internal class KaFirScopeProvider(
             return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
         }
 
-    override val KaDeclarationContainerSymbol.staticMemberScope: KaScope
-        get() = withValidityAssertion {
-            val fir = getFirForScope()
+    override fun combinedMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            asCompositeScope(listOf(memberScope(symbol), staticMemberScope(symbol)))
+        }
+
+    override fun staticMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            val fir = symbol.getFirForScope()
             val firScope = fir.scopeProvider.getStaticScope(fir, analysisSession.firSession, getScopeSession())
                 ?: return createEmptyScope()
 
             return KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
         }
 
-    override val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
-        get() = withValidityAssertion {
-            getDeclaredMemberScope(this, DeclaredMemberScopeKind.NON_STATIC)
+    override fun declaredMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            getDeclaredMemberScope(symbol, DeclaredMemberScopeKind.NON_STATIC)
         }
 
-    override val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
-        get() = withValidityAssertion {
-            getDeclaredMemberScope(this, DeclaredMemberScopeKind.STATIC)
+    override fun staticDeclaredMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            getDeclaredMemberScope(symbol, DeclaredMemberScopeKind.STATIC)
         }
 
-    override val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
-        get() = withValidityAssertion {
-            getDeclaredMemberScope(this, DeclaredMemberScopeKind.COMBINED)
+    override fun combinedDeclaredMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            getDeclaredMemberScope(symbol, DeclaredMemberScopeKind.COMBINED)
         }
 
     private enum class DeclaredMemberScopeKind {
@@ -198,11 +204,11 @@ internal class KaFirScopeProvider(
         }
     }
 
-    override val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
-        get() = withValidityAssertion {
-            val declaredScope = (declaredMemberScope as? KaFirDelegatingNamesAwareScope)?.firScope ?: return createEmptyScope()
+    override fun delegatedMemberScope(symbol: KaDeclarationContainerSymbol): KaScope =
+        withValidityAssertion {
+            val declaredScope = (declaredMemberScope(symbol) as? KaFirDelegatingNamesAwareScope)?.firScope ?: return createEmptyScope()
 
-            val fir = getFirForScope()
+            val fir = symbol.getFirForScope()
 
             @OptIn(DirectDeclarationsAccess::class)
             val delegateFields = fir.delegateFields
@@ -223,52 +229,58 @@ internal class KaFirScopeProvider(
             return KaFirDelegatedMemberScope(firScope, analysisSession.firSymbolBuilder)
         }
 
-    override val KaFileSymbol.fileScope: KaScope
-        get() = withValidityAssertion {
-            check(this is KaFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${this::class} was provided" }
-            return KaFirFileScope(this, builder)
+    override fun fileScope(symbol: KaFileSymbol): KaScope =
+        withValidityAssertion {
+            check(symbol is KaFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${symbol::class} was provided" }
+            return KaFirFileScope(symbol, symbol.builder)
         }
 
     private fun createEmptyScope(): KaScope {
         return KaBaseEmptyScope(token)
     }
 
-    override val KaPackageSymbol.packageScope: KaScope
-        get() = withValidityAssertion {
-            createPackageScope(fqName)
+    override fun packageScope(symbol: KaPackageSymbol): KaScope =
+        withValidityAssertion {
+            createPackageScope(symbol.fqName)
         }
 
-    override fun List<KaScope>.asCompositeScope(): KaScope = withValidityAssertion {
-        return KaBaseCompositeScope.create(this, token)
+    override fun asCompositeScope(scopes: List<KaScope>): KaScope = withValidityAssertion {
+        return KaBaseCompositeScope.create(scopes, token)
     }
 
-    override val KaType.scope: KaTypeScope?
-        get() = withValidityAssertion {
-            check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
-            return getFirTypeScope(this)
-                ?.withSyntheticPropertiesScopeOrSelf(coneType)
+    override fun compositeScope(scopeContext: KaScopeContext, filter: (KaScopeKind) -> Boolean): KaScope =
+        withValidityAssertion {
+            val subScopes = scopeContext.scopes.filter { filter(it.kind) }.map { it.scope }
+            asCompositeScope(subScopes)
+        }
+
+    override fun scope(type: KaType): KaTypeScope? =
+        withValidityAssertion {
+            check(type is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
+            return getFirTypeScope(type)
+                ?.withSyntheticPropertiesScopeOrSelf(type.coneType)
                 ?.let { convertToKtTypeScope(it) }
         }
 
-    override val KaTypeScope.declarationScope: KaScope
-        get() = withValidityAssertion {
-            return when (this) {
-                is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(firScope, analysisSession.firSymbolBuilder)
-                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(subScopes.map { it.declarationScope }, token)
-                else -> unexpectedElementError<KaTypeScope>(this)
+    override fun declarationScope(typeScope: KaTypeScope): KaScope =
+        withValidityAssertion {
+            return when (typeScope) {
+                is KaFirDelegatingTypeScope -> KaFirDelegatingNamesAwareScope(typeScope.firScope, analysisSession.firSymbolBuilder)
+                is KaBaseCompositeTypeScope -> KaBaseCompositeScope.create(typeScope.subScopes.map { declarationScope(it) }, token)
+                else -> unexpectedElementError<KaTypeScope>(typeScope)
             }
         }
 
-    override val KaType.syntheticJavaPropertiesScope: KaTypeScope?
-        get() = withValidityAssertion {
-            check(this is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${this::class} was provided" }
-            val typeScope = getFirTypeScope(this) ?: return null
-            return getFirSyntheticPropertiesScope(coneType, typeScope)?.let { convertToKtTypeScope(it) }
+    override fun syntheticJavaPropertiesScope(type: KaType): KaTypeScope? =
+        withValidityAssertion {
+            check(type is KaFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
+            val typeScope = getFirTypeScope(type) ?: return null
+            return getFirSyntheticPropertiesScope(type.coneType, typeScope)?.let { convertToKtTypeScope(it) }
         }
 
-    override val KtFile.importingScopeContext: KaScopeContext
-        get() = withPsiValidityAssertion {
-            val firFile = getOrBuildFirFile(resolutionFacade)
+    override fun importingScopeContext(file: KtFile): KaScopeContext =
+        file.withPsiValidityAssertion {
+            val firFile = file.getOrBuildFirFile(resolutionFacade)
             val firFileSession = firFile.moduleData.session
             val firImportingScopes = createImportingScopes(
                 firFile,
@@ -283,8 +295,8 @@ internal class KaFirScopeProvider(
             return KaBaseScopeContext(ktScopesWithKinds, implicitValues = emptyList(), token)
         }
 
-    // Do not check [this] psi validity as it is not used
-    override fun KtFile.scopeContext(position: KtElement): KaScopeContext = withPsiValidityAssertion(position) {
+    // Do not check the file's psi validity as it is not used
+    override fun scopeContext(file: KtFile, position: KtElement): KaScopeContext = withPsiValidityAssertion(position) {
         val fakeFile = position.containingKtFile
 
         // If the position is in KDoc, we want to pass the owning declaration to the ContextCollector.

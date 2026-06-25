@@ -55,6 +55,8 @@ public interface KaInternals {
 
     public val resolver: KaInternalsResolver
 
+    public val scopeProvider: KaInternalsScopeProvider
+
     public val signatureSubstitutor: KaInternalsSignatureSubstitutor
 
     public val sourceProvider: KaInternalsSourceProvider

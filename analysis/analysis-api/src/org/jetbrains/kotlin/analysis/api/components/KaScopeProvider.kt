@@ -793,8 +793,6 @@ public val KaType.syntheticJavaPropertiesScope: KaTypeScope?
  * Computes the lexical scope context for a given [position] in the [KtFile]. The scope context includes all scopes that are relevant
  * for the given position, together with all available implicit receivers.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
     return with(session) {
@@ -809,8 +807,6 @@ public fun KtFile.scopeContext(position: KtElement): KaScopeContext {
  *
  * By default, the scope context also includes default importing scopes, which can be filtered by [KaScopeKind].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public val KtFile.importingScopeContext: KaScopeContext
     get() = with(session) { importingScopeContext }
@@ -821,8 +817,6 @@ public val KtFile.importingScopeContext: KaScopeContext
  * The order of declarations corresponds to the order of their containing scopes, which are sorted according to their [indices][KaScopeKind.indexInTower]
  * in the scope tower.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KaScopeContext.compositeScope(filter: (KaScopeKind) -> Boolean = { true }): KaScope {
     return with(session) {
