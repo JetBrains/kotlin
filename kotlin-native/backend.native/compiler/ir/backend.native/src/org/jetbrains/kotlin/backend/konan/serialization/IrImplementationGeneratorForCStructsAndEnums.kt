@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -295,6 +296,3 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
 
 private fun IrBuilder.irInstanceInitializer(classSymbol: IrClassSymbol): IrExpression =
         IrInstanceInitializerCallImpl(startOffset, endOffset, classSymbol, context.irBuiltIns.unitType)
-
-fun IrClass.inheritsFromCStruct() = superClasses.any { it.hasEqualFqName(InteropFqNames.cStructVar) }
-fun IrClass.inheritsFromCEnum() = superClasses.any { it.hasEqualFqName(InteropFqNames.cEnum) }

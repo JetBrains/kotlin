@@ -91,6 +91,7 @@ Native:
  - native/analysis-api-based-test-utils
  - native/base
  - native/binary-options
+ - native/cinterop.deserialization
  - native/cli-native
  - native/commonizer
  - native/commonizer-api

@@ -26,6 +26,9 @@ object NativeStandardInteropNames {
     val objCOverrideInitClassId = ClassId(cInteropPackage, Name.identifier("ObjCObjectBase.OverrideInit"))
     val objCUnavailableClassId = ClassId(cInteropPackage, Name.identifier("ObjCUnavailable"))
 
+    val CStructVarClassId = ClassId(cInteropPackage, CStructVar)
+    val CEnumClassId = ClassId(cInteropPackage, Name.identifier("CEnum"))
+
     object Annotations {
         val objCSignatureOverrideClassId = ClassId(cInteropPackage, Name.identifier("ObjCSignatureOverride"))
     }

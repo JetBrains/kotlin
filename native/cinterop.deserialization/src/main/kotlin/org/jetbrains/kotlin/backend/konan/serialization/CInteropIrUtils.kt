@@ -1,0 +1,14 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.backend.konan.serialization
+
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.util.hasEqualClassId
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+
+fun IrClass.inheritsFromCStruct() = superTypes.any { it.classOrFail.hasEqualClassId(NativeStandardInteropNames.CStructVarClassId) }
+fun IrClass.inheritsFromCEnum() = superTypes.any { it.classOrFail.hasEqualClassId(NativeStandardInteropNames.CEnumClassId) }

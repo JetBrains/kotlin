@@ -175,6 +175,12 @@ fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String
     }
 }
 
+fun IrClassSymbol.hasEqualClassId(classId: ClassId): Boolean {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
+        classId.packageFqName.asString() == packageFqName && classId.relativeClassName.asString() == declarationFqName
+    }
+}
+
 fun List<IrAnnotation>.hasAnnotation(classId: ClassId): Boolean = any { it.classId == classId }
 
 fun List<IrAnnotation>.hasAnnotation(fqName: FqName): Boolean =
