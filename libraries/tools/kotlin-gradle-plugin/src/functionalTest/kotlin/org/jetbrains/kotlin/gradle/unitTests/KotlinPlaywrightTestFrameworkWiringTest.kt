@@ -10,15 +10,21 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class KotlinPlaywrightTestFrameworkWiringTest {
@@ -96,17 +102,50 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
-    fun `playwright framework requires no npm dependencies`() {
+    fun `playwright framework requires playwright-core npm dependency`() {
         val setup = buildBrowserTestProject {
             chromium()
         }
 
         val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
-        assertTrue(
-            framework.requiredNpmDependencies.isEmpty(),
-            "Expected the playwright framework to require no npm dependencies"
+        assertEquals(
+            setOf<RequiredKotlinJsDependency>(
+                NpmPackageVersion(
+                    name = "playwright-core",
+                    version = "1.60.0",
+                ),
+            ).prettyPrinted,
+            framework.requiredNpmDependencies.prettyPrinted
         )
     }
+
+    @Test
+    fun `playwright install task browsers match declared runner names`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+            firefox()
+            webkit("my-webkit")
+        }
+
+        val installTask = assertIs<PlaywrightBrowserInstall>(
+            setup.project.tasks.getByName("kotlinInstallPlaywrightBrowsers")
+        )
+
+        assertNotNull(installTask, "Expected kotlinInstallPlaywrightBrowsers task to be registered")
+        assertEquals(
+            setOf("chromium", "firefox", "webkit"),
+            installTask.browsers.get().toSet()
+        )
+    }
+
+    @Test
+    fun `without runners no playwright install task is registered`() {
+        val setup = buildBrowserTestProject {}
+
+        val installTask = setup.project.tasks.findByName("kotlinInstallPlaywrightBrowsers")
+        assertNull(installTask, "Expected no kotlinInstallPlaywrightBrowsers task when no runners declared")
+    }
+
 }
 
 

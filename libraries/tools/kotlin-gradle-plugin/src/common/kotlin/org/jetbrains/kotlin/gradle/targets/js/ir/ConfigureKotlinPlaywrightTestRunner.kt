@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
@@ -35,9 +37,24 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
+        val playwrightBrowserInstallTask = project.registerTask<PlaywrightBrowserInstall>(
+            "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
+        ) {
+            it.browsers.set(browserTestDsl.allBrowserRunners.map { it.values.map {
+                when (it) {
+                    is KotlinFirefoxTestRunner -> "firefox"
+                    is KotlinWebkitTestRunner -> "webkit"
+                    is KotlinChromiumTestRunner -> "chromium"
+                    else -> throw IllegalArgumentException("Unsupported browser runner: ${it::class.simpleName}")
+                }
+            }.toSet() })
+        }
+
         testTaskProvider.configure { testTask ->
             val objects = project.objects
             val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
+
+            inputs.playwrightBrowsersDirectory.set(playwrightBrowserInstallTask.flatMap { it.outputDir })
 
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->

@@ -1,6 +1,23 @@
 /*
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ *
+ * PwExecutionSpec.createImpl in this file is based on code from the Playwright project (https://github.com/microsoft/playwright-java)
+ * Original method: com.microsoft.playwright.impl.PlaywrightImpl.createImpl
+ * License: Apache License 2.0
+ *
+ * Modifications:
+ * - use reflection to access private constructor of com.microsoft.playwright.impl.Connection
+ * - override
+ *
+ * PwExecutionSpec.createProcessBuilde in this file is based on code from the Playwright project (https://github.com/microsoft/playwright-java)
+ * Original method: com.microsoft.playwright.impl.driver.Driver.createProcessBuilder
+ * License: Apache License 2.0
+ *
+ * Modifications:
+ * - change path to cli.js
+ *
+ * Copyright [Original Playwright authors]
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
@@ -22,6 +39,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing.PlaywrightTestExecutor")
@@ -41,6 +59,7 @@ internal enum class PwBrowserKind {
 internal class PwRunnerSpec(
     val name: String,
     val browserKind: PwBrowserKind,
+    val browsersDirectory: Path,
     val testsLocation: KotlinJsTestsLocation,
     val buildTestsExecutionerUrl: (baseUrl: String) -> String,
     val timeout: Duration,
@@ -78,9 +97,12 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
         handler.use {
             //  Use thin layer of Java Classes to interact with Playwright via std in/out pipes.
             val playwright = spec.createImpl(
-                Playwright.CreateOptions().setEnv(mapOf(
-                    "PLAYWRIGHT_NODEJS_PATH" to spec.nodeExecutable,
-                ))
+                Playwright.CreateOptions().setEnv(
+                    mapOf(
+                        "PLAYWRIGHT_NODEJS_PATH" to spec.nodeExecutable,
+                        "PLAYWRIGHT_BROWSERS_PATH" to spec.runners.first().browsersDirectory.absolutePathString()
+                    )
+                )
             )
 
             playwright.use {
@@ -112,15 +134,13 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             pb.command().add("run-driver")
             pb.redirectError(ProcessBuilder.Redirect.INHERIT)
             val p = pb.start()
-            //TODO shadow classes we need here
-            // Create PipeTransport via reflection
             val pipeTransportClass = try {
                 Class.forName("com.microsoft.playwright.impl.PipeTransport")
             } catch (e: Throwable) {
                 throw RuntimeException("Failed to load PipeTransport class", e)
             }
 
-            // TODO: Merge fix to playwright upstream to get rid of reflection calls
+            // KT-87396: Merge fix to playwright upstream to get rid of reflection calls
             val pipeTransport = try {
                 val constructor = pipeTransportClass.getDeclaredConstructor(
                     InputStream::class.java,
@@ -168,7 +188,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
 
-    private fun PwExecutionSpec.createProcessBuilder( env: MutableMap<String, String>): ProcessBuilder {
+    private fun PwExecutionSpec.createProcessBuilder(env: MutableMap<String, String>): ProcessBuilder {
         val pb = ProcessBuilder(nodeExecutable)
         pb.command().add(playwrightCli) // This is the patched part. Original code loads playwright-cli from the JAR.
         pb.environment().putAll(env)

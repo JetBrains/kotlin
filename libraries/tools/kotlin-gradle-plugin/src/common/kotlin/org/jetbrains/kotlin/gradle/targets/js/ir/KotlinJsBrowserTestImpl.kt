@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
-import org.jetbrains.kotlin.gradle.targets.js.dsl.BundleKotlinJsTestsTask
 import org.jetbrains.kotlin.gradle.targets.js.testing.FileBasedKotlinJsTestDevServer
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask

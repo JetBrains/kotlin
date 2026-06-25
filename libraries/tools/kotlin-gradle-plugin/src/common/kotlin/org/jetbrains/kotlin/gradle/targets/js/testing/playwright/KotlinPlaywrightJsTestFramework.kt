@@ -13,6 +13,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import java.net.URI
+import java.nio.file.Path
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.toKotlinDuration
@@ -60,6 +62,9 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:Nested
         val webkitRunners: ListProperty<WebkitRunnerInput> = objects.listProperty()
+
+        @get:InputDirectory
+        val playwrightBrowsersDirectory: DirectoryProperty = objects.directoryProperty()
     }
 
     /**
@@ -135,15 +140,17 @@ internal class KotlinPlaywrightJsTestFramework(
             exclude = task.excludePatterns,
         ).toList()
 
+        val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
+
         val pwRunners = buildList {
             frameworkTaskInputs.chromiumRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, browsersDirectory, cliArgs))
             }
             frameworkTaskInputs.firefoxRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, browsersDirectory, cliArgs))
             }
             frameworkTaskInputs.webkitRunners.get().forEach {
-                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, cliArgs))
+                add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, browsersDirectory, cliArgs))
             }
         }
 
@@ -160,10 +167,12 @@ internal class KotlinPlaywrightJsTestFramework(
 
     private fun BrowserRunnerInput.createPwRunnerSpec(
         kind: PwBrowserKind,
+        browsersDirectory: Path,
         cliArgs: List<String>,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
+        browsersDirectory = browsersDirectory,
         testsLocation = testsLocation.get(),
         buildTestsExecutionerUrl = { baseUrl -> buildRunnerUrl(baseUrl, cliArgs) },
         timeout = timeout.get().toKotlinDuration(),
