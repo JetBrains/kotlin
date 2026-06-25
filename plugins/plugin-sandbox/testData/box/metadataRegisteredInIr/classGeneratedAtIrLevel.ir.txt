@@ -740,7 +740,8 @@ FILE fqName:<root> fileName:/main.kt
               then: CONST String type=kotlin.String value="b"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null
+              then: CALL 'internal final fun throwNoWhenBranchMatchedException (subject: kotlin.Any): kotlin.Nothing declared in kotlin.internal' type=kotlin.Nothing origin=null
+                ARG subject: GET_VAR 'val tmp_0: <root>.MySealed declared in <root>.box' type=<root>.MySealed origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ

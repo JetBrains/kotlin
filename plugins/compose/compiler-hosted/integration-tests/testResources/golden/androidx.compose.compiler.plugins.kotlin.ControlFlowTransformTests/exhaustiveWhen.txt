@@ -32,7 +32,7 @@ fun <T> Test(alpha: Alpha<T>, %composer: Composer?, %changed: Int): Float {
         1.0f
       }
       else -> {
-        noWhenBranchMatchedException()
+        throwNoWhenBranchMatchedException(tmp0_subject)
       }
     }
   }

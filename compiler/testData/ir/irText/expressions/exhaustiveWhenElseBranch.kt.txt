@@ -21,7 +21,7 @@ fun testAnnotated_throwsJvm(a: A) {
     val tmp_0: A = a
     when {
       EQEQ(arg0 = tmp_0, arg1 = A.V1) -> 1
-      else -> noWhenBranchMatchedException()
+      else -> throwNoWhenBranchMatchedException(subject = tmp_0)
     }
   } /*~> Unit */
 }
@@ -31,7 +31,7 @@ fun testExpression_throws(a: A): Int {
     val tmp_1: A = a
     when {
       EQEQ(arg0 = tmp_1, arg1 = A.V1) -> 1
-      else -> noWhenBranchMatchedException()
+      else -> throwNoWhenBranchMatchedException(subject = tmp_1)
     }
   }
 }
@@ -43,7 +43,7 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
       val tmp_2: A = a
       when {
         EQEQ(arg0 = tmp_2, arg1 = A.V1) -> 1
-        else -> noWhenBranchMatchedException()
+        else -> throwNoWhenBranchMatchedException(subject = tmp_2)
       }
     }
   } /*~> Unit */
@@ -56,7 +56,7 @@ fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
       val tmp_3: A = a
       when {
         EQEQ(arg0 = tmp_3, arg1 = A.V1) -> 1
-        else -> noWhenBranchMatchedException()
+        else -> throwNoWhenBranchMatchedException(subject = tmp_3)
       }
     }
   } /*~> Unit */
@@ -69,7 +69,7 @@ fun testIfTheElseStatement_empty(a: A, flag: Boolean) {
       val tmp_4: A = a
       when {
         EQEQ(arg0 = tmp_4, arg1 = A.V1) -> 1
-        else -> noWhenBranchMatchedException()
+        else -> throwNoWhenBranchMatchedException(subject = tmp_4)
       }
     }
   } /*~> Unit */
@@ -81,7 +81,7 @@ fun testLambdaResultExpression_throws(a: A) {
       val tmp_5: A = a
       when {
         EQEQ(arg0 = tmp_5, arg1 = A.V1) -> 1
-        else -> noWhenBranchMatchedException()
+        else -> throwNoWhenBranchMatchedException(subject = tmp_5)
       }
     }
   }
@@ -93,7 +93,7 @@ fun testParenthesized_throwsJvm(a: A) {
     val tmp_6: A = a
     when {
       EQEQ(arg0 = tmp_6, arg1 = A.V1) -> 1
-      else -> noWhenBranchMatchedException()
+      else -> throwNoWhenBranchMatchedException(subject = tmp_6)
     }
   } /*~> Unit */
 }
@@ -103,7 +103,7 @@ fun testStatement_empty(a: A) {
     val tmp_7: A = a
     when {
       EQEQ(arg0 = tmp_7, arg1 = A.V1) -> 1
-      else -> noWhenBranchMatchedException()
+      else -> throwNoWhenBranchMatchedException(subject = tmp_7)
     }
   } /*~> Unit */
 }
@@ -114,7 +114,7 @@ fun testVariableAssignment_throws(a: A) {
     val tmp_8: A = a
     when {
       EQEQ(arg0 = tmp_8, arg1 = A.V1) -> x = 11
-      else -> noWhenBranchMatchedException()
+      else -> throwNoWhenBranchMatchedException(subject = tmp_8)
     }
   }
 }
