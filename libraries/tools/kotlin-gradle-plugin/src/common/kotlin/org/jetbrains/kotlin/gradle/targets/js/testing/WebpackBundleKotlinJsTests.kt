@@ -103,6 +103,8 @@ constructor(
 
         val runnerModule = modules.require("kotlin-web-helpers/dist/kotlin-test-mocha-browser-runner.js")
         val staticHtml = modules.require("kotlin-web-helpers/dist/static/test.html")
+        modules.require("playwright-core")
+
 
         val outputDir = outputBundleDir.get().asFile
 

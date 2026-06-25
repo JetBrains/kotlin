@@ -212,8 +212,6 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     commonImplementation(project(":kotlin-util-klib-metadata")) // TODO: consider removing in KT-70247
 
-    commonImplementation(libs.playwrigt)
-
     commonRuntimeOnly(project(":kotlin-compiler-runner")) { // TODO: consider removing in KT-70247
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
@@ -241,6 +239,13 @@ dependencies {
     embedded(project(":kotlin-tooling-metadata")) { isTransitive = false }
     embedded("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
+    }
+
+    commonCompileOnly(libs.playwright) {
+        exclude(group = "com.microsoft.playwright", module = "driver-bundle")
+    }
+    embedded(libs.playwright) {
+        exclude(group = "com.microsoft.playwright", module = "driver-bundle")
     }
 
     embedded(libs.org.tukaani.xz)
@@ -413,6 +418,8 @@ tasks {
                 exclusions.forEach { exclude(it) }
             }
         }
+
+        relocate("com.microsoft.playwright", "${baseTargetPackage}.com.microsoft.playwright")
 
         /*
         Disable Kotlin Module remapping to allow our own 'KotlinModuleMetadataVersionBasedSkippingTransformer' to run

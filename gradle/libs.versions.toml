@@ -225,7 +225,7 @@ bouncycastle-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", vers
 
 gradlePlugin-gradle-node = { module = "com.github.node-gradle.node:com.github.node-gradle.node.gradle.plugin", version.ref = "gradle-node-plugin" }
 
-playwrigt = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
+playwright = { module = "com.microsoft.playwright:playwright", version.ref = "playwright" }
 
 analysis-api-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "analysis-api-kotlin" }
