@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
@@ -96,10 +95,8 @@ public enum class KaDiagnosticCheckerFilter {
  *
  * Deprecated: Use [directDiagnostics] instead.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated("Use KtElement.directDiagnostics instead", ReplaceWith("directDiagnostics(filter)"))
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
     @Suppress("DEPRECATION")
@@ -117,9 +114,7 @@ public fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): Collection<
  * checkers of containing elements. Therefore, the API might not return all expected diagnostics for an element.
  * [KtFile.collectDiagnostics] should be preferred at the current time.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtElement.directDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
     return with(session) {
@@ -136,8 +131,6 @@ public fun KtElement.directDiagnostics(filter: KaDiagnosticCheckerFilter): Colle
  *
  * @see KtFile.diagnostics
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>> {
     return with(session) {
@@ -154,9 +147,7 @@ public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collect
  *
  * @see collectDiagnostics
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaContextParameterApi
 context(session: KaSession)
 public fun KtFile.diagnostics(filter: KaDiagnosticCheckerFilter): Sequence<KaDiagnosticWithPsi<*>> {
     return with(session) {

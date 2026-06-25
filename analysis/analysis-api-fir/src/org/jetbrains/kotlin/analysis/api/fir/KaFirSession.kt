@@ -56,7 +56,7 @@ private constructor(
     token,
     resolver = KaResolverBridge(analysisSessionProvider),
     symbolRelationProvider = KaSymbolRelationProviderBridge(analysisSessionProvider),
-    diagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider),
+    diagnosticProvider = KaDiagnosticProviderBridge(analysisSessionProvider),
     scopeProvider = KaFirScopeProvider(analysisSessionProvider),
     completionCandidateChecker = KaCompletionCandidateCheckerBridge(analysisSessionProvider),
     expressionTypeProvider = KaExpressionTypeProviderBridge(analysisSessionProvider),
@@ -84,6 +84,8 @@ private constructor(
     kDocProvider = KaKDocProviderBridge(analysisSessionProvider),
 ) {
     override val resolver: KaInternalsResolver = KaFirResolver(analysisSessionProvider)
+
+    override val diagnosticProvider: KaInternalsDiagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider)
 
     override val typeRelationChecker: KaInternalsTypeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider)
 

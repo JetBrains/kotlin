@@ -245,6 +245,10 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaD
 	public abstract fun collectDiagnostics (Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;)Ljava/util/Collection;
 }
 
+public final class org/jetbrains/kotlin/analysis/api/components/KaDiagnosticProviderKt {
+	public static final fun collectDiagnostics (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtFile;Lorg/jetbrains/kotlin/analysis/api/components/KaDiagnosticCheckerFilter;)Ljava/util/Collection;
+}
+
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaEvaluator : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun evaluate (Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/base/KaConstantValue;
 }
