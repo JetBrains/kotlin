@@ -46,10 +46,8 @@ public final enum class MyEnum {
     private final @org.jetbrains.annotations.NotNull field id: java.lang.String
     private synthetic final static method $values(): MyEnum[]
     static method <clinit>(): void
-    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(p0: java.lang.String, p1: int): void
-    private @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(p0: java.lang.String, p1: int, p2: Id): void
-    private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String, p3: kotlin.jvm.internal.BoxingConstructorMarker): void
-    synthetic method <init>(p0: java.lang.String, p1: int, p2: java.lang.String, p3: kotlin.jvm.internal.BoxingConstructorMarker, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String): void
+    synthetic method <init>(p0: java.lang.String, p1: int, p2: java.lang.String, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public final @kotlin.jvm.JvmExposeBoxed(jvmName="") @org.jetbrains.annotations.NotNull method getId(): Id
     public final @org.jetbrains.annotations.NotNull method getId-eEFUqEU(): java.lang.String

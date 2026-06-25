@@ -17,5 +17,5 @@ class TestClass : Test {
     }
 }
 
-// DECLARATIONS_NO_LIGHT_ELEMENTS: Test.class[test]
+// DECLARATIONS_NO_LIGHT_ELEMENTS: Test.class[bar;foo;test]
 // LIGHT_ELEMENTS_NO_DECLARATION: IC.class[constructor-impl;equals-impl;equals-impl0;hashCode-impl;toString-impl], Test.class[foo-Eh1mVAw;getBar-qjS0p_s;test-Eh1mVAw], TestClass.class[test-Eh1mVAw]

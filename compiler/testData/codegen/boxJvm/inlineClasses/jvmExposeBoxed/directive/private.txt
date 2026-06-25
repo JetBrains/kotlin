@@ -1,3 +1,18 @@
+@kotlin.Metadata
+public final class C$D {
+    // source: 'private.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo-K5cTq2M(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public final inner class C$D
+}
+
+@kotlin.Metadata
+final class C {
+    // source: 'private.kt'
+    public method <init>(): void
+    public final inner class C$D
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class IC {
@@ -22,6 +37,6 @@ public final class IC {
 public final class PrivateKt {
     // source: 'private.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static @kotlin.jvm.JvmExposeBoxed(jvmName="") method foo(p0: IC): java.lang.String
     private final static method foo-K5cTq2M(p0: java.lang.String): java.lang.String
+    public final inner class C$D
 }

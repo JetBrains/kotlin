@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -264,6 +265,8 @@ private fun IrDeclaration.isFunctionWhichCanBeExposed(isPropagatedOrImplicit: Bo
     if (isSuspend) return false
     // Ditto for suspend lambda methods
     if (parentClassOrNull?.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) return false
+    // Ditto for private functions or methods of private classes
+    if (isEffectivelyPrivate()) return false
     // Cannot expose open or abstract - @JvmName problem
     if (isOverridable) return false
     if (parameters.any { it.type.isInlineClassType() }) return true

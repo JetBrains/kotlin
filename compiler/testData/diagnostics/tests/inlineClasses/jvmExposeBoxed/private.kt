@@ -87,6 +87,12 @@ private class c <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@JvmExposeBoxed<!> con
         set(ic: IC) {}
 }
 
+private class C {
+    class D {
+        <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@JvmExposeBoxed<!> fun foo1(): IC = TODO()
+    }
+}
+
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, annotationUseSiteTargetPropertyGetter,
 annotationUseSiteTargetPropertySetter, classDeclaration, classReference, functionDeclaration, getter, primaryConstructor,
 propertyDeclaration, setter, stringLiteral, value */
