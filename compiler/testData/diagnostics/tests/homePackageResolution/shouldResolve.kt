@@ -17,8 +17,8 @@ fun baz(a: A) { }
 package second
 
 import first.A
-import first.foo
-import first.bar
+<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>import first.foo<!>
+<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>import first.bar<!>
 
 class B : A()
 
@@ -26,8 +26,8 @@ fun B.foo() {}
 fun baz(b: B) { }
 
 fun checkB(b: B) {
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>foo<!>()
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
+    b.foo()
+    b.bar()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration */

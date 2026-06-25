@@ -4447,7 +4447,8 @@
                                 "current": false,
                                 "valueInVersions": []
                             }
-                        }
+                        },
+                        "deprecatedMessage": null
                     },
                     {
                         "name": "Xignore-const-optimization-errors",

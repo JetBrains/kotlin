@@ -26,7 +26,7 @@ fun baz(b: B) { }
 
 fun checkB(b: B) {
     b.foo()
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
+    b.bar()
 }
 
 // FILE: c.kt
@@ -37,12 +37,12 @@ import first.A
 import second.B
 
 fun checkC(a: A, b: B) {
-    a.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>foo<!>()
-    a.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
+    a.foo()
+    a.bar()
     <!UNRESOLVED_REFERENCE!>baz<!>(a)
 
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>foo<!>()
-    b.<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>bar<!>()
+    b.foo()
+    b.bar()
     <!UNRESOLVED_REFERENCE!>baz<!>(b)
 }
 
