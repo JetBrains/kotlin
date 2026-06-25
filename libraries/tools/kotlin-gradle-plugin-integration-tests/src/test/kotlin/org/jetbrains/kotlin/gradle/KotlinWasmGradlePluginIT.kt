@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.withType
-import org.gradle.kotlin.dsl.withType
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
@@ -203,6 +202,47 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                 assertTasksExecuted(":app:wasmJsD8ProductionRun")
                 assertOutputContains("Hello from Lib, App!")
                 assertOutputContains("v2: [cube, sphere, light]")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class)
+    @DisplayName("Check js target with per-module closed world incremental build with rerun tasks")
+    @GradleTest
+    fun jsTargetPerModuleClosedWorldWithRerunTasks(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable().forEach {
+                        it.linkTask.configure {
+                            compilerOptions.freeCompilerArgs.add("-Xwasm-generate-closed-world-multimodule")
+                        }
+                    }
+                }
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+            ) {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/kotlin-kotlin-stdlib.wasm")
+            }
+
+            build(
+                ":compileDevelopmentExecutableKotlinWasmJs",
+                *rerunTask(":compileDevelopmentExecutableKotlinWasmJs"),
+            ) {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinWasmJs")
+
+                // Incremental build should not remove unchanged files
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/redefined-wasm-module-name.wasm")
+                assertFileInProjectExists("build/compileSync/wasmJs/main/developmentExecutable/kotlin/kotlin-kotlin-stdlib.wasm")
             }
         }
     }
