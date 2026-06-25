@@ -123,6 +123,8 @@ object BinaryOptions : BinaryOptionRegistry() {
      */
     val macabi by booleanOption()
 
+    val objcExportCache by booleanOption()
+
     val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
 
     val perFileCacheForStdlib by booleanOption()

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.*
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -93,12 +94,12 @@ class CacheSupport(
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
         val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
-        val baseLibraryCacheDirectory = cacheDirectory.child(
-                if (singleFileStrategy == null)
-                    CachedLibraries.getCachedLibraryName(libraryToCache.klib)
-                else
-                    CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
-        )
+        val cacheName = if (singleFileStrategy == null)
+            CachedLibraries.getCachedLibraryName(libraryToCache.klib)
+        else
+            CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
+        val cacheNameWithSuffix = if (configuration.get(BinaryOptions.objcExportCache) == true) "$cacheName.objc" else cacheName
+        val baseLibraryCacheDirectory = cacheDirectory.child(cacheNameWithSuffix)
         val singleFilePath = singleFileStrategy?.filePath
                 ?: return baseLibraryCacheDirectory.absolutePath
 
@@ -131,7 +132,7 @@ class CacheSupport(
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
-                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(File(it)) },
+                libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(File(it)) }
         )
     }
 
@@ -145,7 +146,13 @@ class CacheSupport(
         val libraryToAddToCacheFile = File(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
-        if (libraryCache is CachedLibraries.Cache.Monolithic)
+        val objcExportCacheEnabled = configuration.get(BinaryOptions.objcExportCache) == true
+        val alreadyCached = if (objcExportCacheEnabled) {
+            libraryCache?.objcCachePath != null
+        } else {
+            libraryCache is CachedLibraries.Cache.Monolithic
+        }
+        if (alreadyCached)
             null
         else {
             val filesToCache = configuration.filesToCache
@@ -185,11 +192,14 @@ class CacheSupport(
         }
 
         // Ensure not making cache for libraries that are already cached:
-        libraryToCache?.klib?.let {
-            val cache = cachedLibraries.getLibraryCache(it)
-            if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
-                        "that is already cached in '${cache.path}'")
+        val objcExportCacheEnabled = configuration.get(BinaryOptions.objcExportCache) == true
+        if (!objcExportCacheEnabled) {
+            libraryToCache?.klib?.let {
+                val cache = cachedLibraries.getLibraryCache(it)
+                if (cache is CachedLibraries.Cache.Monolithic) {
+                    configuration.reportCompilationErrorAndThrow("can't cache library '${it.location}' " +
+                            "that is already cached in '${cache.path}'")
+                }
             }
         }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
@@ -82,7 +83,12 @@ internal val CreateTestBundlePhase = createSimpleNamedCompilerPhase<NativeBacken
         "CreateTestBundlePhase",
 ) { context, input ->
     val config = context.config
-    val output = OutputFiles(config.outputPath, config.target, config.produce).mainFile
+    val output = OutputFiles(
+            config.outputPath,
+            config.target,
+            config.produce,
+            objcExportCacheEnabled = config.configuration.get(BinaryOptions.objcExportCache) == true
+    ).mainFile
     createTestBundle(config, input.moduleDescriptor, output)
 }
 

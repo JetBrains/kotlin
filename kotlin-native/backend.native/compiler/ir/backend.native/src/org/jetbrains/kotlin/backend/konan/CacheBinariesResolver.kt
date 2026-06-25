@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 /**
  * Check if we should link static caches into an object file before running full linkage.
@@ -34,6 +35,8 @@ internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List
 internal fun resolveCacheBinaries(
         cachedLibraries: CachedLibraries,
         dependenciesTrackingResult: DependenciesTrackingResult,
+        objcExportCacheEnabled: Boolean = false,
+        allLibraries: List<KotlinLibrary> = emptyList()
 ): ResolvedCacheBinaries {
     val staticCaches = mutableListOf<String>()
     val dynamicCaches = mutableListOf<String>()
@@ -50,9 +53,30 @@ internal fun resolveCacheBinaries(
             CachedLibraries.Kind.HEADER -> error("Header cache ${cache.path} cannot be used for linking")
         }
 
-        list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
+        val binaries = if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
             dependency.kind.files.map { cache.getFileBinaryPath(it.name) }
         else cache.binariesPaths
+
+        list += binaries
+        if (objcExportCacheEnabled && cache.kind == CachedLibraries.Kind.STATIC) {
+            val objcPath = cache.objcCachePath
+            objcPath?.let { list += it }
+        }
     }
-    return ResolvedCacheBinaries(static = staticCaches, dynamic = dynamicCaches)
+
+    if (objcExportCacheEnabled) {
+        allLibraries.forEach { library ->
+            val cache = cachedLibraries.getLibraryCache(library)
+            if (cache != null && cache.kind == CachedLibraries.Kind.STATIC) {
+                val objcPath = cache.objcCachePath
+                objcPath?.let {
+                    if (!staticCaches.contains(it)) {
+                        staticCaches += it
+                    }
+                }
+            }
+        }
+    }
+
+    return ResolvedCacheBinaries(static = staticCaches.distinct(), dynamic = dynamicCaches.distinct())
 }

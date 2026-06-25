@@ -289,6 +289,10 @@ class NativeSecondStageCompilationConfig(
         configuration.get(BinaryOptions.objcDisposeWithRunLoop) ?: true
     }
 
+    val objcExportCacheEnabled: Boolean by lazy {
+        configuration.get(BinaryOptions.objcExportCache) ?: false
+    }
+
     val objcEntryPoints: ObjCEntryPoints by lazy {
         configuration
                 .get(BinaryOptions.objcExportEntryPointsPath)
@@ -420,7 +424,10 @@ class NativeSecondStageCompilationConfig(
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::File)
 
     val fullExportedNamePrefix: String
-        get() = configuration.fullExportedNamePrefix ?: implicitModuleName
+        get() = configuration.fullExportedNamePrefix
+            ?: configuration.bundleId
+            ?: configuration.get(BinaryOptions.bundleId)
+            ?: implicitModuleName
 
     override val moduleId: String
         get() = configuration.moduleName ?: implicitModuleName

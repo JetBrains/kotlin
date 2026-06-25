@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.OutputFiles
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
@@ -40,7 +41,12 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<NativeBac
 ) { context, input ->
     val config = context.config
     // TODO: Share this instance between multiple contexts (including NativeGenerationState)?
-    val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
+    val outputFiles = OutputFiles(
+            config.outputPath,
+            config.target,
+            config.produce,
+            objcExportCacheEnabled = config.configuration.get(BinaryOptions.objcExportCache) == true
+    )
     createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, outputFiles.mainFile)
 }
 

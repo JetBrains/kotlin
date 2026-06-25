@@ -543,7 +543,8 @@ private fun parseBundleId(
         configuration: CompilerConfiguration
 ): String? {
     val argumentValue = arguments.bundleId
-    return if (argumentValue != null && outputKind != CompilerOutputKind.FRAMEWORK) {
+    val objcExportCacheEnabled = configuration.get(BinaryOptions.objcExportCache) == true
+    return if (argumentValue != null && outputKind != CompilerOutputKind.FRAMEWORK && !objcExportCacheEnabled) {
         configuration.report(KONAN_ARGUMENT_STRONG_WARNING, "Setting a bundle ID is only supported when producing a framework " +
                 "but the compiler is producing ${outputKind.name.lowercase()}")
         null

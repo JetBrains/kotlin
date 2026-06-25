@@ -199,18 +199,24 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
     return LlvmModules(
             runtimeModules.ifNotEmpty { this + generationState.generateRuntimeConstantsModule() } ?: emptyList(),
-            additionalModules + listOfNotNull(patchObjCRuntimeModule(generationState))
+            additionalModules
     )
 }
 
 private fun linkAllDependencies(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>) {
+    val patchedObjCResult = patchObjCRuntimeModule(generationState)
+    val patchedModule = patchedObjCResult?.first
+    val patchedGlobalNames = patchedObjCResult?.second.orEmpty()
+
     val (runtimeModules, additionalModules) = collectLlvmModules(generationState, generatedBitcodeFiles)
+    val allAdditionalModules = additionalModules + listOfNotNull(patchedModule)
+
     // TODO: Possibly slow, maybe to a separate phase?
     val optimizedRuntimeModules = linkRuntimeModules(generationState, runtimeModules)
 
     // When the main module `generationState.llvmModule` is very large it is much faster to
     // link all the auxiliary modules together first before linking with the main module.
-    val linkedModules = (optimizedRuntimeModules + additionalModules).reduceOrNull { acc, module ->
+    val linkedModules = (optimizedRuntimeModules + allAdditionalModules).reduceOrNull { acc, module ->
         val failed = llvmLinkModules2(generationState, acc, module)
         if (failed != 0) {
             error("Failed to link ${module.getName()}")
@@ -221,6 +227,13 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
         val failed = llvmLinkModules2(generationState, generationState.llvmModule, it)
         if (failed != 0) {
             error("Failed to link runtime and additional modules into main module")
+        }
+    }
+
+    for (name in patchedGlobalNames) {
+        val global = LLVMGetNamedGlobal(generationState.llvmModule, name)
+        if (global != null) {
+            generationState.llvm.usedGlobals += global
         }
     }
 }

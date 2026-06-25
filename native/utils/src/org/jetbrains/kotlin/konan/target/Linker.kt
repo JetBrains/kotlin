@@ -290,10 +290,17 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
     }.toList()
 
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
-        val staticLibrariesArgs = if (staticLibraries.isEmpty())
-            staticLibraries
+        val (objcStaticLibs, regularStaticLibs) = if (kind == LinkerOutputKind.STATIC_LIBRARY) {
+            Pair(emptyList<String>(), staticLibraries)
+        } else {
+            staticLibraries.partition { it.endsWith(".objc.a") }
+        }
+        val objcLinkFlags = objcStaticLibs.flatMap { listOf("-force_load", it) }
+
+        val staticLibrariesArgs = if (regularStaticLibs.isEmpty())
+            emptyList()
         else tempFiles.create("libraries").let { librariesListFile ->
-            librariesListFile.writeLines(staticLibraries)
+            librariesListFile.writeLines(regularStaticLibs)
             listOf("-filelist", librariesListFile.absolutePath)
         }
 
@@ -339,6 +346,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +linkerKonanFlags
             if (compilerRtLibrary != null) +compilerRtLibrary!!
             +staticLibrariesArgs
+            +objcLinkFlags
             +dynamicLibrariesArgs
             +linkerArgs
             +rpath(dynamic, sanitizer)

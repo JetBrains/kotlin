@@ -101,6 +101,12 @@ internal val IrClass.writableTypeInfoSymbolName: String
         return "ktypew:" + this.fqNameForIrSerialization.toString()
     }
 
+internal val IrClass.objCTypeAdapterSymbolName: String
+    get() {
+        assert (this.isExported())
+        return "kobjcadapter:" + this.fqNameForIrSerialization.toString()
+    }
+
 internal val IrClass.globalObjectStorageSymbolName: String
     get() {
         assert (this.isExported())
