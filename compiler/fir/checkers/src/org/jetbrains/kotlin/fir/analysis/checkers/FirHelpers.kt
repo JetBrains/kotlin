@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
@@ -1184,3 +1185,11 @@ fun FirFunctionSymbol<*>.isArrayLambdaConstructor(): Boolean {
             valueParameterSymbols.size == 2 &&
             resolvedReturnType.isArrayOrPrimitiveArray
 }
+
+/**
+ * @return true if the symbol is generated `copy` function from a data-class
+ */
+fun FirFunction.isCopyMethod(): Boolean =
+    origin == FirDeclarationOrigin.Synthetic.DataClassMember
+            && nameOrSpecialName == StandardNames.DATA_CLASS_COPY
+            && getContainingClassSymbol()?.isData == true
