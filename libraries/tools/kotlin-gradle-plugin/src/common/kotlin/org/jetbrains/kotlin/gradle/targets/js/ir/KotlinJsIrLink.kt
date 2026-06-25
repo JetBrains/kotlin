@@ -11,6 +11,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import javax.inject.Inject
@@ -115,6 +117,18 @@ abstract class KotlinJsIrLink
 
     override fun isIncrementalCompilationEnabled(): Boolean = false
 
+    override fun callCompilerAsync(
+        args: K2JSCompilerArguments,
+        inputChanges: InputChanges,
+        taskOutputsBackup: TaskOutputsBackup?,
+    ) {
+        if (!inputChanges.isIncremental && isWasmPlatform) {
+            args.regenerateUnchangedModules = true
+        }
+
+        super.callCompilerAsync(args, inputChanges, taskOutputsBackup)
+    }
+
     override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
         context.primitive { args ->
             args.irProduceJs = true
@@ -150,6 +164,9 @@ abstract class KotlinJsIrLink
             }
         }
     }
+
+    private val isWasmPlatform: Boolean =
+        target == KotlinPlatformType.wasm
 
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
         if (!isWasmPlatformValue) {
