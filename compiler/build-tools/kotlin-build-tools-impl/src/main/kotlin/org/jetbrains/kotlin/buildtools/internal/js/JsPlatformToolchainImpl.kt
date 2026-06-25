@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.buildtools.internal.js
 
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
+import org.jetbrains.kotlin.buildtools.internal.js.operations.JsDtsGenerationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import java.io.File
@@ -20,4 +22,7 @@ internal class JsPlatformToolchainImpl(private val compilerVersion: String, priv
 
     override fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder =
         JsKlibCompilationOperationImpl(sources, destination, buildIdToSessionFlagFile = buildIdToSessionFlagFile, compilerVersion = compilerVersion)
+
+    override fun jsDtsGenerationOperationBuilder(klibs: List<Path>, outputDirectory: Path): JsDtsGenerationOperation.Builder =
+        JsDtsGenerationOperationImpl(klibs, outputDirectory)
 }

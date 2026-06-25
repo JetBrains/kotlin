@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.buildtools.internal.js.operations
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.js.TsExportConfiguration
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsConsistentDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.js.TsExportConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -47,6 +50,12 @@ internal class JsLinkingOperationImpl private constructor(
     }
 
     override fun toBuilder(): JsLinkingOperation.Builder = deepCopy()
+
+    override fun jsConsistentDtsGenerationOperationBuilder(outputDirectory: Path): JsConsistentDtsGenerationOperation.Builder =
+        JsConsistentDtsGenerationOperationImpl(this, outputDirectory)
+
+    override fun tsExportBuilder(dtsOutputDirectory: Path): TsExportConfiguration.Builder =
+        TsExportConfigurationImpl(dtsOutputDirectory)
 
     override fun deepCopy(): JsLinkingOperationImpl {
         return JsLinkingOperationImpl(
@@ -114,5 +123,14 @@ internal class JsLinkingOperationImpl private constructor(
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")
+    }
+
+    companion object {
+        // Design option B: defaults for the folded-in TypeScript declaration generation options.
+        val GENERATE_DTS: Option<Boolean> = Option("GENERATE_DTS", false)
+        val DTS_OUTPUT_DIRECTORY: Option<Path?> = Option("DTS_OUTPUT_DIRECTORY", null)
+
+        // Design option D: structured fold-in configuration (null = no declaration generation).
+        val TS_EXPORT: Option<TsExportConfiguration?> = Option("TS_EXPORT", null)
     }
 }

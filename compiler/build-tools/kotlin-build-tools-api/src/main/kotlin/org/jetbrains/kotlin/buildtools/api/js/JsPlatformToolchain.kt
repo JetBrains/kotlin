@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.js
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.getToolchain
+import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import java.nio.file.Path
@@ -42,6 +43,15 @@ public interface JsPlatformToolchain : KotlinToolchains.Toolchain {
      *
      */
     public fun jsKlibCompilationOperationBuilder(sources: List<Path>, destination: Path): JsKlibCompilationOperation.Builder
+
+    /**
+     * **Design option A.** Creates a builder for a standalone operation that generates TypeScript
+     * declarations (`.d.ts`) from compiled KLIBs, configured through explicit options.
+     *
+     * @param klibs the main klib and all of its dependencies (regular, friend, runtime)
+     * @param outputDirectory the directory to write the generated `.d.ts` files into
+     */
+    public fun jsDtsGenerationOperationBuilder(klibs: List<Path>, outputDirectory: Path): JsDtsGenerationOperation.Builder
 
     public companion object {
         /**
@@ -91,4 +101,23 @@ public inline fun JsPlatformToolchain.jsKlibCompilationOperation(
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
     return jsKlibCompilationOperationBuilder(sources, destinationKlib).apply(builderAction).build()
+}
+
+/**
+ * Convenience function for creating a [JsDtsGenerationOperation] with options configured by [builderAction].
+ *
+ * @return an immutable `JsDtsGenerationOperation`.
+ * @see JsPlatformToolchain.jsDtsGenerationOperationBuilder
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JsPlatformToolchain.jsDtsGenerationOperation(
+    klibs: List<Path>,
+    outputDirectory: Path,
+    builderAction: JsDtsGenerationOperation.Builder.() -> Unit = {},
+): JsDtsGenerationOperation {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return jsDtsGenerationOperationBuilder(klibs, outputDirectory).apply(builderAction).build()
 }
