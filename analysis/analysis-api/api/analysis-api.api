@@ -888,6 +888,20 @@ public final class org/jetbrains/kotlin/analysis/api/session/AnalyzeKt {
 	public static final fun analyzeCopy (Lorg/jetbrains/kotlin/psi/KtElement;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileResolutionMode;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface class org/jetbrains/kotlin/analysis/api/session/KaSessionListener {
+	public static final field Companion Lorg/jetbrains/kotlin/analysis/api/session/KaSessionListener$Companion;
+	public fun afterAcquiringSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun afterLeavingAnalysis (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun beforeAcquiringSession (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun beforeEnteringAnalysis (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;)V
+	public fun onAnalysisException (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtElement;Ljava/lang/Throwable;)V
+	public fun onSessionAcquisitionException (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;Lorg/jetbrains/kotlin/psi/KtElement;Ljava/lang/Throwable;)V
+}
+
+public final class org/jetbrains/kotlin/analysis/api/session/KaSessionListener$Companion {
+	public final fun getEP_NAME ()Lcom/intellij/openapi/extensions/ExtensionPointName;
+}
+
 public final class org/jetbrains/kotlin/analysis/api/session/UseSiteKt {
 	public static final fun getUseSiteModule (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;
 	public static final fun getUseSiteSession (Lorg/jetbrains/kotlin/analysis/api/KaSession;)Lorg/jetbrains/kotlin/analysis/api/KaSession;
