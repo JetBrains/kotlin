@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
-import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -72,32 +71,32 @@ public interface KaCompilerFacility : KaSessionComponent {
 /**
  * An immutable set of options for in-memory compilation via [KaCompilerFacility].
  *
- * Use [KaCompilerFacility.createCompilationOptions] to create an instance, and [KaCompilationOptions.copy]
+ * Use [KaCompilerFacility.createCompilationOptions] to create an instance, and [KaCompilerFacility.modify]
  * to produce a modified copy.
  *
  * @see KaCompilationOptionsBuilder
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompilationOptions : KaLifetimeOwner
+public interface KaCompilationOptions : org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions
 
 /**
  * A DSL builder for [KaCompilationOptions].
  *
  * Provides methods to configure the compilation target, language settings, JVM-specific options, error handling, and code fragment
  * parameters. Instances are created internally by [KaCompilerFacility.createCompilationOptions] and
- * [KaCompilationOptions.copy].
+ * [KaCompilerFacility.modify].
  *
  * @see KaCompilationOptions
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
+public interface KaCompilationOptionsBuilder : org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder {
     /** Sets the target platform for compilation. Must be provided. */
     public fun target(value: KaCompilationTarget)
 
     /** Sets the module name used for the compiled output. */
-    public fun moduleName(value: String)
+    override fun moduleName(value: String)
 
     /**
      * Sets a custom actualizer for common source modules in multiplatform projects.
@@ -107,7 +106,7 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
     public fun moduleActualizer(value: KaCompilerFacilityModuleActualizer)
 
     /** Sets the language version settings used during compilation. */
-    public fun languageVersionSettings(value: LanguageVersionSettings)
+    override fun languageVersionSettings(value: LanguageVersionSettings)
 
     /**
      * Sets a filter for allowed errors. Compilation will be aborted if there are errors that this filter rejects.
@@ -115,22 +114,22 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
      * A filter returning `true` means the error is allowed and will not abort compilation.
      * Defaults to rejecting all errors.
      */
-    public fun allowedErrorFilter(value: (KaDiagnostic) -> Boolean)
+    override fun allowedErrorFilter(value: (KaDiagnostic) -> Boolean)
 
     /**
      * Sets the simple class name for the code fragment facade class.
      * Only relevant when compiling [KtCodeFragment] files.
      */
-    public fun codeFragmentClassName(value: String)
+    override fun codeFragmentClassName(value: String)
 
     /**
      * Sets the entry point method name for the code fragment.
      * Only relevant when compiling [KtCodeFragment] files.
      */
-    public fun codeFragmentMethodName(value: String)
+    override fun codeFragmentMethodName(value: String)
 
     /** Sets the JVM bytecode target version. */
-    public fun jvmTarget(value: KaJvmTarget)
+    override fun jvmTarget(value: KaJvmTarget)
 
     /**
      * Sets a handler which is called whenever a new class file is produced.
@@ -141,7 +140,7 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
 
     /** Enables output of ASM bytecode listing. When `true`, selects the test-mode class builder factory. */
     @KaNonPublicApi
-    public fun jvmOutputAsmListing(value: Boolean)
+    override fun jvmOutputAsmListing(value: Boolean)
 
     /**
      * Whether unbound IR symbols should be stubbed instead of linked.
@@ -149,27 +148,27 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
      * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
      */
     @KaIdeApi
-    public fun stubUnboundIrSymbols(value: Boolean)
+    override fun stubUnboundIrSymbols(value: Boolean)
 
     /** Disables inlining of `inline` functions. */
     @KaIdeApi
-    public fun disableInline(value: Boolean)
+    override fun disableInline(value: Boolean)
 
     /** Disables null-check assertions on receiver and arguments of platform-typed calls. */
     @KaIdeApi
-    public fun disableCallAssertions(value: Boolean)
+    override fun disableCallAssertions(value: Boolean)
 
     /** Disables optimizations in generated code. */
     @KaIdeApi
-    public fun disableOptimization(value: Boolean)
+    override fun disableOptimization(value: Boolean)
 
     /** Disables null-check assertions on parameters. */
     @KaIdeApi
-    public fun disableParameterAssertions(value: Boolean)
+    override fun disableParameterAssertions(value: Boolean)
 
     /** Ignores errors from constant expression optimization. */
     @KaIdeApi
-    public fun ignoreConstOptimizationErrors(value: Boolean)
+    override fun ignoreConstOptimizationErrors(value: Boolean)
 
     /**
      * Sets the execution stack for debugger code fragment compilation.
@@ -178,23 +177,23 @@ public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
      * listed from the top to the bottom.
      */
     @KaIdeApi
-    public fun jvmExecutionStack(value: Sequence<PsiElement?>)
+    override fun jvmExecutionStack(value: Sequence<PsiElement?>)
 
     /** Enables generation of parameter metadata (names and access flags) in class files. */
     @KaIdeApi
-    public fun jvmGenerateParameterMetadata(value: Boolean)
+    override fun jvmGenerateParameterMetadata(value: Boolean)
 
     /** Uses `invokedynamic` for SAM conversions instead of generating anonymous classes. */
     @KaIdeApi
-    public fun jvmUseInvokeDynamicForSamConversions(value: Boolean)
+    override fun jvmUseInvokeDynamicForSamConversions(value: Boolean)
 
     /** Uses `invokedynamic` for lambdas instead of generating anonymous classes. */
     @KaIdeApi
-    public fun jvmUseInvokeDynamicForLambdas(value: Boolean)
+    override fun jvmUseInvokeDynamicForLambdas(value: Boolean)
 
     /** Links JVM IR symbols via signatures instead of by descriptors. */
     @KaIdeApi
-    public fun jvmLinkViaSignatures(value: Boolean)
+    override fun jvmLinkViaSignatures(value: Boolean)
 }
 
 /**
@@ -251,26 +250,33 @@ public sealed class KaCompilationResult(
 
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompiledFile {
+public interface KaCompiledFile : org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile {
     /**
      * The path of the compiled file relative to the root of the output directory.
      */
-    public val path: String
+    override val path: String
 
     /**
      * The source files that were compiled to produce this file.
      */
-    public val sourceFiles: List<File>
+    override val sourceFiles: List<File>
 
     /**
      * The content of the compiled file.
      */
-    public val content: ByteArray
+    override val content: ByteArray
 }
 
 /**
  * Whether the compiled file is a Java class file.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.isClassFile",
+        "org.jetbrains.kotlin.analysis.api.compilation.isClassFile",
+    ),
+)
 @KaExperimentalApi
 public val KaCompiledFile.isClassFile: Boolean
     get() = path.endsWith(".class", ignoreCase = true)
@@ -293,7 +299,7 @@ public enum class KaCompilationTarget {
  */
 @KaSpi
 @KaExperimentalApi
-public fun interface KaCompiledClassHandler {
+public fun interface KaCompiledClassHandler : org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler {
     /**
      * [handleClassDefinition] is called whenever a new class file is produced.
      *
@@ -302,7 +308,7 @@ public fun interface KaCompiledClassHandler {
      * @param className The name of the class in the JVM's internal name format, for example `"java/lang/Object"`.
      */
     @KaSpiExtensionPoint
-    public fun handleClassDefinition(file: PsiFile?, className: String)
+    override fun handleClassDefinition(file: PsiFile?, className: String)
 }
 
 /**
@@ -351,6 +357,13 @@ public fun interface KaCompilerFacilityModuleActualizer {
  * @see createCompilationOptions
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "compile(file, options)",
+        "org.jetbrains.kotlin.analysis.api.compilation.compile",
+    ),
+)
 @KaExperimentalApi
 @Throws(KaCodeCompilationException::class)
 @KaContextParameterApi
@@ -380,6 +393,13 @@ public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationRe
  * @param init A lambda that configures the [KaCompilationOptionsBuilder].
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "createCompilationOptions(init)",
+        "org.jetbrains.kotlin.analysis.api.compilation.createCompilationOptions",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
@@ -399,6 +419,13 @@ public fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit
  * @param init A lambda that configures the [KaCompilationOptionsBuilder] with modifications to apply.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.modify(init)",
+        "org.jetbrains.kotlin.analysis.api.compilation.modify",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)

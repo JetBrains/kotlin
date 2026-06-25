@@ -9,12 +9,19 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.components.*
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler
+import org.jetbrains.kotlin.analysis.api.compilation.KaCompilerFacilityModuleActualizer
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationOptions
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationOptionsBuilder
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.analysis.api.components.KaCompilationTarget as KaLegacyCompilationTarget
+import org.jetbrains.kotlin.analysis.api.components.KaCompiledClassHandler as KaLegacyCompiledClassHandler
+import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacilityModuleActualizer as KaLegacyCompilerFacilityModuleActualizer
 
 @KaImplementationDetail
 class KaBaseCompilationOptions(
@@ -106,12 +113,22 @@ class KaBaseCompilationOptionsBuilder(
         targetValue = value
     }
 
+    /** Legacy overload routing the `components` target enum to the canonical `compilation` one. */
+    override fun target(value: KaLegacyCompilationTarget) = withValidityAssertion {
+        targetValue = value.toNewCompilationTarget()
+    }
+
     override fun moduleName(value: String) = withValidityAssertion {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, value)
     }
 
     override fun moduleActualizer(value: KaCompilerFacilityModuleActualizer) = withValidityAssertion {
         moduleActualizerValue = value
+    }
+
+    /** Legacy overload wrapping the `components` actualizer into the canonical `compilation` one. */
+    override fun moduleActualizer(value: KaLegacyCompilerFacilityModuleActualizer) = withValidityAssertion {
+        moduleActualizerValue = value.toNewModuleActualizer()
     }
 
     override fun languageVersionSettings(value: LanguageVersionSettings) = withValidityAssertion {
@@ -137,6 +154,11 @@ class KaBaseCompilationOptionsBuilder(
     }
 
     override fun jvmCompiledClassHandler(value: KaCompiledClassHandler) = withValidityAssertion {
+        compiledClassHandlerValue = value
+    }
+
+    /** Legacy overload accepting the `components` class handler, which is a subtype of the canonical `compilation` one. */
+    override fun jvmCompiledClassHandler(value: KaLegacyCompiledClassHandler) = withValidityAssertion {
         compiledClassHandlerValue = value
     }
 
@@ -202,3 +224,18 @@ class KaBaseCompilationOptionsBuilder(
         configuration.put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, value)
     }
 }
+
+internal fun KaLegacyCompilationTarget.toNewCompilationTarget(): KaCompilationTarget =
+    when (this) {
+        KaLegacyCompilationTarget.JVM -> KaCompilationTarget.JVM
+    }
+
+internal fun KaCompilationTarget.toLegacyCompilationTarget(): KaLegacyCompilationTarget =
+    when (this) {
+        KaCompilationTarget.JVM -> KaLegacyCompilationTarget.JVM
+    }
+
+internal fun KaLegacyCompilerFacilityModuleActualizer.toNewModuleActualizer(): KaCompilerFacilityModuleActualizer =
+    KaCompilerFacilityModuleActualizer { module, target ->
+        actualize(module, target.toLegacyCompilationTarget())
+    }

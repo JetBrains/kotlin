@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.cli.create
+import org.jetbrains.kotlin.analysis.api.compilation.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
-import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerFacility
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.CompiledCodeProvider
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -158,7 +159,7 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
-) : KaBaseSessionComponent<KaFirSession>(), KaCompilerFacility, KaFirSessionComponent {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerFacility, KaFirSessionComponent {
     @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
         val opts = options as KaBaseCompilationOptions
@@ -173,8 +174,8 @@ internal class KaFirCompilerFacility(
     }
 
     @OptIn(KaImplementationDetail::class)
-    override fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
-        return (this as KaBaseCompilationOptions).modify(init)
+    override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
+        return (options as KaBaseCompilationOptions).modify(init)
     }
 
     private fun compileWithRetry(

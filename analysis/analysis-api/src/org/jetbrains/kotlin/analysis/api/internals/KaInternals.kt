@@ -29,6 +29,8 @@ public interface KaInternals {
 
     public val completionCandidateChecker: KaInternalsCompletionCandidateChecker
 
+    public val compilerFacility: KaInternalsCompilerFacility
+
     public val compilerPluginGeneratedDeclarationsProvider: KaInternalsCompilerPluginGeneratedDeclarationsProvider
 
     public val dataFlowProvider: KaInternalsDataFlowProvider
