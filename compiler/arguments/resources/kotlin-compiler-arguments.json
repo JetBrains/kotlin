@@ -13925,6 +13925,51 @@
                                                         "deprecatedMessage": null
                                                     },
                                                     {
+                                                        "name": "Xes-const-let",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Variables in generated JavaScript code are declared with 'let' or 'const' keywords instead of 'var'",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.5.0",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "deprecatedMessage": null
+                                                    },
+                                                    {
                                                         "name": "Xes-generators",
                                                         "shortName": null,
                                                         "deprecatedName": null,

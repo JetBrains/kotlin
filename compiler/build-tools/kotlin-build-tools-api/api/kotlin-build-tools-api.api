@@ -829,6 +829,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_DTS_USE_UNKNOWN_INSTEAD_ANY Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_ES_ARROW_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_ES_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
+	public static final field X_ES_CONST_LET Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_ES_GENERATORS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_ES_LONG_AS_BIGINT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
 	public static final field X_GENERATE_POLYFILLS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerLinkingArguments$JsCompilerLinkingArgument;
