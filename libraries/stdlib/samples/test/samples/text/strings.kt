@@ -1095,4 +1095,18 @@ class Strings {
         assertPrints(emptyString.indexOfFirst { it == 'z' }, "-1")
     }
 
+    @Sample
+    fun indexOfLast() {
+        val string = "Kotlin knowledge"
+
+        assertPrints(string.indexOfLast { it == 'K' }, "0")
+        assertPrints(string.indexOfLast { it == 'k' }, "7")
+        assertPrints(string.indexOfLast { it == 'n' }, "8")
+        assertPrints(string.indexOfLast { it == ' ' }, "6")
+        assertPrints(string.indexOfLast { it == 'z' }, "-1")
+
+        val emptyString = "";
+        assertPrints(emptyString.indexOfLast { it == 'z' }, "-1")
+    }
+
 }

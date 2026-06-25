@@ -287,6 +287,10 @@ object Elements : TemplateGroupBase() {
             inlineOnly()
             body { "return storage.indexOfLast { predicate(it.to${primitive!!.name}()) }" }
         }
+
+        specialFor(CharSequences) {
+            sample("${f.sampleClass}.indexOfLast")
+        }
     }
 
     val f_elementAt = fn("elementAt(index: Int)") {

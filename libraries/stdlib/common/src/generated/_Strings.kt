@@ -170,6 +170,8 @@ public inline fun CharSequence.indexOfFirst(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns index of the last character matching the given [predicate], or -1 if the char sequence does not contain such character.
+ * 
+ * @sample samples.text.Strings.indexOfLast
  */
 public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
     for (index in indices.reversed()) {
