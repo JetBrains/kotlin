@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
-import org.gradle.api.tasks.compile.GroovyCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
@@ -63,11 +62,6 @@ internal class Kotlin2JvmSourceSetProcessor(
                 javaTask.configure { javaCompile ->
                     javaCompile.classpath += project.files(kotlinTask.flatMap { it.destinationDirectory })
                 }
-                project.tasks.withType<GroovyCompile>()
-                    .configureEach { groovyCompile ->
-                        if (groovyCompile.name != java.getCompileTaskName("groovy")) return@configureEach
-                        groovyCompile.classpath += project.files(kotlinTask.map { it.destinationDirectory.get() })
-                    }
                 kotlinTask.configure { kotlinCompile ->
                     kotlinCompile.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
                 }
