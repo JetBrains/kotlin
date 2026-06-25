@@ -137,6 +137,10 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
             configuration.compileSuspendAsJsGenerator = true
             configuration.compileLambdasAsEs6ArrowFunctions = DISABLE_ES6_ARROWS !in module.directives
             configuration.compileLongAsBigint = true
+
+            // Even though by default generation of const/let is disabled even in ES2015+ modes, we enable it in tests
+            // because it's a stricter mode.
+            configuration.useEs6ConstLet = true
         }
     }
 }
