@@ -184,6 +184,26 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
 }
 
 /**
+ * Iterates over all non-local declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalDeclaration(action)
+        }
+    }
+}
+
+
+/**
  * Test for checking the code base against the master file.
  *
  * Traverses [sourceDirectories] and triggers [processFile] on each contained file.
