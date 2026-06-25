@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.EffectsKind
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
-import org.jetbrains.kotlin.ir.backend.js.effects
 import org.jetbrains.kotlin.ir.backend.js.ir.isBridge
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isProxyParameterWithDefaultForExportedSuspendFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
-import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -40,6 +36,7 @@ import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JsStandardClassIds
@@ -81,10 +78,6 @@ fun <T : JsNode> IrWhen.toJsNode(
 
 fun jsElementAccess(name: String, receiver: JsExpression?): JsAssignableExpression =
     jsElementAccess(JsName(name, false), receiver)
-
-fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
-    return JsVars(JsVars.Variant.Var, JsVars.JsVar(name, this))
-}
 
 fun jsElementAccess(name: JsName, computedName: JsExpression?, receiver: JsExpression?): JsAssignableExpression =
     computedName?.let { JsArrayAccess(receiver, it) }
@@ -139,38 +132,52 @@ fun defineProperty(
 
 private var IrFunction.cachedOutlinedJsCode: JsFunction? by irAttribute(copyByDefault = false)
 
-context(reportingContext: ErrorReportingContext)
+context(context: JsIrBackendContext)
 fun IrFunction.getJsCode(): JsFunction? {
     cachedOutlinedJsCode?.let {
         return it
     }
 
-    parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsOutlinedFunction, "jsFunctionExpression")
-        ?.let { [annotation, parsedJsFunction] ->
-            val sourceMap = annotation.getConstArgument<String>("sourceMap")
-            val parsedSourceMap = sourceMap?.let { parseSourceMap(it, fileOrNull, annotation) }
-            if (parsedSourceMap != null) {
-                val remapper = SourceMapLocationRemapper(parsedSourceMap)
-                remapper.remap(parsedJsFunction)
-            }
-            cachedOutlinedJsCode = parsedJsFunction
-            return parsedJsFunction
+    parseJsFromAnnotation(
+        declaration = this,
+        annotationClassId = JsStandardClassIds.Annotations.JsOutlinedFunction,
+        annotationParam = "jsFunctionExpression",
+        convertVarsToLets = context.configuration.useEs6ConstLet,
+    )?.let { [annotation, parsedJsFunction] ->
+        val sourceMap = annotation.getConstArgument<String>("sourceMap")
+        val parsedSourceMap = sourceMap?.let { parseSourceMap(it, fileOrNull, annotation) }
+        if (parsedSourceMap != null) {
+            val remapper = SourceMapLocationRemapper(parsedSourceMap)
+            remapper.remap(parsedJsFunction)
         }
+        cachedOutlinedJsCode = parsedJsFunction
+        return parsedJsFunction
+    }
 
-    parseJsFromAnnotation(this, JsStandardClassIds.Annotations.JsFun, "code")
-        ?.let { [_, parsedJsFunction] ->
-            cachedOutlinedJsCode = parsedJsFunction
-            return parsedJsFunction
-        }
+    parseJsFromAnnotation(
+        declaration = this,
+        annotationClassId = JsStandardClassIds.Annotations.JsFun,
+        annotationParam = "code",
+        convertVarsToLets = context.configuration.useEs6ConstLet,
+    )?.let { [_, parsedJsFunction] ->
+        cachedOutlinedJsCode = parsedJsFunction
+        return parsedJsFunction
+    }
+
     return null
 }
 
-private fun parseJsFromAnnotation(declaration: IrDeclaration, annotationClassId: ClassId, annotationParam: String): Pair<IrAnnotation, JsFunction>? {
+private fun parseJsFromAnnotation(
+    declaration: IrDeclaration,
+    annotationClassId: ClassId,
+    annotationParam: String,
+    convertVarsToLets: Boolean,
+): Pair<IrAnnotation, JsFunction>? {
     val annotation = declaration.getAnnotation(annotationClassId.asSingleFqName())
         ?: return null
     val jsCode = annotation.argumentMapping[Name.identifier(annotationParam)]
         ?: compilationException("@${annotationClassId.shortClassName} annotation must contain the JS code argument", annotation)
-    val statements = translateJsCodeIntoStatementList(jsCode, declaration)
+    val statements = translateJsCodeIntoStatementList(jsCode, declaration, convertVarsToLets)
         ?: compilationException("Could not parse JS code", annotation)
     val parsedJsFunction = statements.singleOrNull()
         ?.safeAs<JsExpressionStatement>()
@@ -396,7 +403,7 @@ fun translateCall(
                 val iifeFun = JsFunction(
                     emptyScope,
                     JsBlock(
-                        JsVars(JsVars.Variant.Var, JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                        JsVars(context.varVariant(isMutable = false), JsVars.JsVar(receiverName, jsDispatchReceiver)),
                         JsReturn(
                             JsInvocation(
                                 JsNameRef("apply", jsElementAccess(functionName.ident, receiverRef)),
@@ -799,3 +806,15 @@ val IrSymbol?.shouldIgnore: Boolean
         val owner = this?.owner as? IrDeclaration ?: return false
         return owner.isStdlibDeclaration || owner.isArtificialDeclarationOfLambdaImpl || owner.origin !in debugFriendlyOrigins
     }
+
+internal fun JsIrBackendContext.varVariant(isMutable: Boolean): JsVars.Variant = when {
+    !configuration.useEs6ConstLet -> JsVars.Variant.Var
+    isMutable -> JsVars.Variant.Let
+    else -> JsVars.Variant.Const
+}
+
+internal fun JsStaticContext.varVariant(isMutable: Boolean): JsVars.Variant =
+    backendContext.varVariant(isMutable)
+
+internal fun JsGenerationContext.varVariant(isMutable: Boolean): JsVars.Variant =
+    staticContext.varVariant(isMutable)

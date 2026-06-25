@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -60,7 +61,7 @@ internal class IfStatementReduction(private val root: JsStatement) : FunctionPos
                         if (thenVar.name == elseVar.name && thenVarName != null && thenValue != null && elseValue != null) {
                             hasChanges = true
                             val ternary = JsConditional(x.ifExpression, thenValue, elseValue)
-                            val replacement = JsAstUtils.newVar(thenVarName, ternary)
+                            val replacement = JsVars(thenStatement.variant, JsVar(thenVarName, ternary))
                             replacement.synthetic = thenStatement.synthetic && elseStatement.synthetic
                             ctx.replaceMe(replacement)
                             accept(replacement)

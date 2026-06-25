@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.js.parser.ThrowExceptionOnErrorReporter
-import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.backend.js.lower.PropertyLazyInitLowering
@@ -20,26 +18,100 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.CodePosition
 import org.jetbrains.kotlin.js.parser.JsParser
+import org.jetbrains.kotlin.js.parser.ThrowExceptionOnErrorReporter
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * Returns null if constant expression could not be parsed.
  */
-fun translateJsCodeIntoStatementList(code: IrExpression, container: IrDeclaration) =
+fun translateJsCodeIntoStatementList(code: IrExpression, container: IrDeclaration, convertVarsToLets: Boolean): List<JsStatement>? =
     translateJsCodeIntoStatementList(
         code,
-        code.getStartSourceLocation(container) ?: container.getSourceFile()?.let { JsLocation(it.name, 0, 0) }
+        code.getStartSourceLocation(container) ?: container.getSourceFile()?.let { JsLocation(it.name, 0, 0) },
+        convertVarsToLets,
     )
 
 /**
+ * Replaces `var` declarations with assignments to newly generated `let` variables, which are added in the beginning of a function.
+ */
+private fun List<JsStatement>.convertVarsToLets(scope: JsScope): List<JsStatement> {
+    val dummyFunction = JsFunction(scope, JsBlock(this), "dummy")
+    object : JsVisitorWithContextImpl() {
+        val varsStack = mutableListOf<JsVars>()
+        override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean {
+            varsStack.add(JsVars(JsVars.Variant.Let))
+            return super.visit(x, ctx)
+        }
+
+        override fun endVisit(x: JsFunction, ctx: JsContext<JsNode>) {
+            super.endVisit(x, ctx)
+            val vars = varsStack.removeLast()
+            if (!vars.isEmpty) {
+                x.body.statements.add(0, vars)
+            }
+        }
+
+        fun createVariablesForDeclarable(declarable: JsDeclarable) {
+            val vars = varsStack.last().vars
+            when (declarable) {
+                is JsDeclarable.Named -> vars.add(JsVars.JsVar(declarable))
+                is JsDeclarable.ArrayPattern -> {
+                    for (item in declarable.elements) {
+                        when (item) {
+                            is JsBindingArrayItem.Element -> createVariablesForDeclarable(item.element.target)
+                            is JsBindingArrayItem.Hole -> continue
+                        }
+                    }
+                }
+                is JsDeclarable.ObjectPattern -> {
+                    for (property in declarable.properties) {
+                        createVariablesForDeclarable(property.element.target)
+                    }
+                }
+            }
+        }
+
+        fun JsVars.JsVar.replaceWithAssignment(): JsAssignmentOperation? {
+            val initExpression = this.initExpression
+            createVariablesForDeclarable(declarable)
+            if (initExpression == null) return null
+            return when (val declarable = declarable) {
+                is JsDeclarable.Named -> JsAssignmentOperation.Simple(declarable.name.makeRef(), initExpression)
+                is JsDeclarable.ArrayPattern, is JsDeclarable.ObjectPattern ->
+                    JsAssignmentOperation.Destructuring(declarable, initExpression)
+            }.withMetadataFrom(this)
+        }
+
+        override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
+            if (x.variant == JsVars.Variant.Var) {
+                val assignments = x.vars.mapNotNull { it.replaceWithAssignment() }
+                when (assignments.size) {
+                    0 -> ctx.removeMe()
+                    1 -> ctx.replaceMe(assignments[0].withMetadataFrom(x).makeStmt())
+                    else -> ctx.replaceMe(
+                        JsCompositeBlock(assignments.memoryOptimizedMap(JsAssignmentOperation::makeStmt)).withMetadataFrom(x)
+                    )
+                }
+            }
+            return super.visit(x, ctx)
+        }
+    }.accept(dummyFunction)
+    return dummyFunction.body.statements
+}
+
+/**
  * Returns null if constant expression could not be parsed.
  */
-fun translateJsCodeIntoStatementList(code: IrExpression, fileEntry: IrFileEntry) =
-    translateJsCodeIntoStatementList(code, code.getStartSourceLocation(fileEntry) ?: JsLocation(fileEntry.name, 0, 0))
+fun translateJsCodeIntoStatementList(code: IrExpression, fileEntry: IrFileEntry, convertVarsToLets: Boolean): List<JsStatement>? =
+    translateJsCodeIntoStatementList(code, code.getStartSourceLocation(fileEntry) ?: JsLocation(fileEntry.name, 0, 0), convertVarsToLets)
 
 private fun translateJsCodeIntoStatementList(
     code: IrExpression,
-    sourceInfo: JsLocation?
+    sourceInfo: JsLocation?,
+    convertVarsToLets: Boolean,
 ): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
     (val fileName = file, val startLine, val offset = startChar) = sourceInfo ?: JsLocation("<js-code>", 0, 0)
@@ -59,7 +131,15 @@ private fun translateJsCodeIntoStatementList(
     //
     // So we try to generate the debug info on the best-effort basis. It should work correctly with plain string literals without
     // concatenations, interpolations or backslash replacements like \n.
-    return JsParser.parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(startLine, offset), fileName)
+    return JsParser.parseExpressionOrStatement(
+        jsCode,
+        ThrowExceptionOnErrorReporter,
+        currentScope,
+        CodePosition(startLine, offset),
+        fileName,
+    )?.applyIf(convertVarsToLets) {
+        convertVarsToLets(currentScope)
+    }
 }
 
 private var IrField.lazyInitializerExpression: IrExpression? by irAttribute(copyByDefault = false)

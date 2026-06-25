@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
-import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 import org.jetbrains.kotlin.testFederation.PlanTestFederationTask
+import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
 
 buildscript {
     /**
@@ -368,6 +368,11 @@ tasks {
 
     testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Nightly) {
         dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
+    }
+
+    // TODO(KT-90821): Promote to QualityGate.Nightly
+    testLifecycleTask("jsES6ConstLetTest", QualityGate.Undefined) {
+        dependsOn(":js:js.tests:jsES6ConstLetTest")
     }
 
     // TODO(KT-82969): Promote to QualityGate.Nightly
