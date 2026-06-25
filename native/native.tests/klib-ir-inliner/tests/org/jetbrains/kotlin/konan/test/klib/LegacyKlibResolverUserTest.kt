@@ -158,7 +158,7 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             knownIrProviders = knownIrProviders
         ) {
             override fun libraryComponentBuilder(file: KlibFile, isDefault: Boolean): List<KotlinLibrary> =
-                createKotlinLibraryComponents(file, isDefault, null as ZipFileSystemAccessor?)
+                createKotlinLibraryComponents(file, isDefault, null as org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor?)
         }
 
         val library = resolveSingleFileKlib(KlibFile(libraryFile.path).canonicalFile)
