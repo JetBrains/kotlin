@@ -5,7 +5,7 @@
 object SingletonObject
 typealias AliasToObject = SingletonObject
 
-companion fun AliasToObject.objectViaAlias() {}
+companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>AliasToObject<!>.objectViaAlias() {}
 companion fun <!COMPANION_EXTENSION_RECEIVER_IS_OBJECT!>SingletonObject<!>.objectDirectly() {}
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, objectDeclaration, typeAliasDeclaration */
