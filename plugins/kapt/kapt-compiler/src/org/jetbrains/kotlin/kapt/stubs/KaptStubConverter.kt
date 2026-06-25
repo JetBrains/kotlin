@@ -972,7 +972,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val contextParameters = declaration.parameters.filter { it.kind == IrParameterKind.Context }
         val extensionReceiver = declaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
         val psiElement = kaptContext.origins[method]?.element
-        // TODO (KT-86550): declarations with context parameters are translated incorrectly
         val genericSignature = signatureParser.parseMethodSignature(
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->

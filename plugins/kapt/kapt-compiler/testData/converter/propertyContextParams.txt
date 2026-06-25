@@ -5,6 +5,10 @@
  *   context(t: error/NonExistentClass)
  *   public final fun f(x: error/NonExistentClass): kotlin/Unit
  *
+ *   // signature: f1(Lerror/NonExistentClass;Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   context(t: error/NonExistentClass)
+ *   public final fun error/NonExistentClass.f1(x: error/NonExistentClass): kotlin/Unit
+ *
  *   // field: s:Lerror/NonExistentClass;
  *   // getter: getS(Lerror/NonExistentClass;Lerror/NonExistentClass;)Lerror/NonExistentClass;
  *   // setter: setS(Lerror/NonExistentClass;Lerror/NonExistentClass;Lerror/NonExistentClass;)V
@@ -60,5 +64,11 @@ public final class PropertyContextParamsKt {
     public static final void f(@org.jetbrains.annotations.NotNull()
     U1 t, @org.jetbrains.annotations.NotNull()
     U2 x) {
+    }
+
+    public static final void f1(@org.jetbrains.annotations.NotNull()
+    U1 t, @org.jetbrains.annotations.NotNull()
+    U2 $this$f1, @org.jetbrains.annotations.NotNull()
+    U3 x) {
     }
 }
