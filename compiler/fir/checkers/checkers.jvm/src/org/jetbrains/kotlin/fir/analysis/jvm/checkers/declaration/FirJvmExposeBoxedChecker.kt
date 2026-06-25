@@ -73,7 +73,9 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_OPEN_ABSTRACT)
             }
 
-            if (declaration.effectiveVisibility.privateApi) {
+            if (declaration.visibility == Visibilities.Private ||
+                declaration.getContainingDeclaration(context.session)?.visibility == Visibilities.Private
+            ) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
             }
         }
@@ -111,7 +113,9 @@ object FirJvmExposeBoxedChecker : FirBasicDeclarationChecker(MppCheckerKind.Comm
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_LOCALS)
             }
 
-            if (declaration.effectiveVisibility.privateApi) {
+            if (declaration.visibility == Visibilities.Private ||
+                declaration.getContainingClass()?.visibility == Visibilities.Private
+            ) {
                 reporter.reportOn(jvmExposeBoxedAnnotation.source, FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE)
             }
         }
