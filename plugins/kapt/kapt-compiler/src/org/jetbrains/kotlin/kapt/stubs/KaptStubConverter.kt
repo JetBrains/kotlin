@@ -969,6 +969,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         parameters: JavacList<JCVariableDecl>,
     ): Pair<SignatureParser.MethodGenericSignature, JCExpression?> {
         val irValueParameters = declaration.parameters.filter { it.kind == IrParameterKind.Regular }
+        val contextParameters = declaration.parameters.filter { it.kind == IrParameterKind.Context }
         val extensionReceiver = declaration.parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
         val psiElement = kaptContext.origins[method]?.element
         // TODO (KT-86550): declarations with context parameters are translated incorrectly
@@ -986,22 +987,35 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
                 when {
                     declaration.isGetter -> {
-                        if (irValueParameters.isEmpty() && index == 0) {
-                            getNonErrorMethodParameterType(declaration.returnType) {
-                                psiElement?.getCallableDeclaration()?.receiverTypeReference
+                        when {
+                            index < contextParameters.size -> {
+                                getNonErrorMethodParameterType(contextParameters[index].type) {
+                                    psiElement?.getCallableDeclaration()?.contextParameters?.get(index)?.typeReference
+                                }
                             }
-                        } else {
-                            lazyType()
+                            irValueParameters.isEmpty() && index == contextParameters.size -> {
+                                getNonErrorMethodParameterType(extensionReceiver?.type ?: declaration.returnType) {
+                                    psiElement?.getCallableDeclaration()?.receiverTypeReference
+                                }
+                            }
+                            else -> {
+                                lazyType()
+                            }
                         }
                     }
                     declaration.isSetter -> {
                         when {
-                            irValueParameters.size != 1 -> lazyType()
-                            index == 0 && extensionReceiver != null ->
+                            index < contextParameters.size -> {
+                                getNonErrorMethodParameterType(contextParameters[index].type) {
+                                    psiElement?.getCallableDeclaration()?.contextParameters?.get(index)?.typeReference
+                                }
+                            }
+                            index == contextParameters.size && extensionReceiver != null ->
                                 getNonErrorMethodParameterType(extensionReceiver.type) {
                                     psiElement?.getCallableDeclaration()?.receiverTypeReference
                                 }
-                            index == (if (extensionReceiver == null) 0 else 1) -> {
+                            irValueParameters.size != 1 -> lazyType()
+                            index == (if (extensionReceiver == null) 0 else 1) + contextParameters.size -> {
                                 getNonErrorMethodParameterType(irValueParameters[0].type) {
                                     psiElement?.getCallableDeclaration()?.typeReference
                                 }
@@ -1010,34 +1024,44 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                         }
                     }
                     else -> {
-                        val offset = if (extensionReceiver == null) 0 else 1
-                        if (extensionReceiver != null && index == 0) {
-                            getNonErrorMethodParameterType(extensionReceiver.type) {
-                                (psiElement as? KtCallableDeclaration)?.receiverTypeReference
-                            }
-                        } else if (irValueParameters.size + offset == parameters.size) {
-                            val irParameter = irValueParameters[index - offset]
-                            val sourceElement = when {
-                                psiElement is KtFunction -> psiElement
-                                declaration is IrConstructor && declaration.isPrimary -> {
-                                    (psiElement as? KtClassOrObject)?.primaryConstructor
-                                        ?: ((psiElement as? KtParameterList)?.parent as? KtFunction)
+                        val offset = (if (extensionReceiver == null) 0 else 1) + contextParameters.size
+                        when {
+                            index < contextParameters.size -> {
+                                getNonErrorMethodParameterType(contextParameters[index].type) {
+                                    (psiElement as? KtCallableDeclaration)?.contextParameters?.get(index)?.typeReference
                                 }
-                                else -> null
                             }
-                            getNonErrorMethodParameterType(irParameter.type) {
-                                if (sourceElement == null) return@getNonErrorMethodParameterType null
+                            extensionReceiver != null && index == contextParameters.size -> {
+                                getNonErrorMethodParameterType(extensionReceiver.type) {
+                                    (psiElement as? KtCallableDeclaration)?.receiverTypeReference
+                                }
+                            }
+                            irValueParameters.size + offset == parameters.size -> {
+                                val valueParameterIndex = index - offset
+                                val irParameter = irValueParameters[valueParameterIndex]
+                                val sourceElement = when {
+                                    psiElement is KtFunction -> psiElement
+                                    declaration is IrConstructor && declaration.isPrimary -> {
+                                        (psiElement as? KtClassOrObject)?.primaryConstructor
+                                            ?: ((psiElement as? KtParameterList)?.parent as? KtFunction)
+                                    }
+                                    else -> null
+                                }
+                                getNonErrorMethodParameterType(irParameter.type) {
+                                    if (sourceElement == null) return@getNonErrorMethodParameterType null
 
-                                if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(irParameter)) {
-                                    val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
-                                    val functionReturnType = sourceElement.typeReference!!.text
-                                    KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
-                                } else {
-                                    sourceElement.valueParameters.getOrNull(index)?.typeReference
+                                    if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(irParameter)) {
+                                        val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
+                                        val functionReturnType = sourceElement.typeReference!!.text
+                                        KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
+                                    } else {
+                                        sourceElement.valueParameters.getOrNull(valueParameterIndex)?.typeReference
+                                    }
                                 }
                             }
-                        } else {
-                            lazyType()
+                            else -> {
+                                lazyType()
+                            }
                         }
                     }
                 }
