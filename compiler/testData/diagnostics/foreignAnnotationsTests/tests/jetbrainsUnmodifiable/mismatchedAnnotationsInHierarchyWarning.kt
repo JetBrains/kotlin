@@ -27,5 +27,5 @@ public class B extends A {
 
 // FILE: test.kt
 fun test(b: B) {
-    val list: MutableList<String> = b.foo()
+    val list: MutableList<String> = <!TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>b.foo()<!>
 }

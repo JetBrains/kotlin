@@ -81,7 +81,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val isNotNullTypeParameter = with(typeSystem) { isDefinitelyNotNullType() } || isNotNullTypeParameterCompat
         return JavaTypeQualifiers(
             nullability = nullabilityForErrorsOrWarnings,
-            mutability = mutabilityForErrors,
+            mutability = mutabilityForErrorsOrWarnings,
             definitelyNotNull = isNotNullTypeParameter,
             isNullabilityQualifierForWarning = nullabilityForErrorsOrWarnings != nullabilityForErrors,
             isMutabilityQualifierForWarning = mutabilityForErrorsOrWarnings != mutabilityForErrors,

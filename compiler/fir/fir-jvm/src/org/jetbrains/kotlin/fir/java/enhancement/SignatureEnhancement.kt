@@ -1094,7 +1094,7 @@ private class EnhancementSignatureParts(
         get() = this.asCone().classId?.asSingleFqName()?.toUnsafe()
 
     override val KotlinTypeMarker.enhancedForWarnings: ConeKotlinType?
-        get() = this.asCone().enhancedTypeForWarning
+        get() = EnhancedForWarningConeSubstitutor(session.typeContext).substituteOrNull(asCone())
 
     override fun KotlinTypeMarker.isEqual(other: KotlinTypeMarker): Boolean =
         AbstractTypeChecker.equalTypes(session.typeContext, this, other)
