@@ -46,6 +46,7 @@ val copyCommonSources = tasks.register<Sync>("copyCommonSources") {
             "kotlin/annotations/WasExperimental.kt",
             "kotlin/annotations/ReturnValue.kt",
             "kotlin/internal/Annotations.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
             "kotlin/internal/AnnotationsBuiltin.kt",
             "kotlin/concurrent/atomics/AtomicArrays.common.kt",
             "kotlin/concurrent/atomics/Atomics.common.kt",
@@ -77,6 +78,7 @@ val copySources = tasks.register<Sync>("copySources") {
             "kotlin/collections/TypeAliases.kt",
             "kotlin/enums/EnumEntriesJVM.kt",
             "kotlin/io/Serializable.kt",
+            "kotlin/internal/throwNoWhenBranchMatchedException.kt",
         )
 
     from(stdlibProjectDir.resolve("jvm/builtins"))
