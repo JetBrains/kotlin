@@ -45,7 +45,6 @@ public interface KaRenderer : KaSessionComponent {
 /**
  * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.renderer' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -72,7 +71,6 @@ public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclar
  * Specifically, when [KaRendererTypeApproximator.TO_DENOTABLE] is used, no approximation is performed for [Variance.INVARIANT],
  * a denotable subtype is rendered for [Variance.IN_VARIANCE], and a denotable supertype is rendered for [Variance.OUT_VARIANCE].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.renderer' endpoint instead.",
     replaceWith = ReplaceWith(

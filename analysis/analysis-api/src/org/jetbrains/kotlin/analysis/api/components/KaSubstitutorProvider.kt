@@ -305,7 +305,6 @@ public class KaSubstitutorBuilder
  *
  * @see KaSubstitutor
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -345,7 +344,6 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
  * - `createInheritanceTypeSubstitutor(B, C)` returns `KaSubstitutor { X -> T, Y -> Int }`
  * - `createInheritanceTypeSubstitutor(A, C)` returns `KaSubstitutor { X -> T, Y -> Int } and then KaSubstitutor { T -> String }`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(

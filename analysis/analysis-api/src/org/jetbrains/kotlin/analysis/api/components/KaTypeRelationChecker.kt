@@ -124,7 +124,6 @@ public enum class KaSubtypingErrorTypePolicy {
  * Semantic equality stands in contrast to the structural equality implemented by [KaType.equals]. See [KaType] for a detailed
  * discussion about structural vs. semantic type equality.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -149,7 +148,6 @@ public fun KaType.semanticallyEquals(
 /**
  * Returns whether this [KaType] is a subtype of [supertype]. The relation is non-strict, i.e. any type `t` is a subtype of itself.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -195,7 +193,6 @@ public fun KaType.isSubtypeOf(
  *   right-hand side of [isSubtypeOf]. Hence, with a [LENIENT][KaSubtypingErrorTypePolicy.LENIENT] error type policy, [isSubtypeOf]
  *   is `true` for all unresolved class IDs.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -235,7 +232,6 @@ public fun KaType.isSubtypeOf(
  * the expanded type, as other [isSubtypeOf] implementations also take expansion into account. If the type alias doesn't expand to a
  * [KaClassType][org.jetbrains.kotlin.analysis.api.types.KaClassType], [isSubtypeOf] is trivially `false`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(

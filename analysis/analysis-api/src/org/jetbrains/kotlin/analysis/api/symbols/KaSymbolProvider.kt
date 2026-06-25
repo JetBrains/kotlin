@@ -214,7 +214,6 @@ public interface KaSymbolProvider : KaSessionComponent {
  * There are more specific `symbol` endpoints, such as [KtNamedFunction.symbol] and [KtClassOrObject.classSymbol], which can be used
  * when more specific PSI elements are available.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -238,7 +237,6 @@ public val KtDeclaration.symbol: KaDeclarationSymbol
  *
  * Otherwise, the symbol is [KaValueParameterSymbol].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -250,7 +248,6 @@ public val KtParameter.symbol: KaVariableSymbol
  *
  * If [KtNamedFunction.getName] is `null`, the symbol is a [KaAnonymousFunctionSymbol], and otherwise a [KaNamedFunctionSymbol].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -260,7 +257,6 @@ public val KtNamedFunction.symbol: KaFunctionSymbol
 /**
  * A [KaConstructorSymbol] for the given [KtConstructor].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -270,7 +266,6 @@ public val KtConstructor<*>.symbol: KaConstructorSymbol
 /**
  * A [KaTypeParameterSymbol] for the given [KtTypeParameter].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -280,7 +275,6 @@ public val KtTypeParameter.symbol: KaTypeParameterSymbol
 /**
  * A [KaTypeAliasSymbol] for the given [KtTypeAlias].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -290,7 +284,6 @@ public val KtTypeAlias.symbol: KaTypeAliasSymbol
 /**
  * A [KaEnumEntrySymbol] for the given [KtEnumEntry].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -300,7 +293,6 @@ public val KtEnumEntry.symbol: KaEnumEntrySymbol
 /**
  * A [KaAnonymousFunctionSymbol] for the given [KtFunctionLiteral].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -312,7 +304,6 @@ public val KtFunctionLiteral.symbol: KaAnonymousFunctionSymbol
  *
  * The symbol is a [KaKotlinPropertySymbol] for non-local properties, and a [KaLocalVariableSymbol] for local ones.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -322,7 +313,6 @@ public val KtProperty.symbol: KaVariableSymbol
 /**
  * A [KaBackingFieldSymbol] for the given [KtBackingField].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -332,7 +322,6 @@ public val KtBackingField.symbol: KaBackingFieldSymbol
 /**
  * A [KaAnonymousObjectSymbol] for the given [KtObjectLiteralExpression].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -344,7 +333,6 @@ public val KtObjectLiteralExpression.symbol: KaAnonymousObjectSymbol
  *
  * To retrieve a [KaEnumEntrySymbol], please refer to [KtEnumEntry.symbol].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -357,7 +345,6 @@ public val KtClassOrObject.classSymbol: KaClassSymbol?
  * The symbol may either be a [KaAnonymousObjectSymbol] if the given declaration is an [object expression](https://kotlinlang.org/docs/object-declarations.html#object-expressions),
  * or a [KaNamedClassSymbol] if it is a named object declaration.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -367,7 +354,6 @@ public val KtObjectDeclaration.symbol: KaClassSymbol
 /**
  * A [KaNamedClassSymbol] for the given named [KtClassOrObject], or `null` for [KtEnumEntry] declarations and object literals.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -377,7 +363,6 @@ public val KtClassOrObject.namedClassSymbol: KaNamedClassSymbol?
 /**
  * A [KaPropertyAccessorSymbol] for the given [KtPropertyAccessor].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -387,7 +372,6 @@ public val KtPropertyAccessor.symbol: KaPropertyAccessorSymbol
 /**
  * A [KaClassInitializerSymbol] for the given [KtClassInitializer].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -409,7 +393,6 @@ public val KtClassInitializer.symbol: KaClassInitializerSymbol
  * The destructuring declaration above has two entries, one corresponding to `x` and another to `y`. For both of these entries, we can
  * retrieve a [KaVariableSymbol] which describes the entry.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -419,7 +402,6 @@ public val KtDestructuringDeclarationEntry.symbol: KaVariableSymbol
 /**
  * A [KaDestructuringDeclarationSymbol] for the given [KtDestructuringDeclaration].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -429,7 +411,6 @@ public val KtDestructuringDeclaration.symbol: KaDestructuringDeclarationSymbol
 /**
  * A [KaFileSymbol] for a [KtFile].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -439,7 +420,6 @@ public val KtFile.symbol: KaFileSymbol
 /**
  * A [KaScriptSymbol] for a [KtScript].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -453,7 +433,6 @@ public val KtScript.symbol: KaScriptSymbol
  *
  * **Note**: context receivers inside [KtFunctionType] are not supported.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaExperimentalApi
 @KaContextParameterApi
@@ -465,7 +444,6 @@ public val KtContextReceiver.symbol: KaContextParameterSymbol
  * Returns a [KaPackageSymbol] corresponding to the given [fqName] if that package exists and is visible from the current use site, or
  * `null` otherwise.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -480,7 +458,6 @@ public fun findPackage(fqName: FqName): KaPackageSymbol? {
 /**
  * Returns a [KaClassSymbol] for the specified [ClassId], or `null` if such a symbol cannot be found.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -495,7 +472,6 @@ public fun findClass(classId: ClassId): KaClassSymbol? {
 /**
  * Returns a [KaTypeAliasSymbol] for the specified [ClassId], or `null` if such a symbol cannot be found.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -512,7 +488,6 @@ public fun findTypeAlias(classId: ClassId): KaTypeAliasSymbol? {
  *
  * The function combines both class search (see [findClass]) and type alias search (see [findTypeAlias]).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -528,7 +503,6 @@ public fun findClassLike(classId: ClassId): KaClassLikeSymbol? {
  * Finds top-level functions and properties called [name] in the package called [packageFqName]. Returns only symbols that are visible
  * from the current use-site module.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)
@@ -544,7 +518,6 @@ public fun findTopLevelCallables(packageFqName: FqName, name: Name): Sequence<Ka
 /**
  * A [KaPackageSymbol] for the *root package*, which is the special package with an empty fully-qualified name.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(message = "The endpoint was moved to another file.", level = DeprecationLevel.HIDDEN)
 @KaContextParameterApi
 context(session: KaSession)

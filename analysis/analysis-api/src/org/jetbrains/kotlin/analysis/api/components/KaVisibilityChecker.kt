@@ -97,7 +97,6 @@ public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.
  *
  * @see KaUseSiteVisibilityChecker
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -125,7 +124,6 @@ public fun createUseSiteVisibilityChecker(
 /**
  * Checks whether the given [KaCallableSymbol] (possibly inherited from a superclass) is visible in the given [classSymbol].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -150,7 +148,6 @@ public fun KaCallableSymbol.isVisibleInClass(classSymbol: KaClassSymbol): Boolea
  * In ['Explicit API' mode](https://github.com/Kotlin/KEEP/blob/master/proposals/explicit-api-mode.md), explicit visibility modifiers
  * and explicit return types are required for such symbols.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.visibility' endpoint instead.",
     replaceWith = ReplaceWith(

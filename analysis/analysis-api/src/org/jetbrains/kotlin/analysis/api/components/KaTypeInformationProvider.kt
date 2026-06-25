@@ -524,7 +524,6 @@ public val KaType.functionTypeKind: FunctionTypeKind?
  * Whether the [KaType] is denotable. A [denotable type](https://kotlinlang.org/spec/type-system.html#type-kinds) can be expressed in
  * Kotlin code, as opposed to being only constructible via compiler type operations (such as type inference).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isDenotable", "org.jetbrains.kotlin.analysis.api.types.isDenotable"),
@@ -538,7 +537,6 @@ public val KaType.isDenotable: Boolean
  * Whether the [KaType] is a [functional interface type](https://kotlinlang.org/docs/fun-interfaces.html), such as [Runnable]. Such
  * types are also known as SAM types.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isFunctionalInterface", "org.jetbrains.kotlin.analysis.api.types.isFunctionalInterface"),
@@ -556,7 +554,6 @@ public val KaType.isFunctionalInterface: Boolean
  *
  * @see KaBuiltinFunctionTypeFamilies
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.functionTypeFamily", "org.jetbrains.kotlin.analysis.api.types.functionTypeFamily"),
@@ -570,7 +567,6 @@ public val KaType.functionTypeFamily: KaFunctionTypeFamily?
 /**
  * Whether the [KaType] is a [kotlin.Function] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isFunctionType", "org.jetbrains.kotlin.analysis.api.types.isFunctionType"),
@@ -584,7 +580,6 @@ public val KaType.isFunctionType: Boolean
 /**
  * Whether the [KaType] is a [kotlin.reflect.KFunction] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isKFunctionType", "org.jetbrains.kotlin.analysis.api.types.isKFunctionType"),
@@ -599,7 +594,6 @@ public val KaType.isKFunctionType: Boolean
  * Whether the [KaType] is a [suspend function](https://kotlinlang.org/spec/asynchronous-programming-with-coroutines.html#suspending-functions)
  * type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isSuspendFunctionType", "org.jetbrains.kotlin.analysis.api.types.isSuspendFunctionType"),
@@ -613,7 +607,6 @@ public val KaType.isSuspendFunctionType: Boolean
 /**
  * Whether the [KaType] is a `KSuspendFunction` type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isKSuspendFunctionType", "org.jetbrains.kotlin.analysis.api.types.isKSuspendFunctionType"),
@@ -635,7 +628,6 @@ public val KaType.isKSuspendFunctionType: Boolean
  * A public value of type `T : Any?` can potentially be `null`. But one cannot assign `null` to such a variable because the instantiated
  * type may not be nullable.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isNullable", "org.jetbrains.kotlin.analysis.api.types.isNullable"),
@@ -663,7 +655,6 @@ public val KaType.isNullable: Boolean
  *
  * To explicitly check whether a type can potentially hold `null`, use [isNullable].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isMarkedNullable", "org.jetbrains.kotlin.analysis.api.types.isMarkedNullable"),
@@ -680,7 +671,6 @@ public val KaType.isMarkedNullable: Boolean
  * Note that a flexible / dynamic type has a flexible nullability when the lower bound is non-nullable and the upper bound is nullable.
  * E.g. `T!` has `T` as the lower bound and `T?` as the upper bound, hence it has a flexible nullability.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.hasFlexibleNullability", "org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability"),
@@ -693,7 +683,6 @@ public val KaType.hasFlexibleNullability: Boolean
 /**
  * Whether the [KaType] is a [Unit] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isUnitType", "org.jetbrains.kotlin.analysis.api.types.isUnitType"),
@@ -706,7 +695,6 @@ public val KaType.isUnitType: Boolean
 /**
  * Whether the [KaType] is an [Int] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isIntType", "org.jetbrains.kotlin.analysis.api.types.isIntType"),
@@ -719,7 +707,6 @@ public val KaType.isIntType: Boolean
 /**
  * Whether the [KaType] is a [Long] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isLongType", "org.jetbrains.kotlin.analysis.api.types.isLongType"),
@@ -732,7 +719,6 @@ public val KaType.isLongType: Boolean
 /**
  * Whether the [KaType] is a [Short] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isShortType", "org.jetbrains.kotlin.analysis.api.types.isShortType"),
@@ -745,7 +731,6 @@ public val KaType.isShortType: Boolean
 /**
  * Whether the [KaType] is a [Byte] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isByteType", "org.jetbrains.kotlin.analysis.api.types.isByteType"),
@@ -758,7 +743,6 @@ public val KaType.isByteType: Boolean
 /**
  * Whether the [KaType] is a [Float] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isFloatType", "org.jetbrains.kotlin.analysis.api.types.isFloatType"),
@@ -771,7 +755,6 @@ public val KaType.isFloatType: Boolean
 /**
  * Whether the [KaType] is a [Double] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isDoubleType", "org.jetbrains.kotlin.analysis.api.types.isDoubleType"),
@@ -784,7 +767,6 @@ public val KaType.isDoubleType: Boolean
 /**
  * Whether the [KaType] is a [Char] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isCharType", "org.jetbrains.kotlin.analysis.api.types.isCharType"),
@@ -797,7 +779,6 @@ public val KaType.isCharType: Boolean
 /**
  * Whether the [KaType] is a [Boolean] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isBooleanType", "org.jetbrains.kotlin.analysis.api.types.isBooleanType"),
@@ -810,7 +791,6 @@ public val KaType.isBooleanType: Boolean
 /**
  * Whether the [KaType] is a [String] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isStringType", "org.jetbrains.kotlin.analysis.api.types.isStringType"),
@@ -823,7 +803,6 @@ public val KaType.isStringType: Boolean
 /**
  * Whether the [KaType] is a [CharSequence] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isCharSequenceType", "org.jetbrains.kotlin.analysis.api.types.isCharSequenceType"),
@@ -836,7 +815,6 @@ public val KaType.isCharSequenceType: Boolean
 /**
  * Whether the [KaType] is an [Any] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isAnyType", "org.jetbrains.kotlin.analysis.api.types.isAnyType"),
@@ -849,7 +827,6 @@ public val KaType.isAnyType: Boolean
 /**
  * Whether the [KaType] is a [Nothing] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isNothingType", "org.jetbrains.kotlin.analysis.api.types.isNothingType"),
@@ -862,7 +839,6 @@ public val KaType.isNothingType: Boolean
 /**
  * Whether the [KaType] is a [UInt] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isUIntType", "org.jetbrains.kotlin.analysis.api.types.isUIntType"),
@@ -875,7 +851,6 @@ public val KaType.isUIntType: Boolean
 /**
  * Whether the [KaType] is a [ULong] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isULongType", "org.jetbrains.kotlin.analysis.api.types.isULongType"),
@@ -888,7 +863,6 @@ public val KaType.isULongType: Boolean
 /**
  * Whether the [KaType] is a [UShort] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isUShortType", "org.jetbrains.kotlin.analysis.api.types.isUShortType"),
@@ -901,7 +875,6 @@ public val KaType.isUShortType: Boolean
 /**
  * Whether the [KaType] is a [UByte] type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isUByteType", "org.jetbrains.kotlin.analysis.api.types.isUByteType"),
@@ -914,7 +887,6 @@ public val KaType.isUByteType: Boolean
 /**
  * The class symbol backing the given [KaType], if available.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.expandedSymbol", "org.jetbrains.kotlin.analysis.api.types.expandedSymbol"),
@@ -946,7 +918,6 @@ public val KaType.expandedSymbol: KaClassSymbol?
  *
  * @see KaType.abbreviation
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.fullyExpandedType", "org.jetbrains.kotlin.analysis.api.types.fullyExpandedType"),
@@ -959,7 +930,6 @@ public val KaType.fullyExpandedType: KaType
 /**
  * Whether the [KaType] is an array or a primitive array type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isArrayOrPrimitiveArray", "org.jetbrains.kotlin.analysis.api.types.isArrayOrPrimitiveArray"),
@@ -972,7 +942,6 @@ public val KaType.isArrayOrPrimitiveArray: Boolean
 /**
  * Whether the [KaType] is an array or a primitive array type, and its element is also an array type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isNestedArray", "org.jetbrains.kotlin.analysis.api.types.isNestedArray"),
@@ -985,7 +954,6 @@ public val KaType.isNestedArray: Boolean
 /**
  * Checks whether the given [KaType] is a class type with the given [ClassId].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 context(session: KaSession)
 public fun KaType.isClassType(classId: ClassId): Boolean {
     return with(session) {
@@ -998,7 +966,6 @@ public fun KaType.isClassType(classId: ClassId): Boolean {
 /**
  * Whether the [KaType] is a primitive type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.isPrimitive", "org.jetbrains.kotlin.analysis.api.types.isPrimitive"),
@@ -1011,7 +978,6 @@ public val KaType.isPrimitive: Boolean
 /**
  * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("this.defaultInitializer", "org.jetbrains.kotlin.analysis.api.types.defaultInitializer"),
@@ -1025,7 +991,6 @@ public val KaType.defaultInitializer: String?
 /**
  * Provides access to the built-in [function type families][KaFunctionTypeFamily].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith("builtinFunctionTypeFamilies", "org.jetbrains.kotlin.analysis.api.types.builtinFunctionTypeFamilies"),

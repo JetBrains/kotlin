@@ -533,7 +533,6 @@ public class KaScopeWithKindImpl(
  *
  * @see staticMemberScope
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.memberScope", "org.jetbrains.kotlin.analysis.api.scopes.memberScope"),
@@ -620,7 +619,6 @@ public val KaDeclarationContainerSymbol.memberScope: KaScope
  *
  * @see memberScope
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticMemberScope"),
@@ -633,7 +631,6 @@ public val KaDeclarationContainerSymbol.staticMemberScope: KaScope
 /**
  * A [KaScope] containing *all* members from [memberScope] and [staticMemberScope].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedMemberScope"),
@@ -653,7 +650,6 @@ public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
  *
  * @see staticDeclaredMemberScope
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.declaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope"),
@@ -673,7 +669,6 @@ public val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
  *
  * @see declaredMemberScope
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.staticDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope"),
@@ -688,7 +683,6 @@ public val KaDeclarationContainerSymbol.staticDeclaredMemberScope: KaScope
  *
  * In contrast to [declaredMemberScope] and [staticDeclaredMemberScope], this scope contains both static and non-static members.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.combinedDeclaredMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope"),
@@ -727,7 +721,6 @@ public val KaDeclarationContainerSymbol.combinedDeclaredMemberScope: KaScope
  *
  * `regularProperty` is not contained in the delegated member scope because it is not a delegated property.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.delegatedMemberScope", "org.jetbrains.kotlin.analysis.api.scopes.delegatedMemberScope"),
@@ -740,7 +733,6 @@ public val KaDeclarationContainerSymbol.delegatedMemberScope: KaScope
 /**
  * A [KaScope] containing the top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.fileScope", "org.jetbrains.kotlin.analysis.api.scopes.fileScope"),
@@ -753,7 +745,6 @@ public val KaFileSymbol.fileScope: KaScope
 /**
  * A [KaScope] containing all members of the package represented by the given [KaPackageSymbol], not including members of subpackages.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.packageScope", "org.jetbrains.kotlin.analysis.api.scopes.packageScope"),
@@ -766,7 +757,6 @@ public val KaPackageSymbol.packageScope: KaScope
 /**
  * Combines a list of [KaScope]s into a single composite [KaScope]. The resulting scope contains all members of its constituent scopes.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.asCompositeScope()", "org.jetbrains.kotlin.analysis.api.scopes.asCompositeScope"),
@@ -801,7 +791,6 @@ public fun List<KaScope>.asCompositeScope(): KaScope {
  * @see KaTypeProvider.type
  * @see KaExpressionTypeProvider.expressionType
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.scope", "org.jetbrains.kotlin.analysis.api.scopes.scope"),
@@ -815,7 +804,6 @@ public val KaType.scope: KaTypeScope?
 /**
  * A [KaScope] containing unsubstituted declarations from the [KaType]'s underlying declaration.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.declarationScope", "org.jetbrains.kotlin.analysis.api.scopes.declarationScope"),
@@ -830,7 +818,6 @@ public val KaTypeScope.declarationScope: KaScope
  * A [KaTypeScope] containing the [synthetic Java properties](https://kotlinlang.org/docs/java-interop.html#getters-and-setters) created
  * for a given [KaType].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.scopes' endpoint instead.",
     replaceWith = ReplaceWith("this.syntheticJavaPropertiesScope", "org.jetbrains.kotlin.analysis.api.scopes.syntheticJavaPropertiesScope"),

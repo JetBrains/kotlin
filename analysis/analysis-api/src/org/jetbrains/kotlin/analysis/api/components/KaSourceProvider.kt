@@ -27,7 +27,6 @@ public interface KaSourceProvider : KaSessionComponent {
  * The source file name for the given [KtDeclaration] located in a Kotlin library (klib), or `null` if the declaration is not located in
  * a klib, or when the source file name is not available.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",

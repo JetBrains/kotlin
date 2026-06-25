@@ -129,7 +129,6 @@ public interface KaKDocProvider : KaSessionComponent {
  * - KDoc for an element can be resolved whenever we have sources for it. Including external libraries.
  * - This method only resolves KDoc for Kotlin elements. Java elements and Javadoc are not supported.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.kdoc' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -171,7 +170,6 @@ public fun KtDeclaration.findKDoc(): KDocCommentDescriptor? {
  *
  * @see [KaKDocProvider.findKDoc] for the implementation details.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.kdoc' endpoint instead.",
     replaceWith = ReplaceWith(

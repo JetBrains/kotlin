@@ -61,7 +61,6 @@ public interface KaResolveExtensionInfoProvider : KaSessionComponent {
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
@@ -80,7 +79,6 @@ public val resolveExtensionScopeWithTopLevelDeclarations: KaScope
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
@@ -99,7 +97,6 @@ public val VirtualFile.isResolveExtensionFile: Boolean
  *
  * @see KaResolveExtension
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",
@@ -123,7 +120,6 @@ public val KtElement.isFromResolveExtension: Boolean
  * @see KaResolveExtension
  * @see org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigationTargetsProvider
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.resolve.extensions' endpoint instead.",

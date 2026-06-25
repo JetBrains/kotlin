@@ -413,7 +413,6 @@ public abstract class KaBuiltinTypes : org.jetbrains.kotlin.analysis.api.types.K
 /**
  * [KaType] instances for built-in types.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -435,7 +434,6 @@ public val builtinTypes: KaBuiltinTypes
  * @param approximateLocalTypes Whether locally declared types should be approximated to non-local supertypes. Avoiding local type
  *  approximation is sensible when the resulting [KaType] is analyzed in the same local context.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     "Use `approximateToDenotableSupertype` instead",
@@ -457,7 +455,6 @@ public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boole
  *
  * @see approximateToSuperPublicDenotable
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     "Use `approximateToDenotableSupertypeOrSelf` instead",
@@ -482,7 +479,6 @@ public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes:
  * @param allowLocalDenotableTypes Whether locally declared types should be approximated to local supertypes instead of non-local ones.
  * Local type approximation is sensible when the resulting [KaType] is analyzed in the same local context.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -507,7 +503,6 @@ public fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Bool
  *
  * @see approximateToDenotableSupertype
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -532,7 +527,6 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes
  * The function returns `null` if the type is already denotable and does not need approximation. Otherwise, for a type `T`, returns a
  * denotable type `S` such that `S <: T`, with all type arguments of `S` also being denotable.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -555,7 +549,6 @@ public fun KaType.approximateToDenotableSubtype(): KaType? {
  *
  * @see approximateToDenotableSupertype
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -600,7 +593,6 @@ public fun KaType.approximateToDenotableSubtypeOrSelf(): KaType {
  * However, when approximating from `<position_1>`, the function returns `Any`, as `A` is not visible from this position,
  * so the only option left is `Any`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -625,7 +617,6 @@ public fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? 
  *
  * @see approximateToDenotableSupertype
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -667,7 +658,6 @@ public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): Ka
  * - For `@androidx.annotation.RecentlyNullable X!` [augmentedByWarningLevelAnnotations] is `X?`.
  * - For `@androidx.annotation.RecentlyNonNull X!` [augmentedByWarningLevelAnnotations] is `X`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -688,7 +678,6 @@ public val KaType.augmentedByWarningLevelAnnotations: KaType
  *
  * @see KaTypeCreator
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -708,7 +697,6 @@ public val KaClassifierSymbol.defaultType: KaType
  *
  * @see KaTypeCreator
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -730,7 +718,6 @@ public val KaClassifierSymbol.defaultTypeWithStarProjections: KaType
  * If [this] is an invalid (e.g., in case of multiple `vararg` parameters) or useless (in anonymous functions) `vararg` parameter,
  * [varargArrayType] still contains a type for it.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
@@ -749,7 +736,6 @@ public val KaValueParameterSymbol.varargArrayType: KaType?
  *
  * @throws IllegalArgumentException If the collection of types is empty.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -767,7 +753,6 @@ public val Iterable<KaType>.commonSupertype: KaType
  *
  * @throws IllegalArgumentException If the array of types is empty.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -785,7 +770,6 @@ public val Array<KaType>.commonSupertype: KaType
  *
  * This may raise an exception if the resolution ends up with an unexpected result.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -816,7 +800,6 @@ public val KtTypeReference.type: KaType
  *
  * Here, `receiverType` for `foo::bar` is `Foo` (the type of `foo`).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -832,7 +815,6 @@ public val KtDoubleColonExpression.receiverType: KaType?
 /**
  * Creates a new [KaType] based on the given type with the updated nullability specified by [isMarkedNullable].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -853,7 +835,6 @@ public fun KaType.withNullability(isMarkedNullable: Boolean): KaType {
 /**
  * Returns the [KaFlexibleType]'s upper bound, or the type itself if it is not flexible.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -872,7 +853,6 @@ public fun KaType.upperBoundIfFlexible(): KaType {
 /**
  * Returns the [KaFlexibleType]'s lower bound, or the type itself if it is not flexible.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -891,7 +871,6 @@ public fun KaType.lowerBoundIfFlexible(): KaType {
 /**
  * Checks whether this [KaType] is compatible with [that] other type. If they are compatible, the types can have a common subtype.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -913,7 +892,6 @@ public fun KaType.hasCommonSubtypeWith(that: KaType): Boolean {
  * Collects all the implicit receiver types available at the given [position]. The resulting list is ordered from the outermost to the
  * innermost receiver type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 context(session: KaSession)
 public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
     return with(session) {
@@ -937,7 +915,6 @@ public fun collectImplicitReceiverTypes(position: KtElement): List<KaType> {
  * supertype of `List<out String>` is `Collection<CAPTURED out String>`. With approximation set to `true`, `Collection<out String>` is
  * returned instead.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -967,7 +944,6 @@ public fun KaType.directSupertypes(shouldApproximate: Boolean): Sequence<KaType>
  *
  * Given `MutableList<String>`, [directSupertypes] contains `List<String>` and `MutableCollection<String>`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -987,7 +963,6 @@ public val KaType.directSupertypes: Sequence<KaType>
  * @param shouldApproximate Whether to approximate [non-denotable][KaTypeInformationProvider.isDenotable] types. See [directSupertypes]
  *  for more information.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -1011,7 +986,6 @@ public fun KaType.allSupertypes(shouldApproximate: Boolean): Sequence<KaType> {
  *
  * [Denotable][KaTypeInformationProvider.isDenotable] types are not approximated.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -1035,7 +1009,6 @@ public val KaType.allSupertypes: Sequence<KaType>
  *
  * @receiver A target callable symbol.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated("Avoid using this function")
 context(session: KaSession)
@@ -1046,7 +1019,6 @@ public val KaCallableSymbol.dispatchReceiverType: KaType?
 /**
  * The array type's element type if the given [KaType] is a primitive type array or [Array], and `null` otherwise.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
     replaceWith = ReplaceWith(

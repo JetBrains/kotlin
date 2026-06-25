@@ -186,7 +186,6 @@ public fun KaSession.getModule(element: PsiElement): KaModule = element.kaModule
  * which signifies *where* symbols are located (such as sources, dependencies, and so on) and *which* symbols can be found in the first
  * place.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("useSiteModule", "org.jetbrains.kotlin.analysis.api.session.useSiteModule"),
@@ -199,7 +198,6 @@ public val useSiteModule: KaModule
 /**
  * The [KaSession] of the current analysis context.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.session' endpoint instead.",
     replaceWith = ReplaceWith("useSiteSession", "org.jetbrains.kotlin.analysis.api.session.useSiteSession"),
@@ -212,7 +210,6 @@ public val useSiteSession: KaSession
 /**
  * Returns the restored [KaSymbol] (possibly a new symbol instance) if the pointer is still valid, or `null` otherwise.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols.pointers' endpoint instead.",
     replaceWith = ReplaceWith("this.restoreSymbol()", "org.jetbrains.kotlin.analysis.api.symbols.pointers.restoreSymbol"),
@@ -228,7 +225,6 @@ public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
 /**
  * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",

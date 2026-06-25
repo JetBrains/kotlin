@@ -145,7 +145,6 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
  * The expected type represents the type that is expected for an expression at a specific location in the code. This is determined by
  * the context in which the expression appears, such as a variable type for its initializer, or a parameter type for a function call.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expressionType", "org.jetbrains.kotlin.analysis.api.expressions.expressionType"),
@@ -170,7 +169,6 @@ public val KtExpression.expressionType: KaType?
  * from [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
  * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 context(session: KaSession)
 public val KtDeclarationWithReturnType.returnType: KaType
     get() = with(session) { returnType }
@@ -181,7 +179,6 @@ public val KtDeclarationWithReturnType.returnType: KaType
  * Note: this property throws an exception if the declaration _can't_ have a return type
  * (i.e., it is not a [KtDeclarationWithReturnType]).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
 @KaContextParameterApi
 context(session: KaSession)
@@ -201,7 +198,6 @@ public val KtDeclaration.returnType: KaType
  * Depending on the function's attributes, such as `suspend` or reflective access, a different functional type such as
  * `SuspendFunction`, `KFunction`, or `KSuspendFunction` will be constructed.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.functionType", "org.jetbrains.kotlin.analysis.api.expressions.functionType"),
@@ -217,7 +213,6 @@ public val KtFunction.functionType: KaType
  *
  * See [expressionType] for a discussion about the expression type vs. the expected type.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.expectedType", "org.jetbrains.kotlin.analysis.api.expressions.expectedType"),
@@ -253,7 +248,6 @@ public val PsiElement.expectedType: KaType?
  *   }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull"),
@@ -268,7 +262,6 @@ public val KtExpression.isDefinitelyNull: Boolean
  *
  * @see isDefinitelyNull
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith("this.isDefinitelyNotNull", "org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull"),

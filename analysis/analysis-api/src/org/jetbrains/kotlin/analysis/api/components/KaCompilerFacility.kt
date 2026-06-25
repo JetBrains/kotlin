@@ -356,7 +356,6 @@ public fun interface KaCompilerFacilityModuleActualizer {
  *
  * @see createCompilationOptions
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -392,7 +391,6 @@ public fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationRe
  *
  * @param init A lambda that configures the [KaCompilationOptionsBuilder].
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -418,7 +416,6 @@ public fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit
  *
  * @param init A lambda that configures the [KaCompilationOptionsBuilder] with modifications to apply.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.compilation' endpoint instead.",
     replaceWith = ReplaceWith(

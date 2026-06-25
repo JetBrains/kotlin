@@ -244,7 +244,6 @@ public sealed class KaWhenMissingCase {
 /**
  * The [symbol][KaCallableSymbol] of the callable which the given [KtReturnExpression] returns from.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated("The API is obsolete. Use `resolveSymbol()` instead.", ReplaceWith("resolveSymbol()"))
 @KaIdeApi
 @KaContextParameterApi
@@ -313,7 +312,6 @@ public fun KtWhenExpression.computeMissingCases(): List<KaWhenMissingCase> {
  *   - `run { x; println(50) }`
  *   - `when (x) { else -> ... }`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -347,7 +345,6 @@ public val KtExpression.isUsedAsExpression: Boolean
  *   - `{ if (true) { x } else { x } }`
  *   - `fun(x: Int) = x`
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith(
@@ -413,7 +410,6 @@ public val KtExpression.isUsedAsResultOfLambda: Boolean
  * }
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
     replaceWith = ReplaceWith(

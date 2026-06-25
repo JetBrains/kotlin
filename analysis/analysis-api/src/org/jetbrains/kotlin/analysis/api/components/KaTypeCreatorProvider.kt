@@ -110,7 +110,6 @@ public interface KaTypeCreatorProvider : KaSessionComponent {
 /**
  * A single entry point for the type building infrastructure.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
@@ -137,7 +136,6 @@ public val typeCreator: KaTypeCreator
  *
  * @see KaTypeCreator.classType
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
@@ -169,7 +167,6 @@ public fun <T : KaClassType> T.copy(init: KaClassTypeBuilder.() -> Unit): KaClas
  *
  * @see KaTypeCreator.classType
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
@@ -201,7 +198,6 @@ public fun KaUsualClassType.copy(init: KaClassTypeBuilder.() -> Unit): KaUsualCl
  *
  * @see KaTypeCreator.functionType
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",
@@ -233,7 +229,6 @@ public fun KaFunctionType.copy(init: KaFunctionTypeBuilder.() -> Unit): KaFuncti
  *
  * @see KaTypeCreator.typeParameterType
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.types.typeCreation' endpoint instead.",

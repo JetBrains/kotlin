@@ -271,7 +271,6 @@ public val KaClassSymbol.annotationApplicableTargets: Set<KotlinTarget>?
  * This considers deprecation annotations applied to the symbol itself and, for property-related
  * symbols, deprecation annotations with appropriate use-site targets.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -287,7 +286,6 @@ public val KaSymbol.deprecation: KaDeprecation?
  *
  * This is a convenience property equivalent to `deprecation != null`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -321,7 +319,6 @@ public val KaSymbol.isDeprecated: Boolean
  * fun A.minus(): A = A() // canBeOperator = false, as `minus` is a binary operator and should have one parameter.
  * ```
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -335,7 +332,6 @@ public val KaNamedFunctionSymbol.canBeOperator: Boolean
 /**
  * A set of applicable targets for an annotation class symbol, or `null` if the symbol is not an annotation class.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -351,7 +347,6 @@ public val KaClassSymbol.applicableAnnotationTargets: Set<KaAnnotationTarget>?
  * A property is considered `inline` when both of its accessors are `inline` or when it has the `inline` keyword.
  * The `inline` keyword on a property is syntactic sugar for marking both accessors as `inline`.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -365,7 +360,6 @@ public val KaKotlinPropertySymbol.isInline: Boolean
 /**
  * A [FqName] which can be used to import the given symbol, or `null` if the symbol cannot be imported.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -387,7 +381,6 @@ public val KaSymbol.importableFqName: FqName?
  * Check the [Annotation use-site targets](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) documentation
  * for additional information.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 @KaExperimentalApi
 @Deprecated(
@@ -403,7 +396,6 @@ public val KaSymbol.defaultAnnotationTargets: Set<KaAnnotationTarget>?
  * The return value status of the function (should it be used, or can it be ignored).
  * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",
@@ -420,7 +412,6 @@ public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
  *
  * This API is only intended to be used by the TypeScript export utility.
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
 @Deprecated(
     message = "Use the 'org.jetbrains.kotlin.analysis.api.symbols' endpoint instead.",

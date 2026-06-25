@@ -114,7 +114,6 @@ public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
  *     with a placeholder identifier inserted. Also see `CompletionUtilCore.DUMMY_IDENTIFIER` in IntelliJ IDEA.
  * @param explicitReceiver A receiver expression, if available (also from the in-memory copy of [originalFile]).
  */
-// Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
 context(session: KaSession)
 public fun createExtensionCandidateChecker(
