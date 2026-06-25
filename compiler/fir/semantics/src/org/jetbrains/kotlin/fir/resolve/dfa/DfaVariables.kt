@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -147,7 +148,7 @@ class RealVariable(
                     else -> PropertyStability.CAPTURED_VARIABLE
                 }
                 fir.isVar -> PropertyStability.MUTABLE_PROPERTY
-                fir.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
+                fir.isInstanceExtension -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.visibility == Visibilities.Private -> PropertyStability.PRIVATE_OR_CONST_VAL
                 // REPL vals can be treated the same as local vals.

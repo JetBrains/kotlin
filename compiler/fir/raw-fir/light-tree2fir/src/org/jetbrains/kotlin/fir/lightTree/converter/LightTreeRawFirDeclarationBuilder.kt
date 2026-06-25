@@ -1478,6 +1478,7 @@ class LightTreeRawFirDeclarationBuilder(
 
             val calculatedModifiers = modifiers ?: ModifierList()
             val propertyAnnotations = calculatedModifiers.convertAnnotations()
+            val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
 
             return buildProperty {
                 source = propertySource
@@ -1506,6 +1507,7 @@ class LightTreeRawFirDeclarationBuilder(
                         it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
                     },
                     property,
+                    isStatic,
                 )
 
                 if (isLocal) {
@@ -1543,8 +1545,6 @@ class LightTreeRawFirDeclarationBuilder(
                         }
 
                         val propertyVisibility = calculatedModifiers.getVisibility()
-
-                        val isStatic = calculatedModifiers.hasCompanion() || isCompanionBlockMember
 
                         fun defaultAccessorStatus() =
                             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
@@ -1846,6 +1846,7 @@ class LightTreeRawFirDeclarationBuilder(
         isVar: Boolean,
         annotationsFromProperty: List<FirAnnotationCall>,
         property: LighterASTNode,
+        isStatic: Boolean,
     ): FirBackingField {
         var modifiers: ModifierList? = null
         var returnType: FirTypeRef = implicitType
@@ -1862,7 +1863,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
         val calculatedModifiers = modifiers ?: ModifierList()
-        val status = obtainPropertyComponentStatus(Visibilities.Private, calculatedModifiers, propertyModifiers)
+        val status = obtainPropertyComponentStatus(Visibilities.Private, calculatedModifiers, propertyModifiers, isStatic)
         val sourceElement = this?.toFirSourceElement()
         return if (this != null) {
             buildBackingField {
@@ -1898,12 +1899,14 @@ class LightTreeRawFirDeclarationBuilder(
         componentVisibility: Visibility,
         modifiers: ModifierList,
         propertyModifiers: ModifierList,
+        isStatic: Boolean,
     ): FirDeclarationStatus {
         // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
         return FirDeclarationStatusImpl(componentVisibility, modifiers.getModality(isClassOrObject = false)).apply {
             isInline = propertyModifiers.hasInline() || modifiers.hasInline()
             isExternal = propertyModifiers.hasExternal() || modifiers.hasExternal()
             isLateInit = modifiers.hasLateinit()
+            this.isStatic = isStatic
         }
     }
 

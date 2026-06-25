@@ -23,7 +23,7 @@ class C {
 }
 
 fun test() {
-    C.foo.add(1)
+    C.foo.<!UNRESOLVED_REFERENCE!>add<!>(1)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, explicitBackingField, functionDeclaration, propertyDeclaration */

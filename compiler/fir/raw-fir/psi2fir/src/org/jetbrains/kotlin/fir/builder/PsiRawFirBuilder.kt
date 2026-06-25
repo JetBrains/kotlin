@@ -691,6 +691,7 @@ open class PsiRawFirBuilder(
             componentVisibility: Visibility,
             declaration: KtDeclaration?,
             property: KtProperty,
+            isStatic: Boolean,
         ): FirDeclarationStatus {
             return FirDeclarationStatusImpl(componentVisibility, declaration?.modality).apply {
                 isInline = property.hasModifier(INLINE_KEYWORD) ||
@@ -698,6 +699,7 @@ open class PsiRawFirBuilder(
                 isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
                         declaration?.hasModifier(EXTERNAL_KEYWORD) == true
                 isLateInit = declaration?.hasModifier(LATEINIT_KEYWORD) == true
+                this.isStatic = isStatic
             }
         }
 
@@ -706,8 +708,9 @@ open class PsiRawFirBuilder(
             propertySymbol: FirPropertySymbol,
             propertyReturnType: FirTypeRef,
             annotationsFromProperty: List<FirAnnotationCall>,
+            isStatic: Boolean,
         ): FirBackingField {
-            val status = obtainPropertyComponentStatus(Visibilities.Private, this, property)
+            val status = obtainPropertyComponentStatus(Visibilities.Private, this, property, isStatic)
             val backingFieldInitializer = this?.toInitializerExpression()
             val returnType = this?.typeReference.toFirOrImplicitType()
             val source = this?.toFirSourceElement()
@@ -2615,6 +2618,7 @@ open class PsiRawFirBuilder(
                 FirRegularPropertySymbol(callableIdForName(propertyName))
             }
             val isCompanionBlockMember = isDirectlyInsideCompanionBlock
+            val isStatic = hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
 
             withContainerSymbol(propertySymbol, isLocal) {
                 val propertyType = typeReference.toFirOrImplicitType()
@@ -2651,6 +2655,7 @@ open class PsiRawFirBuilder(
                             propertySymbol = symbol,
                             propertyType,
                             emptyList(),
+                            isStatic = false,
                         )
 
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
@@ -2692,6 +2697,7 @@ open class PsiRawFirBuilder(
                                 propertySymbol = symbol,
                                 propertyType,
                                 propertyAnnotations.filter { it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD },
+                                isStatic,
                             )
 
                             getter = this@toFirProperty.getter.toFirPropertyAccessor(
@@ -2714,7 +2720,6 @@ open class PsiRawFirBuilder(
                                 isCompanionBlockMember,
                             )
 
-                            val isStatic = hasModifier(COMPANION_KEYWORD) || isCompanionBlockMember
                             status = FirDeclarationStatusImpl(getVisibility(), modality).apply {
                                 isExpect = hasExpectModifier() || this@PsiRawFirBuilder.context.containerIsExpect
                                 isActual = hasActualModifier()

@@ -6,30 +6,30 @@ package a
 class C {
     companion {
         fun insideCompanion() {
-            <!SMARTCAST_IMPOSSIBLE!>foo<!>.add(1)
+            foo.add(1)
         }
     }
 
     companion object {
        fun insideCompanionObject() {
-            <!SMARTCAST_IMPOSSIBLE!>foo<!>.add(1)
+            foo.add(1)
         }
     }
 
     fun insideClass() {
-        <!SMARTCAST_IMPOSSIBLE!>foo<!>.add(1)
+        foo.add(1)
     }
 }
 
 companion val C.foo: List<Int>
-    <!EXPLICIT_BACKING_FIELD_IN_EXTENSION!>field<!>: MutableList<Int> = TODO()
+    field: MutableList<Int> = TODO()
 
 companion fun C.bar() {
-    <!SMARTCAST_IMPOSSIBLE!>foo<!>.add(1)
+    foo.add(1)
 }
 
 fun test() {
-    <!SMARTCAST_IMPOSSIBLE!>C.foo<!>.add(1)
+    C.foo.add(1)
 }
 
 // FILE: a2.kt
