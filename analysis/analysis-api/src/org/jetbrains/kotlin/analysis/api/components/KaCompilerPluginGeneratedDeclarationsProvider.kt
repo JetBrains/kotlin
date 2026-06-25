@@ -47,6 +47,13 @@ public interface KaCompilerPluginGeneratedDeclarations :
  * declarations for *dependencies* of this module.
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.compilerPlugins' endpoint instead.",
+    replaceWith = ReplaceWith(
+        "this.compilerPluginGeneratedDeclarations",
+        "org.jetbrains.kotlin.analysis.api.compilerPlugins.compilerPluginGeneratedDeclarations",
+    ),
+)
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerPluginGeneratedDeclarationsProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.compilerPlugins.compilerPluginGenerated
  * `org.jetbrains.kotlin.analysis.api.compilation` endpoint, which in turn reaches the
  * [org.jetbrains.kotlin.analysis.api.internals.KaInternalsCompilerPluginGeneratedDeclarationsProvider] proxy.
  */
-@KaImplementationDetail
 internal class KaCompilerPluginGeneratedDeclarationsProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaCompilerPluginGeneratedDeclarationsProvider {
