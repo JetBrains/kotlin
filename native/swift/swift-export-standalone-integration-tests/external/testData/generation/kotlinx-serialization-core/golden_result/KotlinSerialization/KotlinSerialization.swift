@@ -111,7 +111,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     @objc(_BinaryFormat)
     public protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
-    public protocol __BinaryFormat: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __BinaryFormat: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerialFormat {
     }
     public protocol DeserializationStrategy: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -134,7 +134,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     @objc(_KSerializer)
     public protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
     }
-    public protocol __KSerializer: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __KSerializer: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.__DeserializationStrategy {
     }
     public protocol SerialFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -165,7 +165,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
     @objc(_StringFormat)
     public protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
-    public protocol __StringFormat: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __StringFormat: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__SerialFormat {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
     public final class ContextualSerializer: KotlinRuntime.KotlinBase {
@@ -467,7 +467,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     public protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
-    public protocol __GeneratedSerializer: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __GeneratedSerializer: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.serialization.__KSerializer {
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
     open class AbstractCollectionSerializer: KotlinRuntime.KotlinBase {
@@ -673,7 +673,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
-    open class TaggedDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
+    open class TaggedDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
         @_spi(kotlinx$serialization$InternalSerializationApi)
         open var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -847,7 +847,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
     }
     @_spi(kotlinx$serialization$InternalSerializationApi)
-    open class TaggedEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
+    open class TaggedEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
         @_spi(kotlinx$serialization$InternalSerializationApi)
         open var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
             @_spi(kotlinx$serialization$InternalSerializationApi)
@@ -1129,7 +1129,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules._SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
+    public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, ExportedKotlinPackages.kotlinx.serialization.modules.__SerializersModuleCollector {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         public func include(
             module: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule
@@ -2492,7 +2492,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
     public protocol __Encoder: KotlinRuntimeSupport._KotlinBridgeable {
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    open class AbstractDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
+    open class AbstractDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeDecoder {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func beginStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
@@ -2715,7 +2715,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         }
     }
     @_spi(kotlinx$serialization$ExperimentalSerializationApi)
-    open class AbstractEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
+    open class AbstractEncoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__Encoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeEncoder, ExportedKotlinPackages.kotlinx.serialization.encoding.__CompositeEncoder {
         @_spi(kotlinx$serialization$ExperimentalSerializationApi)
         open func beginStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor

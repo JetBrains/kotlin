@@ -237,7 +237,7 @@ extension ExportedKotlinPackages.kotlin.text {
     }
     public protocol __Appendable: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.__CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, ExportedKotlinPackages.kotlin.text.__Appendable {
+    public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text.__Appendable {
         public var length: Swift.Int32 {
             get {
                 return kotlin_text_StringBuilder_length_get(self.__externalRCRef())

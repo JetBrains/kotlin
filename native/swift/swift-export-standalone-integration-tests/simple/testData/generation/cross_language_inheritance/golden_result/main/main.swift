@@ -70,7 +70,7 @@ open class Base: KotlinRuntime.KotlinBase {
         return Base_notOpen(self.__externalRCRef())
     }
 }
-open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main._Greeter, main.__Greeter {
+open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main.__Greeter {
     public init() {
         let __kt = __root___GreeterBase_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);

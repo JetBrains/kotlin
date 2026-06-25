@@ -196,3 +196,18 @@ interface Bar: Foo {
 interface Baz {
     fun foo(result: Any)
 }
+
+
+// FILE: inherited_impl_marker.kt
+
+interface InterfaceA {
+    fun foo()
+}
+
+interface InterfaceB : InterfaceA {
+    fun bar()
+}
+
+abstract class ClassC : InterfaceB {
+    fun baz() = Unit
+}

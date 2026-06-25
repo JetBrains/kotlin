@@ -29,7 +29,7 @@ public protocol _MyInterface {
 public protocol __MyInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 @_spi(InternalLibApi)
-public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib._InternalLibInterface, lib.__InternalLibInterface {
+public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib.__InternalLibInterface {
     @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
     public var experimentalProp: Swift.String {
         @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
@@ -104,7 +104,7 @@ public final class MyOptInClass: KotlinRuntime.KotlinBase {
     }
 }
 @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
-public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne, lib.__InterfaceOne {
+public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib.__InterfaceOne {
     @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
     public override init() {
         let __kt = __root___MySubClass_init_allocate()
@@ -119,7 +119,7 @@ public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOn
     }
 }
 @_spi(InterfaceOptInTwo)
-public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo, lib.__InterfaceTwo {
+public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib.__InterfaceTwo {
     @_spi(InterfaceOptInTwo)
     public init() {
         let __kt = __root___MySubInterface_init_allocate()

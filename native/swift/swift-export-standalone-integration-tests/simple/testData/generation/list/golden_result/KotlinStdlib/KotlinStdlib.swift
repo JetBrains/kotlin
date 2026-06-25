@@ -218,15 +218,15 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_ListIterator)
     public protocol _ListIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
     }
-    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
     }
     public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    public protocol __List: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __List: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Collection {
     }
-    public protocol __ListIterator: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __ListIterator: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterator {
     }
 }
 @_cdecl("kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

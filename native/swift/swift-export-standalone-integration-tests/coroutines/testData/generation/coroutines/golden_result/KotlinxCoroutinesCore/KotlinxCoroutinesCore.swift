@@ -199,13 +199,13 @@ extension ExportedKotlinPackages.kotlinx.coroutines.flow {
     }
     public protocol __FlowCollector: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    public protocol __MutableSharedFlow: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __MutableSharedFlow: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.flow.__SharedFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__FlowCollector {
     }
-    public protocol __MutableStateFlow: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __MutableStateFlow: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.flow.__StateFlow, ExportedKotlinPackages.kotlinx.coroutines.flow.__MutableSharedFlow {
     }
-    public protocol __SharedFlow: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __SharedFlow: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.flow.__Flow {
     }
-    public protocol __StateFlow: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __StateFlow: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlinx.coroutines.flow.__SharedFlow {
     }
     public static func flowCollector(
         function: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) async throws -> Swift.Void

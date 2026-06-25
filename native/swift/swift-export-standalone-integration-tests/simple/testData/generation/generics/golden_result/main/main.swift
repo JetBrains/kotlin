@@ -55,7 +55,7 @@ public protocol __B: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __Consumer: KotlinRuntimeSupport._KotlinBridgeable {
 }
-public protocol __ConsumerProducer: KotlinRuntimeSupport._KotlinBridgeable {
+public protocol __ConsumerProducer: KotlinRuntimeSupport._KotlinBridgeable, main.__Consumer, main.__Producer {
 }
 public protocol __Processor: KotlinRuntimeSupport._KotlinBridgeable {
 }

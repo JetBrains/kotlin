@@ -48,7 +48,7 @@ public protocol _DeprecatedInterface {
 public protocol _InterfaceWithDeprecatedMembers {
 }
 @objc(_NonDeprecatedInterface)
-public protocol _NonDeprecatedInterface: main._DeprecatedInterface {
+public protocol _NonDeprecatedInterface {
 }
 @objc(_SomeInterface)
 public protocol _SomeInterface {
@@ -59,6 +59,7 @@ public protocol _SubDeprecatedInterface: main._DeprecatedInterface {
 @objc(_SwiftInterfaceC)
 public protocol _SwiftInterfaceC {
 }
+@available(*, unavailable, message: "Obsoleted")
 public protocol __DeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
 public protocol __InterfaceWithDeprecatedMembers: KotlinRuntimeSupport._KotlinBridgeable {
@@ -67,7 +68,8 @@ public protocol __NonDeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable
 }
 public protocol __SomeInterface: KotlinRuntimeSupport._KotlinBridgeable {
 }
-public protocol __SubDeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable {
+@available(*, unavailable, message: "Obsoleted")
+public protocol __SubDeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable, main.__DeprecatedInterface {
 }
 public protocol __SwiftInterfaceC: KotlinRuntimeSupport._KotlinBridgeable {
 }
@@ -86,7 +88,7 @@ public final class Bar: main.Foo {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers {
+public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers {
     public init() {
         let __kt = __root___ClassWithDeprecatedMembersFromInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -246,7 +248,7 @@ public final class OptInConstructor: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main._DeprecatedInterface, main.__DeprecatedInterface {
+public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___PublicClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -290,7 +292,7 @@ open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
     }
 }
 @available(*, unavailable, message: "Obsoleted")
-public final class PublicDeprecatedClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface, main._DeprecatedInterface, main.__DeprecatedInterface {
+public final class PublicDeprecatedClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface, main.__DeprecatedInterface {
     public init() {
         let __kt = __root___PublicDeprecatedClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);

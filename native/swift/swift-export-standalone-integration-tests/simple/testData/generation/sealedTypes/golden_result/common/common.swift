@@ -271,11 +271,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     @objc(_SealedInterfaceB)
     public protocol _SealedInterfaceB: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
-    public protocol __InterfaceC: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __InterfaceC: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     }
     public protocol __SealedInterfaceA: KotlinRuntimeSupport._KotlinBridgeable {
     }
-    public protocol __SealedInterfaceB: KotlinRuntimeSupport._KotlinBridgeable {
+    public protocol __SealedInterfaceB: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     }
     public final class ClassC: ExportedKotlinPackages.org.kotlin.foo.SealedClassA {
         public init() {
@@ -309,7 +309,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             .classD(.init(self))
         }
     }
-    public final class ClassE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
+    public final class ClassE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
         public init() {
             let __kt = org_kotlin_foo_ClassE_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -523,7 +523,7 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             .nonSealedOptInClass(.init(self))
         }
     }
-    open class SealedClassA: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
+    open class SealedClassA: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions

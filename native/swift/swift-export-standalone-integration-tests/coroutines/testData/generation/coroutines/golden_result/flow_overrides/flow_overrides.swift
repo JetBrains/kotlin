@@ -11,7 +11,7 @@ public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBas
 @objc(__ExportedKotlinPackages_namespace_I1_I2)
 public protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
 }
-public protocol ___ExportedKotlinPackages_namespace_I1_I2: KotlinRuntimeSupport._KotlinBridgeable {
+public protocol ___ExportedKotlinPackages_namespace_I1_I2: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.namespace.__I1 {
 }
 public struct _ExportedKotlinPackages_namespace_I1_I2_SealedType: KotlinRuntimeSupport.SealedType {
     public let value: flow_overrides._ExportedKotlinPackages_namespace_I1_I2

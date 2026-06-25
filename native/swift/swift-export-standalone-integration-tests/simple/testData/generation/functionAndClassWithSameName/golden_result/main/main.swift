@@ -69,7 +69,7 @@ public protocol _InterfaceWithFactory {
 @objc(_Job)
 public protocol _Job {
 }
-public protocol __CompletableJob: KotlinRuntimeSupport._KotlinBridgeable {
+public protocol __CompletableJob: KotlinRuntimeSupport._KotlinBridgeable, main.__Job {
 }
 public protocol __InterfaceWithFactory: KotlinRuntimeSupport._KotlinBridgeable {
 }

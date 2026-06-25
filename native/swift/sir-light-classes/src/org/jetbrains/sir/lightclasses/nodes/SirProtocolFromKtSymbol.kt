@@ -8,7 +8,8 @@ package org.jetbrains.sir.lightclasses.nodes
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.expandedSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
 import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -56,25 +56,25 @@ internal open class SirProtocolFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        val isUnavailable = this.isUnavailable
-        val inherited = translatedProtocols.filter { isUnavailable || !it.isUnavailable }
-        if (isUnavailable) inherited else inherited + existentialMarker
+        if (isUnavailable) translatedProtocols else translatedProtocols + existentialMarker
     }
 
-    internal val translatedProtocols: List<SirProtocol> by lazyWithSessions {
+    internal val translatedProtocols: List<SirProtocolFromKtSymbol> by lazyWithSessions {
+        val isUnavailable = this.isUnavailable
         ktSymbol.superTypes
-            .mapNotNull { it.symbol as? KaClassSymbol }
+            .asSequence()
+            .filterIsInstance<KaClassType>()
+            .mapNotNull { it.expandedSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
             .filter {
                 it.sirAvailability().let {
                     it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
                 }
             }
-            .mapNotNull {
-                it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
-                    ktSymbol.containingModule.sirModule().updateImportFor(it)
-                }
-            }
+            .mapNotNull { it.toSir().primaryDeclaration as SirProtocolFromKtSymbol? }
+            .filter { isUnavailable || !it.isUnavailable }
+            .toList()
+            .also { protocols -> protocols.forEach { ktSymbol.containingModule.sirModule().updateImportFor(it) } }
     }
 
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
@@ -169,7 +169,7 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol>
-        get() = target.translatedProtocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
+        get() = target.translatedProtocols.map { it.existentialMarker }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(
@@ -205,11 +205,22 @@ internal class SirImplementationMarkerProtocolFromKtSymbol(
     override val origin: KotlinSource get() = KotlinImplementationMarkerProtocol(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PUBLIC
     override val documentation: String? = null
-    override val attributes: List<SirAttribute> by lazy { translatedOptInAttributes }
+    override val attributes: List<SirAttribute> by lazy {
+        buildList {
+            addAll(translatedAttributes)
+            replaceOrAddPropagatedUnavailability { SirNominalType(target).unavailableTypes }
+        }
+    }
     override val name: String get() = "__${target.name}"
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
-    override val protocols: List<SirProtocol> get() = listOf(KotlinRuntimeSupportModule.kotlinBridgeable)
+    override val protocols: List<SirProtocol>
+        get() = buildList {
+            add(KotlinRuntimeSupportModule.kotlinBridgeable)
+            for (protocol in target.translatedProtocols) {
+                add(protocol.implementationMarker)
+            }
+        }
     override val bridges: List<SirBridge> = emptyList()
 }
 
