@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.toIrConst
 
@@ -65,12 +66,19 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
             } else if (functionReference.reflectionTargetSymbol != null) {
                 arguments[0] = functionReference.getFlags().toIrConst(context.irBuiltIns.intType)
                 arguments[1] = functionReference.getArity().toIrConst(context.irBuiltIns.intType)
-                arguments[2] = JsIrBuilder.buildCall(jsContext.symbols.signatureIdSymbol).apply {
+                arguments[2] = functionReference.getMinimalArity().toIrConst(context.irBuiltIns.intType)
+                arguments[3] = JsIrBuilder.buildCall(jsContext.symbols.signatureIdSymbol).apply {
                     arguments[0] = functionReference.getId(jsContext).toIrConst(context.irBuiltIns.stringType)
                 }
             }
         }
     }
+
+    fun IrRichFunctionReference.getMinimalArity(): Int =
+        // Here we suppose that:
+        // - Coroutine continuation is a param without a defaultValue
+        // - We can bound only parameters without defaultValue
+        (reflectionTargetSymbol?.owner?.parameters ?: invokeFunction.parameters).count { !it.hasDefaultValue() } - boundValues.size + if (invokeFunction.isSuspend) 1 else 0
 
     override fun getSuperClassType(reference: IrRichFunctionReference): IrType = when {
         reference.shouldAddContinuation -> context.symbols.coroutineImpl.owner.defaultType

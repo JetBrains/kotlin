@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,8 @@ private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier(
 fun IrType.isFunctionMarker(): Boolean = classifierOrNull?.isFunctionMarker() == true
 fun IrType.isFunction(): Boolean = classifierOrNull?.isFunction() == true
 fun IrType.isKFunction(): Boolean = classifierOrNull?.isKFunction() == true
+fun IrType.isNumberedFunction(): Boolean = classifierOrNull?.isNumberedFunction() == true
+fun IrType.isNumberedKFunction(): Boolean = classifierOrNull?.isNumberedKFunction() == true
 fun IrType.isSuspendFunction(): Boolean = classifierOrNull?.isSuspendFunction() == true
 fun IrType.isKSuspendFunction(): Boolean = classifierOrNull?.isKSuspendFunction() == true
 
@@ -43,6 +45,10 @@ fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFun
 fun IrClassifierSymbol.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
 fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
 fun IrClassifierSymbol.isFunctional(): Boolean = isFunction() || isKFunction() || isSuspendFunction() || isKSuspendFunction()
+fun IrClassifierSymbol.isNumberedFunction(): Boolean =
+    isFunction() && !isClassWithName("Function", kotlinPackageFqn)
+fun IrClassifierSymbol.isNumberedKFunction(): Boolean =
+    isKFunction() && !isClassWithName("KFunction", kotlinReflectionPackageFqn)
 
 private fun IrClassifierSymbol.isClassWithName(name: String, packageFqName: FqName): Boolean =
     checkNameAndPackage({ it == name }, { it == packageFqName.asString() })

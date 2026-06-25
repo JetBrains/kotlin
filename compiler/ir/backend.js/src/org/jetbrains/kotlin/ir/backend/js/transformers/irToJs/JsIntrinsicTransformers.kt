@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
+import org.jetbrains.kotlin.ir.util.isKFunction
 import org.jetbrains.kotlin.ir.util.isThrowable
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
@@ -394,7 +396,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                             typeArgument.isInt() ||
                             typeArgument.isFloat() ||
                             typeArgument.isDouble() -> JsNameRef("Number")
-                    typeArgument.isFunctionOrKFunction() -> JsNameRef("Function")
+                    typeArgument.isFunction() -> JsNameRef("Function")
                     else -> typeArgument.getClassRef(context.staticContext)
                 }
             }

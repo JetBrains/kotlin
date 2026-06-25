@@ -239,6 +239,8 @@ class BackendJsSymbols(
     val isArraySymbol by CallableIds.isArray.functionSymbol()
     //    val isCharSymbol = CallableIds.isChar.functionSymbol()
     val isSuspendFunctionSymbol by CallableIds.isSuspendFunction.functionSymbol()
+    val isFunctionNSymbol by CallableIds.isFunctionN.functionSymbol()
+    val isKFunctionNSymbol by CallableIds.isKFunctionN.functionSymbol()
 
     val isNumberSymbol by CallableIds.isNumber.functionSymbol()
     val isComparableSymbol by CallableIds.isComparable.functionSymbol()
@@ -621,6 +623,8 @@ private object CallableIds {
     val isArray = "isArray".jsCallableId
     //    val isChar = "isChar".jsCallableId
     val isSuspendFunction = "isSuspendFunction".jsCallableId
+    val isFunctionN = "isFunctionN".jsCallableId
+    val isKFunctionN = "isKFunctionN".jsCallableId
     val isNumber = "isNumber".jsCallableId
     val isComparable = "isComparable".jsCallableId
     val isCharSequence = "isCharSequence".jsCallableId

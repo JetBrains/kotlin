@@ -640,7 +640,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         val constructedCallableReference = when {
             kFunctionImplCall != null -> {
-                val [flags, arity, id] = kFunctionImplCall.arguments
+                val [flags, arity, minimalArity, id] = kFunctionImplCall.arguments
 
                 JsIrBuilder.buildCall(constructCallableReferenceSymbol)
                     .apply {
@@ -651,14 +651,17 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                             lambdaDeclaration.parameters.size.toIrConst(context.irBuiltIns.intType)
                         } else arity?.shallowCopy() ?: compilationException("'arity' is expected to be passed to a parent constructor", kFunctionImplCall)
 
-                        arguments[2] = flags?.shallowCopy()
+                        arguments[2] = minimalArity?.shallowCopy()
+                            ?: compilationException("'minimalArity' is expected to be passed to a parent constructor", kFunctionImplCall)
+
+                        arguments[3] = flags?.shallowCopy()
                             ?: compilationException("'flags' is expected to be passed to a parent constructor", kFunctionImplCall)
 
-                        arguments[3] = id?.deepCopyWithoutPatchingParents()
+                        arguments[4] = id?.deepCopyWithoutPatchingParents()
                             ?: compilationException("'id' is expected to be passed to a parent constructor", kFunctionImplCall)
 
-                        arguments[4] = callableName
-                        arguments[5] = if (factoryFunction.parameters.any()) {
+                        arguments[5] = callableName
+                        arguments[6] = if (factoryFunction.parameters.any()) {
                             JsIrBuilder.buildArray(
                                 factoryFunction.parameters.map { JsIrBuilder.buildGetValue(it.symbol) },
                                 context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.anyNType),
@@ -678,6 +681,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                         arguments[3] = context.getVoid()
                         arguments[4] = context.getVoid()
                         arguments[5] = context.getVoid()
+                        arguments[6] = context.getVoid()
                     }
             }
 
