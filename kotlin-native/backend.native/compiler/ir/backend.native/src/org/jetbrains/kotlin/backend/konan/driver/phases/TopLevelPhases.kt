@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
@@ -82,7 +83,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         fun createGenerationState(fragment: BackendJobFragment): NativeGenerationState {
             val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
-            val outputFiles = OutputFiles(outputPath, config.target, config.produce)
+            val outputFiles = OutputFiles(
+                    outputPath,
+                    config.target,
+                    config.produce,
+                    objcExportCacheEnabled = config.configuration.get(BinaryOptions.objcExportCache) == true
+            )
             val generationState = NativeGenerationState(context.config, backendContext,
                     fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
                     llvmModuleName = "out", // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
@@ -279,7 +285,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         val tempFiles = createTempFiles(context.config, null)
         val bitcodeFile = tempFiles.create(context.config.shortModuleName ?: "out", ".bc").javaFile()
         val outputPath = context.config.outputPath
-        val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
+        val outputFiles = OutputFiles(
+                outputPath,
+                context.config.target,
+                context.config.produce,
+                objcExportCacheEnabled = context.config.configuration.get(BinaryOptions.objcExportCache) == true
+        )
         bitcodeEngine.runBitcodePostProcessing()
         runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
@@ -403,8 +414,16 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
     val compilationResult = temporaryFiles.create(File(outputFiles.nativeBinaryFile).name, ".o").javaFile()
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
+    val objcExportCacheEnabled = context.config.configuration.get(BinaryOptions.objcExportCache) == true
     val [linkerInput, cacheBinaries] = run {
-        val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
+        val resolvedCacheBinaries by lazy {
+            resolveCacheBinaries(
+                    context.config.cachedLibraries,
+                    moduleCompilationOutput.dependenciesTrackingResult,
+                    objcExportCacheEnabled,
+                    context.config.resolvedLibraries.getFullList()
+            )
+        }
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())

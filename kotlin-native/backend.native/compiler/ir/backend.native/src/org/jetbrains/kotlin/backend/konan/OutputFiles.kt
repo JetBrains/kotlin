@@ -15,7 +15,17 @@ import kotlin.random.Random
 /**
  * Creates and stores terminal compiler outputs.
  */
-class OutputFiles(val outputName: String, target: KonanTarget, val produce: CompilerOutputKind) {
+class OutputFiles(
+        val outputName: String,
+        target: KonanTarget,
+        val produce: CompilerOutputKind,
+        objcExportCacheEnabled: Boolean = false
+) {
+    private val adjustedOutputName = if (objcExportCacheEnabled && produce == CompilerOutputKind.STATIC_CACHE) {
+        if (outputName.endsWith(".objc")) outputName else "$outputName.objc"
+    } else {
+        outputName
+    }
 
     private val prefix = produce.prefix(target)
     private val suffix = produce.suffix(target)
@@ -23,33 +33,33 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     /**
      * Header file for dynamic library.
      */
-    val cAdapterHeader by lazy { File("${outputName}_api.h") }
-    val cAdapterDef    by lazy { File("${outputName}.def") }
+    val cAdapterHeader by lazy { File("${adjustedOutputName}_api.h") }
+    val cAdapterDef    by lazy { File("${adjustedOutputName}.def") }
 
     /**
      * Compiler's main output file.
      */
     val mainFileName =
             if (produce.isCache)
-                outputName
+                adjustedOutputName
             else
-                outputName.fullOutputName()
+                adjustedOutputName.fullOutputName()
 
     val mainFile = File(mainFileName)
 
-    val perFileCacheFileName = File(outputName).absoluteFile.name
+    val perFileCacheFileName = File(adjustedOutputName).absoluteFile.name
 
-    val cacheFileName = File((outputName).fullOutputName()).absoluteFile.name
+    val cacheFileName = File((adjustedOutputName).fullOutputName()).absoluteFile.name
 
     private fun File.cacheBinaryPart() = this.child(CachedLibraries.PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
 
     private fun File.cacheIrPart() = this.child(CachedLibraries.PER_FILE_CACHE_IR_LEVEL_DIR_NAME)
 
-    val dynamicCacheInstallName = File(outputName).cacheBinaryPart().child(cacheFileName).absolutePath
+    val dynamicCacheInstallName = File(adjustedOutputName).cacheBinaryPart().child(cacheFileName).absolutePath
 
     val tempCacheDirectory =
             if (produce.isCache)
-                File(outputName + Random.nextLong().toString())
+                File(adjustedOutputName + Random.nextLong().toString())
             else null
 
     fun prepareTempDirectories() {
@@ -59,6 +69,10 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
     }
 
     val nativeBinaryFile = tempCacheDirectory?.cacheBinaryPart()?.child(cacheFileName)?.absolutePath ?: mainFileName
+
+    val objcExportCacheCsvFile = tempCacheDirectory?.cacheBinaryPart()?.child(
+            cacheFileName.substringBeforeLast(".") + ".csv"
+    )
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 

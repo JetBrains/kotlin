@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import java.io.PrintStream
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -46,10 +48,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         }
     })
 
-    val files = topLevel.map { [sourceFile, declarations] ->
+    val files = topLevel.entries.map { entry ->
+        val sourceFile = entry.key
+        val declarations = entry.value
         val binaryName = namer.getFileClassName(sourceFile).binaryName
         val methods = declarations.toObjCMethods()
-        ObjCClassForKotlinFile(binaryName, sourceFile, methods)
+        val klib = declarations.firstOrNull()?.module?.konanLibrary
+        ObjCClassForKotlinFile(binaryName, sourceFile, methods, klib)
     }
 
     val classToType = mutableMapOf<ClassDescriptor, ObjCTypeForKotlinType>()
@@ -316,7 +321,8 @@ internal class ObjCProtocolForKotlinInterface(
 internal class ObjCClassForKotlinFile(
         binaryName: String,
         private val sourceFile: SourceFile,
-        val methods: List<ObjCMethodForKotlinMethod>
+        val methods: List<ObjCMethodForKotlinMethod>,
+        val klib: org.jetbrains.kotlin.library.KotlinLibrary? = null
 ) : ObjCTypeSpec(binaryName) {
     override fun toString(): String =
             "ObjC spec of class `$binaryName` for `${sourceFile.name}`"

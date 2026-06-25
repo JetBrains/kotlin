@@ -115,8 +115,25 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runFrontend(config, environment) }
                 ?: return
 
-        val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
-        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput)
+        val objCExportedInterface = if (config.objcExportCacheEnabled) {
+            performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
+                engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+            }
+        } else null
+
+        val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
+            engine.linkKlibs(frontendOutput) {
+                if (objCExportedInterface != null) {
+                    it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+                } else {
+                    null
+                }
+            }
+        }
+        val backendContext = createBackendContext(config, frontendOutput, linkKlibsOutput) {
+            it.objCExportedInterface = objCExportedInterface
+            it.objCExportCodeSpec = objCCodeSpec
+        }
         engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
     }
 

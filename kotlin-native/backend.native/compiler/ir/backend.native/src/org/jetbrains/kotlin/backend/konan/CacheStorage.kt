@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.backend.konan.objcexport.ExportedAdapterMetadata
 import kotlin.random.Random
 
 private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
@@ -58,6 +59,9 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
     fun saveAdditionalCacheInfo() {
         outputFiles.prepareTempDirectories()
+        if (generationState.config.objcExportCacheEnabled) {
+            saveObjCExportCacheCsv()
+        }
         if (!generationState.config.produce.isHeaderCache) {
             saveMetadata()
         }
@@ -66,6 +70,15 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveClassFields()
         saveEagerInitializedProperties()
         saveTrivialGetters()
+    }
+
+    private fun saveObjCExportCacheCsv() {
+        val csvFile = outputFiles.objcExportCacheCsvFile ?: return
+        csvFile.javaFile().bufferedWriter().use { writer ->
+            generationState.objCExport.exportedAdapters.forEach { metadata ->
+                writer.write("${metadata.objCName},${metadata.symbolName},${metadata.kind}\n")
+            }
+        }
     }
 
     private fun saveMetadata() {

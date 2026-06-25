@@ -193,11 +193,12 @@ fun AbstractNativeSimpleTest.compileToExecutableInOneStage(testCase: TestCase, v
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
     cacheDir: File,
-    vararg dependencies: TestCompilationArtifact.KLIBStaticCache
+    vararg dependencies: TestCompilationArtifact.KLIBStaticCache,
+    freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
 ): TestCompilationArtifact.KLIBStaticCache {
     val compilation = StaticCacheCompilation(
         settings = testRunSettings,
-        freeCompilerArgs = TestCompilerArgs.EMPTY,
+        freeCompilerArgs = freeCompilerArgs,
         StaticCacheCompilation.Options.Regular,
         dependencies = buildList {
             this += klib.asLibraryDependency()

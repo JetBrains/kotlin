@@ -190,6 +190,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             LLVMSetInitializer(classGlobal.llvm, classObjectValue.llvm)
             LLVMSetSection(classGlobal.llvm, "__DATA, __objc_data")
             LLVMSetAlignment(classGlobal.llvm, LLVMABIAlignmentOfType(runtime.targetData, classObjectType))
+            if (context.config.objcExportCacheEnabled) {
+                LLVMSetLinkage(classGlobal.llvm, LLVMLinkage.LLVMWeakAnyLinkage)
+            }
 
             llvm.usedGlobals.add(classGlobal.llvm)
 
