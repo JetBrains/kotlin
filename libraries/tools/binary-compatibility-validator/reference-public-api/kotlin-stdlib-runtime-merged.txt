@@ -3431,6 +3431,10 @@ public final class kotlin/internal/ProgressionUtilKt {
 	public static final fun getProgressionLastElement (JJJ)J
 }
 
+public final class kotlin/internal/ThrowNoWhenBranchMatchedExceptionKt {
+	public static final fun throwNoWhenBranchMatchedException (Ljava/lang/Object;)Ljava/lang/Void;
+}
+
 public final class kotlin/internal/UProgressionUtilKt {
 	public static final fun getProgressionLastElement-7ftBX0g (JJJ)J
 	public static final fun getProgressionLastElement-Nkh28Cs (III)I
