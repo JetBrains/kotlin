@@ -81,6 +81,16 @@ public interface JsCompilerLinkingArguments : JsCompilerArguments,
         JsCompilerLinkingArgument("X_ES_CLASSES", KotlinReleaseVersion(1, 8, 20))
 
     /**
+     * Variables in generated JavaScript code are declared with 'let' or 'const' keywords instead of 'var'
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ES_CONST_LET: JsCompilerLinkingArgument<Boolean> =
+        JsCompilerLinkingArgument("X_ES_CONST_LET", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Enable ES2015 generator functions usage inside the compiled code. Enabled by default in case of ES2015 target usage
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

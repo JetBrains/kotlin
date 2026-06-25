@@ -30,6 +30,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.optimizeGeneratedJs = from.optimizeGeneratedJs
     to.platformArgumentsProviderJsExpression = from.platformArgumentsProviderJsExpression
     to.target = from.target
+    to.useEs6ConstLet = from.useEs6ConstLet
     to.useEsArrowFunctions = from.useEsArrowFunctions
     to.useEsClasses = from.useEsClasses
     to.useEsGenerators = from.useEsGenerators
