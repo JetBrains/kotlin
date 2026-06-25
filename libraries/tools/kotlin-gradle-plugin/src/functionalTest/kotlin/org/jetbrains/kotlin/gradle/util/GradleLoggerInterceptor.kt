@@ -138,3 +138,10 @@ fun List<OutputEvent>.assertLogDoesNotContain(expected: String) {
     val allLogs = joinToString("\n")
     fail("Expected log to not contain '$expected', actual log:\n$allLogs")
 }
+
+fun List<OutputEvent>.assertLogDoesNotContain(pattern: Regex) {
+    val contains = any { pattern.containsMatchIn(it.toString()) }
+    if (!contains) return
+    val allLogs = joinToString("\n")
+    fail("Expected log to not contain pattern '$pattern', actual log:\n$allLogs")
+}

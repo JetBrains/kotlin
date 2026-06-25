@@ -2738,13 +2738,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun produceExecutable (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestDevServerService {
-	public abstract fun use (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestsLocation {
 	public abstract fun getBundleLocation ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getDevServer ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getUrl ()Lorg/gradle/api/provider/Provider;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl {

@@ -279,4 +279,65 @@ class JsBrowserTestsIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `two subprojects should reuse single http server for tests`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+                .copy(logLevel = LogLevel.DEBUG)
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
+        ) {
+            plugins {
+                kotlin("multiplatform") apply false
+            }
+
+            val subprojectA = project("empty", gradleVersion)
+            val subprojectB = project("empty", gradleVersion)
+
+            include(subprojectA, "subprojectA")
+            include(subprojectB, "subprojectB")
+
+            for (subproject in listOf(subprojectA, subprojectB)) {
+                subproject.plugins {
+                    kotlin("multiplatform")
+                }
+                subproject.buildScriptInjection {
+                    project.applyMultiplatform {
+                        js {
+                            browser {
+                                @OptIn(ExperimentalJsTestDsl::class)
+                                test {
+                                    it.chromium {}
+                                }
+                            }
+                        }
+                        sourceSets.commonTest.dependencies {
+                            implementation(kotlin("test"))
+                        }
+                        sourceSets.commonTest.get().compileSource(
+                            """
+                            import kotlin.test.*
+                            
+                            class JsBrowserSmokeTest {
+                                @Test
+                                fun assertOk() {
+                                    assertTrue(42 == 42)
+                                }
+                            }
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            build(
+                ":subprojectA:jsBrowserTest",
+                ":subprojectB:jsBrowserTest"
+            ) {
+                assertOutputContainsExactlyTimes("HTTP server for js tests started at", 1)
+            }
+        }
+    }
 }

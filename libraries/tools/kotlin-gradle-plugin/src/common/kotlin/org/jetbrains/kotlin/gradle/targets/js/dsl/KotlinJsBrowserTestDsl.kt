@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
+import java.net.URI
 import java.time.Duration
 
 @ExperimentalJsTestDsl
@@ -77,9 +78,9 @@ interface BrowserTestRunnerConfigDsl {
 @ExperimentalJsTestDsl
 interface KotlinJsTestsLocation {
     /**
-     * Access prepared JS tests via dev web server.
+     * Access prepared JS tests via http web server.
      */
-    val devServer: Provider<out KotlinJsTestDevServerService>
+    val url: Provider<URI>
 
     /**
      * Location of a prepared JS tests bundle on local filesystem.

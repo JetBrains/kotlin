@@ -18,15 +18,20 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.mapProperty
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
-import org.jetbrains.kotlin.gradle.targets.js.testing.FileBasedKotlinJsTestDevServer
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinHttpServerForBrowserJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
+import org.jetbrains.kotlin.gradle.targets.js.testing.kotlinHttpServerForBrowserJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.property
+import java.net.URI
 import java.time.Duration
 import javax.inject.Inject
 
@@ -78,8 +83,20 @@ internal abstract class KotlinJsBrowserTestImpl
         }
     }
 
-    override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> =
-        defaultBundleTask.map { KotlinDefaultJsTestLocation(it.outputBundleDir) }
+    override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> = run {
+        val uniqueBundleName = lowerCamelCaseName(
+            testCompilation.project.currentBuildId().buildPath,
+            testCompilation.disambiguateName("bundle"),
+        )
+
+        defaultBundleTask.map {
+            KotlinDefaultJsTestLocation(
+                it.outputBundleDir,
+                uniqueBundleName,
+                testCompilation.project.kotlinHttpServerForBrowserJsTests()
+            )
+        }
+    }
 
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
         chromiumRunners + firefoxRunners + webkitRunners
@@ -152,11 +169,15 @@ internal abstract class KotlinJsBrowserTestImpl
 
 internal class KotlinDefaultJsTestLocation(
     @get:InputDirectory
-    override val bundleLocation: Provider<Directory>
+    override val bundleLocation: Provider<Directory>,
+    private val uniqueBundleName: String,
+    httpServerJsTestBuildService: Provider<KotlinHttpServerForBrowserJsTests>,
 ) : KotlinJsTestsLocation {
 
     @get:Internal
-    override val devServer: Provider<FileBasedKotlinJsTestDevServer> = bundleLocation
-        .map { it.file("test.html") }
-        .map { FileBasedKotlinJsTestDevServer(it.asFile.toPath()) }
+    override val url: Provider<URI> = bundleLocation
+        .zip(httpServerJsTestBuildService) { bundleDir, httpServer ->
+            val baseUri = httpServer.serve(uniqueBundleName, bundleDir)
+            baseUri.resolve("test.html")
+        }
 }
