@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
-import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_BACKEND
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.chainedDisallowChanges
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -131,6 +130,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
+
+    @get:Internal
+    internal abstract val getIsWasmPlatform: Property<Boolean>
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
@@ -364,8 +366,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             toolingDiagnosticsCollector = toolingDiagnosticsCollector,
         )
         processArgsBeforeCompile(args)
-        @Suppress("DEPRECATION")
-        if (args.wasm || args.freeArgs.contains(WASM_BACKEND)) {
+        if (getIsWasmPlatform.getOrElse(false)) {
             val wasmArgs = copyK2JSCompilerArguments(args, KotlinWasmCompilerArguments())
             compilerRunner.runWasmCompilerAsync(
                 wasmArgs,

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_MODULE_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_BACKEND
 import org.jetbrains.kotlin.gradle.targets.js.ir.WASM_TARGET
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.moduleName
@@ -64,6 +63,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 else -> task.runViaBuildToolsApi.value(false).disallowChanges()
             }
             task.generateCompilerRefIndex.value(false).disallowChanges()
+            task.getIsWasmPlatform.value(compilation.platformType == KotlinPlatformType.wasm).disallowChanges()
         }
     }
 
@@ -107,14 +107,6 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 add(arg)
             }
         }
-
-        addIfDoesntContain(@Suppress("DEPRECATION") WASM_BACKEND)
-
-        /**
-         * Suppress the [org.jetbrains.kotlin.cli.CliDiagnostics.DEPRECATED_CLI_ARG] warning because it breaks bootstrap compilation (considering the `-Werror` is enabled).
-         * The suppression itself is needed for the `-Xwasm` that's being added above.
-         */
-        addIfDoesntContain("-Xwarning-level=DEPRECATED_CLI_ARG:disabled")
 
         val wasmTargetType = (compilation.origin as KotlinJsIrCompilation).target.wasmTargetType!!
         val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"

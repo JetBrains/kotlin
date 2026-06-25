@@ -36,8 +36,11 @@ import javax.inject.Inject
  * Compile executable JS or Wasm files from KLibs.
  */
 @CacheableTask
-abstract class KotlinJsIrLink @Inject constructor(
+abstract class KotlinJsIrLink
+@Deprecated("Do not use a constructor of a task explicitly. Scheduled for internal in Kotlin 2.6.")
+@Inject constructor(
     project: Project,
+    @Suppress("UNUSED_PARAMETER")
     target: KotlinPlatformType,
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor,
@@ -75,6 +78,9 @@ abstract class KotlinJsIrLink @Inject constructor(
 
     @get:Input
     var incrementalWasm: Boolean = propertiesProvider.incrementalWasm
+
+    private val isWasmPlatformValue
+        get() = getIsWasmPlatform.getOrElse(false)
 
     @get:Input
     val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
@@ -127,11 +133,11 @@ abstract class KotlinJsIrLink @Inject constructor(
                 args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
             }
 
-            if (isWasmPlatform && modeProperty.get() == DEVELOPMENT) {
+            if (isWasmPlatformValue && modeProperty.get() == DEVELOPMENT) {
                 args.debuggerCustomFormatters = true
             }
 
-            if (delegateTranspilationToExternalTool && !isWasmPlatform) {
+            if (delegateTranspilationToExternalTool && !isWasmPlatformValue) {
                 // If the delegated transpilation used, we should compile to the latest supported JS version
                 // so that the third-party transpilation tool (swc) will transpile it by the rules defined by users
                 args.target = JsPlatforms.latestSupportedTarget
@@ -145,11 +151,8 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
-    private val isWasmPlatform: Boolean =
-        target == KotlinPlatformType.wasm
-
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
-        if (!isWasmPlatform) {
+        if (!isWasmPlatformValue) {
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinJsIrLinkMetrics.collectMetrics(args, incrementalJsIr, it)
             }
@@ -172,5 +175,5 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     private fun usingCacheDirectory() =
-        (if (isWasmPlatform) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
+        (if (isWasmPlatformValue) incrementalWasm else incrementalJsIr) && modeProperty.get() == DEVELOPMENT
 }
