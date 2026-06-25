@@ -15,14 +15,15 @@ fun box() : String {
         return "FAIL 1"
     } catch(t: Error) {
         val cause = t.cause
-        if (cause !is IllegalStateException) return "FAIL 2"
-        if (cause.message != "1") return "FAIL 3"
+        if (cause !is IllegalStateException) return "FAIL 2: cause must be IllegalStateException, was ${cause?.let { it::class }}"
+        if (cause.message != "1") return "FAIL 3: message must be '1', was '${cause.message}'"
     }
     try {
         y
         return "FAIL 4"
     } catch(t: Error) {
-        // On JVM < 20, t.cause is null, but on JVM >= 20, it's ExceptionInInitializerError.
+        if (t.cause != null) return "FAIL 5: cause must be null, got ${t.cause}"
+        if (t.message == null) return "FAIL 6: message must not be null"
     }
     return "OK"
 }
