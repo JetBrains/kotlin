@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWithGeneratorsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
-import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
+import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
@@ -32,20 +32,15 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
 import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.js.config.generateInlineAnonymousFunctions
+import org.jetbrains.kotlin.js.config.useEs6ConstLet
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
@@ -233,7 +228,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
      *
      * ES6 `let` statements don't have this problem.
      */
-    private class ClosureUsageAnalyser : IrVisitorVoid() {
+    private inner class ClosureUsageAnalyser : IrVisitorVoid() {
 
         private val lambdaConstructorCalls: MutableMap<IrConstructorSymbol, MutableList<IrConstructorCall>> = hashMapOf()
         private val variablesDeclaredInLoops: MutableSet<IrValueDeclaration> = hashSetOf()
@@ -286,6 +281,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             arguments.any { it!!.referencesVariablesDeclaredInLoops() }
 
         fun lambdaCapturesVariablesDeclaredInLoops(lambdaClass: IrClass): Boolean {
+            if (context.configuration.useEs6ConstLet) return false
             val primaryConstructor = lambdaClass.primaryConstructor ?: return false
             val ctorCalls = lambdaConstructorCalls[primaryConstructor.symbol] ?: return false
             return ctorCalls.any { it.referencesVariablesDeclaredInLoops() }

@@ -15,7 +15,8 @@ fun setOK(): Int {
     return 1
 }
 
-// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.js
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.js TARGET_BACKENDS=JS_IR
+// EXPECT_GENERATED_JS: function=box expect=inlineEmptyFunctionTest.es6.js TARGET_BACKENDS=JS_IR_ES6
 fun box(): String {
     sep("Simple call")
     inlineFunction(1)

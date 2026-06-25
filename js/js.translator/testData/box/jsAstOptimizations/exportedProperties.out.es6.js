@@ -3,7 +3,7 @@ class Child extends Parent {
     return new.target.new_Child_enp6fv_k$();
   }
   static new_Child_enp6fv_k$($box) {
-    var $this = this.new_Parent_wmhgih_k$($box);
+    const $this = this.new_Parent_wmhgih_k$($box);
     $this.foo_2 = null;
     return $this;
   }
