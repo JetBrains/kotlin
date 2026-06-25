@@ -1,4 +1,5 @@
 @kotlin.Metadata
+@kotlin.ExposedCopyVisibility
 public final class test/Test$EverythingExceptTheClassAndPropertyToBeRemoved {
     // source: 'test.kt'
     public final inner class test/Test$EverythingExceptTheClassAndPropertyToBeRemoved
