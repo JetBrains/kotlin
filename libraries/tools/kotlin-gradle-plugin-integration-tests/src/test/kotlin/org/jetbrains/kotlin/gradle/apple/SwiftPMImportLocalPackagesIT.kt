@@ -12,6 +12,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.konan.target.Xcode
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -773,20 +774,25 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
             plugins {
                 kotlin("multiplatform")
             }
+
+            val isXcodeLessThan27 = Xcode.findCurrent().version.major < 27
             buildScriptInjection {
                 project.applyMultiplatform {
-                    listOf(
+                    val targets = mutableListOf(
                         iosArm64(),
                         iosX64(),
                         iosSimulatorArm64(),
                         macosArm64(),
                         tvosArm64(),
                         tvosSimulatorArm64(),
-                        watchosArm32(),
                         watchosArm64(),
                         watchosSimulatorArm64(),
                         watchosDeviceArm64(),
-                    ).forEach {
+                    )
+                    if (isXcodeLessThan27) {
+                        targets.add(watchosArm32())
+                    }
+                    targets.forEach {
                         it.binaries.framework {
                             baseName = "Shared"
                             isStatic = false
@@ -823,18 +829,22 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                 )
             )
 
-            build(
+            val linkTasks = mutableListOf(
                 "linkDebugFrameworkIosArm64",
                 "linkDebugFrameworkIosX64",
                 "linkDebugFrameworkIosSimulatorArm64",
                 "linkDebugFrameworkMacosArm64",
                 "linkDebugFrameworkTvosArm64",
                 "linkDebugFrameworkTvosSimulatorArm64",
-                "linkDebugFrameworkWatchosArm32",
                 "linkDebugFrameworkWatchosArm64",
                 "linkDebugFrameworkWatchosSimulatorArm64",
                 "linkDebugFrameworkWatchosDeviceArm64",
             )
+            if (isXcodeLessThan27) {
+                linkTasks.add("linkDebugFrameworkWatchosArm32")
+            }
+
+            build(*linkTasks.toTypedArray())
 
             buildXcodeProject(
                 xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj"),
