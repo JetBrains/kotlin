@@ -99,6 +99,8 @@ org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNul
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression.isNegated
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractIsNullPredicateExpression.negated()
 org.jetbrains.kotlin.analysis.api.contracts.description.booleans.KaContractLogicalNotExpression.argument
+org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot
+org.jetbrains.kotlin.analysis.api.dataflow.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic.diagnosticClass
 org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity.ERROR
 org.jetbrains.kotlin.analysis.api.diagnostics.KaSeverity.INFO

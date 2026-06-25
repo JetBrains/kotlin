@@ -31,6 +31,8 @@ public interface KaInternals {
 
     public val compilerPluginGeneratedDeclarationsProvider: KaInternalsCompilerPluginGeneratedDeclarationsProvider
 
+    public val dataFlowProvider: KaInternalsDataFlowProvider
+
     public val diagnosticProvider: KaInternalsDiagnosticProvider
 
     public val evaluator: KaInternalsEvaluator

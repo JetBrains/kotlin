@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.parentsOfType
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredAugmentedAssign
 import org.jetbrains.kotlin.KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-import org.jetbrains.kotlin.analysis.api.components.*
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
-import org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot.VariableReassignment
+import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot
+import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot.DefaultExpressionInfo
+import org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot.VariableReassignment
+import org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCast
+import org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKind
+import org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseImplicitReceiverSmartCast
@@ -21,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionCompo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSmartCastInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.impl.base.util.withKaModuleEntry
+import org.jetbrains.kotlin.analysis.api.internals.KaInternalsDataFlowProvider
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -54,11 +59,11 @@ import kotlin.math.sign
 
 internal class KaFirDataFlowProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaDataFlowProvider, KaFirSessionComponent {
-    override val KtExpression.smartCastInfo: KaSmartCastInfo?
-        get() = withPsiValidityAssertion {
+) : KaBaseSessionComponent<KaFirSession>(), KaInternalsDataFlowProvider, KaFirSessionComponent {
+    override fun smartCastInfo(expression: KtExpression): KaSmartCastInfo? =
+        expression.withPsiValidityAssertion {
             with(analysisSession) {
-                val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(this@smartCastInfo) ?: return null
+                val firSmartCastExpression = getMatchingFirExpressionWithSmartCast(expression) ?: return null
                 val originalType = firSmartCastExpression.originalExpression.resolvedType.asKaType()
                 val smartCastType = firSmartCastExpression.smartcastType.coneType.asKaType()
 
@@ -75,9 +80,9 @@ internal class KaFirDataFlowProvider(
             }
         }
 
-    override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
-        get() = withPsiValidityAssertion {
-            val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(this) ?: return emptyList()
+    override fun implicitReceiverSmartCasts(expression: KtExpression): Collection<KaImplicitReceiverSmartCast> =
+        expression.withPsiValidityAssertion {
+            val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(expression) ?: return emptyList()
 
             listOfNotNull(
                 createImplicitReceiverSmartCast(firQualifiedExpression, KaImplicitReceiverSmartCastKind.DISPATCH),

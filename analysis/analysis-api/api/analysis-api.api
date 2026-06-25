@@ -369,7 +369,7 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaS
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaSessionComponent : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
 }
 
-public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaSmartCastInfo : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaSmartCastInfo : org/jetbrains/kotlin/analysis/api/dataflow/KaSmartCastInfo {
 	public abstract fun getSmartCastType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 	public abstract fun isStable ()Z
 }
@@ -529,6 +529,15 @@ public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaT
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaVisibilityChecker : org/jetbrains/kotlin/analysis/api/components/KaSessionComponent {
 	public abstract fun isPublicApi (Lorg/jetbrains/kotlin/analysis/api/symbols/KaDeclarationSymbol;)Z
+}
+
+public final class org/jetbrains/kotlin/analysis/api/dataflow/DataFlowInformationKt {
+	public static final fun getSmartCastInfo (Lorg/jetbrains/kotlin/analysis/api/KaSession;Lorg/jetbrains/kotlin/psi/KtExpression;)Lorg/jetbrains/kotlin/analysis/api/dataflow/KaSmartCastInfo;
+}
+
+public abstract interface class org/jetbrains/kotlin/analysis/api/dataflow/KaSmartCastInfo : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {
+	public abstract fun getSmartCastType ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
+	public abstract fun isStable ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/analysis/api/diagnostics/KaDiagnostic : org/jetbrains/kotlin/analysis/api/lifetime/KaLifetimeOwner {

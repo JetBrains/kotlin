@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -46,22 +50,23 @@ public interface KaDataFlowProvider : KaSessionComponent {
  * Represents smart cast information for an expression.
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaSmartCastInfo : KaLifetimeOwner {
+public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo {
+
     /**
      * Whether the smart cast is [stable](https://kotlinlang.org/spec/type-inference.html#smart-cast-sink-stability).
      */
-    public val isStable: Boolean
+    public override val isStable: Boolean
 
     /**
      * The original type of the expression before the smart cast was applied.
      */
     @KaExperimentalApi
-    public val originalType: KaType
+    public override val originalType: KaType
 
     /**
      * The type with the smart cast applied.
      */
-    public val smartCastType: KaType
+    public override val smartCastType: KaType
 }
 
 /**
