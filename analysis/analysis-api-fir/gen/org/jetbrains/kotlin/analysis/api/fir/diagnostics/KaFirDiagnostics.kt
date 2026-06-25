@@ -763,6 +763,14 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DataClassNotPropertyParameter::class
     }
 
+    interface DataClassCopyJsExportabilityWillBeChangedError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DataClassCopyJsExportabilityWillBeChangedError::class
+    }
+
+    interface DataClassCopyJsExportabilityWillBeChangedWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DataClassCopyJsExportabilityWillBeChangedWarning::class
+    }
+
     interface AnnotationArgumentKclassLiteralOfTypeParameterError : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = AnnotationArgumentKclassLiteralOfTypeParameterError::class
     }
@@ -5401,6 +5409,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface NonExportableType : KaFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NonExportableType::class
         val kind: String
+        val type: KaType
+    }
+
+    interface NonExportableTypeInSyntheticCopyFunctionWithExposedCopyVisibility : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonExportableTypeInSyntheticCopyFunctionWithExposedCopyVisibility::class
+        val type: KaType
+    }
+
+    interface NonExportableTypeInSyntheticCopyWithoutConsistentVisibility : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NonExportableTypeInSyntheticCopyWithoutConsistentVisibility::class
         val type: KaType
     }
 

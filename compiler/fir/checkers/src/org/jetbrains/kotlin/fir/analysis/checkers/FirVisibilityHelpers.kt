@@ -79,6 +79,18 @@ fun FirBasedSymbol<*>.isExportedToJs(): Boolean {
         if (visibility != Visibilities.Public && visibility != Visibilities.Protected) {
             return false
         }
+
+        /**
+         * We don't need to check anything except the `copy` method because
+         * - `componentN` are not exported to JS at all. See [org.jetbrains.kotlin.ir.backend.js.lower.ExcludeSyntheticDeclarationsFromExportLowering]
+         * - `toString`, `hashCode`, and `equals` are members of `Any` so they are exported anyway. See [org.jetbrains.kotlin.ir.backend.js.ir.shouldDeclarationBeExported]
+         */
+        if (
+            declaration.origin == FirDeclarationOrigin.Synthetic.DataClassMember &&
+            declaration.nameOrSpecialName != StandardNames.DATA_CLASS_COPY
+        ) {
+            return false
+        }
     }
 
     if (hasAnnotationOrInsideAnnotatedClass(StandardClassIds.Annotations.jsExportIgnore, session)) {
@@ -91,6 +103,24 @@ fun FirBasedSymbol<*>.isExportedToJs(): Boolean {
         getAnnotationBooleanParameter(StandardClassIds.Annotations.jsImplicitExport, session) == true ||
         getContainingFile()?.symbol?.hasAnnotation(StandardClassIds.Annotations.jsExport, session) == true
     ) {
+        /**
+         * The rules for exporting data class copy functions are inheriting rules for consistent `copy` visibility,
+         * described in KT-11914. The migration process is exactly the same as for the visibility modifiers (described in details in the same ticket)
+         *
+         * For more context see [shouldExportDataClassCopy] from org.jetbrains.kotlin.ir.backend.js.ir package
+         */
+        if (declaration is FirFunction && declaration.isCopyMethod()) {
+            val dataClass = getContainingClassSymbol()
+            val primaryConstructor = dataClass?.getPrimaryConstructorSymbol(session, context.scopeSession) ?: return false
+
+            return when {
+                dataClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility, session) -> true
+                primaryConstructor.isExportedToJs() -> true
+                LanguageFeature.DataClassCopyRespectsConstructorVisibility.isEnabled() -> false
+                else -> !dataClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility, session)
+            }
+        }
+
         return true
     }
 

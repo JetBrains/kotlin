@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeProjection
 import org.jetbrains.kotlin.name.StandardClassIds
 
-internal class SuperTypeApproximator {
+internal class SuperTypeApproximator(private val config: TypeScriptExportConfig) {
     private data class ClassWithAppliedArguments(val classSymbol: KaClassLikeSymbol, val appliedArguments: List<KaTypeProjection>)
 
     private val typeCaches = hashMapOf<ClassWithAppliedArguments, Set<KaType>>()
@@ -54,7 +54,7 @@ internal class SuperTypeApproximator {
         val packageFqName = klass.classId?.packageFqName ?: return
         when {
             type.isAnyType || packageFqName.startsWith(StandardClassIds.BASE_JS_PACKAGE) -> return
-            klass.isEffectivelyExported(includingImplicitExport = true) || klass.isExportableExternalClass -> add(type)
+            klass.isEffectivelyExported(config, includingImplicitExport = true) || klass.isExportableExternalClass -> add(type)
             else -> collectSuperTypesTransitiveHierarchy(type)
         }
     }

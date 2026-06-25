@@ -7,7 +7,7 @@
 // FILE: data-classes.kt
 
 package foo
-
+import kotlin.reflect.KClass
 
 @JsExport
 data class TestDataClass(val name: String) {
@@ -62,4 +62,33 @@ fun fullPositionBasedDestructuring(): String {
     [var v1, val v2] = Test2("4", "2")
     v1 += " "
     return v1 + v2
+}
+
+// KT-86273
+@JsExport
+@ConsistentCopyVisibility
+data class WithIgnoredPrimaryAndPropertyAndHiddenCopy @JsExport.Ignore constructor(
+    val a: Int = 5,
+    val b: String = "Test",
+    @JsExport.Ignore val throwable: KClass<Throwable>? = null
+) {
+    @JsName("create")
+    public constructor(
+        a: Int = 5,
+        b: String = "Test",
+    ) : this(a, b, null)
+}
+
+@JsExport
+@ExposedCopyVisibility
+data class WithIgnoredPrimaryAndPropertyAndExposedCopy @JsExport.Ignore constructor(
+    val a: Int = 5,
+    val b: String = "Test",
+    @JsExport.Ignore val throwable: KClass<Throwable>? = null
+) {
+    @JsName("create")
+    public constructor(
+        a: Int = 5,
+        b: String = "Test",
+    ) : this(a, b, null)
 }

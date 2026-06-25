@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsOriginalFunction
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -139,3 +141,11 @@ fun IrClass.typeScriptInnerClassReference(): String {
     if (parent !is IrClass) return name
     return "${parentAsClass.typeScriptInnerClassReference()}.$name"
 }
+
+val IrDeclarationWithName.isDataClassCopy: Boolean
+    get() = this is IrSimpleFunction && (defaultArgumentsOriginalFunction ?: this).isDataClassCopy
+
+val IrFunction.isDataClassCopy: Boolean
+    get() = origin == IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
+            && name == StandardNames.DATA_CLASS_COPY
+            && parentClassOrNull?.isData == true

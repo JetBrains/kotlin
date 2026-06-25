@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.ir
 
 import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.backend.common.suspendFunction
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -177,10 +180,45 @@ private fun shouldDeclarationBeExported(
     if (declaration.isExplicitlyExported())
         return true
 
-    return when (val parent = declaration.parent) {
+    return declaration.shouldParentBeExported(context) &&
+            (!declaration.isDataClassCopy || declaration.shouldExportDataClassCopy(context))
+}
+
+private fun IrDeclaration.shouldParentBeExported(context: JsIrBackendContext): Boolean =
+    when (val parent = parent) {
         is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
         is IrAnnotationContainer -> parent.isExplicitlyExported()
         else -> false
+    }
+
+/**
+ * The rules for exporting data class copy functions are inheriting rules for consistent `copy` visibility,
+ * described in KT-11914. The migration process is exactly the same as for the visibility modifiers (described in details in the same ticket)
+ *
+ * So, in a few words, the rules are following:
+ * - If the primary constructor is exported, then the copy function should be exported as well
+ * - If the primary constructor is not exported, but the data class has `@ExposedCopyVisibility` annotation - then the copy function should be exported
+ * - If the primary constructor is not exported, and the data class has `@ConsistentCopyVisibility` annotation - then the copy function should not be exported
+ * - If the primary constructor is not exported, and DataClassCopyRespectsConstructorVisibility language feature is turned on, then the copy function should not be exported
+ * - Otherwise, the copy is exported
+ *
+ * This sequence is following the Migration plan described in KT-11914. So, as soon as the feature is turned on, by default, nothing should be changed in this part of the compiler.
+ *
+ * **Important Note**: There is an Analysis-API-based version of this function in [org.jetbrains.kotlin.js.tsexport.shouldExportDataClassCopy].
+ * Changes here should be synchronized with the Analysis-API-based version.
+ * Also, the same rules are defined on the FIR side for the exportability checks. see [org.jetbrains.kotlin.fir.analysis.checkers.FirVisibilityHelpers]
+ */
+private fun IrDeclaration.shouldExportDataClassCopy(context: JsIrBackendContext): Boolean {
+    val parentDataClass = parentAsClass
+    // `parentDataClass.primaryConstructor` could be null at this stage, since in ES2015 classes generating schema
+    // we don't generate a JS constructor for classes which constructor is not exported
+    val primaryConstructor = parentDataClass.primaryConstructor
+
+    return when {
+        parentDataClass.hasAnnotation(StandardClassIds.Annotations.ExposedCopyVisibility) -> true
+        primaryConstructor != null && shouldDeclarationBeExported(primaryConstructor, context) -> true
+        context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.DataClassCopyRespectsConstructorVisibility) -> false
+        else -> !parentDataClass.hasAnnotation(StandardClassIds.Annotations.ConsistentCopyVisibility)
     }
 }
 

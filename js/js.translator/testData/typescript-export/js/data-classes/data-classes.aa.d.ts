@@ -86,6 +86,37 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Test3;
             }
         }
+        class WithIgnoredPrimaryAndPropertyAndHiddenCopy {
+            private constructor();
+            static create(a?: number, b?: string): foo.WithIgnoredPrimaryAndPropertyAndHiddenCopy;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get a(): number;
+            get b(): string;
+        }
+        namespace WithIgnoredPrimaryAndPropertyAndHiddenCopy {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPrimaryAndPropertyAndHiddenCopy;
+            }
+        }
+        class WithIgnoredPrimaryAndPropertyAndExposedCopy {
+            private constructor();
+            static create(a?: number, b?: string): foo.WithIgnoredPrimaryAndPropertyAndExposedCopy;
+            copy(a?: number, b?: string, throwable?: Nullable<any>/* Nullable<kotlin.reflect.KClass<Error>> */): foo.WithIgnoredPrimaryAndPropertyAndExposedCopy;
+            equals(other: Nullable<any>): boolean;
+            hashCode(): number;
+            toString(): string;
+            get a(): number;
+            get b(): string;
+        }
+        namespace WithIgnoredPrimaryAndPropertyAndExposedCopy {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => WithIgnoredPrimaryAndPropertyAndExposedCopy;
+            }
+        }
     }
 }
 

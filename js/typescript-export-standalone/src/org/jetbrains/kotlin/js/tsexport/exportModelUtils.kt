@@ -30,9 +30,13 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsExportIgnore
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsImplicitExport
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNoRuntime
 import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsStatic
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ExposedCopyVisibility
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ConsistentCopyVisibility
 import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 private val reservedWords = setOf(
     "break",
@@ -135,7 +139,7 @@ internal fun KaNamedSymbol.getExportedIdentifier(): String {
 }
 
 context(_: KaSession)
-internal fun KaDeclarationSymbol.isEffectivelyExported(includingImplicitExport: Boolean = false): Boolean {
+internal fun KaDeclarationSymbol.isEffectivelyExported(config: TypeScriptExportConfig, includingImplicitExport: Boolean = false): Boolean {
     if (isExpect || isJsExportIgnore() || !visibility.isPublicApi) {
         return false
     }
@@ -145,7 +149,7 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(includingImplicitExport: 
 
     if (this is KaCallableSymbol && isOverride) {
         return (this is KaNamedFunctionSymbol && isMethodOfAny)
-                || allOverriddenSymbols.any { it.isEffectivelyExported(includingImplicitExport) }
+                || allOverriddenSymbols.any { it.isEffectivelyExported(config, includingImplicitExport) }
     }
 
     val parent = containingDeclaration
@@ -162,11 +166,45 @@ internal fun KaDeclarationSymbol.isEffectivelyExported(includingImplicitExport: 
         return false
     }
 
-    if (parent != null) {
-        return parent.isEffectivelyExported(includingImplicitExport)
+    return when (parent) {
+        null -> containingFileAnnotations?.contains(JsExport) ?: false
+        else -> parent.isEffectivelyExported(config, includingImplicitExport) &&
+                (!isDataClassCopyMethod(parent) || shouldExportDataClassCopy(parent, config, includingImplicitExport))
+    }
+}
+
+@OptIn(ExperimentalContracts::class)
+private fun KaDeclarationSymbol.isDataClassCopyMethod(parent: KaDeclarationSymbol): Boolean {
+    contract {
+        returns(true) implies (parent is KaNamedClassSymbol)
     }
 
-    return containingFileAnnotations?.contains(JsExport) ?: false
+    return parent is KaNamedClassSymbol &&
+            parent.isData &&
+            this is KaFunctionSymbol &&
+            name == StandardNames.DATA_CLASS_COPY
+}
+
+/**
+ * This is the Analysis API-based version of the same function from org.jetbrains.kotlin.ir.backend.js.ir
+ * The changes here should be synchronized with the original function.
+ *
+ * Also, the same rules are defined on the FIR side for the exportability checks. see [org.jetbrains.kotlin.fir.analysis.checkers.FirVisibilityHelpers]
+ */
+context(_: KaSession)
+private fun shouldExportDataClassCopy(
+    parentDataClass: KaNamedClassSymbol,
+    config: TypeScriptExportConfig,
+    includingImplicitExport: Boolean,
+): Boolean {
+    val primaryConstructor = parentDataClass.declaredMemberScope.constructors.firstOrNull(KaConstructorSymbol::isPrimary) ?: return false
+
+    return when {
+        parentDataClass.isExposedCopyVisibility() -> true
+        primaryConstructor.isEffectivelyExported(config, includingImplicitExport) -> true
+        config.dataClassCopyRespectsConstructorVisibility -> false
+        else -> !parentDataClass.isConsistentCopyVisibility()
+    }
 }
 
 internal val TypeScriptExportConfig.generateNamespacesForPackages: Boolean
@@ -229,6 +267,12 @@ internal fun KaAnnotated.isJsNoRuntime(): Boolean =
 
 internal fun KaAnnotated.noDefaultImplementation(): Boolean =
     annotations.contains(JsDontExportDefaultImplementation)
+
+internal fun KaAnnotated.isExposedCopyVisibility(): Boolean =
+    annotations.contains(ExposedCopyVisibility)
+
+internal fun KaAnnotated.isConsistentCopyVisibility(): Boolean =
+    annotations.contains(ConsistentCopyVisibility)
 
 private val KaSymbolVisibility.isPublicApi: Boolean
     get() = this == KaSymbolVisibility.PUBLIC || this == KaSymbolVisibility.PROTECTED
@@ -498,7 +542,7 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
     while (stack.isNotEmpty()) {
         val processedClass = stack.removeLast().takeIf { it !in result } ?: continue
 
-        if (!processedClass.isEffectivelyExported(includingImplicitExport = true)) continue
+        if (!processedClass.isEffectivelyExported(config, includingImplicitExport = true)) continue
 
         if (processedClass.hasNonExportedAbstractMembers()) {
             result[processedClass] = false

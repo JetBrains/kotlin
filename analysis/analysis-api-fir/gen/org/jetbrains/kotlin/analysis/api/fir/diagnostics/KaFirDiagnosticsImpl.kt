@@ -910,6 +910,16 @@ internal class DataClassNotPropertyParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtParameter>(firDiagnostic, token), KaFirDiagnostic.DataClassNotPropertyParameter
 
+internal class DataClassCopyJsExportabilityWillBeChangedErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DataClassCopyJsExportabilityWillBeChangedError
+
+internal class DataClassCopyJsExportabilityWillBeChangedWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DataClassCopyJsExportabilityWillBeChangedWarning
+
 internal class AnnotationArgumentKclassLiteralOfTypeParameterErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -6494,6 +6504,18 @@ internal class NonExportableTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExportableType
+
+internal class NonExportableTypeInSyntheticCopyFunctionWithExposedCopyVisibilityImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExportableTypeInSyntheticCopyFunctionWithExposedCopyVisibility
+
+internal class NonExportableTypeInSyntheticCopyWithoutConsistentVisibilityImpl(
+    override val type: KaType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NonExportableTypeInSyntheticCopyWithoutConsistentVisibility
 
 internal class NonConsumableExportedIdentifierImpl(
     override val name: String,

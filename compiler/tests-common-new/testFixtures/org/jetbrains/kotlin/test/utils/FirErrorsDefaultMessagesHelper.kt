@@ -56,6 +56,7 @@ private val lastCharRegex = """[.}\d]""".toRegex()
 
 private val lastCharExclusions = listOf(
     FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.name,
+    FirJsErrors.DATA_CLASS_COPY_JS_EXPORTABILITY_WILL_BE_CHANGED.name,
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
     FirErrors.CONTEXT_CLASS_OR_CONSTRUCTOR.name,
