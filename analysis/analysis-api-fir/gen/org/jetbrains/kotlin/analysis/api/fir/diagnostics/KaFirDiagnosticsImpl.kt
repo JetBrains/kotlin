@@ -2949,27 +2949,12 @@ internal class RedundantNullableImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.RedundantNullable
 
-internal class InferredInvisibleReifiedTypeArgumentErrorImpl(
-    override val typeParameter: KaTypeParameterSymbol,
-    override val typeArgumentType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleReifiedTypeArgumentError
-
 internal class InferredInvisibleReifiedTypeArgumentWarningImpl(
     override val typeParameter: KaTypeParameterSymbol,
     override val typeArgumentType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleReifiedTypeArgumentWarning
-
-internal class InferredInvisibleVarargTypeArgumentErrorImpl(
-    override val typeParameter: KaTypeParameterSymbol,
-    override val typeArgumentType: KaType,
-    override val valueParameter: KaSymbol,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleVarargTypeArgumentError
 
 internal class InferredInvisibleVarargTypeArgumentWarningImpl(
     override val typeParameter: KaTypeParameterSymbol,
@@ -2978,13 +2963,6 @@ internal class InferredInvisibleVarargTypeArgumentWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleVarargTypeArgumentWarning
-
-internal class InferredInvisibleReturnTypeErrorImpl(
-    override val calleeSymbol: KaSymbol,
-    override val returnType: KaType,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleReturnTypeError
 
 internal class InferredInvisibleReturnTypeWarningImpl(
     override val calleeSymbol: KaSymbol,
@@ -4867,13 +4845,6 @@ internal class WhenGuardWithoutSubjectImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.WhenGuardWithoutSubject
-
-internal class InferredInvisibleWhenTypeErrorImpl(
-    override val whenType: KaType,
-    override val syntaxConstructionName: String,
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InferredInvisibleWhenTypeError
 
 internal class InferredInvisibleWhenTypeWarningImpl(
     override val whenType: KaType,

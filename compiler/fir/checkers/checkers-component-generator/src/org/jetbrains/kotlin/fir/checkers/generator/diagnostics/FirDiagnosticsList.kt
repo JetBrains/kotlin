@@ -1213,22 +1213,16 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error<KtElement>()
         val REDUNDANT_NULLABLE by warning<KtElement>(PositioningStrategy.REDUNDANT_NULLABLE)
 
-        val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-        ) {
+        val INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT_WARNING by warning<KtElement> {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<ConeKotlinType>("typeArgumentType")
         }
-        val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-        ) {
+        val INFERRED_INVISIBLE_VARARG_TYPE_ARGUMENT_WARNING by warning<KtElement> {
             parameter<FirTypeParameterSymbol>("typeParameter")
             parameter<ConeKotlinType>("typeArgumentType")
             parameter<FirValueParameterSymbol>("valueParameter")
         }
-        val INFERRED_INVISIBLE_RETURN_TYPE by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-        ) {
+        val INFERRED_INVISIBLE_RETURN_TYPE_WARNING by warning<KtElement> {
             parameter<FirBasedSymbol<*>>("calleeSymbol")
             parameter<ConeKotlinType>("returnType")
         }
@@ -2007,9 +2001,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD by error<PsiElement>(PositioningStrategy.WHEN_GUARD)
         val WHEN_GUARD_WITHOUT_SUBJECT by error<PsiElement>(PositioningStrategy.WHEN_GUARD)
-        val INFERRED_INVISIBLE_WHEN_TYPE by deprecationError<KtElement>(
-            LanguageFeature.ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-        ) {
+        val INFERRED_INVISIBLE_WHEN_TYPE_WARNING by warning<KtElement> {
             parameter<ConeKotlinType>("whenType")
             parameter<String>("syntaxConstructionName")
         }

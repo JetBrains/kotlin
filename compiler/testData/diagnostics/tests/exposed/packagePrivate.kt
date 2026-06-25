@@ -1,7 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // JAVAC_EXPECTED_FILE
-// LANGUAGE: -ForbidInferOfInvisibleTypeAsReifiedVarargOrReturnType
-
 // FILE: test/Internal.java
 
 package test;
