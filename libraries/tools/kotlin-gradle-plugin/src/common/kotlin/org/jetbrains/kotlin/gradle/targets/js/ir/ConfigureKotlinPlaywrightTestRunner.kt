@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightInstall
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { target ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetSideEffect
@@ -35,9 +37,17 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val testTaskProvider = testRun.executionTask
 
+        val playwrightInstallTask = project.registerTask<PlaywrightInstall>(
+            "kotlinInstallPlaywrightBrowsers", listOf(testCompilation)
+        ) {
+            it.browsers.set(browserTestDsl.allBrowserRunners.map { it.keys })
+        }
+
         testTaskProvider.configure { testTask ->
             val objects = project.objects
             val inputs = KotlinPlaywrightJsTestFramework.createInputs(objects)
+
+            inputs.playwrightBrowsersDirectory.set(playwrightInstallTask.flatMap { it.outputDir })
 
             inputs.chromiumRunners.set(
                 browserTestDsl.chromiumRunners.values.map { runner ->

@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.time.Duration
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing.PlaywrightTestExecutor")
@@ -40,6 +42,7 @@ internal enum class PwBrowserKind {
 internal class PwRunnerSpec(
     val name: String,
     val browserKind: PwBrowserKind,
+    val browsersDirectory: Path,
     val testsLocation: KotlinJsTestsLocation,
     val buildTestsExecutionerUrl: (baseUrl: String) -> String,
     val timeout: Duration,
@@ -84,9 +87,12 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             // 2.1. we spawn browser process
             // 2.3. playwright use it
             val playwright = spec.createImpl(
-                Playwright.CreateOptions().setEnv(mapOf(
-                    "PLAYWRIGHT_NODEJS_PATH" to spec.nodeExecutable,
-                ))
+                Playwright.CreateOptions().setEnv(
+                    mapOf(
+                        "PLAYWRIGHT_NODEJS_PATH" to spec.nodeExecutable,
+                        "PLAYWRIGHT_BROWSERS_PATH" to spec.runners.first().browsersDirectory.absolutePathString()
+                    )
+                )
             )
 
             playwright.use {
@@ -169,7 +175,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
     }
 
 
-    private fun PwExecutionSpec.createProcessBuilder( env: MutableMap<String, String>): ProcessBuilder {
+    private fun PwExecutionSpec.createProcessBuilder(env: MutableMap<String, String>): ProcessBuilder {
         val pb = ProcessBuilder(nodeExecutable)
         pb.command().add(playwrightCli) // This is the patched part. Original code loads playwright-cli from the JAR.
         pb.environment().putAll(env)
