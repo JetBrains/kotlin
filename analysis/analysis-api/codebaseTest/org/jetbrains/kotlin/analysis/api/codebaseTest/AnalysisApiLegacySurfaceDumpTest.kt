@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseDumpFileComparisonTest
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.forEachNonLocalPublicDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.isPublic
 import org.junit.jupiter.api.Test
 
 /**
@@ -38,7 +36,12 @@ class AnalysisApiLegacySurfaceDumpTest : AbstractAnalysisApiCodebaseDumpFileComp
 
     override fun PsiFile.processFile(): List<String> {
         if (this !is KtFile) return emptyList()
-        return collectPublicDeclarations().map { it.renderDeclaration() }
+
+        return buildList {
+            forEachNonLocalPublicDeclaration {
+                add(it.renderDeclaration())
+            }
+        }
     }
 
     override fun SourceDirectory.ForDumpFileComparison.getErrorMessage(): String =
@@ -56,16 +59,5 @@ class AnalysisApiLegacySurfaceDumpTest : AbstractAnalysisApiCodebaseDumpFileComp
     @Test
     fun testLegacySurface() {
         doTest()
-    }
-
-    private fun KtFile.collectPublicDeclarations(): List<KtDeclaration> = buildList {
-        this@collectPublicDeclarations.declarations.forEach { collectPublicNestedDeclarations(it) }
-    }
-
-    private fun MutableList<KtDeclaration>.collectPublicNestedDeclarations(declaration: KtDeclaration) {
-        if (!declaration.isPublic) return
-
-        add(declaration)
-        (declaration as? KtDeclarationContainer)?.declarations?.forEach { collectPublicNestedDeclarations(it) }
     }
 }

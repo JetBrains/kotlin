@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,7 +10,6 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isPublic
 
 /**
  * This test was introduced to automatically check that every public API from some module
@@ -46,30 +45,17 @@ abstract class AbstractKDocCoverageTest : AbstractAnalysisApiCodebaseDumpFileCom
             Otherwise, update the exclusion list accordingly.
         """.trimIndent()
 
-    private fun getUndocumentedDeclarationsByFile(file: KtFile): List<String> =
-        file.collectPublicDeclarations()
-            .filter { it.shouldBeRendered() }
-            .map { it.renderDeclaration() }
+    private fun getUndocumentedDeclarationsByFile(file: KtFile): List<String> = buildList {
+        file.forEachNonLocalPublicDeclaration {
+            if (it.shouldBeRendered())
+                add(it.renderDeclaration())
+        }
+    }
 
     private fun getUndocumentedDeclarationsByFile(file: PsiJavaFile): List<String> =
         file.collectPublicDeclarations()
             .filter { it.shouldBeRendered() }
             .map { it.renderDeclaration() }
-
-
-    private fun KtFile.collectPublicDeclarations(): List<KtDeclaration> = buildList {
-        this@collectPublicDeclarations.declarations.forEach { ktDeclaration ->
-            this.collectPublicNestedDeclarations(ktDeclaration)
-        }
-    }
-
-    private fun MutableList<KtDeclaration>.collectPublicNestedDeclarations(declaration: KtDeclaration) {
-        if (!declaration.isPublic) return
-
-        add(declaration)
-        (declaration as? KtDeclarationContainer)?.declarations?.forEach { collectPublicNestedDeclarations(it) }
-    }
-
 
     private fun PsiJavaFile.collectPublicDeclarations(): List<PsiElement> = buildList {
         this@collectPublicDeclarations.classes.forEach { psiClass ->

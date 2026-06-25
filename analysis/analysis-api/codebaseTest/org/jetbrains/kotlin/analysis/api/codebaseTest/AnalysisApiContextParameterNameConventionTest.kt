@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.forEachNonLocalDeclaration
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.forEachNonLocalPublicDeclaration
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,14 +29,11 @@ class AnalysisApiContextParameterNameConventionTest : AbstractAnalysisApiSurface
     override fun processFile(file: File, psiFile: PsiFile) {
         if (psiFile !is KtFile) return
 
-        psiFile.forEachNonLocalDeclaration(::validate)
+        psiFile.forEachNonLocalPublicDeclaration(::validate)
     }
 
     private fun validate(declaration: KtDeclaration) {
         if (declaration !is KtCallableDeclaration) return
-
-        // Non-public declarations doesn't expose signatures
-        if (declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) || declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) return
 
         declaration.contextParameters.forEach(::validateContextParameter)
     }

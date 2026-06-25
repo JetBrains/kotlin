@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,12 +15,9 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
@@ -202,6 +199,29 @@ fun KtDeclarationContainer.forEachNonLocalDeclaration(action: (KtDeclaration) ->
     }
 }
 
+/**
+ * Iterates over all non-local public declarations in the given container recursively.
+ */
+@OptIn(KtExperimentalApi::class)
+fun KtDeclarationContainer.forEachNonLocalPublicDeclaration(action: (KtDeclaration) -> Unit) {
+    for (declaration in declarations) {
+        if (!declaration.isPubliclyVisible) continue
+
+        action(declaration)
+        if (declaration is KtDeclarationContainer) {
+            declaration.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+
+    if (this is KtClassOrObject) {
+        companionBlocks.forEach {
+            it.forEachNonLocalPublicDeclaration(action)
+        }
+    }
+}
+
+private val KtModifierListOwner.isPubliclyVisible: Boolean
+    get() = !hasModifier(KtTokens.PRIVATE_KEYWORD) && !hasModifier(KtTokens.INTERNAL_KEYWORD)
 
 /**
  * Test for checking the code base against the master file.

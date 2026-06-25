@@ -24,6 +24,8 @@ org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFile(VirtualFile)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFiles(Collection<VirtualFile>)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.contentScope
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.getBinaryRoots()
+org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.getBinaryVirtualFiles()
 org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder.libraryName
 org.jetbrains.kotlin.analysis.project.structure.builder.KtLibraryModuleBuilder.librarySources
@@ -36,6 +38,9 @@ org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addDepen
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addFriendDependency(KaModule)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addRegularDependency(KaModule)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.build()
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.directDependsOnDependencies
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.directFriendDependencies
+org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.directRegularDependencies
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.platform
 org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder.file

@@ -253,6 +253,8 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.Companion.deserialize(StubI
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.Companion.serialize(KotlinStubOrigin?, StubOutputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.Facade
 org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.MultiFileFacade
+org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.kind
+org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin.serializeContent(StubOutputStream)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeArgumentBean
 org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeBean

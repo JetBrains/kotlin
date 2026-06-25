@@ -437,10 +437,12 @@ org.jetbrains.kotlin.psi.KtCommonFile.findChildByTypeOrClass(KtStubElementType<o
 org.jetbrains.kotlin.psi.KtCommonFile.findChildrenByTypeOrClass(KtStubElementType<*, T>, Class<T>)
 org.jetbrains.kotlin.psi.KtCommonFile.findImportByAlias(String)
 org.jetbrains.kotlin.psi.KtCommonFile.getNameForGivenImportAlias(Name)
+org.jetbrains.kotlin.psi.KtCommonFile.greenStub
 org.jetbrains.kotlin.psi.KtCommonFile.hasImportAlias()
 org.jetbrains.kotlin.psi.KtCommonFile.hasTopLevelCallables()
 org.jetbrains.kotlin.psi.KtCommonFile.importDirectives
 org.jetbrains.kotlin.psi.KtCommonFile.importList
+org.jetbrains.kotlin.psi.KtCommonFile.importLists
 org.jetbrains.kotlin.psi.KtCommonFile.isScript()
 org.jetbrains.kotlin.psi.KtCommonFile.isScriptByTree
 org.jetbrains.kotlin.psi.KtCommonFile.packageDirective
@@ -459,6 +461,8 @@ org.jetbrains.kotlin.psi.KtConstructor.getContainingClassOrObject()
 org.jetbrains.kotlin.psi.KtConstructor.hasConstructorKeyword()
 org.jetbrains.kotlin.psi.KtConstructor.isDelegatedCallToThis()
 org.jetbrains.kotlin.psi.KtConstructor.isExplicitDelegationCall()
+org.jetbrains.kotlin.psi.KtConstructor:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtConstructor:constructor(KotlinConstructorStub<T>, KtStubElementType<out KotlinConstructorStub<T>, T>)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:constructor(KotlinPlaceHolderStub<KtConstructorCalleeExpression>)
 org.jetbrains.kotlin.psi.KtConstructorCalleeExpression:getConstructorReferenceExpression()
@@ -562,6 +566,7 @@ org.jetbrains.kotlin.psi.KtExpression:EMPTY_ARRAY
 org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 org.jetbrains.kotlin.psi.KtExpressionImpl
 org.jetbrains.kotlin.psi.KtExpressionImpl.Companion.replaceExpression(KtExpression, PsiElement, Boolean, (PsiElement) -> PsiElement)
+org.jetbrains.kotlin.psi.KtExpressionImpl.findExpressionUnder(IElementType)
 org.jetbrains.kotlin.psi.KtExpressionImplStub
 org.jetbrains.kotlin.psi.KtExpressionImplStub:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtExpressionImplStub:constructor(T, IStubElementType)
