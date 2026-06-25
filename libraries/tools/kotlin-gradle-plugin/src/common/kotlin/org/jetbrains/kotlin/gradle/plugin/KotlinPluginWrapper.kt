@@ -167,7 +167,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
                 // and will fix toolchain's version to the latest 2.4 toolchain (it applies to abiValidation toolchain only).
                 project.dependencies.add(name, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL") {
                     version { versionConstraint ->
-                        versionConstraint.strictly("[2.4.0-Beta2, 2.5.0)")
+                        versionConstraint.strictly("2.4.0")
                     }
                 }
             }

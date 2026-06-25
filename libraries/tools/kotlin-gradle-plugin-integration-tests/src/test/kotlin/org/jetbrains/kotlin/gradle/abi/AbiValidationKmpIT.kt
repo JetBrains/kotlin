@@ -68,6 +68,10 @@ class AbiValidationKmpIT : KGPBaseTest() {
             build("check") {
                 assertTasksExecuted(":checkKotlinAbi")
             }
+
+            build("dependencies", "--configuration", "kotlinAbiValidationCompatClasspath") {
+                assertOutputContains("\\--- org.jetbrains.kotlin:kotlin-build-tools-impl:{strictly 2.4.0} -> 2.4.0")
+            }
         }
     }
 
