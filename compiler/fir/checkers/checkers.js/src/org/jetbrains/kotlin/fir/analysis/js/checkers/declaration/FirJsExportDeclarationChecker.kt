@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationFirstArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.isExportedToJs
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXPOSED_NOT_EXPORTED_SUPER_INTERFACE
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.Variance
 object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
-        if (!declaration.symbol.isExportedObject() || declaration !is FirMemberDeclaration) {
+        if (!declaration.symbol.isExportedToJs() || declaration !is FirMemberDeclaration) {
             return
         }
 
@@ -306,7 +306,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
             isPrimitiveExportableType -> true
             symbol?.isMemberDeclaration != true -> false
             expandedType.isEnum -> true
-            else -> symbol.isEffectivelyExternal(session) || symbol.isExportedObject(session)
+            else -> symbol.isEffectivelyExternal(session) || symbol.isExportedToJs()
         }
     }
 

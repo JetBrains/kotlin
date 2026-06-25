@@ -250,6 +250,7 @@ object StandardClassIds {
         val Transient = "Transient".jvmId()
 
         val jsExport = "JsExport".jsId()
+        val jsImplicitExport = "JsImplicitExport".jsId()
         val jsExportIgnore = jsExport.createNestedClassId(Name.identifier("Ignore"))
         val jsExportDefault = jsExport.createNestedClassId(Name.identifier("Default"))
         val jsNoDispatchReceiver = "JsNoDispatchReceiver".jsId()

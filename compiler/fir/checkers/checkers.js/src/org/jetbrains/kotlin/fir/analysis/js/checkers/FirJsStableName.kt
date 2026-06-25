@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExportedToJs
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -36,7 +37,7 @@ internal data class FirJsStableName(
             val hasStableNameInJavaScript = when {
                 symbol.isEffectivelyExternal(session) -> true
                 symbol is FirCallableSymbol<*> && symbol.isEffectivelyExternalOrOverridingExternal() -> true
-                symbol.isExportedObject(session) -> true
+                symbol.isExportedToJs() -> true
                 else -> false
             }
 
