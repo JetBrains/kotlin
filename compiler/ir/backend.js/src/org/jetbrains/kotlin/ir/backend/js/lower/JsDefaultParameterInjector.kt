@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
@@ -45,10 +46,9 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
 
     override fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
         return functionAccess.nonDispatchArguments.any { it == null } || functionAccess.symbol.owner.run {
-            origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
-                    !isTopLevel &&
+            !isTopLevel &&
                     functionAccess.origin != JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL &&
-                    (promisifiedWrapperFunction != null || isExported(context))
+                    (promisifiedWrapperFunction != null || (defaultArgumentsDispatchFunction ?: this).isExported(context))
         }
     }
 

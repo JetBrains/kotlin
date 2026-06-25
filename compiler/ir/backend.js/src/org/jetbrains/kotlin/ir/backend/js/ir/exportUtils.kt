@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.backend.common.suspendFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.promisifiedWrapperFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.isPromisifiedMemberWrapper
 import org.jetbrains.kotlin.ir.backend.js.staticInitFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.hasDefaultArgumentBridge
 import org.jetbrains.kotlin.ir.backend.js.tsexport.Exportability
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportedVisibility
 import org.jetbrains.kotlin.ir.backend.js.tsexport.toExportedVisibility
@@ -52,8 +54,8 @@ internal fun IrSimpleFunction.exportability(context: JsIrBackendContext, special
 
     if (
         origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION ||
-        origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT ||
-        origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION
+        origin == JsLoweredDeclarationOrigin.ENUM_GET_INSTANCE_FUNCTION ||
+        hasDefaultArgumentBridge
     ) {
         return Exportability.NotNeeded
     }
@@ -332,10 +334,10 @@ internal fun IrClass.hasNotExportedAbstractMembers(): Boolean {
         }
 
 
-        if (
-            candidate.isJsExportIgnore() &&
-            candidate.origin == IrDeclarationOrigin.DEFINED
-        ) return true
+        if (candidate.isJsExportIgnore() && candidate.origin == IrDeclarationOrigin.DEFINED) {
+            val defaultArgumentsBridge = (candidate as? IrFunction)?.defaultArgumentsDispatchFunction ?: return true
+            if (defaultArgumentsBridge.isJsExportIgnore()) return true
+        }
     }
 
     return false
