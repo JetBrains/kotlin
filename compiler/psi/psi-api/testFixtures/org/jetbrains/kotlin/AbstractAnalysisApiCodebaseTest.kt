@@ -118,6 +118,8 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
         annotation.shortName.toString() == annotationName
     }
 
+    protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(Deprecated::class.simpleName!!)
+
     sealed class SourceDirectory(val sourcePaths: List<String>) {
         class ForValidation(sourcePaths: List<String>) : SourceDirectory(sourcePaths)
         class ForDumpFileComparison(sourcePaths: List<String>, val outputFilePath: String) : SourceDirectory(sourcePaths)

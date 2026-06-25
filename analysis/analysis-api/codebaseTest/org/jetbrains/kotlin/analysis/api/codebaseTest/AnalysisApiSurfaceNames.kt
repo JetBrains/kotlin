@@ -14,8 +14,6 @@ internal object AnalysisApiSurfaceNames {
 
     val KA_SESSION: String = KaSession::class.simpleName!!
 
-    val DEPRECATED: String = Deprecated::class.simpleName!!
-
     const val KA_SPI: String = "KaSpi"
     val SUBCLASS_OPT_IN_REQUIRED: String = SubclassOptInRequired::class.simpleName!!
     val SUBCLASS_OPT_IN_REQUIRED_ANNOTATION: String = "@$SUBCLASS_OPT_IN_REQUIRED(KaImplementationDetail::class)"

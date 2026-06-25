@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseValidationTest
-import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.DEPRECATED
 import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION
 import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.KA_SESSION_COMPONENT
-import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -23,30 +21,27 @@ abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalys
             sourcePaths = listOf("src/org/jetbrains/kotlin/analysis/api"),
         )
     )
-
-    protected fun KtFile.findSessionComponent(): KtClassOrObject? {
-        val declarations = declarations
-        val sessionComponent = (declarations.firstOrNull() as? KtClassOrObject)?.takeIf { it.isSessionComponent }
-
-        declarations.asSequence()
-            .drop(1)
-            .filter { it is KtClassOrObject && it.isSessionComponent }
-            .toList()
-            .ifNotEmpty {
-                error(
-                    joinToString(
-                        prefix = "Only one session component on the first declaration position is allowed.\n$virtualFilePath violates this rule for:\n",
-                        separator = "\n"
-                    ) { it.name.toString() }
-                )
-            }
-
-        return sessionComponent
-    }
-
-    protected fun KtAnnotated.hasDeprecatedAnnotation(): Boolean = hasAnnotation(DEPRECATED)
-
-    protected val KtClassOrObject.isSessionComponent: Boolean
-        get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION
-
 }
+
+internal fun KtFile.findSessionComponent(): KtClassOrObject? {
+    val declarations = declarations
+    val sessionComponent = (declarations.firstOrNull() as? KtClassOrObject)?.takeIf { it.isSessionComponent }
+
+    declarations.asSequence()
+        .drop(1)
+        .filter { it is KtClassOrObject && it.isSessionComponent }
+        .toList()
+        .ifNotEmpty {
+            error(
+                joinToString(
+                    prefix = "Only one session component on the first declaration position is allowed.\n$virtualFilePath violates this rule for:\n",
+                    separator = "\n"
+                ) { it.name.toString() }
+            )
+        }
+
+    return sessionComponent
+}
+
+internal val KtClassOrObject.isSessionComponent: Boolean
+    get() = superTypeListEntries.any { it.textMatches(KA_SESSION_COMPONENT) } || name == KA_SESSION
