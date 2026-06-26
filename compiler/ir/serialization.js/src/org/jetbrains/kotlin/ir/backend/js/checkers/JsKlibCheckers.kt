@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,7 +43,7 @@ object JsKlibCheckers {
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
-            private val diagnosticContext = JsKlibDiagnosticContext(configuration)
+            private val diagnosticContext = CommonKlibDiagnosticContext(configuration)
 
             override fun visitElement(element: IrElement) {
                 if (element is IrDeclaration) {
