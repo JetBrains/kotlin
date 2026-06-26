@@ -13,11 +13,17 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrLazilyBoundAnnotationImpl
+import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
+import org.jetbrains.kotlin.ir.expressions.IrRichPropertyReference
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -407,4 +413,18 @@ fun IdSignature.CommonSignature.isClassSignature(): Boolean = id == null
 inline fun <reified T> IrAnnotation.getConstArgument(name: String): T? {
     val expression = argumentMapping[Name.identifier(name)] as? IrConst
     return expression?.value as? T
+}
+
+val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
+
+tailrec fun getSinglePropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?): IrRichPropertyReference? {
+    return when {
+        expression == null -> null
+        expectedReturn == null && expression is IrRichPropertyReference -> expression
+        expectedReturn == null && expression is IrReturnableBlock -> getSinglePropertyReference(expression.singleExpressionOrNull, expression.symbol)
+        expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getSinglePropertyReference(expression.value, null)
+        expression is IrBlock -> getSinglePropertyReference(expression.singleExpressionOrNull, expectedReturn)
+        expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST -> getSinglePropertyReference(expression.argument, expectedReturn)
+        else -> null
+    }
 }
