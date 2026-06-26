@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -36,6 +37,7 @@ internal val ExportCrossCompilationMetadata = KotlinProjectSetupCoroutine {
     }
 }
 
+@Serializable
 internal class CrossCompilationData(
     @get:Input
     val crossCompilationSupported: Boolean,

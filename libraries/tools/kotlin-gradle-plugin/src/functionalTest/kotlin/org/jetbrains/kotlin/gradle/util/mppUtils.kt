@@ -1,13 +1,16 @@
 package org.jetbrains.kotlin.gradle.util
 
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.json.AbsoluteFileSerializer
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinMetadataCompilations
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.toJson
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
-import org.jetbrains.kotlin.gradle.utils.JsonUtils
 
 /**
  * During normal build the task `generateProjectStructureMetadata` generates `kotlin-project-structure-metadata.json` and `source-sets-metadata.json`
@@ -23,6 +26,6 @@ internal fun ProjectInternal.mockGenerateProjectStructureMetadataTaskOutputs() {
 
         locateOrRegisterGenerateProjectStructureMetadataTask().get()
             .sourceSetMetadataOutputsFile.get().asFile.also { it.parentFile.mkdirs() }
-            .writeText(JsonUtils.gson.toJson(sourceSetOutputs))
+            .writeText(KgpJson.default.encodeToString(MapSerializer(String.serializer(), AbsoluteFileSerializer), sourceSetOutputs))
     }
 }

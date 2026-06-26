@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.currentBuildId
 /**
  * Exported KMP Coordinates to be consumed by other KMP projects
  */
+@Serializable
 internal data class KotlinProjectCoordinatesData(
     @get:Input
     val buildPath: String,

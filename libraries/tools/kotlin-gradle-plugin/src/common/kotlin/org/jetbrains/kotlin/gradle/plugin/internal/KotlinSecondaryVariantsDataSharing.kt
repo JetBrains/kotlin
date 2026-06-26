@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.serializer
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -25,8 +29,8 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.JsonUtils
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
@@ -37,8 +41,8 @@ internal val Project.kotlinSecondaryVariantsDataSharing: KotlinSecondaryVariants
 }
 
 /**
- * Marker interface of classes that shares data between Gradle Projects using [KotlinSecondaryVariantsDataSharing]
- * Implementations should be serializable via [JsonUtils]
+ * Marker interface of classes that shares data between Gradle Projects using [KotlinSecondaryVariantsDataSharing].
+ * Implementations must be annotated with `@Serializable` (kotlinx-serialization).
  */
 internal interface KotlinShareableDataAsSecondaryVariant
 
@@ -159,6 +163,7 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         return artifact.parse()
     }
 
+    @OptIn(InternalSerializationApi::class)
     private fun ResolvedArtifactResult.parse(): T? {
         // In rare cases, for example when provided attributes and requested attributes didn't match at all.
         // Gradle will resolve into that variant.
@@ -172,7 +177,14 @@ internal class KotlinProjectSharedDataProvider<T : KotlinShareableDataAsSecondar
         if (!file.exists()) return null
 
         val content = file.readText()
-        return runCatching { JsonUtils.gson.fromJson(content, clazz) }.getOrNull()
+        val serializer = clazz.kotlin.serializer()
+        return try {
+            KgpJson.default.decodeFromString(serializer, content)
+        } catch (_: SerializationException) {
+            // An artifact with our key/attribute exists but does not deserialize (e.g. a foreign or
+            // incompatible producer). Skip it rather than failing the consumer; other failures propagate.
+            null
+        }
     }
 }
 
@@ -184,10 +196,12 @@ internal abstract class ExportKotlinProjectDataTask : DefaultTask() {
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
 
+    @OptIn(InternalSerializationApi::class)
+    @Suppress("UNCHECKED_CAST")
     @TaskAction
     fun action() {
         val data = outputData.get()
-        val json = JsonUtils.gson.toJson(data)
-        outputFile.get().asFile.writeText(json)
+        val serializer = data::class.serializer() as KSerializer<KotlinShareableDataAsSecondaryVariant>
+        outputFile.get().asFile.writeText(KgpJson.default.encodeToString(serializer, data))
     }
 }
