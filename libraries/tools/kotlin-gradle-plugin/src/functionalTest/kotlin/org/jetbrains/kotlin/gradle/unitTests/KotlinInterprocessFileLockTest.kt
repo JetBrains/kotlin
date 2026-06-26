@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
+import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
 import java.io.File
@@ -22,7 +22,7 @@ import java.util.function.Supplier
 import kotlin.reflect.full.declaredFunctions
 import kotlin.test.fail
 
-class NativeDistributionCommonizerLockTest {
+class KotlinInterprocessFileLockTest {
 
     @field:TempDir
     lateinit var temporaryFolderField: File
@@ -94,7 +94,7 @@ class NativeDistributionCommonizerLockTest {
     private class IsolatedLock private constructor(private val classLoader: ClassLoader, val instance: Any) {
         constructor(classLoader: ClassLoader, folder: File) : this(
             classLoader,
-            classLoader.loadClass(NativeDistributionCommonizerLock::class.java.name).declaredConstructors.first().newInstance(folder)
+            classLoader.loadClass(KotlinInterprocessDirectoryLock::class.java.name).declaredConstructors.first().newInstance(folder)
         )
 
         fun withLock(action: () -> Unit) {

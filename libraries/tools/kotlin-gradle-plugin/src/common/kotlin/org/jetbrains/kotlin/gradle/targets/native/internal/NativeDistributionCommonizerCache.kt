@@ -96,13 +96,13 @@ class NativeDistributionCommonizerCache(
      * even between multiple process (Gradle Daemons)
      */
     @Transient
-    private var lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
+    private var lock = KotlinInterprocessDirectoryLock(outputDirectory, ::logInfo)
 
     private fun logInfo(message: String) =
         logger.info("Native Distribution Commonization: $message")
 
     private fun readObject(input: ObjectInputStream) {
         input.defaultReadObject()
-        lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
+        lock = KotlinInterprocessDirectoryLock(outputDirectory, ::logInfo)
     }
 }

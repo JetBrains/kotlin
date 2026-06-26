@@ -10,27 +10,22 @@ import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
+internal class KotlinInterprocessDirectoryLock @JvmOverloads constructor(
     private val outputDirectory: File,
     private val logInfo: (message: String) -> Unit = {}
 ) {
     private companion object {
-        val intraProcessLock: ReentrantLock = ReentrantLock()
-        val lockedOutputDirectories = hashSetOf<File>()
+        private val inprocessDirectoryLockPool = ConcurrentHashMap<String, ReentrantLock>()
     }
 
     fun <T> withLock(action: (lockFile: File) -> T): T {
         /* Enter intra-process wide lock */
-        intraProcessLock.withLock {
+        inprocessDirectoryLockPool.getOrPut(outputDirectory.path) { ReentrantLock() }.withLock {
             val lockFile = outputDirectory.resolve(".lock")
-            if (outputDirectory in lockedOutputDirectories) {
-                /* Already acquired this directory and re-entered: We can just execute the action */
-                return action(lockFile)
-            }
-
             /* Lock output directory inter-process wide */
             outputDirectory.mkdirs()
             logInfo("Acquire lock: ${lockFile.path} ...")
@@ -39,10 +34,8 @@ internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
                 assert(lock.isValid)
                 return try {
                     logInfo("Lock acquired: ${lockFile.path}")
-                    lockedOutputDirectories.add(outputDirectory)
                     action(lockFile)
                 } finally {
-                    lockedOutputDirectories.remove(outputDirectory)
                     lock.release()
                     logInfo("Lock released: ${lockFile.path}")
                 }
@@ -79,12 +72,12 @@ internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
     }
 
     fun checkLocked(outputDirectory: File) {
-        check(intraProcessLock.isHeldByCurrentThread) {
+        check(inprocessDirectoryLockPool[outputDirectory.path]?.isHeldByCurrentThread == true) {
             "Expected lock to be held by current thread ${Thread.currentThread().name}"
         }
 
-        check(outputDirectory in lockedOutputDirectories) {
-            "Expected $outputDirectory to be locked. Locked directories: $lockedOutputDirectories"
+        check(outputDirectory.path in inprocessDirectoryLockPool.keys) {
+            "Expected $outputDirectory to be locked. Locked directories: ${inprocessDirectoryLockPool.keys}"
         }
     }
 }
