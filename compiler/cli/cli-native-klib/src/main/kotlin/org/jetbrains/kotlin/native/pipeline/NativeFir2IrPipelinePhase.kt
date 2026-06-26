@@ -37,6 +37,11 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.backend.konan.checkers.NativeKlibCheckers
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.native.Fir2IrOutput
 import org.jetbrains.kotlin.native.NativeFir2IrExtensions
 import org.jetbrains.kotlin.native.runPreSerializationLowerings
@@ -143,10 +148,26 @@ object NativePreSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact,
         val phaserState = PhaserState()
         val engine = PhaseEngine(phaseConfig, phaserState, phaseContext)
         val loweredResult = engine.runPreSerializationLowerings(fir2IrOutput, configuration)
+
+        runCheckers(configuration, loweredResult)
+
         return NativeFir2IrArtifact(
             fir2IrOutput = loweredResult,
             configuration = configuration,
             phaseContext = phaseContext,
         )
+    }
+
+    private fun runCheckers(
+        configuration: CompilerConfiguration,
+        loweredResult: Fir2IrOutput,
+    ) {
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(configuration.diagnosticsCollector, configuration.languageVersionSettings)
+        val checker = NativeKlibCheckers.makeChecker(
+            irDiagnosticReporter,
+            configuration
+        )
+        loweredResult.fir2irActualizedResult.irModuleFragment.acceptVoid(checker)
     }
 }
