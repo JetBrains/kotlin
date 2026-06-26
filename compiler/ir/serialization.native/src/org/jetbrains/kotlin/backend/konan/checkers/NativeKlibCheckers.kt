@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 
 object NativeKlibCheckers {
-    private val callCheckers: List<NativeKlibExpressionsChecker<IrCall>> = emptyList()
+    private val callCheckers: List<NativeKlibExpressionsChecker<IrCall>> = listOf(NativeVolatileCheck)
 
     fun makeChecker(
         diagnosticReporter: IrDiagnosticReporter,
