@@ -9,13 +9,18 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -118,6 +123,18 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
 
     open val setWithoutBoundCheckName: Name?
         get() = null
+
+    open fun arraySizePropertyGetter(arrayType: IrType): IrSimpleFunction =
+        arrayType.getClass()!!.getPropertyGetter("size")!!.owner
+
+    open fun arrayElementGetter(arrayType: IrType, intType: IrType): IrSimpleFunction {
+        val isArray = arrayType.isArray() || arrayType.isPrimitiveArray()
+        val getFunctionName = if (isArray && getWithoutBoundCheckName != null) getWithoutBoundCheckName else OperatorNameConventions.GET
+        return arrayType.getClass()!!.functions.single {
+            it.name == getFunctionName &&
+                    it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, intType))
+        }
+    }
 
     /**
      * Determines whether the provided function call is free of side effects.

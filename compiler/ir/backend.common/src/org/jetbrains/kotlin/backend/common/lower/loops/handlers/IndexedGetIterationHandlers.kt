@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for iteration over iterables using the `get / []` operator and an index. */
@@ -84,30 +83,14 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
                 callee.kotlinFqName == FqName("kotlin.collections.reversed")
     }
 
-    override val IrType.sizePropertyGetter
-        get() = getClass()!!.getPropertyGetter("size")!!.owner
+    override val IrType.sizePropertyGetter: IrSimpleFunction
+        get() = context.symbols.arraySizePropertyGetter(this)
 
     private fun IrType.isArrayType() =
         isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
 
-    private val IrType.getFunctionName: Name
-        get() = context.symbols.getWithoutBoundCheckName.let {
-            if (isArrayType() && it != null) {
-                it
-            } else {
-                OperatorNameConventions.GET
-            }
-        }
-
-    override val IrType.getFunction
-        get() = getClass()!!.functions.single {
-            it.name == getFunctionName &&
-                    it.hasShape(
-                        dispatchReceiver = true,
-                        regularParameters = 1,
-                        parameterTypes = listOf(null, context.irBuiltIns.intType)
-                    )
-        }
+    override val IrType.getFunction: IrSimpleFunction
+        get() = context.symbols.arrayElementGetter(this, context.irBuiltIns.intType)
 }
 
 /**
