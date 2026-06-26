@@ -1,0 +1,34 @@
+Module: lib
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <lib>
+final value class /MultiFieldValueClass { // /MultiFieldValueClass|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /MultiFieldValueClass.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /MultiFieldValueClass.hashCode|hashCode(){}[0]
+    final fun retrieveX(): kotlin/Int // /MultiFieldValueClass.retrieveX|retrieveX(){}[0]
+    final fun retrieveY(): kotlin/Int // /MultiFieldValueClass.retrieveY|retrieveY(){}[0]
+    final fun toString(): kotlin/String // /MultiFieldValueClass.toString|toString(){}[0]
+    final object Companion { // /MultiFieldValueClass.Companion|null[0]
+        final fun make(): /MultiFieldValueClass // /MultiFieldValueClass.Companion.make|make(){}[0]
+    }
+}
+final value class /SingleFieldValueClass { // /SingleFieldValueClass|null[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // /SingleFieldValueClass.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // /SingleFieldValueClass.hashCode|hashCode(){}[0]
+    final fun retrieveX(): kotlin/Int // /SingleFieldValueClass.retrieveX|retrieveX(){}[0]
+    final fun toString(): kotlin/String // /SingleFieldValueClass.toString|toString(){}[0]
+    final object Companion { // /SingleFieldValueClass.Companion|null[0]
+        final fun make(): /SingleFieldValueClass // /SingleFieldValueClass.Companion.make|make(){}[0]
+    }
+}
+Module: main
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <main>
+final fun /box(): kotlin/String // /box|box(){}[0]
