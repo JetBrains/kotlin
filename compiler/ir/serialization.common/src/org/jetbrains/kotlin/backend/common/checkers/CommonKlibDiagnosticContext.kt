@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.backend.js.checkers
+package org.jetbrains.kotlin.backend.common.checkers
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
-class JsKlibDiagnosticContext(val compilerConfiguration: CompilerConfiguration) {
+class CommonKlibDiagnosticContext(val compilerConfiguration: CompilerConfiguration) {
     var containingDeclaration: IrDeclaration? = null
         private set
 
@@ -41,14 +41,14 @@ class JsKlibDiagnosticContext(val compilerConfiguration: CompilerConfiguration) 
 
 fun IrDiagnosticReporter.at(
     declaration: IrDeclaration,
-    context: JsKlibDiagnosticContext,
+    context: CommonKlibDiagnosticContext,
 ): IrDiagnosticReporter.IrDiagnosticContext {
     return context.containingFile?.let { at(declaration, it) } ?: at(declaration)
 }
 
 fun IrDiagnosticReporter.at(
     irElement: IrElement,
-    context: JsKlibDiagnosticContext,
+    context: CommonKlibDiagnosticContext,
 ): IrDiagnosticReporter.IrDiagnosticContext {
     val file = context.containingFile
     if (file != null) {

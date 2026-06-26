@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers.declarations
 
+import org.jetbrains.kotlin.backend.common.checkers.CommonKlibDiagnosticContext
+import org.jetbrains.kotlin.backend.common.checkers.at
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.backend.js.checkers.*
 
 object JsKlibEsModuleExportsChecker : JsKlibExportedDeclarationsChecker {
     override fun check(
         declarations: List<JsKlibExportingDeclaration>,
-        context: JsKlibDiagnosticContext,
+        context: CommonKlibDiagnosticContext,
         reporter: IrDiagnosticReporter
     ) {
         val allExportedNameClashes = declarations.groupBy { it.exportingName }.filterValues { it.size > 1 }
