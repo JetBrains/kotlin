@@ -32,16 +32,20 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertInstanceOf
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 
-class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
+class LoadJavaPackageAnnotationsTest {
     companion object {
         private const val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
     }
 
-    private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
+    private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit): Unit = runWithDisposable { testRootDisposable ->
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()
         ).apply {
@@ -70,7 +74,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
 
         val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments
             .singleOrNull { it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null }
-            .let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
+            .let { assertInstanceOf<LazyJavaPackageFragment>(it) }
 
         val annotation = packageFragmentDescriptor.annotations.findAnnotation(FqName("test.Ann"))
         assertNotNull(annotation)
@@ -78,21 +82,24 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
         val singleAnnotation = packageFragmentDescriptor.annotations.singleOrNull()
         assertNotNull(singleAnnotation)
 
-        assertEquals(FqName("test.Ann"), singleAnnotation!!.fqName)
+        assertEquals(FqName("test.Ann"), singleAnnotation.fqName)
     }
 
+    @Test
     fun testAnnotationFromSource() {
         doTest(useJavac = false) {
             it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
         }
     }
 
+    @Test
     fun testAnnotationFromSourceWithJavac() {
         doTest(useJavac = true) {
             it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
         }
     }
 
+    @Test
     fun testAnnotationFromCompiledCode() {
         val jar = prepareJar()
 
@@ -101,6 +108,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testAnnotationFromCompiledCodeWithJavac() {
         val jar = prepareJar()
 

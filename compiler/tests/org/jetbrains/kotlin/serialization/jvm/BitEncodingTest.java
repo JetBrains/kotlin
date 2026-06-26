@@ -17,15 +17,16 @@
 package org.jetbrains.kotlin.serialization.jvm;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
 import static org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding.decodeBytes;
 import static org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding.encodeBytes;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class BitEncodingTest extends KtUsefulTestCase {
+public class BitEncodingTest {
     private static final int[] BIG_LENGTHS = new int[]
             {1000, 32000, 33000, 65000, 65534, 65535, 65536, 65537, 100000, 131074, 239017, 314159, 1000000};
 
@@ -40,13 +41,13 @@ public class BitEncodingTest extends KtUsefulTestCase {
 
         byte[] c = decodeBytes(b);
         String message = "Failed randSeed = " + randSeed + ", length = " + length;
-        assertArrayEquals(message, a, c);
+        assertArrayEquals(a, c, message);
 
         String[] d = encodeBytes(c);
-        assertArrayEquals(message, b, d);
+        assertArrayEquals(b, d, message);
 
         byte[] e = decodeBytes(d);
-        assertArrayEquals(message, a, e);
+        assertArrayEquals(a, e, message);
     }
 
     private static void assertStringConformsToJVMS(@NotNull String string) {
@@ -54,10 +55,11 @@ public class BitEncodingTest extends KtUsefulTestCase {
         for (char c : string.toCharArray()) {
             if (c == 0x0) effectiveLength++;
         }
-        assertTrue(String.format("String exceeds maximum allowed length in a class file: %d > 65535", effectiveLength),
-                   effectiveLength <= 65535);
+        int res = effectiveLength;
+        Assertions.assertTrue(effectiveLength <= 65535, () -> String.format("String exceeds maximum allowed length in a class file: %d > 65535", res));
     }
 
+    @Test
     public void testEncodeDecode() throws Exception {
         for (int length = 0; length <= 100; length++) {
             for (int randSeed = 1; randSeed <= 100; randSeed++) {

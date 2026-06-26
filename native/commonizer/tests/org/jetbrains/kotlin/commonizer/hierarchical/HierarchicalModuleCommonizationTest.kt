@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.commonizer.assertCommonized
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.jupiter.api.Test
 
 class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test common modules hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
@@ -77,6 +79,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test module commonization with empty root not sharing any module`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
@@ -114,6 +117,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         )
     }
 
+    @Test
     fun `test no common modules`() {
         val result = commonize(Status.NOTHING_TO_DO) {
             outputTarget("(a, b)", "(a, b, c)")
@@ -143,6 +147,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         assertTrue(result.results.isEmpty(), "Expected no results")
     }
 
+    @Test
     fun `test propagation`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)", "(a, b, c, d)")
@@ -180,6 +185,7 @@ class HierarchicalModuleCommonizationTest : AbstractInlineSourcesCommonizationTe
         }
     }
 
+    @Test
     fun `test missing modules on two targets`() {
         val result = commonize {
             outputTarget("(a, b)")

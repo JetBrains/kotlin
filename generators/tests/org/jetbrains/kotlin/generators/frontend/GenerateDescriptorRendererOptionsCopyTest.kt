@@ -6,17 +6,18 @@ package org.jetbrains.kotlin.generators.frontend
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.frontend.GenerateDescriptorRendererOptionsCopy.generate
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-class GenerateDescriptorRendererOptionsCopyTest : KtUsefulTestCase() {
+class GenerateDescriptorRendererOptionsCopyTest {
+    @Test
     fun testGeneratedDataIsUpToDate() {
         val text = generate()
-        TestCase.assertEquals(
-            "Contents differ. Regenerate " + GenerateDescriptorRendererOptionsCopy::class.java.getName(),
+        Assertions.assertEquals(
             StringUtil.convertLineSeparators(text),
             FileUtil.loadFile(GenerateDescriptorRendererOptionsCopy.DEST_FILE, true),
+            "Contents differ. Regenerate " + GenerateDescriptorRendererOptionsCopy::class.java.getName()
         )
     }
 }

@@ -1,6 +1,5 @@
 import JdkMajorVersion.JDK_1_8
 import JdkMajorVersion.JDK_21_0
-import TestCompilePaths.KOTLIN_STDLIB_SOURCES_ROOT_PATH
 
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -19,9 +18,10 @@ plugins {
 }
 
 dependencies {
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testFixturesApi(libs.junit4)
     testFixturesCompileOnly(kotlinTest("junit"))
-    testImplementation(libs.junit.jupiter.api)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(project(":compiler:fir:checkers"))

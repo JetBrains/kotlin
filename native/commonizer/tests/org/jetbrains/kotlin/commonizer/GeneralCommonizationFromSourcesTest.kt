@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import kotlin.contracts.ExperimentalContracts
+import org.junit.jupiter.api.Test
 
-@ExperimentalContracts
 class GeneralCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTest() {
 
+    @Test
     fun testMismatchedPackages() = doTestSuccessfulCommonization()
 
+    @Test
     fun testAnnotations() = doTestSuccessfulCommonization()
 }

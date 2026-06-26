@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
-import org.jetbrains.kotlin.test.runTest
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.junit.Assert
-import org.junit.Ignore
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
 
 @WithMutedInDatabaseRunTest
-@Ignore("Reads files from :libraries, should live there")
-class KotlinVersionsTest : KtUsefulTestCase() {
+@Disabled("Reads files from :libraries, should live there")
+class KotlinVersionsTest {
+    @Test
     fun testVersionsAreConsistent() {
         val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
 
@@ -80,10 +80,9 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         versions.add(latestStableVersion)
 
         if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
-            Assert.fail(
+            Assertions.fail<Unit>(
                 "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
-                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
-            )
+                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } })
         }
 
         // Note: uncomment this fragment before a language version update
@@ -95,6 +94,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 //        }
     }
 
+    @Test
     fun testMavenProjectVersionsAreEqual() {
         data class Pom(val path: String, val version: String)
 
@@ -112,16 +112,15 @@ class KotlinVersionsTest : KtUsefulTestCase() {
             true
         }
 
-        Assert.assertTrue(
-            "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure",
-            poms.size > 10
+        Assertions.assertTrue(
+            poms.size > 10,
+            "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure"
         )
 
         if (!poms.map(Pom::version).areEqual()) {
-            Assert.fail(
+            Assertions.fail<Unit>(
                 "Some versions in pom.xml files are different. Please change the versions so that they are equal:\n\n" +
-                        poms.joinToString(separator = "\n") { (path, version) -> "$version $path" }
-            )
+                        poms.joinToString(separator = "\n") { (path, version) -> "$version $path" })
         }
     }
 
@@ -154,8 +153,4 @@ class KotlinVersionsTest : KtUsefulTestCase() {
     }
 
     private fun Collection<Any>.areEqual(): Boolean = all(first()::equals)
-
-    override fun runTest() {
-        runTest { super.runTest() }
-    }
 }

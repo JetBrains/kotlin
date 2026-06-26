@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.load.java.MUTABLE_ANNOTATIONS
-import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
-import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATION_SETTINGS
-import org.jetbrains.kotlin.load.java.NullabilityAnnotationStatesImpl
-import org.jetbrains.kotlin.load.java.READ_ONLY_ANNOTATIONS
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.isChildOf
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.junit.jupiter.api.Test
 
 private val ALL_ANNOTATIONS = NULLABILITY_ANNOTATIONS + READ_ONLY_ANNOTATIONS + MUTABLE_ANNOTATIONS
 
-class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {
+class AllNullabilityAnnotationsAreSetUpTest {
+    @Test
     fun testAllAnnotationsAreSetUp() {
         val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
         assert(ALL_ANNOTATIONS.all { annotation -> annotationsRawMap.keys.any { annotation.isChildOf(it) } }) {
@@ -26,6 +23,7 @@ class AllNullabilityAnnotationsAreSetUpTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testAllSetUpAnnotationsArePresent() {
         val annotationsRawMap = (NULLABILITY_ANNOTATION_SETTINGS as NullabilityAnnotationStatesImpl).states
         assert(annotationsRawMap.keys.all { annotations ->

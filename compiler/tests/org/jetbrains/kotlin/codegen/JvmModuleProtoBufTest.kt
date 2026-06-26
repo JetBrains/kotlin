@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestDataAssertions
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Test
 import java.io.File
 
-class JvmModuleProtoBufTest : KtUsefulTestCase() {
+class JvmModuleProtoBufTest {
     private fun doTest(
         relativeDirectory: String,
         compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
@@ -75,22 +75,27 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         TestDataAssertions.assertEqualsToFile(File(directory, "module-proto.txt"), result)
     }
 
+    @Test
     fun testSimple() {
         doTest("moduleProtoBuf/simple")
     }
 
+    @Test
     fun testJvmPackageName() {
         doTest("moduleProtoBuf/jvmPackageName")
     }
 
+    @Test
     fun testJvmPackageNameManyParts() {
         doTest("moduleProtoBuf/jvmPackageNameManyParts")
     }
 
+    @Test
     fun testJvmPackageNameLanguageVersion11() {
         doTest("moduleProtoBuf/jvmPackageNameLanguageVersion11", loadWith = LanguageVersion.KOTLIN_1_1)
     }
 
+    @Test
     fun testJvmPackageNameMultifileClass() {
         doTest("moduleProtoBuf/jvmPackageNameMultifileClass")
     }

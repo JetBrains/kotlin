@@ -16,8 +16,20 @@
 
 package org.jetbrains.kotlin.test.testFramework
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Disposer
 
 fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
+}
+inline fun runWithDisposable(block: (Disposable) -> Unit) {
+    val disposable = Disposer.newDisposable()
+    try {
+        block(disposable)
+    } finally {
+        ApplicationManager.getApplication()?.runWriteAction {
+            Disposer.dispose(disposable)
+        }
+    }
 }

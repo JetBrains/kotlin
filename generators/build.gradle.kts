@@ -97,7 +97,7 @@ dependencies {
 }
 
 projectTests {
-    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         workingDir = rootDir
     }
 }

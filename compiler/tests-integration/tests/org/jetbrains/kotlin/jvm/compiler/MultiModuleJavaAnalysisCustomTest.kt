@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -55,15 +55,15 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
 
-class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
+class MultiModuleJavaAnalysisCustomTest {
 
     private class TestModule(
-        val project: Project,
         val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
         val _dependencies: TestModule.() -> List<TestModule>,
     ) : TrackableModuleInfo {
@@ -79,9 +79,10 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             get() = JvmPlatformAnalyzerServices
     }
 
-    fun testJavaEntitiesBelongToCorrectModule() {
+    @Test
+    fun testJavaEntitiesBelongToCorrectModule(): Unit = runWithDisposable { testRootDisposable ->
         val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory }!!
-        val environment = createEnvironment(moduleDirs)
+        val environment = createEnvironment(moduleDirs, testRootDisposable)
         val modules = setupModules(environment, moduleDirs)
         val projectContext = ProjectContext(environment.project, "MultiModuleJavaAnalysisTest")
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
@@ -133,7 +134,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         performChecks(resolverForProject, modules)
     }
 
-    private fun createEnvironment(moduleDirs: Array<File>): KotlinCoreEnvironment {
+    private fun createEnvironment(moduleDirs: Array<File>, testRootDisposable: Disposable): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.JDK_ONLY,
             TestJdkKind.MOCK_JDK,
@@ -149,15 +150,15 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {
             val name = dir.name
-            val kotlinFiles = KotlinTestUtils.loadToKtFiles(environment, dir.listFiles { it -> it.extension == "kt" }?.toList().orEmpty())
-            val javaFilesScope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+            val kotlinFiles = KotlinTestUtils.loadToKtFiles(environment, dir.listFiles { it.extension == "kt" }?.toList().orEmpty())
+            val javaFilesScope = object : DelegatingGlobalSearchScope(allScope(project)) {
                 override fun contains(file: VirtualFile): Boolean {
                     if (file !in myBaseScope!!) return false
                     if (file.isDirectory) return true
                     return file.parent!!.parent!!.name == name
                 }
             }
-            modules[name] = TestModule(project, name, kotlinFiles, javaFilesScope) {
+            modules[name] = TestModule(name, kotlinFiles, javaFilesScope) {
                 when (this._name) {
                     "a" -> listOf(this)
                     "b" -> listOf(this, modules["a"]!!)
@@ -210,18 +211,19 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             val annotationClassDescriptor = it.annotationClass!!
             checkDescriptor(annotationClassDescriptor, callable)
 
-            Assert.assertEquals(
-                "Annotation value arguments number is not equal to number of parameters in $callable",
-                annotationClassDescriptor.constructors.single().valueParameters.size, it.allValueArguments.size
+            Assertions.assertEquals(
+                annotationClassDescriptor.constructors.single().valueParameters.size,
+                it.allValueArguments.size,
+                "Annotation value arguments number is not equal to number of parameters in $callable"
             )
 
             it.allValueArguments.forEach {
                 val argument = it.value
                 if (argument is EnumValue) {
-                    Assert.assertEquals(
-                        "Enum entry name should be <module-name>X",
+                    Assertions.assertEquals(
                         "X",
-                        argument.enumEntryName.identifier.last().toString()
+                        argument.enumEntryName.identifier.last().toString(),
+                        "Enum entry name should be <module-name>X"
                     )
                 }
             }
@@ -244,9 +246,10 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val descriptorName = referencedDescriptor.name.asString()
         val expectedModuleName = "<${descriptorName.lowercase().first()}>"
         val moduleName = referencedDescriptor.module.name.asString()
-        Assert.assertEquals(
-            "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName",
-            expectedModuleName, moduleName
+        Assertions.assertEquals(
+            expectedModuleName,
+            moduleName,
+            "Java class $descriptorName in $context should be in module $expectedModuleName, but instead was in $moduleName"
         )
     }
 

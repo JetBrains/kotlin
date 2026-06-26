@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommonizationTest() {
+    @Test
     fun `test non-platform types`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -32,6 +34,7 @@ class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommoniza
         )
     }
 
+    @Test
     fun `test platform types`() {
         val result = commonize {
             outputTarget("(a, b)")

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.generators.dsl.junit4.generateTestGroupSuiteWithJUnit4
+import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 
@@ -42,7 +43,9 @@ fun main(args: Array<String>) {
                 model("cli/metadata", extension = "args", testMethod = "doMetadataTest", recursive = false)
             }
         }
+    }
 
+    generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup("compiler/tests-integration/tests-gen", "compiler/tests-integration/testData") {
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
