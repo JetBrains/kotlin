@@ -78,11 +78,25 @@ internal object XcodebuildDefFileUtils {
         val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
         val ldArgs = mutableListOf<String>()
         val filelist = mutableListOf<String>()
+        // swiftc linker driver passes arguments in argv instead of the filelist and it doesn't seem to be possible to force "-driver-filelist-threshold 0" easily
+        val argvObjectFiles = mutableListOf<String>()
         val kotlinDylibProduct = mutableListOf<String>()
         val linkTimeFrameworkSearchPaths = mutableSetOf<String>()
         val librarySearchPaths = mutableSetOf<String>()
 
+        var consumeNextArg = true
+        val skipArgs = setOf("-object_path_lto")
+
         resplitLdCall.forEachIndexed { index, arg ->
+            if (!consumeNextArg) {
+                consumeNextArg = true
+                return@forEachIndexed
+            }
+            if (arg in skipArgs) {
+                consumeNextArg = false
+                return@forEachIndexed
+            }
+
             if (arg == "-filelist") {
                 filelist.addAll(listOf(arg, resplitLdCall[index + 1]))
             }
@@ -104,10 +118,12 @@ internal object XcodebuildDefFileUtils {
                 librarySearchPaths.add(arg.substring(2))
             }
 
-            // Unpacked XCFramework slices are passed as a CLI path
             if (arg.startsWith("/")) {
                 if (arg.endsWith(".a")) {
                     ldArgs.add(arg)
+                }
+                if (arg.endsWith(".o")) {
+                    argvObjectFiles.add(arg)
                 }
                 if (arg.endsWith(".dylib")) {
                     ldArgs.add(arg)
@@ -129,7 +145,11 @@ internal object XcodebuildDefFileUtils {
         }
 
         return ParsedLdCall(
-            ldArgs = ldArgs + filelist,
+            /**
+             * See [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.ConvertSyntheticSwiftPMImportProjectIntoDefFile.ldFilePath] for
+             * the reason these ld args are different
+             */
+            ldArgs = ldArgs + filelist + argvObjectFiles,
             frameworkLdArgs = kotlinDylibProduct + ldArgs,
             linkTimeFrameworkSearchPaths = linkTimeFrameworkSearchPaths,
             librarySearchPaths = librarySearchPaths,

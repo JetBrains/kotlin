@@ -167,8 +167,9 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
         defFiles.map { directory -> directory.file(XcodebuildDefFileUtils.defFileName(architecture)) }
 
     /**
-     * The difference between these is that for dynamic framework linkage we never want -filelist as we expect it to contain .o files
-     * which are instead going to be exported through our SwiftPM dylib product.
+     * The difference between [ldFilePath] and [ldFileForFrameworkLinkagePath] is that for dynamic framework linkage we never want
+     * -filelist or the .o paths which are instead going to be exported through our SwiftPM dylib product.
+     * For executables (e.g. K/N tests) we instead want to avoid SwiftPM dylib and pass .o dependencies directly.
      */
     fun ldFilePath(architecture: AppleArchitecture): Provider<RegularFile> =
         ldDump.map { directory -> directory.file(XcodebuildDefFileUtils.ldFileName(architecture)) }
