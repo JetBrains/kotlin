@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 import com.microsoft.playwright.Browser
 import com.microsoft.playwright.BrowserType
 import com.microsoft.playwright.Playwright
-import com.microsoft.playwright.TimeoutError
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.internal.tasks.testing.TestExecutionSpec
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
@@ -77,9 +76,10 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                             suite(id = runner.name) {
                                 try {
                                     executeRunner(playwright, runner, handler)
-                                } catch (e: TimeoutError) {
+                                } catch (t: Throwable) {
                                     val tsEnd = System.currentTimeMillis()
-                                    closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = e)
+                                    closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
+                                    throw t
                                 }
                             }
                         }
