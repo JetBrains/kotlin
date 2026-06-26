@@ -1,7 +1,7 @@
 b main.kt:12
 r
-fr var -o
+fr var
 b main.kt:16
 c
-fr var -o
+fr var
 q

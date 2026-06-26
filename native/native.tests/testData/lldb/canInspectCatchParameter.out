@@ -17,8 +17,8 @@ Process <process id> stopped
    13  	    }
    14
    15  	    try {
-(lldb) fr var -o
-(ObjHeader *) e1 = <memory address>
+(lldb) fr var
+(ObjHeader *) e1 = kotlin.Exception: message 1
 (ObjHeader *) e2 = NULL
 (lldb) b main.kt:16
 Breakpoint 2: where = lldb_canInspectCatchParameter.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:16:9, address = <memory address>
@@ -36,7 +36,7 @@ Process <process id> stopped
    17  	    } catch (e2: Throwable) {
    18  	        println(e2.message)
    19  	    }
-(lldb) fr var -o
-(ObjHeader *) e1 = <memory address>
+(lldb) fr var
+(ObjHeader *) e1 = kotlin.Exception: message 1
 (ObjHeader *) e2 = NULL
 (lldb) q
