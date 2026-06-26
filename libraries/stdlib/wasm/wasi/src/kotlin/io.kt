@@ -18,6 +18,7 @@ private const val STDERR = 2
 
 private const val USER_DATA = 0L
 private const val EVENT_FD_READ = 1
+private const val EVENT_FD_WRITE = 2
 
 private const val BUFFER_SIZE: Int = 32
 
@@ -29,17 +30,17 @@ private const val LF: Byte = 0x0A.toByte()
  */
 @ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "fd_write")
-private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, errorPtr: Int): Int
+private external fun wasiRawFdWrite(descriptor: Int, scatterPtr: Int, scatterSize: Int, resultPtr: Int): Int
 
 /** Read from a file descriptor. Note: This is similar to `readv` in POSIX. */
 @ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "fd_read")
-private external fun wasiRawFdRead(descriptor: Int, gatherPtr: Int, gatherSize: Int, errorPtr: Int): Int
+private external fun wasiRawFdRead(descriptor: Int, gatherPtr: Int, gatherSize: Int, resultPtr: Int): Int
 
 /** Concurrently poll for the occurrence of a set of events. */
 @ExperimentalWasmInterop
 @WasmImport("wasi_snapshot_preview1", "poll_oneoff")
-private external fun wasiPollOneOff(subscriptionPtr: Int, eventPtr: Int, nSubscriptions: Int, errorPtr: Int): Int
+private external fun wasiPollOneOff(subscriptionPtr: Int, eventPtr: Int, nSubscriptions: Int, resultPtr: Int): Int
 
 @OptIn(ExperimentalWasmInterop::class)
 private fun wasiPrintImpl(
@@ -49,10 +50,10 @@ private fun wasiPrintImpl(
     useErrorStream: Boolean
 ) {
     val dataSize = data?.size ?: 0
-    val memorySize = dataSize + (if (newLine) 1 else 0)
-    if (memorySize == 0) return
+    val bytesToWrite = dataSize + (if (newLine) 1 else 0)
+    if (bytesToWrite == 0) return
 
-    val ptr = allocator.allocate(memorySize)
+    val ptr = allocator.allocate(bytesToWrite)
     if (data != null) {
         var currentPtr = ptr
         for (el in data) {
@@ -65,21 +66,34 @@ private fun wasiPrintImpl(
     }
 
     val scatterPtr = allocator.allocate(8)
-    (scatterPtr + 0).storeInt(ptr.address.toInt())
-    (scatterPtr + 4).storeInt(memorySize)
-
     val rp0 = allocator.allocate(4)
+    val descriptor = if (useErrorStream) STDERR else STDOUT
 
-    val ret =
-        wasiRawFdWrite(
-            descriptor = if (useErrorStream) STDERR else STDOUT,
+    var written = 0
+    while (written < bytesToWrite) {
+        (scatterPtr + 0).storeInt(ptr.address.toInt() + written)
+        (scatterPtr + 4).storeInt(bytesToWrite - written)
+
+        var res = wasiRawFdWrite(
+            descriptor = descriptor,
             scatterPtr = scatterPtr.address.toInt(),
             scatterSize = 1,
-            errorPtr = rp0.address.toInt()
+            resultPtr = rp0.address.toInt()
         )
+        if (res == WasiErrorCode.AGAIN.ordinal) {
+            wasiWaitUntilEventImpl(allocator, descriptor, EVENT_FD_WRITE)
+            res = wasiRawFdWrite(
+                descriptor = descriptor,
+                scatterPtr = scatterPtr.address.toInt(),
+                scatterSize = 1,
+                resultPtr = rp0.address.toInt()
+            )
+        }
+        if (res != 0) {
+            throw WasiError(WasiErrorCode.entries[res])
+        }
 
-    if (ret != 0) {
-        throw WasiError(WasiErrorCode.entries[ret])
+        written += rp0.loadInt()
     }
 }
 
@@ -114,11 +128,11 @@ public actual fun print(message: Any?) {
 }
 
 @OptIn(ExperimentalWasmInterop::class)
-private fun wasiWaitUntilUserInputImpl(allocator: MemoryAllocator) {
+private fun wasiWaitUntilEventImpl(allocator: MemoryAllocator, descriptor: Int, fdEvent: Int) {
     val subscriptionPtr = allocator.allocate(20)
     (subscriptionPtr + 0).storeLong(USER_DATA)
-    (subscriptionPtr + 8).storeByte(1)
-    (subscriptionPtr + 16).storeInt(STDIN)
+    (subscriptionPtr + 8).storeByte(fdEvent.toByte())
+    (subscriptionPtr + 16).storeInt(descriptor)
 
     val eventSize = 26
     val eventPtr = allocator.allocate(eventSize)
@@ -129,7 +143,7 @@ private fun wasiWaitUntilUserInputImpl(allocator: MemoryAllocator) {
         subscriptionPtr = subscriptionPtr.address.toInt(),
         eventPtr = eventPtr.address.toInt(),
         nSubscriptions = 1,
-        errorPtr = rp0.address.toInt()
+        resultPtr = rp0.address.toInt()
     )
     if (ret != 0) {
         throw WasiError(WasiErrorCode.entries[ret])
@@ -144,7 +158,7 @@ private fun wasiWaitUntilUserInputImpl(allocator: MemoryAllocator) {
         throw WasiError(WasiErrorCode.entries[eventRet])
     }
     val eventType = (eventPtr + 10).loadByte().toInt()
-    check(eventType == EVENT_FD_READ) { "Unexpected WASI result" }
+    check(eventType == fdEvent) { "Unexpected WASI result" }
 }
 
 @OptIn(ExperimentalWasmInterop::class)
@@ -166,7 +180,7 @@ private fun wasiReadLineImpl(allocator: MemoryAllocator): ByteArray? {
             descriptor = STDIN,
             gatherPtr = ioVecPtr.address.toInt(),
             gatherSize = 1,
-            errorPtr = rp0.address.toInt()
+            resultPtr = rp0.address.toInt()
         )
         if (ret != 0) {
             throw WasiError(WasiErrorCode.entries[ret])
@@ -227,6 +241,6 @@ public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFExcepti
  */
 @SinceKotlin("1.6")
 public actual fun readlnOrNull(): String? = withScopedMemoryAllocator { allocator ->
-    wasiWaitUntilUserInputImpl(allocator)
+    wasiWaitUntilEventImpl(allocator, STDIN, EVENT_FD_READ)
     wasiReadLineImpl(allocator)?.decodeToString()
 }
