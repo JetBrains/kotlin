@@ -89,9 +89,21 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("delegatedFunctionInSuper.kt")
+  public void testDelegatedFunctionInSuper() {
+    run("delegatedFunctionInSuper.kt");
+  }
+
+  @Test
   @TestMetadata("delegatedProperty.kt")
   public void testDelegatedProperty() {
     run("delegatedProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedPropertyInSuper.kt")
+  public void testDelegatedPropertyInSuper() {
+    run("delegatedPropertyInSuper.kt");
   }
 
   @Test
@@ -122,6 +134,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   @TestMetadata("incompleteFunction2.kt")
   public void testIncompleteFunction2() {
     run("incompleteFunction2.kt");
+  }
+
+  @Test
+  @TestMetadata("intersectionOverride.kt")
+  public void testIntersectionOverride() {
+    run("intersectionOverride.kt");
   }
 
   @Test
