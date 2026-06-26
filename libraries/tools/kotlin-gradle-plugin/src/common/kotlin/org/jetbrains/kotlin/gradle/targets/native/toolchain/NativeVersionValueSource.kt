@@ -9,7 +9,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
+import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.konan.util.ArchiveType
 import org.jetbrains.kotlin.konan.util.DependencyExtractor
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -66,7 +66,7 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
         val lock =
-            NativeDistributionCommonizerLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
+            KotlinInterprocessDirectoryLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
             val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
