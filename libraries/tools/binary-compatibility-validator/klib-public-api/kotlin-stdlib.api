@@ -4620,10 +4620,8 @@ open class kotlin/ArithmeticException : kotlin/RuntimeException { // kotlin/Arit
 open class kotlin/AssertionError : kotlin/Error { // kotlin/AssertionError|null[0]
     constructor <init>() // kotlin/AssertionError.<init>|<init>(){}[0]
     constructor <init>(kotlin/Any?) // kotlin/AssertionError.<init>|<init>(kotlin.Any?){}[0]
-    constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin/AssertionError.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
-
-    // Targets: [js, wasmJs, wasmWasi]
     constructor <init>(kotlin/String?) // kotlin/AssertionError.<init>|<init>(kotlin.String?){}[0]
+    constructor <init>(kotlin/String?, kotlin/Throwable?) // kotlin/AssertionError.<init>|<init>(kotlin.String?;kotlin.Throwable?){}[0]
 }
 
 open class kotlin/ClassCastException : kotlin/RuntimeException { // kotlin/ClassCastException|null[0]
