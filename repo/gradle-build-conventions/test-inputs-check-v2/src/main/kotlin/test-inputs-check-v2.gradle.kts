@@ -13,7 +13,7 @@ tasks.withType<Test>().configureEach {
 afterEvaluate {
     tasks.withType<Test>().names.forEach { testName ->
         val test = tasks.named<Test>(testName)
-        configureCheckTestInputsTask(test, declaredInputsFile(test.name))
+        configureCheckTestInputsTask(test, undeclaredInputsFile(test.name))
     }
 }
 
