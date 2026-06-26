@@ -169,7 +169,7 @@ internal class PsiElementToHtmlConverter(
         private fun PsiElement.toDocumentationLinkString(label: String = ""): String {
             val displayLabel = label.ifBlank { defaultLabel().text }
 
-            val driId = reference?.resolve()?.takeIf { it !is PsiParameter }?.let {
+            val driId = reference?.resolveToDocumentedElement()?.takeIf { it !is PsiParameter }?.let {
                 val dri = DRI.from(it)
                 val id = docTagParserContext.store(dri)
                 id
