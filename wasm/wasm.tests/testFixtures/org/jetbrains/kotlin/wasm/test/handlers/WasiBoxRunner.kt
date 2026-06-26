@@ -151,7 +151,11 @@ class WasiBoxRunner(
     }
 }
 
-class WasmWasiFolderGroupingStageBoxRunner(
+/*
+ * This Wasi folder runner is intended for the future use in "WasmWasi Klib forward compatibility tests", should it be ever needed,
+ * similar to [CustomWasmJsCompilerSecondStageTestGenerated]
+ */
+open class WasmWasiFolderGroupingStageBoxRunner(
     testServices: TestServices
 ) : AbstractWasmGroupingStageBoxRunner(testServices), WasmArtifactsCollector {
     private val firstNonGroupingTestServices: TestServices

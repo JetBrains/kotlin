@@ -44,9 +44,7 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys.WASM_GENERATE_CLOS
 import org.jetbrains.kotlin.wasm.test.blackbox.WasmGroupingTestIsolator
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmCompilationSetsGroupingStageBoxRunner
-import org.jetbrains.kotlin.wasm.test.handlers.WasmFolderGroupingStageBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmJsCoroutinesStackSwitchingBoxRunner
-import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiFolderGroupingStageBoxRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
@@ -57,7 +55,6 @@ abstract class AbstractWasmCodegenBoxTest(
     val pathToTestDir: String = "compiler/testData/codegen/",
 ): AbstractTwoStageKotlinCompilerTest() {
     abstract val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>>
-    abstract val wasmFolderBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>>
     open val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmCompilationSetsGroupingStageBoxRunner
 
     // Allow subclasses to contribute ignore directives for BlackBoxCodegenSuppressor,
@@ -144,7 +141,6 @@ abstract class AbstractWasmJsCodegenBoxTest(pathToTestDir: String = "compiler/te
     pathToTestDir,
 ) {
     override val additionalSourceProviders: List<Constructor<AdditionalSourceProvider>> = listOf(::WasmJsLauncherAdditionalSourceProvider)
-    override val wasmFolderBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmFolderGroupingStageBoxRunner
 }
 
 abstract class AbstractWasmWasiCodegenBoxTest : AbstractWasmCodegenBoxTest(TargetBackend.WASM_WASI, WasmPlatforms.wasmWasi, WasmTarget.WASI) {
@@ -152,7 +148,6 @@ abstract class AbstractWasmWasiCodegenBoxTest : AbstractWasmCodegenBoxTest(Targe
         ::WasmJsLauncherAdditionalSourceProvider,
         ::WasmWasiBoxTestHelperSourceProvider,
     )
-    override val wasmFolderBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmWasiFolderGroupingStageBoxRunner
 }
 
 abstract class AbstractWasmJsCodegenBoxInlinedTest(pathToTestDir: String = "compiler/testData/codegen/") :
