@@ -66,6 +66,9 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
 
     @Throws(RemoteException::class)
+    fun incrementalCache_getMetadataModuleMappingData(target: TargetId): ByteArray?
+
+    @Throws(RemoteException::class)
     fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
 
     @Throws(RemoteException::class)

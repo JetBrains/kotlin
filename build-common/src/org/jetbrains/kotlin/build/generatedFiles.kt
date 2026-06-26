@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
+import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_MODULE_METADATA_FILE_NAME
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.utils.sure
@@ -24,7 +26,7 @@ import java.io.File
 
 open class GeneratedFile(
     sourceFiles: Collection<File>,
-    val outputFile: File
+    val outputFile: File,
 ) {
     val sourceFiles = sourceFiles.filter { it.exists() }.sortedBy { it.path }
 
@@ -34,7 +36,7 @@ open class GeneratedFile(
 class GeneratedJvmClass(
     sourceFiles: Collection<File>,
     outputFile: File,
-    metadataVersionFromLanguageVersion: MetadataVersion
+    metadataVersionFromLanguageVersion: MetadataVersion,
 ) : GeneratedFile(sourceFiles, outputFile) {
     val outputClass = LocalFileKotlinClass.create(outputFile, metadataVersionFromLanguageVersion).sure {
         "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"
@@ -42,3 +44,4 @@ class GeneratedJvmClass(
 }
 
 fun File.isModuleMappingFile() = extension == ModuleMapping.MAPPING_FILE_EXT && parentFile.name == "META-INF"
+fun File.isMetadataModuleMappingFile() = nameWithoutExtension == KLIB_MODULE_METADATA_FILE_NAME && parentFile.name == KLIB_METADATA_FOLDER_NAME

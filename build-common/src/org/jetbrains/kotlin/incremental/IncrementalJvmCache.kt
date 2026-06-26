@@ -65,6 +65,7 @@ open class IncrementalJvmCache(
         private const val JAVA_SOURCES_PROTO_MAP = "java-sources-proto-map"
 
         private const val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
+        private const val METADATA_MODULE_MAPPING_FILE_NAME = "metadata-module"
     }
 
     override val sourceToClassesMap = registerMap(SourceToJvmNameMap(SOURCE_TO_CLASSES.storageFile, icContext))
@@ -120,6 +121,17 @@ open class IncrementalJvmCache(
 
     fun saveModuleMappingToCache(sourceFiles: Collection<File>, data: ByteArray) {
         val jvmClassName = JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)
+        protoMap.storeModuleMapping(jvmClassName, data)
+        dirtyOutputClassesMap.notDirty(jvmClassName)
+        sourceFiles.forEach { sourceToClassesMap.append(it, jvmClassName) }
+    }
+
+    fun saveMetadataModuleToCache(sourceFiles: Collection<File>, file: File) {
+        saveMetadataModuleToCache(sourceFiles, file.readBytes())
+    }
+
+    fun saveMetadataModuleToCache(sourceFiles: Collection<File>, data: ByteArray) {
+        val jvmClassName = JvmClassName.byInternalName(METADATA_MODULE_MAPPING_FILE_NAME)
         protoMap.storeModuleMapping(jvmClassName, data)
         dirtyOutputClassesMap.notDirty(jvmClassName)
         sourceFiles.forEach { sourceToClassesMap.append(it, jvmClassName) }
@@ -369,6 +381,10 @@ open class IncrementalJvmCache(
 
     override fun getModuleMappingData(): ByteArray? {
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
+    }
+
+    override fun getMetadataModuleMappingData(): ByteArray? {
+        return protoMap[JvmClassName.byInternalName(METADATA_MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
     private inner class ProtoMap(

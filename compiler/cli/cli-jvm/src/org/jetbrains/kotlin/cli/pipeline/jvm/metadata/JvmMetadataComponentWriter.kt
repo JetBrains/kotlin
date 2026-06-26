@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.writer.KlibComponentWriter
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
@@ -24,6 +25,10 @@ internal class JvmMetadataComponentWriter(
 
         layout.metadataDir.createDirectories()
         layout.moduleHeaderFile.writeBytes(metadata.module)
+        fragmentTracker?.recordSourceFilesToOutputFileMapping(
+            metadata.fragments.flatten().mapNotNull { it.path }.map { File(it) },
+            layout.moduleHeaderFile.toFile()
+        )
 
         metadata.fragmentNames.forEachIndexed { index, packageFqName ->
             layout.getPackageFragmentsDir(packageFqName).createDirectories()

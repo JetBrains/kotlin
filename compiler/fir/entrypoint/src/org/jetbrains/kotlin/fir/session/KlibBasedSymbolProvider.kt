@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.utils.SmartList
 import java.nio.file.Paths
 
@@ -32,13 +34,14 @@ class KlibBasedSymbolProvider(
     private val resolvedLibraries: Collection<KotlinLibrary>,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     flexibleTypeFactory: FirTypeDeserializer.FlexibleTypeFactory = FirTypeDeserializer.FlexibleTypeFactory.Default,
+    metadataProvider: (KotlinLibrary) -> KlibMetadataComponent = { it.metadata },
 ) : MetadataLibraryBasedSymbolProvider<KotlinLibrary>(
     session,
     moduleDataProvider,
     kotlinScopeProvider,
     flexibleTypeFactory,
     defaultDeserializationOrigin,
-    metadataProvider = { it.metadata },
+    metadataProvider,
 ) {
     private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
@@ -87,7 +90,7 @@ class KlibBasedSymbolProvider(
 
     override fun createDeserializedContainerSource(
         resolvedLibrary: KotlinLibrary,
-        packageFqName: FqName
+        packageFqName: FqName,
     ): KlibDeserializedContainerSource = KlibDeserializedContainerSource(
         resolvedLibrary,
         moduleHeaders[resolvedLibrary]!!,

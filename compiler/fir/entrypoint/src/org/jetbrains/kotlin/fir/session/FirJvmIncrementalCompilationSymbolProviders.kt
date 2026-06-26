@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.hmppModuleStructure
+import org.jetbrains.kotlin.config.incrementalCompilationComponents
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -17,6 +19,10 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
+import org.jetbrains.kotlin.library.components.metadata
+import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirJvmIncrementalCompilationSymbolProviders(
@@ -75,9 +81,27 @@ fun createIncrementalProvidersForNonLeafMppModules(
         kotlinScopeProvider = session.kotlinScopeProvider,
         resolvedLibraries,
         defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled,
+        metadataProvider = { JvmIncrementalMetadataComponent(configuration.incrementalCacheForThisTarget(), it.metadata) },
     )
     return FirJvmIncrementalCompilationSymbolProviders(
         symbolProviderForBinariesFromIncrementalCompilation = provider,
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation = null,
     )
+}
+
+private fun CompilerConfiguration.incrementalCacheForThisTarget(): IncrementalCache {
+    val moduleName = requireNotNull(moduleName) { "Module name should be specified for incremental compilation" }
+    val targetId = TargetId(moduleName, "java-production")
+
+    return requireNotNull(incrementalCompilationComponents).getIncrementalCache(targetId)
+}
+
+private class JvmIncrementalMetadataComponent(
+    private val incrementalData: IncrementalCache,
+    klibMetadataComponent: KlibMetadataComponent,
+) :
+    KlibMetadataComponent by klibMetadataComponent {
+
+    override val moduleHeaderData: ByteArray
+        get() = requireNotNull(incrementalData.getMetadataModuleMappingData()) { "Module header data is not available" }
 }

@@ -117,6 +117,10 @@ fun updateIncrementalCache(
                 generatedFile.sourceFiles,
                 generatedFile.outputFile
             )
+            generatedFile.outputFile.isMetadataModuleMappingFile() -> cache.saveMetadataModuleToCache(
+                generatedFile.sourceFiles,
+                generatedFile.outputFile
+            )
         }
     }
 

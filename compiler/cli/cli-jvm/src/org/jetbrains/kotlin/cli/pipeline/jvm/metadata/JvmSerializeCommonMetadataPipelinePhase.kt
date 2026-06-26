@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
@@ -12,13 +13,17 @@ import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataInMemorySerializationArtifact
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.commonFragmentsOutputDir
+import org.jetbrains.kotlin.config.incrementalCompilationComponents
+import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.library.SerializedFirMetadata
 import org.jetbrains.kotlin.library.components.KlibMetadataComponentLayout
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.modules.TargetId
 import java.nio.file.Path
 import kotlin.io.path.notExists
 import kotlin.io.path.readBytes
@@ -50,7 +55,7 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
 
             val metadataInMemory =
                 MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
-                    .mergeMetadataHeader(loadPreviousMetadataHeader(destinationDir.toPath()))
+                    .mergeMetadataHeader(loadPreviousMetadataHeader(configuration))
 
             JvmMetadataKlibFileWriterPhase.writeToDisc(
                 metadataInMemory,
@@ -101,5 +106,20 @@ internal object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFront
         }
 
         return parseModuleHeader(moduleHeaderFile.readBytes())
+    }
+
+
+    /**
+     * TODO: Handle removals. For now, keep merging the previous header so that
+     * incremental serialization does not drop package fragments absent from this compilation,
+     * even if some of them may already be obsolete.
+     */
+    private fun loadPreviousMetadataHeader(configuration: CompilerConfiguration): KlibMetadataProtoBuf.Header? {
+        val target = configuration.moduleName?.let { TargetId(it, "java-production") } ?: return null
+        val incrementalCache = configuration.incrementalCompilationComponents?.getIncrementalCache(target) ?: return null
+        val serializedHeader = incrementalCache.getMetadataModuleMappingData() ?: return null
+
+        @OptIn(K1Deprecation::class)
+        return parseModuleHeader(serializedHeader)
     }
 }
