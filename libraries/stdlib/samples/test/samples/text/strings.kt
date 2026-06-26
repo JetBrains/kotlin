@@ -129,6 +129,22 @@ class Strings {
     }
 
     @Sample
+    fun elementAtOrNull() {
+        val lion = "Lion"
+
+        // safe access returns char at the given index
+        assertPrints(lion.elementAtOrNull(0), "L")
+        assertPrints(lion.elementAtOrNull(lion.lastIndex), "n")
+
+        // index out of bounds returns null
+        assertPrints(lion.elementAtOrNull(-1), "null")
+        assertPrints(lion.elementAtOrNull(20), "null")
+
+        // empty string always returns null
+        assertPrints("".elementAtOrNull(0), "null")
+    }
+
+    @Sample
     fun filter() {
         val text = "a1b2c3d4e5"
 

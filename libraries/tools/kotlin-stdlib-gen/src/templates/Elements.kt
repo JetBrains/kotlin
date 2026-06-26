@@ -470,6 +470,9 @@ object Elements : TemplateGroupBase() {
             inlineOnly()
             body { "return this.getOrNull(index)" }
         }
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.elementAtOrNull")
+        }
     }
 
     val f_getOrNull = fn("getOrNull(index: Int)") {
