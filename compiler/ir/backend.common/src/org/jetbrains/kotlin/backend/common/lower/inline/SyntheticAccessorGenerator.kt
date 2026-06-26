@@ -438,8 +438,9 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         }
         val capturedTypeParameters = if (oldExpression is IrCall)
             capturedTypeParametersOfSyntheticAccessor(oldExpression.symbol.owner) else listOf()
+        val receiverArguments = (oldExpression.dispatchReceiver?.type as? IrSimpleType)?.arguments
         capturedTypeParameters.forEachIndexed { index, typeParameter ->
-            newExpression.typeArguments[index] = typeParameter.defaultType
+            newExpression.typeArguments[index] = receiverArguments?.getOrNull(index)?.typeOrNull ?: typeParameter.defaultType
         }
         newExpression.copyTypeArgumentsFrom(oldExpression, shift = capturedTypeParameters.size)
         val newExpressionArguments = if (accessorSymbol is IrConstructorSymbol) {
