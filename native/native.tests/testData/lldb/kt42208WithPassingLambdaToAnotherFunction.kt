@@ -1,6 +1,7 @@
 // KIND: STANDALONE_LLDB
 // FREE_COMPILER_ARGS: -Xklib-ir-inliner=disabled
 // FIR_IDENTICAL
+// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE
 // INPUT_DATA_FILE: kt42208WithPassingLambdaToAnotherFunction.in
 // OUTPUT_DATA_FILE: kt42208WithPassingLambdaToAnotherFunction.out
 // FILE: kt42208-1.kt

@@ -78,7 +78,8 @@ Process <process id> stopped
    28  	}
 (lldb) bt
 * thread #<thread id>, stop reason = step in
-   * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:26:12
+  * frame #0: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int at lib.kt:26:12
     frame #1: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#bar(x=42){}kotlin.Int at main.kt:10:15
     frame #2: <frame pc> lldb_stepThroughInlineArguments.kexe`kfun:#main(){} at main.kt:18:13
 (lldb) q
+
