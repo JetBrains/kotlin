@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test function with boxed parameter`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -43,6 +45,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
     }
 
 
+    @Test
     fun `test function with boxed parameter - with box from dependencies`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -76,6 +79,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
         )
     }
 
+    @Test
     fun `test function parameter with suitable typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -104,6 +108,7 @@ class HierarchicalTypeSubstitutionCommonizationTest : AbstractInlineSourcesCommo
         )
     }
 
+    @Test
     fun `test boxed property return type`() {
         val result = commonize {
             outputTarget("(a, b)")

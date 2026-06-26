@@ -757,7 +757,11 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @NotNull
     protected String getTestDirectoryName() {
-        final String testName = getTestName(true);
+        return getTestDirectoryName(getName());
+    }
+
+    public static String getTestDirectoryName(String name) {
+        String testName = getTestName(name, true);
         return testName.replaceAll("_.*", "");
     }
 

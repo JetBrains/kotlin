@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.generators.frontend;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class GenerateKeywordStringsTest extends KtUsefulTestCase {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class GenerateKeywordStringsTest {
+    @Test
     public void testGeneratedDataIsUpToDate() throws IOException {
         String text = GenerateKeywordStrings.generate();
         assertEquals("Contents differ. Regenerate " + GenerateKeywordStrings.class.getName(),

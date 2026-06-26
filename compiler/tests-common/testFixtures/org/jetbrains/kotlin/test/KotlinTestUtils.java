@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +59,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIXES;
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
 
 public class KotlinTestUtils {
     public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
@@ -116,6 +118,11 @@ public class KotlinTestUtils {
     @NotNull
     public static File tmpDirForTest(TestCase test) throws IOException {
         return KtTestUtil.tmpDirForTest(test.getClass().getSimpleName(), test.getName());
+    }
+
+    @NotNull
+    public static File tmpDirForTest(TestInfo testInfo) throws IOException {
+        return KtTestUtil.tmpDirForTest(testInfo.getTestClass().get().getSimpleName(), testInfo.getDisplayName());
     }
 
     @NotNull

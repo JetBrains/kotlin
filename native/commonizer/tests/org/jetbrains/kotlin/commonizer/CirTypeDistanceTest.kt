@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.*
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -16,6 +17,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
 
     private val target = LeafCommonizerTarget("a")
 
+    @Test
     fun `test sample 0`() {
 
         val root = createCirTreeRootFromSourceCode(
@@ -91,6 +93,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
         )
     }
 
+    @Test
     fun `test sample 1 - unreachable types`() {
         val root = createCirTreeRootFromSourceCode(
             """
@@ -132,6 +135,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
         assertUnreachable(typeDistance(classifiers, target, typeC, idOfX))
     }
 
+    @Test
     fun `test sample 2 - indirect backwards reachable types`() {
         val root = createCirTreeRootFromSourceCode(
             """
@@ -191,6 +195,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
      * B -> Y
      * D -> C -> A -> X
      */
+    @Test
     fun `test sample 3 - with dependencies`() {
         fun InlineSourceBuilder.ModuleBuilder.commonDependencies() {
             source(
@@ -298,6 +303,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
         )
     }
 
+    @Test
     fun `test unreachable distance`() {
         assertUnreachable(CirTypeDistance.unreachable + CirTypeDistance.unreachable)
         assertUnreachable(CirTypeDistance.unreachable + 1)
@@ -311,6 +317,7 @@ class CirTypeDistanceTest : KtInlineSourceCommonizerTestCase() {
         assertEquals(CirTypeDistance(Int.MAX_VALUE), CirTypeDistance.unreachable)
     }
 
+    @Test
     fun `test penalty`() {
         assertEquals(1, CirTypeDistance(-1).penalty)
         assertEquals(2, CirTypeDistance(-2).penalty)

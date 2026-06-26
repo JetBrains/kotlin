@@ -10,17 +10,21 @@ import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.core.ExtensionReceiverCommonizer.Commonized
 import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.commonizer.utils.mockExtensionReceiver
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
     private val commonizer = ExtensionReceiverCommonizer(TypeCommonizer(MOCK_CLASSIFIERS, DefaultCommonizerSettings))
 
+    @Test
     fun `test null receiver`() {
         assertEquals(
             Commonized(null), commonizer(listOf(null, null, null)),
         )
     }
 
+    @Test
     fun `test same receiver`() {
         assertEquals(
             Commonized(mockExtensionReceiver("kotlin/String")),
@@ -34,6 +38,7 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
         )
     }
 
+    @Test
     fun `test different receiver`() {
         assertEquals(
             null, commonizer(
@@ -46,6 +51,7 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
         )
     }
 
+    @Test
     fun `test null and non-null receivers - 1`() {
         assertEquals(
             null, commonizer(
@@ -58,6 +64,7 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
         )
     }
 
+    @Test
     fun `test null and non-null receivers - 2`() {
         assertEquals(
             null, commonizer(listOf(null, null, mockExtensionReceiver("kotlin/String")))

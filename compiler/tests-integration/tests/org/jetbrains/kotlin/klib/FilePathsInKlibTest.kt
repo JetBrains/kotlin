@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.klib
 
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
-import org.jetbrains.kotlin.backend.common.serialization.IrKlibBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
-import org.jetbrains.kotlin.backend.common.serialization.deserializeFileEntryName
-import org.jetbrains.kotlin.backend.common.serialization.fileEntry
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.incremental.md5
@@ -22,13 +18,16 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertSameElements
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
 
 @OptIn(ObsoleteTestInfrastructure::class)
-class FilePathsInKlibTest : KtUsefulTestCase() {
+class FilePathsInKlibTest {
     companion object {
         private const val MODULE_NAME = "M"
         private const val TEST_DATA_FILE = "compiler/testData/ir/klibLayout/multiFiles.kt"
@@ -100,6 +99,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         return artifact
     }
 
+    @Test
     fun testStableCompilation() {
         withTempDir { dirA ->
             withTempDir { dirB ->
@@ -114,6 +114,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testRelativePaths() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
@@ -127,6 +128,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
         }
     }
 
+    @Test
     fun testAbsoluteNormalizedPath() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()
@@ -141,6 +143,7 @@ class FilePathsInKlibTest : KtUsefulTestCase() {
 
     private fun String.normalizePath(): String = replace(File.separator, "/")
 
+    @Test
     fun testUnrelatedBase() {
         withTempDir { testTempDir ->
             val testFiles = createTestFiles()

@@ -30,16 +30,27 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.lowercaseFirstLetter
+import org.jetbrains.kotlin.test.testFramework.runWithDisposable
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInfo
 import java.io.File
-import kotlin.contracts.ExperimentalContracts
+import kotlin.jvm.optionals.getOrNull
 import kotlin.test.fail
 
-@ExperimentalContracts
-abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
+abstract class AbstractCommonizationFromSourcesTest {
     companion object {
         init {
             System.setProperty("java.awt.headless", "true")
         }
+    }
+
+    private lateinit var testInfo: TestInfo
+
+    @BeforeEach
+    fun setUp(info: TestInfo) {
+        testInfo = info
     }
 
     private fun getTestDataDir(): File {
@@ -47,7 +58,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             this::class.java.simpleName.substringBefore("FromSources").substringBefore("Test"),
             true
         )
-        val testDir = testDirectoryName
+        val testDir = KtUsefulTestCase.getTestDirectoryName(testInfo.testMethod.getOrNull()!!.name)
 
         return ForTestCompileRuntime.transformTestDataPath("native/commonizer/testData")
             .resolve(testCaseDir)
@@ -55,7 +66,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
             .also(::assertIsDirectory)
     }
 
-    protected fun doTestSuccessfulCommonization() {
+    protected fun doTestSuccessfulCommonization(): Unit = runWithDisposable { testRootDisposable ->
         val sourceModuleRoots: SourceModuleRoots = SourceModuleRoots.load(getTestDataDir())
         val analyzedModules: AnalyzedModules = AnalyzedModules.create(sourceModuleRoots, testRootDisposable)
 

@@ -86,14 +86,13 @@ sourceSets {
 
 projectTests {
     testTask(
-        parallel = true,
         defineJDKEnvVariables = listOf(
             JdkMajorVersion.JDK_1_8,
             JdkMajorVersion.JDK_11_0,
             JdkMajorVersion.JDK_17_0,
             JdkMajorVersion.JDK_21_0
         ),
-        jUnitMode = JUnitMode.JUnit4,
+        jUnitMode = JUnitMode.JUnit5,
         javaLauncher = JdkMajorVersion.JDK_1_8
     ) {
         dependsOn(":dist")

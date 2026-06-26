@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.commonizer.tree.deserializer
 
 import org.jetbrains.kotlin.commonizer.utils.createCirTree
+import org.junit.jupiter.api.Test
 
 class CirTreePackageDeserializerTest : AbstractCirTreeDeserializerTest() {
 
+    @Test
     fun `test package with multiple classes properties and functions`() {
         val module = createCirTree {
             source(

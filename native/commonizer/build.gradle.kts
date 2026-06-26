@@ -48,6 +48,8 @@ dependencies {
 
     api(kotlinStdlib())
 
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit4)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
@@ -57,6 +59,7 @@ dependencies {
     testImplementation(project(":native:native.config"))
     testImplementation(intellijCore())
 
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
 }

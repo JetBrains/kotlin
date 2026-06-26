@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.PlatformIntegerCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.assertCommonized
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.jupiter.api.Test
 
 class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommonizationTest() {
+    @Test
     fun `test signed ints without optimistic commonization`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -38,6 +40,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test signed ints with optimistic commonization backup`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -65,6 +68,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test unsigned ints`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -91,6 +95,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test signed vars`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -135,6 +140,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test unsigned vars`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -179,6 +185,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test signed arrays`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -206,6 +213,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test unsigned arrays`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -233,6 +241,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test signed ranges`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -262,6 +271,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test unsigned ranges`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -291,6 +301,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test signed progressions`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -320,6 +331,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test unsigned progressions`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -349,6 +361,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test platform types in return positions`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -403,6 +416,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test platform types in signatures`() {
         val result = commonize {
             outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
@@ -450,6 +464,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test platform integers in multi-target commonization`() {
         val intTarget1 = LINUX_ARM32_HFP.name
         val intTarget2 = WATCHOS_ARM64.name
@@ -559,6 +574,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test platform types from known leaf targets are commonized`() {
         val result = commonize {
             outputTarget("(${LINUX_X64.name}, ${WATCHOS_ARM64.name})")
@@ -588,6 +604,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         )
     }
 
+    @Test
     fun `test platform types from unknown targets are not commonized`() {
         val result = commonize {
             outputTarget("(unknown, ${WATCHOS_ARM64.name})")
@@ -615,6 +632,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
     }
 
     // Issue: KT-51528
+    @Test
     fun `test multiple argument function with over the edge type alias available`() {
         val result = commonize {
             outputTarget("(${WATCHOS_ARM64.name}, ${IOS_ARM64.name})")

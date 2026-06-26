@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.commonizer.tree.deserializer
 import org.jetbrains.kotlin.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.commonizer.utils.createCirTree
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class CirTreeDependenciesDeserializerTest : AbstractCirTreeDeserializerTest() {
 
+    @Test
     fun `test deserialize with dependencies`() {
         val module = createCirTree {
             dependency {

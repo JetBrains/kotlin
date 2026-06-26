@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.junit.jupiter.api.Test
 
 class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test two nullable functions`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -20,6 +22,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect fun x(): Any?")
     }
 
+    @Test
     fun `test two non-nullable functions`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -30,6 +33,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect fun x(): Any")
     }
 
+    @Test
     fun `test nullable and non-nullable function`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -40,6 +44,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect fun x(): Any?")
     }
 
+    @Test
     fun `test two nullable properties`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -50,6 +55,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect val x: Any?")
     }
 
+    @Test
     fun `test two non-nullable properties`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -60,6 +66,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect val x: Any")
     }
 
+    @Test
     fun `test nullable and non-nullable - property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -70,6 +77,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "expect val x: Any?")
     }
 
+    @Test
     fun `test nullable and non-nullable - var - val property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -80,6 +88,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "")
     }
 
+    @Test
     fun `test nullable and non-nullable - var var property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -90,6 +99,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b)", "")
     }
     
+    @Test
     fun `test different nullability typealias  - function`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -116,6 +126,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         )
     }
 
+    @Test
     fun `test different nullability typealias chain - function`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -150,6 +161,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         )
     }
 
+    @Test
     fun `test different nullability typealias chain - property`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -184,6 +196,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     }
 
 
+    @Test
     fun `test property - hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -204,6 +217,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
     with overrides of super classes/interfaces
      */
 
+    @Test
     fun `test member - property - hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -246,6 +260,7 @@ class ReturnTypeNullabilityCommonizationTest : AbstractInlineSourcesCommonizatio
         result.assertCommonized("(a, b, c, d)", """expect class X()""")
     }
 
+    @Test
     fun `test member - function - hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")

@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.*
+import org.junit.jupiter.api.Test
 
 class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
+    @Test
     fun `test Byte and Byte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -26,6 +28,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Byte and Short - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -44,6 +47,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Byte and Int - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -62,6 +66,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Byte and Long - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -80,6 +85,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Short and Byte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -98,6 +104,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Short and Short - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -115,6 +122,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Short and Int - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -133,6 +141,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Short and Long - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -151,6 +160,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Int and Byte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -169,6 +179,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Int and Short - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -187,6 +198,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Int and Int - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -204,6 +216,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Int and Long - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -222,6 +235,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Long and Byte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -240,6 +254,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Long and Short - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -258,6 +273,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Long and Int - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -276,6 +292,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Long and Long - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -293,6 +310,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UByte and UByte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -310,6 +328,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UByte and UShort - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -328,6 +347,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UByte and UInt - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -346,6 +366,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UByte and ULong - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -364,6 +385,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UShort and UByte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -382,6 +404,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UShort and UShort - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -399,6 +422,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UShort and UInt - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -417,6 +441,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UShort and ULong - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -435,6 +460,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UInt and UByte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -453,6 +479,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UInt and UShort - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -471,6 +498,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UInt and UInt - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -488,6 +516,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test UInt and ULong - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -506,6 +535,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test ULong and UByte - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -524,6 +554,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test ULong and UShort - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -542,6 +573,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test ULong and UInt - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -560,6 +592,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test ULong and ULong - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -572,6 +605,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized("(a, b)", "typealias X = ULong")
     }
 
+    @Test
     fun `test UInt and Long - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -584,6 +618,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized("(a, b)", "expect class X")
     }
 
+    @Test
     fun `test UIntVarOf and ULongVarOf - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -616,6 +651,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test IntVarOf and LongVarOf - typealias`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -647,6 +683,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test Int and Long - typealias chain`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -683,6 +720,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test function with pure number types parameter`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -702,6 +740,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         result.assertCommonized("(a, b)", "")
     }
 
+    @Test
     fun `test function with aliased number value parameter`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -733,6 +772,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test property with pure number return type`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -751,6 +791,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test property with aliased number return type`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -780,6 +821,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test multilevel hierarchy`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(e, f)", "(c, d, e, f)", "(a, b, c, d, e, f)")
@@ -829,6 +871,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
     }
 
     // return types, unlike parameter types, don't participate in function signature, and therefore can be commonized optimistically
+    @Test
     fun `test optimistic commonization in function return types`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -865,6 +908,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test optimistic commonization in property return types`() {
         val result = commonize {
             outputTarget("(a, b)")
@@ -899,6 +943,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test optimistic commonization inside parameterized types`() {
         val result = commonize {
             outputTarget("(a, b)", "(c, d)", "(a, b, c, d)")
@@ -972,6 +1017,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
         )
     }
 
+    @Test
     fun `test KT-64376 - UnsafeNumber annotation - isn't applied to a commonization type that isn't a number - when commonizing hierarchically`() {
         val result = commonize {
             outputTarget("(a, b)", "(a, b, c)")
