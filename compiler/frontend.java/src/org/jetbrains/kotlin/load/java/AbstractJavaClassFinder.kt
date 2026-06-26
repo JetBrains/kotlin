@@ -30,15 +30,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.jvm.CommonJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.JvmCodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import javax.inject.Inject
 
 @K1Deprecation
-abstract class AbstractJavaClassFinder : JavaClassFinder {
+abstract class AbstractJavaClassFinder : CommonJavaClassFinder() {
     protected lateinit var project: Project
-    protected lateinit var javaSearchScope: GlobalSearchScope
+    override lateinit var javaSearchScope: GlobalSearchScope
 
     @Inject
     fun setScope(scope: GlobalSearchScope) {

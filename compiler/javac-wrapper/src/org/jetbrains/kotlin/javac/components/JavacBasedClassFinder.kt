@@ -21,15 +21,23 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
+import org.jetbrains.kotlin.load.java.JavaAnnotationProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 @K1Deprecation
 class JavacBasedClassFinder : AbstractJavaClassFinder() {
     private lateinit var javac: JavacWrapper
+
+    override val javaFacade: KotlinJavaPsiFacade
+        get() = error("Should not be called")
+
+    override val annotationProvider: JavaAnnotationProvider?
+        get() = null
 
     override fun initialize(
         trace: BindingTrace,
