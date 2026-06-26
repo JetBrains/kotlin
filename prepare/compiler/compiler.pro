@@ -353,6 +353,9 @@
 -keepclassmembers class com.intellij.openapi.application.Application {
     void addApplicationListener(com.intellij.openapi.application.ApplicationListener, com.intellij.openapi.Disposable);
 }
+-keepclassmembers class com.intellij.util.messages.impl.PluginListenerDescriptor {
+    public *;
+}
 -keep class com.intellij.openapi.extensions.ExtensionPointName {
     java.util.List getExtensionList(com.intellij.openapi.extensions.AreaInstance);
     **[] getExtensions();
