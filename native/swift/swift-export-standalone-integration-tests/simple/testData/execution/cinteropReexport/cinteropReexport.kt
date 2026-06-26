@@ -2,12 +2,10 @@
 // WITH_PLATFORM_LIBS
 
 // MODULE: fooKitInterop
-// SWIFT_EXPORT_CONFIG: reexportAsObjCModule=FooKit
 
 // FILE: fooKitInterop.def
 language = Objective-C
-headers = Foo.h
-headerFilter = Foo.h
+modules = FooKit
 package = foo
 
 // FILE: Foo.h

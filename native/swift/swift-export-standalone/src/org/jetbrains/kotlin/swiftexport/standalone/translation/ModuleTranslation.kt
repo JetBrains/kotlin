@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
+import org.jetbrains.kotlin.swiftexport.standalone.builders.reexportedObjCModuleNames
 import org.jetbrains.kotlin.swiftexport.standalone.builders.translateModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
@@ -182,7 +183,7 @@ private fun createTranslationResult(
 
     val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) +
             kaModules.platformLibraries.map { it.libraryName } +
-            kaModules.cinteropReexportLibraries.map { it.libraryName }
+            kaModules.cinteropReexportLibrary?.reexportedObjCModuleNames().orEmpty()
     val referencedSwiftModules = sirModule.imports
         .filter { it.moduleName !in knownModuleNames }
         .map { SwiftExportModule.Reference(it.moduleName) }

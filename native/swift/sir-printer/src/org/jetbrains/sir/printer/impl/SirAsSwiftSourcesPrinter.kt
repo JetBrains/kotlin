@@ -320,6 +320,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     }
 
     private fun SirImport.print() {
+        if (conditionallyAvailable) {
+            println("#if canImport(${moduleName.swiftIdentifier})")
+        }
         print(
             when (mode) {
                 SirImport.Mode.Exported -> "@_exported "
@@ -329,6 +332,9 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         )
         print(spi.render(SirTypeVariance.INVARIANT).takeUnless { it.isBlank() }?.let { "$it " } ?: "")
         println("import ${moduleName.swiftIdentifier}")
+        if (conditionallyAvailable) {
+            println("#endif")
+        }
     }
 
     private fun SirDeclarationContainer.printContainerKeyword() = print(

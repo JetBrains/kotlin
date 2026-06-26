@@ -46,13 +46,6 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     var minOSVersion: String? = null
 
     /**
-     * Maps a [TestModule.Given]'s klib-file name to the name of an externally-defined ObjC module that Swift
-     * Export should treat it as — populating [SwiftModuleConfig.reexportAsObjCModule]. This is how a cinterop
-     * klib is opted into the platform-like path at test time.
-     */
-    var cinteropReexportsByKlibFileName: Map<String, String> = emptyMap()
-
-    /**
      * Additional options appended verbatim to every `swiftc` invocation made by the test harness. Tests that
      * bring their own ObjC modules need to pass `-Xcc -fmodule-map-file=<path>` here so that `import <Foo>`
      * in the generated Swift resolves through the supplied modulemap.
@@ -81,24 +74,24 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             ?.getByName(testCaseId)!!
             .copyAndAddModules(givenModules)
 
-        // Inline cinterop modules marked with the reexportAsObjCModule directive may supply a module.modulemap
-        // that swiftc needs to resolve the generated `import <ObjCModule>` references. Discover those files
-        // automatically.
+        // Inline cinterop re-export modules may supply a module.modulemap that swiftc needs to resolve the
+        // generated `import <ObjCModule>` references. Discover those files automatically.
         val discoveredModuleMaps = originalTestCase.modules
-            .filter { it.swiftExportConfigMap()[REEXPORT_AS_OBJC_MODULE_DIRECTIVE] != null }
+            .filter { it.isCinteropReexport() }
             .flatMap { it.files }
             .map { it.location }
             .filter { it.name == "module.modulemap" }
         extraSwiftCompilerOptions = extraSwiftCompilerOptions +
             discoveredModuleMaps.flatMap { listOf("-Xcc", "-fmodule-map-file=${it.absolutePath}") }
 
-        val modulesToExport = (originalTestCase.rootModules + originalTestCase.modules + givenModules).mapToSet {
+        val inputModuleByTestModule = (originalTestCase.rootModules + originalTestCase.modules + givenModules).associateWith {
             createInputModule(
                 testModule = it,
                 originalTestCase = originalTestCase,
                 shouldBeFullyExported = it.shouldBeExportedToSwift() || originalTestCase.rootModules.contains(it)
             )
         }
+        val modulesToExport = inputModuleByTestModule.values.toSet()
 
         val config = SwiftExportConfig(
             outputPath = buildDir(testPathFull.name).resolve(testDir).toPath(),
@@ -125,11 +118,12 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         // Inline cinterop modules flagged for reexport cannot be passed with -Xinclude to
         // binary compilation (the compiler rejects interop klibs via that flag). Expose their
         // compiled klibs as Given dependencies (-library) instead, and keep their source modules
-        // (.def/.h/.modulemap) out of the Kotlin binary compilation. We identify such modules by the
-        // reexport directive rather than by InputModule.name, because the latter is overridden with the
-        // ObjC module name and would no longer match the test module name.
-        val reexportInputs = modulesToExport.filter { it.config.moduleProvidedThroughCinterop }
-        val reexportGivens = reexportInputs.map { TestModule.Given(it.path.toFile()) }.toSet()
+        // (.def/.h/.modulemap) out of the Kotlin binary compilation.
+        val reexportGivens = inputModuleByTestModule
+            .filterKeys { it.isCinteropReexport() }
+            .values
+            .map { TestModule.Given(it.path.toFile()) }
+            .toSet()
 
         val resultingTestCase = generateSwiftExportTestCase(
             testPathFull,
@@ -139,7 +133,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                 .flatMapToSet {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - originalTestCase.rootModules)
-                .filterNot { it.swiftExportConfigMap()[REEXPORT_AS_OBJC_MODULE_DIRECTIVE] != null }
+                .filterNot { it.isCinteropReexport() }
                 .toSet(),
             dependencies = givenModules + reexportGivens
         )
@@ -152,27 +146,25 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         shouldBeFullyExported: Boolean
     ): InputModule {
         val config = (testModule as? TestModule.Exclusive)?.swiftExportConfigMap()
-        // For cinterop re-exports the test directive (or the test-support map) supplies the desired
-        // Swift-level ObjC module name. We translate that into the standalone API: a boolean flag on
-        // SwiftModuleConfig plus the InputModule.name set to that ObjC module name.
-        val objCModuleName = when (testModule) {
-            is TestModule.Exclusive -> config?.get(REEXPORT_AS_OBJC_MODULE_DIRECTIVE)
-            is TestModule.Given -> cinteropReexportsByKlibFileName[testModule.klibFile.name]
-            else -> null
-        }
-        val input = testModule.constructSwiftInput(
+        // Whether a module is a cinterop re-export container is detected by Swift Export from the klib
+        // manifest (interop=true), so nothing has to be flagged here.
+        return testModule.constructSwiftInput(
             originalTestCase.freeCompilerArgs,
             SwiftModuleConfig(
                 rootPackage = config?.get(SwiftModuleConfig.ROOT_PACKAGE),
                 unsupportedDeclarationReporterKind = getUnsupportedDeclarationsReporterKind(config),
-                // moduleProvidedThroughCinterop implies the klib is never fully exported — it is only a container
-                // for types that may be referenced by the actually-exported modules.
-                shouldBeFullyExported = shouldBeFullyExported && objCModuleName == null,
-                moduleProvidedThroughCinterop = objCModuleName != null,
+                shouldBeFullyExported = shouldBeFullyExported,
             )
         )
-        return if (objCModuleName != null) input.copy(name = objCModuleName) else input
     }
+
+    /**
+     * A cinterop re-export test module: an inline module compiled from a `.def`. Used only for
+     * binary-compilation plumbing (such a klib is passed as `-library` rather than `-Xinclude`d).
+     * Swift Export itself detects cinterop re-export klibs from their manifest (`interop=true`).
+     */
+    private fun TestModule.isCinteropReexport(): Boolean =
+        this is TestModule.Exclusive && files.any { it.location.extension == "def" }
 
     private fun TestModule.constructSwiftInput(
         freeCompilerArgs: TestCompilerArgs,
@@ -361,14 +353,6 @@ private fun modulemapFileToSwiftCompilerOptionsIfNeeded(modulemap: File?) = modu
 private fun SwiftExportModule.resolvedDependencies(allModules: Set<SwiftExportModule>): List<SwiftExportModule> = dependencies.map { dep ->
     allModules.firstOrNull { it.name == dep.name } ?: error("Module ${this.name} requested non-existing dependency ${dep.name}")
 }
-
-/**
- * Test-fixture-only directive. Inside a `// SWIFT_EXPORT_CONFIG:` block, `reexportAsObjCModule=<Name>`
- * marks the module as a cinterop re-export and supplies the ObjC module name. The infrastructure
- * translates this into [SwiftModuleConfig.moduleProvidedThroughCinterop] plus an [InputModule.name]
- * override (the standalone API itself no longer carries the ObjC name string).
- */
-private const val REEXPORT_AS_OBJC_MODULE_DIRECTIVE: String = "reexportAsObjCModule"
 
 private fun getUnsupportedDeclarationsReporterKind(configMap: Map<String, String>?): UnsupportedDeclarationReporterKind {
     return configMap?.get(SwiftModuleConfig.UNSUPPORTED_DECLARATIONS_REPORTER_KIND)

@@ -112,9 +112,16 @@ val SirDeclaration.swiftParentNamePrefix: String?
     get() = this.parent.swiftFqNameOrNull
 
 val SirDeclarationParent.swiftFqNameOrNull: String?
-    get() = (this as? SirScopeDefiningDeclaration)?.swiftFqName
-        ?: ((this as? SirScopeDefiningElement)?.name?.swiftSanitizedName)
-        ?: ((this as? SirExtension)?.extendedType?.swiftName)
+    get() = when {
+        // Types of a cinterop re-export klib are referenced bare: every ObjC module the klib provides is
+        // imported (and a single klib may bundle several), and the klib does not record which module each
+        // type originates from. KT-82896 proposes storing the originating Clang module per declaration, which
+        // would let us emit precise modular imports / qualifiers instead of relying on bare references.
+        this is SirCinteropModule -> null
+        else -> (this as? SirScopeDefiningDeclaration)?.swiftFqName
+            ?: ((this as? SirScopeDefiningElement)?.name?.swiftSanitizedName)
+            ?: ((this as? SirExtension)?.extendedType?.swiftName)
+    }
 
 val SirScopeDefiningDeclaration.swiftFqName: String
     get() = swiftParentNamePrefix?.let { "$it.${name.swiftSanitizedName.swiftIdentifier}" } ?: name.swiftSanitizedName.swiftIdentifier

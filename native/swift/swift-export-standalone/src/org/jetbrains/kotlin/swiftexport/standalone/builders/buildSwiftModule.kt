@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.klib.reader.getAllDeclarations
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.io.propertyList
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -38,12 +40,24 @@ internal fun buildSirSession(
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
     moduleProvider = SirOneToOneModuleProvider(
         platformLibs = kaModules.platformLibraries,
-        cinteropReexportLibs = kaModules.cinteropReexportLibraries,
+        cinteropReexportLib = kaModules.cinteropReexportLibrary?.let { it to it.reexportedObjCModuleNames() },
     ),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,
     enableCoroutinesSupport = config.enableCoroutinesSupport,
 )
+
+/**
+ * The ObjC module names a cinterop reexport klib provides, read from its manifest `modules` property
+ * (a single cinterop klib may bundle several Clang modules). Empty when the klib declares no ObjC
+ * modules to import — e.g. a header-based cinterop klib, which the reexport strategy cannot serve.
+ */
+internal fun KaLibraryModule.reexportedObjCModuleNames(): List<String> {
+    val klibPath = binaryRoots.firstOrNull() ?: return emptyList()
+    val library = KlibLoader { libraryPaths(klibPath.toString()) }.load().librariesStdlibFirst.singleOrNull()
+        ?: return emptyList()
+    return library.manifestProperties.propertyList("modules", escapeInQuotes = true)
+}
 
 /**
  * Translates the given [module] to a [SirModule].

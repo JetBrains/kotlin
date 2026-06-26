@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-standalone"))
 
     implementation(project(":libraries:tools:analysis-api-based-klib-reader"))
+    implementation(project(":kotlin-util-klib"))
     compileOnly(project(":kotlin-util-klib-metadata"))
 }
 

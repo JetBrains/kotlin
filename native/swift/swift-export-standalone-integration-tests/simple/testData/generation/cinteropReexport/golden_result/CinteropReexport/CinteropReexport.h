@@ -3,9 +3,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-int32_t main_consumesBar__TypesOfArguments__anyU20FooKit_Bar__(id x);
+int32_t main_consumesBar__TypesOfArguments__Bar__(id<NSObject> x);
 
-int32_t main_consumesFoo__TypesOfArguments__FooKit_Foo__(id<NSObject> x);
+int32_t main_consumesBar__TypesOfArguments__anyU20Zar__(id x);
+
+int32_t main_consumesFoo__TypesOfArguments__Foo__(id<NSObject> x);
 
 id<NSObject> _Nullable main_producesFoo();
 

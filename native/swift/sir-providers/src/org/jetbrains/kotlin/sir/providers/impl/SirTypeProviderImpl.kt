@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.util.SirCinteropModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.expandedType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -204,7 +205,15 @@ public class SirTypeProviderImpl(
                     }
                     // We're being lazy here importing all spi's preventively
                     val spi = this@extractImport.attributes.filterIsInstance<SirAttribute.SPI>()
-                    processTypeImports(listOf(SirImport(sirModule.name, spi = spi)))
+
+                    val imports = when (sirModule) {
+                        is SirCinteropModule -> sirModule.importNames.map {
+                            SirImport(it, spi = spi, conditionallyAvailable = true)
+                        }
+                        else ->
+                            listOf(SirImport(sirModule.name, spi = spi))
+                    }
+                    processTypeImports(imports)
                 }
                 is KotlinRuntimeElement -> {
                     processTypeImports(listOf(SirImport(KotlinRuntimeModule.name)))

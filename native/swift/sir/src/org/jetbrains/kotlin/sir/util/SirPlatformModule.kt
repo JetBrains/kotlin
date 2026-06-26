@@ -16,4 +16,6 @@ sealed class SirPlatformLikeModule(override val name: String) : SirModule() {
 
 class SirPlatformModule(name: String) : SirPlatformLikeModule(name)
 
-class SirCinteropModule(name: String) : SirPlatformLikeModule(name)
+class SirCinteropModule(val importNames: List<String>) : SirPlatformLikeModule(SYNTHETIC_CINTEROP_MODULE_NAME)
+
+private const val SYNTHETIC_CINTEROP_MODULE_NAME = "<cinterop>"
