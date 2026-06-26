@@ -14,6 +14,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import java.io.File
+import java.nio.file.Path
 import kotlin.reflect.KProperty
 
 // Workaround for https://github.com/gradle/gradle/issues/12388
@@ -196,3 +197,5 @@ private abstract class AdhocValueSource<T> : ValueSource<T, AdhocValueSource.Par
 }
 
 internal fun Provider<Directory>.dir(path: String): Provider<Directory> = map { it.dir(path) }
+
+internal val RegularFileProperty.asPathOrNull: Path? get() = asFile.orNull?.toPath()

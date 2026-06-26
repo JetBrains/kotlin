@@ -78,4 +78,6 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     timeout.convention(runner.timeout)
     headless.convention(runner.headless)
     launchArgs.convention(runner.launchArgs)
+    launchEnvironmentVariables.convention(runner.launchEnvironmentVariables)
+    customBrowserExecutable.convention(runner.customBrowserExecutable)
 }

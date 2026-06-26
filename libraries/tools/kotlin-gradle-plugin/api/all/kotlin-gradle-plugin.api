@@ -2586,8 +2586,10 @@ public final class org/jetbrains/kotlin/gradle/targets/js/d8/D8RootExtension$Com
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl {
+	public abstract fun getCustomBrowserExecutable ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getHeadless ()Lorg/gradle/api/provider/Property;
 	public abstract fun getLaunchArgs ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getLaunchEnvironmentVariables ()Lorg/gradle/api/provider/MapProperty;
 	public abstract fun getTestsLocation ()Lorg/gradle/api/provider/Property;
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
 }

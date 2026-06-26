@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.nio.file.Path
 import kotlin.time.Duration
 
 private val log = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.tasks.testing.PlaywrightTestExecutor")
@@ -41,6 +42,8 @@ internal class PwRunnerSpec(
     val finishMarker: String,
     val headless: Boolean,
     val launchArgs: List<String>,
+    val launchEnvironmentVariables: Map<String, String>,
+    val customBrowserExecutable: Path?,
 )
 
 /**
@@ -97,6 +100,8 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
             .setHeadless(runner.headless)
             .apply {
                 if (runner.launchArgs.isNotEmpty()) setArgs(runner.launchArgs)
+                if (runner.launchEnvironmentVariables.isNotEmpty()) setEnv(runner.launchEnvironmentVariables)
+                if (runner.customBrowserExecutable != null) setExecutablePath(runner.customBrowserExecutable)
             }
 
         log.info("Launching playwright runner '${runner.name}' (${runner.browserKind})")

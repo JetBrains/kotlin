@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.TestExecuter
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
+import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.asPathOrNull
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
@@ -69,6 +75,13 @@ internal class KotlinPlaywrightJsTestFramework(
 
         @get:Input
         val launchArgs: ListProperty<String> = objects.listProperty()
+
+        @get:Input
+        val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty()
+
+        @get:Optional
+        @get:InputFile
+        val customBrowserExecutable: RegularFileProperty = objects.fileProperty()
 
         @get:Input
         val finishMarker: Property<String> = objects.property<String>().convention("KOTLIN_TEST_FINISHED")
@@ -137,6 +150,8 @@ internal class KotlinPlaywrightJsTestFramework(
         finishMarker = finishMarker.get(),
         headless = headless.get(),
         launchArgs = launchArgs.get(),
+        launchEnvironmentVariables = launchEnvironmentVariables.get(),
+        customBrowserExecutable = customBrowserExecutable.asPathOrNull
     )
 
     private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: String, cliArgs: List<String>): String {

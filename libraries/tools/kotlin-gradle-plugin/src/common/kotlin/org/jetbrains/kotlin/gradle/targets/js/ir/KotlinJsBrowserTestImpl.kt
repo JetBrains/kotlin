@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.mapProperty
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
@@ -38,6 +41,8 @@ internal abstract class KotlinBrowserTestRunner(
     override val headless: Property<Boolean> = objects.property()
     override val timeout: Property<Duration> = objects.property()
     override val launchArgs: ListProperty<String> = objects.listProperty()
+    override val customBrowserExecutable: RegularFileProperty = objects.fileProperty()
+    override val launchEnvironmentVariables: MapProperty<String, String> = objects.mapProperty()
 }
 
 internal class KotlinChromiumTestRunner(
@@ -140,6 +145,8 @@ internal abstract class KotlinJsBrowserTestImpl
             browserLevelDsl.headless.convention(headless)
             browserLevelDsl.timeout.convention(timeout)
             browserLevelDsl.launchArgs.convention(launchArgs)
+            browserLevelDsl.customBrowserExecutable.convention(customBrowserExecutable)
+            browserLevelDsl.launchEnvironmentVariables.convention(launchEnvironmentVariables)
         }
     }
 }

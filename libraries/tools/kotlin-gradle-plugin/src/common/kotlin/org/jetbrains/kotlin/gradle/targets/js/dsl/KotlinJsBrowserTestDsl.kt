@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.Directory
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -51,6 +53,19 @@ interface BrowserTestRunnerConfigDsl {
      * Configure additional command line arguments to launch the browser.
      */
     val launchArgs: ListProperty<String>
+
+    /**
+     * Configure environment variables that will be passed to the browser instance.
+     */
+    val launchEnvironmentVariables: MapProperty<String, String>
+
+    /**
+     * Set to configure a custom path to the browser executable.
+     *
+     * Should not be used to get the default browser executable path.
+     * Default is empty, meaning that the toolchain's default browser will be used.
+     */
+    val customBrowserExecutable: RegularFileProperty
 }
 
 /**
