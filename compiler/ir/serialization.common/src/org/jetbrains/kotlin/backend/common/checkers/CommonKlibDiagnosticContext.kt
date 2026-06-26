@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 
 class CommonKlibDiagnosticContext(val compilerConfiguration: CompilerConfiguration) {
     var containingDeclaration: IrDeclaration? = null
@@ -17,6 +18,9 @@ class CommonKlibDiagnosticContext(val compilerConfiguration: CompilerConfigurati
 
     var containingFile: IrFile? = null
         private set
+
+    val inlineBlockStack: List<IrInlinedFunctionBlock>
+        field = mutableListOf()
 
     fun withDeclarationScope(declaration: IrDeclaration, f: () -> Unit) {
         val prevDeclaration = containingDeclaration
@@ -35,6 +39,15 @@ class CommonKlibDiagnosticContext(val compilerConfiguration: CompilerConfigurati
             f()
         } finally {
             containingFile = prevFile
+        }
+    }
+
+    fun withInlineScope(inlineBlock: IrInlinedFunctionBlock, f: () -> Unit) {
+        try {
+            inlineBlockStack.add(inlineBlock)
+            f()
+        } finally {
+            inlineBlockStack.removeLast()
         }
     }
 }
