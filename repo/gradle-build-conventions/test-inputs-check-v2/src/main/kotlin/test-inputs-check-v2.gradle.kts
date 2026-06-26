@@ -7,17 +7,19 @@ val testInputsCheck = extensions.create<TestInputsCheckExtensionV2>("testInputsC
 
 tasks.withType<Test>().configureEach {
     val test = this
-    configureTestTask(test, declaredInputsFile(test.name))
+    configureTestInstrumenter(test)
 }
 
 afterEvaluate {
     tasks.withType<Test>().names.forEach { testName ->
         val test = tasks.named<Test>(testName)
-        configureCheckTestInputsTask(test, undeclaredInputsFile(test.name))
+        registerCheckTestInputsTask(test)
     }
 }
 
-fun configureTestTask(test: Test, declaredInputsFile: Provider<RegularFile>) {
+fun configureTestInstrumenter(test: Test) {
+    val declaredInputsFile = layout.buildDirectory.file("$pluginBuildDir/declared-inputs-for-${test.name}.txt")
+
     test.systemProperty("test.instrumenter.inputs.check.enabled", true)
     test.addAbsoluteFileProperty(declaredInputsFile, "test.instrumenter.declared.inputs.file")
     test.addAbsoluteDirectoryProperty(layout.settingsDirectory, "test.instrumenter.root.dir")
@@ -32,10 +34,9 @@ fun configureTestTask(test: Test, declaredInputsFile: Provider<RegularFile>) {
     }
 }
 
-fun configureCheckTestInputsTask(
-    test: TaskProvider<Test>,
-    undeclaredInputsFile: Provider<RegularFile>,
-) {
+fun registerCheckTestInputsTask(test: TaskProvider<Test>) {
+    val undeclaredInputsFile = layout.buildDirectory.file("$pluginBuildDir/undeclared-inputs-for-${test.name}.txt")
+
     val checkTestInputs = tasks.register<CheckTestInputs>("checkInputsFor${test.name.capitalize()}") {
         group = "verification"
         description = "Check undeclared inputs from task ${test.name}"
@@ -51,9 +52,3 @@ fun configureCheckTestInputsTask(
         }
     }
 }
-
-fun declaredInputsFile(testName: String) =
-    layout.buildDirectory.file("$pluginBuildDir/declared-inputs-for-$testName.txt")
-
-fun undeclaredInputsFile(testName: String) =
-    layout.buildDirectory.file("$pluginBuildDir/undeclared-inputs-for-$testName.txt")
