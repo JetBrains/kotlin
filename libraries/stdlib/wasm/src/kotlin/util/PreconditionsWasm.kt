@@ -12,9 +12,7 @@ import kotlin.internal.DoNotInlineOnFirstStage
 // Just making the declarations public is impossible since it may change the resolution in a user code. 
 // TODO: investigate other ways to achieve the same, preferably covering not stdlib only but user cases too.
 
-@PublishedApi
 @kotlin.internal.InlineOnly
-@DoNotInlineOnFirstStage
 internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     contract {
         returns() implies value
@@ -25,7 +23,5 @@ internal inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     }
 }
 
-@PublishedApi
 @kotlin.internal.InlineOnly
-@DoNotInlineOnFirstStage
 internal inline fun error(message: String): Nothing = throw IllegalStateException(message)

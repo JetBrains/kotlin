@@ -14575,12 +14575,6 @@ final inline fun (kotlin/Long).kotlin/countTrailingZeroBits(): kotlin/Int // kot
 final inline fun <#A: kotlin/Any?> kotlin.wasm.unsafe/withScopedMemoryAllocator(kotlin/Function1<kotlin.wasm.unsafe/MemoryAllocator, #A>): #A // kotlin.wasm.unsafe/withScopedMemoryAllocator|withScopedMemoryAllocator(kotlin.Function1<kotlin.wasm.unsafe.MemoryAllocator,0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/check(kotlin/Boolean, kotlin/Function0<kotlin/String>) // kotlin/check|check(kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0]
-
-// Targets: [wasmJs, wasmWasi]
-final inline fun kotlin/error(kotlin/String): kotlin/Nothing // kotlin/error|error(kotlin.String){}[0]
-
-// Targets: [wasmJs, wasmWasi]
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
