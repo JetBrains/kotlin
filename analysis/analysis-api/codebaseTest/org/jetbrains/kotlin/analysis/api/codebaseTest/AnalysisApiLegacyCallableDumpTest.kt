@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.codebaseTest
 
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.AbstractAnalysisApiCodebaseDumpFileComparisonTest
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.analysis.api.codebaseTest.AnalysisApiSurfaceNames.IMPLEMENTATION_DETAIL
+import org.jetbrains.kotlin.isPubliclyVisible
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.jupiter.api.Test
@@ -30,17 +32,22 @@ class AnalysisApiLegacyCallableDumpTest : AbstractAnalysisApiCodebaseDumpFileCom
         return buildList {
             declarations.forEach {
                 if (isToBeMigrated(it)) {
-                    add(findSessionComponent()!!.name + ": " + it.renderDeclaration())
+                    add(findSessionComponent()?.name + ": " + it.renderDeclaration())
                 }
             }
         }
     }
 
-    private fun isToBeMigrated(declaration: KtDeclaration): Boolean {
-        if (declaration !is KtCallableDeclaration) return false
-        if (declaration.hasDeprecatedAnnotation()) return false
+    private fun isToBeMigrated(declaration: KtDeclaration): Boolean = when {
+        declaration.hasDeprecatedAnnotation() -> false
+        !declaration.isPubliclyVisible -> false
+        declaration is KtClassOrObject -> {
+            !declaration.hasAnnotation("KaObsoleteComponentApi") &&
+                    !declaration.hasAnnotation(IMPLEMENTATION_DETAIL) &&
+                    !declaration.isSessionComponent
+        }
 
-        return true
+        else -> true
     }
 
     override fun SourceDirectory.ForDumpFileComparison.getErrorMessage(): String =

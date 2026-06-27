@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaObsoleteComponentApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -87,8 +88,11 @@ public interface KaTypeRelationChecker : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaSubtypingErrorTypePolicy] instead.**
+ *
  * [KaSubtypingErrorTypePolicy] determines the treatment of error types in type equality and subtyping checks.
  */
+@KaObsoleteComponentApi
 public enum class KaSubtypingErrorTypePolicy {
     /**
      * Error types are not considered equal to or subtypes of any other type.

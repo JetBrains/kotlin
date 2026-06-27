@@ -317,6 +317,8 @@ public interface KaTypeInformationProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily] instead.**
+ *
  * Describes a family of numbered function types such as `Function0`, `Function1`, ..., `FunctionN`.
  *
  * Kotlin has the following built-in function type families:
@@ -330,6 +332,7 @@ public interface KaTypeInformationProvider : KaSessionComponent {
  * @see KaTypeInformationProvider.functionTypeFamily
  * @see KaBuiltinFunctionTypeFamilies
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaFunctionTypeFamily : org.jetbrains.kotlin.analysis.api.types.KaFunctionTypeFamily {
@@ -376,10 +379,13 @@ public interface KaFunctionTypeFamily : org.jetbrains.kotlin.analysis.api.types.
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies] instead.**
+ *
  * Provides access to the four built-in [function type families][KaFunctionTypeFamily].
  *
  * @see KaTypeInformationProvider.builtinFunctionTypeFamilies
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaBuiltinFunctionTypeFamilies : org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies {

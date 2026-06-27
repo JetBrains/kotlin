@@ -69,6 +69,8 @@ public interface KaVisibilityChecker : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker] instead.**
+ *
  * Allows checking if [KaDeclarationSymbol] is visible from the current use-site.
  *
  * [KaUseSiteVisibilityChecker] is created by [KaVisibilityChecker.createUseSiteVisibilityChecker].
@@ -76,6 +78,7 @@ public interface KaVisibilityChecker : KaSessionComponent {
  * [KaUseSiteVisibilityChecker] is designed to be reused. Therefore, if you have multiple candidates to check from the same use-site position,
  * it will be more performant to reuse the same [KaUseSiteVisibilityChecker].
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaUseSiteVisibilityChecker : org.jetbrains.kotlin.analysis.api.visibility.KaUseSiteVisibilityChecker {

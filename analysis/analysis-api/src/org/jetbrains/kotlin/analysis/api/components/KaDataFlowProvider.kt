@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
@@ -47,8 +43,11 @@ public interface KaDataFlowProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo] instead.**
+ *
  * Represents smart cast information for an expression.
  */
+@KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.KaSmartCastInfo {
 
@@ -70,9 +69,12 @@ public interface KaSmartCastInfo : org.jetbrains.kotlin.analysis.api.dataflow.Ka
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCast] instead.**
+ *
  * Represents type information about an implicit receiver which has been smart-cast to a more specific type. An implicit smart cast is
  * applied to an implicit receiver, such as `substring()` called on an implicit `this` given an earlier smart cast `this is String`.
  */
+@KaObsoleteComponentApi
 @KaNonPublicApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
@@ -88,8 +90,11 @@ public interface KaImplicitReceiverSmartCast : KaLifetimeOwner {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaImplicitReceiverSmartCastKind] instead.**
+ *
  * Represents the kind of implicit receiver affected by the smart cast.
  */
+@KaObsoleteComponentApi
 @KaNonPublicApi
 public enum class KaImplicitReceiverSmartCastKind {
     /**
@@ -103,6 +108,10 @@ public enum class KaImplicitReceiverSmartCastKind {
     EXTENSION,
 }
 
+/**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.dataflow.KaDataFlowExitPointSnapshot] instead.**
+ */
+@KaObsoleteComponentApi
 @KaNonPublicApi
 public class KaDataFlowExitPointSnapshot(
     /**

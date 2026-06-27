@@ -359,6 +359,10 @@ public interface KaTypeProvider : KaSessionComponent {
     public val KaType.arrayElementType: KaType?
 }
 
+/**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes] instead.**
+ */
+@KaObsoleteComponentApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaBuiltinTypes : org.jetbrains.kotlin.analysis.api.types.KaBuiltinTypes {
     /** The [Int] class type. */

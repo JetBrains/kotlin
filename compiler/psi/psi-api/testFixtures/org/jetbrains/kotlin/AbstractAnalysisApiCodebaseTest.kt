@@ -222,7 +222,7 @@ fun KtDeclarationContainer.forEachNonLocalPublicDeclaration(action: (KtDeclarati
     }
 }
 
-private val KtModifierListOwner.isPubliclyVisible: Boolean
+val KtModifierListOwner.isPubliclyVisible: Boolean
     get() = !hasModifier(KtTokens.PRIVATE_KEYWORD) && !hasModifier(KtTokens.INTERNAL_KEYWORD)
 
 /**

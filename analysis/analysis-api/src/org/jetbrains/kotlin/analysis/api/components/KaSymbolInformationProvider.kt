@@ -163,10 +163,13 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.symbols.KaDeprecation] instead.**
+ *
  * Represents the deprecation status of a symbol.
  *
  * @see KaSymbolInformationProvider.deprecation
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaDeprecation {
@@ -178,11 +181,14 @@ public interface KaDeprecation {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.symbols.KaDeprecationLevel] instead.**
+ *
  * Deprecation severity levels, corresponding to [DeprecationLevel] in the Kotlin standard library.
  *
  * The levels form a progression from least to most restrictive: [WARNING] produces a compiler warning, [ERROR] produces a compiler
  * error, and [HIDDEN] makes the declaration invisible to new code.
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public class KaDeprecationLevel private constructor(public val name: String) {
     @KaExperimentalApi
@@ -217,9 +223,12 @@ public class KaDeprecationLevel private constructor(public val name: String) {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.symbols.KaReturnValueStatus] instead.**
+ *
  * The return value status of the function (should it be used, or can it be ignored).
  * @see KaSymbolInformationProvider.returnValueStatus
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed class KaReturnValueStatus(public val name: String) {
     override fun toString(): String = name

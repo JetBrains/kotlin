@@ -69,6 +69,8 @@ public interface KaCompilerFacility : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions] instead.**
+ *
  * An immutable set of options for in-memory compilation via [KaCompilerFacility].
  *
  * Use [KaCompilerFacility.createCompilationOptions] to create an instance, and [KaCompilerFacility.modify]
@@ -76,11 +78,14 @@ public interface KaCompilerFacility : KaSessionComponent {
  *
  * @see KaCompilationOptionsBuilder
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilationOptions : org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptions
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder] instead.**
+ *
  * A DSL builder for [KaCompilationOptions].
  *
  * Provides methods to configure the compilation target, language settings, JVM-specific options, error handling, and code fragment
@@ -89,6 +94,7 @@ public interface KaCompilationOptions : org.jetbrains.kotlin.analysis.api.compil
  *
  * @see KaCompilationOptions
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompilationOptionsBuilder : org.jetbrains.kotlin.analysis.api.compilation.KaCompilationOptionsBuilder {
@@ -197,12 +203,15 @@ public interface KaCompilationOptionsBuilder : org.jetbrains.kotlin.analysis.api
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompilationResult] instead.**
+ *
  * An in-memory compilation result returned from [KaCompilerFacility].
  *
  * Compilation fails if there are critical errors reported either on the frontend or on the backend side.
  * Keep in mind that [KaCompilationResult] is a part of the Analysis API, so it should only be used inside an
  * [analysis block][org.jetbrains.kotlin.analysis.api.session.analyze].
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed class KaCompilationResult(
     /** A list of exceptions that were thrown during compilation but workaround somehow */
@@ -248,6 +257,10 @@ public sealed class KaCompilationResult(
     ) : KaCompilationResult(mutedExceptions)
 }
 
+/**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile] instead.**
+ */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaCompiledFile : org.jetbrains.kotlin.analysis.api.compilation.KaCompiledFile {
@@ -282,8 +295,11 @@ public val KaCompiledFile.isClassFile: Boolean
     get() = path.endsWith(".class", ignoreCase = true)
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompilationTarget] instead.**
+ *
  * The target platform of the compilation performed by [KaCompilerFacility].
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public enum class KaCompilationTarget {
     /**
@@ -293,10 +309,13 @@ public enum class KaCompilationTarget {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler] instead.**
+ *
  * A handler which is called whenever a new class file is produced, when compiling sources to the JVM target.
  *
  * @see KaCompilationTarget.JVM
  */
+@KaObsoleteComponentApi
 @KaSpi
 @KaExperimentalApi
 public fun interface KaCompiledClassHandler : org.jetbrains.kotlin.analysis.api.compilation.KaCompiledClassHandler {
@@ -312,14 +331,19 @@ public fun interface KaCompiledClassHandler : org.jetbrains.kotlin.analysis.api.
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCodeCompilationException] instead.**
+ *
  * Thrown when an exception occurred while analyzing the code to be compiled, or during target platform code generation.
  *
  * @see KaCompilerFacility
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cause)
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.compilation.KaCompilerFacilityModuleActualizer] instead.**
+ *
  * Actualizer for common source modules.
  *
  * The Kotlin compiler cannot directly compile classes from common modules, as it needs dependencies and language settings from the target
@@ -331,6 +355,7 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  * (e.g., Android and JVM); in that case, the facility chooses the first matching one. [KaCompilerFacilityModuleActualizer] is a way to
  * override the default behavior by offering a closer match – e.g., a module with an Android target.
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 @KaSpi
 public fun interface KaCompilerFacilityModuleActualizer {

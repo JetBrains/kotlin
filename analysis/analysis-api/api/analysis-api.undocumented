@@ -3,13 +3,10 @@ org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue.displayText
 org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
-org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.arguments
-org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
 org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
 org.jetbrains.kotlin.analysis.api.components.KaCompletionCandidateChecker
 org.jetbrains.kotlin.analysis.api.components.KaCompletionExtensionCandidateChecker
-org.jetbrains.kotlin.analysis.api.components.KaDataFlowExitPointSnapshot
 org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider
 org.jetbrains.kotlin.analysis.api.components.KaDataFlowProvider.computeExitPointSnapshot(List<KtExpression>)
 org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider

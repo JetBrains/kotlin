@@ -365,6 +365,8 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
 }
 
 /**
+ * **The type has been moved to a new package. Use [org.jetbrains.kotlin.analysis.api.symbols.KaCallableImplementationState] instead.**
+ *
  * Describes the implementation state of a [KaCallableSymbol] in the context of a specific [KaClassSymbol].
  *
  * An implementation state captures whether a callable is explicitly implemented in the class, has an inherited
@@ -372,6 +374,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  *
  * @see KaSymbolRelationProvider.implementationState
  */
+@KaObsoleteComponentApi
 @KaExperimentalApi
 public sealed interface KaCallableImplementationState {
     /**
