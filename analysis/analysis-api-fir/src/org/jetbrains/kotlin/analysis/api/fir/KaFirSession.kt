@@ -51,7 +51,7 @@ private constructor(
     val extensionTools: List<LLFirResolveExtensionTool>,
     token: KaLifetimeToken,
     analysisSessionProvider: () -> KaFirSession,
-    useSiteScope: KaResolutionScope
+    useSiteScope: KaResolutionScope,
 ) : KaBaseSession(
     token,
     resolver = KaResolverBridge(analysisSessionProvider),
@@ -83,20 +83,26 @@ private constructor(
     sourceProvider = KaSourceProviderBridge(analysisSessionProvider),
     kDocProvider = KaKDocProviderBridge(analysisSessionProvider),
 ) {
-    override val resolver: KaInternalsResolver = KaFirResolver(analysisSessionProvider)
+    override val resolver: KaInternalsResolver =
+        KaFirResolver(analysisSessionProvider)
 
-    override val diagnosticProvider: KaInternalsDiagnosticProvider = KaFirDiagnosticProvider(analysisSessionProvider)
+    override val diagnosticProvider: KaInternalsDiagnosticProvider =
+        KaFirDiagnosticProvider(analysisSessionProvider)
 
-    override val typeRelationChecker: KaInternalsTypeRelationChecker = KaFirTypeRelationChecker(analysisSessionProvider)
+    override val typeRelationChecker: KaInternalsTypeRelationChecker =
+        KaFirTypeRelationChecker(analysisSessionProvider)
 
     override val javaInteroperabilityComponent: KaInternalsJavaInteroperabilityComponent =
         KaFirJavaInteroperabilityComponent(analysisSessionProvider)
 
-    override val visibilityChecker: KaInternalsVisibilityChecker = KaFirVisibilityChecker(analysisSessionProvider)
+    override val visibilityChecker: KaInternalsVisibilityChecker =
+        KaFirVisibilityChecker(analysisSessionProvider)
 
-    override val kDocProvider: KaInternalsKDocProvider = KaFirKDocProvider(analysisSessionProvider)
+    override val kDocProvider: KaInternalsKDocProvider =
+        KaFirKDocProvider(analysisSessionProvider)
 
-    override val renderer: KaInternalsRenderer = KaRendererImpl(analysisSessionProvider)
+    override val renderer: KaInternalsRenderer =
+        KaRendererImpl(analysisSessionProvider)
 
     override val expressionInformationProvider: KaInternalsExpressionInformationProvider =
         KaFirExpressionInformationProvider(analysisSessionProvider)
@@ -104,7 +110,8 @@ private constructor(
     override val expressionTypeProvider: KaInternalsExpressionTypeProvider =
         KaFirExpressionTypeProvider(analysisSessionProvider)
 
-    override val sourceProvider: KaInternalsSourceProvider = KaFirSourceProvider(analysisSessionProvider)
+    override val sourceProvider: KaInternalsSourceProvider =
+        KaFirSourceProvider(analysisSessionProvider)
 
     override val signatureSubstitutor: KaInternalsSignatureSubstitutor =
         KaFirSignatureSubstitutor(analysisSessionProvider)
@@ -112,13 +119,17 @@ private constructor(
     override val resolveExtensionInfoProvider: KaInternalsResolveExtensionInfoProvider =
         KaFirResolveExtensionInfoProvider(analysisSessionProvider)
 
-    override val evaluator: KaInternalsEvaluator = KaFirEvaluator(analysisSessionProvider)
+    override val evaluator: KaInternalsEvaluator =
+        KaFirEvaluator(analysisSessionProvider)
 
-    override val referenceShortener: KaInternalsReferenceShortener = KaFirReferenceShortener(analysisSessionProvider)
+    override val referenceShortener: KaInternalsReferenceShortener =
+        KaFirReferenceShortener(analysisSessionProvider)
 
-    override val typeCreatorProvider: KaInternalsTypeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider)
+    override val typeCreatorProvider: KaInternalsTypeCreatorProvider =
+        KaFirTypeCreatorProvider(analysisSessionProvider)
 
-    override val legacyTypeCreator: KaInternalsTypeCreator = KaFirTypeCreator(analysisSessionProvider)
+    override val legacyTypeCreator: KaInternalsTypeCreator =
+        KaFirTypeCreator(analysisSessionProvider)
 
     override val analysisScopeProvider: KaInternalsAnalysisScopeProvider =
         KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope)
@@ -135,21 +146,26 @@ private constructor(
     override val symbolInformationProvider: KaInternalsSymbolInformationProvider =
         KaFirSymbolInformationProvider(analysisSessionProvider)
 
-    override val typeProvider: KaInternalsTypeProvider = KaFirTypeProvider(analysisSessionProvider)
+    override val typeProvider: KaInternalsTypeProvider =
+        KaFirTypeProvider(analysisSessionProvider)
 
     override val typeInformationProvider: KaInternalsTypeInformationProvider =
         KaFirTypeInformationProvider(analysisSessionProvider)
 
-    override val substitutorProvider: KaInternalsSubstitutorProvider = KaFirSubstitutorProvider(analysisSessionProvider)
+    override val substitutorProvider: KaInternalsSubstitutorProvider =
+        KaFirSubstitutorProvider(analysisSessionProvider)
 
     override val compilerPluginGeneratedDeclarationsProvider: KaInternalsCompilerPluginGeneratedDeclarationsProvider =
         KaFirCompilerPluginGeneratedDeclarationsProvider(analysisSessionProvider)
 
-    override val compilerFacility: KaInternalsCompilerFacility = KaFirCompilerFacility(analysisSessionProvider)
+    override val compilerFacility: KaInternalsCompilerFacility =
+        KaFirCompilerFacility(analysisSessionProvider)
 
-    override val scopeProvider: KaInternalsScopeProvider = KaFirScopeProvider(analysisSessionProvider)
+    override val scopeProvider: KaInternalsScopeProvider =
+        KaFirScopeProvider(analysisSessionProvider)
 
-    override val dataFlowProvider: KaInternalsDataFlowProvider = KaFirDataFlowProvider(analysisSessionProvider)
+    override val dataFlowProvider: KaInternalsDataFlowProvider =
+        KaFirDataFlowProvider(analysisSessionProvider)
 
     internal val firSymbolBuilder: KaSymbolByFirBuilder by lazy {
         KaSymbolByFirBuilder(project, this, token)
