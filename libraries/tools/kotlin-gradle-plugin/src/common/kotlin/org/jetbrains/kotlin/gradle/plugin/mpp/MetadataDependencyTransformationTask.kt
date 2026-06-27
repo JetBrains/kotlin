@@ -28,11 +28,15 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
+import java.io.IOException
+import java.nio.file.FileVisitResult
 import java.nio.file.Files
+import kotlin.io.path.*
 import java.nio.file.Path
+import java.nio.file.SimpleFileVisitor
+import java.nio.file.attribute.BasicFileAttributes
 import javax.inject.Inject
 import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.isDirectory
 
 /* Keep typealias for source compatibility */
@@ -49,7 +53,7 @@ internal fun transformGranularMetadataTaskName(sourceSetName: String) =
     lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
 
 internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
-    sourceSet: KotlinSourceSet
+    sourceSet: KotlinSourceSet,
 ): TaskProvider<MetadataDependencyTransformationTask> {
     val transformationTask = project.locateOrRegisterTask<MetadataDependencyTransformationTask>(
         transformGranularMetadataTaskName(sourceSet.name),
@@ -69,7 +73,7 @@ abstract class MetadataDependencyTransformationTask
 @Inject constructor(
     kotlinSourceSet: KotlinSourceSet,
     objectFactory: ObjectFactory,
-    private val projectLayout: ProjectLayout
+    private val projectLayout: ProjectLayout,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     //region Task Configuration State & Inputs
@@ -166,6 +170,7 @@ abstract class MetadataDependencyTransformationTask
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @TaskAction
     fun transformMetadata() {
         val parentLibrariesRecords: List<List<TransformedMetadataLibraryRecord>> = parentLibrariesIndexFiles
@@ -184,7 +189,7 @@ abstract class MetadataDependencyTransformationTask
         )
 
         if (outputsDirPath.isDirectory()) {
-            outputsDirPath.deleteExisting()
+            outputsDirPath.deleteRecursively()
         }
         outputsDirPath.createDirectories()
 
@@ -212,4 +217,24 @@ abstract class MetadataDependencyTransformationTask
             return records.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }
         }
     }
+}
+
+private fun Path.deleteRecursively() {
+    if (!Files.exists(this)) return
+    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
+        override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+            Files.deleteIfExists(file)
+            return FileVisitResult.CONTINUE
+        }
+
+        override fun postVisitDirectory(dir: Path, exc: IOException?): FileVisitResult {
+            if (exc != null) throw exc
+            try {
+                Files.deleteIfExists(dir)
+            } catch (e: NoSuchFileException) {
+            }
+            return FileVisitResult.CONTINUE
+        }
+    })
+
 }
