@@ -79,6 +79,7 @@ internal class PlaywrightTestExecutor() : TestExecuter<PwExecutionSpec> {
                                 } catch (t: Throwable) {
                                     val tsEnd = System.currentTimeMillis()
                                     closeSuiteWithFailingTestCause(suiteNode = this, tsEnd, failingTestCause = t)
+                                    log.error("Here's the Throwable we caught", t)
                                 }
                             }
                         }
