@@ -1,8 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-
 <!POSSIBLE_INITIALIZATION_DEADLOCK!>enum class Enum(val y: String) {
-    <!POTENTIALLY_UNINITIALIZED_PROPERTY!>ENTRY(<!POTENTIALLY_UNINITIALIZED_ACCESS!>EnumTest.x<!>) {
+    <!POSSIBLY_UNINITIALIZED_ENUM_ENTRY!>ENTRY(<!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>EnumTest.x<!>) {
         override fun toString(): String = y
     };<!>
 }<!>
@@ -10,7 +9,7 @@
 <!POSSIBLE_INITIALIZATION_DEADLOCK!>interface EnumTest {
     companion object {
         val x = "OK"
-        <!POTENTIALLY_UNINITIALIZED_PROPERTY!>val z = <!POTENTIALLY_UNINITIALIZED_ACCESS!>Enum.ENTRY.y<!><!>
+        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val z = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>Enum.ENTRY.y<!><!>
     }
 }<!>
 
@@ -31,3 +30,6 @@
 //        val y = "yay"
 //    }
 //}
+
+/* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration,
+primaryConstructor, propertyDeclaration, stringLiteral */

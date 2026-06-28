@@ -85,12 +85,12 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                 || !symbol.isInitializedBySupertypes
                 || !symbol.inSameModule()
             ) return
-            val enclosingEntity = symbol.asClassEntity()
+            val supertypeEntity = symbol.asClassEntity()
             // We do not need to visit the supertype here, as it was either already visited
             // or will be visited later (in this file or in a subseqently visited one)
-            val endNode = enclosingEntity.endInitializationIndex
+            val endNode = supertypeEntity.endInitializationIndex
             endNode.buildNode()
-            endNode mustHappenBefore this.enclosingEntity.beginInitializationIndex
+            endNode mustHappenBefore enclosingEntity.beginInitializationIndex
         }
     }
 
@@ -173,7 +173,7 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                         is QualifierIndex -> {
                             buildObjectEntity(current.enclosingEntity)
                             val constructor = current.enclosingEntity.symbol.primaryConstructorIfAny(holder.session)?.fir ?: continue
-                            constructor.accept(callSiteVisitor, current)
+                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, true))
                             val containingFile = current.containingFile ?: continue
                             pendingNodes.put(containingFile, current)
                         }
@@ -183,13 +183,13 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                                 ?.primaryConstructorIfAny(holder.session)
                                 ?.fir
                                 ?: continue
-                            constructor.accept(callSiteVisitor, current)
+                            constructor.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current, true))
                             val containingFile = current.containingFile ?: continue
                             pendingNodes.put(containingFile, current)
                         }
                         is StaticPropertyIndex -> {
                             val propertySymbol = current.symbol
-                            propertySymbol.fir.accept(callSiteVisitor, current)
+                            propertySymbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
                             val containingDeclaration = holder.session.firProvider.getContainingClass(propertySymbol)
                                 ?: holder.session.firProvider.getContainingFile(propertySymbol)?.symbol
                             if (containingDeclaration == current.enclosingEntity.symbol) {
@@ -199,14 +199,14 @@ class DependencyGraphResolver(val dependencyGraph: DependencyGraph) : FirSession
                         }
                         is StaticAnonymousInitializerIndex -> {
                             val initializedSymbol = current.symbol
-                            current.symbol.fir.accept(callSiteVisitor, current)
+                            current.symbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
                             if (holder.session.firProvider.getContainingClass(initializedSymbol) == current.enclosingEntity.symbol) {
                                 val containingFile = current.containingFile ?: continue
                                 pendingNodes.put(containingFile, current)
                             }
                         }
                         is DeclarationIndex<*> -> {
-                            current.symbol.fir.accept(callSiteVisitor, current)
+                            current.symbol.fir.accept(callSiteVisitor, CallSiteVisitor.CallSiteVisitContext(current))
                         }
                         else -> {}
                     }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 object A {
     val a = 1
@@ -8,3 +8,5 @@ object A {
 object B {
     val a = 2
 }
+
+/* GENERATED_FIR_TAGS: integerLiteral, objectDeclaration, propertyDeclaration */

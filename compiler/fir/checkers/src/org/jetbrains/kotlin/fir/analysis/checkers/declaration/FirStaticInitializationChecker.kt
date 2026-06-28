@@ -13,16 +13,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.resolvedStatus
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.dependencies.AnalysisResult
 import org.jetbrains.kotlin.fir.resolve.dependencies.ClinitIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.DependencyGraphAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity
+import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnumEntryIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.FunctionIndex
+import org.jetbrains.kotlin.fir.resolve.dependencies.InitializationCycleAccessResult
 import org.jetbrains.kotlin.fir.resolve.dependencies.QualifierIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.StaticAnonymousInitializerIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.StaticPropertyIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.dependencyGraphAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dependencies.logic.dependencyGraphResolver
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.name.CallableId
 
 object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
 
@@ -30,8 +35,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFile) {
         val resolver = context.session.dependencyGraphResolver ?: return
         val analyzer = context.session.dependencyGraphAnalyzer ?: return
-        val pendingNodes = resolver.collectDependencies(declaration)
-        for (node in pendingNodes) {
+        resolver.collectDependencies(declaration).forEach { node ->
             when (node) {
                 is ClinitIndex -> analyzer.checkDeadlocks(node.enclosingEntity)
                 is QualifierIndex -> {
@@ -46,67 +50,94 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
         }
     }
 
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportResultAndPossibleUninitialization(result: AnalysisResult): Boolean {
+        val [type, accesses] = result
+        when (type) {
+            is InitializationCycleAccessResult.UninitializedPropertyAccess -> accesses.forEach {
+                reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY, type.node.symbol)
+            }
+            is InitializationCycleAccessResult.UninitializedEnumEntryAccess -> accesses.forEach {
+                reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY, type.node.enclosingEntity.symbol)
+            }
+            is InitializationCycleAccessResult.CyclicAccess -> accesses.forEach {
+                reporter.reportOn(it, FirErrors.POSSIBLE_CYCLIC_ACCESS, type.node.symbol)
+            }
+            is InitializationCycleAccessResult.InaccessibleEntityAccess ->
+                when (val node = type.node) {
+                    is QualifierIndex -> accesses.forEach {
+                        reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE, type.entity.name)
+                    }
+                    is EnumEntryIndex -> {
+                        val enumClass = node.enclosingEntity.parentEnclosingEntity
+                        accesses.forEach {
+                            reporter.reportOn(it, FirErrors.ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, enumClass.name, node.enclosingEntity.symbol)
+                        }
+                    }
+                    is FunctionIndex<*>, is StaticPropertyIndex -> {
+                        val parent = type.entity.parentEnclosingEntityOrSelf
+                        accesses.forEach {
+                            reporter.reportOn(it, FirErrors.ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS, parent.name, node.symbol)
+                        }
+                    }
+                }
+            is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> accesses.forEach {
+                reporter.reportOn(it, FirErrors.CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS, type.node.symbol.callableId.classId?.relativeClassName ?: CallableId(type.node.symbol.name).asSingleFqName())
+            }
+            else -> {}
+        }
+        return type.poisonsInitializers
+    }
+
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun DependencyGraphAnalyzer.checkDeadlocks(enclosingEntity: EnclosingEntity<FirRegularClass>) {
+    private fun DependencyGraphAnalyzer.checkDeadlocks(enclosingEntity: EnclosingEntity<FirRegularClass>) {
         if (enclosingEntity.symbol.resolvedStatus?.isCompanion ?: false) return
         val deadlockingEntities = mutuallyDependentEntities(enclosingEntity).toList()
         if (deadlockingEntities.isNotEmpty()) {
             reporter.reportOn(
                 enclosingEntity.symbol.fir.source,
                 FirErrors.POSSIBLE_INITIALIZATION_DEADLOCK,
-                deadlockingEntities.map(EnclosingEntity<*>::symbol)
+                deadlockingEntities.map(EnclosingEntity<*>::name)
             )
         }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun DependencyGraphAnalyzer.checkObjectConstructor(enclosingEntity: EnclosingEntity.Object) {
-        val index = enclosingEntity.beginInitializationIndex
-        if (isPoisoned(index)) {
-            collectAllPoisoningDirectAccesses(index).forEach { access ->
-                reporter.reportOn(access, FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS)
-            }
-        }
-    }
+    private fun DependencyGraphAnalyzer.checkObjectConstructor(enclosingEntity: EnclosingEntity.Object) =
+        performAccessAnalysis(enclosingEntity.beginInitializationIndex).forEach { reportResultAndPossibleUninitialization(it) }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: StaticAnonymousInitializerIndex) {
-        if (isPoisoned(initializerNode)) {
-            collectAllPoisoningDirectAccesses(initializerNode).forEach { access ->
-                reporter.reportOn(access, FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS)
-            }
-        }
-    }
+    private fun DependencyGraphAnalyzer.checkAccessesInInitializer(initializerNode: StaticAnonymousInitializerIndex) =
+        performAccessAnalysis(initializerNode).forEach { reportResultAndPossibleUninitialization(it) }
 
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun DependencyGraphAnalyzer.checkEnumEntry(enclosingEntity: EnclosingEntity.EnumEntry) {
-        val enumEntryIndex = enclosingEntity.beginInitializationIndex
-        if (isPoisoned(enumEntryIndex)) {
+    private fun DependencyGraphAnalyzer.checkEnumEntry(enclosingEntity: EnclosingEntity.EnumEntry) {
+        val isUninitialized = performAccessAnalysis(enclosingEntity.beginInitializationIndex).fold(false) { isUninitialized, result ->
+            isUninitialized || reportResultAndPossibleUninitialization(result)
+        }
+        if (isUninitialized) {
             reporter.reportOn(
                 enclosingEntity.symbol.fir.source,
-                FirErrors.POTENTIALLY_UNINITIALIZED_PROPERTY,
-                mutuallyDependentEntities(enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::symbol)
+                FirErrors.POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
+                mutuallyDependentEntities(enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::name)
             )
-            collectAllPoisoningDirectAccesses(enumEntryIndex).forEach { access ->
-                reporter.reportOn(access, FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS)
-            }
         }
     }
 
     @OptIn(SymbolInternals::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun DependencyGraphAnalyzer.checkProperty(propertyNode: StaticPropertyIndex) {
-        if (isPoisoned(propertyNode)) {
+        val isUninitialized = performAccessAnalysis(propertyNode).fold(false) { isUninitialized, result ->
+            isUninitialized || reportResultAndPossibleUninitialization(result)
+        }
+        if (isUninitialized) {
             reporter.reportOn(
                 propertyNode.symbol.fir.source,
-                FirErrors.POTENTIALLY_UNINITIALIZED_PROPERTY,
-                mutuallyDependentEntities(propertyNode.enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::symbol)
+                FirErrors.POSSIBLY_UNINITIALIZED_PROPERTY,
+                mutuallyDependentEntities(propertyNode.enclosingEntity).mapTo(mutableListOf(), EnclosingEntity<*>::name)
             )
-            collectAllPoisoningDirectAccesses(propertyNode).forEach { access ->
-                reporter.reportOn(access, FirErrors.POTENTIALLY_UNINITIALIZED_ACCESS)
-            }
         }
     }
 }

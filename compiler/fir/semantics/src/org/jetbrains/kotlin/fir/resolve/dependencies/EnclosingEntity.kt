@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -21,10 +22,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.withSession
+import org.jetbrains.kotlin.name.FqName
 
 sealed class EnclosingEntity<D : FirDeclaration> {
 
     abstract val symbol: FirBasedSymbol<D>
+
+    abstract val name: FqName
 
     abstract val parentEnclosingEntity: EnclosingEntity<*>?
 
@@ -36,13 +40,13 @@ sealed class EnclosingEntity<D : FirDeclaration> {
 
     data class Class(override val symbol: FirRegularClassSymbol) : EnclosingEntity<FirRegularClass>() {
 
+        override val name: FqName = symbol.classId.relativeClassName
+
         override val parentEnclosingEntity: EnclosingEntity<*>? get() = null
 
         override val beginInitializationIndex: ClinitIndex = ClinitIndex(this)
 
         override val isPrivate: Boolean = symbol.isPrivate
-
-        override fun toString(): String = symbol.classId.relativeClassName.asString()
     }
 
     data class Object(
@@ -50,16 +54,19 @@ sealed class EnclosingEntity<D : FirDeclaration> {
         override val parentEnclosingEntity: Class? = null
     ) : EnclosingEntity<FirRegularClass>() {
 
+        override val name: FqName = symbol.classId.relativeClassName
+
         override val beginInitializationIndex: QualifierIndex = QualifierIndex(this)
 
         override val isPrivate: Boolean = symbol.isPrivate
 
-        override fun toString(): String = parentEnclosingEntity?.let { outerEnclosingEntity ->
-            "$outerEnclosingEntity.${symbol.name}"
-        } ?: "${symbol.name}"
+        val isCompanion: Boolean = symbol.isCompanion && parentEnclosingEntity != null
     }
 
     data class EnumEntry(override val symbol: FirEnumEntrySymbol) : EnclosingEntity<FirEnumEntry>() {
+
+        override val name: FqName = symbol.callableId.asSingleFqName()
+
         override val parentEnclosingEntity: Class = symbol.getContainingClassSymbol()
             ?.fullyExpandedClass(symbol.moduleData.session)
             ?.asClassEntity()
@@ -73,6 +80,8 @@ sealed class EnclosingEntity<D : FirDeclaration> {
     }
 
     data class File(override val symbol: FirFileSymbol) : EnclosingEntity<FirFile>() {
+
+        override val name: FqName = symbol.packageFqName
 
         override val parentEnclosingEntity: EnclosingEntity<*>? get() = null
 
