@@ -385,6 +385,25 @@ public fun cuMemFree(dptr: CPointer<*>) {
     if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemFree: code $rc")
 }
 
+@GCUnsafeCall("cuMemsetD8_v2")
+public external fun cuMemsetD8(dstDevice: CUdeviceptr, uc: UByte, n: ULong): Int
+
+/**
+ * Zero-fills [count] elements of type `T` at [dptr] on the device (i.e. `count * sizeOf<T>()`
+ * bytes). Typed overload mirroring [cuMemAlloc]'s shape — accepts the same `CPointer<T>` it
+ * returned, expresses the size as an element [count], and throws [IllegalStateException] on
+ * driver error so callers don't have to wrap every clear in an explicit result check.
+ *
+ * Implemented over `cuMemsetD8` since the all-bytes-zero pattern works regardless of `T`'s
+ * representation; the wider [`cuMemsetD16` / `cuMemsetD32`] entry points would only be a win
+ * for non-zero patterns and would constrain `T`'s size.
+ */
+public inline fun <reified T : CVariable> cuClear(dptr: CPointer<T>, count: Int) {
+    val byteCount = sizeOf<T>().toULong() * count.toULong()
+    val rc = cuMemsetD8(dptr.toLong().toULong(), 0u, byteCount)
+    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuClear: code $rc")
+}
+
 // =========================================================================
 // Host → device array upload shortcuts
 // =========================================================================
