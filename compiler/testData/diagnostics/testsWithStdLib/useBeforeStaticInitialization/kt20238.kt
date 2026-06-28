@@ -13,23 +13,23 @@
     }
 }<!>
 
-//class Class {
-//    init {
-//        println("Class.<init>")
-//    }
-//    val y = ClassTest.y
-//}
-//
-//interface ClassTest {
-//    companion object {
-//        init {
-//            println("ClassTest.<clinit>")
-//        }
-//        val x = "OK"
-//        val z = Class().y
-//        val y = "yay"
-//    }
-//}
+class Class {
+    init {
+        println("Class.<init>")
+    }
+    val y = ClassTest.y
+}
+
+interface ClassTest {
+    companion object {
+        init {
+            println("ClassTest.<clinit>")
+        }
+        val x = "OK"
+        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val z = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>Class()<!>.y<!>
+        val y = "yay"
+    }
+}
 
 /* GENERATED_FIR_TAGS: companionObject, enumDeclaration, enumEntry, interfaceDeclaration, objectDeclaration,
 primaryConstructor, propertyDeclaration, stringLiteral */

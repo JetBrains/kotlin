@@ -37,11 +37,11 @@ interface MLFeatureValueBase {
         fun version(value: String): MLFeatureValue = VersionValue(value)
     }
 
-    <!POSSIBLE_INITIALIZATION_DEADLOCK!>data class BinaryValue internal constructor(override val value: Boolean) : MLFeatureValue()<!>
-    data class FloatValue internal constructor(override val value: Double) : MLFeatureValue()
-    data class CategoricalValue internal constructor(override val value: String) : MLFeatureValue()
-    data class ClassNameValue internal constructor(override val value: Class<*>, val useSimpleName: Boolean) : MLFeatureValue()
-    data class VersionValue internal constructor(override val value: String) : MLFeatureValue()
+    <!POSSIBLE_INITIALIZATION_DEADLOCK!>data class BinaryValue(override val value: Boolean) : MLFeatureValue()<!>
+    data class FloatValue(override val value: Double) : MLFeatureValue()
+    data class CategoricalValue(override val value: String) : MLFeatureValue()
+    data class ClassNameValue(override val value: Class<*>, val useSimpleName: Boolean) : MLFeatureValue()
+    data class VersionValue(override val value: String) : MLFeatureValue()
 }<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, data, functionDeclaration, ifExpression, interfaceDeclaration,

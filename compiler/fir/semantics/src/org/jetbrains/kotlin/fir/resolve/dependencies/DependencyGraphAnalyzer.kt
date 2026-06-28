@@ -42,6 +42,10 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
             }
             if (from !in cycle) continue
             when (val result = from.accessAnalysisResult) {
+                is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> {
+                    yield(result)
+                    yieldAll(analyze(from, visited.toMutableSet()))
+                }
                 InitializationCycleAccessResult.PropagatesTransitiveDependencies -> yieldAll(analyze(from, visited.toMutableSet()))
                 InitializationCycleAccessResult.Safe -> continue
                 else -> yield(result)
@@ -94,6 +98,10 @@ class DependencyGraphAnalyzer(val dependencyGraph: DependencyGraph) : FirSession
                         }
                         if (from !in cycle) continue
                         when (val result = from.accessAnalysisResult) {
+                            is InitializationCycleAccessResult.DeadlockInducingConstructorCall -> {
+                                yield(result with accesses)
+                                analyze(from, mutableSetOf(node)).forEach { yield(it with accesses) }
+                            }
                             InitializationCycleAccessResult.PropagatesTransitiveDependencies ->
                                 analyze(from, mutableSetOf(node)).forEach { yield(it with accesses) }
                             InitializationCycleAccessResult.Safe -> continue

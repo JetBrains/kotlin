@@ -180,7 +180,7 @@ sealed class FunctionIndex<D : FirFunction> : DeclarationIndex<FirFunction>, Acc
                     lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle } == true -> {
                         InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
                     }
-                    else -> InitializationCycleAccessResult.Safe
+                    else -> InitializationCycleAccessResult.PropagatesTransitiveDependencies
                 }
             }
     }
