@@ -4842,7 +4842,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface AccessingPossiblyUninitializedProperty : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = AccessingPossiblyUninitializedProperty::class
-        val property: KaVariableSymbol
+        val property: FqName
     }
 
     interface AccessingPossiblyUninitializedEnumEntry : KaFirDiagnostic<PsiElement> {
@@ -4852,23 +4852,23 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface PossibleCyclicAccess : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = PossibleCyclicAccess::class
-        val property: KaSymbol
+        val declaration: KaSymbol
     }
 
     interface AccessingPossiblyInaccessibleObjectReference : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = AccessingPossiblyInaccessibleObjectReference::class
-        val object: FqName
+        val inaccessibleEntity: FqName
     }
 
     interface AccessingDeclarationOfPossiblyInaccessibleClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = AccessingDeclarationOfPossiblyInaccessibleClass::class
-        val class: FqName
+        val inaccessibleEntity: FqName
         val declaration: KaSymbol
     }
 
     interface ConstructingPossiblyDeadlockingClass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ConstructingPossiblyDeadlockingClass::class
-        val class: FqName
+        val deadlockingEntity: FqName
     }
 
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {

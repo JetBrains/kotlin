@@ -2468,7 +2468,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
-            parameter<FirPropertySymbol>("property")
+            parameter<FqName>("property")
         }
 
         val ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
@@ -2476,20 +2476,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val POSSIBLE_CYCLIC_ACCESS by warning<PsiElement> {
-            parameter<FirBasedSymbol<*>>("property")
+            parameter<FirBasedSymbol<*>>("declaration")
         }
 
         val ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE by warning<PsiElement> {
-            parameter<FqName>("object")
+            parameter<FqName>("inaccessibleEntity")
         }
 
         val ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS by warning<PsiElement> {
-            parameter<FqName>("class")
+            parameter<FqName>("inaccessibleEntity")
             parameter<FirBasedSymbol<*>>("declaration")
         }
 
         val CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS by warning<PsiElement> {
-            parameter<FqName>("class")
+            parameter<FqName>("deadlockingEntity")
         }
     }
 }

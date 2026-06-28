@@ -5811,7 +5811,7 @@ internal class PossiblyUninitializedEnumEntryImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossiblyUninitializedEnumEntry
 
 internal class AccessingPossiblyUninitializedPropertyImpl(
-    override val property: KaVariableSymbol,
+    override val property: FqName,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyUninitializedProperty
@@ -5823,26 +5823,26 @@ internal class AccessingPossiblyUninitializedEnumEntryImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyUninitializedEnumEntry
 
 internal class PossibleCyclicAccessImpl(
-    override val property: KaSymbol,
+    override val declaration: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PossibleCyclicAccess
 
 internal class AccessingPossiblyInaccessibleObjectReferenceImpl(
-    override val object: FqName,
+    override val inaccessibleEntity: FqName,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingPossiblyInaccessibleObjectReference
 
 internal class AccessingDeclarationOfPossiblyInaccessibleClassImpl(
-    override val class: FqName,
+    override val inaccessibleEntity: FqName,
     override val declaration: KaSymbol,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AccessingDeclarationOfPossiblyInaccessibleClass
 
 internal class ConstructingPossiblyDeadlockingClassImpl(
-    override val class: FqName,
+    override val deadlockingEntity: FqName,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConstructingPossiblyDeadlockingClass

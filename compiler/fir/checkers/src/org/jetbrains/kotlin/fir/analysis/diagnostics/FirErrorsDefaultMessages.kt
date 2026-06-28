@@ -4049,7 +4049,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY,
             "The expression accesses (either directly or indirectly) the property ''{0}'' when it is possibly uninitialized.",
-            DECLARATION_FQ_NAME,
+            Renderer(FqName::asString),
         )
         map.put(
             ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY,
