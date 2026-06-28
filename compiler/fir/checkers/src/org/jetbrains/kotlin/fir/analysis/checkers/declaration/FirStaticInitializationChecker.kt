@@ -55,7 +55,7 @@ object FirStaticInitializationChecker : FirFileChecker(MppCheckerKind.Common) {
         val [type, accesses] = result
         when (type) {
             is InitializationCycleAccessResult.UninitializedPropertyAccess -> accesses.forEach {
-                reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY, type.node.symbol)
+                reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY, type.node.name)
             }
             is InitializationCycleAccessResult.UninitializedEnumEntryAccess -> accesses.forEach {
                 reporter.reportOn(it, FirErrors.ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY, type.node.enclosingEntity.symbol)
