@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
 abstract class X(val y: Bar)
 
 <!POSSIBLE_INITIALIZATION_DEADLOCK!>object Bar<!> {
-    <!POTENTIALLY_UNINITIALIZED_PROPERTY!>val prop = <!POTENTIALLY_UNINITIALIZED_ACCESS!>Foo.const<!><!>
+    <!POSSIBLY_UNINITIALIZED_PROPERTY!>val prop = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>Foo.const<!><!>
 }
 
 <!POSSIBLE_INITIALIZATION_DEADLOCK!>class Foo {
@@ -11,3 +11,6 @@ abstract class X(val y: Bar)
         val const = "AAA"
     }
 }<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, objectDeclaration, primaryConstructor, propertyDeclaration,
+stringLiteral */

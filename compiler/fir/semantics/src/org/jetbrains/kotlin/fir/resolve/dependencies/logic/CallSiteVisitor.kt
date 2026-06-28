@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dependencies.logic
 
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
+import org.jetbrains.kotlin.fir.declarations.getConstructedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
@@ -83,6 +84,8 @@ import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.a
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asEnumEntryEntity
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asFileEntity
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.asObjectEntity
+import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.isNotPrivate
+import org.jetbrains.kotlin.fir.resolve.dependencies.EnclosingEntity.Companion.parentEnclosingEntityOrSelf
 import org.jetbrains.kotlin.fir.resolve.dependencies.EnumEntryIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.FunctionIndex
 import org.jetbrains.kotlin.fir.resolve.dependencies.StaticInitializationIndex
@@ -106,6 +109,7 @@ import org.jetbrains.kotlin.fir.scopes.firOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -129,20 +133,24 @@ internal class CallSiteVisitor(
     override val scopeSession: ScopeSession,
     private val visitedFiles: Set<FirFileSymbol>,
     private val graphBuilder: DependencyGraphBuilder,
-) : SessionAndScopeSessionHolder, FirVisitor<Unit, DependencyNodeIndex>() {
+) : SessionAndScopeSessionHolder, FirVisitor<Unit, CallSiteVisitor.CallSiteVisitContext>() {
 
-    override fun visitElement(element: FirElement, data: DependencyNodeIndex): Unit = Unit
+    data class CallSiteVisitContext(val accessingNode: DependencyNodeIndex, val materializeOnlyConstructorArguments: Boolean = false) {
+        val accessingEntity: EnclosingEntity<*>? = (accessingNode as? StaticInitializationIndex)?.enclosingEntity
+    }
+
+    override fun visitElement(element: FirElement, data: CallSiteVisitContext): Unit = Unit
 
     private inline fun <E : FirElement> E.visit(
-        data: DependencyNodeIndex,
-        crossinline block: context(DependencyNodeIndex, E) DependencyGraphBuilder.() -> Unit
+        data: CallSiteVisitContext,
+        crossinline block: context(CallSiteVisitContext, E) DependencyGraphBuilder.() -> Unit
     ) = when {
         this is FirDeclaration && !symbol.inSameModule() -> {}
         else -> context(data, this@visit) { graphBuilder.block() }
     }
 
-    context(accessingNode: DependencyNodeIndex)
-    private fun FirElement.visitRecursively() = accept(this@CallSiteVisitor, accessingNode)
+    context(context: CallSiteVisitContext)
+    private fun FirElement.visitRecursively() = accept(this@CallSiteVisitor, context)
 
     private val FirBasedSymbol<*>.inVisitedFile: Boolean get() = session.firProvider.getContainingFile(this)?.symbol in visitedFiles
 
@@ -156,29 +164,27 @@ internal class CallSiteVisitor(
         worklist.add(enclosingEntity.beginInitializationIndex)
     }
 
-    context(accessingNode: DependencyNodeIndex, reference: FirExpression)
+    context(context: CallSiteVisitContext, reference: FirExpression)
     private fun DependencyGraphBuilder.referenceNode(node: AccessibleIndex) = apply {
         node.buildNode()
-        accessingNode references node
+        context.accessingNode references node
         val possiblyInitializedEndNode = node.lazilyInitialized?.endInitializationIndex ?: return@apply
-        possiblyInitializedEndNode.buildNode()
-        possiblyInitializedEndNode mayHappenBefore accessingNode
+        if (context.accessingEntity?.parentEnclosingEntityOrSelf?.let { it != possiblyInitializedEndNode.enclosingEntity } ?: true) {
+            possiblyInitializedEndNode.buildNode()
+            possiblyInitializedEndNode mayHappenBefore context.accessingNode
+        }
     }
 
-    context(accessingNode: DependencyNodeIndex, callSite: FirExpression)
+    context(context: CallSiteVisitContext, callSite: FirExpression)
     private fun DependencyGraphBuilder.callNode(node: FunctionIndex<*>) = apply {
         node.buildNode()
-        accessingNode calls node
-        val enclosingEntity = node.lazilyInitialized ?: return@apply
-        val possiblyInitializedEndNode = enclosingEntity.endInitializationIndex
-        if (node is FunctionIndex.Constructor) {
-            if (!(enclosingEntity is EnclosingEntity.Class && enclosingEntity.symbol.classKind == ClassKind.ENUM_CLASS)) {
-                possiblyInitializedEndNode mustHappenBefore node
-            }
-        } else {
+        if (!node.symbol.inVisitedFile) postponeFileEntity(node.symbol)
+        context.accessingNode calls node
+        if (node !is FunctionIndex.Constructor) {
+            val enclosingEntity = node.lazilyInitialized ?: return@apply
+            val possiblyInitializedEndNode = enclosingEntity.endInitializationIndex
             possiblyInitializedEndNode mayHappenBefore node
         }
-        if (!node.symbol.inVisitedFile) postponeFileEntity(node.symbol)
     }
 
     /*
@@ -187,19 +193,19 @@ internal class CallSiteVisitor(
      * =============================================
      */
 
-    override fun visitProperty(property: FirProperty, data: DependencyNodeIndex): Unit =
+    override fun visitProperty(property: FirProperty, data: CallSiteVisitContext): Unit =
         property.visit(data) {
             // Visit only the initializer
             property.initializer?.visitRecursively()
         }
 
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: DependencyNodeIndex) {
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CallSiteVisitContext) {
         // So far we only care about getters
         if (!propertyAccessor.isGetter) return
         return propertyAccessor.visit(data) { propertyAccessor.body?.visitRecursively() }
     }
 
-    override fun visitBlock(block: FirBlock, data: DependencyNodeIndex): Unit = block.visit(data) {
+    override fun visitBlock(block: FirBlock, data: CallSiteVisitContext): Unit = block.visit(data) {
         block.statements.forEach { stmt -> stmt.visitRecursively() }
     }
 
@@ -231,25 +237,23 @@ internal class CallSiteVisitor(
         return result
     }
 
-    context(accessingNode: DependencyNodeIndex)
+    context(context: CallSiteVisitContext)
     private val FirFunctionSymbol<*>.defaultParametersIfAny: Pair<DefaultedFunctionIndex<*>, Pair<List<IndexedValue<FirValueParameterSymbol>>, List<IndexedValue<FirValueParameterSymbol>>>>?
         get() = when {
-            accessingNode is DefaultedFunctionIndex<*> && accessingNode.functionIndex.symbol == this ->
-                accessingNode to accessingNode.defaultParameters.asSequence()
+            context.accessingNode is DefaultedFunctionIndex<*> && context.accessingNode.functionIndex.symbol == this ->
+                context.accessingNode to context.accessingNode.defaultParameters.asSequence()
                     .withIndex()
                     .partition { it.value.hasDefaultValue }
             else -> null
         }
 
-    override fun visitFunction(function: FirFunction, data: DependencyNodeIndex): Unit =
+    override fun visitFunction(function: FirFunction, data: CallSiteVisitContext): Unit =
         function.visit(data) {
             val symbol = function.symbol
             symbol.defaultParametersIfAny?.let { [defaultedIndex, parameters] ->
                 val [defaultMissingParameter, nonDefaultMissingParameter] = parameters
                 // Add the known default values for missing parameters to the mapping
-                defaultMissingParameter.forEach { [_, parameter] ->
-                    parameter.fir.defaultValue?.visitRecursively()
-                }
+                defaultMissingParameter.forEach { [_, parameter] -> parameter.fir.defaultValue?.visitRecursively() }
                 if (nonDefaultMissingParameter.isNotEmpty() && symbol is FirNamedFunctionSymbol) {
                     // We need to find an overridden declaration by the called declaration which defines these missing default values
                     symbol.findOverriddenFunctionWithDefaultArguments()?.let { overriddenFunction ->
@@ -267,16 +271,16 @@ internal class CallSiteVisitor(
             } ?: function.body?.visitRecursively()
         }
 
-    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: DependencyNodeIndex): Unit =
+    override fun visitNamedFunction(namedFunction: FirNamedFunction, data: CallSiteVisitContext): Unit =
         visitFunction(namedFunction, data)
 
     // Forward to visitFunction
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: DependencyNodeIndex): Unit =
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CallSiteVisitContext): Unit =
         visitFunction(anonymousFunction, data)
 
     // Should only be visited with its corresponding function contract
     override fun visitAnonymousFunctionExpression(
-        anonymousFunctionExpression: FirAnonymousFunctionExpression, data: DependencyNodeIndex
+        anonymousFunctionExpression: FirAnonymousFunctionExpression, data: CallSiteVisitContext
     ): Unit = Unit
 
     /*
@@ -285,7 +289,7 @@ internal class CallSiteVisitor(
      * =============================================
      */
 
-    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: DependencyNodeIndex): Unit =
+    override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CallSiteVisitContext): Unit =
         anonymousInitializer.visit(data) { anonymousInitializer.body?.visitRecursively() }
 
     /*
@@ -294,10 +298,29 @@ internal class CallSiteVisitor(
      * =============================================
      */
 
-    override fun visitConstructor(constructor: FirConstructor, data: DependencyNodeIndex): Unit =
+    override fun visitConstructor(constructor: FirConstructor, data: CallSiteVisitContext): Unit =
         constructor.visit(data) {
+            if (constructor.isPrimary && !data.materializeOnlyConstructorArguments) {
+                constructor.symbol.getConstructedClass(session)?.asClassEntity()?.let { classEntity ->
+                    classEntity.endInitializationIndex mustHappenBefore data.accessingNode
+                }
+            }
             constructor.delegatedConstructor?.visitRecursively()
-            constructor.body?.visitRecursively()
+            val materializeEverythingContext = CallSiteVisitContext(data.accessingNode)
+            context(materializeEverythingContext) {
+                constructor.body?.visitRecursively()
+            }
+            if (!data.materializeOnlyConstructorArguments) {
+                context(materializeEverythingContext) {
+                    val constructedClass = constructor.symbol.getConstructedClass(session) ?: return@visit
+                    constructedClass.declarationSymbols.forEach {
+                        when (it) {
+                            is FirPropertySymbol -> it.fir.visitRecursively()
+                            is FirAnonymousInitializerSymbol -> it.fir.visitRecursively()
+                        }
+                    }
+                }
+            }
         }
 
     /*
@@ -319,10 +342,10 @@ internal class CallSiteVisitor(
         }
     }
 
-    context(accessingIndex: DependencyNodeIndex, access: FirQualifiedAccessExpression)
+    context(context: CallSiteVisitContext, access: FirQualifiedAccessExpression)
     private inline fun <D : FirCallableDeclaration, S : FirCallableSymbol<D>> DependencyGraphBuilder.accessNode(
         symbol: S,
-        crossinline resolveAccess: context(DependencyNodeIndex, FirQualifiedAccessExpression) DependencyGraphBuilder.(S, EnclosingEntity<*>?) -> Unit,
+        crossinline resolveAccess: context(CallSiteVisitContext, FirQualifiedAccessExpression) DependencyGraphBuilder.(S, EnclosingEntity<*>?) -> Unit,
         processCallables: FirScope.(Name, (S) -> Unit) -> Unit,
         crossinline checkOverride: FirOverrideChecker.(S, S) -> Boolean
     ) {
@@ -332,11 +355,10 @@ internal class CallSiteVisitor(
             access.explicitReceiver?.visitRecursively()
             access.extensionReceiver?.visitRecursively()
         }
-        val accessingEnclosingEntity = (accessingIndex as? StaticInitializationIndex)?.enclosingEntity
         // Compute the node to this callable based on the access' dispatch receiver
         access.dispatchReceiver?.let { receiver ->
             when (receiver) {
-                is FirSuperReceiverExpression -> resolveAccess(symbol, accessingEnclosingEntity)
+                is FirSuperReceiverExpression -> resolveAccess(symbol, context.accessingEntity)
                 is FirThisReceiverExpression -> {
                     val classSymbol = receiver.calleeReference.boundSymbol?.let { symbol ->
                         when (symbol) {
@@ -347,7 +369,7 @@ internal class CallSiteVisitor(
                         }
                     }
                     val accessedEntity = classSymbol?.let { it.asEntity(allowClass = it.isEnumClass && symbol.isStatic) }
-                    resolveAccess(symbol, accessedEntity ?: accessingEnclosingEntity)
+                    resolveAccess(symbol, accessedEntity ?: context.accessingEntity)
                 }
                 is FirResolvedQualifier -> {
                     val enclosingEntity = receiver.toEnclosingEntity() ?: return
@@ -383,7 +405,7 @@ internal class CallSiteVisitor(
 
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         propertyAccessExpression.visit(data) {
             // Case 1: Accessing an enum entry
@@ -399,11 +421,9 @@ internal class CallSiteVisitor(
                         val receiverEntity = enclosingEntity ?: return@resolveAccess
                         val propertyNode = StaticPropertyIndex(receiverEntity, propertySymbol)
                         // If the property has an initializer and no getter, create a reference edge to it
-                        if (propertyNode.hasInitializer && propertyNode.getter == null) {
+                        if (!propertyNode.isConst && propertyNode.hasInitializer && propertyNode.getter == null) {
                             referenceNode(propertyNode)
-                            if (!propertySymbol.inVisitedFile) {
-                                postponeFileEntity(propertySymbol)
-                            }
+                            if (!propertySymbol.inVisitedFile) postponeFileEntity(propertySymbol)
                         }
                         // If the property has a getter, create a call edge to it
                         val propertyGetter = propertyNode.getter ?: return@resolveAccess
@@ -421,7 +441,7 @@ internal class CallSiteVisitor(
             }
         }
 
-    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: DependencyNodeIndex): Unit =
+    override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: CallSiteVisitContext): Unit =
         resolvedQualifier.visit(data) {
             val symbol = resolvedQualifier.symbol?.fullyExpandedClass() ?: return@visit
             if (symbol.isLibraryDeclaration || !symbol.inSameModule()) return@visit
@@ -432,7 +452,7 @@ internal class CallSiteVisitor(
                     resolvedQualifier.resolvedToCompanionObject -> symbol.resolvedCompanionObjectSymbol?.asObjectEntity(symbol.asClassEntity())
                     else -> symbol.asObjectEntity()
                 } ?: return@visit
-                referenceNode(objectEntity.beginInitializationIndex)
+                if (objectEntity.isNotPrivate) referenceNode(objectEntity.beginInitializationIndex)
                 if (!objectEntity.symbol.inVisitedFile) postponeFileEntity(objectEntity.symbol)
             }
         }
@@ -447,7 +467,7 @@ internal class CallSiteVisitor(
         else -> if (parameters.isNotEmpty()) DefaultedFunctionIndex(this, parameters) else this
     }
 
-    context(accessingNode: DependencyNodeIndex, accessExpression: FirExpression)
+    context(context: CallSiteVisitContext, accessExpression: FirExpression)
     private fun <T : FirCall> DependencyGraphBuilder.visitArguments(
         symbol: FirFunctionSymbol<*>,
         functionCall: T
@@ -483,7 +503,7 @@ internal class CallSiteVisitor(
         return property to access
     }
 
-    override fun visitFunctionCall(functionCall: FirFunctionCall, data: DependencyNodeIndex): Unit =
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: CallSiteVisitContext): Unit =
         functionCall.visit(data) {
             functionCall.calleeReference.toResolvedNamedFunctionSymbol(discardErrorReference = true)?.let { namedFunction ->
                 val defaultParameters = visitArguments(namedFunction, functionCall)
@@ -516,10 +536,7 @@ internal class CallSiteVisitor(
                 accessNode(
                     symbol = namedFunction,
                     resolveAccess = { functionSymbol, receiverEntity ->
-                        val node = FunctionIndex.MemberFunction(functionSymbol, receiverEntity).let {
-                            if (defaultParameters.isNotEmpty()) DefaultedFunctionIndex(it, defaultParameters) else it
-                        }
-                        callNode(node)
+                        callNode(FunctionIndex.MemberFunction(functionSymbol, receiverEntity).defaultedOrSelf(defaultParameters))
                     },
                     processCallables = FirScope::processFunctionsByName,
                     checkOverride = { overrideCandidate, baseDeclaration ->
@@ -530,31 +547,43 @@ internal class CallSiteVisitor(
             functionCall.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true)?.let { constructor ->
                 val defaultParameters = visitArguments(constructor, functionCall)
                 if (constructor.isLibraryDeclaration || !constructor.inSameModule()) return@visit
+                if (constructor.getConstructedClass(session)?.asClassEntity() == data.accessingEntity?.parentEnclosingEntity) return@let
                 callNode(FunctionIndex.Constructor(constructor).defaultedOrSelf(defaultParameters))
             }
         }
 
-    override fun visitArgumentList(argumentList: FirArgumentList, data: DependencyNodeIndex): Unit =
+    override fun visitArgumentList(argumentList: FirArgumentList, data: CallSiteVisitContext): Unit =
         argumentList.visit(data) {
             argumentList.arguments.forEach { argument -> argument.visitRecursively() }
         }
 
     override fun visitDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         delegatedConstructorCall.visit(data) {
             val constructor =
                 delegatedConstructorCall.calleeReference.toResolvedConstructorSymbol(discardErrorReference = true) ?: return@visit
             val defaultArguments = visitArguments(constructor, delegatedConstructorCall)
             if (constructor.isLibraryDeclaration || !constructor.inSameModule()) return@visit
-            callNode(FunctionIndex.Constructor(constructor).defaultedOrSelf(defaultArguments))
+            if (data.materializeOnlyConstructorArguments) {
+                // Default parameters are independent expressions
+                context(CallSiteVisitContext(data.accessingNode)) {
+                    defaultArguments.forEach { argument ->
+                        argument.fir.defaultValue?.visitRecursively()
+                    }
+                }
+                // The only way to properly materialize the edges to the accessing node is to fully recurse into the construction call chain
+                constructor.fir.visitRecursively()
+            } else {
+                callNode(FunctionIndex.Constructor(constructor).defaultedOrSelf(defaultArguments))
+            }
         }
 
     // One should visit the subtypes of the qualified expressions directly
     override fun visitQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit = Unit
 
     /*
@@ -565,44 +594,44 @@ internal class CallSiteVisitor(
 
     override fun visitBooleanOperatorExpression(
         booleanOperatorExpression: FirBooleanOperatorExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         booleanOperatorExpression.visit(data) {
             booleanOperatorExpression.leftOperand.visitRecursively()
             booleanOperatorExpression.rightOperand.visitRecursively()
         }
 
-    override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: DependencyNodeIndex): Unit =
+    override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: CallSiteVisitContext): Unit =
         checkedSafeCallSubject.visit(data) {
             checkedSafeCallSubject.originalReceiverRef.value.visitRecursively()
         }
 
-    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: DependencyNodeIndex): Unit =
+    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: CallSiteVisitContext): Unit =
         checkNotNullCall.visit(data) {
             checkNotNullCall.argumentList.visitRecursively()
         }
 
-    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: DependencyNodeIndex): Unit =
+    override fun visitCollectionLiteral(collectionLiteral: FirCollectionLiteral, data: CallSiteVisitContext): Unit =
         collectionLiteral.visit(data) {
             collectionLiteral.argumentList.visitRecursively()
         }
 
-    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: DependencyNodeIndex): Unit =
+    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: CallSiteVisitContext): Unit =
         comparisonExpression.visit(data) {
             comparisonExpression.compareToCall.visitRecursively()
         }
 
-    override fun visitComponentCall(componentCall: FirComponentCall, data: DependencyNodeIndex): Unit =
+    override fun visitComponentCall(componentCall: FirComponentCall, data: CallSiteVisitContext): Unit =
         visitFunctionCall(componentCall, data)
 
     override fun visitDesugaredAssignmentValueReferenceExpression(
         desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit = desugaredAssignmentValueReferenceExpression.visit(data) {
         desugaredAssignmentValueReferenceExpression.expressionRef.value.visitRecursively()
     }
 
-    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: DependencyNodeIndex): Unit =
+    override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: CallSiteVisitContext): Unit =
         elvisExpression.visit(data) {
             elvisExpression.lhs.visitRecursively()
             elvisExpression.rhs.visitRecursively()
@@ -610,7 +639,7 @@ internal class CallSiteVisitor(
 
     override fun visitEnumEntryDeserializedAccessExpression(
         enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit = enumEntryDeserializedAccessExpression.visit(data) {
         val enumEntry = enumEntryDeserializedAccessExpression.enumClassId.toLookupTag().toSymbol()
             ?.fullyExpandedClass()
@@ -620,17 +649,23 @@ internal class CallSiteVisitor(
         referenceNode(EnumEntryIndex(enumEntry.asEnumEntryEntity()))
     }
 
-    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: DependencyNodeIndex): Unit =
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CallSiteVisitContext): Unit =
         equalityOperatorCall.visit(data) {
             equalityOperatorCall.argumentList.visitRecursively()
         }
 
-    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: DependencyNodeIndex): Unit =
+    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CallSiteVisitContext) {
+        varargArgumentsExpression.visit(data) {
+            varargArgumentsExpression.arguments.forEach { argument -> argument.visitRecursively() }
+        }
+    }
+
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: CallSiteVisitContext): Unit =
         visitFunctionCall(implicitInvokeCall, data)
 
     override fun visitIncrementDecrementExpression(
         incrementDecrementExpression: FirIncrementDecrementExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         incrementDecrementExpression.visit(data) {
             incrementDecrementExpression.expression.visitRecursively()
@@ -638,80 +673,80 @@ internal class CallSiteVisitor(
 
     override fun visitIntegerLiteralOperatorCall(
         integerLiteralOperatorCall: FirIntegerLiteralOperatorCall,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         visitFunctionCall(integerLiteralOperatorCall, data)
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: DependencyNodeIndex): Unit =
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: CallSiteVisitContext): Unit =
         namedArgumentExpression.visit(data) { namedArgumentExpression.expression.visitRecursively() }
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: DependencyNodeIndex): Unit =
+    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: CallSiteVisitContext): Unit =
         returnExpression.visit(data) {
             returnExpression.result.visitRecursively()
         }
 
-    override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: DependencyNodeIndex): Unit =
+    override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: CallSiteVisitContext): Unit =
         safeCallExpression.visit(data) {
             safeCallExpression.receiver.visitRecursively()
             safeCallExpression.checkedSubjectRef.value.visitRecursively()
         }
 
-    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: DependencyNodeIndex): Unit =
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CallSiteVisitContext): Unit =
         smartCastExpression.visit(data) { smartCastExpression.originalExpression.visitRecursively() }
 
     override fun visitSpreadArgumentExpression(
         spreadArgumentExpression: FirSpreadArgumentExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit =
         spreadArgumentExpression.visit(data) {
             spreadArgumentExpression.expression.visitRecursively()
         }
 
-    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: DependencyNodeIndex): Unit =
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CallSiteVisitContext): Unit =
         stringConcatenationCall.visit(data) {
             stringConcatenationCall.argumentList.visitRecursively()
         }
 
-    override fun visitThrowExpression(throwExpression: FirThrowExpression, data: DependencyNodeIndex): Unit =
+    override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CallSiteVisitContext): Unit =
         throwExpression.visit(data) {
             throwExpression.exception.visitRecursively()
         }
 
-    override fun visitTryExpression(tryExpression: FirTryExpression, data: DependencyNodeIndex): Unit =
+    override fun visitTryExpression(tryExpression: FirTryExpression, data: CallSiteVisitContext): Unit =
         tryExpression.visit(data) {
             tryExpression.tryBlock.visitRecursively()
             tryExpression.catches.forEach { catch -> catch.visitRecursively() }
             tryExpression.finallyBlock?.visitRecursively()
         }
 
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: DependencyNodeIndex): Unit =
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CallSiteVisitContext): Unit =
         whenExpression.visit(data) {
             whenExpression.subjectVariable?.visitRecursively()
             whenExpression.branches.forEach { branch -> branch.visitRecursively() }
         }
 
-    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: DependencyNodeIndex): Unit =
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CallSiteVisitContext): Unit =
         visitPropertyAccessExpression(whenSubjectExpression, data)
 
-    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: DependencyNodeIndex): Unit = whenBranch.visit(data) {
+    override fun visitWhenBranch(whenBranch: FirWhenBranch, data: CallSiteVisitContext): Unit = whenBranch.visit(data) {
         whenBranch.condition.visitRecursively()
         whenBranch.result.visitRecursively()
     }
 
     override fun visitWrappedArgumentExpression(
         wrappedArgumentExpression: FirWrappedArgumentExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit = wrappedArgumentExpression.visit(data) {
         wrappedArgumentExpression.expression.visitRecursively()
     }
 
     override fun visitWrappedDelegateExpression(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
-        data: DependencyNodeIndex
+        data: CallSiteVisitContext
     ): Unit = wrappedDelegateExpression.visit(data) {
         wrappedDelegateExpression.expression.visitRecursively()
     }
 
-    override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: DependencyNodeIndex): Unit =
+    override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: CallSiteVisitContext): Unit =
         wrappedExpression.visit(data) { wrappedExpression.expression.visitRecursively() }
 }

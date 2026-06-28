@@ -38,11 +38,39 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
 
-enum class CyclicAccessTraversalAction {
-    POSSIBLY_UNINITIALIZED,
-    TRANSITIVELY_CONTINUE,
-    IGNORE
+sealed interface InitializationCycleAccessResult {
+    val poisonsInitializers: Boolean
+
+    data class UninitializedPropertyAccess(val node: StaticPropertyIndex) : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = true
+    }
+
+    data class UninitializedEnumEntryAccess(val node: EnumEntryIndex) : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = true
+    }
+
+    data class CyclicAccess(val node: DeclarationIndex<*>) : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = true
+    }
+
+    data class InaccessibleEntityAccess(val entity: EnclosingEntity<*>, val node: AccessibleIndex) : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = true
+    }
+
+    data class DeadlockInducingConstructorCall(val node: FunctionIndex.Constructor) : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = false
+    }
+
+    data object PropagatesTransitiveDependencies : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = false
+    }
+
+    data object Safe : InitializationCycleAccessResult {
+        override val poisonsInitializers: Boolean = false
+    }
 }
 
 sealed interface DependencyNodeIndex {
@@ -52,7 +80,9 @@ sealed interface DependencyNodeIndex {
 
 sealed interface AccessibleIndex : DependencyNodeIndex {
     val lazilyInitialized: EnclosingEntity<*>?
-    val traversalAction: CyclicAccessTraversalAction get() = CyclicAccessTraversalAction.IGNORE
+
+    context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
+    val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.Safe
 }
 
 sealed interface StaticInitializationIndex : DependencyNodeIndex {
@@ -74,12 +104,15 @@ data class StaticPropertyIndex(
 
     val hasFunctionType: Boolean = symbol.resolvedReturnType.isSomeFunctionType(symbol.moduleData.session)
 
-    override val lazilyInitialized: EnclosingEntity<*> = enclosingEntity.parentEnclosingEntityOrSelf
+    override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.parentEnclosingEntityOrSelf
+        .takeIf { !isConst && !symbol.isPrivate }
 
-    override val traversalAction: CyclicAccessTraversalAction = when {
-        !isConst && hasInitializer && !hasFunctionType -> CyclicAccessTraversalAction.POSSIBLY_UNINITIALIZED
-        else -> CyclicAccessTraversalAction.IGNORE
-    }
+    context(_: EnclosingEntity<*>?, _: CompositeNode)
+    override val accessAnalysisResult: InitializationCycleAccessResult
+        get() = when {
+            !isConst && hasInitializer && !hasFunctionType -> InitializationCycleAccessResult.UninitializedPropertyAccess(this)
+            else -> InitializationCycleAccessResult.Safe
+        }
 
     val getter: FunctionIndex.PropertyAccessor? = symbol.getterSymbol
         ?.takeIf { it.hasCustomImplementation }
@@ -88,13 +121,18 @@ data class StaticPropertyIndex(
     val initializedClosure: FunctionIndex.Closure? = symbol.fir.initializer?.let {
         when (it) {
             // We cover only simple cases e.g., `val x = { ... }`
-            is FirAnonymousFunctionExpression -> FunctionIndex.Closure(it.anonymousFunction.symbol, lazilyInitialized)
+            is FirAnonymousFunctionExpression -> FunctionIndex.Closure(
+                symbol = it.anonymousFunction.symbol,
+                lazilyInitialized = lazilyInitialized
+            )
             else -> null
         }
     }
 
     context(sessionHolder: SessionHolder)
     override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(symbol)?.symbol
+
+    val name: FqName get() = symbol.callableId?.classId?.relativeClassName?.child(symbol.name) ?: CallableId(symbol.name).asSingleFqName()
 
     override fun toString(): String = "${symbol.callableId?.classId?.relativeClassName ?: ""}.${symbol.name.asString()}"
 }
@@ -114,7 +152,8 @@ data class StaticAnonymousInitializerIndex(
 sealed class FunctionIndex<D : FirFunction> : DeclarationIndex<FirFunction>, AccessibleIndex {
     abstract override val symbol: FirFunctionSymbol<D>
 
-    override val traversalAction: CyclicAccessTraversalAction = CyclicAccessTraversalAction.TRANSITIVELY_CONTINUE
+    context(_: EnclosingEntity<*>?, _: CompositeNode)
+    override val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.PropagatesTransitiveDependencies
 
     context(sessionHolder: SessionHolder)
     override val containingFile: FirFileSymbol? get() = sessionHolder.session.firProvider.getContainingFile(symbol)?.symbol
@@ -129,9 +168,21 @@ sealed class FunctionIndex<D : FirFunction> : DeclarationIndex<FirFunction>, Acc
     data class Constructor(override val symbol: FirConstructorSymbol) : FunctionIndex<FirConstructor>() {
 
         override val lazilyInitialized: EnclosingEntity<*>? =
-            symbol.takeIf { it.isPrimary }?.getContainingClassSymbol()
+            symbol.takeIf { it.isPrimary }
+                ?.getContainingClassSymbol()
                 ?.fullyExpandedClass(symbol.moduleData.session)
                 ?.asEntity(symbol.moduleData.session, true)
+
+        context(accessingEntity: EnclosingEntity<*>?, cycle: CompositeNode)
+        override val accessAnalysisResult: InitializationCycleAccessResult
+            get() {
+                return when {
+                    lazilyInitialized?.let { accessingEntity?.parentEnclosingEntityOrSelf != it && it in cycle } == true -> {
+                        InitializationCycleAccessResult.DeadlockInducingConstructorCall(this)
+                    }
+                    else -> InitializationCycleAccessResult.Safe
+                }
+            }
     }
 
     data class MemberFunction(
@@ -151,9 +202,11 @@ data class DefaultedFunctionIndex<D : FirFunction>(
 ) : FunctionIndex<D>() {
     override val symbol: FirFunctionSymbol<D> get() = functionIndex.symbol
 
+    // It is redundant to create another edge from the lazily initialized entity of the original function node to this node as well
     override val lazilyInitialized: EnclosingEntity<*>? get() = null
 
-    override val traversalAction: CyclicAccessTraversalAction get() = functionIndex.traversalAction
+    context(_: EnclosingEntity<*>?, _: CompositeNode)
+    override val accessAnalysisResult: InitializationCycleAccessResult get() = functionIndex.accessAnalysisResult
 }
 
 sealed interface BeginInitializationIndex<D : FirDeclaration> : StaticInitializationIndex {
@@ -184,7 +237,8 @@ data class QualifierIndex(
     override val lazilyInitialized: EnclosingEntity<*>? =
         enclosingEntity.takeIf { it.isNotPrivate }?.let { it.parentEnclosingEntity ?: it }
 
-    override val traversalAction: CyclicAccessTraversalAction = CyclicAccessTraversalAction.TRANSITIVELY_CONTINUE
+    context(_: EnclosingEntity<*>?, _: CompositeNode)
+    override val accessAnalysisResult: InitializationCycleAccessResult get() = InitializationCycleAccessResult.PropagatesTransitiveDependencies
 
     override fun toString(): String = enclosingEntity.toString()
 }
@@ -195,7 +249,9 @@ data class EnumEntryIndex(
 
     override val lazilyInitialized: EnclosingEntity<*>? = enclosingEntity.parentEnclosingEntity.takeIf { it.isNotPrivate }
 
-    override val traversalAction: CyclicAccessTraversalAction = CyclicAccessTraversalAction.POSSIBLY_UNINITIALIZED
+    context(_: EnclosingEntity<*>?, _: CompositeNode)
+    override val accessAnalysisResult: InitializationCycleAccessResult
+        get() = InitializationCycleAccessResult.UninitializedEnumEntryAccess(this)
 
     override fun toString(): String = enclosingEntity.toString()
 }

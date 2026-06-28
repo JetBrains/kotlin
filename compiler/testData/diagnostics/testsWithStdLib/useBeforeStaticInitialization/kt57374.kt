@@ -1,9 +1,8 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // FIR_IDENTICAL
-
 <!POSSIBLE_INITIALIZATION_DEADLOCK!>sealed class Base {
     companion object {
-        <!POTENTIALLY_UNINITIALIZED_PROPERTY!>val fooAccess = <!POTENTIALLY_UNINITIALIZED_ACCESS!>Derived.foo()<!><!>
+        <!POSSIBLY_UNINITIALIZED_PROPERTY!>val fooAccess = <!ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS!>Derived.foo()<!><!>
     }
 }<!>
 
@@ -12,3 +11,6 @@
         fun foo(): String = "foo"
     }
 }<!>
+
+/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, objectDeclaration, primaryConstructor,
+propertyDeclaration, sealed, stringLiteral */

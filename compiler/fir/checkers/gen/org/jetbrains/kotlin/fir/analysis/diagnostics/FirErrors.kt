@@ -1143,9 +1143,15 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Static Initialization
-    val POSSIBLE_INITIALIZATION_DEADLOCK: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("POSSIBLE_INITIALIZATION_DEADLOCK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val POTENTIALLY_UNINITIALIZED_PROPERTY: KtDiagnosticFactory1<List<FirBasedSymbol<*>>> = KtDiagnosticFactory1("POTENTIALLY_UNINITIALIZED_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
-    val POTENTIALLY_UNINITIALIZED_ACCESS: KtDiagnosticFactory0 = KtDiagnosticFactory0("POTENTIALLY_UNINITIALIZED_ACCESS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLE_INITIALIZATION_DEADLOCK: KtDiagnosticFactory1<List<FqName>> = KtDiagnosticFactory1("POSSIBLE_INITIALIZATION_DEADLOCK", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLY_UNINITIALIZED_PROPERTY: KtDiagnosticFactory1<List<FqName>> = KtDiagnosticFactory1("POSSIBLY_UNINITIALIZED_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLY_UNINITIALIZED_ENUM_ENTRY: KtDiagnosticFactory1<List<FqName>> = KtDiagnosticFactory1("POSSIBLY_UNINITIALIZED_ENUM_ENTRY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY: KtDiagnosticFactory1<FirPropertySymbol> = KtDiagnosticFactory1("ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY: KtDiagnosticFactory1<FirEnumEntrySymbol> = KtDiagnosticFactory1("ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val POSSIBLE_CYCLIC_ACCESS: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("POSSIBLE_CYCLIC_ACCESS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE: KtDiagnosticFactory1<FqName> = KtDiagnosticFactory1("ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS: KtDiagnosticFactory2<FqName, FirBasedSymbol<*>> = KtDiagnosticFactory2("ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS: KtDiagnosticFactory1<FqName> = KtDiagnosticFactory1("CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS", WARNING, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

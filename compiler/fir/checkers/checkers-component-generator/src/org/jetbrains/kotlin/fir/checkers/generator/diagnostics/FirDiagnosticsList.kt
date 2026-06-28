@@ -2456,14 +2456,41 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val STATIC_INITIALIZATION by object : DiagnosticGroup("Static Initialization") {
 
         val POSSIBLE_INITIALIZATION_DEADLOCK by warning<PsiElement> {
-            parameter<List<FirBasedSymbol<*>>>("mutualDependencies")
+            parameter<List<FqName>>("cyclicDependencies")
         }
 
-        val POTENTIALLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
-            parameter<List<FirBasedSymbol<*>>>("mutualDependencies")
+        val POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
+            parameter<List<FqName>>("cyclicDependencies")
         }
 
-        val POTENTIALLY_UNINITIALIZED_ACCESS by warning<PsiElement>()
+        val POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
+            parameter<List<FqName>>("cyclicDependencies")
+        }
+
+        val ACCESSING_POSSIBLY_UNINITIALIZED_PROPERTY by warning<PsiElement> {
+            parameter<FirPropertySymbol>("property")
+        }
+
+        val ACCESSING_POSSIBLY_UNINITIALIZED_ENUM_ENTRY by warning<PsiElement> {
+            parameter<FirEnumEntrySymbol>("enumEntry")
+        }
+
+        val POSSIBLE_CYCLIC_ACCESS by warning<PsiElement> {
+            parameter<FirBasedSymbol<*>>("property")
+        }
+
+        val ACCESSING_POSSIBLY_INACCESSIBLE_OBJECT_REFERENCE by warning<PsiElement> {
+            parameter<FqName>("object")
+        }
+
+        val ACCESSING_DECLARATION_OF_POSSIBLY_INACCESSIBLE_CLASS by warning<PsiElement> {
+            parameter<FqName>("class")
+            parameter<FirBasedSymbol<*>>("declaration")
+        }
+
+        val CONSTRUCTING_POSSIBLY_DEADLOCKING_CLASS by warning<PsiElement> {
+            parameter<FqName>("class")
+        }
     }
 }
 

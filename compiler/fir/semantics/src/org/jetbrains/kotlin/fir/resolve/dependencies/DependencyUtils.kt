@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dependencies
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
+import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumEntry
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.nullableModuleData
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
@@ -130,7 +130,21 @@ val FirBasedSymbol<*>.isLibraryDeclaration: Boolean
             || origin == FirDeclarationOrigin.Java.Library
             || moduleData.session.kind == FirSession.Kind.Library
 
-val FirClassSymbol<*>.isPrivate: Boolean get() = visibility == Visibilities.Private
+val FirClassSymbol<*>.isPrivate: Boolean
+    get() = when (effectiveVisibility) {
+        is EffectiveVisibility.PrivateInClass -> true
+        is EffectiveVisibility.PrivateInFile -> true
+        is EffectiveVisibility.Local -> true
+        else -> false
+    }
+
+val FirCallableSymbol<*>.isPrivate: Boolean
+    get() = when (effectiveVisibility) {
+        is EffectiveVisibility.PrivateInClass -> true
+        is EffectiveVisibility.PrivateInFile -> true
+        is EffectiveVisibility.Local -> true
+        else -> false
+    }
 
 infix operator fun <T> List<T>.plus(element: T?): List<T> = toMutableList().apply { element?.let(::add) }
 
