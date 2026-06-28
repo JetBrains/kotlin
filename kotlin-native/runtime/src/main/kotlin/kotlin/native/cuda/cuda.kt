@@ -561,18 +561,21 @@ public data class dim3(val x: Int, val y: Int = 1, val z: Int = 1)
 /**
  * Captures the launch configuration for a `__global__` kernel — grid/block dimensions, shared
  * memory size, and an optional stream — separately from the kernel identity. The user-facing
- * launch surface: build one and call [launch] with a function reference to a `@CudaCompile`
- * top-level function plus the kernel's typed arguments.
+ * launch surface: build one and call [launch] passing the *call expression* of a `@CudaCompile`
+ * function, e.g. `CudaLaunchpad(grid, block).launch(myKernel(a, b, c))`.
  *
- * `CudaLaunchKernelLowering` rewrites each `launch(ref, …)` call into [launchKernel] with the
- * kernel's mangled name embedded as a string literal — same runtime path as before, but the
- * compiler verifies the kernel identity and the argument shape at the source level instead of
- * leaving the user to type a mangled name and an `Any?`-vararg and discover the typo at
- * `cuModuleGetFunction` time. The overloads below cover arities 0..10; their bodies call
- * [unreachable] so any unlowered call crashes loudly instead of silently mis-launching.
+ * The kernel call inside `launch(...)` is never actually executed on the host —
+ * `CudaLaunchKernelLowering` matches the `@CudaLaunchKernel` callee, extracts the inner
+ * [IrCall] passed as [kernelCall], reads off the callee and its argument expressions, and
+ * rewrites the whole `launch(kernel(args))` into a direct call to [launchKernel] with the
+ * kernel's mangled name embedded as a string literal. Passing the call form rather than a
+ * `::ref` + vararg keeps the IDE's parameter-info popup live as the user types out the
+ * arguments — the same compile-time checks (kernel identity, argument shape) are recovered
+ * from the inner [IrCall].
  *
  * `launch` MUST NOT be `inline` — an inline body would expand at the user call site and erase
- * the `IrCall` the lowering needs to dispatch on.
+ * the `IrCall` the lowering needs to dispatch on. The body calls [unreachable] so any
+ * unlowered call crashes loudly instead of silently mis-launching.
  */
 public class CudaLaunchpad(
         public val gridSize: dim3,
@@ -581,58 +584,7 @@ public class CudaLaunchpad(
         public val stream: CUstream? = null,
 ) {
     @CudaLaunchKernel
-    public fun launch(ref: () -> Unit) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1> launch(ref: (P1) -> Unit, p1: P1) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2> launch(ref: (P1, P2) -> Unit, p1: P1, p2: P2) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3> launch(ref: (P1, P2, P3) -> Unit, p1: P1, p2: P2, p3: P3) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4> launch(
-            ref: (P1, P2, P3, P4) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5> launch(
-            ref: (P1, P2, P3, P4, P5) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5, P6> launch(
-            ref: (P1, P2, P3, P4, P5, P6) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5, P6, P7> launch(
-            ref: (P1, P2, P3, P4, P5, P6, P7) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5, P6, P7, P8> launch(
-            ref: (P1, P2, P3, P4, P5, P6, P7, P8) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5, P6, P7, P8, P9> launch(
-            ref: (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9,
-    ) { unreachable() }
-
-    @CudaLaunchKernel
-    public fun <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10> launch(
-            ref: (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> Unit,
-            p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10,
-    ) { unreachable() }
+    public fun launch(@Suppress("UNUSED_PARAMETER") kernel: Unit) { unreachable() }
 }
 
 /**

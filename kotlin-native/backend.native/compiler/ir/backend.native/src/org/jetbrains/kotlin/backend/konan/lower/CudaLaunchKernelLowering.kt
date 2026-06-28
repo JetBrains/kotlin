@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -41,19 +40,24 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 
 /**
- * Rewrites every `CudaLaunchpad.launch(::kernel, p1, …, pN)` — i.e. an `IrCall` whose callee
+ * Rewrites every `CudaLaunchpad.launch(kernel(p1, …, pN))` — i.e. an `IrCall` whose callee
  * carries `@CudaLaunchKernel` — into a direct call to the internal `launchKernel(name, grid,
  * block, sharedMemBytes, stream, vararg args)`. The kernel's mangled symbol name is computed
- * from the `IrFunctionReference` passed as `ref` via `buildCudaKernelExportName`, the same util
- * that `AssignCudaKernelExportNamesPhase` (`CudaCrossModuleInlining.kt`) uses to attach
+ * from the inner `IrCall` (the `kernel(…)` argument) via `buildCudaKernelExportName`, the same
+ * util that `AssignCudaKernelExportNamesPhase` (`CudaCrossModuleInlining.kt`) uses to attach
  * `@ExportForCppRuntime` on the device side — so the host's string literal and the device's
  * PTX symbol name are guaranteed to match.
  *
- * Position constraint: must run AFTER `UpgradeCallableReferences` (which rewrites the raw
- * `IrFunctionReference` into `IrRichFunctionReference` carrying a `reflectionTargetSymbol`),
- * and BEFORE `NativeFunctionReferenceLowering` (which collapses the rich-reference into a
- * constructor call to a synthesized `KFunctionN`-implementing class — at which point the
- * callable-reference shape is gone and we can't read the referenced kernel off it any more).
+ * The inner kernel call expression is not actually evaluated at runtime: its `IrCall` is
+ * pattern-matched here, the callee symbol and the per-parameter argument expressions are
+ * extracted, and the whole `launch(kernel(…))` node is replaced by the `launchKernel` call.
+ * Side effects in the argument expressions are preserved (they're re-used verbatim as the
+ * vararg of `launchKernel`); only the actual host-side dispatch through `kernel` is dropped.
+ *
+ * Position constraint: must run before any lowering that wraps `IrCall`s in synthetic nodes
+ * which would obscure the direct `kernel(…)` shape — but the IR-level call site is otherwise
+ * stable throughout the lowering pipeline, so the launchpad lowering slot used previously
+ * (post-inlining, alongside the other CUDA file lowerings) still works.
  */
 internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass {
 
@@ -72,38 +76,34 @@ internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass
 
                 val scopeOwner = data
                         ?: error("CudaLaunchpad.launch call outside any declaration scope: ${expression.dump()}")
-                return rewriteLaunch(scopeOwner, callee, expression, irFile)
+                return rewriteLaunch(scopeOwner, expression, irFile)
             }
         }, data = null)
     }
 
     private fun rewriteLaunch(
             scopeOwner: IrSymbolOwner,
-            launchCallee: IrSimpleFunction,
             expression: IrCall,
             irFile: IrFile,
     ): IrExpression {
-        // `launch(ref, p1, …, pN)` — `arguments[0]` is the launchpad dispatch receiver,
-        // `arguments[1]` is the kernel reference, `arguments[2..]` are the pass-through args.
+        // `launch(kernel(p1, …, pN))` — `arguments[0]` is the launchpad dispatch receiver,
+        // `arguments[1]` is the kernel-call expression we pattern-match against. The kernel
+        // call itself is never evaluated; only its callee symbol and arg expressions are
+        // copied out into the new `launchKernel` call below.
         val launchpad = expression.arguments[0]
                 ?: error("CudaLaunchpad.launch call missing dispatch receiver: ${expression.dump()}")
-        val refArg = expression.arguments[1]
-                ?: error("CudaLaunchpad.launch call missing `ref` argument: ${expression.dump()}")
+        val kernelCallArg = expression.arguments[1]
+                ?: error("CudaLaunchpad.launch call missing kernel-call argument: ${expression.dump()}")
 
-        // After `UpgradeCallableReferences` (runs early in the pipeline, well before us), the
-        // raw `IrFunctionReference` shape for `::vecAdd` has been rewritten into an
-        // `IrRichFunctionReference` whose `reflectionTargetSymbol` points at the originally
-        // referenced function. Lambdas (`{ … }`) produce the same node but with a null
-        // `reflectionTargetSymbol` — reject those, since there's no kernel symbol to mangle a
-        // name from.
-        val richRef = refArg as? IrRichFunctionReference
-        val referenced = (richRef?.reflectionTargetSymbol?.owner as? IrSimpleFunction)
-        if (richRef == null || referenced == null) {
+        val kernelCall = kernelCallArg as? IrCall
+        if (kernelCall == null) {
             context.reportCompilationError(
-                    "CudaLaunchpad.launch requires a direct function reference like `::vecAdd` as its first argument.",
-                    irFile, refArg
+                    "CudaLaunchpad.launch requires a direct kernel call expression like `myKernel(a, b)` " +
+                            "as its argument; got ${kernelCallArg.render()}.",
+                    irFile, kernelCallArg
             )
         }
+        val referenced = kernelCall.symbol.owner
         // Accept two shapes for the referenced kernel:
         //  - A top-level function: parent is `IrPackageFragment` (either an `IrFile` for
         //    in-module kernels or an `IrExternalPackageFragment` for klib-deserialized ones).
@@ -118,14 +118,14 @@ internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass
                     context.reportCompilationError(
                             "CudaLaunchpad.launch requires a top-level function or a member of a top-level `object` " +
                                     "(`${referenced.name.asString()}` is a member of class `${containerClass.name.asString()}`).",
-                            irFile, refArg
+                            irFile, kernelCallArg
                     )
                 }
                 containerClass.parent as? IrPackageFragment ?: run {
                     context.reportCompilationError(
                             "CudaLaunchpad.launch requires the containing `object` to be top-level " +
                                     "(`${containerClass.name.asString()}` is nested).",
-                            irFile, refArg
+                            irFile, kernelCallArg
                     )
                 }
             }
@@ -133,7 +133,7 @@ internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass
                 context.reportCompilationError(
                         "CudaLaunchpad.launch requires a top-level function or a member of a top-level `object` " +
                                 "(`${referenced.name.asString()}` is not).",
-                        irFile, refArg
+                        irFile, kernelCallArg
                 )
             }
         }
@@ -147,7 +147,7 @@ internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass
             context.reportCompilationError(
                     "CudaLaunchpad.launch requires a function declared in a `@CudaCompile` file " +
                             "(`${referenced.name.asString()}` is not).",
-                    irFile, refArg
+                    irFile, kernelCallArg
             )
         }
 
@@ -161,10 +161,15 @@ internal class CudaLaunchKernelLowering(val context: Context) : FileLoweringPass
                 qualifiedName,
         )
 
-        // `pN` args follow at `arguments[2..]`; pass them straight through to the vararg.
-        val passThroughArgs = expression.arguments.drop(2).map {
-            it ?: error("CudaLaunchpad.launch call has a null pass-through arg: ${expression.dump()}")
-        }
+        // The kernel-call's argument list has the dispatch receiver (when the kernel is an
+        // object member) at index 0, then `p1..pN`. Drop the receiver — the device side gets
+        // a 0L placeholder for it below — and keep the value-args in source order.
+        val kernelHasDispatchReceiver = referenced.dispatchReceiverParameter != null
+        val passThroughArgs = kernelCall.arguments
+                .drop(if (kernelHasDispatchReceiver) 1 else 0)
+                .map {
+                    it ?: error("CudaLaunchpad.launch kernel call has a null arg: ${kernelCall.dump()}")
+                }
 
         val launchpadClass = launchpad.type.classOrNull?.owner
                 ?: error("CudaLaunchpad receiver has no class: ${launchpad.type.render()}")
