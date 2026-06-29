@@ -1,13 +1,19 @@
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.`maven-publish`
+import plugins.configureDefaultPublishing
 
 plugins {
+    id("common-configuration")
+    id("test-federation-convention")
+    id("com.autonomousapps.dependency-analysis")
     kotlin("multiplatform")
     `maven-publish`
 }
 
 group = "org.jetbrains.kotlin.commonizer"
-version = "0.9.9-local"
+description = "Provides numeric expect classes covering inconsistent types in cinterops"
+
+configureDefaultPublishing()
 
 val generateSources = tasks.register<GenerateSupportSources>("generateSources") {
     description = "Generates the numeric `expect` classes from the declarations in `src/`."
@@ -36,6 +42,14 @@ kotlin {
     androidNativeArm64()
     androidNativeX86()
     androidNativeX64()
+
+    // Non-native targets: no cinterop types exist on these platforms, so the library compiles to
+    // an empty klib. The targets are present so that consumers with these targets (e.g. test-utils)
+    // can resolve the artifact from the published Maven metadata.
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class) wasmJs()
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class) wasmWasi()
+    jvm()
+    js()
 
     @Suppress("DEPRECATION")
     "Deprecated but used by Coroutines".run {
