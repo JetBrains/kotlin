@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.lang.ParserDefinition;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
@@ -41,20 +40,12 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
     protected String myFileExt;
     protected final String myFullDataPath;
     protected PsiFile myFile;
-    private final ParserDefinition[] myDefinitions;
-    private final boolean myLowercaseFirstLetter;
 
     private KotlinCoreEnvironment myEnvironment;
 
-    protected KtParsingTestCase(@NonNls @NotNull String dataPath, @NotNull String fileExt, @NotNull ParserDefinition... definitions) {
-        this(dataPath, fileExt, false, definitions);
-    }
-
-    protected KtParsingTestCase(@NonNls @NotNull String dataPath, @NotNull String fileExt, boolean lowercaseFirstLetter, @NotNull ParserDefinition... definitions) {
-        myDefinitions = definitions;
+    protected KtParsingTestCase(@NonNls @NotNull String dataPath, @NotNull String fileExt) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
         myFileExt = fileExt;
-        myLowercaseFirstLetter = lowercaseFirstLetter;
     }
 
     @Override
@@ -78,29 +69,8 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         return PathManager.getHomePath();
     }
 
-    @NotNull
-    public final String getTestName() {
-        return getTestName(myLowercaseFirstLetter);
-    }
-
-    protected boolean includeRanges() {
-        return false;
-    }
-
-    protected boolean skipSpaces() {
-        return false;
-    }
-
-    protected boolean checkAllPsiRoots() {
-        return true;
-    }
-
     protected PsiFile createPsiFile(String name, String text) {
-        return createFile(name + "." + myFileExt, text);
-    }
-
-    protected PsiFile createFile(@NonNls String name, String text) {
-        return KtTestUtil.createFile(name, text, myProject);
+        return KtTestUtil.createFile(name + "." + myFileExt, text, myProject);
     }
 
     public static void doCheckResult(String fullPath, String targetDataName, String actual) throws IOException {
@@ -114,10 +84,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
     }
 
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
-        return loadFileDefault(myFullDataPath, name);
-    }
-
-    public static String loadFileDefault(String dir, String name) throws IOException {
-        return FileUtil.loadFile(new File(dir, name), CharsetToolkit.UTF8, true).trim();
+        return FileUtil.loadFile(new File(myFullDataPath, name), CharsetToolkit.UTF8, true).trim();
     }
 }
