@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
+import org.junit.jupiter.api.Assertions.assertFalse
 import java.io.File
 import java.lang.annotation.Retention
 
@@ -90,7 +91,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
         @Suppress("DEPRECATION_ERROR")
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
-        assertFalse("Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}", packageView.isEmpty())
+        assertFalse(packageView.isEmpty()) { "Nothing found in package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}" }
 
         val expectedFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".txt"))
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)

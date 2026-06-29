@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.compiler.plugins;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,43 +17,49 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/plugins-interactions-testing/testData/cli")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class PluginCliTestsGenerated extends AbstractPluginCliTests {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+  private void run(String fileName) {
+    doJvmTest("plugins/plugins-interactions-testing/testData/cli/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInCli() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/plugins-interactions-testing/testData/cli"), Pattern.compile("^(.+)\\.args$"), null, false);
   }
 
+  @Test
   @TestMetadata("pluginsLegacyOrdered.args")
   public void testPluginsLegacyOrdered() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacyOrdered.args");
+    run("pluginsLegacyOrdered.args");
   }
 
+  @Test
   @TestMetadata("pluginsLegacyReversed.args")
   public void testPluginsLegacyReversed() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacyReversed.args");
+    run("pluginsLegacyReversed.args");
   }
 
+  @Test
   @TestMetadata("pluginsLegacySorted.args")
   public void testPluginsLegacySorted() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsLegacySorted.args");
+    run("pluginsLegacySorted.args");
   }
 
+  @Test
   @TestMetadata("pluginsOrdered.args")
   public void testPluginsOrdered() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsOrdered.args");
+    run("pluginsOrdered.args");
   }
 
+  @Test
   @TestMetadata("pluginsReversed.args")
   public void testPluginsReversed() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsReversed.args");
+    run("pluginsReversed.args");
   }
 
+  @Test
   @TestMetadata("pluginsSorted.args")
   public void testPluginsSorted() {
-    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsSorted.args");
+    run("pluginsSorted.args");
   }
 }

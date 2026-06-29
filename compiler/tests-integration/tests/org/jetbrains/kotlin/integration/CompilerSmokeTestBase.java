@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.integration;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
@@ -28,10 +27,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import static org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName;
+
 public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
     @NotNull
     protected File getTestDataDir() {
-        return ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/integration/smoke/" + getTestName(true));
+        return ForTestCompileRuntime.transformTestDataPath("compiler/tests-integration/testData/integration/smoke/" + getTestName(testInfo));
     }
 
     protected int run(String logName, String... args) throws Exception {

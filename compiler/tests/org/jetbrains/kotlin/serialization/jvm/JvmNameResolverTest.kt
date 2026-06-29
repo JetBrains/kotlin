@@ -87,7 +87,7 @@ class JvmNameResolverTest {
     @Test
     fun testPredefined() {
         for ([index, predefined] in JvmNameResolverBase.PREDEFINED_STRINGS.withIndex()) {
-            assertEquals("Predefined string failed: $predefined (index $index)", predefined, str("ignored", predefinedIndex = index))
+            assertEquals(predefined, str("ignored", predefinedIndex = index), "Predefined string failed: $predefined (index $index)")
         }
     }
 

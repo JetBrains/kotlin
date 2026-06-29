@@ -21,22 +21,20 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.getTestName
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.assertNull
 import java.io.File
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import java.util.regex.Pattern
-import kotlin.collections.plus
 
 abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     protected abstract val testDataPath: String
 
     protected val testDataDirectory: File
-        get() = File(testDataPath, getTestName(true))
-
-    protected fun getTestDataFileWithExtension(extension: String): File {
-        return File(testDataDirectory, "${getTestName(true)}.$extension")
-    }
+        get() = File(testDataPath, getTestName(testInfo))
 
     /**
      * Compiles all sources (.java and .kt) under the directory named [libraryName] to [destination].
@@ -85,7 +83,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
                     ZipUtil.addDirToZipRecursively(jar, destination, outputDir, "", null, null)
                 }
             } else {
-                assertNull("Manifest is ignored if destination is not a .jar file", manifest)
+                assertNull(manifest) { "Manifest is ignored if destination is not a .jar file" }
             }
         } finally {
             if (cleanupAfterCompilation) {

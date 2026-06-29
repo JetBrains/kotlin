@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.stats.ModulesReportsData
 import org.jetbrains.kotlin.stats.StatsCalculator
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
 import org.jetbrains.kotlin.util.UnitStats
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -27,6 +30,7 @@ import kotlin.time.measureTime
 class VirtualFilesCachingTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String get() = tmpdir.absolutePath
 
+    @Test
     fun test() {
         val modulesCount = 2000
 

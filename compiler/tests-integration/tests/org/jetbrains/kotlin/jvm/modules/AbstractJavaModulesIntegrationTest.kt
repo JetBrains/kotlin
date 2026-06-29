@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.test.JavaCompilationError
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.compileJavaFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
@@ -112,18 +115,20 @@ abstract class AbstractJavaModulesIntegrationTest(
 
         val process = ProcessBuilder().command(command).inheritIO().start()
         process.waitFor()
-        assertEquals("'jar' did not finish successfully", 0, process.exitValue())
+        assertEquals(0, process.exitValue(), "'jar' did not finish successfully")
 
         return destination
     }
 
     // -------------------------------------------------------
 
+    @Test
     fun testSimple() {
         val a = module("moduleA")
         module("moduleB", listOf(a))
     }
 
+    @Test
     fun testAllModulePathAndNamedModule() {
         try {
             module("main", addModules = listOf("ALL-MODULE-PATH"))
@@ -132,18 +137,21 @@ abstract class AbstractJavaModulesIntegrationTest(
         }
     }
 
+    @Test
     fun testNamedReadsTransitive() {
         val a = module("moduleA")
         val b = module("moduleB", listOf(a))
         module("moduleC", listOf(a, b))
     }
 
+    @Test
     fun testUnnamedReadsTransitive() {
         val a = module("moduleA")
         val b = module("moduleB", listOf(a))
         module("moduleC", listOf(a, b), addModules = listOf("moduleB"))
     }
 
+    @Test
     fun testInheritedDeclarationFromTwiceTransitiveDependency() {
         // module A <-t- module B <-t- module C <--- module D
 
@@ -170,6 +178,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         assertEquals("OK", kotlinStdout)
     }
 
+    @Test
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
@@ -188,6 +197,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         )
     }
 
+    @Test
     fun testMultiReleaseLibrary() {
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
@@ -210,6 +220,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         }
     }
 
+    @Test
     fun testAutomaticModuleNames() {
         // This name should be sanitized to just "auto.mat1c.m0d.ule"
         val m1 = File(tmpdir, ".auto--mat1c-_-!@#\$%^&()m0d_ule--1.0..0-release..jar")
@@ -223,6 +234,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(m1, m2))
     }
 
+    @Test
     fun testUnnamedAgainstSeveralAutomatic() {
         val a = module("autoA")
         val b = module("autoB")
@@ -232,12 +244,14 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(a, b), addModules = listOf("autoA"))
     }
 
+    @Test
     fun testNamedAgainstSeveralAutomatic() {
         val a = module("autoA")
         val b = module("autoB")
         module("main", listOf(a, b))
     }
 
+    @Test
     fun testSeveralModulesWithTheSameName() {
         val d1 = module("dependency1")
         val d2 = module("dependency2")
@@ -245,6 +259,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     }
 
     @Suppress("DEPRECATION")
+    @Test
     fun testDependencyOnStdlib() {
         module("unnamed")
         val namedWithExplicitDependency = module("namedWithExplicitDependency")
@@ -253,15 +268,18 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
     }
 
+    @Test
     fun testDependencyOnStdlibJdk78() {
         module("usage", listOf(File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")))
     }
 
     @Suppress("DEPRECATION")
+    @Test
     fun testDependencyOnReflect() {
         module("usage", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
     }
 
+    @Test
     fun testWithBuildFile() {
         // This test checks that module path is configured correctly when the compiler is invoked in the '-Xbuild-file' mode. Note that
         // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
@@ -273,6 +291,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))
     }
 
+    @Test
     fun testCoroutinesDebugMetadata() {
         val usage = module("usage")
         val (stdout, stderr) = runModule("usage/some.module.withsome.packages.UsageKt", listOf(usage))
@@ -281,6 +300,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     }
 
     @Suppress("DEPRECATION")
+    @Test
     fun testReflection() {
         val reflect = ForTestCompileRuntime.reflectJarFromDistForTests()
         val usage = module("usage", listOf(reflect))
@@ -289,28 +309,32 @@ abstract class AbstractJavaModulesIntegrationTest(
         assertEquals("OK", stdout)
     }
 
+    @Test
     fun testDoNotLoadIrrelevantJarsFromUnnamed() {
         // This test checks that we don't load irrelevant .jar files from the JDK distribution when resolving JDK dependencies.
         // Here we're testing that references to symbols from lib/ant-javafx are unresolved, if that file is present.
         // The test succeeds though even if the file is absent, because it's not guaranteed to be present in JDK.
         module("main", checkKotlinOutput = {
-            assertTrue(it, it.trimEnd().endsWith("COMPILATION_ERROR"))
+            assertTrue(it.trimEnd().endsWith("COMPILATION_ERROR"), it)
         })
     }
 
+    @Test
     fun testDoNotLoadIrrelevantJarsFromNamed() {
         // See the comment in testDoNotLoadIrrelevantJarsFromUnnamed.
         module("main", checkKotlinOutput = {
-            assertTrue(it, it.trimEnd().endsWith("COMPILATION_ERROR"))
+            assertTrue(it.trimEnd().endsWith("COMPILATION_ERROR"), it)
         })
     }
 
+    @Test
     fun testNoDependencyOnNamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
         module("main", listOf(lib), listOf("lib"))
     }
 
+    @Test
     fun testNoDependencyOnUnnamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE diagnostic.
         // Most of the other tests in this class are compiling modules to jars, however here we need to compile the module to a directory.
@@ -322,10 +346,11 @@ abstract class AbstractJavaModulesIntegrationTest(
         //    `ClasspathRootsResolver.modularBinaryRoot`. Combined with p.1, it means that _any_ jar in the dependencies will be loaded
         //    as either a named or an automatic module; there's no way to observe a jar that is a part of the unnamed module.
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
-        val lib = module("lib", destination = File(tmpdir, name))
+        val lib = module("lib", destination = File(tmpdir, testInfo.testMethod.get().name))
         module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
     }
 
+    @Test
     fun testNamedDoesNotReadAutomaticWithUnrelatedNamed() {
         // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
         // But currently it's OK for compatibility, see KT-66622.
@@ -334,6 +359,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(lib, unrelated))
     }
 
+    @Test
     fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
         // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
         // But currently it's OK for compatibility, see KT-66622.
@@ -341,6 +367,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(lib))
     }
 
+    @Test
     fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
         // Similarly to how it works in javac, if we depend on one automatic module, we depend on all of them. So even though 'main' does
         // not have explicit "requires lib", in fact it depends on 'lib' because it has "requires unrelated". So "OK" is expected.

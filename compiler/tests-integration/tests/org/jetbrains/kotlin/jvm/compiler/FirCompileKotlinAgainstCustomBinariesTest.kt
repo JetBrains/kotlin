@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.util.toMetadataVersion
+import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
 import java.util.jar.JarFile
 
@@ -31,10 +31,12 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         fail("Looks like this test can be unmuted. Remove the call to `muteForK2`.")
     }
 
+    @Test
     fun testHasStableParameterNames() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
+    @Test
     fun testStrictMetadataVersionSemanticsOldVersion() {
         val nextMetadataVersion = languageVersion.toMetadataVersion().next()
         val library = compileLibrary(
@@ -43,6 +45,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    @Test
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
         val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
         val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
@@ -52,6 +55,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         )
     }
 
+    @Test
     fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
         val stdlib = JarFile(PathUtil.kotlinPathsForCompiler.stdlibPath)
         val classFromStdlib = stdlib.getEntry(KotlinVersion::class.java.name.replace(".", "/") + ".class")
@@ -61,6 +65,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         )
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseFeatureJs() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
@@ -83,6 +88,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         }
     }
 
+    @Test
     fun testReleaseCompilerWithoutUsageOfPreReleaseFeatureJs() {
         val arbitraryPoisoningFeature = LanguageFeature.entries.firstOrNull { it.forcesPreReleaseBinariesIfEnabled(LanguageVersion.LATEST_STABLE) } ?: return
 
@@ -105,11 +111,13 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         }
     }
 
+    @Test
     fun testDataClassCompiledWith1_0_5Compiler() {
         val library = File(testDataDirectory, "VeryOldLibraryWithDataClass.jar")
         compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler())
     }
 
+    @Test
     fun testAgainstHeaderMode() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xheader-mode"))
 

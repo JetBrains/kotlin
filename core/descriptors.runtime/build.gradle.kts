@@ -25,7 +25,9 @@ dependencies {
     testFixturesApi(intellijCore())
 
     testFixturesApi(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
+    testFixturesApi(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -45,7 +47,7 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(jUnitMode = JUnitMode.JUnit4, javaLauncher = JdkMajorVersion.JDK_1_8)
+    testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_1_8)
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 

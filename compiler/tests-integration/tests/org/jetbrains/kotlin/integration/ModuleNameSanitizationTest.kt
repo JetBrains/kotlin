@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -17,54 +20,67 @@ import java.io.File
  */
 class ModuleNameSanitizationTest : KotlinIntegrationTestBase() {
 
+    @Test
     fun testColonIsReplaced() {
         assertEquals("META-INF/com.example_app.kotlin_module", JvmCodegenUtil.getMappingFileName("com.example:app"))
     }
 
+    @Test
     fun testLessThanIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a<b"))
     }
 
+    @Test
     fun testGreaterThanIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a>b"))
     }
 
+    @Test
     fun testDoubleQuoteIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a\"b"))
     }
 
+    @Test
     fun testForwardSlashIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a/b"))
     }
 
+    @Test
     fun testBackslashIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a\\b"))
     }
 
+    @Test
     fun testPipeIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a|b"))
     }
 
+    @Test
     fun testQuestionMarkIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a?b"))
     }
 
+    @Test
     fun testAsteriskIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a*b"))
     }
 
+    @Test
     fun testPercentIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a%b"))
     }
 
+    @Test
     fun testNullControlCharIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a\u0000b"))
     }
 
+    @Test
     fun testControlCharIsReplaced() {
         assertEquals("META-INF/a_b.kotlin_module", JvmCodegenUtil.getMappingFileName("a\u001Fb"))
     }
 
+    @Test
     fun testGradleStyleModuleName() {
         assertEquals(
             "META-INF/com.example_my-project.kotlin_module",
@@ -72,6 +88,7 @@ class ModuleNameSanitizationTest : KotlinIntegrationTestBase() {
         )
     }
 
+    @Test
     fun testCombinedForbiddenChars() {
         assertEquals(
             "META-INF/com.example_my_app_.kotlin_module",
@@ -79,12 +96,14 @@ class ModuleNameSanitizationTest : KotlinIntegrationTestBase() {
         )
     }
 
+    @Test
     fun testPlainNameIsUnchanged() {
         assertEquals("META-INF/my_module.kotlin_module", JvmCodegenUtil.getMappingFileName("my_module"))
     }
 
     // --- Integration test: actual compilation with a forbidden module name ---
 
+    @Test
     fun testCompilationWithForbiddenCharsInModuleName() {
         val sourceFile = File(tmpdir, "test.kt")
         sourceFile.writeText("fun hello() = \"Hello\"\n")
@@ -100,12 +119,9 @@ class ModuleNameSanitizationTest : KotlinIntegrationTestBase() {
                 "-d", outputDir.path,
             )
         )
-        assertEquals("Compilation failed:\n$stdout", ExitCode.OK, exitCode)
+        assertEquals(ExitCode.OK, exitCode, "Compilation failed:\n$stdout")
 
         val expectedModuleFile = File(outputDir, JvmCodegenUtil.getMappingFileName(moduleName))
-        assertTrue(
-            "Expected .kotlin_module file not found at ${expectedModuleFile.path}",
-            expectedModuleFile.exists()
-        )
+        assertTrue(expectedModuleFile.exists(), "Expected .kotlin_module file not found at ${expectedModuleFile.path}")
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil.DOS_EPOCH
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.jar.JarFile
 import kotlin.test.assertEquals
@@ -28,6 +29,7 @@ import kotlin.test.assertNotEquals
 
 class JarOutputTest : TestCaseWithTmpdir() {
 
+    @Test
     fun testDeterministicOutput() {
         val fooKt = tmpdir.resolve("foo.kt").also {
             it.writeText("class Foo")
@@ -64,6 +66,7 @@ class JarOutputTest : TestCaseWithTmpdir() {
         assertAllTimestampsAreReset(secondJar)
     }
 
+    @Test
     fun testNoResetJarTimestamps() {
         val fooKt = tmpdir.resolve("foo.kt").also {
             it.writeText("class Foo")
@@ -86,6 +89,7 @@ class JarOutputTest : TestCaseWithTmpdir() {
     /**
      *  KT-44078
      */
+    @Test
     fun testNoModuleInfoClass() {
         val fooKt = tmpdir.resolve("foo.kt").also {
             it.writeText("class Foo")

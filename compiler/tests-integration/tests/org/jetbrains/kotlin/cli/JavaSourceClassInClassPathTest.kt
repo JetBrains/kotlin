@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Test
 
 class JavaSourceClassInClassPathTest : TestCaseWithTmpdir() {
 
     // Test that a java source file for a class is taken before a class file for the same
     // class on the class path.
+    @Test
     fun testDeterministicOutput() {
         val aKt = tmpdir.resolve("A.kt").also {
             it.writeText("class A")

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertSameElements
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -175,5 +174,9 @@ class FilePathsInKlibTest {
         } finally {
             workingDirFile.deleteRecursively()
         }
+    }
+
+    private fun <T> assertSameElements(actual: Collection<T>, expected: Collection<T>) {
+        assertEquals(expected.toSet(), actual.toSet())
     }
 }

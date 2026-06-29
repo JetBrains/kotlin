@@ -9,6 +9,9 @@ package org.jetbrains.kotlin.benchmarks.custom
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.measureTime
@@ -22,6 +25,7 @@ import kotlin.time.measureTime
 class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String get() = tmpdir.absolutePath
 
+    @Test
     fun test() {
         // Set up realistic but quite large values to emulate a huge monorepo project
         val rootsCount = 3000

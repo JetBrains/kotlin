@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.junit.jupiter.api.TestInfo;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.FileInfo;
 
@@ -733,6 +734,11 @@ public abstract class KtUsefulTestCase extends TestCase {
         if (name == null) return "";
         name = StringUtil.trimStart(name, "test");
         return StringUtil.isEmpty(name) ? "" : lowercaseFirstLetter(name, lowercaseFirstLetter);
+    }
+
+    @NotNull
+    public static String getTestName(@Nullable TestInfo testInfo) {
+        return getTestName(testInfo.getTestMethod().get().getName(), true);
     }
 
     public static @NotNull String lowercaseFirstLetter(@NotNull String name, boolean lowercaseFirstLetter) {
