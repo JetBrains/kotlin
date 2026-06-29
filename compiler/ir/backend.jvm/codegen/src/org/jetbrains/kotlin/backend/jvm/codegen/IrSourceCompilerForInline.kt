@@ -76,9 +76,7 @@ class IrSourceCompilerForInline(
     }
 
     override fun compileInlineFunction(jvmSignature: JvmMethodSignature): SMAPAndMethodNode {
-        generateInlineIntrinsicForIr(callee.toIrBasedDescriptor())?.let {
-            return it
-        }
+        generateInlineIntrinsicForIr(callee)?.let { return it }
         if (jvmSignature.asmMethod.name != callee.name.asString()) {
             val ktFile = codegen.irFunction.fileParent.getKtFile()
             if ((ktFile != null && ktFile.doNotAnalyze == null) || ktFile == null) {

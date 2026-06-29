@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.CompilerVersionOfApiDeprecation
-import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -38,8 +37,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.StringWriter
 
 /**
@@ -1573,7 +1575,7 @@ fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
 
-fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
+fun IrDeclarationWithName.isTopLevelInPackage(name: String, packageFqName: FqName) =
     this.name.asString() == name && parent.kotlinFqName == packageFqName
 
 val IrValueDeclaration.isAssignable: Boolean

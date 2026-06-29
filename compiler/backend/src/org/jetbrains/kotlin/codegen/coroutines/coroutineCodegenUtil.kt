@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_INTRINSICS_PACKAGE
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
+import org.jetbrains.kotlin.codegen.inline.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -62,9 +61,8 @@ private val SPILLING_INTERNAL_NAME =
 
 enum class SuspensionPointKind { NEVER, NOT_INLINE, ALWAYS }
 
-fun createMethodNodeForCoroutineContext(functionDescriptor: FunctionDescriptor): MethodNode {
-    @OptIn(K1Deprecation::class)
-    assert(functionDescriptor.isBuiltInCoroutineContext()) {
+fun createMethodNodeForCoroutineContext(function: IrFunction): MethodNode {
+    assert(function.isBuiltInCoroutineContext()) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.coroutineContext property getter"
     }
 

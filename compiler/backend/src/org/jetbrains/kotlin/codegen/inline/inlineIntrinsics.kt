@@ -9,26 +9,21 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
-import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.isTopLevelInPackage
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.org.objectweb.asm.Type
 
-private fun FunctionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
-    isTopLevelInPackage(
-        "suspendCoroutineUninterceptedOrReturn",
-        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.asString()
-    )
+private fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
+    isTopLevelInPackage("suspendCoroutineUninterceptedOrReturn", StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
 
-fun generateInlineIntrinsicForIr(descriptor: FunctionDescriptor): SMAPAndMethodNode? =
+fun generateInlineIntrinsicForIr(function: IrFunction): SMAPAndMethodNode? =
     when {
         // TODO: implement these as codegen intrinsics (see IrIntrinsicMethods)
-        @OptIn(K1Deprecation::class)
-        descriptor.isBuiltInCoroutineContext() ->
-            createMethodNodeForCoroutineContext(descriptor)
-        descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
+        function.isBuiltInCoroutineContext() ->
+            createMethodNodeForCoroutineContext(function)
+        function.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
             createMethodNodeForSuspendCoroutineUninterceptedOrReturn()
         else -> null
     }?.let { SMAPAndMethodNode(it, SMAP(listOf())) }
@@ -36,3 +31,8 @@ fun generateInlineIntrinsicForIr(descriptor: FunctionDescriptor): SMAPAndMethodN
 internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String =
     if (isValueOf) Type.getMethodDescriptor(type, JAVA_STRING_TYPE)
     else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
+
+internal fun IrFunction.isBuiltInCoroutineContext(): Boolean =
+    this is IrSimpleFunction && correspondingPropertySymbol?.owner?.isTopLevelInPackage(
+        "coroutineContext", StandardNames.COROUTINES_PACKAGE_FQ_NAME,
+    ) == true
