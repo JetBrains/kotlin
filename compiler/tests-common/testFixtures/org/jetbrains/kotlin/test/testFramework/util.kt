@@ -28,6 +28,8 @@ inline fun runWithDisposable(block: (Disposable) -> Unit) {
     try {
         block(disposable)
     } finally {
-        Disposer.dispose(disposable)
+        ApplicationManager.getApplication().runWriteAction {
+            Disposer.dispose(disposable)
+        }
     }
 }
