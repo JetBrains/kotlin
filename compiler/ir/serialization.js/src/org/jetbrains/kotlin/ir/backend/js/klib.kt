@@ -183,7 +183,7 @@ fun loadIrForSingleModule(
     irLinker.init(null)
 
     @OptIn(InternalSymbolFinderAPI::class)
-    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
+    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings, stdlib = stdlibFragment)
 
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)
@@ -239,7 +239,7 @@ private fun getIrModuleInfoForKlib(
     irLinker.init(null)
 
     @OptIn(InternalSymbolFinderAPI::class)
-    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings)
+    val irBuiltIns = IrBuiltInsForLinker(irLinker, configuration.languageVersionSettings, stdlib = moduleDependencies.stdlib)
 
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(irBuiltIns, inOrAfterLinkageStep = true)

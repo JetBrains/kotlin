@@ -208,8 +208,11 @@ internal class JsIrLinkerLoader(
         }
 
         linker.init(null)
+
+        val stdlib = irModules.values.firstOrNull { it.kotlinLibrary?.isJsStdlib == true }
+
         @OptIn(InternalSymbolFinderAPI::class)
-        val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings)
+        val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings, stdlib = stdlib)
 
         if (!loadAllIr) {
             for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {
