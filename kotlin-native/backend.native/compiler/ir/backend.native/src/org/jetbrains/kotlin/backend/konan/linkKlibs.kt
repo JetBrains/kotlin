@@ -231,7 +231,6 @@ private fun ensureCStructsAndEnumsAreLoadedForCaching(linker: KonanIrLinker, lib
     // Normally it's only for the classes actually used from the lib/app being compiled, but if instead we're building a cache for
     // a C-interop library, we want to load, process and cache everything. The consumer of the cached library will then have all the
     // resulting assembly code for the C structs and enums already available, without a need for any special processing.
-    @OptIn(K1Deprecation::class)
     if (libraryToCacheModule?.kotlinLibrary?.isCInteropLibrary() == true) {
         val interopModuleDeserializer = linker.getOrCreateDeserializerForModule(libraryToCacheModule, libraryToCacheModule.kotlinLibrary,
                 { DeserializationStrategy.ONLY_REFERENCED }, libraryToCacheModule.name.asString())
@@ -258,7 +257,6 @@ internal class KonanCInteropModuleDeserializerFactory(
         private val cachedLibraries: CachedLibraries,
         private val deserializationConfiguration: DeserializationConfiguration,
 ) : CInteropModuleDeserializerFactory {
-    @OptIn(K1Deprecation::class)
     override fun createIrModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             klib: KotlinLibrary,

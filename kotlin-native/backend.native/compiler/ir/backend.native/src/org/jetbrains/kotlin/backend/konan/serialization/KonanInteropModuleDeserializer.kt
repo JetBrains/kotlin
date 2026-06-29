@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer.TopLevelSymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
@@ -63,7 +62,6 @@ import kotlin.metadata.KmProperty
  * It returns regular (non-lazy), body-less IR, with a top-level-class grauallity (i.e. even if one class member is referenced, it
  * deserializes the entire top-level class along with its nested classes).
  */
-@K1Deprecation
 internal class KonanInteropModuleDeserializer(
         private val deserializationConfiguration: DeserializationConfiguration,
         moduleDescriptor: ModuleDescriptor,
