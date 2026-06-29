@@ -8,127 +8,139 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.jvm.functions.Function1;
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.ImportPath;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class KtPsiUtilTest extends KotlinTestWithEnvironment {
+    private final TestInfo testInfo;
 
+    public KtPsiUtilTest(TestInfo info) {
+        testInfo = info;
+    }
+
+    @Test
     public void testUnquotedIdentifier() {
-        Assert.assertEquals("", KtPsiUtil.unquoteIdentifier(""));
-        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifier("a2"));
-        Assert.assertEquals("", KtPsiUtil.unquoteIdentifier("``"));
-        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifier("`a2`"));
+        Assertions.assertEquals("", KtPsiUtil.unquoteIdentifier(""));
+        Assertions.assertEquals("a2", KtPsiUtil.unquoteIdentifier("a2"));
+        Assertions.assertEquals("", KtPsiUtil.unquoteIdentifier("``"));
+        Assertions.assertEquals("a2", KtPsiUtil.unquoteIdentifier("`a2`"));
     }
 
+    @Test
     public void testUnquotedIdentifierOrFieldReference() {
-        Assert.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference(""));
-        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("a2"));
-        Assert.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference("``"));
-        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("`a2`"));
-        Assert.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$a2"));
-        Assert.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$`a2`"));
+        Assertions.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference(""));
+        Assertions.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("a2"));
+        Assertions.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference("``"));
+        Assertions.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("`a2`"));
+        Assertions.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$a2"));
+        Assertions.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$`a2`"));
     }
 
+    @Test
     public void testConvertToImportPath() {
-        Assert.assertEquals(null, getImportPathFromParsed("import "));
-        Assert.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some."));
-        Assert.assertEquals(null, getImportPathFromParsed("import *"));
-        Assert.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.* as SomeTest"));
-        Assert.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some?.Test"));
+        Assertions.assertNull(getImportPathFromParsed("import "));
+        Assertions.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some."));
+        Assertions.assertNull(getImportPathFromParsed("import *"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.* as SomeTest"));
+        Assertions.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some?.Test"));
 
-        Assert.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some"));
-        Assert.assertEquals(new ImportPath(new FqName("some"), true), getImportPathFromParsed("import some.*"));
-        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.Test"));
-        Assert.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.*"));
-        Assert.assertEquals(new ImportPath(new FqName("some.test"), false, Name.identifier("SomeTest")), getImportPathFromParsed("import some.test as SomeTest"));
+        Assertions.assertEquals(new ImportPath(new FqName("some"), false), getImportPathFromParsed("import some"));
+        Assertions.assertEquals(new ImportPath(new FqName("some"), true), getImportPathFromParsed("import some.*"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.Test"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.test"), true), getImportPathFromParsed("import some.test.*"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.test"), false, Name.identifier("SomeTest")),
+                                getImportPathFromParsed("import some.test as SomeTest"));
 
-        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some./* hello world */Test"));
-        Assert.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.    Test"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.Test"), false),
+                                getImportPathFromParsed("import some./* hello world */Test"));
+        Assertions.assertEquals(new ImportPath(new FqName("some.Test"), false), getImportPathFromParsed("import some.    Test"));
 
-        Assert.assertNotSame(new ImportPath(new FqName("some.test"), false), getImportPathFromParsed("import some.Test"));
+        Assertions.assertNotSame(new ImportPath(new FqName("some.test"), false), getImportPathFromParsed("import some.Test"));
     }
 
+    @Test
     public void testIsSingleQuoted() {
         KtPsiFactory factory = new KtPsiFactory(getProject());
 
-        Assert.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createStringTemplate("")));
-        Assert.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createStringTemplate("foo")));
-        Assert.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("bar", 2, false)));
-        Assert.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("baz", 5, false)));
+        Assertions.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createStringTemplate("")));
+        Assertions.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createStringTemplate("foo")));
+        Assertions.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("bar", 2, false)));
+        Assertions.assertTrue(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("baz", 5, false)));
 
-        Assert.assertFalse(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("Foo\nBar", 2, false)));
-        Assert.assertFalse(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("Foo", 2, true)));
+        Assertions.assertFalse(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("Foo\nBar", 2, false)));
+        Assertions.assertFalse(KtPsiUtilKt.isSingleQuoted(factory.createMultiDollarStringTemplate("Foo", 2, true)));
     }
 
+    @Test
     public void testPlainContent() {
         KtPsiFactory factory = new KtPsiFactory(getProject());
         String singleLineContent = "foo";
         String multiLineContent = "Bar\nBaz";
 
-        Assert.assertEquals("", KtPsiUtilKt.getPlainContent(factory.createStringTemplate("")));
-        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createStringTemplate(singleLineContent)));
-        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, false)));
-        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 5, false)));
+        Assertions.assertEquals("", KtPsiUtilKt.getPlainContent(factory.createStringTemplate("")));
+        Assertions.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createStringTemplate(singleLineContent)));
+        Assertions.assertEquals(singleLineContent,
+                                KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, false)));
+        Assertions.assertEquals(singleLineContent,
+                                KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 5, false)));
 
-        Assert.assertEquals(multiLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(multiLineContent, 2, false)));
-        Assert.assertEquals(singleLineContent, KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, true)));
+        Assertions.assertEquals(multiLineContent,
+                                KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(multiLineContent, 2, false)));
+        Assertions.assertEquals(singleLineContent,
+                                KtPsiUtilKt.getPlainContent(factory.createMultiDollarStringTemplate(singleLineContent, 2, true)));
     }
 
+    @Test
     public void testIsLocalClass() throws IOException {
-        String text = FileUtil.loadFile(new File(KtTestUtil.getTestDataPathBase() + "/psiUtil/isLocalClass.kt"), true);
+        String text = FileUtil.loadFile(ForTestCompileRuntime.transformTestDataPath("compiler/psi/psi-impl/testData/psiUtil/isLocalClass.kt"), true);
         KtClass aClass = new KtPsiFactory(getProject()).createClass(text);
 
-        @SuppressWarnings("unchecked")
         Collection<KtClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, KtClassOrObject.class);
 
         for (KtClassOrObject classOrObject : classOrObjects) {
             String classOrObjectName = classOrObject.getName();
             if (classOrObjectName != null && classOrObjectName.contains("Local")) {
-                assertTrue("KtPsiUtil.isLocal should return true for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
+                Assertions.assertTrue(KtPsiUtil.isLocal(classOrObject), () -> "KtPsiUtil.isLocal should return true for " + classOrObjectName);
             }
             else {
-                assertFalse("KtPsiUtil.isLocal should return false for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
+                Assertions.assertFalse(KtPsiUtil.isLocal(classOrObject), () -> "KtPsiUtil.isLocal should return false for " + classOrObjectName);
             }
         }
     }
 
+    @Test
     public void testIsSelectorInExpression() {
         checkIsSelectorInQualified();
     }
 
+    @Test
     public void testIsSelectorInType() {
         checkIsSelectorInQualified();
     }
 
+    @Test
     public void testIsCallee() {
         checkExpression(KtPsiUtilKt::isCallee);
-    }
-
-    @Override
-    protected KotlinCoreEnvironment createEnvironment() {
-        return KotlinCoreEnvironment.createForTests(
-                getTestRootDisposable(), KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
-        );
     }
 
     private ImportPath getImportPathFromParsed(String text) {
         KtImportDirective importDirective =
                 PsiTreeUtil.findChildOfType(new KtPsiFactory(getProject()).createFile(text), KtImportDirective.class);
 
-        assertNotNull("At least one import directive is expected", importDirective);
+        Assertions.assertNotNull(importDirective, "At least one import directive is expected");
 
         return importDirective.getImportPath();
     }
@@ -141,15 +153,10 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
         String trueResultString = "/*true*/";
         String falseResultString = "/*false*/";
 
-        KtFile file;
-        String name = "compiler/psi/psi-impl/testData/psiUtil/" + getTestName(true) + ".kt";
-        try {
-            String text = KtTestUtil.doLoadFile(KtTestUtil.getTestDataPathBase(), name);
-            file = KtTestUtil.createFile(name + ".kt", text, getProject());
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        String testName = testInfo.getTestMethod().get().getName();
+        String name = KtUsefulTestCase.getTestName(testName, true) + ".kt";
+        String fileText = KtTestUtil.doLoadFile(ForTestCompileRuntime.transformTestDataPath("compiler/psi/psi-impl/testData/psiUtil/" + name));
+        KtFile file = KtTestUtil.createFile(name, fileText, getProject());
 
         String text = file.getText();
 
@@ -165,9 +172,9 @@ public class KtPsiUtilTest extends KotlinTestWithEnvironment {
 
             String modifiedWithOffset = new StringBuilder(text).insert(offset, "<======caret======>").toString();
 
-            Assert.assertNotNull("Can't find expression in text:\n" + modifiedWithOffset, expression);
-            Assert.assertSame(expected + " result was expected at\n" + modifiedWithOffset,
-                              expected, checkedFunction.invoke(expression));
+            Assertions.assertNotNull(expression, "Can't find expression in text:\n" + modifiedWithOffset);
+            Assertions.assertSame(expected, checkedFunction.invoke(expression),
+                                  expected + " result was expected at\n" + modifiedWithOffset);
         }
     }
 }

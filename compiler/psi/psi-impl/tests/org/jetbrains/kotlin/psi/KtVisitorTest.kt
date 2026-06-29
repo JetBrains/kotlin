@@ -8,29 +8,32 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class KtVisitorTest : KotlinTestWithEnvironment() {
+    @Test
     fun testTopLevelFunctionContextVisiting() {
         doTestContextReceiverVisiting("""context(String, Int) fun foo() {}""")
     }
 
+    @Test
     fun testMemberFunctionContextVisiting() {
         doTestContextReceiverVisiting("""class Foo { context(String, Int) fun foo() {} }""")
     }
 
+    @Test
     fun testClassContextVisiting() {
         doTestContextReceiverVisiting("""context(String, Int) class Foo""")
     }
 
+    @Test
     fun testFunctionalParameterContextVisiting() {
         doTestContextReceiverVisiting("""fun foo(fn: context(String, Int) () -> Unit) {}""")
     }
 
+    @Test
     fun testHiddenTokensInStringConcatenation() {
         val expectedComments = listOf("/* Block comment before plus */", "/* Block comment after plus */", "// Line comment")
 
@@ -98,12 +101,5 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
             
             """.trimIndent()
         }
-    }
-
-    @OptIn(CoreEnvironmentDeprecation::class)
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(
-            testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
     }
 }

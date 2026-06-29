@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.Assert
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class KtSimpleNameExpressionTest : KotlinTestWithEnvironment() {
+    @Test
     fun testGetReceiverExpressionIdentifier() {
         // Binary Expressions
         assertReceiver("1 + 2", "1")
@@ -23,13 +21,6 @@ class KtSimpleNameExpressionTest : KotlinTestWithEnvironment() {
 
     private fun assertReceiver(exprString: String, expected: String) {
         val expression = KtPsiFactory(project).createExpression(exprString) as KtBinaryExpression
-        Assert.assertEquals(expected, expression.operationReference.getReceiverExpression()!!.text)
-    }
-
-    @OptIn(CoreEnvironmentDeprecation::class)
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(
-            testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
+        Assertions.assertEquals(expected, expression.operationReference.getReceiverExpression()!!.text)
     }
 }
