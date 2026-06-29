@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.backend.js.PropertyLazyInitialization
 import org.jetbrains.kotlin.ir.backend.js.ReflectionSymbols
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IdSignatureRetriever
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -35,9 +35,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.moduleFragment
 import org.jetbrains.kotlin.js.config.propertyLazyInitialization
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
@@ -62,12 +64,13 @@ class WasmBackendContext(
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
 
-    fun getExcludedPackageFragmentOrCreate(fqName: FqName): IrPackageFragment = excludedDeclarations.getOrPut(fqName) {
-        IrExternalPackageFragmentImpl(
-            DescriptorlessExternalPackageFragmentSymbol(),
-            fqName
-        )
-    }
+    fun getExcludedPackageFragmentOrCreate(fqName: FqName, module: IrModuleFragment): IrPackageFragment =
+        excludedDeclarations.getOrPut(fqName) {
+            IrExternalPackageFragmentImpl(
+                DescriptorlessExternalPackageFragmentSymbol(),
+                fqName
+            ).also { it.module = module }
+        }
 
     fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment? = excludedDeclarations.get(fqName)
 
@@ -144,7 +147,13 @@ class WasmBackendContext(
     override val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
-    )
+    ).apply {
+        module = if (irBuiltIns.anyClass.isBound) {
+            irBuiltIns.anyClass.owner.moduleFragment
+        } else {
+            IrModuleFragmentImpl(ErrorModuleDescriptor)
+        }
+    }
 
     companion object {
         internal const val SPECIAL_INTERFACE_TABLE_SIZE = 22

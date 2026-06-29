@@ -49,8 +49,8 @@ class ExcludeDeclarationsFromCodegen(private val context: WasmBackendContext) : 
                 val d = it.next() as? IrDeclarationWithName ?: continue
                 if (isExcluded(d)) {
                     it.remove()
-                    // Move to "excluded" package fragment preserving fq-name
-                    context.getExcludedPackageFragmentOrCreate(file.packageFqName).addChild(d)
+                    // Move to "excluded" package fragment preserving fq-name and module
+                    context.getExcludedPackageFragmentOrCreate(file.packageFqName, irModule).addChild(d)
                 }
             }
         }
