@@ -98,12 +98,12 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             val withParsedKeys = library.mapKeys { parseCommonizerTarget(it.key) }.also { supportLibrarySources += it }
 
             fun CommonizerTarget.getAllContainingSharedModules() = withParsedKeys
-                .filter { (target, _) -> allLeaves().isSubsetOf(target.allLeaves()) }
+                .filter { [target] -> allLeaves().isSubsetOf(target.allLeaves()) }
 
             // To properly compile sample code for output targets (written in `assertEquals()`),
             // we must be able to resolve the resulting types in the dependencies.
             for (it in outputTargets.orEmpty()) {
-                val (_, closestSharedSourceSet) = it.getAllContainingSharedModules().minBy { it.key.allLeaves().size }
+                val [_, closestSharedSourceSet] = it.getAllContainingSharedModules().minBy { it.key.allLeaves().size }
                 registerDependencyFor(it) { closestSharedSourceSet }
             }
 
