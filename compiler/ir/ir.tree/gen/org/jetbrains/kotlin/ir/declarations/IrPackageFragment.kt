@@ -23,6 +23,8 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
 
     abstract var packageFqName: FqName
 
+    abstract var module: IrModuleFragment
+
     override fun <D> acceptChildren(visitor: IrVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
     }

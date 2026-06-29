@@ -18,10 +18,8 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
  * Each declaration is contained either in some [IrFile], or in some [IrExternalPackageFragment].
  * Declarations coming from dependencies are located in [IrExternalPackageFragment].
  *
- * It can be used for obtaining a module descriptor, which contains the information about
- * the module from which the declaration came. It would be more correct to have a link to some
- * [IrModuleFragment] instead, which would make [IrModuleFragment] the only source of truth about modules,
- * but this is how things are now.
+ * It can be used for obtaining an [IrModuleFragment], which contains the information about
+ * the module from which the declaration came.
  *
  * Also, it can be used for checking whether some declaration is external (by checking whether its top
  * level parent is an [IrExternalPackageFragment]). But it is not possible

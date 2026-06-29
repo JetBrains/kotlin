@@ -223,6 +223,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
             if (element.isSubclassOf(IrTree.function)) {
                 println("parameters = ${element.visitorParameterName}.parameters.memoryOptimizedMap { it.transform() }")
             }
+            if (element.isSubclassOf(IrTree.externalPackageFragment)) {
+                println("module = transformedModule ?: ${element.visitorParameterName}.module")
+            }
             if (element.isSubclassOf(IrTree.moduleFragment)) {
                 println("this@DeepCopyIrTreeWithSymbols.transformedModule = null")
             }

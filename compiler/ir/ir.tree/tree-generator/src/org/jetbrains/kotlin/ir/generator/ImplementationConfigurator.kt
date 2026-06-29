@@ -167,6 +167,8 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
+            isMutable("module")
+            isLateinit("module")
         }
 
         impl(file) {
