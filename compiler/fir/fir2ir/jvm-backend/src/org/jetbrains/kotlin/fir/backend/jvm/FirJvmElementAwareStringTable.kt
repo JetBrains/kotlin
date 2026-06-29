@@ -43,9 +43,8 @@ class FirJvmElementAwareStringTable(
     }
 
     /**
-     * The method aims to reproduce convoluted K1 behavior
-     * (@see [org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable.getLocalClassIdReplacement]).
-     * K1 uses both `.` and `$` to separate nested class names when serializing metadata.
+     * The method aims to reproduce convoluted K1 behavior.
+     * K1 used both `.` and `$` to separate nested class names when serializing metadata.
      * That makes little sense and looks like an artifact of implementation arising from the K1 descriptors structure.
      * But we still need to preserve it to establish compatibility with K2-produced metadata.
      */

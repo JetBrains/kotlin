@@ -1,10 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen.serialization
+package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -12,11 +13,10 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.DescriptorAwareStringTable
 
 @OptIn(K1Deprecation::class)
-class JvmCodegenStringTable @JvmOverloads constructor(
+class K1JvmCodegenStringTable @JvmOverloads constructor(
     private val typeMapper: KotlinTypeMapperBase,
     nameResolver: JvmNameResolver? = null
 ) : JvmStringTable(nameResolver), DescriptorAwareStringTable {

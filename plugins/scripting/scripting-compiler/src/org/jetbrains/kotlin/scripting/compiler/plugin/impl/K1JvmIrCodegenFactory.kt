@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
-import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -84,6 +83,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlin.serialization.VersionRequirementUtils
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -420,8 +420,13 @@ private class DescriptorMetadataSerializer(
     private val globalSerializationBindings: K1JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val serializerExtension =
-        JvmSerializerExtension(serializationBindings, globalSerializationBindings, context.state, context.defaultTypeMapper)
+    @OptIn(K1Deprecation::class)
+    private val typeApproximator =
+        TypeApproximator(context.state.module.builtIns, context.state.config.languageVersionSettings)
+
+    private val serializerExtension = JvmSerializerExtension(
+        serializationBindings, globalSerializationBindings, context.state, context.defaultTypeMapper, typeApproximator,
+    )
 
     @OptIn(K1Deprecation::class)
     private val serializer: DescriptorSerializer? = run {
@@ -466,7 +471,7 @@ private class DescriptorMetadataSerializer(
                     serializerExtension.serializeJvmPackage(this, type)
                 }.build()
             is DescriptorMetadataSource.Function -> {
-                val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, context.state.typeApproximator)
+                val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, typeApproximator)
                 serializationBindings.get(METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
                     serializationBindings.put(METHOD_FOR_FUNCTION, withTypeParameters, it)
                 }
@@ -506,8 +511,9 @@ private class JvmSerializerExtension(
     private val globalBindings: K1JvmSerializationBindings,
     state: GenerationState,
     private val typeMapper: KotlinTypeMapperBase,
+    private val approximator: TypeApproximator,
 ) : SerializerExtension() {
-    override val stringTable = JvmCodegenStringTable(typeMapper)
+    override val stringTable = K1JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
@@ -517,7 +523,6 @@ private class JvmSerializerExtension(
     private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
     override val metadataVersion = state.config.metadataVersion
     private val jvmDefaultMode = state.config.jvmDefaultMode
-    private val approximator = state.typeApproximator
     private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
     private val localDelegatedProperties = state.localDelegatedProperties
