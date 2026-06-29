@@ -75,6 +75,9 @@
 -dontwarn java.util.List
 # seems testonly method assertNoReferenceKept is absent, so it's probably safe to ignore this problem
 -dontwarn com.intellij.openapi.util.ObjectNode
+# Used by some intellij classes, e.g. by com.intellij.platform.syntax.extensions.impl.ExtensionRegistryHolderJvmKt
+# In fact we don't need this one in runtime
+-dontwarn fleet.util.multiplatform.Actual
 
 # Some annotations from intellijCore/annotations.jar are not presented in org.jetbrains.annotations
 -dontwarn org.jetbrains.annotations.*
