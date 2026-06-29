@@ -1264,8 +1264,7 @@ abstract class AbstractComposeLowering(
                 name = Name.special("<unsafe-coerce>")
                 origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             }.apply {
-                @Suppress("DEPRECATION")
-                parent = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+                parent = createEmptyExternalPackageFragment(
                     context.moduleDescriptor,
                     FqName("kotlin.jvm.internal")
                 )

@@ -59,7 +59,7 @@ class JvmSymbolsForScripting(
 
     private fun createPackage(packageName: String): IrPackageFragment =
         createEmptyExternalPackageFragment(
-            moduleFragment.descriptor,
+            moduleFragment,
             FqName(packageName)
         )
 }
