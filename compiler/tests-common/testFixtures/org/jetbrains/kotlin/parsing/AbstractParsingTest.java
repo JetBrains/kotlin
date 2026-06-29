@@ -47,7 +47,7 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
     }
 
     public AbstractParsingTest() {
-        super(".", "kt", new KotlinParserDefinition());
+        super(".", "kt");
     }
 
     private static void checkPsiGetters(KtElement elem) throws Throwable {
@@ -88,14 +88,6 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
 
     protected void doParsingTest(@NotNull String filePath, Function1<String, String> contentFilter) {
         doBaseTest(filePath, KtNodeTypes.KT_FILE, contentFilter);
-    }
-
-    protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) {
-        doBaseTest(filePath, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, null);
-    }
-
-    protected void doBlockCodeFragmentParsingTest(@NotNull String filePath) {
-        doBaseTest(filePath, KtNodeTypes.BLOCK_CODE_FRAGMENT, null);
     }
 
     private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) {
