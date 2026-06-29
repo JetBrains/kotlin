@@ -216,3 +216,7 @@ internal val ReflectKCallable<*>.isAnnotationConstructor: Boolean
  */
 internal fun <R> ReflectKCallable<R>.unbindAllReceivers(): ReflectKCallable<R> =
     if (!isBound) this else shallowCopy(container, overriddenStorage)
+
+internal fun ReflectKCallable<*>.substituteType(type: KType): KType =
+    overriddenStorage.getTypeSubstitutor(typeParameters, memberNameForDebug = name)
+        .substituteTopLevelType(type, containerNameForDebug = name)

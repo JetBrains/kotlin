@@ -16,12 +16,6 @@ import kotlin.reflect.jvm.internal.types.*
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaMethod
 
-internal fun starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug: String): Nothing =
-    error(
-        "Star projection in top level type is not possible. " +
-                "Star projection appeared in the following container: '$containerNameForDebug'"
-    )
-
 private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
     override fun compare(a: ReflectKCallable<*>, b: ReflectKCallable<*>): Int {
         val typeParametersEliminator = a.typeParameters.substitutedWith(b.typeParameters)
@@ -30,9 +24,7 @@ private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
                         "It must have been reported by the compiler. " +
                         "The following members appear to be violating intersection overrides: '$a' '$b'"
             )
-        val aReturnType =
-            typeParametersEliminator.substitute(a.returnType).type
-                ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = a.name)
+        val aReturnType = typeParametersEliminator.substituteTopLevelType(a.returnType, a.name)
         val bReturnType = b.returnType
 
         val aIsSubtypeOfB = aReturnType.isSubtypeOf(bReturnType)
@@ -383,18 +375,14 @@ internal data class EquatableCallableSignature<T : EqualityMode>(
                 val typeParameterB = other.typeParameters[i]
                 if (typeParameterA.upperBounds.size != typeParameterB.upperBounds.size) return false
                 val equalUpperBounds = typeParameterA.upperBounds
-                    .map {
-                        functionTypeParametersEliminator.substitute(it).type
-                            ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = name)
-                    }
+                    .map { functionTypeParametersEliminator.substituteTopLevelType(it, name) }
                     .sortedUpperBounds(memberNameForDebug = name)
                     .zip(typeParameterB.upperBounds.sortedUpperBounds(memberNameForDebug = other.name))
                     .all { areEqualKTypes(it.first, it.second) }
                 if (!equalUpperBounds) return false
             }
             for (i in kotlinParameterTypes.indices) {
-                val a = functionTypeParametersEliminator.substitute(kotlinParameterTypes[i]).type
-                    ?: starProjectionInTopLevelTypeIsNotPossible(containerNameForDebug = name)
+                val a = functionTypeParametersEliminator.substituteTopLevelType(kotlinParameterTypes[i], name)
                 val b = other.kotlinParameterTypes[i]
                 if (!areEqualKTypes(a, b)) return false
             }

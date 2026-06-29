@@ -76,9 +76,7 @@ internal fun captureKTypeFromArguments(type: AbstractKType): AbstractKType? {
         val oldProjection = arguments[index]
         if (oldProjection.variance == KVariance.INVARIANT) continue
 
-        val capturedTypeSupertypes = parameters[index].upperBounds.mapTo(mutableListOf()) {
-            substitutor.substitute(it).type!!
-        }
+        val capturedTypeSupertypes = parameters[index].upperBounds.mapTo(mutableListOf(), substitutor::substituteTopLevelType)
 
         if (oldProjection.variance == KVariance.OUT) {
             capturedTypeSupertypes += oldProjection.type!!
