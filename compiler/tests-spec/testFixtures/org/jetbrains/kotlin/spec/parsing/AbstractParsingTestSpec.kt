@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.spec.parsing
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.TestExceptionsComparator
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.validators.ParsingTestTypeValidator
@@ -15,8 +16,8 @@ import org.junit.Assert
 import java.io.File
 
 abstract class AbstractParsingTestSpec : AbstractParsingTest() {
-    override fun doParsingTest(filePath: String) {
-        val file = File(filePath)
+    override fun runTest(filePath: String) {
+        val file = ForTestCompileRuntime.transformTestDataPath(filePath)
         val [specTest, testLinkedType] = CommonParser.parseSpecTest(
             file.canonicalPath,
             mapOf("main.kt" to FileUtil.loadFile(file, true))

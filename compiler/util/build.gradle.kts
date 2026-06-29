@@ -23,8 +23,11 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
+
     testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit4)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -44,5 +47,5 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 testsJar()
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit4)
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }

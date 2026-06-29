@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.utils
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class GetElementWithContextTest : KtParsingTestCase("", "kt") {
+    @Test
     fun testGetElementWithContext() {
         val file = KtPsiFactory(myProject).createFile(
             """ |

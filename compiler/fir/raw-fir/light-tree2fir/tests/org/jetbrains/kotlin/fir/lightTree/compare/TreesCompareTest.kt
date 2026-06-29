@@ -16,18 +16,16 @@ import org.jetbrains.kotlin.fir.builder.test.COMPILER_DIAGNOSTICS_TEST_DATA_DIRE
 import org.jetbrains.kotlin.fir.builder.test.splitTestDataIntoFiles
 import org.jetbrains.kotlin.fir.builder.test.toStrippedCompilerDiagnosticsTestDataFiles
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
-import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithTestData
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
+import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithTestData
+import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
 import org.jetbrains.kotlin.test.utils.isCustomTestData
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
 import java.io.File
 
 @TestDataPath("\$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     companion object {
         private val DIAGNOSTIC_IN_TESTDATA_PATTERN = Regex("<!>|<!(.*?(\\(\".*?\"\\)|\\(\\))??)+(?<!<)!>")
@@ -84,7 +82,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
                 //light tree
-                val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
+                val firFileFromLightTree = lightTreeConverter.buildFirFile(fileText, KtIoFileSourceFile(file), linesMapping)
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -96,6 +94,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         }
     }
 
+    @Test
     fun testCompareDiagnostics() {
         @OptIn(ObsoleteTestInfrastructure::class)
         val session = FirSessionFactoryHelper.createEmptySession()
@@ -136,6 +135,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         }
     }
 
+    @Test
     fun testCompareAll() {
         compareAll()
     }

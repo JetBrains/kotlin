@@ -25,19 +25,22 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.TestsCompilerError
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.IfNotParsed
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.utils.rethrow
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 import java.lang.reflect.Modifier
 import java.nio.file.Paths
 
 @Suppress("UnstableApiUsage")
 abstract class AbstractParsingTest : KtParsingTestCase(".", "kt") {
-    protected open fun doParsingTest(filePath: String) {
+    protected open fun runTest(filePath: String) {
         doBaseTest(filePath, KtNodeTypes.KT_FILE, null)
     }
 
@@ -55,6 +58,7 @@ abstract class AbstractParsingTest : KtParsingTestCase(".", "kt") {
 
     @Throws(Exception::class)
     private fun doBaseTestImpl(filePath: String, fileType: IElementType, contentFilter: ((String) -> String)?) {
+        val filePath = ForTestCompileRuntime.transformTestDataPath(filePath).absolutePath
         val fileContent: String?
         if (Paths.get(filePath).isAbsolute()) {
             fileContent = FileUtil.loadFile(File(filePath), CharsetToolkit.UTF8, true).trim { it <= ' ' }
@@ -125,11 +129,9 @@ abstract class AbstractParsingTest : KtParsingTestCase(".", "kt") {
                 if (result == null) {
                     for (annotation in method.declaredAnnotations) {
                         if (annotation is IfNotParsed) {
-                            assertNotNull(
-                                "Incomplete operation in parsed OK test, method " + methodName +
-                                        " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.text,
-                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement::class.java)
-                            )
+                            assertNotNull(PsiTreeUtil.findChildOfType(elem, PsiErrorElement::class.java)) {
+                                "Incomplete operation in parsed OK test, method $methodName in ${declaringClass.getSimpleName()} returns null. Element text: \n${elem.text}"
+                            }
                         }
                     }
                 }

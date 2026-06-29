@@ -17,14 +17,12 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.util.walkRepositoryKotlinFilesWithoutTestData
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.system.measureNanoTime
 
 @TestDataPath("/")
-@RunWith(JUnit3RunnerWithInners::class)
 class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
     private fun generateFirFromPsi(onlyPsi: Boolean, text: String, path: String) {
         val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(path)), text) as KtFile
@@ -112,18 +110,22 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
 
     }
 
+    @Test
     fun testTotalKotlinOnlyLightTree() {
         totalKotlinLight(true)
     }
 
+    @Test
     fun testTotalKotlinOnlyPsi() {
         totalKotlinPsi(true)
     }
 
+    @Test
     fun testTotalKotlinFirFromLightTree() {
         totalKotlinLight(false)
     }
 
+    @Test
     fun testTotalKotlinFirFromPsi() {
         totalKotlinPsi(false)
     }

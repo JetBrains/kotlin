@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.File
 import kotlin.reflect.full.memberProperties
@@ -65,7 +64,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         }
     }
 
-    protected open fun doRawFirTest(filePath: String) {
+    protected open fun runTest(filePath: String) {
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)

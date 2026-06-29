@@ -16,7 +16,9 @@
 package org.jetbrains.kotlin.test.testFramework
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElement
@@ -24,39 +26,43 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertSameLinesWithFile
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.io.IOException
 
 @Suppress("UnstableApiUsage")
-abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String, fileExt: String) : KtUsefulTestCase() {
+abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String, fileExt: String) {
     protected var myFileExt: String = fileExt
     protected val myFullDataPath: String = "$testDataPath/$dataPath"
     protected lateinit var myFile: PsiFile
-    protected val myProject: MockProject get() = myEnvironment!!.project as MockProject
+    protected val myProject: MockProject get() = myEnvironment.project as MockProject
+    protected val testRootDisposable: Disposable = Disposer.newDisposable()
 
-    private var myEnvironment: KotlinCoreEnvironment? = null
+    private lateinit var myEnvironment: KotlinCoreEnvironment
 
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+    @BeforeEach
+    fun setUp() {
         val configuration = CompilerConfiguration.create()
-        myEnvironment = createForTests(
+        @OptIn(CoreEnvironmentDeprecation::class)
+        myEnvironment = KotlinCoreEnvironment.createForParallelTests(
             testRootDisposable, configuration,
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
     }
 
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-        myEnvironment = null
-        clearFields(this)
+    @AfterEach
+    fun tearDown() {
+        ApplicationManager.getApplication().runWriteAction {
+            Disposer.dispose(testRootDisposable)
+        }
     }
 
     protected val testDataPath: String
