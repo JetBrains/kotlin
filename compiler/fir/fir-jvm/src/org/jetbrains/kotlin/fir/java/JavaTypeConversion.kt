@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
     typeArgumentsForUpper: Array<out ConeTypeProjection>,
@@ -246,8 +248,29 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         }
 
         null -> {
-            val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
-            classId.constructClassLikeType(isMarkedNullable = lowerBound != null, attributes = attributes)
+            var classId: ClassId? = null
+            val fqName = FqName(this.classifierQualifiedName)
+            if (!fqName.isRoot) {
+                var pkgFqn = fqName.parent()
+                var classFqn = FqName.topLevel(fqName.shortName())
+
+                while (true) {
+                    val candidateClassId = ClassId(pkgFqn, classFqn, isLocal = false)
+                    if (session.symbolProvider.getClassLikeSymbolByClassId(candidateClassId) != null) {
+                        classId = candidateClassId
+                        break
+                    }
+                    if (pkgFqn.isRoot) break
+                    classFqn = FqName(pkgFqn.shortName().asString() + "." + classFqn.asString())
+                    pkgFqn = pkgFqn.parent()
+                }
+            }
+
+            if (classId != null) {
+                classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
+            } else {
+                ConeErrorType(ConeSimpleDiagnostic("Failed to resolve class: $fqName", DiagnosticKind.Java))
+            }
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
