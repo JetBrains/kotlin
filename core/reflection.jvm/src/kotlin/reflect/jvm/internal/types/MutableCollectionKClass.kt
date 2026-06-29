@@ -81,6 +81,6 @@ internal class DescriptorMutableCollectionKClass<T : Any>(
     }
 
     override fun equals(other: Any?): Boolean = other is MutableCollectionKClass<*> && readonlyClass == other.readonlyClass
-    override fun hashCode(): Int = readonlyClass.hashCode()
+    override fun hashCode(): Int = readonlyClass.hashCode() * 31
     override fun toString(): String = "MutableCollectionKClass($readonlyClass)"
 }

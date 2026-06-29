@@ -89,10 +89,7 @@ private val mutableCollectionKClassCache = ConcurrentHashMap<ClassId, MutableCol
 internal fun getMutableCollectionKClass(readonlyClass: KClass<*>): MutableCollectionKClass<*>? {
     val readOnlyClassId = (readonlyClass as? KClassImpl<*>)?.classId ?: return null
     val mutableClassId = JavaToKotlinClassMap.readOnlyToMutable(readOnlyClassId) ?: return null
-    return mutableCollectionKClassCache[mutableClassId]
-        ?: MutableCollectionKClassImpl(readonlyClass, mutableClassId).let {
-            mutableCollectionKClassCache.putIfAbsent(mutableClassId, it) ?: it
-        }
+    return mutableCollectionKClassCache.getOrPut(mutableClassId) { MutableCollectionKClassImpl(readonlyClass, mutableClassId) }
 }
 
 internal fun clearBuiltinClassCaches() {
