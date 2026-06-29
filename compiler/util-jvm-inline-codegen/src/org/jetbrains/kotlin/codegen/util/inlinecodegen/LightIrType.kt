@@ -14,6 +14,7 @@ data class LightIrType(
     val arguments: List<TypeArgument>,
     val nullable: Boolean,
     val asmTypeInternalName: String,
+    val unreified: LightIrType?,
 ) : Serializable {
     val asmTypeDesc: String
         get() = when {
@@ -86,6 +87,7 @@ data class LightIrType(
                 listOf(TypeArgument.TypeProjection(arrayWrapped.markNullable(), TypeArgument.VARIANCE_INV)),
                 false,
                 "[" + arrayWrapped.asmTypeDesc,
+                null,
             )
         }
         return if (reificationArgument.nullable && !arrayWrapped.nullable) {
@@ -104,29 +106,35 @@ data class LightIrType(
     }
 
     fun reify(mapping: Map<Int, LightIrType>): LightIrType {
-        (this.classifier as? Classifier.TypeParameter)?.index?.let { mapping[it] }?.let { parameterValue ->
-            return if (nullable) parameterValue.markNullable() else parameterValue
-        }
+        when (classifier) {
+            is Classifier.TypeParameter -> {
+                mapping[classifier.index]
+                    ?.let { if (nullable && !it.nullable) it.markNullable() else it }
+                    ?.let { if (!classifier.isReified) it.copy(unreified = this) else it }
+                    ?.also { return it }
+                return this
+            }
+            is Classifier.Clazz -> {
+                val reifiedArgs = arguments.map {
+                    when (it) {
+                        is TypeArgument.StarProjection -> TypeArgument.StarProjection()
+                        is TypeArgument.TypeProjection -> TypeArgument.TypeProjection(it.type.reify(mapping), it.variance)
+                    }
+                }
 
-        val reifiedArgs = arguments.map {
-            when (it) {
-                is TypeArgument.StarProjection -> TypeArgument.StarProjection()
-                is TypeArgument.TypeProjection -> TypeArgument.TypeProjection(it.type.reify(mapping), it.variance)
+                val reifiedAsmTypeInternalName = if (classifier.fqName == "kotlin.Array") {
+                    (reifiedArgs.single() as? TypeArgument.TypeProjection)
+                        ?.let { "[" + it.type.asmTypeDesc }
+                } else {
+                    null
+                }
+
+                return copy(
+                    arguments = reifiedArgs,
+                    asmTypeInternalName = reifiedAsmTypeInternalName ?: asmTypeInternalName,
+                )
             }
         }
-
-        return LightIrType(
-            classifier,
-            reifiedArgs,
-            nullable,
-            if ((classifier as? Classifier.Clazz)?.fqName == "kotlin.Array") {
-                (reifiedArgs.single() as? TypeArgument.TypeProjection)
-                    ?.let { "[" + it.type.asmTypeDesc }
-                    ?: asmTypeInternalName
-            } else {
-                asmTypeInternalName
-            },
-        )
     }
 
     fun specializedAbi(): SpecializedTypeAbi? {

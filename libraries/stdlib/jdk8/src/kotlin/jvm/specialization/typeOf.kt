@@ -31,6 +31,7 @@ internal fun generateTypeOf(
     isTypeParameterBound: Boolean,
     emit: (AbstractInsnNode) -> Unit,
 ) {
+    val typeParameterValue = typeParameterValue.unreified ?: typeParameterValue
     val methodArguments = when (val classifier = typeParameterValue.classifier) {
         is LightIrType.Classifier.Clazz -> {
             emit.classInstance(classifier.typeOfSupportClassInstance)

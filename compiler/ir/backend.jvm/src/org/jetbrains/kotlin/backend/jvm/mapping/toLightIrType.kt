@@ -74,6 +74,7 @@ fun IrType.toLightIrType(context: JvmBackendContext, visitedTypeParameters: Muta
         arguments,
         isMarkedNullable(),
         context.defaultTypeMapper.mapTypeParameter(simpleType, sw).internalName,
+        null,
     )
 }
 
