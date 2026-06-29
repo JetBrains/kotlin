@@ -117,7 +117,7 @@ class SimpleTestClassModel(
         buildList {
             when (testInfraRevision) {
                 TestInfraRevision.LegacyJUnit4 -> add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName))
-                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath(), testKClass))
+                TestInfraRevision.StandardJUnit5 -> add(RunTestWithDirectoryPrefixMethodModel(rootFile.getFilePath(), testKClass, customMethodName = doTestMethodName.takeIf { it != "doTest" }))
             }
             if (!skipTestAllFilesCheck) {
                 add(TestAllFilesPresentMethodModel(this@SimpleTestClassModel))

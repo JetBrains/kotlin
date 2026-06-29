@@ -13,19 +13,19 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderLazyBodiesByAstTest> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderLazyBodiesByStubTest> {
-                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
+                model("rawBuilder", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
-                model("sourceElementMapping", testMethod = "doRawFirTest")
+                model("sourceElementMapping")
             }
         }
     }
