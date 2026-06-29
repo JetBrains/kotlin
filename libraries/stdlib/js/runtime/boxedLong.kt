@@ -20,6 +20,7 @@
 package kotlin.js.internal.boxedLong
 
 import withType
+import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.js.internal.PrimitiveKClassImpl
 
@@ -36,12 +37,36 @@ import kotlin.reflect.js.internal.PrimitiveKClassImpl
 @Retention(AnnotationRetention.BINARY)
 internal annotation class BoxedLongApi
 
+/* Several algorithms come from "the JS Long paper":
+ *   S. Doeraene and T. Schlatter,
+ *   "64-bit Integer Division for the JavaScript Platform,"
+ *   33rd IEEE Symposium on Computer Arithmetic (ARITH), Fulda, Germany, 2026.
+ *   https://arith2026.org/papers/64-bit%20Integer%20Division%20for%20the%20JavaScript%20Platform.pdf
+ */
+
 /**
  * @see kotlin.js.internal.longAsBigInt.toNumber
  */
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.toNumber() = high * TWO_PWR_32_DBL_ + getLowBitsUnsigned()
+internal fun Long.toNumber(): Double {
+    // JS Long paper, Section V.A.
+    return high.toDouble() * TWO_PWR_32_DBL_ + low.toUInt().toDouble()
+}
+
+@BoxedLongApi
+@InlineOnly
+private inline fun toUnsignedNumber(low: Int, high: Int): Double {
+    // JS Long paper, Section V.A.
+    return high.toUInt().toDouble() * TWO_PWR_32_DBL_ + low.toUInt().toDouble()
+}
+
+@BoxedLongApi
+@InlineOnly
+private inline fun fromUnsignedSafeDouble(x: Double): Long {
+    // JS Long paper, Section V.B.
+    return Long(jsToInt32(x), jsToInt32(x * TWO_PWR_M32_DBL_))
+}
 
 /**
  * @see kotlin.js.internal.longAsBigInt.convertToByte
@@ -72,11 +97,13 @@ internal fun Long.convertToShort(): Short = low.toShort()
 internal fun Long.convertToInt(): Int = low
 
 @BoxedLongApi
-private fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
-
-@BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun hashCode(l: Long) = l.low xor l.high
+
+// toString(), see the JS Long paper, Section VIII
+
+@InlineOnly
+private inline fun jsToString(x: Double, base: Int): String = js("x.toString(base)")
 
 /**
  * @see kotlin.js.internal.longAsBigInt.toStringImpl
@@ -84,50 +111,23 @@ internal fun hashCode(l: Long) = l.low xor l.high
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.toStringImpl(radix: Int): String {
-    if (isZero()) {
-        return "0"
-    }
+    // JS Long paper, Algorithm 11
 
-    if (isNegative()) {
-        if (equalsLong(MIN_VALUE)) {
-            // We need to change the Long value before it can be negated, so we remove
-            // the bottom-most digit in this base and then recurse to do the rest.
-            val radixLong = fromInt(radix)
-            val div = div(radixLong)
-            val rem = div.multiply(radixLong).subtract(this).toInt()
-            // Using rem.asDynamic() to break dependency on "kotlin.text" package
-            return div.toStringImpl(radix) + rem.asDynamic().toString(radix).unsafeCast<String>()
+    val low = this.low
+    val high = this.high
+
+    if ((low shr 31) == high) {
+        // -2^31 <= this < 2^31
+        return jsToString(low.toDouble(), radix)
+    } else if (((high xor (high shr 10)) and 0xffe00000.toInt()) == 0) {
+        // -2^53 <= this < 2^53
+        return jsToString(toNumber(), radix)
+    } else {
+        // |this| >= 2^53
+        if (high >= 0) {
+            return ulongToStringLarge(this, radix)
         } else {
-            return "-${negate().toStringImpl(radix)}"
-        }
-    }
-
-    // Do several digits each time through the loop, so as to
-    // minimize the calls to the very expensive emulated div.
-    val digitsPerTime = when {
-        radix == 2 -> 31
-        radix <= 10 -> 9
-        radix <= 21 -> 7
-        radix <= 35 -> 6
-        else -> 5
-    }
-    val radixToPower = fromNumber(JsMath.pow(radix.toDouble(), digitsPerTime.toDouble()))
-
-    var rem = this
-    var result = ""
-    while (true) {
-        val remDiv = rem.div(radixToPower)
-        val intval = rem.subtract(remDiv.multiply(radixToPower)).toInt()
-        var digits = intval.asDynamic().toString(radix).unsafeCast<String>()
-
-        rem = remDiv
-        if (rem.isZero()) {
-            return digits + result
-        } else {
-            while (digits.length < digitsPerTime) {
-                digits = "0" + digits
-            }
-            result = digits + result
+            return "-" + ulongToStringLarge(negate(), radix)
         }
     }
 }
@@ -137,49 +137,57 @@ internal fun Long.toStringImpl(radix: Int): String {
  */
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.negate(): Long = invert() + 1L
-
-@BoxedLongApi
-private fun Long.isZero() = high == 0 && low == 0
+internal fun Long.negate(): Long {
+    // manually inlined and simplified from 0L - this
+    val rlow = -low
+    val rhigh = -high - boolToInt(rlow != 0)
+    return Long(rlow, rhigh)
+}
 
 @BoxedLongApi
 private fun Long.isNegative() = high < 0
 
 @BoxedLongApi
-private fun Long.isOdd() = low and 1 == 1
+@UsedFromCompilerGeneratedCode
+internal fun Long.equalsLong(other: Long) = bothZero(high xor other.high, low xor other.low)
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.equalsLong(other: Long) = high == other.high && low == other.low
+private fun Long.lessThan(other: Long): Boolean {
+    if (high == other.high) {
+        return low.toUInt().toDouble() < other.low.toUInt().toDouble()
+    } else {
+        return high < other.high
+    }
+}
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-private fun Long.lessThan(other: Long) = compare(other) < 0
+private fun Long.greaterThan(other: Long): Boolean {
+    if (high == other.high) {
+        return low.toUInt().toDouble() > other.low.toUInt().toDouble()
+    } else {
+        return high > other.high
+    }
+}
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-private fun Long.greaterThan(other: Long) = compare(other) > 0
-
-@BoxedLongApi
-@UsedFromCompilerGeneratedCode
-private fun Long.greaterThanOrEqual(other: Long) = compare(other) >= 0
+private fun Long.greaterThanOrEqual(other: Long): Boolean {
+    if (high == other.high) {
+        return low.toUInt().toDouble() >= other.low.toUInt().toDouble()
+    } else {
+        return high > other.high
+    }
+}
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.compare(other: Long): Int {
-    if (equalsLong(other)) {
-        return 0;
-    }
-
-    val thisNeg = isNegative();
-    val otherNeg = other.isNegative();
-
-    return when {
-        thisNeg && !otherNeg -> -1
-        !thisNeg && otherNeg -> 1
-    // at this point, the signs are the same, so subtraction will not overflow
-        subtract(other).isNegative() -> -1
-        else -> 1
+    if (high == other.high) {
+      return low.toUInt().compareTo(other.low.toUInt())
+    } else {
+      return if (high < other.high) -1 else 1
     }
 }
 
@@ -189,34 +197,10 @@ internal fun Long.compare(other: Long): Int {
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.add(other: Long): Long {
-    // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
-
-    val a48 = high ushr 16
-    val a32 = high and 0xFFFF
-    val a16 = low ushr 16
-    val a00 = low and 0xFFFF
-
-    val b48 = other.high ushr 16
-    val b32 = other.high and 0xFFFF
-    val b16 = other.low ushr 16
-    val b00 = other.low and 0xFFFF
-
-    var c48 = 0
-    var c32 = 0
-    var c16 = 0
-    var c00 = 0
-    c00 += a00 + b00
-    c16 += c00 ushr 16
-    c00 = c00 and 0xFFFF
-    c16 += a16 + b16
-    c32 += c16 ushr 16
-    c16 = c16 and 0xFFFF
-    c32 += a32 + b32
-    c48 += c32 ushr 16
-    c32 = c32 and 0xFFFF
-    c48 += a48 + b48
-    c48 = c48 and 0xFFFF
-    return Long((c16 shl 16) or c00, (c48 shl 16) or c32)
+    // JS Long paper, Algorithm 1
+    val rlow = low + other.low
+    val rhigh = high + other.high + boolToInt(rlow.toUInt().toDouble() < low.toUInt().toDouble())
+    return Long(rlow, rhigh)
 }
 
 /**
@@ -224,7 +208,12 @@ internal fun Long.add(other: Long): Long {
  */
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.subtract(other: Long) = add(other.unaryMinus())
+internal fun Long.subtract(other: Long): Long {
+    // JS Long paper, Algorithm 2
+    val rlow = low - other.low
+    val rhigh = high - other.high - boolToInt(rlow.toUInt().toDouble() > low.toUInt().toDouble())
+    return Long(rlow, rhigh)
+}
 
 /**
  * @see kotlin.js.internal.longAsBigInt.multiply
@@ -232,71 +221,32 @@ internal fun Long.subtract(other: Long) = add(other.unaryMinus())
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.multiply(other: Long): Long {
-    if (isZero()) {
-        return ZERO
-    } else if (other.isZero()) {
-        return ZERO
-    }
+    // JS Long paper, Algorithm 3
 
-    if (equalsLong(MIN_VALUE)) {
-        return if (other.isOdd()) MIN_VALUE else ZERO
-    } else if (other.equalsLong(MIN_VALUE)) {
-        return if (isOdd()) MIN_VALUE else ZERO
-    }
+    val alow = low
+    val blow = other.low
 
-    if (isNegative()) {
-        return if (other.isNegative()) {
-            negate().multiply(other.negate())
-        } else {
-            negate().multiply(other).negate()
-        }
-    } else if (other.isNegative()) {
-        return multiply(other.negate()).negate()
-    }
+    val a0 = alow and 0xffff
+    val a1 = alow ushr 16
+    val b0 = blow and 0xffff
+    val b1 = blow ushr 16
 
-    // If both longs are small, use float multiplication
-    if (lessThan(TWO_PWR_24_) && other.lessThan(TWO_PWR_24_)) {
-        return fromNumber(toNumber() * other.toNumber())
-    }
+    val a0b0 = a0 * b0
+    val a1b0 = a1 * b0
+    val a0b1 = a0 * b1
 
-    // Divide each long into 4 chunks of 16 bits, and then add up 4x4 products.
-    // We can skip products that would overflow.
+    /* rlow = alow * blow, but we compute the above 3 subproducts for rhigh
+     * anyway, we reuse them to compute rlow too, trading a * for 2 +'s and 1 <<.
+     */
+    val rlow = a0b0 + ((a1b0 + a0b1) shl 16)
 
-    val a48 = high ushr 16
-    val a32 = high and 0xFFFF
-    val a16 = low ushr 16
-    val a00 = low and 0xFFFF
+    val c1part = (a0b0 ushr 16) + a0b1
+    val rhigh = (
+        alow * other.high + high * blow + a1 * b1 + (c1part ushr 16) +
+        (((c1part and 0xffff) + a1b0) ushr 16)
+    )
 
-    val b48 = other.high ushr 16
-    val b32 = other.high and 0xFFFF
-    val b16 = other.low ushr 16
-    val b00 = other.low and 0xFFFF
-
-    var c48 = 0
-    var c32 = 0
-    var c16 = 0
-    var c00 = 0
-    c00 += a00 * b00
-    c16 += c00 ushr 16
-    c00 = c00 and 0xFFFF
-    c16 += a16 * b00
-    c32 += c16 ushr 16
-    c16 = c16 and 0xFFFF
-    c16 += a00 * b16
-    c32 += c16 ushr 16
-    c16 = c16 and 0xFFFF
-    c32 += a32 * b00
-    c48 += c32 ushr 16
-    c32 = c32 and 0xFFFF
-    c32 += a16 * b16
-    c48 += c32 ushr 16
-    c32 = c32 and 0xFFFF
-    c32 += a00 * b32
-    c48 += c32 ushr 16
-    c32 = c32 and 0xFFFF
-    c48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48
-    c48 = c48 and 0xFFFF
-    return Long(c16 shl 16 or c00, c48 shl 16 or c32)
+    return Long(rlow, rhigh)
 }
 
 /**
@@ -305,80 +255,45 @@ internal fun Long.multiply(other: Long): Long {
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long {
-    if (other.isZero()) {
-        throw ArithmeticException("/ by zero")
-    } else if (isZero()) {
-        return ZERO
+    if (other.isZero()) throw ArithmeticException("/ by zero")
+    // JS Long paper, Section VI, Algorithm 7, specialized to get the quotient
+
+    val thisHigh = this.high
+    val otherHigh = other.high
+    val a = if (thisHigh < 0) this.negate() else this
+    val b = if (otherHigh < 0) other.negate() else other
+
+    val alo = a.low
+    val ahi = a.high
+    val blo = b.low
+    val bhi = b.high
+
+    /* Conveniently, when b = 0, we enter the first case, where the first thing
+     * we do is an int division by blo. If that throws an ArithmeticException,
+     * we will throw it as well. If it ignores it and returns 0, we'll also
+     * compute a 0 quotient, so we're in sync with the behavior of Int division.
+     */
+
+    val q = if (bothZero(bhi, blo and 0xffe00000.toInt())) {
+        // b < 2^21, Algorithm 4
+        val quotHi = (ahi.toUInt() / blo.toUInt()).toInt()
+        val k = ahi - blo * quotHi
+        val quotLo = jsToInt32(toUnsignedNumber(alo, k) / blo.toDouble())
+        Long(quotLo, quotHi)
+    } else {
+        // 2^21 <= b <= 2^63, Algorithm 5
+        val aHat = toUnsignedNumber(alo, ahi)
+        val bHat = toUnsignedNumber(blo, bhi)
+        val qHat = fromUnsignedSafeDouble((aHat / bHat) + 0.00390625) // 2^(-8)
+        val rHat = a - b * qHat
+        if (rHat.isNegative()) qHat - 1L else qHat
     }
 
-    if (equalsLong(MIN_VALUE)) {
-        if (other.equalsLong(ONE) || other.equalsLong(NEG_ONE)) {
-            return MIN_VALUE  // recall that -MIN_VALUE == MIN_VALUE
-        } else if (other.equalsLong(MIN_VALUE)) {
-            return ONE
-        } else {
-            // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.
-            val halfThis = shiftRight(1)
-            val approx = halfThis.div(other).shiftLeft(1)
-            if (approx.equalsLong(ZERO)) {
-                return if (other.isNegative()) ONE else NEG_ONE
-            } else {
-                val rem = subtract(other.multiply(approx))
-                return approx.add(rem.div(other))
-            }
-        }
-    } else if (other.equalsLong(MIN_VALUE)) {
-        return ZERO
+    return if ((thisHigh xor otherHigh) < 0) {
+        return q.negate()
+    } else {
+        return q
     }
-
-    if (isNegative()) {
-        return if (other.isNegative()) {
-            negate().div(other.negate())
-        } else {
-            negate().div(other).negate()
-        }
-    } else if (other.isNegative()) {
-        return div(other.negate()).negate()
-    }
-
-    // Repeat the following until the remainder is less than other:  find a
-    // floating-point that approximates remainder / other *from below*, add this
-    // into the result, and subtract it from the remainder.  It is critical that
-    // the approximate value is less than or equal to the real value so that the
-    // remainder never becomes negative.
-    var res = ZERO
-    var rem = this
-    while (rem.greaterThanOrEqual(other)) {
-        // Approximate the result of division. This may be a little greater or
-        // smaller than the actual value.
-        val approxDouble = rem.toNumber() / other.toNumber()
-        var approx2 = JsMath.max(1.0, JsMath.floor(approxDouble))
-
-        // We will tweak the approximate result by changing it in the 48-th digit or
-        // the smallest non-fractional digit, whichever is larger.
-        val log2 = JsMath.ceil(JsMath.log(approx2) / JsMath.LN2)
-        val delta = if (log2 <= 48) 1.0 else JsMath.pow(2.0, log2 - 48)
-
-        // Decrease the approximation until it is smaller than the remainder.  Note
-        // that if it is too large, the product overflows and is negative.
-        var approxRes = fromNumber(approx2)
-        var approxRem = approxRes.multiply(other)
-        while (approxRem.isNegative() || approxRem.greaterThan(rem)) {
-            approx2 -= delta
-            approxRes = fromNumber(approx2)
-            approxRem = approxRes.multiply(other)
-        }
-
-        // We know the answer can't be zero... and actually, zero would cause
-        // infinite recursion since we would make no progress.
-        if (approxRes.isZero()) {
-            approxRes = ONE
-        }
-
-        res = res.add(approxRes)
-        rem = rem.subtract(approxRem)
-    }
-    return res
 }
 
 /**
@@ -386,7 +301,42 @@ internal fun Long.divide(other: Long): Long {
  */
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
+internal fun Long.modulo(other: Long): Long {
+    // JS Long paper, Section VI, Algorithm 7, specialized to get the remainder
+
+    val thisHigh = this.high
+    val otherHigh = other.high
+    val a = if (thisHigh < 0) this.negate() else this
+    val b = if (otherHigh < 0) other.negate() else other
+
+    val alo = a.low
+    val ahi = a.high
+    val blo = b.low
+    val bhi = b.high
+
+    // See divide about division by 0
+
+    val r = if (bothZero(bhi, blo and 0xffe00000.toInt())) {
+        // b < 2^21, Algorithm 4
+        val k = (ahi.toUInt() % blo.toUInt()).toInt()
+        val quotLo = jsToInt32(toUnsignedNumber(alo, k) / blo.toDouble())
+        val remLo = alo - blo * quotLo
+        Long(remLo, 0)
+    } else {
+        // 2^21 <= b <= 2^63, Algorithm 5
+        val aHat = toUnsignedNumber(alo, ahi)
+        val bHat = toUnsignedNumber(blo, bhi)
+        val qHat = fromUnsignedSafeDouble((aHat / bHat) + 0.00390625) // 2^(-8)
+        val rHat = a - b * qHat
+        if (rHat.isNegative()) rHat + b else rHat
+    }
+
+    if (thisHigh < 0) {
+        return r.negate()
+    } else {
+        return r
+    }
+}
 
 /**
  * @see kotlin.js.internal.longAsBigInt.shiftLeft
@@ -394,16 +344,13 @@ internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.shiftLeft(numBits: Int): Long {
-    @Suppress("NAME_SHADOWING")
-    val numBits = numBits and 63
-    if (numBits == 0) {
-        return this
+    /* For a proof, see the comment in the Scala.js implementation:
+     * https://github.com/scala-js/scala-js/blob/v1.22.0/linker-private-library/src/main/scala/org/scalajs/linker/runtime/RuntimeLong.scala#L111
+     */
+    if ((numBits and 32) == 0) {
+        return Long(low shl numBits, (high shl numBits) or ((low ushr 1) ushr (31 - numBits)))
     } else {
-        if (numBits < 32) {
-            return Long(low shl numBits, (high shl numBits) or (low ushr (32 - numBits)))
-        } else {
-            return Long(0, low shl (numBits - 32))
-        }
+        return Long(0, low shl numBits)
     }
 }
 
@@ -413,16 +360,11 @@ internal fun Long.shiftLeft(numBits: Int): Long {
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.shiftRight(numBits: Int): Long {
-    @Suppress("NAME_SHADOWING")
-    val numBits = numBits and 63
-    if (numBits == 0) {
-        return this
+    // Similar to shiftLeft
+    if ((numBits and 32) == 0) {
+        return Long((low ushr numBits) or ((high shl 1) shl (31 - numBits)), high shr numBits)
     } else {
-        if (numBits < 32) {
-            return Long((low ushr numBits) or (high shl (32 - numBits)), high shr numBits)
-        } else {
-            return Long(high shr (numBits - 32), if (high >= 0) 0 else -1)
-        }
+        return Long(high shr numBits, high shr 31)
     }
 }
 
@@ -432,18 +374,11 @@ internal fun Long.shiftRight(numBits: Int): Long {
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun Long.shiftRightUnsigned(numBits: Int): Long {
-    @Suppress("NAME_SHADOWING")
-    val numBits = numBits and 63
-    if (numBits == 0) {
-        return this
+    // Similar to shiftLeft
+    if ((numBits and 32) == 0) {
+        return Long((low ushr numBits) or ((high shl 1) shl (31 - numBits)), high ushr numBits)
     } else {
-        if (numBits < 32) {
-            return Long((low ushr numBits) or (high shl (32 - numBits)), high ushr numBits)
-        } else return if (numBits == 32) {
-            Long(high, 0)
-        } else {
-            Long(high ushr (numBits - 32), 0)
-        }
+        return Long(high ushr numBits, 0)
     }
 }
 
@@ -473,7 +408,7 @@ internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
 // TODO: cache
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
-internal fun fromInt(value: dynamic) = Long(value, if (value < 0) -1 else 0)
+internal fun fromInt(value: dynamic) = Long(value, value.unsafeCast<Int>() shr 31)
 
 /**
  * @see kotlin.js.internal.longAsBigInt.numberToLong
@@ -493,50 +428,53 @@ internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
 internal fun fromNumber(value: Double): Long {
-    if (value.isNaN()) {
-        return ZERO;
-    } else if (value <= -TWO_PWR_63_DBL_) {
+    /* For a proof, see the comment in the Scala.js implementation:
+     * https://github.com/scala-js/scala-js/blob/v1.22.0/linker-private-library/src/main/scala/org/scalajs/linker/runtime/RuntimeLong.scala#L402
+     */
+    if (value <= -TWO_PWR_63_DBL_) {
         return MIN_VALUE;
-    } else if (value + 1 >= TWO_PWR_63_DBL_) {
+    } else if (value >= TWO_PWR_63_DBL_) {
         return MAX_VALUE;
-    } else if (value < 0) {
-        return fromNumber(-value).negate();
     } else {
-        val twoPwr32 = TWO_PWR_32_DBL_
+        val rawLow = jsToInt32(value)
+        val rawHigh = jsToInt32(value * TWO_PWR_M32_DBL_)
         return Long(
-            jsBitwiseOr(value.rem(twoPwr32), 0),
-            jsBitwiseOr(value / twoPwr32, 0)
+            rawLow,
+            if (value < 0 && rawLow != 0) rawHigh - 1 else rawHigh
         )
     }
 }
 
-//private val TWO_PWR_32_DBL_ = TWO_PWR_16_DBL_ * TWO_PWR_16_DBL_
-private const val TWO_PWR_32_DBL_ = (1 shl 16).toDouble() * (1 shl 16).toDouble()
+private const val TWO_PWR_32_DBL_ = 4294967296.0
 
-//private val TWO_PWR_63_DBL_ = TWO_PWR_64_DBL_ / 2
-private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDouble()) * ((1 shl 16).toDouble() * (1 shl 16).toDouble())) / 2
+private const val TWO_PWR_M32_DBL_ = 1.0 / TWO_PWR_32_DBL_
 
-@BoxedLongApi
-private val ZERO = fromInt(0)
+private const val TWO_PWR_63_DBL_ = 9223372036854775808.0
 
 @BoxedLongApi
 @UsedFromCompilerGeneratedCode
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 internal val ONE = fromInt(1)
 
 @BoxedLongApi
-private val NEG_ONE = fromInt(-1)
-
-@BoxedLongApi
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 private val MAX_VALUE = Long(-1, -1 ushr 1)
 
 @BoxedLongApi
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 private val MIN_VALUE = Long(0, 1 shl 31)
 
 @BoxedLongApi
-private val TWO_PWR_24_ = fromInt(1 shl 24)
-
-@BoxedLongApi
 @UsedFromCompilerGeneratedCode
+@OptIn(ExperimentalStdlibApi::class)
+@Suppress("DEPRECATION")
+@EagerInitialization
 // TODO(KT-85540): remove the property after bootstrapping
 internal val longArrayClass = PrimitiveKClassImpl(js("Array").unsafeCast<JsClass<LongArray>>(), "LongArray", { it is LongArray })
 
@@ -548,3 +486,14 @@ internal fun isLongArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "
 @UsedFromCompilerGeneratedCode
 internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic = VOID, toIndex: dynamic = VOID): LongArray =
     withType("LongArray", arr.slice(fromIndex, toIndex)).unsafeCast<LongArray>()
+
+@InlineOnly
+private inline fun bothZero(a: Int, b: Int): Boolean = (a or b) == 0
+
+@InlineOnly
+@OptIn(JsIntrinsic::class)
+private inline fun jsToInt32(x: Double): Int = jsBitOr(x, 0)
+
+@InlineOnly
+@OptIn(JsIntrinsic::class)
+private inline fun boolToInt(x: Boolean): Int = jsBitOr(x, 0)
