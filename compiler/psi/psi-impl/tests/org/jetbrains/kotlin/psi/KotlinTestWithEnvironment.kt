@@ -2,38 +2,34 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
+import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.AfterEach
 
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
+abstract class KotlinTestWithEnvironment {
+    private val testRootDisposable = Disposer.newDisposable()
+    private val environment: KotlinCoreEnvironment = createEnvironment()
+    val project: Project get() = environment.project
 
-public abstract class KotlinTestWithEnvironment extends KtUsefulTestCase {
-    private KotlinCoreEnvironment environment;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        environment = createEnvironment();
+    @AfterEach
+    fun tearDown() {
+        ApplicationManager.getApplication().runWriteAction {
+            Disposer.dispose(testRootDisposable)
+        }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        environment = null;
-        super.tearDown();
-    }
-
-    protected abstract KotlinCoreEnvironment createEnvironment() throws Exception;
-
-    @NotNull
-    public KotlinCoreEnvironment getEnvironment() {
-        return environment;
-    }
-
-    @NotNull
-    public Project getProject() {
-        return getEnvironment().getProject();
+    private fun createEnvironment(): KotlinCoreEnvironment {
+        @OptIn(CoreEnvironmentDeprecation::class)
+        return KotlinCoreEnvironment.createForParallelTests(
+            testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
     }
 }
