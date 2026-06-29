@@ -12,6 +12,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
     implementation(project(":compiler:ir.tree"))
+    api(project(":kotlin-util-jvm-inline-codegen"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)
