@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.cli.NativeDistributionListTargets
 import org.jetbrains.kotlin.commonizer.cli.Task
-import org.jetbrains.kotlin.commonizer.cli.TaskType
 import org.jetbrains.kotlin.commonizer.cli.parseTasksFromCommandLineArguments
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TestName
 import java.io.File
 import java.nio.file.Files

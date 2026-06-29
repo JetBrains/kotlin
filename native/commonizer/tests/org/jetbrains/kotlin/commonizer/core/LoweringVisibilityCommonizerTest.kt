@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities.Private
 import org.jetbrains.kotlin.descriptors.Visibilities.Protected
 import org.jetbrains.kotlin.descriptors.Visibilities.Public
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 abstract class LoweringVisibilityCommonizerTest(
     private val areMembersVirtual: Boolean
@@ -41,8 +41,8 @@ abstract class LoweringVisibilityCommonizerTest(
         Internal.toMock(), Internal.toMock(), Internal.toMock()
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun somethingUnexpected() = doTestFailure(
+    @Test
+    fun somethingUnexpected() = doTestFailure<IllegalCommonizerStateException>(
         Public.toMock(), Local.toMock()
     )
 
@@ -80,61 +80,61 @@ abstract class LoweringVisibilityCommonizerTest(
             Public.toMock(), Internal.toMock(), Public.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndInternalAndProtected() = doTestFailure(
+        @Test
+        fun publicAndInternalAndProtected() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Internal.toMock(), Protected.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndInternalAndPrivate() = doTestFailure(
+        @Test
+        fun publicAndInternalAndPrivate() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Internal.toMock(), Private.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun privateOnly() = doTestFailure(
+        @Test
+        fun privateOnly() = doTestFailure<IllegalCommonizerStateException>(
             Private.toMock()
         )
     }
 
     class VirtualMembers : LoweringVisibilityCommonizerTest(true) {
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndProtected1() = doTestFailure(
+        @Test
+        fun publicAndProtected1() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Protected.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndProtected2() = doTestFailure(
+        @Test
+        fun publicAndProtected2() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Public.toMock(), Protected.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndInternal1() = doTestFailure(
+        @Test
+        fun publicAndInternal1() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Internal.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndInternal2() = doTestFailure(
+        @Test
+        fun publicAndInternal2() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Public.toMock(), Internal.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun protectedAndInternal1() = doTestFailure(
+        @Test
+        fun protectedAndInternal1() = doTestFailure<IllegalCommonizerStateException>(
             Protected.toMock(), Internal.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun protectedAndInternal2() = doTestFailure(
+        @Test
+        fun protectedAndInternal2() = doTestFailure<IllegalCommonizerStateException>(
             Protected.toMock(), Protected.toMock(), Internal.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun publicAndPrivate() = doTestFailure(
+        @Test
+        fun publicAndPrivate() = doTestFailure<IllegalCommonizerStateException>(
             Public.toMock(), Private.toMock()
         )
 
-        @Test(expected = IllegalCommonizerStateException::class)
-        fun privateOnly() = doTestFailure(
+        @Test
+        fun privateOnly() = doTestFailure<IllegalCommonizerStateException>(
             Private.toMock()
         )
     }

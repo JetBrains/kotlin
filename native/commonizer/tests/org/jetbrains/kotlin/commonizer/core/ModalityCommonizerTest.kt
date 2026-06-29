@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Modality.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>() {
 
@@ -35,18 +35,18 @@ class ModalityCommonizerTest : AbstractCommonizerTest<Modality, Modality>() {
         ABSTRACT, ABSTRACT, ABSTRACT
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun sealedAndAbstract() = doTestFailure(
+    @Test
+    fun sealedAndAbstract() = doTestFailure<IllegalCommonizerStateException>(
         SEALED, ABSTRACT
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun sealedAndFinal() = doTestFailure(
+    @Test
+    fun sealedAndFinal() = doTestFailure<IllegalCommonizerStateException>(
         SEALED, FINAL
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun abstractAndFinal() = doTestFailure(
+    @Test
+    fun abstractAndFinal() = doTestFailure<IllegalCommonizerStateException>(
         ABSTRACT, FINAL
     )
 
