@@ -27,6 +27,9 @@ public final class org/jetbrains/kotlin/analysis/api/standalone/StandaloneAnalys
 	public static final fun disposeGlobalStandaloneApplicationServices ()V
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/standalone/StandaloneWorkaroundApi : java/lang/annotation/Annotation {
+}
+
 public final class org/jetbrains/kotlin/analysis/project/structure/builder/KaLibraryModuleBuilderKt {
 	public static final fun buildKtLibraryModule (Lorg/jetbrains/kotlin/analysis/project/structure/builder/KaModuleContainerBuilder;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaLibraryModule;
 }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaSuccessCallInfo
 import org.jetbrains.kotlin.analysis.api.resolution.successfulFunctionCallOrNull
 import org.jetbrains.kotlin.analysis.api.resolution.symbol
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
@@ -456,6 +457,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     }
 
     @Test
+    @OptIn(StandaloneWorkaroundApi::class)
     fun testLibraryModuleScopeRespectsProviderDefaultAndModuleOverride() {
         val compiledJar = compileToJar(testDataPath("otherModuleUsage").resolve("dependent"))
 

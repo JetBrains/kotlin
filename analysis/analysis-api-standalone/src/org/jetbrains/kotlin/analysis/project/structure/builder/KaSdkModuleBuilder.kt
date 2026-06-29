@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -27,7 +28,7 @@ public class KtSdkModuleBuilder(
     }
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, StandaloneWorkaroundApi::class)
 public inline fun KaModuleContainerBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KaLibraryModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
