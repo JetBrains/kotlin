@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import java.nio.file.Path
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneLibraryScopeConstructionMode
 
@@ -25,6 +26,7 @@ public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
      * The default construction mode is seeded from the owning provider's [KaModuleContainerBuilder.libraryScopeConstructionMode] and may be
      * overridden here.
      */
+    @StandaloneWorkaroundApi
     public var libraryScopeConstructionMode: StandaloneLibraryScopeConstructionMode =
         StandaloneLibraryScopeConstructionMode.ParentTraversal
 
