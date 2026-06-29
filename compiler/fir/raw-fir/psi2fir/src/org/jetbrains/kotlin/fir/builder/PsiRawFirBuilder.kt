@@ -4044,9 +4044,9 @@ open class PsiRawFirBuilder(
 
                     contextParameters.addContextParameters(modifierList.contextParameterLists, symbol)
                 }
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()?.lookupTag
             }
-        }.apply {
-            containingClassAttr = currentDispatchReceiverType()?.lookupTag
         }
     }
 }
