@@ -36,10 +36,11 @@ import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings("ALL")
-public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
+public abstract class KtParsingTestCase extends KtUsefulTestCase {
     protected String myFileExt;
     protected final String myFullDataPath;
     protected PsiFile myFile;
+    protected MockProject myProject;
 
     private KotlinCoreEnvironment myEnvironment;
 
@@ -63,6 +64,7 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         myFile = null;
         myProject = null;
         myEnvironment = null;
+        clearFields(this);
     }
 
     protected String getTestDataPath() {
