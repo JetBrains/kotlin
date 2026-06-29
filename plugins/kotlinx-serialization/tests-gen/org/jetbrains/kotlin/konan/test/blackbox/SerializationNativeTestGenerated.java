@@ -83,6 +83,12 @@ public class SerializationNativeTestGenerated extends AbstractNativeCodegenBoxTe
   }
 
   @Test
+  @TestMetadata("constructorException.kt")
+  public void testConstructorException() {
+    run("constructorException.kt");
+  }
+
+  @Test
   @TestMetadata("contextualByDefault.kt")
   public void testContextualByDefault() {
     run("contextualByDefault.kt");
