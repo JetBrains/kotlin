@@ -733,10 +733,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 val (predicate, variable) = expression.argument.accept(this, Predicate.Empty)
                 result.predicate = predicate
                 return if (variable == null) {
+                    // Mark as unknown as an earlier loop iteration might have resolved to a variable
+                    // and could have had the type check computed (see KT-86948).
+                    typeCheckResults[expression] = TypeCheckResult.UNKNOWN
                     null
                 } else {
                     tryOptimizeTypeCheck(expression, variable, predicate)
-                    return NullablePredicate(
+                    NullablePredicate(
                             ifNull = buildIsNotSubtypeOfPredicate(variable, expression.typeOperand),
                             ifNotNull = buildIsSubtypeOfPredicate(variable, expression.typeOperand)
                     )
@@ -789,6 +792,9 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             if (expression is IrTypeOperatorCall && expression.isTypeCheck()) {
                 val (predicate, variable) = expression.argument.accept(this, Predicate.Empty)
                 return if (variable == null) {
+                    // Mark as unknown as an earlier loop iteration might have resolved to a variable
+                    // and could have had the type check computed (see KT-86948).
+                    typeCheckResults[expression] = TypeCheckResult.UNKNOWN
                     val term = buildComplexTerm(expression)
                     BooleanPredicate(
                             ifTrue = Predicates.and(Predicates.disjunctionOf(term setTo true), predicate),
@@ -1223,7 +1229,11 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
              */
             (val argumentPredicate = predicate, val argumentVariable = variable) = expression.argument.accept(this, data)
             if (expression.isCast() || expression.isTypeCheck() || expression.operator == IrTypeOperator.SAFE_CAST) {
-                if (argumentVariable != null) {
+                if (argumentVariable == null) {
+                    // Mark as unknown as an earlier loop iteration might have resolved to a variable
+                    // and could have had the type check computed (see KT-86948).
+                    typeCheckResults[expression] = TypeCheckResult.UNKNOWN
+                } else {
                     tryOptimizeTypeCheck(expression, argumentVariable, argumentPredicate)
 
                     return if (expression.isCast())
