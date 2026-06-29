@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
@@ -27,14 +31,26 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
-class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() {
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_21)
+class AdditionalBuiltInsMembersSignatureListsTest {
+    private val testRootDisposable: Disposable = Disposer.newDisposable()
+    private val environment: KotlinCoreEnvironment = createEnvironment()
+
+    private fun createEnvironment(): KotlinCoreEnvironment {
+        @OptIn(CoreEnvironmentDeprecation::class)
+        return KotlinCoreEnvironment.createForTests(
+            testRootDisposable,
+            KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_21, KtTestUtil.getAnnotationsJar()),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
     }
 
+    @Test
     fun testAllListedSignaturesExistInJdk() {
         @Suppress("DEPRECATION_ERROR")
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl
