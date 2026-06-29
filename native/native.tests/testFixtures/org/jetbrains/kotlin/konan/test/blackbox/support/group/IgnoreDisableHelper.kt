@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
+import org.jetbrains.kotlin.test.services.IrCheckersDisabledByTestDirectives
+import org.jetbrains.kotlin.test.services.IrCheckersEnabledByTestDirectives
 
 private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
@@ -102,3 +104,11 @@ internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, direc
     }
     return false
 }
+
+fun RegisteredDirectives.collectToggledCheckers(): Pair<Set<String>, Set<String>> {
+    val additionalCheckers = IrCheckersEnabledByTestDirectives.filter { it.key in this }.values.toSet()
+    val disabledIrCheckers = IrCheckersDisabledByTestDirectives.filter { this[it.key].containsNativeOrAny }.values.toSet()
+
+    return additionalCheckers to disabledIrCheckers
+}
+

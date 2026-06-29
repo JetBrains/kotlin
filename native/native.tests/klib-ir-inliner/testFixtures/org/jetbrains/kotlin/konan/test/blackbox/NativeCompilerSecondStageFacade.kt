@@ -17,29 +17,23 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.collectToggledCheckers
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
-import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.CompilationStage
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.artifactsProvider
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
-import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -91,7 +85,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE],
                 withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
-                freeArgs = module.directives[FREE_COMPILER_ARGS] + customArgs,
+                freeArgs = module.directives[FREE_COMPILER_ARGS] + irCheckersArguments(module) + customArgs,
                 verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
@@ -155,7 +149,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in someModule.directives[ASSERTIONS_MODE],
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
-                freeArgs = freeArgs + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+                freeArgs = freeArgs + irCheckersArguments(someModule) + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
                 verifyIrMode = VerifyIrMode.ERROR,
             )
 
@@ -276,3 +270,10 @@ internal fun TestModule.fileCheckStage(): String? {
  * Constructs file check dump path for the given executable file and stage
  */
 internal fun File.fileCheckDump(fileCheckStage: String): File = this.resolveSibling("out.$fileCheckStage.ll")
+
+fun irCheckersArguments(module: TestModule): List<String> =
+    module.directives.collectToggledCheckers().let { [additional, disabled] ->
+        val additionalArgs = additional.ifNotEmpty { "-Xadditional-ir-checkers=" + additional.joinToString(",") }
+        val disabledArgs = disabled.ifNotEmpty { "-Xdisable-ir-checkers=" + disabled.joinToString(",") }
+        listOfNotNull(additionalArgs, disabledArgs)
+    }
