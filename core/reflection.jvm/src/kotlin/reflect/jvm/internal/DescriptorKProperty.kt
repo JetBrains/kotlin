@@ -45,13 +45,14 @@ internal abstract class DescriptorKProperty<out V> private constructor(
     constructor(
         container: KDeclarationContainerImpl,
         descriptor: PropertyDescriptor,
+        boundReceiver: Any?,
         overriddenStorage: KCallableOverriddenStorage,
     ) : this(
         container,
         descriptor.name.asString(),
         RuntimeTypeMapper.mapPropertySignature(descriptor).asString(),
         descriptor,
-        CallableReference.NO_RECEIVER,
+        boundReceiver,
         overriddenStorage,
     )
 
@@ -146,16 +147,19 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         override val isOperator: Boolean get() = descriptor.isOperator
         override val isInfix: Boolean get() = descriptor.isInfix
         override val isSuspend: Boolean get() = descriptor.isSuspend
-    }
-
-    abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
-        override val name: String get() = "<get-${property.name}>"
 
         final override fun shallowCopy(
             container: KDeclarationContainerImpl,
             overriddenStorage: KCallableOverriddenStorage,
-        ): DescriptorKCallable<V> =
+        ): DescriptorKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
+
+        override fun rebind(boundReceiver: Any?): DescriptorKCallable<ReturnType> =
+            error("Property accessors can only be bound by copying the corresponding property")
+    }
+
+    abstract class Getter<out V> : Accessor<V, V>(), KProperty.Getter<V> {
+        override val name: String get() = "<get-${property.name}>"
 
         override val descriptor: PropertyGetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY).apply {
@@ -181,12 +185,6 @@ internal abstract class DescriptorKProperty<out V> private constructor(
 
     abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
         override val name: String get() = "<set-${property.name}>"
-
-        final override fun shallowCopy(
-            container: KDeclarationContainerImpl,
-            overriddenStorage: KCallableOverriddenStorage,
-        ): DescriptorKCallable<Unit> =
-            error("Property accessors can only be copied by copying the corresponding property")
 
         override val descriptor: PropertySetterDescriptor by ReflectProperties.lazySoft {
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)

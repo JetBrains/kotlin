@@ -74,4 +74,8 @@ internal class JavaKConstructor(
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return JavaKConstructor(container, jConstructor, CallableReference.NO_RECEIVER)
     }
+
+    override fun rebind(boundReceiver: Any?): ReflectKCallable<Any?> =
+        if (this.rawBoundReceiver === boundReceiver) this
+        else JavaKConstructor(container, jConstructor, boundReceiver)
 }
