@@ -7,19 +7,19 @@
 @file:Suppress("DEPRECATION", "DEPRECATION_ERROR") // Char.toInt()
 package kotlin.native.internal
 
-import kotlin.experimental.ExperimentalNativeApi
-import kotlin.internal.getProgressionLastElement
-import kotlin.reflect.KClass
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.NativePtr
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlinx.cinterop.*
-import kotlinx.cinterop.NativePtr
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.internal.UsedFromCompilerGeneratedCode
+import kotlin.internal.staticInitializationFailure
 import kotlin.native.internal.escapeAnalysis.Escapes
 import kotlin.native.internal.ref.ExternalRCRef
 import kotlin.native.internal.ref.dereferenceExternalRCRef
 import kotlin.native.internal.ref.disposeExternalRCRef
 import kotlin.native.internal.ref.releaseExternalRCRef
+import kotlin.reflect.KClass
 
 @ExportForCppRuntime
 @UsedFromCompilerGeneratedCode
@@ -120,20 +120,9 @@ internal fun ThrowCharacterCodingException(): Nothing {
     throw CharacterCodingException()
 }
 
-internal class FileFailedToInitializeException(message: String?, cause: Throwable?) : Error(message, cause)
-
 @ExportForCppRuntime
-@OptIn(ExperimentalStdlibApi::class)
 internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
-    if (reason is Error) {
-        throw reason
-    } else {
-        // https://youtrack.jetbrains.com/issue/KT-57134
-        // TODO: align exact exception hierarchy with jvm
-        // in jvm it's NoClassDefFound if reason is null, i.e. this is already failed class
-        // and ExceptionInInitializerError if it's non-null
-        throw FileFailedToInitializeException("There was an error during file or class initialization", reason)
-    }
+    staticInitializationFailure(reason, null)
 }
 
 @ExportForCppRuntime

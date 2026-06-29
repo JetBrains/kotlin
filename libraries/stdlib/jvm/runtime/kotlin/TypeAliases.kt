@@ -23,6 +23,8 @@ package kotlin
 @Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 @SinceKotlin("1.1") public actual typealias AssertionError = java.lang.AssertionError
 
+internal actual typealias ExceptionInInitializerError = java.lang.ExceptionInInitializerError
+
 @SinceKotlin("1.1") public actual typealias NoSuchElementException = java.util.NoSuchElementException
 
 @Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")

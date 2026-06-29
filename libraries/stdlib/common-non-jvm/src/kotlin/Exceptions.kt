@@ -93,3 +93,9 @@ public actual open class AssertionError : Error {
     @SinceKotlin("1.4")
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
+
+internal actual open class ExceptionInInitializerError : Error {
+    actual constructor() : super()
+    actual constructor(message: String?) : super(message)
+    actual constructor(cause: Throwable?) : super(null, cause)
+}

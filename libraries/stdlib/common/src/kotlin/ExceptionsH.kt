@@ -124,6 +124,11 @@ internal class KotlinNothingValueException : RuntimeException {
     public constructor(cause: Throwable?) : super(cause)
 }
 
+internal expect class ExceptionInInitializerError : Error {
+    constructor()
+    constructor(message: String?)
+    constructor(cause: Throwable?)
+}
 
 /**
  * Returns the detailed description of this throwable with its stack trace.
