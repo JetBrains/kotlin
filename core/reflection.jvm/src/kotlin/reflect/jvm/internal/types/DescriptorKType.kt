@@ -121,16 +121,7 @@ internal class DescriptorKType(
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             if (!JavaToKotlinClassMapper.isMutable(classDescriptor)) return null
             if (useK1Implementation) {
-                return MutableCollectionKClass(
-                    classifier as KClass<*>,
-                    classDescriptor.fqNameSafe.asString(),
-                    { container ->
-                        classDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(container, descriptor) }
-                    },
-                    {
-                        classDescriptor.typeConstructor.supertypes.map(::DescriptorKType)
-                    },
-                )
+                return DescriptorMutableCollectionKClass(classifier as KClass<*>, classDescriptor)
             }
             return getMutableCollectionKClass(classifier as KClass<*>)
         }
