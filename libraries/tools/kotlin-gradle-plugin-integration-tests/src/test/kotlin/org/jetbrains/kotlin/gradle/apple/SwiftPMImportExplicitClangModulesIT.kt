@@ -60,16 +60,16 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/ExposedHelper.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/ExposedHelper.Companion|null[1]
-                    swiftPMImport.emptyxcode/ExposedHelper.init|objc:init[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.greeting|objc:greeting[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta|null[1]
-                    swiftPMImport.emptyxcode/ExposedHelper|null[1]
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/ExposedHelper : platform/darwin/NSObject
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCConstructor public /* secondary */ constructor swiftPMImport/emptyxcode/ExposedHelper.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated @kotlinx/cinterop/internal/CCall.ConsumesReceiver @kotlinx/cinterop/internal/CCall.ReturnsRetained public open expect fun swiftPMImport/emptyxcode/ExposedHelper.init(): swiftPMImport/emptyxcode/ExposedHelper?
+                    public final expect companion object swiftPMImport/emptyxcode/ExposedHelper.Companion : swiftPMImport/emptyxcode/ExposedHelperMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/ExposedHelper>
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/ExposedHelperMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/ExposedHelperMeta.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.alloc(): swiftPMImport/emptyxcode/ExposedHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/ExposedHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.greeting(): kotlin/String?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.new(): swiftPMImport/emptyxcode/ExposedHelper?
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "With implicit discovery disabled and only ExposedTarget listed in importedClangModules, " +
@@ -107,26 +107,26 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
 
             assertEquals(
                 """
-                    swiftPMImport.emptyxcode/ExposedHelper.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/ExposedHelper.Companion|null[1]
-                    swiftPMImport.emptyxcode/ExposedHelper.init|objc:init[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.greeting|objc:greeting[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/ExposedHelperMeta|null[1]
-                    swiftPMImport.emptyxcode/ExposedHelper|null[1]
-                    swiftPMImport.emptyxcode/HiddenHelper.<init>|objc:init#Constructor[1]
-                    swiftPMImport.emptyxcode/HiddenHelper.Companion|null[1]
-                    swiftPMImport.emptyxcode/HiddenHelper.init|objc:init[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta.<init>|<init>(){}[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta.allocWithZone|objc:allocWithZone:[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta.alloc|objc:alloc[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta.greeting|objc:greeting[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta.new|objc:new[1]
-                    swiftPMImport.emptyxcode/HiddenHelperMeta|null[1]
-                    swiftPMImport.emptyxcode/HiddenHelper|null[1]
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/ExposedHelper : platform/darwin/NSObject
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCConstructor public /* secondary */ constructor swiftPMImport/emptyxcode/ExposedHelper.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated @kotlinx/cinterop/internal/CCall.ConsumesReceiver @kotlinx/cinterop/internal/CCall.ReturnsRetained public open expect fun swiftPMImport/emptyxcode/ExposedHelper.init(): swiftPMImport/emptyxcode/ExposedHelper?
+                    public final expect companion object swiftPMImport/emptyxcode/ExposedHelper.Companion : swiftPMImport/emptyxcode/ExposedHelperMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/ExposedHelper>
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/ExposedHelperMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/ExposedHelperMeta.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.alloc(): swiftPMImport/emptyxcode/ExposedHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/ExposedHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.greeting(): kotlin/String?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/ExposedHelperMeta.new(): swiftPMImport/emptyxcode/ExposedHelper?
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/HiddenHelper : platform/darwin/NSObject
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCConstructor public /* secondary */ constructor swiftPMImport/emptyxcode/HiddenHelper.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated @kotlinx/cinterop/internal/CCall.ConsumesReceiver @kotlinx/cinterop/internal/CCall.ReturnsRetained public open expect fun swiftPMImport/emptyxcode/HiddenHelper.init(): swiftPMImport/emptyxcode/HiddenHelper?
+                    public final expect companion object swiftPMImport/emptyxcode/HiddenHelper.Companion : swiftPMImport/emptyxcode/HiddenHelperMeta, kotlinx/cinterop/ObjCClassOf<swiftPMImport/emptyxcode/HiddenHelper>
+                    @kotlinx/cinterop/ExternalObjCClass @kotlinx/cinterop/ExperimentalForeignApi public open expect class swiftPMImport/emptyxcode/HiddenHelperMeta : platform/darwin/NSObjectMeta
+                    protected /* secondary */ constructor swiftPMImport/emptyxcode/HiddenHelperMeta.<init>()
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/HiddenHelperMeta.alloc(): swiftPMImport/emptyxcode/HiddenHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod @kotlin/Deprecated public open expect fun swiftPMImport/emptyxcode/HiddenHelperMeta.allocWithZone(zone: kotlinx/cinterop/CPointer<cnames/structs/_NSZone>?): swiftPMImport/emptyxcode/HiddenHelper?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/HiddenHelperMeta.greeting(): kotlin/String?
+                    @kotlin/commonizer/ObjCCallable @kotlinx/cinterop/ObjCMethod public open expect fun swiftPMImport/emptyxcode/HiddenHelperMeta.new(): swiftPMImport/emptyxcode/HiddenHelper?
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "With implicit discovery disabled and importedClangModules omitted, the default " +
