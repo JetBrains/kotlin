@@ -27,19 +27,9 @@ val IrExternalPackageFragment.containerSource: DeserializedContainerSource?
     @OptIn(K1Deprecation::class)
     get() = (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
 
-/**
- * This should be a link to [IrModuleFragment] instead.
- *
- * Unfortunately, some package fragments (e.g. some synthetic ones and [IrExternalPackageFragment])
- * are not located in any IR module, but still have a module descriptor.
- */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrPackageFragment.moduleDescriptor: ModuleDescriptor
-    get() = if (this is IrFileImpl) {
-        module.descriptor
-    } else {
-        packageFragmentDescriptor.containingDeclaration
-    }
+    get() = module.descriptor
 
 
 fun createEmptyExternalPackageFragment(module: IrModuleFragment, fqName: FqName): IrExternalPackageFragment =
