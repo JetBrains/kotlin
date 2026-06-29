@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 
 class KtCodeFragmentTest : KotlinTestWithEnvironment() {
     fun testSingleImportDirectiveWithoutContext() {
