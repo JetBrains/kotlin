@@ -177,7 +177,7 @@
 /compiler/testData/cli/metadata/ "Kotlin Frontend"
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
 /compiler/testData/codegen/box/ "Kotlin Compiler"
-/compiler/testData/codegen/box/size/ zalim.bashorov@jetbrains.com
+/compiler/testData/codegen/box/size/ zalim.bashorov@jetbrains.com "Kotlin JS"
 /compiler/testData/codegen/boxJvm/ "Kotlin Compiler"
 /compiler/testData/codegen/boxInline/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"

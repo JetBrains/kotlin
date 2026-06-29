@@ -190,6 +190,7 @@ fun TestConfigurationBuilder.configureJsBoxHandlers(
             ::JsTypeScriptCompilationHandler,
             ::NodeJsGeneratorHandler,
             ::JsBoxRunner,
+            ::JsSizeHandler,
         )
         runIf(verifyJsAst) {
             useHandlers(::JsAstHandler)
