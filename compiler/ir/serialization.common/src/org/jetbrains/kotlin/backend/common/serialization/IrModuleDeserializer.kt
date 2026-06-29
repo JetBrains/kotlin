@@ -174,10 +174,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     private val signatureComputer = PublicIdSignatureComputer(mangler)
     private val syntheticProvider = IrSyntheticProvider(
-        packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(
-            delegate.moduleDescriptor,
-            StandardClassIds.BASE_INTERNAL_IR_PACKAGE
-        ),
+        module = delegate.moduleFragment,
         symbolTable = symbolTable,
         signatureComputer = signatureComputer::computeSignature
     )
