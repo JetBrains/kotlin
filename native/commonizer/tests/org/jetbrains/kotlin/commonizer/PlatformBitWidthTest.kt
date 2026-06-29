@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.commonizer
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformIntWidth
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndex
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PlatformBitWidthTest {

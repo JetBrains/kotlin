@@ -23,5 +23,5 @@ abstract class KtInlineSourceCommonizerTestCase : InlineSourceBuilderDelegate {
         Disposer.dispose(testRootDisposable)
     }
 
-    override val inlineSourceBuilder: InlineSourceBuilder = InlineSourceBuilderImpl(testRootDisposable)
+    override val inlineSourceBuilder: InlineSourceBuilder by lazy { InlineSourceBuilderImpl(testRootDisposable) }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.utils.mockClassType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.DeprecationLevel.*
 
 class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, List<CirAnnotation>>() {
