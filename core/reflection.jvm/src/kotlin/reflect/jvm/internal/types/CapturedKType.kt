@@ -20,7 +20,7 @@ internal class CapturedKType(
 
     override val arguments: List<KTypeProjection> get() = emptyList()
 
-    override val annotations: List<Annotation> get() = emptyList()
+    override val lazyAnnotations: Lazy<List<Annotation>> = lazyOf(emptyList())
 
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType =
         if (nullable == isMarkedNullable) this else CapturedKType(lowerType, typeConstructor, nullable)
@@ -92,7 +92,7 @@ internal fun captureKTypeFromArguments(type: AbstractKType): AbstractKType? {
         klass,
         capturedArguments,
         type.isMarkedNullable,
-        type.annotations,
+        type.lazyAnnotations,
         type.abbreviation,
         isDefinitelyNotNullType = false,
         isNothingType = false,

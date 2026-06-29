@@ -136,7 +136,7 @@ private fun createJavaSimpleType(
     mutableCollectionClass: KClass<*>? = null,
 ): SimpleKType = SimpleKType(
     classifier, arguments, isMarkedNullable,
-    annotations = emptyList(),
+    lazyAnnotations = lazyOf(emptyList()),
     abbreviation = null,
     isDefinitelyNotNullType = false,
     isNothingType = false,

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Type
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
@@ -88,8 +89,8 @@ internal class DescriptorKType(
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 
-    override val annotations: List<Annotation>
-        get() = type.computeAnnotations()
+    override val lazyAnnotations: Lazy<List<Annotation>> =
+        lazy(PUBLICATION) { type.computeAnnotations() }
 
     override fun makeNullableAsSpecified(nullable: Boolean): AbstractKType {
         // If the type is not marked nullable, it's either a non-null type or a platform type.
