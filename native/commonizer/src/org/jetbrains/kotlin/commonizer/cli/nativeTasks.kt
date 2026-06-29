@@ -67,13 +67,15 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination)
         }
+        val supportLibraryRepository = CommonizerSupportLibraryRepository(distribution, logger)
 
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
+            supportLibraryRepository = supportLibraryRepository,
             dependencies = StdlibRepository(distribution, libraryLoader)
                     + CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader)
-                    + CommonizerSupportLibraryRepository(logger),
+                    + supportLibraryRepository,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,
@@ -108,12 +110,14 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
 
         val descriptionSuffix = estimateLibrariesCount(repository, outputTargets.allLeaves()).let { " ($it items)" }
         logger.log("${logPrefix}Preparing commonized Kotlin/Native libraries for ${outputTargets.allLeaves()}$descriptionSuffix")
+        val supportLibraryRepository = CommonizerSupportLibraryRepository(distribution, logger)
 
         LibraryCommonizer(
             outputTargets = outputTargets,
             repository = repository,
+            supportLibraryRepository = supportLibraryRepository,
             dependencies = StdlibRepository(distribution, libraryLoader)
-                    + CommonizerSupportLibraryRepository(logger),
+                    + supportLibraryRepository,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger,

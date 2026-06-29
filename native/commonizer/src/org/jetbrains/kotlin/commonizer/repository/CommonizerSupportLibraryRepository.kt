@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.associateByNotNull
 import java.io.File
 
-const val SUPPORT_LIB_PATH = "/Users/Nikolay.Lunyak/Documents/Projects/kotlin-worktrees/kotlin-platform-type-commonized-to-different-types/libraries/commonizer-support-library/build/classes/kotlin"
-
-val SUPPORT_LIB_FILE = File(SUPPORT_LIB_PATH)
-val SUPPORT_LIB_FILE_COMMON = SUPPORT_LIB_FILE.resolve("metadata")
+private const val SUPPORT_LIB_NAME = "commonizer-support-library"
 
 val supportHierarchy = mapOf(
     "linuxArm64" to "linuxMain",
@@ -93,27 +90,50 @@ fun Map<String, SupportHierarchyTarget>.toCommonizerTargets(): Map<SupportHierar
     return map { it.value to it.value.toCommonizerTarget() }.toMap()
 }
 
-internal fun loadSupportLibraries(logger: Logger): Map<String, NativeLibrary> {
-    val supportLibSharedTargets = SUPPORT_LIB_FILE_COMMON.list { _, name -> name.endsWith("Main") } ?: return emptyMap()
-    val supportNativeSharedLibraries = supportLibSharedTargets.associateWith {
-        val file = SUPPORT_LIB_FILE_COMMON.resolve(it).resolve("klib").resolve("module1_$it")
-        DefaultNativeLibraryLoader(logger).invoke(file)
+/**
+ * Resolves the klibs base directory for the support library.
+ *
+ * Normally this is [KonanDistribution.commonizerSupportLibrary] (`klib/commonizer/support/` in
+ * the distribution). For in-tree tests the bootstrap distribution doesn't contain the support
+ * library, so `jvmArgumentProviders` in the test task sets the system property
+ * `kotlin.internal.commonizer.supportLibClassesDir` to the project's `build/classes/kotlin/`
+ * directory, which takes precedence here.
+ */
+private fun KonanDistribution.resolveCommonizerSupportLibDir(): File =
+    System.getProperty("kotlin.internal.commonizer.supportLibClassesDir")
+        ?.let { File(it) }
+        ?: commonizerSupportLibrary
+
+internal fun loadSupportLibraries(distribution: KonanDistribution, logger: Logger): Map<String, NativeLibrary> {
+    val klibsBase = distribution.resolveCommonizerSupportLibDir()
+    val metadataBase = klibsBase.resolve("metadata")
+    val loader = DefaultNativeLibraryLoader(logger)
+
+    // Intermediate metadata klibs: metadata/<sourceSet>/klib/<libName>_<sourceSet>/
+    val supportLibSharedTargets = metadataBase.list { _, name -> name.endsWith("Main") } ?: return emptyMap()
+    val supportNativeSharedLibraries = supportLibSharedTargets.associateWith { sourceSetName ->
+        val file = metadataBase.resolve(sourceSetName).resolve("klib").resolve("${SUPPORT_LIB_NAME}_$sourceSetName")
+        loader.invoke(file)
     }
 
-    val supportLibLeafTargets = SUPPORT_LIB_FILE.list { _, name ->
+    // Leaf target klibs: <target>/main/klib/<libName>/
+    val supportLibLeafTargets = klibsBase.list { _, name ->
         name.endsWith("X64") || name.endsWith("Arm64") || name.endsWith("X32") || name.endsWith("Arm32") || name.endsWith("X86")
     } ?: return emptyMap()
-    val supportNativeLeafLibraries = supportLibLeafTargets.associateWith {
-        val file = SUPPORT_LIB_FILE.resolve(it).resolve("main").resolve("klib").resolve("module1")
-        DefaultNativeLibraryLoader(logger).invoke(file)
+    val supportNativeLeafLibraries = supportLibLeafTargets.associateWith { targetName ->
+        val file = klibsBase.resolve(targetName).resolve("main").resolve("klib").resolve(SUPPORT_LIB_NAME)
+        loader.invoke(file)
     }
 
     return supportNativeSharedLibraries + supportNativeLeafLibraries
 }
 
-internal class CommonizerSupportLibraryRepository(val logger: Logger) : Repository {
+internal class CommonizerSupportLibraryRepository(
+    private val distribution: KonanDistribution,
+    val logger: Logger,
+) : Repository {
     val libraries by lazy {
-        val supportLibraries = loadSupportLibraries(logger)
+        val supportLibraries = loadSupportLibraries(distribution, logger)
         val supportHierarchyTargets = buildSupportHierarchyTargets()
         val supportHierarchyCommonizerTargets = supportHierarchyTargets.toCommonizerTargets()
 

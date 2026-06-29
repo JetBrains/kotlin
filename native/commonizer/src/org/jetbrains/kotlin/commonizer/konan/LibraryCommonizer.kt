@@ -19,6 +19,7 @@ internal class LibraryCommonizer internal constructor(
     private val outputTargets: Set<SharedCommonizerTarget>,
     private val repository: Repository,
     private val dependencies: Repository,
+    private val supportLibraryRepository: CommonizerSupportLibraryRepository,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val logger: Logger,
@@ -50,15 +51,13 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun commonizeAndSaveResults(libraries: TargetDependent<NativeLibrariesToCommonize?>) {
-        val repository = CommonizerSupportLibraryRepository(logger)
-
         runCommonization(
             CommonizerParameters(
                 outputTargets = outputTargets,
                 targetProviders = libraries.map { target, targetLibraries -> createTargetProvider(target, targetLibraries) },
                 manifestProvider = createManifestProvider(libraries),
                 dependenciesProvider = createDependenciesProvider(),
-                supportLibraryModulesProvider = repository.toModulesProvider(outputTargets),
+                supportLibraryModulesProvider = supportLibraryRepository.toModulesProvider(outputTargets),
                 resultsConsumer = resultsConsumer,
                 statsCollector = statsCollector,
                 logger = logger,

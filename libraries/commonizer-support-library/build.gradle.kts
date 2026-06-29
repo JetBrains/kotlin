@@ -75,3 +75,12 @@ kotlin {
         optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
     }
 }
+
+val commonizerKlibs by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+
+    outgoing.artifact(layout.buildDirectory.dir("classes/kotlin")) {
+        builtBy(tasks.named("build"))
+    }
+}
