@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 
 class KtVisitorTest : KotlinTestWithEnvironment() {
     fun testTopLevelFunctionContextVisiting() {

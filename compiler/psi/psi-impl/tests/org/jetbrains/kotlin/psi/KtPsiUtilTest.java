@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.Assert;
 
