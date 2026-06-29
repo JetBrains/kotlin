@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -102,64 +103,79 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
     }
 
 
+    @Test
     fun testSimple() {
         doTest("builtinsSerializer/simple.kt")
     }
 
+    @Test
     fun testNestedClassesAndObjects() {
         doTest("builtinsSerializer/nestedClassesAndObjects.kt", ".fir.txt")
     }
 
+    @Test
     fun testCompileTimeConstants() {
         // After implementation of https://youtrack.jetbrains.com/issue/KT-65805/Migrate-builtins-serializer-to-K2,
         // compileTimeConstants.txt will be same as compileTimeConstants.fir.txt. So, it would be worthwhile to unify them.
         doTest("builtinsSerializer/compileTimeConstants.kt", ".fir.txt")
     }
 
+    @Test
     fun testAnnotationTargets() {
         doTest("builtinsSerializer/annotationTargets.kt")
     }
 
+    @Test
     fun testAnnotatedEnumEntry() {
         doTest("builtinsSerializer/annotatedEnumEntry.kt")
     }
 
+    @Test
     fun testPrimitives() {
         doTest("builtinsSerializer/annotationArguments/primitives.kt")
     }
 
+    @Test
     fun testPrimitiveArrays() {
         doTest("builtinsSerializer/annotationArguments/primitiveArrays.kt")
     }
 
+    @Test
     fun testString() {
         doTest("builtinsSerializer/annotationArguments/string.kt")
     }
 
+    @Test
     fun testAnnotation() {
         doTest("builtinsSerializer/annotationArguments/annotation.kt")
     }
 
+    @Test
     fun testEnum() {
         doTest("builtinsSerializer/annotationArguments/enum.kt")
     }
 
+    @Test
     fun testPropertyAccessorAnnotations() {
         doTest("builtinsSerializer/propertyAccessorAnnotations.kt", ".fir.txt")
     }
 
+    @Test
     fun testReceiverAnnotations() {
         doTest("klib/receiverAnnotations.kt")
     }
 
+    @Test
     fun testFieldAnnotations() {
         doTest("klib/fieldAnnotations.kt")
     }
 
+    @Test
     fun testDelegationToInterfaceWithDeprecation() {
         doTestWithDependency("klib/delegationToInterfaceWithDeprecation_main.kt", "klib/delegationToInterfaceWithDeprecation_dep.kt")
     }
 
+    @Test
     fun testComplexDeprecation() {
         doTest("klib/complexDeprecation.kt")
     }

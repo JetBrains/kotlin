@@ -46,6 +46,7 @@ Compiler:
  - compiler/test-security-manager
  - compiler/testData
  - compiler/testFixtures
+ - compiler/testResources
  - compiler/tests
  - compiler/tests-against-klib
  - compiler/tests-common

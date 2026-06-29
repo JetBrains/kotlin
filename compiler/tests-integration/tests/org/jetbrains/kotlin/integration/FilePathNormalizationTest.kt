@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -32,6 +35,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
     // It compiles and runs a program in a separate process to be able to test how it works from different working directories.
     // (It could be tested in the same process by changing the user.dir manually, but that could change behavior
     // of other tests run in parallel.)
+    @Test
     fun test() {
         val descendantRelativeTo = File::descendantRelativeTo.name
         val program = ProgramWithDependencyOnCompiler(
@@ -51,7 +55,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
             // We use "/" below for simplicity, but the actual paths in compiler messages use the system separator.
             val expected = expectedWithForwardSlash.replace("/", File.separator)
             val actual = program.run(cwd, filePath)
-            assertEquals("cwd: $cwd\nfilePath: $filePath\n", expected, actual)
+            assertEquals(expected, actual, "cwd: $cwd\nfilePath: $filePath\n")
         }
 
         doTest(tmpdir, "a", "a")
@@ -91,6 +95,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
     private operator fun File.div(x: String): File = File(this, x)
 
     // Check, that the compiler still works, when classpath entry is passed by symlink
+    @Test
     fun testSymlinkInClasspath() {
         fun compileWithClasspath(source: String, fileName: String, outputFile: File, classpath: File? = null) {
             val programSource = File(tmpdir, fileName)
@@ -109,7 +114,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                     ).joinToString(File.pathSeparator)
                 }
             )
-            assertEquals("Compilation failed:\n$stdout", ExitCode.OK, exitCode)
+            assertEquals(ExitCode.OK, exitCode, "Compilation failed:\n$stdout")
         }
 
         // Run the compiled file
@@ -223,6 +228,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
         }
     }
 
+    @Test
     fun testSymlinkInJsKlibPath() {
         fun compileKlib(source: String, fileName: String, outputFile: File, dependency: File? = null) {
             val programSource = File(tmpdir, fileName)
@@ -254,7 +260,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
                 K2JSCompiler().execFullPathsInMessages(printStream, args)
             }
 
-            assertEquals("Compilation failed:\n$compilerXmlOutput", ExitCode.OK, exitCode)
+            assertEquals(ExitCode.OK, exitCode, "Compilation failed:\n$compilerXmlOutput")
         }
 
         // There are four possible scenarios:
@@ -357,6 +363,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
     }
 
     // Some compiler plugins use CONTENT_ROOTS. In case of symlinks, there should also be symlinks
+    @Test
     fun testSymlinksInContentRoots() {
         // Symlinks do not work on Windows
         if (isWindows) return

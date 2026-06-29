@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
@@ -30,6 +28,9 @@ import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlin
 import org.jetbrains.kotlin.util.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.File
@@ -144,30 +145,37 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     // ------------------------------------------------------------------------------
 
     // KT-62900 K2: Expected expression to be resolved during Fir2Ir
+    @Test
     fun testMissingEnumReferencedInAnnotationArgument() {
         doTestBrokenLibrary("library", "a/E.class")
     }
 
+    @Test
     fun testIncompleteHierarchyInJava() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    @Test
     fun testIncompleteHierarchyInKotlin() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    @Test
     fun testIncompleteHierarchyMissingInterface() {
         doTestBrokenLibrary("library", "test/A.class")
     }
 
+    @Test
     fun testIncompleteHierarchyOnlyImport() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    @Test
     fun testMissingStaticClass() {
         doTestBrokenLibrary("library", "test/C\$D.class")
     }
 
+    @Test
     fun testIncompleteHierarchyNoErrors() {
         doTestBrokenLibrary(
             "library",
@@ -176,6 +184,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testIncompleteHierarchyWithExtendedCompilerChecks() {
         doTestBrokenLibrary(
             "library",
@@ -184,30 +193,37 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testIncompleteHierarchyErrorPositions() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    @Test
     fun testIncompleteHierarchyOfEnclosingClass() {
         doTestBrokenLibrary("library", "test/Super.class")
     }
 
+    @Test
     fun testMissingDependencySimple() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
+    @Test
     fun testComputeSupertypeWithMissingDependency() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
+    @Test
     fun testMissingDependencyDifferentCases() {
         doTestBrokenLibrary("library", "a/A.class")
     }
 
+    @Test
     fun testMissingDependencyNestedAnnotation() {
         doTestBrokenLibrary("library", "a/A\$Anno.class")
     }
 
+    @Test
     fun testMissingDependencyConflictingLibraries() {
         val library1 = copyJarFileWithoutEntry(
             compileLibrary("library1"),
@@ -222,40 +238,49 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
+    @Test
     fun testMissingDependencyJava() {
         doTestBrokenLibrary("library", "test/Bar.class")
     }
 
+    @Test
     fun testMissingDependencyJavaConflictingLibraries() {
         val library1 = copyJarFileWithoutEntry(compileLibrary("library1"), "test/A.class", "test/A\$Inner.class")
         val library2 = copyJarFileWithoutEntry(compileLibrary("library2"), "test/A.class", "test/A\$Inner.class")
         compileKotlin("source.kt", tmpdir, listOf(library1, library2))
     }
 
+    @Test
     fun testMissingDependencyJavaNestedAnnotation() {
         doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibrary() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK1 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() = muteForK1 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, K2MetadataCompilerArguments::skipMetadataVersionCheck.cliArgument)
     }
 
+    @Test
     fun testPreReleaseCompilerAgainstPreReleaseLibraryStableLanguageVersion() {
         withPreRelease {
             val library = compileLibrary("library")
@@ -269,6 +294,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testPreReleaseCompilerAgainstPreReleaseLibraryLatestStable() {
         withPreRelease {
             val library = compileLibrary("library")
@@ -281,10 +307,12 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, K2JVMCompilerArguments::allowUnstableDependencies.cliArgument, CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
+    @Test
     fun testWrongMetadataVersion() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
@@ -293,6 +321,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     // to compile something against this library. It emulates the scenario when a future Kotlin version has a completely different metadata
     // format -- so different that reading it as if it's the current (protobuf-based) format would most likely result in an exception.
     // Expected result is that the compiler does NOT try to read it, and instead reports incompatible version & unresolved reference errors.
+    @Test
     fun testWrongMetadataVersionBadMetadata() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, value ->
             if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME == name) {
@@ -305,20 +334,24 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         })
     }
 
+    @Test
     fun testWrongMetadataVersionBadMetadata2() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, _ ->
             if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME == name) arrayOf<String>() else null
         })
     }
 
+    @Test
     fun testWrongMetadataVersionSkipVersionCheck() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, K2MetadataCompilerArguments::skipMetadataVersionCheck.cliArgument)
     }
 
+    @Test
     fun testWrongMetadataVersionSkipPrereleaseCheckHasNoEffect() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, CommonCompilerArguments::skipPrereleaseCheck.cliArgument)
     }
 
+    @Test
     fun testKlibMetadataVersionSupportedDependency() {
         val sourceSetDir = File(testDataPath, "klibMetadataVersionDependency")
         val currentLanguageVersionIndex = LanguageVersion.entries.indexOf(LanguageVersion.LATEST_STABLE)
@@ -368,6 +401,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testKlibMetadataVersionUnsupportedDependency() {
         val sourceSetDir = File(testDataPath, "klibMetadataVersionDependency")
         val currentLanguageVersionIndex = LanguageVersion.entries.indexOf(LanguageVersion.LATEST_STABLE)
@@ -415,16 +449,19 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
+    @Test
     fun testRequireKotlin() = muteForK2 {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
+    @Test
     fun testRequireKotlinInNestedClasses() = muteForK2 {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
+    @Test
     fun testRequireKotlinInNestedClassesJs() = muteForK2 {
         muteForK1 {
             compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
@@ -432,6 +469,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     // KT-59901 K2: Disappeared API_NOT_AVAILABLE
+    @Test
     fun testRequireKotlinInNestedClassesAgainst14Js() = muteForK2 {
         muteForK1 {
             val library =
@@ -443,11 +481,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testStrictMetadataVersionSemanticsSameVersion() {
         val library = compileLibrary("library", additionalOptions = listOf(K2JVMCompilerArguments::strictMetadataVersionSemantics.cliArgument))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    @Test
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.entries) {
             if (languageVersion.isUnsupported) continue
@@ -464,22 +504,23 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
             val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"), languageVersion.toMetadataVersion())!!
             val classVersion = topLevelClass.classHeader.metadataVersion
-            assertEquals("Actual version: $classVersion", expectedMajor, classVersion.major)
-            assertEquals("Actual version: $classVersion", expectedMinor, classVersion.minor)
+            assertEquals(expectedMajor, classVersion.major, "Actual version: $classVersion")
+            assertEquals(expectedMinor, classVersion.minor, "Actual version: $classVersion")
 
             val moduleFile = File(tmpdir.absolutePath, "META-INF/main.kotlin_module").readBytes()
             val versionNumber = ModuleMapping.readVersionNumber(DataInputStream(ByteArrayInputStream(moduleFile)))!!
             val moduleVersion = MetadataVersion(*versionNumber)
             if (languageVersion == LanguageVersion.KOTLIN_2_0) {
-                assertEquals("Actual version: $moduleVersion", MetadataVersion(1, 9, 9999), moduleVersion)
+                assertEquals(MetadataVersion(1, 9, 9999), moduleVersion, "Actual version: $moduleVersion")
             } else {
-                assertEquals("Actual version: $moduleVersion", expectedMajor, moduleVersion.major)
-                assertEquals("Actual version: $moduleVersion", expectedMinor, moduleVersion.minor)
+                assertEquals(expectedMajor, moduleVersion.major, "Actual version: $moduleVersion")
+                assertEquals(expectedMinor, moduleVersion.minor, "Actual version: $moduleVersion")
             }
         }
     }
 
     /*test source mapping generation when source info is absent*/
+    @Test
     fun testInlineFunWithoutDebugInfo() {
         compileKotlin("sourceInline.kt", tmpdir)
 
@@ -507,6 +548,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     /* Regression test for KT-37107: compile against .class file without any constructors. */
+    @Test
     fun testClassfileWithoutConstructors() {
         compileKotlin("TopLevel.kt", tmpdir, expectedFileName = "TopLevel.txt")
 
@@ -537,6 +579,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
     }
 
+    @Test
     fun testReplaceAnnotationClassWithInterface() {
         val library1 = compileLibrary("library-1")
         val usage = compileLibrary("usage", extraClassPath = listOf(library1))
@@ -544,6 +587,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(usage, library2))
     }
 
+    @Test
     fun testInnerClassPackageConflict() {
         val output = compileLibrary("library", destination = File(tmpdir, "library"))
         File(testDataDirectory, "library/test/Foo/x.txt").copyTo(File(output, "test/Foo/x.txt"))
@@ -551,6 +595,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(File(tmpdir, "library.jar")))
     }
 
+    @Test
     fun testInnerClassPackageConflict2() {
         val library1 = compileLibrary("library1", destination = File(tmpdir, "library1"))
         val library2 = compileLibrary("library2", destination = File(tmpdir, "library2"))
@@ -570,6 +615,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library1))
     }
 
+    @Test
     fun testInlineFunctionsWithMatchingJvmSignatures() {
         val library = compileLibrary(
             "library",
@@ -582,6 +628,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             .loadClass("SourceKt").getDeclaredMethod("run").invoke(null)
     }
 
+    @Test
     fun testChangedEnumsInLibrary() {
         val oldLibrary = compileLibrary("old", checkKotlinOutput = {})
         val newLibrary = compileLibrary("new", checkKotlinOutput = {})
@@ -590,9 +637,10 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         val result =
             URLClassLoader(arrayOf(newLibrary.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
                 .loadClass("SourceKt").getDeclaredMethod("run").invoke(null) as String
-        assertEquals("ABCAB", result)
+        assertEquals(result, "ABCAB")
     }
 
+    @Test
     fun testContextualDeclarationUse() = muteForK1 {
         val library = compileLibrary("library")
         compileKotlin(
@@ -607,6 +655,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     }
 
     // KT-60531 K2/JS: Report diagnostics before running FIR2IR
+    @Test
     fun testInternalFromForeignModuleJs() = muteForK2 {
         muteForK1 {
             compileKotlin(
@@ -618,6 +667,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testInternalFromFriendModuleJs() = muteForK1 {
         val library = compileJsLibrary("library")
         compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), listOf(K2JSCompilerArguments::friendModules.cliArgument(library.path)))
@@ -625,11 +675,13 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     /*
     // TODO: see KT-15661 and KT-23483
+    @Test
     fun testInternalFromForeignModuleCommon() {
         compileKotlin("source.kt", tmpdir, listOf(compileCommonLibrary("library")), K2MetadataCompiler())
     }
     */
 
+    @Test
     fun testInternalFromFriendModuleCommon() = muteForK1 {
         val library = compileCommonLibrary("library")
         compileKotlin(
@@ -644,6 +696,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testInlineAnonymousObjectWithDifferentTarget() {
         val library = compileLibrary("library", additionalOptions = listOf("-jvm-target", JvmTarget.JVM_1_8.description))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", JvmTarget.JVM_9.description))
@@ -654,6 +707,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         }
     }
 
+    @Test
     fun testIncorrectJavaSignature() {
         compileKotlin(
             "source.kt", tmpdir,
@@ -662,6 +716,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testIncorrectRemoveSignature() {
         compileKotlin(
             "source.kt", tmpdir,
@@ -670,6 +725,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testAgainstStable() {
         val library = compileLibrary(
             "library",
@@ -691,6 +747,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
+    @Test
     fun testAgainstFir() {
         val library = compileLibrary(
             "library",
@@ -699,6 +756,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    @Test
     fun testAgainstFirWithUnstableAbi() {
         val library2 = compileLibrary(
             "library",
@@ -707,6 +765,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library2))
     }
 
+    @Test
     fun testAgainstUnstable() {
         val library = compileLibrary(
             "library",
@@ -719,6 +778,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    @Test
     fun testAgainstFirWithStableAbi() {
         val library = compileLibrary(
             "library",
@@ -727,6 +787,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    @Test
     fun testAgainstFirWithStableAbiAndNoPrereleaseCheck() {
         val library = compileLibrary(
             "library",
@@ -741,6 +802,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testAgainstFirWithAllowUnstableDependencies() {
         val library = compileLibrary(
             "library",
@@ -752,20 +814,24 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testUnreachableExtensionVarPropertyDeclaration() {
         val [output, exitCode] = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
+        assertEquals(ExitCode.COMPILATION_ERROR, exitCode, "Output:\n$output")
     }
 
+    @Test
     fun testUnreachableExtensionValPropertyDeclaration() {
         val [output, exitCode] = compileKotlin("source.kt", tmpdir, expectedFileName = null)
-        assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
+        assertEquals(ExitCode.COMPILATION_ERROR, exitCode, "Output:\n$output")
     }
 
+    @Test
     fun testAnonymousObjectTypeMetadata() = muteForK1 {
         doTestAnonymousObjectTypeMetadata()
     }
 
+    @Test
     fun testAnonymousObjectTypeMetadataKlib() = muteForK1 {
         doTestAnonymousObjectTypeMetadata(listOf(K2MetadataCompilerArguments::metadataKlib.cliArgument))
     }
@@ -776,12 +842,14 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
      *
      * The test is needed only to check that the old CLI argument still works as needed.
      */
+    @Test
     fun testAnonymousObjectTypeMetadataKlibWithOldCLIKey() = muteForK1 {
         doTestAnonymousObjectTypeMetadata(listOf("-Xexpect-actual-linker")) { output ->
             output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
         }
     }
 
+    @Test
     fun testUsageOfNestedTypeAliasesWhenTheyAreNotStable() {
         val library = compileLibrary(
             "library",
@@ -793,6 +861,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         )
     }
 
+    @Test
     fun testUsageOfNestedTypeAliasesWhenTheyAreEnabled() {
         val library = compileLibrary(
             "library",
@@ -884,7 +953,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             }
         }, 0)
 
-        TestCase.assertEquals("Pre-release flag of the class file has incorrect value", shouldBePreRelease, isPreRelease)
+        assertEquals(shouldBePreRelease, isPreRelease, "Pre-release flag of the class file has incorrect value")
     }
 
     private fun checkPreReleaseness(file: File, shouldBePreRelease: Boolean) {

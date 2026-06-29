@@ -102,7 +102,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     protected void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) {
         System.setProperty("java.awt.headless", "true");
-
+        fileName = ForTestCompileRuntime.transformTestDataPath(fileName).getAbsolutePath();
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));
         if (environmentTestConfig.exists()) {
             compiler.setReadingSettingsFromEnvironmentAllowed(true);

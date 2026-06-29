@@ -67,8 +67,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
     // Specifically each @interface in Java sources is extended by @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
     // Also type related annotations are removed from Java because they are invisible at runtime
-    protected fun doTest(fileName: String) {
-        val file = File(fileName)
+    protected fun runTest(fileName: String) {
+        val file = ForTestCompileRuntime.transformTestDataPath(fileName)
         val text = FileUtil.loadFile(file, true)
 
         if (InTextDirectivesUtils.isDirectiveDefined(text, "SKIP_IN_RUNTIME_TEST")) return

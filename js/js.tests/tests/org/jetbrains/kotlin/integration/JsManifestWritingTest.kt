@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
 import kotlin.test.assertContains
@@ -34,6 +35,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
     private val outKlibDir: String
         get() = tmpdir.resolve("out").absolutePath
 
+    @Test
     fun testEnableAndDisableLanguageFeatures() {
         jsStdlib?.let { lib ->
             val poisoningFeature =

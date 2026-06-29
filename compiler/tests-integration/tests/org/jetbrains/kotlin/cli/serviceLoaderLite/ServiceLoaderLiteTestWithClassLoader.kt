@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.cli.serviceLoaderLite
 
 import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 
@@ -20,6 +22,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     class NestedComponent : Intf
     inner class InnerComponent : Intf
 
+    @Test
     fun testClassloader1() {
         val entries = arrayOf(impls(Component1::class, Component2::class), clazz<Component1>(), clazz<Component2>())
 
@@ -30,6 +33,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testDirWithSpaces() {
         classLoaderTest("test dir", impls<Intf>(NestedComponent::class), clazz<NestedComponent>()) { classLoader ->
             val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
@@ -37,6 +41,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testNestedComponent() {
         classLoaderTest("test", impls<Intf>(NestedComponent::class), clazz<NestedComponent>()) { classLoader ->
             val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
@@ -44,6 +49,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testInnerComponent() {
         classLoaderTest("test", impls<Intf>(InnerComponent::class), clazz<InnerComponent>()) { classLoader ->
             assertThrows<InstantiationException> {
@@ -52,6 +58,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testComponentWithParameters() {
         classLoaderTest("test", impls<Intf>(ComponentWithParameters::class), clazz<ComponentWithParameters>()) { classLoader ->
             assertThrows<InstantiationException> {
@@ -60,6 +67,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testInterface() {
         classLoaderTest("test", impls(Intf::class), clazz<Intf>()) { classLoader ->
             assertThrows<InstantiationException> {
@@ -68,6 +76,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testEnum() {
         classLoaderTest("test", impls<Intf>(EnumComponent::class), clazz<EnumComponent>()) { classLoader ->
             assertThrows<InstantiationException> {
@@ -76,6 +85,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testUnrelatedComponent() {
         val implsEntry = Entry("META-INF/services/" + Intf::class.java.name, UnrelatedComponent::class.java.name)
         classLoaderTest("test", implsEntry, clazz<UnrelatedComponent>()) { classLoader ->
@@ -85,6 +95,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testNestedClassLoaders() {
         val entries1 = arrayOf(impls<Intf>(Component1::class), clazz<Component1>())
         val entries2 = arrayOf(impls<Intf>(Component2::class), clazz<Component2>())
@@ -101,6 +112,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
         }
     }
 
+    @Test
     fun testEmpty() {
         val classLoader = URLClassLoader(emptyArray(), ServiceLoaderLiteTestWithClassLoader::class.java.classLoader)
         val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)

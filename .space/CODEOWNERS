@@ -221,6 +221,7 @@
 /compiler/testData/writeFlags/ "Kotlin JVM"
 /compiler/testData/writeSignature/ "Kotlin JVM"
 /compiler/tests/ "Kotlin Compiler"
+/compiler/testResources/ "Kotlin Compiler"
 /compiler/testFixtures/ "Kotlin Compiler"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Compiler"

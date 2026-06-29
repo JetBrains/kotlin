@@ -20,13 +20,8 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import kotlinx.metadata.klib.KlibMetadataVersion
 import kotlinx.metadata.klib.KlibModuleMetadata
-import kotlin.metadata.isExpect
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -35,10 +30,15 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.metadata.isExpect
 
 class LauncherScriptTest : TestCaseWithTmpdir() {
     private fun runProcess(
@@ -52,7 +52,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.kotlinPathsForDistDirectory.homePath, "bin/$executableFileName")
-        assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
+        assertTrue(launcherFile.exists()) { "Launcher script not found, run dist task: ${launcherFile.absolutePath}" }
 
         // For some reason, IntelliJ's ExecUtil screws quotes up on windows.
         // So, use ProcessBuilder instead.
@@ -109,6 +109,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         if (exitCode != ExitCode.OK) error("Failed to compile: ${args.joinToString(" ")}\nOutput:\n$output")
     }
 
+    @Test
     fun testKotlincSimple() {
         runProcess(
             "kotlinc",
@@ -117,6 +118,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincJvmSimple() {
         runProcess(
             "kotlinc-jvm",
@@ -125,6 +127,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincJvmScriptWithClassPathFromSysProp() {
         runProcess(
             "kotlinc-jvm",
@@ -134,9 +137,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinJvmContextClassLoader() {
         val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
-        assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
+        assertTrue(kotlinTestJar.exists()) { "kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}" }
         kotlincInProcess(
             K2JVMCompilerArguments::classpath.cliArgument, kotlinTestJar.path,
             "$testDataDirectory/contextClassLoaderTester.kt",
@@ -151,6 +155,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincJsSimple() {
         runProcess(
             "kotlinc-js",
@@ -167,8 +172,10 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlincWasmJsSimple() = testKotlincWasmSimple(target = "wasm-js")
 
+    @Test
     fun testKotlincWasmWasiSimple() = testKotlincWasmSimple(target = "wasm-wasi")
 
     private fun testKotlincWasmSimple(target: String) {
@@ -191,6 +198,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
 
+    @Test
     fun testKotlinNoReflect() {
         kotlincInProcess("$testDataDirectory/reflectionUsage.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
@@ -203,12 +211,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
         kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
         runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
 
-        val emptyDir = KotlinTestUtils.tmpDirForTest(this)
+        val emptyDir = KotlinTestUtils.tmpDirForTest(testInfo)
         runProcess(
             "kotlin",
             K2JVMCompilerArguments::classpath.cliArgument, emptyDir.path,
@@ -219,6 +228,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testRunnerExpression() {
         runProcess(
             "kotlin",
@@ -231,6 +241,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testRunnerExpressionK2() {
         runProcess(
             "kotlin",
@@ -242,6 +253,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testCommandlineProcessing() {
         runProcess(
             "kotlin",
@@ -277,6 +289,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testLegacyAssert() {
         kotlincInProcess(
             "$testDataDirectory/legacyAssertDisabled.kt",
@@ -297,6 +310,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess("kotlin", "LegacyAssertEnabledKt", "-J-ea:kotlin._Assertions", workDirectory = tmpdir)
     }
 
+    @Test
     fun testScriptWithXArguments() {
         runProcess(
             "kotlin", K2JVMCompilerArguments::noInline.cliArgument, "$testDataDirectory/noInline.kts",
@@ -308,6 +322,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess("kotlin", "$testDataDirectory/noInline.kts", expectedStdout = "OK\n")
     }
 
+    @Test
     fun testNoStdLib() {
         runProcess("kotlin", "-e", "println(42)", expectedStdout = "42\n")
         runProcess(
@@ -321,6 +336,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testProperty() {
         kotlincInProcess("$testDataDirectory/property.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
@@ -330,6 +346,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testHowToRunExpression() {
         runProcess(
             "kotlin", "-howtorun", "jar", "-e", "println(args.joinToString())", "-a", "b",
@@ -341,6 +358,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testHowToRunScript() {
         runProcess(
             "kotlin", "-howtorun", "classfile", "$testDataDirectory/printargs.kts", "--", "-a", "b",
@@ -352,6 +370,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testHowToRunCustomScript() {
         runProcess(
             "kotlin", "$testDataDirectory/noInline.myscript",
@@ -385,6 +404,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testHowToRunClassFile() {
         kotlincInProcess("$testDataDirectory/helloWorld.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path)
 
@@ -396,6 +416,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess("kotlin", "-howtorun", "classfile", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
     }
 
+    @Test
     fun testKotlincJdk17() {
         val jdk17 = mapOf("JAVA_HOME" to KtTestUtil.getJdk17Home().absolutePath)
         runProcess(
@@ -409,6 +430,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testEmptyJArgument() {
         runProcess(
             "kotlinc",
@@ -419,6 +441,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testNoClassDefFoundErrorWhenClassInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
@@ -435,6 +458,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testNoClassDefFoundErrorWhenClassNotInDefaultPackage() {
         val testDir = File("$tmpdir/test")
 
@@ -454,6 +478,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     /**
      * A class whose full qualified name is `DefaultPackageKt` and is located in path `$tmpdir/test/DefaultPackageKt.class`
      */
+    @Test
     fun testRunClassFileWithExtensionInDefaultPackage() {
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
@@ -482,6 +507,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     /**
      * A class whose full qualified name is `test.HelloWorldKt` and is located in path `$tmpdir/test/HelloWorldKt.class`
      */
+    @Test
     fun testRunClassFileWithExtensionNotInDefaultPackage() {
         val subDir = File("$tmpdir/test/sub").apply { mkdirs() }
         val testDir = File("$tmpdir/test")
@@ -519,6 +545,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinUseJdkModuleFromMainClass() {
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         runProcess(
@@ -532,6 +559,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinUseJdkModuleFromJar() {
         val jdk11 = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath)
         val output = tmpdir.resolve("out.jar")
@@ -546,12 +574,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testInterpreterClassLoader() {
         runProcess(
             "kotlinc", "$testDataDirectory/interpreterClassLoader.kt", K2JVMCompilerArguments::destination.cliArgument, tmpdir.path
         )
     }
 
+    @Test
     fun testImplicitModularJdk() {
         // see KT-54337
         val moduleInfo = tmpdir.resolve("module-info.java").apply {
@@ -576,6 +606,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testK2ClassPathWithRelativeDir() {
         val file1kt = tmpdir.resolve("file1.kt").apply {
             writeText("class C")
@@ -607,6 +638,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinSimple() {
         runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", tmpdir.path)
         runProcess(
@@ -617,6 +649,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testKotlinFromJar() {
         val jarFile = File(tmpdir, "out.jar").path
         runProcess("kotlinc", "$testDataDirectory/helloWorld.kt", "-d", jarFile)
@@ -628,6 +661,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testPassSystemProperties() {
         runProcess("kotlinc", "$testDataDirectory/systemProperties.kt", "-d", tmpdir.path)
         runProcess(
@@ -640,6 +674,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    @Test
     fun testSanitizedStackTrace() {
         runProcess("kotlinc", "$testDataDirectory/throwException.kt", "-d", tmpdir.path)
         runProcess(
@@ -669,6 +704,7 @@ Caused by: java.lang.AssertionError: assert
         )
     }
 
+    @Test
     fun testColorAlwaysProperty() {
         val testKt = tmpdir.resolve("test.kt").apply {
             writeText("val result: String = 42")
@@ -686,11 +722,13 @@ Caused by: java.lang.AssertionError: assert
         )
     }
 
+    @Test
     fun testKaptVersion() {
         val info = $$"info: kotlinc-jvm $VERSION$ (JRE $JVM_VERSION$)\n"
         runProcess("kapt", "-version", expectedStderr = info)
     }
 
+    @Test
     fun testCommonFragmentsMetadataDestination() {
         val metadataDir = compileSimpleCommonPlatformProject()
 
@@ -709,9 +747,9 @@ Caused by: java.lang.AssertionError: assert
         })
 
         val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
-        assertNotNull("Class 'Some' must be present in the common-fragments metadata", someClass)
+        assertNotNull(someClass) { "Class 'Some' must be present in the common-fragments metadata" }
         requireNotNull(someClass)
-        assertTrue("Class 'Some' must be marked as expect", someClass.isExpect)
+        assertTrue(someClass.isExpect) { "Class 'Some' must be marked as expect" }
         assertTrue(someClass.functions.any { it.name == "foo" })
         assertFalse(someClass.functions.any { it.name == "bar" })
     }
@@ -721,6 +759,7 @@ Caused by: java.lang.AssertionError: assert
      * until the BTA part is implemented, this test is the best effort of testing
      * the compiler behavior
      */
+    @Test
     fun testDummyFragmentIncrementalClasspathTest() {
         val metadataDir = compileSimpleCommonPlatformProject()
         val newCommonKt = tmpdir.resolve("new-common.kt").apply {

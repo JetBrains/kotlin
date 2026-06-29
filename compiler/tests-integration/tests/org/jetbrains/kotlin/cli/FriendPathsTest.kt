@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.createSymbolicLinkPointingTo
 
@@ -32,32 +33,39 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     private val absoluteDir by lazy { File(tmpdir, "lib") }
     private val relativeDir by lazy { absoluteDir.relativeTo(File("").absoluteFile) }
 
+    @Test
     fun testArchive() {
         doTestFriendPaths(absoluteArchive, absoluteArchive)
     }
 
     /** Regression test for KT-29933. */
+    @Test
     fun testArchiveWithRelativePath() {
         doTestFriendPaths(relativeArchive, relativeArchive)
     }
 
+    @Test
     fun testDirectory() {
         doTestFriendPaths(absoluteDir, absoluteDir)
     }
 
     /** Regression test for KT-29933. */
+    @Test
     fun testDirectoryWithRelativePath() {
         doTestFriendPaths(relativeDir, relativeDir)
     }
 
+    @Test
     fun testArchiveWithRelativeFriendPath() {
         doTestFriendPaths(absoluteArchive, relativeArchive)
     }
 
+    @Test
     fun testArchiveWithRelativeClasspath() {
         doTestFriendPaths(relativeArchive, absoluteArchive)
     }
 
+    @Test
     fun testArchiveWithRelativeFriendPathThroughSymlink() {
         val dir = File(tmpdir, "dir")
         dir.mkdir()
@@ -68,6 +76,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         doTestFriendPaths(libDest, relativeLibDest)
     }
 
+    @Test
     fun testArchiveWithRelativeClasspathThroughSymlink() {
         val dir = File(tmpdir, "dir")
         dir.mkdir()
@@ -81,6 +90,7 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     // This is a regression test for KT-70991.
     // It's not a generated CLI test because the issue only reproduced when any path in the classpath is absolute, while CliTestGenerated
     // passes relative paths of libraries to the classpath.
+    @Test
     fun testNonExistingPath() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
         CompilerTestUtil.executeCompilerAssertSuccessful(
