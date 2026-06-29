@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.test;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
-public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
+public abstract class KotlinTestWithEnvironment extends KtUsefulTestCase {
     private KotlinCoreEnvironment environment;
 
     @Override
