@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -50,6 +51,7 @@ abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String,
     @BeforeEach
     fun setUp() {
         val configuration = CompilerConfiguration.create()
+        @OptIn(CoreEnvironmentDeprecation::class)
         myEnvironment = KotlinCoreEnvironment.createForParallelTests(
             testRootDisposable, configuration,
             EnvironmentConfigFiles.JVM_CONFIG_FILES
