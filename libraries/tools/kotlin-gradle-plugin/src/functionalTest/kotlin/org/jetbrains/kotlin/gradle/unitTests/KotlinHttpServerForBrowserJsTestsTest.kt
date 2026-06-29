@@ -82,22 +82,14 @@ class KotlinHttpServerForBrowserJsTestsTest {
 
         val jsIrTarget = project.multiplatformExtension.js() as KotlinJsIrTarget
 
-        // check that output bundle dir is correctly configured to output location
-        val defaultBundleTask = jsIrTarget.browser.test.defaultBundleTask.get()
-        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocation.get()
-        val bundleDir = defaultBundleTask.outputBundleDir.asFile.get()
-        assertEquals(
-            defaultBundleTask.outputBundleDir.asFile.get(),
-            bundleDir,
-            "Bundle task output directory doesn't match default test location directory from test dsl"
-        )
 
         // create directory simulating that bundle task got executed, so http server can safely start
-        bundleDir.mkdirs()
+        val defaultTestLocation = jsIrTarget.browser.test.defaultTestsLocation.get()
+        defaultTestLocation.bundleLocation.get().asFile.mkdirs()
 
         try {
             val (url, logs) = withGradleLogCaptureAndResult { defaultTestLocation.url.get() }
-            logs.assertLogContains("HTTP server for js tests started at http://localhost:${url.port}/")
+            logs.assertLogContains("HTTP server for js tests started at http://${url.host}:${url.port}/")
         } finally {
             // don't leave http server running
             project.findKotlinHttpServerForBrowserJsTestsBuilService()?.close()

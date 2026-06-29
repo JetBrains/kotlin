@@ -7,18 +7,26 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.file.Directory
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import java.io.File
+import java.net.URI
+import java.time.Duration
+import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,14 +52,19 @@ class KotlinPlaywrightTestFrameworkWiringTest {
 
         assertIs<KotlinKarma>(setup.jsBrowserTestTask.testFramework)
 
-        val bundleTask = setup.testDsl.defaultBundleTask.get()
+        val bundleTask = setup.webpackBundleTask
+        setup.mockJsTestLinkOutput()
         assertFalse(
-            bundleTask.enabled,
+            bundleTask.browserRunnersDeclared.get(),
             "Expected the bundle task to stay disabled when no browser runners are declared"
         )
         assertTrue(
             bundleTask.requiredNpmDependencies.isEmpty(),
             "Expected no npm dependencies to be contributed while the bundle task is disabled"
+        )
+        assertFalse(
+            bundleTask.onlyIf.isSatisfiedBy(bundleTask),
+            "Expected the bundle task to be skipped, as no browser runners are declared"
         )
     }
 
@@ -84,20 +97,25 @@ class KotlinPlaywrightTestFrameworkWiringTest {
             firefox()
         }
 
-        val bundleTask = setup.testDsl.defaultBundleTask.get()
+        val bundleTask = setup.webpackBundleTask
+        setup.mockJsTestLinkOutput()
         assertTrue(
-            bundleTask.enabled,
+            bundleTask.browserRunnersDeclared.get(),
             "Expected the bundle task to be enabled when a browser runner is declared"
+        )
+        assertTrue(
+            bundleTask.requiredNpmDependencies.isNotEmpty(),
+            "Expected the bundle task to require npm dependencies, when task is enabled"
+        )
+        assertTrue(
+            bundleTask.onlyIf.isSatisfiedBy(bundleTask),
+            "Expected the bundle task to be executed."
         )
 
         val expectedBundleDir = setup.project.layout.buildDirectory.dir("kotlinJsTest/dist").get()
         assertEquals(
             expectedBundleDir.asFile,
             bundleTask.outputBundleDir.get().asFile
-        )
-        assertEquals(
-            expectedBundleDir.file("test.html").asFile,
-            bundleTask.testHtmlFile.get().asFile
         )
     }
 
@@ -146,8 +164,72 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertNull(installTask, "Expected no kotlinInstallPlaywrightBrowsers task when no runners declared")
     }
 
-}
+    @Test
+    fun `playwright framework task inputs correctly wired`() {
+        fun mockLocation(): KotlinJsTestsLocation = object : KotlinJsTestsLocation {
+            override val bundleLocation: Provider<Directory> get() = TODO("Mock")
+            override val testHtmlFileName: Provider<String> get() = TODO("Mock")
+            override val url: Provider<URI> get() = TODO("Mock")
+        }
 
+        val mockLocation1 = mockLocation()
+        val mockLocation2 = mockLocation()
+        val mockLocation3 = mockLocation()
+        val mockLocation4 = mockLocation()
+
+        val customChromeExecutable = File("custom-chrome-executable.txt").absoluteFile
+
+        val setup = buildBrowserTestProject {
+            browserDefaults.testsLocation.set(mockLocation1)
+            browserDefaults.timeout.set(Duration.ofHours(72))
+            browserDefaults.launchEnvironmentVariables.set(mapOf("FOO" to "BAR"))
+
+            chromium("myChrome") {
+                it.headless.set(false)
+                it.launchArgs.set(listOf("--no-sandbox"))
+                it.timeout.set(Duration.ofDays(42))
+                it.customBrowserExecutable.set(customChromeExecutable)
+            }
+            firefox {
+                it.testsLocation.set(mockLocation2)
+            }
+            webkit {
+                it.testsLocation.set(mockLocation3)
+            }
+            webkit("webki2") {
+                it.testsLocation.set(mockLocation4)
+            }
+        }
+
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(setup.jsBrowserTestTask.testFramework)
+        val inputs = framework.frameworkTaskInputs
+
+        assertEquals(1, inputs.chromiumRunners.get().size, "Expected 1 chromium runner")
+        val chromeRunner = inputs.chromiumRunners.get().first()
+        assertEquals("myChrome", chromeRunner.name.get())
+        assertFalse(chromeRunner.headless.get(), "Expected headless to be false for myChrome")
+        assertEquals(listOf("--no-sandbox"), chromeRunner.launchArgs.get())
+        assertEquals(mockLocation1, chromeRunner.testsLocation.get())
+        assertEquals(Duration.ofDays(42), chromeRunner.timeout.get())
+        assertEquals(customChromeExecutable, chromeRunner.customBrowserExecutable.get().asFile)
+        assertEquals(mapOf("FOO" to "BAR"), chromeRunner.launchEnvironmentVariables.get())
+
+        assertEquals(1, inputs.firefoxRunners.get().size, "Expected 1 firefox runner")
+        val firefoxRunner = inputs.firefoxRunners.get().first()
+        assertEquals("firefox", firefoxRunner.name.get())
+        assertEquals(mockLocation2, firefoxRunner.testsLocation.get())
+        assertEquals(Duration.ofHours(72), firefoxRunner.timeout.get(), "Expected default timeout for firefox")
+        assertEquals(mapOf("FOO" to "BAR"), firefoxRunner.launchEnvironmentVariables.get())
+
+        assertEquals(2, inputs.webkitRunners.get().size, "Expected 2 webkit runners")
+        val webkitRunner = inputs.webkitRunners.get().find { it.name.get() == "webkit" }!!
+        assertEquals(mockLocation3, webkitRunner.testsLocation.get())
+        assertEquals(mapOf("FOO" to "BAR"), webkitRunner.launchEnvironmentVariables.get())
+
+        val webkit2Runner = inputs.webkitRunners.get().find { it.name.get() == "webki2" }!!
+        assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
+    }
+}
 
 private class BrowserTestProject(
     val project: ProjectInternal,
@@ -155,6 +237,15 @@ private class BrowserTestProject(
 ) {
     val jsBrowserTestTask: KotlinJsTest
         get() = project.tasks.getByName("jsBrowserTest") as KotlinJsTest
+
+    val webpackBundleTask: WebpackBundleKotlinJsTests
+        get() = project.tasks.getByName("prepareWebpackBundleForKotlinJsTests") as WebpackBundleKotlinJsTests
+
+    fun mockJsTestLinkOutput() {
+        val jsFile = webpackBundleTask.testsEntryFile.get().asFile
+        jsFile.parentFile.mkdirs()
+        jsFile.writeText("function xxx() {}")
+    }
 }
 
 private fun buildBrowserTestProject(configure: KotlinJsBrowserTestDsl.() -> Unit): BrowserTestProject {

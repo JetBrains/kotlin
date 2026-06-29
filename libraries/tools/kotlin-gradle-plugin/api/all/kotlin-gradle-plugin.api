@@ -2596,12 +2596,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Brows
 	public abstract fun getTimeout ()Lorg/gradle/api/provider/Property;
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/BundleKotlinJsTestsTask : org/gradle/api/Task, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
-	public abstract fun getOutputBundleDir ()Lorg/gradle/api/file/DirectoryProperty;
-	public abstract fun getTestHtmlFile ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getTestsEntryFile ()Lorg/gradle/api/file/RegularFileProperty;
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Distribution {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/dsl/Distribution$Companion;
 	public static final field DIST Ljava/lang/String;
@@ -2645,7 +2639,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun firefox (Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public abstract fun getAllBrowserRunners ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getBrowserDefaults ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/BrowserTestRunnerConfigDsl;
-	public abstract fun getDefaultBundleTask ()Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun getDefaultTestsLocation ()Lorg/gradle/api/provider/Provider;
 	public abstract fun webkit (Ljava/lang/String;)V
 	public abstract fun webkit (Ljava/lang/String;Lorg/gradle/api/Action;)V
@@ -2740,6 +2733,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTestsLocation {
 	public abstract fun getBundleLocation ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getTestHtmlFileName ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getUrl ()Lorg/gradle/api/provider/Provider;
 }
 

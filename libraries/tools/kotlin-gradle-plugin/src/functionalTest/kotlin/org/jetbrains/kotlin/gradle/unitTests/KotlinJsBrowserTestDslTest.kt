@@ -122,8 +122,7 @@ class KotlinJsBrowserTestDslTest {
             webkit()
         }
 
-        val expectedDefault = test.defaultBundleTask.flatMap { it.outputBundleDir }.get()
-        assertEquals(expectedDefault, test.defaultTestsLocation.get().bundleLocation.get())
+        val expectedDefault = test.defaultTestsLocation.flatMap { it.bundleLocation }.get()
         assertEquals(expectedDefault, test.allBrowserRunners.get().getValue("webkit").testsLocation.get().bundleLocation.get())
     }
 
@@ -190,4 +189,4 @@ internal fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
     }
 
 internal val KotlinJsBrowserTestDsl.defaultBundleDirectory: Directory
-    get() = defaultBundleTask.flatMap { it.outputBundleDir }.get()
+    get() = defaultTestsLocation.flatMap { it.bundleLocation }.get()

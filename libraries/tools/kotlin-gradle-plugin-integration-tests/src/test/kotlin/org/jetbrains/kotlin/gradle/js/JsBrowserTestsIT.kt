@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import kotlin.io.path.moveTo
 import org.junit.jupiter.api.Assumptions.assumeFalse
@@ -23,7 +24,7 @@ import kotlin.test.assertContains
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
-@JsGradlePluginTests
+@JsBrowserGradlePluginTests
 class JsBrowserTestsIT : KGPBaseTest() {
 
     @GradleTest
@@ -214,7 +215,7 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 )
                 assertTasksExecuted(":prepareWebpackBundleForKotlinJsTests")
                 assertTasksFailed(":jsBrowserTest")
-                assertOutputContains("""Execute JS tests with chromium runner at URL: file.*kotlinJsTest/dist/test.html""".toRegex())
+                assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:prepareWebpackBundleForKotlinJsTests/test/test.html""".toRegex())
                 assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[js, browser] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
                 // TODO: KT-86778 Add verification of test report

@@ -13,7 +13,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import java.net.URI
 import java.time.Duration
@@ -78,14 +77,20 @@ interface BrowserTestRunnerConfigDsl {
 @ExperimentalJsTestDsl
 interface KotlinJsTestsLocation {
     /**
-     * Access prepared JS tests via http web server.
-     */
-    val url: Provider<URI>
-
-    /**
      * Location of a prepared JS tests bundle on local filesystem.
      */
     val bundleLocation: Provider<Directory>
+
+    /**
+     * Name of the HTML file inside [bundleLocation], that runs Kotlin JS Tests when opened in browser.
+     */
+    val testHtmlFileName: Provider<String>
+
+    /**
+     * Access prepared JS tests via http web server.
+     * Already points to [testHtmlFileName].
+     */
+    val url: Provider<URI>
 }
 
 @ExperimentalJsTestDsl
@@ -102,13 +107,6 @@ interface KotlinJsBrowserTestDsl {
      */
     val browserDefaults: BrowserTestRunnerConfigDsl
     fun browserDefaults(configure: Action<BrowserTestRunnerConfigDsl>): BrowserTestRunnerConfigDsl
-
-    /**
-     * Default bundle task that produces js bundle with the HTML file to run Kotlin tests in a browser.
-     *
-     * Use this task to post-process bundle output when needed.
-     */
-    val defaultBundleTask: TaskProvider<out BundleKotlinJsTestsTask>
 
     /**
      * Default location of bundled and ready to execute JS tests produced from Kotlin JS test compilation.

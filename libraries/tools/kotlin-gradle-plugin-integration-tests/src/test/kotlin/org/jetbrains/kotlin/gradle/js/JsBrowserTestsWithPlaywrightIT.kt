@@ -8,26 +8,29 @@
 package org.jetbrains.kotlin.gradle.js
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.provider.Property
+import org.gradle.api.logging.LogLevel
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.junit.jupiter.api.condition.OS
+import java.net.URI
 import javax.inject.Inject
 import kotlin.io.path.writeText
 import kotlin.test.Ignore
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalJsTestDsl::class)
 @JsBrowserGradlePluginTests
@@ -64,7 +67,6 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
         }
     }
 
-    @Ignore("KT-86911 Configured post-processing for playwright reports missing an input or output annotation")
     @GradleTest
     fun `verify KotlinJsTest with bundle post processing`(gradleVersion: GradleVersion) {
         project(
@@ -78,18 +80,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                     js {
                         browser {
                             test.apply {
-                                val postProcess = project.tasks.register(
-                                    "postProcessTestBundle",
-                                    PostProcessTestsBundle::class.java,
-                                ) {
-                                    it.originalTestsLocation.set(defaultTestsLocation)
-                                    it.outputBundleDir.set(project.layout.buildDirectory.dir("post-processed-test-bundle"))
-                                }
-
                                 chromium()
-                                browserDefaults.testsLocation.set(
-                                    postProcess.flatMap { it.postProcessedTestsLocation }
-                                )
                             }
                         }
                     }
@@ -113,9 +104,29 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 }
             }
 
-            build(":jsBrowserTest") {
+            // replace default tests location with post-processed one
+            buildScriptInjection {
+                val jsTarget = kotlinMultiplatform.targets.filterIsInstance<KotlinJsIrTarget>().single()
+                val defaultTestsLocation = jsTarget.browser.test.defaultTestsLocation
+
+                val postProcess = project.tasks.register(
+                    "postProcessTestBundle",
+                    PostProcessTestsBundle::class.java,
+                ) {
+                    it.originalBundleLocation.set(defaultTestsLocation.flatMap { it.bundleLocation })
+                    it.newBundleLocation.set(project.layout.buildDirectory.dir("post-processed-test-bundle"))
+                }
+
+                jsTarget.browser.test.browserDefaults.testsLocation.set(postProcess.map { it.kotlinJsTestsLocation })
+            }
+
+
+            build(":jsBrowserTest", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksExecuted(":postProcessTestBundle")
                 assertOutputContains("post-processed test output")
+                // since post process bundle is served via file scheme, instead http.
+                // we shouldn't expect HTTP server to be started
+                assertOutputDoesNotContain("Starting HTTP server")
             }
         }
     }
@@ -421,16 +432,28 @@ private fun TestProject.jsProject(
     }
 }
 
-abstract class PostProcessTestsBundle : DefaultTask() {
+private class MyLocalFileLocation(
+    @get:InputDirectory
+    override val bundleLocation: Provider<Directory>,
+    @get:Input
+    override val testHtmlFileName: Provider<String>,
+) : KotlinJsTestsLocation {
+    @get:Internal
+    override val url: Provider<URI> = bundleLocation.map { it.asFile.resolve(testHtmlFileName.get()).toURI() }
+}
 
-    @get:Nested
-    abstract val originalTestsLocation: Property<KotlinJsTestsLocation>
+private abstract class PostProcessTestsBundle : DefaultTask() {
+    @get:InputDirectory
+    abstract val originalBundleLocation: DirectoryProperty
 
     @get:OutputDirectory
-    abstract val outputBundleDir: DirectoryProperty
+    abstract val newBundleLocation: DirectoryProperty
 
     @get:Internal
-    abstract val postProcessedTestsLocation: Property<KotlinJsTestsLocation>
+    val kotlinJsTestsLocation get() = MyLocalFileLocation(
+            bundleLocation = newBundleLocation,
+            testHtmlFileName = project.provider { "test.html" },
+        )
 
     @get:Inject
     abstract val fs: FileSystemOperations
@@ -438,16 +461,11 @@ abstract class PostProcessTestsBundle : DefaultTask() {
     @TaskAction
     fun postProcess() {
         fs.copy {
-            it.from(originalTestsLocation.get().bundleLocation)
-            it.into(outputBundleDir)
+            it.from(originalBundleLocation.get())
+            it.into(newBundleLocation)
             it.filter { line: String ->
                 line.replace("dummy test", "post-processed test output")
             }
         }
-
-        postProcessedTestsLocation.set(object : KotlinJsTestsLocation {
-            override val devServer get() = originalTestsLocation.get().devServer
-            override val bundleLocation = outputBundleDir
-        })
     }
 }
