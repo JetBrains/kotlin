@@ -53,8 +53,6 @@ import kotlin.reflect.jvm.isAccessible
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
-    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory()
-
     private fun createFile(filePath: String, fileType: IElementType): PsiFile {
         val psiFactory = KtPsiFactory(myProject)
         return when (fileType) {
