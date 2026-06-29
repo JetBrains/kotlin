@@ -5711,6 +5711,11 @@ internal class InvalidVersioningOnValueClassParameterImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnValueClassParameter
 
+internal class InvalidVersioningOnInlineImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InvalidVersioningOnInline
+
 internal class NonAscendingVersionAnnotationImpl(
     override val lowestVersion: MavenComparableVersion?,
     override val highestVersion: MavenComparableVersion?,

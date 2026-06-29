@@ -495,6 +495,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_NON_OPTIO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_QUALIFIER_IN_LHS_OF_CALLABLE_REFERENCE_TO_STATIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION
@@ -3965,6 +3966,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER,
             "'@IntroducedAt' annotation cannot be used in the (single) parameter of a value class constructor.",
+        )
+        map.put(
+            INVALID_VERSIONING_ON_INLINE,
+            "'@IntroducedAt' annotation cannot be used cannot be used in inline functions.",
         )
         map.put(
             NON_ASCENDING_VERSION_ANNOTATION,

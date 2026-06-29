@@ -28,6 +28,8 @@ fun withVararg3(vararg rest: String, @IntroducedAt("1") x: String = "hello") { }
 
 @JvmInline value class ValueClass(<!INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER!>@IntroducedAt("1")<!> val n: Int = 0)
 
+inline fun <!INVALID_VERSIONING_ON_INLINE!>inlineFunction<!>(x: String, @IntroducedAt("1") y: Int = 1, block: () -> Unit) { }
+
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetFile, classDeclaration, classReference,
 funWithExtensionReceiver, functionDeclaration, functionDeclarationWithContext, integerLiteral, localFunction,
 primaryConstructor, propertyDeclaration, sealed, stringLiteral, value, vararg */

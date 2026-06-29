@@ -4758,6 +4758,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InvalidVersioningOnValueClassParameter::class
     }
 
+    interface InvalidVersioningOnInline : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnInline::class
+    }
+
     interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NonAscendingVersionAnnotation::class
         val lowestVersion: MavenComparableVersion?

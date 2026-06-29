@@ -925,6 +925,12 @@ private fun KaDiagnosticConverterBuilder.addConversions15() {
             token,
         )
     }
+    add(FirErrors.INVALID_VERSIONING_ON_INLINE) { firDiagnostic ->
+        InvalidVersioningOnInlineImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS.errorFactory) { firDiagnostic ->
         JvmSerializableLambdaOnInlinedFunctionLiteralsErrorImpl(
             firDiagnostic as KtPsiDiagnostic,

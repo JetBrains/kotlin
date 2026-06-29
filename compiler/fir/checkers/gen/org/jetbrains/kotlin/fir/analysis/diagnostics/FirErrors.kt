@@ -1125,6 +1125,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_VARARG: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_VARARG", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val INVALID_VERSIONING_ON_INLINE: KtDiagnosticFactory0 = KtDiagnosticFactory0("INVALID_VERSIONING_ON_INLINE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NON_ASCENDING_VERSION_ANNOTATION: KtDiagnosticFactory3<MavenComparableVersion?, MavenComparableVersion?, FirCallableSymbol<*>> = KtDiagnosticFactory3("NON_ASCENDING_VERSION_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION: KtDiagnosticFactory0 = KtDiagnosticFactory0("VERSION_OVERLOADS_TOO_COMPLEX_EXPRESSION", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
