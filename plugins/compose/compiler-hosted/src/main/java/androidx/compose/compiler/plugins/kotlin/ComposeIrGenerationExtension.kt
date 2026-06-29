@@ -64,7 +64,6 @@ class ComposeIrGenerationExtension(
 
         val stabilityInferencer = StabilityInferencer(
             pluginContext.platform.isJvm(),
-            pluginContext.moduleDescriptor,
             stableTypeMatchers,
         )
 

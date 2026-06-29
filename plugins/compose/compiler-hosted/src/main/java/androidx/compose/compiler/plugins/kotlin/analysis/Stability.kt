@@ -213,7 +213,6 @@ data class SymbolForAnalysis(
 
 class StabilityInferencer(
     private val isTargetJvm: Boolean,
-    private val currentModule: ModuleDescriptor,
     externalStableTypeMatchers: Set<FqNameMatcher>,
 ) {
     private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
@@ -412,10 +411,6 @@ class StabilityInferencer(
 
         return stability
     }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    private fun IrDeclaration.isInCurrentModule() =
-        module == currentModule
 
     private fun IrClass.isProtobufType(): Boolean {
         // Quick exit as all protos are final
