@@ -22,6 +22,13 @@
 -dontwarn gnu.trove.TObjectHashingStrategy
 -dontwarn kotlinx.coroutines.debug.DebugProbes
 
+# Section after upgrade to SDK 261
+-dontwarn kotlinx.coroutines.CoroutineDispatcher
+-dontwarn java.util.List
+-dontwarn com.intellij.openapi.util.ObjectNode
+-dontwarn fleet.util.multiplatform.Actual
+-dontwarn kotlinx.coroutines.internal.intellij.IntellijCoroutines
+
 # Used in script compilation (refineCompilationConfiguration.kt), requires intellij-analysis
 -dontwarn com.intellij.openapi.vfs.LocalFileSystem
 
