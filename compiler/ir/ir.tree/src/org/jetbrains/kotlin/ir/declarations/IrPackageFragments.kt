@@ -41,7 +41,14 @@ val IrPackageFragment.moduleDescriptor: ModuleDescriptor
         packageFragmentDescriptor.containingDeclaration
     }
 
+
+fun createEmptyExternalPackageFragment(module: IrModuleFragment, fqName: FqName): IrExternalPackageFragment =
+    IrExternalPackageFragmentImpl(
+        IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module.descriptor, fqName)), fqName
+    )
+
 fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
+    // TODO(KT-87300): Migrate all usages of this function to the one with `IrModuleFragment` instead of `ModuleDescriptor`
     IrExternalPackageFragmentImpl(
         IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(module, fqName)), fqName
     )

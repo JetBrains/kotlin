@@ -167,21 +167,6 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             )
             defaultWithErrorOnSet("startOffset", undefinedOffset())
             defaultWithErrorOnSet("endOffset", undefinedOffset())
-            implementation.generationCallback = {
-                println()
-                printlnMultiLine(
-                    """
-                    companion object {
-                        @Deprecated(
-                            message = "Use org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment instead",
-                            replaceWith = ReplaceWith("createEmptyExternalPackageFragment", "org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment")
-                        )
-                        fun createEmptyExternalPackageFragment(module: ModuleDescriptor, fqName: FqName): IrExternalPackageFragment =
-                            org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment(module, fqName)
-                    }
-                    """
-                )
-            }
         }
 
         impl(file) {

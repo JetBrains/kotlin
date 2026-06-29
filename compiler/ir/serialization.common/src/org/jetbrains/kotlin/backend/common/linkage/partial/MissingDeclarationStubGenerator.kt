@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
@@ -35,7 +36,7 @@ internal class MissingDeclarationStubGenerator(
     private val nothingType: IrType,
 ) {
     private val commonParent by lazy {
-        createEmptyExternalPackageFragment(ErrorUtils.errorModule, FqName.ROOT)
+        createEmptyExternalPackageFragment(IrModuleFragmentImpl(ErrorUtils.errorModule), FqName.ROOT)
     }
 
     val allStubbedSymbols: Set<IrSymbol>
