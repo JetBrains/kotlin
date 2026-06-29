@@ -13,138 +13,127 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.parsing
 
-package org.jetbrains.kotlin.parsing;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.TestsCompilerError
+import org.jetbrains.kotlin.psi.IfNotParsed
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
+import org.jetbrains.kotlin.utils.rethrow
+import java.io.File
+import java.lang.reflect.Modifier
+import java.nio.file.Paths
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiErrorElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.PathUtil;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.TestsCompilerError;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.nio.file.Paths;
-
-public abstract class AbstractParsingTest extends KtParsingTestCase {
-
-    @Override
-    protected String getTestDataPath() {
-        return KtTestUtil.getHomeDirectory();
+@Suppress("UnstableApiUsage")
+abstract class AbstractParsingTest : KtParsingTestCase(".", "kt") {
+    protected open fun doParsingTest(filePath: String) {
+        doBaseTest(filePath, KtNodeTypes.KT_FILE, null)
     }
 
-    public AbstractParsingTest() {
-        super(".", "kt");
+    protected fun doParsingTest(filePath: String, contentFilter: (String) -> String) {
+        doBaseTest(filePath, KtNodeTypes.KT_FILE, contentFilter)
     }
 
-    private static void checkPsiGetters(KtElement elem) throws Throwable {
-        Method[] methods = elem.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            String methodName = method.getName();
-            if (!methodName.startsWith("get") && !methodName.startsWith("find") ||
-                methodName.equals("getReference") ||
-                methodName.equals("getReferences") ||
-                methodName.equals("getUseScope") ||
-                methodName.equals("getPresentation")) {
-                continue;
-            }
-
-            if (!Modifier.isPublic(method.getModifiers())) continue;
-            if (method.getParameterTypes().length > 0) continue;
-
-            Class<?> declaringClass = method.getDeclaringClass();
-            if (!declaringClass.getName().startsWith("org.jetbrains.kotlin")) continue;
-
-            Object result = method.invoke(elem);
-            if (result == null) {
-                for (Annotation annotation : method.getDeclaredAnnotations()) {
-                    if (annotation instanceof IfNotParsed) {
-                        assertNotNull(
-                                "Incomplete operation in parsed OK test, method " + methodName +
-                                " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.getText(),
-                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement.class));
-                    }
-                }
-            }
-        }
-    }
-
-    protected void doParsingTest(@NotNull String filePath) {
-        doBaseTest(filePath, KtNodeTypes.KT_FILE, null);
-    }
-
-    protected void doParsingTest(@NotNull String filePath, Function1<String, String> contentFilter) {
-        doBaseTest(filePath, KtNodeTypes.KT_FILE, contentFilter);
-    }
-
-    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) {
+    private fun doBaseTest(filePath: String, fileType: IElementType, contentFilter: ((String) -> String)?) {
         try {
-            doBaseTestImpl(filePath, fileType, contentFilter);
-        } catch (Exception e) {
-            throw ExceptionUtilsKt.rethrow(e);
+            doBaseTestImpl(filePath, fileType, contentFilter)
+        } catch (e: Exception) {
+            throw rethrow(e)
         }
     }
 
-    private void doBaseTestImpl(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) throws Exception {
-        String fileContent;
+    @Throws(Exception::class)
+    private fun doBaseTestImpl(filePath: String, fileType: IElementType, contentFilter: ((String) -> String)?) {
+        val fileContent: String?
         if (Paths.get(filePath).isAbsolute()) {
-            fileContent = FileUtil.loadFile(new File(filePath), CharsetToolkit.UTF8, true).trim();
+            fileContent = FileUtil.loadFile(File(filePath), CharsetToolkit.UTF8, true).trim { it <= ' ' }
         } else {
-            fileContent = loadFile(filePath);
+            fileContent = loadFile(filePath)
         }
 
-        myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));
+        myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
 
         try {
-            myFile = createFile(filePath, fileType, contentFilter != null ? contentFilter.invoke(fileContent) : fileContent);
-            myFile.acceptChildren(new KtVisitorVoid() {
-                @Override
-                public void visitKtElement(@NotNull KtElement element) {
-                    element.acceptChildren(this);
+            myFile = createFile(filePath, fileType, (if (contentFilter != null) contentFilter.invoke(fileContent) else fileContent))
+            myFile.acceptChildren(object : KtVisitorVoid() {
+                override fun visitKtElement(element: KtElement) {
+                    element.acceptChildren(this)
                     try {
-                        checkPsiGetters(element);
-                    }
-                    catch (Throwable throwable) {
-                        throw new TestsCompilerError(throwable);
+                        checkPsiGetters(element)
+                    } catch (throwable: Throwable) {
+                        throw TestsCompilerError(throwable)
                     }
                 }
-            });
-        } catch (Throwable throwable) {
-            throw new TestsCompilerError(throwable);
+            })
+        } catch (throwable: Throwable) {
+            throw TestsCompilerError(throwable)
         }
 
-        String actual = toParseTreeText(myFile, false, false).trim();
-        if (Paths.get(filePath).isAbsolute()) {
-            assertSameLinesWithFile(filePath.replaceAll("\\.kts?", ".txt"), actual);
+        val actual = toParseTreeText(myFile, skipSpaces = false, printRanges = false).trim { it <= ' ' }
+        if (Paths.get(filePath).isAbsolute) {
+            assertSameLinesWithFile(filePath.replace("\\.kts?".toRegex(), ".txt"), actual)
         } else {
-            doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), actual);
+            doCheckResult(myFullDataPath, filePath.replace("\\.kts?".toRegex(), ".txt"), actual)
         }
     }
 
-    private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType, @NotNull String fileContent) {
-        KtPsiFactory psiFactory = new KtPsiFactory(myProject);
+    private fun createFile(filePath: String, fileType: IElementType, fileContent: String): PsiFile {
+        val psiFactory = KtPsiFactory(myProject)
 
-        if (fileType == KtNodeTypes.EXPRESSION_CODE_FRAGMENT) {
-            return psiFactory.createExpressionCodeFragment(fileContent, null);
+        return if (fileType === KtNodeTypes.EXPRESSION_CODE_FRAGMENT) {
+            psiFactory.createExpressionCodeFragment(fileContent, null)
+        } else if (fileType === KtNodeTypes.BLOCK_CODE_FRAGMENT) {
+            psiFactory.createBlockCodeFragment(fileContent, null)
+        } else {
+            createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent)
         }
-        else if (fileType == KtNodeTypes.BLOCK_CODE_FRAGMENT) {
-            return psiFactory.createBlockCodeFragment(fileContent, null);
-        }
-        else {
-            return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent);
+    }
+
+    companion object {
+        @Throws(Throwable::class)
+        private fun checkPsiGetters(elem: KtElement) {
+            val methods = elem.javaClass.getDeclaredMethods()
+            for (method in methods) {
+                val methodName = method.name
+                if (!methodName.startsWith("get") && !methodName.startsWith("find") ||
+                    methodName == "getReference" ||
+                    methodName == "getReferences" ||
+                    methodName == "getUseScope" ||
+                    methodName == "getPresentation"
+                ) {
+                    continue
+                }
+
+                if (!Modifier.isPublic(method.modifiers)) continue
+                if (method.parameterTypes.size > 0) continue
+
+                val declaringClass = method.declaringClass
+                if (!declaringClass.getName().startsWith("org.jetbrains.kotlin")) continue
+
+                val result = method.invoke(elem)
+                if (result == null) {
+                    for (annotation in method.declaredAnnotations) {
+                        if (annotation is IfNotParsed) {
+                            assertNotNull(
+                                "Incomplete operation in parsed OK test, method " + methodName +
+                                        " in " + declaringClass.getSimpleName() + " returns null. Element text: \n" + elem.text,
+                                PsiTreeUtil.findChildOfType(elem, PsiErrorElement::class.java)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }

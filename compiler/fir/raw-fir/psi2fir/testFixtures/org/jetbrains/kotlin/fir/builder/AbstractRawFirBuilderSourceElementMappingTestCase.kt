@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFirBuilderTestCase() {
     override fun doRawFirTest(filePath: String) {
-        val fileTextWithCaret = loadFile(filePath)!!
+        val fileTextWithCaret = loadFile(filePath)
         val fileTextWithoutCaret = fileTextWithCaret.replace(START_EXPRESSION_TAG, "").replace(END_EXPRESSION_TAG, "")
         val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileTextWithoutCaret) as KtFile
         val selectedExpression = run {
