@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import javax.inject.Inject
+import kotlin.collections.map
+import kotlin.collections.toTypedArray
 
 @CacheableTask
 abstract class KotlinCompile @Inject constructor(
@@ -281,6 +283,9 @@ abstract class KotlinCompile @Inject constructor(
                         args.fragmentDependencies = emptyArray()
                         args.fragmentFriendDependencies = emptyArray()
                     }
+                    if (isIncrementalCompilationEnabled() && enableUnsafeIncrementalCompilationForMultiplatform.get() && enableJvmClasspathMetadata.get()) {
+                        args.applyJvmClasspathMetadata()
+                    }
                 } else {
                     args.commonSources = commonSourceSet.asFileTree.toPathsArray()
                 }
@@ -294,6 +299,19 @@ abstract class KotlinCompile @Inject constructor(
             }
 
             args.freeArgs += (scriptSourcesFiles + javaSourcesFiles + sourcesFiles).map { it.absolutePath }
+        }
+    }
+
+    private fun K2JVMCompilerArguments.applyJvmClasspathMetadata() {
+        val metadataJvmDestinationFile = taskBuildCacheableOutputDirectory.file("metadata-jvm").get().asFile
+
+        commonFragmentsMetadataDestination = metadataJvmDestinationFile.absolutePath
+        if (metadataJvmDestinationFile.exists()) {
+            fragmentIncrementalClasspath = metadataJvmDestinationFile
+                .listFiles()
+                .orEmpty()
+                .map { path -> "${path.name}:${path.absolutePath}" }
+                .toTypedArray()
         }
     }
 
@@ -354,7 +372,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
-        args: K2JVMCompilerArguments
+        args: K2JVMCompilerArguments,
     ) {
         val kotlinCompilerVersion = kotlinCompilerVersion.orNull
         val shouldSkipCheck = runViaBuildToolsApi.get() &&
