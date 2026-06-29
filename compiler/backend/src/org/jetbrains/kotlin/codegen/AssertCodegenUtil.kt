@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.findPreviousOrNull
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor

@@ -19,13 +19,12 @@ import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putReifiedOperationMarker
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.*
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -1073,7 +1072,7 @@ class ExpressionCodegen(
                 val boxedRightType = typeMapper.boxType(typeOperand)
 
                 if (typeOperand.isReifiedTypeParameter) {
-                    val operationKind = if (expression.operator == IrTypeOperator.CAST) AS else SAFE_AS
+                    val operationKind = if (expression.operator == IrTypeOperator.CAST) ReifiedOperationKind.AS else ReifiedOperationKind.SAFE_AS
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, operationKind)
                     mv.checkcast(boxedRightType)
                 } else {
@@ -1093,7 +1092,7 @@ class ExpressionCodegen(
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
                 if (typeOperand.isReifiedTypeParameter) {
-                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, OperationKind.IS)
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedOperationKind.IS)
                     mv.instanceOf(type)
                 } else {
                     TypeIntrinsics.instanceOf(mv, typeOperand, type)
@@ -1105,7 +1104,7 @@ class ExpressionCodegen(
         }
     }
 
-    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind): Boolean {
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: ReifiedOperationKind): Boolean {
         val [typeParameter, second] = typeMapper.typeSystem.extractReificationArgument(type) ?: return false
         consumeReifiedOperationMarker(typeParameter)
         putReifiedOperationMarker(operationKind, second, visitor)
@@ -1306,7 +1305,7 @@ class ExpressionCodegen(
             val descriptorType = parameter.asmType
             val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, CATCH)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(parameter.type, ReifiedOperationKind.CATCH)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
 
@@ -1502,7 +1501,7 @@ class ExpressionCodegen(
                 val classType = classReference.classType
                 val classifier = classType.classifierOrNull
                 if (classifier is IrTypeParameterSymbol) {
-                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, OperationKind.JAVA_CLASS)
+                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedOperationKind.JAVA_CLASS)
                     assert(success) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
                     }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isReifiedTypeParameter
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -26,7 +26,7 @@ object EnumValueOf : IntrinsicMethod() {
             // INVOKESTATIC java/lang/Enum.valueOf...
             val temporary = frameMap.enterTemp(result.type)
             mv.store(temporary, result.type)
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedOperationKind.ENUM_REIFIED)
             mv.aconst(null)
             mv.load(temporary, result.type)
             val descriptor = Type.getMethodDescriptor(AsmTypes.ENUM_TYPE, AsmTypes.JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE)
@@ -50,7 +50,7 @@ object EnumValues : IntrinsicMethod() {
             // <REIFIED-OPERATIONS-MARKER>
             // ICONST_0
             // ANEWARRAY Ljava/lang/Enum;
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedOperationKind.ENUM_REIFIED)
             mv.iconst(0)
             mv.newarray(AsmTypes.ENUM_TYPE)
             MaterialValue(codegen, ENUM_ARRAY_TYPE, expression.type)
@@ -74,7 +74,7 @@ object EnumEntries : IntrinsicMethod() {
             // <REIFIED-OPERATIONS-MARKER>
             // ACONST_NULL
             // CHECKCAST Lkotlin/enums/EnumEntries;
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED)
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedOperationKind.ENUM_REIFIED)
             mv.aconst(null)
             mv.checkcast(AsmTypes.ENUM_ENTRIES)
             MaterialValue(codegen, AsmTypes.ENUM_ENTRIES, expression.type)

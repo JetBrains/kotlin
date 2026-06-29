@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.backend.jvm.codegen.materialize
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetClass
@@ -30,7 +30,7 @@ object GetJavaObjectType : IntrinsicMethod() {
                 if (symbol is IrTypeParameterSymbol) {
                     val success = codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(
                         receiver.classType,
-                        ReifiedTypeInliner.OperationKind.JAVA_CLASS
+                        ReifiedOperationKind.JAVA_CLASS
                     )
                     assert(success) {
                         "Non-reified type parameter under ::class should be rejected by type checker: ${receiver.render()}"

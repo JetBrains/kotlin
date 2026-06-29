@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.iconstInsnNode
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Label
@@ -69,19 +70,11 @@ object TypeIntrinsics {
         v.instanceOf(boxedAsmType)
     }
 
-    private fun iconstNode(value: Int): AbstractInsnNode =
-        when (value) {
-            in -1..5 -> InsnNode(Opcodes.ICONST_0 + value)
-            in Byte.MIN_VALUE..Byte.MAX_VALUE -> IntInsnNode(Opcodes.BIPUSH, value)
-            in Short.MIN_VALUE..Short.MAX_VALUE -> IntInsnNode(Opcodes.SIPUSH, value)
-            else -> LdcInsnNode(value)
-        }
-
     @JvmStatic
     fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, type: IrType, asmType: Type) {
         val functionTypeArity = getFunctionTypeArity(type)
         if (functionTypeArity >= 0) {
-            instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
+            instructions.insertBefore(instanceofInsn, iconstInsnNode(functionTypeArity))
             instructions.insertBefore(
                 instanceofInsn,
                 typeIntrinsicNode(IS_FUNCTION_OF_ARITY_METHOD_NAME, IS_FUNCTION_OF_ARITY_DESCRIPTOR),
