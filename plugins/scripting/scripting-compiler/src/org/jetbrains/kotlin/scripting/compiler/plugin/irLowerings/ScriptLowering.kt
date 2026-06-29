@@ -311,7 +311,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private val scriptingJvmPackage by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        createEmptyExternalPackageFragment(context.moduleDescriptor, FqName("kotlin.script.experimental.jvm"))
+        createEmptyExternalPackageFragment(context.irModule, FqName("kotlin.script.experimental.jvm"))
     }
 
     private fun IrClass.addScriptMainFun() {

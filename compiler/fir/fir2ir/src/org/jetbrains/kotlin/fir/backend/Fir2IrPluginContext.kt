@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 class Fir2IrPluginContext(
     private val c: Fir2IrComponents,
     override val irBuiltIns: IrBuiltIns,
-    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
+    override val irModule: IrModuleFragment,
     @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
     @property:Deprecated(
         "Consider using diagnosticReporter instead. See https://youtrack.jetbrains.com/issue/KT-78277 for more details",

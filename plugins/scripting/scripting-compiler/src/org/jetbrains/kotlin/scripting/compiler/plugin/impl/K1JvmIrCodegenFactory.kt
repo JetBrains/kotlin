@@ -188,10 +188,19 @@ class K1JvmIrCodegenFactory(
 
         SourceDeclarationsPreprocessor(psi2irContext).run(files)
 
+        val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
+            listOf(stubGenerator)
+        } else {
+            val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
+            listOf(irProvider, stubGeneratorForMissingClasses)
+        }
+
+        val [irModuleFragment, moduleGenerator] = psi2ir.generateModuleFragment(psi2irContext, files, irProviders)
+
         // The plugin context contains unbound symbols right after construction and has to be
         // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
         val pluginContext = IrPluginContextImpl(
-            psi2irContext.moduleDescriptor,
+            irModuleFragment,
             psi2irContext.languageVersionSettings,
             symbolTable,
             psi2irContext.irBuiltIns,
@@ -216,6 +225,8 @@ class K1JvmIrCodegenFactory(
             }
         }
 
+        psi2ir.applyPostprocessingSteps(psi2irContext, irModuleFragment, moduleGenerator, irProviders)
+
         val dependencies = if (irProvider !is KotlinIrLinker) {
             emptyList()
         } else {
@@ -224,15 +235,6 @@ class K1JvmIrCodegenFactory(
                 irProvider.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
             }
         }
-
-        val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
-            listOf(stubGenerator)
-        } else {
-            val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
-            listOf(irProvider, stubGeneratorForMissingClasses)
-        }
-
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders)
 
         if (irProvider is KotlinIrLinker) {
             irProvider.postProcess(psi2irContext.irBuiltIns, inOrAfterLinkageStep = true)

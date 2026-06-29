@@ -86,8 +86,7 @@ class Psi2IrTranslator(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
-    ): IrModuleFragment {
-
+    ): Pair<IrModuleFragment, ModuleGenerator> {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
 
@@ -99,15 +98,24 @@ class Psi2IrTranslator(
         deserializers.forEach { it.postProcess(context.irBuiltIns, inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after generation of IR module ${irModule.name.asString()}" }
 
+        return irModule to moduleGenerator
+    }
+
+    fun applyPostprocessingSteps(
+        context: GeneratorContext,
+        irModule: IrModuleFragment,
+        moduleGenerator: ModuleGenerator,
+        irProviders: List<IrProvider>,
+    ) {
+        val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+
         postprocessingSteps.forEach { it.invoke(irModule) }
-//        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
+        // assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         deserializers.forEach { it.postProcess(context.irBuiltIns, inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after applying all post-processing steps for the generated IR module ${irModule.name.asString()}" }
-
-        return irModule
     }
 
     private inline fun GeneratorContext.checkNoUnboundSymbols(whenDetected: () -> String) {

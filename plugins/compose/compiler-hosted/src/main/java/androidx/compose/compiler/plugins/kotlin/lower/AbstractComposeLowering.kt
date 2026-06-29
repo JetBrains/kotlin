@@ -1253,7 +1253,7 @@ abstract class AbstractComposeLowering(
                 origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             }.apply {
                 parent = createEmptyExternalPackageFragment(
-                    context.moduleDescriptor,
+                    context.irModule,
                     FqName("kotlin.jvm.internal")
                 )
                 val src = addTypeParameter("T", context.irBuiltIns.anyNType)

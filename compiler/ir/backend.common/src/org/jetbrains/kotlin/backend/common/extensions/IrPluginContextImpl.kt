@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 @Suppress("DEPRECATION")
 open class IrPluginContextImpl(
-    private val module: ModuleDescriptor,
+    private val module: IrModuleFragment,
     override val languageVersionSettings: LanguageVersionSettings,
     private val st: ReferenceSymbolTable,
     override val irBuiltIns: IrBuiltIns,
@@ -45,10 +45,9 @@ open class IrPluginContextImpl(
 ) : IrPluginContext {
     override val afterK2: Boolean = false
 
-    override val platform: TargetPlatform? = module.platform
+    override val platform: TargetPlatform? = module.descriptor.platform
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val moduleDescriptor: ModuleDescriptor = module
+    override val irModule: IrModuleFragment = module
 
     @ObsoleteDescriptorBasedAPI
     override val symbolTable: ReferenceSymbolTable = st
@@ -57,7 +56,7 @@ open class IrPluginContextImpl(
         get() = DummyIrGeneratedDeclarationsRegistrar
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {
-        val pkg = module.getPackage(fqName)
+        val pkg = module.descriptor.getPackage(fqName)
 
         if (fqName.isRoot || pkg.fragments.isNotEmpty()) return pkg.memberScope
 

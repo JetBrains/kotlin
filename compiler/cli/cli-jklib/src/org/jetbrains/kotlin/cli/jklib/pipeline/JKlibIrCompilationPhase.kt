@@ -156,7 +156,7 @@ object JKlibIrCompilationPhase :
         linker.stubGenerator = stubGenerator
 
         val pluginContext = IrPluginContextImpl(
-            mainModule,
+            mainModuleFragment,
             configuration.languageVersionSettings,
             symbolTable,
             irBuiltIns,

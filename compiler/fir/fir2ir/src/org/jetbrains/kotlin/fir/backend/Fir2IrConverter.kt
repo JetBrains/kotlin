@@ -60,7 +60,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
-    private val moduleDescriptor: FirModuleDescriptor,
     private val c: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope,
 ) : Fir2IrComponents by c {
@@ -69,7 +68,7 @@ class Fir2IrConverter(
 
     private fun runSourcesConversion(
         allFirFiles: List<FirFile>,
-        irModuleFragment: IrModuleFragmentImpl,
+        irModuleFragment: IrModuleFragment,
         fir2irVisitor: Fir2IrVisitor
     ) {
         for (firFile in allFirFiles) {
@@ -143,7 +142,7 @@ class Fir2IrConverter(
         }
         val irFile = IrFileImpl(
             fileEntry,
-            moduleDescriptor.getPackage(file.packageFqName).fragments.first(),
+            moduleFragment.descriptor.getPackage(file.packageFqName).fragments.first(),
             moduleFragment
         )
         if (file.origin is FirDeclarationOrigin.Synthetic.PluginFile) {
@@ -602,12 +601,12 @@ class Fir2IrConverter(
     }
 
     companion object {
-        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragmentImpl {
+        fun generateIrModuleFragment(components: Fir2IrComponentsStorage, firFiles: List<FirFile>): IrModuleFragment {
             val session = components.session
 
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
 
-            val irModuleFragment = IrModuleFragmentImpl(components.moduleDescriptor)
+            val irModuleFragment = components.module
 
             val allFirFiles = buildList {
                 addAll(session.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded())
