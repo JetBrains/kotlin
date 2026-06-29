@@ -55,7 +55,7 @@ internal class CapturedKTypeConstructor(val projection: KTypeProjection) : Captu
     override fun toString(): String = "CapturedType($projection)"
 }
 
-internal fun captureKTypeFromArguments(type: KType): KType? {
+internal fun captureKTypeFromArguments(type: AbstractKType): AbstractKType? {
     val klass = type.classifier as? KClass<*> ?: return null
 
     val arguments = type.arguments
@@ -93,11 +93,11 @@ internal fun captureKTypeFromArguments(type: KType): KType? {
         capturedArguments,
         type.isMarkedNullable,
         type.annotations,
-        (type as? AbstractKType)?.abbreviation,
+        type.abbreviation,
         isDefinitelyNotNullType = false,
         isNothingType = false,
         isSuspendFunctionType = false,
-        (type as? AbstractKType)?.mutableCollectionClass,
+        type.mutableCollectionClass,
     )
 }
 

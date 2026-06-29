@@ -289,7 +289,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): RigidTypeMarker? {
-        return captureKTypeFromArguments(type as KType) as AbstractKType?
+        return captureKTypeFromArguments(type as AbstractKType)
     }
 
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
