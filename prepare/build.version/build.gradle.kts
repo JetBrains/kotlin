@@ -10,18 +10,16 @@ plugins {
 
 val buildVersionFilePath = layout.buildDirectory.file("build.txt")
 val buildVersion by configurations.creating
-val buildNumber: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
 
 val writeBuildNumber by tasks.registering {
     val versionFile = buildVersionFilePath
-    val buildNumber = buildNumber
+    val buildNumber = project.kotlinBuildProperties.buildNumber
     inputs.property("version", buildNumber)
     outputs.file(versionFile)
     doLast {
         with(versionFile.get().asFile) {
             parentFile.mkdirs()
-            writeText(buildNumber)
+            writeText(buildNumber.get())
         }
     }
 }
@@ -33,7 +31,7 @@ artifacts.add(buildVersion.name, buildVersionFilePath) {
 
 
 val writeStdlibVersion by tasks.registering {
-    val kotlinVersionLocal = kotlinVersion
+    val kotlinVersionLocal = kotlinBuildProperties.kotlinVersion
     val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
     inputs.property("version", kotlinVersionLocal)
     outputs.file(versionFile)
@@ -55,7 +53,7 @@ val writeStdlibVersion by tasks.registering {
 
     doLast {
         replaceVersion(versionFile, """fun get\(\): KotlinVersion = KotlinVersion\((\d+, \d+, \d+)\)""") {
-            val (major, minor, _, optPatch) = Regex("""^(\d+)\.(\d+)(\.(\d+))?""").find(kotlinVersionLocal)?.destructured ?: error("Cannot parse current version $kotlinVersionLocal")
+            val (major, minor, _, optPatch) = Regex("""^(\d+)\.(\d+)(\.(\d+))?""").find(kotlinVersionLocal.get())?.destructured ?: error("Cannot parse current version ${kotlinVersionLocal.get()}")
             "$major, $minor, ${optPatch.takeIf { it.isNotEmpty() } ?: "0" }"
         }
     }

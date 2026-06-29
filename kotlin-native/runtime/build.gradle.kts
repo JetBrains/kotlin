@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistributi
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
-val kotlinVersion: String by rootProject.extra
-
 plugins {
     id("common-configuration")
     id("test-federation-convention")

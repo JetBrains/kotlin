@@ -19,7 +19,7 @@ projectTests {
             dependsOn(":kotlin-native:install")
         }
 
-        systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+        systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     }
 }
 

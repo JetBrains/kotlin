@@ -12,7 +12,6 @@ plugins {
 // java extension
 configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
 
-val kotlinVersion: String by rootProject.extra
 
 dependencies {
     compileOnly("org.jetbrains:annotations:13.0")
@@ -24,7 +23,7 @@ sourceSets {
 }
 
 tasks.named<ProcessResources>("processResources") {
-    val kotlinVersionLocal = kotlinVersion
+    val kotlinVersionLocal = kotlinBuildProperties.kotlinVersion.get()
     inputs.property("compilerVersion", kotlinVersionLocal)
     filesMatching("META-INF/compiler.version") {
         filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersionLocal))

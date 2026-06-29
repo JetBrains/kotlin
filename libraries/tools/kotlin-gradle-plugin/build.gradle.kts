@@ -6,7 +6,6 @@ import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.nativeDistribution.registerNativeBootstrapDistribution
 import org.jetbrains.kotlin.nativeDistribution.useProvidedNativeBootstrapDistribution
 import org.jetbrains.kotlin.testFederation.SmokeTestConfig
 import org.jetbrains.kotlin.testFederation.TemporaryTestFederationApi
@@ -655,7 +654,7 @@ functionalTestCompilation.associateWith(kotlin.target.compilations.getByName("co
 functionalTestCompilation.associateWith(testFixturesCompilation)
 
 tasks.register<Test>("functionalTest") {
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     useJUnitPlatform()
 
     @OptIn(TemporaryTestFederationApi::class)

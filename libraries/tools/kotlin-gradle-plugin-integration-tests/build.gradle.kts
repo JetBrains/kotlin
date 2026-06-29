@@ -438,7 +438,7 @@ tasks.withType<Test>().configureEach {
         dependsOn(it)
     }
 
-    systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
+    systemProperty("kotlinVersion", kotlinBuildProperties.kotlinVersion.get())
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
     systemProperty("composeVersion", composeRuntimeSnapshot.versions.runtime.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())

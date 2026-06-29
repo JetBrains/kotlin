@@ -15,7 +15,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
@@ -86,7 +85,7 @@ fun Project.manifestAttributes(
     manifest.attributes(
         "Implementation-Vendor" to "JetBrains",
         "Implementation-Title" to project.extensions.getByType<BasePluginExtension>().archivesName,
-        "Implementation-Version" to project.rootProject.extra["buildNumber"] as String
+        "Implementation-Version" to kotlinBuildProperties.buildNumber.get()
     )
 
     if (component != null) {

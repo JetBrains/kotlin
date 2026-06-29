@@ -18,6 +18,7 @@ kotlin {
 
 dependencies {
     implementation(project(":buildsrc-compat"))
+    implementation(kotlinBuildHelpers())
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }

@@ -83,6 +83,11 @@ class KotlinBuildProperties internal constructor(
      */
     val defaultSnapshotVersion: Provider<String> = stringProperty("defaultSnapshotVersion")
 
+    val buildNumber: Provider<String> = stringProperty("build.number").orElse(defaultSnapshotVersion)
+    val kotlinVersion: Provider<String> = stringProperty("deployVersion").map { deploySnapshotStr ->
+        if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion.get()
+    }.orElse(buildNumber)
+
     /**
      * Nullable
      */

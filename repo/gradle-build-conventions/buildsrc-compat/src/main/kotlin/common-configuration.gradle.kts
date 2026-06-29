@@ -17,7 +17,7 @@ plugins {
 }
 
 // Common Group and version
-val kotlinVersion: String by rootProject.extra
+val kotlinVersion: String = project.kotlinBuildProperties.kotlinVersion.get()
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
 
