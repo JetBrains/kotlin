@@ -22,7 +22,7 @@ abstract class AbstractMergeCirTreeTest : KtInlineSourceCommonizerTestCase() {
     private val storageManager = LockBasedStorageManager(this::class.simpleName)
 
     fun mergeCirTree(vararg modules: Pair<String, CirTreeModule>): CirRootNode {
-        val targets = modules.map { (targetName, _) -> LeafCommonizerTarget(targetName) }
+        val targets = modules.map { [targetName] -> LeafCommonizerTarget(targetName) }
         val supportExpectClassSupplier = buildDummySupportExpectClassSupplier(targets, testRootDisposable)
 
         return org.jetbrains.kotlin.commonizer.tree.mergeCirTree(
