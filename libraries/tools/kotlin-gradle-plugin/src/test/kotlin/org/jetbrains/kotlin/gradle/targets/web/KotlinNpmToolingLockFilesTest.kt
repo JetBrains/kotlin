@@ -224,10 +224,10 @@ class KotlinNpmToolingLockFilesTest {
         private val packageLockJsonPackages: List<String> by lazy {
             packageLockJson.packages.keys
                 .asSequence()
-                .filter { it.startsWith("node_modules/") }
-                .filter { "/node_modules/" !in it }
-                .map { it.substringAfter("node_modules/") }
-                .filter { it.isNotBlank() }
+                .filter { it.isNotBlank() } // Remove root project entry
+                .filter { it.startsWith("node_modules/") } // only leaving actual resolved full dependency path including name
+                // Leaving only package name (including package-specific one where package name added as a prefix)
+                .map { it.substringAfterLast("node_modules/") }
                 .distinct()
                 .sorted()
                 .toList()

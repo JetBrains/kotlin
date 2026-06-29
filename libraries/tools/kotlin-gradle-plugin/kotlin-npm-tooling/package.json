@@ -3,7 +3,7 @@
   "private": true,
   "description": "Tooling dependencies required by Kotlin Gradle plugin for building, testing, and running Kotlin JS and WasmJS projects.",
   "dependencies": {
-    "@swc/helpers": "^0.5.21",
+    "@swc/helpers": "^0.5.23",
     "css-loader": "^7.1.4",
     "karma": "github:Kotlin/karma#6.4.5",
     "karma-chrome-launcher": "^3.2.0",
@@ -16,16 +16,16 @@
     "karma-webpack": "^5.0.1",
     "kotlin-web-helpers": "^3.3.0",
     "mini-css-extract-plugin": "^2.10.2",
-    "mocha": "^11.7.5",
-    "sass": "^1.99.0",
-    "sass-loader": "^16.0.7",
+    "mocha": "^11.7.6",
+    "sass": "^1.101.0",
+    "sass-loader": "^16.0.8",
     "source-map-loader": "^5.0.0",
     "source-map-support": "^0.5.21",
     "style-loader": "^4.0.0",
     "to-string-loader": "^1.2.0",
     "typescript": "^6.0.3",
-    "webpack": "^5.106.2",
-    "webpack-cli": "^7.0.2",
-    "webpack-dev-server": "^5.2.4"
+    "webpack": "^5.108.1",
+    "webpack-cli": "^7.1.0",
+    "webpack-dev-server": "^5.2.5"
   }
 }
