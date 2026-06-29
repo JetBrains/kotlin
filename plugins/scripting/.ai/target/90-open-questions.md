@@ -62,7 +62,7 @@ Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToF
 - Owner: unassigned
 - YT: — (umbrella)
 - Target doc: [`40-jsr223-target.md#remote-out-of-process-compilation`](40-jsr223-target.md), [`50-migration-plan.md#3-design--prototype-stateless-remote-repl-compilation`](50-migration-plan.md)
-- Last touched: 2026-05-27
+- Last touched: 2026-06-25
 
 **Settled**: stateless snippet compilation (snippet artifacts = class files + sidecar metadata). At least one IntelliJ consumer relies on out-of-process JSR-223 compilation today.
 
@@ -71,7 +71,7 @@ Tracked as migration-plan step 2. Sub-questions (priority, shape — `convertToF
 | Q5a | Reconstruction feasibility: can `FirReplSnippetSymbol` + `FirReplSnippetResolveExtension.getSnippetScope` be implemented over symbols rebuilt from on-disk class metadata + sidecar? | **resolved — happy-path proven 2026-05-27** ([iteration](../iterations/2026-05-27_stateless-repl-prototype.md)) | unassigned | — | 2026-05-27 |
 | Q5b | Sidecar format (JSON / proto / hand-rolled binary) + versioning strategy | **prototype-locked: paired JSON, `sidecarVersion = 1`** ([iteration](../iterations/2026-05-27_stateless-repl-prototype.md)); protobuf-in-`.kotlin_metadata` planned for promotion once field set stabilises | unassigned | — | 2026-05-27 |
 | Q5c | Performance: O(N²) FIR reconstruction risk for long sessions; caller-side caching strategy? | open — not measured in the raw prototype (single-snippet history); revisit when promoting | unassigned | — | 2026-05-27 |
-| Q5d | Transport: BTA `CompileReplSnippetOperation` vs direct in-process embedding (post IntelliJ-platform-dep cleanup) — probably both eventually | **BTA half landed 2026-05-28c** ([iteration](../iterations/2026-05-28c_stateless-repl-bta-transport.md)) — `CompileReplSnippetOperation` API/Impl + `SnippetArtifactCodec` single-root JSON envelope (framing/envelope/granularity decisions recorded); direct in-process embedding still pending IntelliJ-platform-dep cleanup | unassigned | — | 2026-05-28 |
+| Q5d | Transport: BTA `CompileReplSnippetOperation` vs direct in-process embedding (post IntelliJ-platform-dep cleanup) — probably both eventually | **BTA half landed 2026-05-28c** ([iteration](../iterations/2026-05-28c_stateless-repl-bta-transport.md)) — `CompileReplSnippetOperation` API/Impl + `SnippetArtifactCodec` single-root JSON envelope (framing/envelope/granularity decisions recorded). **End-to-end smoke test landed 2026-06-25b** ([iteration](../iterations/2026-06-25b_stateless-repl-bta-smoke-test.md)) — `ReplSnippetCompilationTest` drives the op through `KotlinToolchains.loadImplementation`; surfaced + fixed a latent `kotlin-build-tools-compat` build break + a missing-`kotlin-script-runtime` packaging gap (follow-up #1 done). Still open: structured failure surface (follow-up #2); direct in-process embedding pending IntelliJ-platform-dep cleanup | unassigned | — | 2026-06-25 |
 | Q5e | Migration window: K1 daemon bridge breaks before stateless lands; IntelliJ consumer pin to a Kotlin version during transition? | unblocked by 2026-05-27 prototype; still pending public API + transport (Q5d) | unassigned | — | 2026-05-27 |
 
 ## Q6. Classpath-based script definition discovery (KT-82551)

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.CompileReplSnippetOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import java.io.File
@@ -69,6 +70,14 @@ internal class KotlinWrapperPre2_4_0(
 
         override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder {
             throw UnsupportedOperationException("DiscoverScriptExtensionsOperation is available from Kotlin compiler version 2.4.0")
+        }
+
+        override fun compileReplSnippetOperationBuilder(
+            priorSnippets: List<ByteArray>,
+            snippetSource: String,
+            snippetName: String,
+        ): CompileReplSnippetOperation.Builder {
+            throw UnsupportedOperationException("CompileReplSnippetOperation is available from Kotlin compiler version 2.4.0")
         }
     }
 

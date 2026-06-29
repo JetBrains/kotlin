@@ -2,7 +2,7 @@
 
 > **When to consult**: picking a step or checking sequencing constraints. Steps 1–14 are referenceable IDs. Canonical home for KT-83498 design notes (step 2).
 > **Cache lifetime**: mutable-per-iteration (step strike-throughs accumulate)
-> **Last verified**: 2026-05-27 (step 3 raw prototype **landed** — see iteration `2026-05-27_stateless-repl-prototype.md`)
+> **Last verified**: 2026-06-25 (step 3 — BTA transport end-to-end smoke test landed; see iteration `2026-06-25b_stateless-repl-bta-smoke-test.md`)
 
 Ordered, each step independently mergeable. Each step is a small set of commits, not a single mega-MR.
 
@@ -87,7 +87,7 @@ Ordered, each step independently mergeable. Each step is a small set of commits,
 - Route the existing stateful `K2ReplCompiler` through the stateless core (re-express stateful entry as a cache layer in front of the stateless path; Q5c performance work fits here).
 - In-memory `VirtualFile` overlay for prior-snippet classfiles (replace temp-dir indirection).
 - Promote `StatelessReplCompiler` to a public `libraries/scripting/common` API (`@SinceKotlin`-stable).
-- Transport (Q5d): BTA `CompileReplSnippetOperation` and/or in-process embedding.
+- Transport (Q5d): BTA `CompileReplSnippetOperation` and/or in-process embedding. **BTA op + wire codec landed 2026-05-28c; end-to-end smoke test landed 2026-06-25b** (`ReplSnippetCompilationTest` drives the op through `KotlinToolchains.loadImplementation`; fixed a `kotlin-build-tools-compat` build break + embedded `kotlin-script-runtime` into the impl shaded jar). Remaining: structured failure surface; daemon execution; in-process embedding.
 - Daemon-bridge migration (Q5e): IntelliJ consumer pin during transition.
 
 **Out of scope for the prototype**: BTA transport, in-process embedding, IntelliJ consumer migration — those follow once the core proves out. See [40-jsr223-target.md](40-jsr223-target.md).
