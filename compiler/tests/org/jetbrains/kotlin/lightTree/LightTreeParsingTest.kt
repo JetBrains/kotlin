@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lightTree
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -90,6 +91,7 @@ class LightTreeParsingTest {
     private fun withEnvironment(block: () -> Unit) {
         runWithDisposable { testRootDisposable ->
             // environment is needed to setup the parser
+            @OptIn(CoreEnvironmentDeprecation::class)
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable, CompilerConfiguration.create(),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
