@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
@@ -47,7 +49,9 @@ import org.junit.jupiter.api.Test
  */
 class CustomKotlinLikeDumpStrategyTest {
 
-    private val pkg = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("test"))
+    private val pkg = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("test")).apply {
+        this.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+    }
 
     private data class TestIr(
         val instanceFactory: IrClass,

@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.types.error.ErrorModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -36,7 +38,9 @@ import kotlin.reflect.KProperty
 object TestIrBuiltins : IrBuiltIns() {
     override val symbolFinder by lazy { missingBuiltIn() }
 
-    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin"))
+    private val builtinsPackage = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(), FqName("kotlin")).apply {
+        this.module = IrModuleFragmentImpl(ErrorModuleDescriptor)
+    }
 
     override val languageVersionSettings: LanguageVersionSettings
         get() = LanguageVersionSettingsImpl.DEFAULT
