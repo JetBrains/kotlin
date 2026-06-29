@@ -4,13 +4,17 @@
 enum class InitEnum(val text: String) {
     FIRST(<!UNINITIALIZED_ENUM_ENTRY!>SECOND<!>.name),
     SECOND(<!UNINITIALIZED_ENUM_COMPANION!>companionObject<!>),
-    THIRD(companionBlock);
+    THIRD(<!UNINITIALIZED_ENUM_COMPANION_BLOCK_MEMBER!>companionBlock<!>),
+    FOURTH(companionBlockComputed),
+    FIFTH(companionBlockFunction());
 
     companion object {
         val companionObject: String = FIRST.name
     }
     companion {
-        val companionBlock: String = <!UNINITIALIZED_ENUM_ENTRY!>SECOND<!>.name
+        val companionBlock: String = SECOND.name
+        val companionBlockComputed: String get() = SECOND.name
+        fun companionBlockFunction() = SECOND.name
     }
 }
 

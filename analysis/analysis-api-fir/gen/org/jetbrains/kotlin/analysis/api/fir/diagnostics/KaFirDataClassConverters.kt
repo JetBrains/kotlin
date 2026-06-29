@@ -1945,6 +1945,13 @@ private fun KaDiagnosticConverterBuilder.addConversions39() {
             token,
         )
     }
+    add(FirErrors.UNINITIALIZED_ENUM_COMPANION_BLOCK_MEMBER) { firDiagnostic ->
+        UninitializedEnumCompanionBlockMemberImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.USELESS_ELVIS) { firDiagnostic ->
         UselessElvisImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

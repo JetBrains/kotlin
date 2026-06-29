@@ -3770,6 +3770,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val enumClass: KaClassLikeSymbol
     }
 
+    interface UninitializedEnumCompanionBlockMember : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = UninitializedEnumCompanionBlockMember::class
+        val enumClass: KaClassLikeSymbol
+    }
+
     interface ValReassignment : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ValReassignment::class
         val variable: KaVariableSymbol

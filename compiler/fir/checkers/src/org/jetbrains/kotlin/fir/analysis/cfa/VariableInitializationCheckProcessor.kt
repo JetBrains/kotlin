@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.resolve.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.hasDiagnosticKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
@@ -224,10 +225,15 @@ abstract class VariableInitializationCheckProcessor {
             !symbol.isExternal &&
             expression.hasMatchingReceiver(this) &&
             symbol in properties &&
-            !symbol.isInitializedAt(node, data = this)
+            !symbol.isInitializedAt(node, data = this) &&
+            !isEnumEntryAccessInCompanionBlockInitializer(node, symbol)
         ) {
             reportUninitializedVariable(expression, symbol)
         }
+    }
+
+    private fun isEnumEntryAccessInCompanionBlockInitializer(node: CFGNode<*>, symbol: FirVariableSymbol<*>): Boolean {
+        return symbol is FirEnumEntrySymbol && (node.owner.declaration as? FirProperty)?.isCompanionBlockMember == true
     }
 
     private fun FirVariableSymbol<*>.isInitializedAt(node: CFGNode<*>, data: VariableInitializationInfoData): Boolean {

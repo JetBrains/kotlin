@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -37,7 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -88,14 +90,30 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 is FunctionCallExitNode -> node.firAsFunctionCallOrNull ?: continue
                 else -> continue
             }
-            val matchingReceiver = qualifiedAccess.allReceiverExpressions
-                .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(qualifiedAccess) == companionSymbol }
-            if (matchingReceiver != null) {
-                reporter.reportOn(
-                    matchingReceiver.source ?: qualifiedAccess.source,
-                    FirErrors.UNINITIALIZED_ENUM_COMPANION,
-                    enumClass
-                )
+
+            for (receiver in qualifiedAccess.allReceiverExpressions) {
+                val classSymbol = receiver.unwrapSmartcastExpression().getClassSymbol(qualifiedAccess)
+
+                if (classSymbol == companionSymbol) {
+                    reporter.reportOn(
+                        receiver.source ?: qualifiedAccess.source,
+                        FirErrors.UNINITIALIZED_ENUM_COMPANION,
+                        enumClass
+                    )
+                    break
+                }
+
+                if (classSymbol == enumClass &&
+                    qualifiedAccess.toResolvedCallableSymbol()
+                        .let { it is FirPropertySymbol && it.isCompanionBlockMember && it.hasBackingField }
+                ) {
+                    reporter.reportOn(
+                        receiver.source ?: qualifiedAccess.source,
+                        FirErrors.UNINITIALIZED_ENUM_COMPANION_BLOCK_MEMBER,
+                        enumClass
+                    )
+                    break
+                }
             }
         }
     }
