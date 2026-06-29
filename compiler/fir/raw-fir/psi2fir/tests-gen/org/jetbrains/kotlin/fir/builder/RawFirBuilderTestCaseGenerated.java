@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.fir.builder;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.regex.Pattern;
@@ -19,1054 +18,1248 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
-@RunWith(JUnit3RunnerWithInners.class)
 public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCase {
-  private void runTest(String testDataFilePath) {
-    KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+  private void run(String fileName) {
+    runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/" + fileName);
   }
 
+  @Test
   public void testAllFilesPresentInRawBuilder() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
   }
 
+  @Nested
   @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Declarations extends AbstractRawFirBuilderTestCase {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+  public class Declarations {
+    private void run(String fileName) {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInDeclarations() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
+    @Test
     @TestMetadata("annotation.kt")
     public void testAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotation.kt");
+      run("annotation.kt");
     }
 
+    @Test
     @TestMetadata("annotationArguments.kt")
     public void testAnnotationArguments() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationArguments.kt");
+      run("annotationArguments.kt");
     }
 
+    @Test
     @TestMetadata("annotationArgumentsRepl.repl.kts")
     public void testAnnotationArgumentsRepl_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationArgumentsRepl.repl.kts");
+      run("annotationArgumentsRepl.repl.kts");
     }
 
+    @Test
     @TestMetadata("annotationOnContextParameters.kt")
     public void testAnnotationOnContextParameters() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnContextParameters.kt");
+      run("annotationOnContextParameters.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnDelegatedInterface.kt")
     public void testAnnotationOnDelegatedInterface() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnDelegatedInterface.kt");
+      run("annotationOnDelegatedInterface.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnField.kt")
     public void testAnnotationOnField() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnField.kt");
+      run("annotationOnField.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnFullNameBasedDestructuring.kt")
     public void testAnnotationOnFullNameBasedDestructuring() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnFullNameBasedDestructuring.kt");
+      run("annotationOnFullNameBasedDestructuring.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnFullNameBasedDestructuringScript.kts")
     public void testAnnotationOnFullNameBasedDestructuringScript() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnFullNameBasedDestructuringScript.kts");
+      run("annotationOnFullNameBasedDestructuringScript.kts");
     }
 
+    @Test
     @TestMetadata("annotationOnProperty.kt")
     public void testAnnotationOnProperty() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnProperty.kt");
+      run("annotationOnProperty.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnReceiver.kt")
     public void testAnnotationOnReceiver() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnReceiver.kt");
+      run("annotationOnReceiver.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnSuperType.kt")
     public void testAnnotationOnSuperType() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperType.kt");
+      run("annotationOnSuperType.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnSuperTypeCall.kt")
     public void testAnnotationOnSuperTypeCall() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnSuperTypeCall.kt");
+      run("annotationOnSuperTypeCall.kt");
     }
 
+    @Test
     @TestMetadata("annotationOnTypeParameterInWhereClause.kt")
     public void testAnnotationOnTypeParameterInWhereClause() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnTypeParameterInWhereClause.kt");
+      run("annotationOnTypeParameterInWhereClause.kt");
     }
 
+    @Test
     @TestMetadata("annotationRepl.repl.kts")
     public void testAnnotationRepl_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationRepl.repl.kts");
+      run("annotationRepl.repl.kts");
     }
 
+    @Test
     @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
     public void testAnnotationsOnNullableParenthesizedTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
+      run("annotationsOnNullableParenthesizedTypes.kt");
     }
 
+    @Test
     @TestMetadata("annotationsOnParenthesizedTypes.kt")
     public void testAnnotationsOnParenthesizedTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnParenthesizedTypes.kt");
+      run("annotationsOnParenthesizedTypes.kt");
     }
 
+    @Test
     @TestMetadata("anonymousObjectWithAnnotation.kt")
     public void testAnonymousObjectWithAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/anonymousObjectWithAnnotation.kt");
+      run("anonymousObjectWithAnnotation.kt");
     }
 
+    @Test
     @TestMetadata("classLevelDestructuringWithAnnotation.kt")
     public void testClassLevelDestructuringWithAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classLevelDestructuringWithAnnotation.kt");
+      run("classLevelDestructuringWithAnnotation.kt");
     }
 
+    @Test
     @TestMetadata("classWithWrongSuperCall.kt")
     public void testClassWithWrongSuperCall() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classWithWrongSuperCall.kt");
+      run("classWithWrongSuperCall.kt");
     }
 
+    @Test
     @TestMetadata("companionBlocks.kt")
     public void testCompanionBlocks() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/companionBlocks.kt");
+      run("companionBlocks.kt");
     }
 
+    @Test
     @TestMetadata("companionExtensions.kt")
     public void testCompanionExtensions() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/companionExtensions.kt");
+      run("companionExtensions.kt");
     }
 
+    @Test
     @TestMetadata("complexTypes.kt")
     public void testComplexTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");
+      run("complexTypes.kt");
     }
 
+    @Test
     @TestMetadata("constantInRepl.repl.kts")
     public void testConstantInRepl_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constantInRepl.repl.kts");
+      run("constantInRepl.repl.kts");
     }
 
+    @Test
     @TestMetadata("constructorInObject.kt")
     public void testConstructorInObject() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorInObject.kt");
+      run("constructorInObject.kt");
     }
 
+    @Test
     @TestMetadata("constructorOfAnonymousObject.kt")
     public void testConstructorOfAnonymousObject() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorOfAnonymousObject.kt");
+      run("constructorOfAnonymousObject.kt");
     }
 
+    @Test
     @TestMetadata("constructorWithAnnotations.kt")
     public void testConstructorWithAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithAnnotations.kt");
+      run("constructorWithAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("constructorWithLocalDeclarations.kt")
     public void testConstructorWithLocalDeclarations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/constructorWithLocalDeclarations.kt");
+      run("constructorWithLocalDeclarations.kt");
     }
 
+    @Test
     @TestMetadata("contextParameterDefaultValue.kt")
     public void testContextParameterDefaultValue() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextParameterDefaultValue.kt");
+      run("contextParameterDefaultValue.kt");
     }
 
+    @Test
     @TestMetadata("contextParameters.kt")
     public void testContextParameters() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextParameters.kt");
+      run("contextParameters.kt");
     }
 
+    @Test
     @TestMetadata("contextReceivers.kt")
     public void testContextReceivers() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
+      run("contextReceivers.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnMemberClass.kt")
     public void testDanglingAnnotationOnMemberClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberClass.kt");
+      run("danglingAnnotationOnMemberClass.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnMemberFunction.kt")
     public void testDanglingAnnotationOnMemberFunction() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberFunction.kt");
+      run("danglingAnnotationOnMemberFunction.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnMemberProperty.kt")
     public void testDanglingAnnotationOnMemberProperty() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnMemberProperty.kt");
+      run("danglingAnnotationOnMemberProperty.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnTopLevelClass.kt")
     public void testDanglingAnnotationOnTopLevelClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelClass.kt");
+      run("danglingAnnotationOnTopLevelClass.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
     public void testDanglingAnnotationOnTopLevelFunction() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelFunction.kt");
+      run("danglingAnnotationOnTopLevelFunction.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationOnTopLevelProperty.kt")
     public void testDanglingAnnotationOnTopLevelProperty() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationOnTopLevelProperty.kt");
+      run("danglingAnnotationOnTopLevelProperty.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationsClassLevel.kt")
     public void testDanglingAnnotationsClassLevel() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
+      run("danglingAnnotationsClassLevel.kt");
     }
 
+    @Test
     @TestMetadata("danglingAnnotationsFileLevel.kt")
     public void testDanglingAnnotationsFileLevel() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsFileLevel.kt");
+      run("danglingAnnotationsFileLevel.kt");
     }
 
+    @Test
     @TestMetadata("danglingConstrants.kt")
     public void testDanglingConstrants() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingConstrants.kt");
+      run("danglingConstrants.kt");
     }
 
+    @Test
     @TestMetadata("danglingModifierInsideCompanionBlock.kt")
     public void testDanglingModifierInsideCompanionBlock() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideCompanionBlock.kt");
+      run("danglingModifierInsideCompanionBlock.kt");
     }
 
+    @Test
     @TestMetadata("danglingModifierInsideEnumEntry.kt")
     public void testDanglingModifierInsideEnumEntry() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingModifierInsideEnumEntry.kt");
+      run("danglingModifierInsideEnumEntry.kt");
     }
 
+    @Test
     @TestMetadata("dataClassWithAnnotations.kt")
     public void testDataClassWithAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/dataClassWithAnnotations.kt");
+      run("dataClassWithAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("delegatedFieldNestedName.kt")
     public void testDelegatedFieldNestedName() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegatedFieldNestedName.kt");
+      run("delegatedFieldNestedName.kt");
     }
 
+    @Test
     @TestMetadata("delegates.kt")
     public void testDelegates() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");
+      run("delegates.kt");
     }
 
+    @Test
     @TestMetadata("delegatesWithAnnotations.kt")
     public void testDelegatesWithAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegatesWithAnnotations.kt");
+      run("delegatesWithAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/derivedClass.kt");
+      run("derivedClass.kt");
     }
 
+    @Test
     @TestMetadata("emptyAnonymousObject.kt")
     public void testEmptyAnonymousObject() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/emptyAnonymousObject.kt");
+      run("emptyAnonymousObject.kt");
     }
 
+    @Test
     @TestMetadata("enumEntryWithAnnotations.kt")
     public void testEnumEntryWithAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enumEntryWithAnnotations.kt");
+      run("enumEntryWithAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("enums.kt")
     public void testEnums() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums.kt");
+      run("enums.kt");
     }
 
+    @Test
     @TestMetadata("enums2.kt")
     public void testEnums2() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums2.kt");
+      run("enums2.kt");
     }
 
+    @Test
     @TestMetadata("enums3.kt")
     public void testEnums3() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums3.kt");
+      run("enums3.kt");
     }
 
+    @Test
     @TestMetadata("expectActual.kt")
     public void testExpectActual() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt");
+      run("expectActual.kt");
     }
 
+    @Test
     @TestMetadata("expectClassesAndFunctions.kt")
     public void testExpectClassesAndFunctions() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectClassesAndFunctions.kt");
+      run("expectClassesAndFunctions.kt");
     }
 
+    @Test
     @TestMetadata("expectNestedAnnotationClassWithConstructorParameter.kt")
     public void testExpectNestedAnnotationClassWithConstructorParameter() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedAnnotationClassWithConstructorParameter.kt");
+      run("expectNestedAnnotationClassWithConstructorParameter.kt");
     }
 
+    @Test
     @TestMetadata("expectNestedClassMembers.kt")
     public void testExpectNestedClassMembers() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedClassMembers.kt");
+      run("expectNestedClassMembers.kt");
     }
 
+    @Test
     @TestMetadata("expectNestedEnumClassGeneratedMembers.kt")
     public void testExpectNestedEnumClassGeneratedMembers() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectNestedEnumClassGeneratedMembers.kt");
+      run("expectNestedEnumClassGeneratedMembers.kt");
     }
 
+    @Test
     @TestMetadata("external.kt")
     public void testExternal() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");
+      run("external.kt");
     }
 
+    @Test
     @TestMetadata("F.kt")
     public void testF() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/F.kt");
+      run("F.kt");
     }
 
+    @Test
     @TestMetadata("fileAnnotations.kt")
     public void testFileAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/fileAnnotations.kt");
+      run("fileAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("fileAnnotationsWithoutPackage.kt")
     public void testFileAnnotationsWithoutPackage() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/fileAnnotationsWithoutPackage.kt");
+      run("fileAnnotationsWithoutPackage.kt");
     }
 
+    @Test
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionTypes.kt");
+      run("functionTypes.kt");
     }
 
+    @Test
     @TestMetadata("functionWithAnnotations.kt")
     public void testFunctionWithAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/functionWithAnnotations.kt");
+      run("functionWithAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/genericFunctions.kt");
+      run("genericFunctions.kt");
     }
 
+    @Test
     @TestMetadata("genericProperty.kt")
     public void testGenericProperty() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/genericProperty.kt");
+      run("genericProperty.kt");
     }
 
+    @Test
     @TestMetadata("importAlias.kt")
     public void testImportAlias() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/importAlias.kt");
+      run("importAlias.kt");
     }
 
+    @Test
     @TestMetadata("incompletePropertyWithDelegate.kt")
     public void testIncompletePropertyWithDelegate() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/incompletePropertyWithDelegate.kt");
+      run("incompletePropertyWithDelegate.kt");
     }
 
+    @Test
     @TestMetadata("initBlockWithDeclarations.kt")
     public void testInitBlockWithDeclarations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/initBlockWithDeclarations.kt");
+      run("initBlockWithDeclarations.kt");
     }
 
+    @Test
     @TestMetadata("initWithLocalDeclarations.kt")
     public void testInitWithLocalDeclarations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/initWithLocalDeclarations.kt");
+      run("initWithLocalDeclarations.kt");
     }
 
+    @Test
     @TestMetadata("invalidDestructing.kt")
     public void testInvalidDestructing() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidDestructing.kt");
+      run("invalidDestructing.kt");
     }
 
+    @Test
     @TestMetadata("kotlinAny.kt")
     public void testKotlinAny() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAny.kt");
+      run("kotlinAny.kt");
     }
 
+    @Test
     @TestMetadata("kotlinAnyNonTopLevel.kt")
     public void testKotlinAnyNonTopLevel() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/kotlinAnyNonTopLevel.kt");
+      run("kotlinAnyNonTopLevel.kt");
     }
 
+    @Test
     @TestMetadata("localAnnotations.kt")
     public void testLocalAnnotations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localAnnotations.kt");
+      run("localAnnotations.kt");
     }
 
+    @Test
     @TestMetadata("localDeclarationsInEnumEntry.kt")
     public void testLocalDeclarationsInEnumEntry() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localDeclarationsInEnumEntry.kt");
+      run("localDeclarationsInEnumEntry.kt");
     }
 
+    @Test
     @TestMetadata("localImplicitType.kt")
     public void testLocalImplicitType() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localImplicitType.kt");
+      run("localImplicitType.kt");
     }
 
+    @Test
     @TestMetadata("localTypeAliasInsideLocalClass.kt")
     public void testLocalTypeAliasInsideLocalClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+      run("localTypeAliasInsideLocalClass.kt");
     }
 
+    @Test
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
+      run("multiDeclarations.kt");
     }
 
+    @Test
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt");
+      run("nestedClass.kt");
     }
 
+    @Test
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/NestedOfAliasedType.kt");
+      run("NestedOfAliasedType.kt");
     }
 
+    @Test
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/NestedSuperType.kt");
+      run("NestedSuperType.kt");
     }
 
+    @Test
     @TestMetadata("noPrimaryConstructor.kt")
     public void testNoPrimaryConstructor() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noPrimaryConstructor.kt");
+      run("noPrimaryConstructor.kt");
     }
 
+    @Test
     @TestMetadata("primaryConstructorWithoutConstructorKeyword.kt")
     public void testPrimaryConstructorWithoutConstructorKeyword() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/primaryConstructorWithoutConstructorKeyword.kt");
+      run("primaryConstructorWithoutConstructorKeyword.kt");
     }
 
+    @Test
     @TestMetadata("propertyWithBackingField.kt")
     public void testPropertyWithBackingField() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingField.kt");
+      run("propertyWithBackingField.kt");
     }
 
+    @Test
     @TestMetadata("propertyWithBackingFieldDifferentTypes.kt")
     public void testPropertyWithBackingFieldDifferentTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/propertyWithBackingFieldDifferentTypes.kt");
+      run("propertyWithBackingFieldDifferentTypes.kt");
     }
 
+    @Test
     @TestMetadata("replLevelDestructuringWithAnnotation.repl.kts")
     public void testReplLevelDestructuringWithAnnotation_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replLevelDestructuringWithAnnotation.repl.kts");
+      run("replLevelDestructuringWithAnnotation.repl.kts");
     }
 
+    @Test
     @TestMetadata("replNestedClass.repl.kts")
     public void testReplNestedClass_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replNestedClass.repl.kts");
+      run("replNestedClass.repl.kts");
     }
 
+    @Test
     @TestMetadata("replPropertyDelegated.repl.kts")
     public void testReplPropertyDelegated_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replPropertyDelegated.repl.kts");
+      run("replPropertyDelegated.repl.kts");
     }
 
+    @Test
     @TestMetadata("replSealedClass.repl.kts")
     public void testReplSealedClass_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSealedClass.repl.kts");
+      run("replSealedClass.repl.kts");
     }
 
+    @Test
     @TestMetadata("replSimple.repl.kts")
     public void testReplSimple_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSimple.repl.kts");
+      run("replSimple.repl.kts");
     }
 
+    @Test
     @TestMetadata("replSmartcastImplDelegate.repl.kts")
     public void testReplSmartcastImplDelegate_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replSmartcastImplDelegate.repl.kts");
+      run("replSmartcastImplDelegate.repl.kts");
     }
 
+    @Test
     @TestMetadata("replWithPackage.repl.kts")
     public void testReplWithPackage_repl() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/replWithPackage.repl.kts");
+      run("replWithPackage.repl.kts");
     }
 
+    @Test
     @TestMetadata("script.kts")
     public void testScript() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/script.kts");
+      run("script.kts");
     }
 
+    @Test
     @TestMetadata("scriptLevelDestructuringWithAnnotation.kts")
     public void testScriptLevelDestructuringWithAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptLevelDestructuringWithAnnotation.kts");
+      run("scriptLevelDestructuringWithAnnotation.kts");
     }
 
+    @Test
     @TestMetadata("scriptStatementLevelDestructuringWithAnnotation.kts")
     public void testScriptStatementLevelDestructuringWithAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotation.kts");
+      run("scriptStatementLevelDestructuringWithAnnotation.kts");
     }
 
+    @Test
     @TestMetadata("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts")
     public void testScriptStatementLevelDestructuringWithAnnotationAsLastStatement() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
+      run("scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts");
     }
 
+    @Test
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/secondaryConstructor.kt");
+      run("secondaryConstructor.kt");
     }
 
+    @Test
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleClass.kt");
+      run("simpleClass.kt");
     }
 
+    @Test
     @TestMetadata("simpleFun.kt")
     public void testSimpleFun() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleFun.kt");
+      run("simpleFun.kt");
     }
 
+    @Test
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/simpleTypeAlias.kt");
+      run("simpleTypeAlias.kt");
     }
 
+    @Test
     @TestMetadata("splitModifierList.kt")
     public void testSplitModifierList() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/splitModifierList.kt");
+      run("splitModifierList.kt");
     }
 
+    @Test
     @TestMetadata("suspendFunctionTypes.kt")
     public void testSuspendFunctionTypes() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/suspendFunctionTypes.kt");
+      run("suspendFunctionTypes.kt");
     }
 
+    @Test
     @TestMetadata("targetAnnotationWithDifferentValues.kt")
     public void testTargetAnnotationWithDifferentValues() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/targetAnnotationWithDifferentValues.kt");
+      run("targetAnnotationWithDifferentValues.kt");
     }
 
+    @Test
     @TestMetadata("topLevelDestructuringWithAnnotation.kt")
     public void testTopLevelDestructuringWithAnnotation() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithAnnotation.kt");
+      run("topLevelDestructuringWithAnnotation.kt");
     }
 
+    @Test
     @TestMetadata("topLevelDestructuringWithoutInitializer.kt")
     public void testTopLevelDestructuringWithoutInitializer() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/topLevelDestructuringWithoutInitializer.kt");
+      run("topLevelDestructuringWithoutInitializer.kt");
     }
 
+    @Test
     @TestMetadata("typeAliasWithGeneric.kt")
     public void testTypeAliasWithGeneric() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/typeAliasWithGeneric.kt");
+      run("typeAliasWithGeneric.kt");
     }
 
+    @Test
     @TestMetadata("typeParameterVsNested.kt")
     public void testTypeParameterVsNested() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/typeParameterVsNested.kt");
+      run("typeParameterVsNested.kt");
     }
 
+    @Test
     @TestMetadata("typeParameters.kt")
     public void testTypeParameters() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/typeParameters.kt");
+      run("typeParameters.kt");
     }
 
+    @Test
     @TestMetadata("userAny.kt")
     public void testUserAny() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/userAny.kt");
+      run("userAny.kt");
     }
 
+    @Test
     @TestMetadata("where.kt")
     public void testWhere() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/where.kt");
+      run("where.kt");
     }
 
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Contracts extends AbstractRawFirBuilderTestCase {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+    public class Contracts {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInContracts() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Nested
       @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax")
       @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class NewSyntax extends AbstractRawFirBuilderTestCase {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+      public class NewSyntax {
+        private void run(String fileName) {
+          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax/" + fileName);
         }
 
+        @Test
         public void testAllFilesPresentInNewSyntax() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
+        @Test
         @TestMetadata("functionWithBothOldAndNewSyntaxContractDescription.kt")
         public void testFunctionWithBothOldAndNewSyntaxContractDescription() {
-          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax/functionWithBothOldAndNewSyntaxContractDescription.kt");
+          run("functionWithBothOldAndNewSyntaxContractDescription.kt");
         }
 
+        @Test
         @TestMetadata("propertyAccessorsContractDescription.kt")
         public void testPropertyAccessorsContractDescription() {
-          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax/propertyAccessorsContractDescription.kt");
+          run("propertyAccessorsContractDescription.kt");
         }
 
+        @Test
         @TestMetadata("simpleFunctionsContractDescription.kt")
         public void testSimpleFunctionsContractDescription() {
-          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/newSyntax/simpleFunctionsContractDescription.kt");
+          run("simpleFunctionsContractDescription.kt");
         }
       }
 
+      @Nested
       @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax")
       @TestDataPath("$PROJECT_ROOT")
-      @RunWith(JUnit3RunnerWithInners.class)
-      public static class OldSyntax extends AbstractRawFirBuilderTestCase {
-        private void runTest(String testDataFilePath) {
-          KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+      public class OldSyntax {
+        private void run(String fileName) {
+          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax/" + fileName);
         }
 
+        @Test
         public void testAllFilesPresentInOldSyntax() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
+        @Test
         @TestMetadata("contractDescription.kt")
         public void testContractDescription() {
-          runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax/contractDescription.kt");
+          run("contractDescription.kt");
         }
       }
     }
 
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Destructuring extends AbstractRawFirBuilderTestCase {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+    public class Destructuring {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInDestructuring() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Test
       @TestMetadata("nameBasedDestructuringFullForm.kt")
       public void testNameBasedDestructuringFullForm() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringFullForm.kt");
+        run("nameBasedDestructuringFullForm.kt");
       }
 
+      @Test
       @TestMetadata("nameBasedDestructuringScript.kts")
       public void testNameBasedDestructuringScript() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringScript.kts");
+        run("nameBasedDestructuringScript.kts");
       }
 
+      @Test
       @TestMetadata("nameBasedDestructuringShortFormAfter.kt")
       public void testNameBasedDestructuringShortFormAfter() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormAfter.kt");
+        run("nameBasedDestructuringShortFormAfter.kt");
       }
 
+      @Test
       @TestMetadata("nameBasedDestructuringShortFormBefore.kt")
       public void testNameBasedDestructuringShortFormBefore() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormBefore.kt");
+        run("nameBasedDestructuringShortFormBefore.kt");
       }
 
+      @Test
       @TestMetadata("positionalDestructuringFullForm.kt")
       public void testPositionalDestructuringFullForm() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringFullForm.kt");
+        run("positionalDestructuringFullForm.kt");
       }
 
+      @Test
       @TestMetadata("positionalDestructuringScript.kts")
       public void testPositionalDestructuringScript() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringScript.kts");
+        run("positionalDestructuringScript.kts");
       }
 
+      @Test
       @TestMetadata("positionalDestructuringShortForm.kt")
       public void testPositionalDestructuringShortForm() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringShortForm.kt");
+        run("positionalDestructuringShortForm.kt");
       }
     }
 
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class InvalidCode extends AbstractRawFirBuilderTestCase {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+    public class InvalidCode {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInInvalidCode() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Test
       @TestMetadata("annotatedClassAsFunctionBody.kt")
       public void testAnnotatedClassAsFunctionBody() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedClassAsFunctionBody.kt");
+        run("annotatedClassAsFunctionBody.kt");
       }
 
+      @Test
       @TestMetadata("annotatedObjectAsFunctionBody.kt")
       public void testAnnotatedObjectAsFunctionBody() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedObjectAsFunctionBody.kt");
+        run("annotatedObjectAsFunctionBody.kt");
       }
 
+      @Test
       @TestMetadata("annotatedTypealiasAsFunctionBody.kt")
       public void testAnnotatedTypealiasAsFunctionBody() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotatedTypealiasAsFunctionBody.kt");
+        run("annotatedTypealiasAsFunctionBody.kt");
       }
 
+      @Test
       @TestMetadata("annotationArgumentLocalDeclarations.kt")
       public void testAnnotationArgumentLocalDeclarations() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/annotationArgumentLocalDeclarations.kt");
+        run("annotationArgumentLocalDeclarations.kt");
       }
 
+      @Test
       @TestMetadata("contextParameterOnErrorPrimaryConstructor.kt")
       public void testContextParameterOnErrorPrimaryConstructor() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/contextParameterOnErrorPrimaryConstructor.kt");
+        run("contextParameterOnErrorPrimaryConstructor.kt");
       }
 
+      @Test
       @TestMetadata("danglingAnnotationAsFunctionBody.kt")
       public void testDanglingAnnotationAsFunctionBody() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingAnnotationAsFunctionBody.kt");
+        run("danglingAnnotationAsFunctionBody.kt");
       }
 
+      @Test
       @TestMetadata("danglingContextParameter.kt")
       public void testDanglingContextParameter() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameter.kt");
+        run("danglingContextParameter.kt");
       }
 
+      @Test
       @TestMetadata("danglingContextParameterAndAnnotations.kt")
       public void testDanglingContextParameterAndAnnotations() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/danglingContextParameterAndAnnotations.kt");
+        run("danglingContextParameterAndAnnotations.kt");
       }
 
+      @Test
       @TestMetadata("destructuringInsideCallChain.kt")
       public void testDestructuringInsideCallChain() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/destructuringInsideCallChain.kt");
+        run("destructuringInsideCallChain.kt");
       }
 
+      @Test
       @TestMetadata("duplicatedContextParameter.kt")
       public void testDuplicatedContextParameter() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/duplicatedContextParameter.kt");
+        run("duplicatedContextParameter.kt");
       }
 
+      @Test
       @TestMetadata("setterWithNoBodyAndDifferentValueParameterType.kt")
       public void testSetterWithNoBodyAndDifferentValueParameterType() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/invalidCode/setterWithNoBodyAndDifferentValueParameterType.kt");
+        run("setterWithNoBodyAndDifferentValueParameterType.kt");
       }
     }
 
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NoParameterType extends AbstractRawFirBuilderTestCase {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+    public class NoParameterType {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInNoParameterType() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInCatch.kt")
       public void testNoParameterTypRefInCatch() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInCatch.kt");
+        run("noParameterTypRefInCatch.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInFuncionalType.kt")
       public void testNoParameterTypRefInFuncionalType() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFuncionalType.kt");
+        run("noParameterTypRefInFuncionalType.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInFunction.kt")
       public void testNoParameterTypRefInFunction() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInFunction.kt");
+        run("noParameterTypRefInFunction.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInLambda.kt")
       public void testNoParameterTypRefInLambda() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInLambda.kt");
+        run("noParameterTypRefInLambda.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInPrimaryConstructor.kt")
       public void testNoParameterTypRefInPrimaryConstructor() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConstructor.kt");
+        run("noParameterTypRefInPrimaryConstructor.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInPrimaryConstructorWithVararg.kt")
       public void testNoParameterTypRefInPrimaryConstructorWithVararg() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConstructorWithVararg.kt");
+        run("noParameterTypRefInPrimaryConstructorWithVararg.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInPrimaryConsturctorVal.kt")
       public void testNoParameterTypRefInPrimaryConsturctorVal() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorVal.kt");
+        run("noParameterTypRefInPrimaryConsturctorVal.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInPrimaryConsturctorValWithVararg.kt")
       public void testNoParameterTypRefInPrimaryConsturctorValWithVararg() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInPrimaryConsturctorValWithVararg.kt");
+        run("noParameterTypRefInPrimaryConsturctorValWithVararg.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInSecondaryConstructor.kt")
       public void testNoParameterTypRefInSecondaryConstructor() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSecondaryConstructor.kt");
+        run("noParameterTypRefInSecondaryConstructor.kt");
       }
 
+      @Test
       @TestMetadata("noParameterTypRefInSetter.kt")
       public void testNoParameterTypRefInSetter() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/noParameterTypRefInSetter.kt");
+        run("noParameterTypRefInSetter.kt");
       }
 
+      @Test
       @TestMetadata("uncompletedTypRefInPrimaryConstructorWithVararg.kt")
       public void testUncompletedTypRefInPrimaryConstructorWithVararg() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/uncompletedTypRefInPrimaryConstructorWithVararg.kt");
+        run("uncompletedTypRefInPrimaryConstructorWithVararg.kt");
       }
 
+      @Test
       @TestMetadata("uncompletedTypRefInPrimaryConsturctorValWithVararg.kt")
       public void testUncompletedTypRefInPrimaryConsturctorValWithVararg() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/noParameterType/uncompletedTypRefInPrimaryConsturctorValWithVararg.kt");
+        run("uncompletedTypRefInPrimaryConsturctorValWithVararg.kt");
       }
     }
   }
 
+  @Nested
   @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions")
   @TestDataPath("$PROJECT_ROOT")
-  @RunWith(JUnit3RunnerWithInners.class)
-  public static class Expressions extends AbstractRawFirBuilderTestCase {
-    private void runTest(String testDataFilePath) {
-      KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+  public class Expressions {
+    private void run(String fileName) {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/" + fileName);
     }
 
+    @Test
     public void testAllFilesPresentInExpressions() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
+    @Test
     @TestMetadata("annotated.kt")
     public void testAnnotated() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/annotated.kt");
+      run("annotated.kt");
     }
 
+    @Test
     @TestMetadata("arrayAccess.kt")
     public void testArrayAccess() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/arrayAccess.kt");
+      run("arrayAccess.kt");
     }
 
+    @Test
     @TestMetadata("arrayAssignment.kt")
     public void testArrayAssignment() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/arrayAssignment.kt");
+      run("arrayAssignment.kt");
     }
 
+    @Test
     @TestMetadata("branches.kt")
     public void testBranches() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/branches.kt");
+      run("branches.kt");
     }
 
+    @Test
     @TestMetadata("callableReferences.kt")
     public void testCallableReferences() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/callableReferences.kt");
+      run("callableReferences.kt");
     }
 
+    @Test
     @TestMetadata("calls.kt")
     public void testCalls() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/calls.kt");
+      run("calls.kt");
     }
 
+    @Test
     @TestMetadata("cascadeIf.kt")
     public void testCascadeIf() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/cascadeIf.kt");
+      run("cascadeIf.kt");
     }
 
+    @Test
     @TestMetadata("classReference.kt")
     public void testClassReference() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/classReference.kt");
+      run("classReference.kt");
     }
 
+    @Test
     @TestMetadata("collectionLiterals.kt")
     public void testCollectionLiterals() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/collectionLiterals.kt");
+      run("collectionLiterals.kt");
     }
 
+    @Test
     @TestMetadata("destructuring.kt")
     public void testDestructuring() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/destructuring.kt");
+      run("destructuring.kt");
     }
 
+    @Test
     @TestMetadata("for.kt")
     public void testFor() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/for.kt");
+      run("for.kt");
     }
 
+    @Test
     @TestMetadata("genericCalls.kt")
     public void testGenericCalls() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/genericCalls.kt");
+      run("genericCalls.kt");
     }
 
+    @Test
     @TestMetadata("in.kt")
     public void testIn() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/in.kt");
+      run("in.kt");
     }
 
+    @Test
     @TestMetadata("inBrackets.kt")
     public void testInBrackets() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/inBrackets.kt");
+      run("inBrackets.kt");
     }
 
+    @Test
     @TestMetadata("init.kt")
     public void testInit() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/init.kt");
+      run("init.kt");
     }
 
+    @Test
     @TestMetadata("invalidWhen.kt")
     public void testInvalidWhen() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidWhen.kt");
+      run("invalidWhen.kt");
     }
 
+    @Test
     @TestMetadata("labelForInfix.kt")
     public void testLabelForInfix() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/labelForInfix.kt");
+      run("labelForInfix.kt");
     }
 
+    @Test
     @TestMetadata("lambda.kt")
     public void testLambda() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/lambda.kt");
+      run("lambda.kt");
     }
 
+    @Test
     @TestMetadata("lambdaAndAnonymousFunction.kt")
     public void testLambdaAndAnonymousFunction() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/lambdaAndAnonymousFunction.kt");
+      run("lambdaAndAnonymousFunction.kt");
     }
 
+    @Test
     @TestMetadata("localDeclarationWithExpression.kt")
     public void testLocalDeclarationWithExpression() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/localDeclarationWithExpression.kt");
+      run("localDeclarationWithExpression.kt");
     }
 
+    @Test
     @TestMetadata("locals.kt")
     public void testLocals() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/locals.kt");
+      run("locals.kt");
     }
 
+    @Test
     @TestMetadata("modifications.kt")
     public void testModifications() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/modifications.kt");
+      run("modifications.kt");
     }
 
+    @Test
     @TestMetadata("namedArgument.kt")
     public void testNamedArgument() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/namedArgument.kt");
+      run("namedArgument.kt");
     }
 
+    @Test
     @TestMetadata("nullability.kt")
     public void testNullability() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/nullability.kt");
+      run("nullability.kt");
     }
 
+    @Test
     @TestMetadata("parenthesizedSafeCallsAndOperators.kt")
     public void testParenthesizedSafeCallsAndOperators() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/parenthesizedSafeCallsAndOperators.kt");
+      run("parenthesizedSafeCallsAndOperators.kt");
     }
 
+    @Test
     @TestMetadata("qualifierWithTypeArguments.kt")
     public void testQualifierWithTypeArguments() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
+      run("qualifierWithTypeArguments.kt");
     }
 
+    @Test
     @TestMetadata("safeCallsImplicitWithInvoke.kt")
     public void testSafeCallsImplicitWithInvoke() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsImplicitWithInvoke.kt");
+      run("safeCallsImplicitWithInvoke.kt");
     }
 
+    @Test
     @TestMetadata("safeCallsWithAssignment.kt")
     public void testSafeCallsWithAssignment() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAssignment.kt");
+      run("safeCallsWithAssignment.kt");
     }
 
+    @Test
     @TestMetadata("safeCallsWithAugmentedAssignment.kt")
     public void testSafeCallsWithAugmentedAssignment() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAugmentedAssignment.kt");
+      run("safeCallsWithAugmentedAssignment.kt");
     }
 
+    @Test
     @TestMetadata("safeCallsWithUnaryOperators.kt")
     public void testSafeCallsWithUnaryOperators() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithUnaryOperators.kt");
+      run("safeCallsWithUnaryOperators.kt");
     }
 
+    @Test
     @TestMetadata("simpleReturns.kt")
     public void testSimpleReturns() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/simpleReturns.kt");
+      run("simpleReturns.kt");
     }
 
+    @Test
     @TestMetadata("super.kt")
     public void testSuper() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/super.kt");
+      run("super.kt");
     }
 
+    @Test
     @TestMetadata("suspendLambda.kt")
     public void testSuspendLambda() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambda.kt");
+      run("suspendLambda.kt");
     }
 
+    @Test
     @TestMetadata("suspendLambdaScript.kts")
     public void testSuspendLambdaScript() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/suspendLambdaScript.kts");
+      run("suspendLambdaScript.kts");
     }
 
+    @Test
     @TestMetadata("these.kt")
     public void testThese() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/these.kt");
+      run("these.kt");
     }
 
+    @Test
     @TestMetadata("try.kt")
     public void testTry() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/try.kt");
+      run("try.kt");
     }
 
+    @Test
     @TestMetadata("typeOperators.kt")
     public void testTypeOperators() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/typeOperators.kt");
+      run("typeOperators.kt");
     }
 
+    @Test
     @TestMetadata("unary.kt")
     public void testUnary() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/unary.kt");
+      run("unary.kt");
     }
 
+    @Test
     @TestMetadata("variables.kt")
     public void testVariables() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/variables.kt");
+      run("variables.kt");
     }
 
+    @Test
     @TestMetadata("whenGuards.kt")
     public void testWhenGuards() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/whenGuards.kt");
+      run("whenGuards.kt");
     }
 
+    @Test
     @TestMetadata("while.kt")
     public void testWhile() {
-      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/while.kt");
+      run("while.kt");
     }
 
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode")
     @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class InvalidCode extends AbstractRawFirBuilderTestCase {
-      private void runTest(String testDataFilePath) {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+    public class InvalidCode {
+      private void run(String fileName) {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/" + fileName);
       }
 
+      @Test
       public void testAllFilesPresentInInvalidCode() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
       }
 
+      @Test
       @TestMetadata("longStringTemplateEntryInvalidCharacters.kt")
       public void testLongStringTemplateEntryInvalidCharacters() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryInvalidCharacters.kt");
+        run("longStringTemplateEntryInvalidCharacters.kt");
       }
 
+      @Test
       @TestMetadata("longStringTemplateEntryWithTwoExpressions.kt")
       public void testLongStringTemplateEntryWithTwoExpressions() {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/invalidCode/longStringTemplateEntryWithTwoExpressions.kt");
+        run("longStringTemplateEntryWithTwoExpressions.kt");
       }
     }
   }

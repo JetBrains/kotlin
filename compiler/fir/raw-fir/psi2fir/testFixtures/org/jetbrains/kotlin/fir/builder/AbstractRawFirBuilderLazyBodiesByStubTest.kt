@@ -12,14 +12,16 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.assertNotNull
 import java.io.File
 
 abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilderLazyBodiesTestCase() {
-    override fun doRawFirTest(filePath: String) {
+    override fun runTest(filePath: String) {
         val ignoreTreeAccess = InTextDirectivesUtils.isDirectiveDefined(File(filePath).readText(), "// IGNORE_TREE_ACCESS:")
         var treeAccessFound = false
         try {
-            super.doRawFirTest(filePath)
+            super.runTest(filePath)
         } catch (e: Throwable) {
             /**
              * @see com.intellij.psi.impl.source.PsiFileImpl.reportProhibitedAstAccess
@@ -31,7 +33,7 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
             treeAccessFound = true
         }
 
-        assertEquals("The tree access is not detected. 'IGNORE_TREE_ACCESS' have to be dropped", ignoreTreeAccess, treeAccessFound)
+        assertEquals(ignoreTreeAccess, treeAccessFound) { "The tree access is not detected. 'IGNORE_TREE_ACCESS' have to be dropped" }
     }
 
     override fun createKtFile(filePath: String): KtFile {
@@ -88,7 +90,7 @@ abstract class AbstractRawFirBuilderLazyBodiesByStubTest : AbstractRawFirBuilder
              */
             updatedProvider.forceCachedPsi(fileWithStub)
 
-            assertNotNull("Stub for the file must not be null", fileWithStub.stub)
+            assertNotNull(fileWithStub.stub) { "Stub for the file must not be null" }
             return fileWithStub
         }
     }
