@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.jvm
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.load.java.typeEnhancement.PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class PredefinedNullabilityExhaustivenessTest : TestCase() {
+class PredefinedNullabilityExhaustivenessTest {
+    @Test
     fun testNullabilityDefinedForAllVisibleMappedMembers() {
         (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES + JvmBuiltInsSignatures.VISIBLE_CONSTRUCTOR_SIGNATURES).forEach { signature ->
             assertTrue(
-                "Unknown nullability for signature: $signature",
                 signature in PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE || signature in EXPECTED_TO_BE_EXCLUDED_FROM_PREDEFINED_NULLABILITY
-            )
+            ) {
+                "Unknown nullability for signature: $signature"
+            }
         }
     }
 

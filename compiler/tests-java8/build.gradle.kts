@@ -9,16 +9,21 @@ plugins {
 }
 
 dependencies {
-    testFixturesApi(project(":kotlin-scripting-compiler"))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesImplementation(project(":compiler:cli-jvm:javac-integration"))
-    testFixturesImplementation(intellijCore())
-    testFixturesApi(platform(libs.junit.bom))
-    testCompileOnly(libs.junit4)
-    testFixturesImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
-    testRuntimeOnly(libs.junit.vintage.engine)
-    testRuntimeOnly(libs.junit.platform.launcher)
-    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testImplementation(project(":kotlin-scripting-compiler"))
+    testImplementation(project(":core:descriptors"))
+    testImplementation(project(":core:descriptors.jvm"))
+    testImplementation(project(":core:compiler.common.jvm"))
+    testImplementation(project(":compiler:cli-jvm:javac-integration"))
+    testImplementation(testFixtures(project(":compiler:tests-compiler-utils")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(intellijCore())
+
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.platform.launcher)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+
+    testImplementation(testFixtures(project(":generators:test-generator")))
     testRuntimeOnly(toolsJar())
 }
 
