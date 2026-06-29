@@ -5795,6 +5795,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompile : 
 	protected fun getIncrementalProps ()Ljava/util/List;
 	protected final fun getMultiModuleICSettings ()Lorg/jetbrains/kotlin/daemon/common/MultiModuleICSettings;
 	public fun getNormalizedKotlinDaemonJvmArguments ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
 	protected fun makeIncrementalCompilationFeatures ()Lorg/jetbrains/kotlin/incremental/IncrementalCompilationFeatures;
 	public fun reportDiagnostic (Lorg/jetbrains/kotlin/gradle/plugin/diagnostics/ToolingDiagnostic;)V
 	public final fun setIncremental (Z)V

@@ -235,6 +235,7 @@ abstract class KotlinCompile @Inject constructor(
             overrideXJvmDefaultInPresenceOfKotlinDslPlugin(args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+            returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
 
             if (useFirRunner.get()) {
                 @Suppress("DEPRECATION")
