@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -41,6 +42,7 @@ class AdditionalBuiltInsMembersSignatureListsTest {
     private val environment: KotlinCoreEnvironment = createEnvironment()
 
     private fun createEnvironment(): KotlinCoreEnvironment {
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK_21, KtTestUtil.getAnnotationsJar()),
