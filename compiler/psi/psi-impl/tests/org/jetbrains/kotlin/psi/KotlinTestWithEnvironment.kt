@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,7 +27,7 @@ abstract class KotlinTestWithEnvironment {
     }
 
     private fun createEnvironment(): KotlinCoreEnvironment {
-        @OptIn(K1Deprecation::class)
+        @OptIn(CoreEnvironmentDeprecation::class)
         return KotlinCoreEnvironment.createForParallelTests(
             testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
