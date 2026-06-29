@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -381,6 +382,19 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
         UNKNOWN
     }
 
+    // Replaces a statically resolved type operator with [value], evaluating [argument] beforehand
+    // for its side effects unless it is pure (KT-86947).
+    private fun IrBuilderWithScope.keepingSideEffectsOf(
+            argument: IrExpression,
+            value: IrBuilderWithScope.() -> IrExpression,
+    ): IrExpression = when {
+        argument.isPure(anyVariable = true) -> value()
+        else -> irBlock {
+            +argument
+            +value()
+        }
+    }
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val typeCheckResults = mutableMapOf<IrTypeOperatorCall, TypeCheckResult>()
         try {
@@ -401,27 +415,28 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     TypeCheckResult.ALWAYS_SUCCEEDS -> true
                     TypeCheckResult.NEVER_SUCCEEDS -> false
                 }
+                irBuilder.at(expression)
                 return when (expression.operator) {
-                    IrTypeOperator.INSTANCEOF -> irBuilder.at(expression).irBoolean(typeCheckResult)
-                    IrTypeOperator.NOT_INSTANCEOF -> irBuilder.at(expression).irBoolean(!typeCheckResult)
+                    IrTypeOperator.INSTANCEOF -> irBuilder.keepingSideEffectsOf(expression.argument) { irBoolean(typeCheckResult) }
+                    IrTypeOperator.NOT_INSTANCEOF -> irBuilder.keepingSideEffectsOf(expression.argument) { irBoolean(!typeCheckResult) }
                     IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> when {
-                        typeCheckResult -> irBuilder.at(expression).irBlock(origin = STATEMENT_ORIGIN_NO_CAST_NEEDED) {
+                        typeCheckResult -> irBuilder.irBlock(origin = STATEMENT_ORIGIN_NO_CAST_NEEDED) {
                             +irImplicitCast(expression.argument, expression.typeOperand)
                         }
-                        else -> if (expression.operator == IrTypeOperator.SAFE_CAST)
-                            irBuilder.at(expression).irNull()
-                        else
-                            irBuilder.at(expression).irCall(throwClassCastException).apply {
-                                val typeOperandClass = expression.typeOperand.erasedUpperBound
-                                val typeOperandClassReference = IrClassReferenceImpl(
-                                        startOffset, endOffset,
-                                        context.symbols.nativePtrType,
-                                        typeOperandClass.symbol,
-                                        typeOperandClass.defaultType
-                                )
-                                arguments[0] = expression.argument
-                                arguments[1] = typeOperandClassReference
-                            }
+                        expression.operator == IrTypeOperator.SAFE_CAST -> {
+                            irBuilder.keepingSideEffectsOf(expression.argument) { irNull() }
+                        }
+                        else -> irBuilder.irCall(throwClassCastException).apply {
+                            val typeOperandClass = expression.typeOperand.erasedUpperBound
+                            val typeOperandClassReference = IrClassReferenceImpl(
+                                    startOffset, endOffset,
+                                    context.symbols.nativePtrType,
+                                    typeOperandClass.symbol,
+                                    typeOperandClass.defaultType
+                            )
+                            arguments[0] = expression.argument
+                            arguments[1] = typeOperandClassReference
+                        }
                     }
                     else -> error("Unexpected type operator: ${expression.operator}")
                 }
