@@ -26,9 +26,8 @@ fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFea
     append(".")
 
     deprecatingFeature.issue.takeUnless { it == NO_ISSUE_SPECIFIED }?.let {
-        append(" See https://youtrack.jetbrains.com/issue/")
+        append(" See: https://youtrack.jetbrains.com/issue/")
         append(it)
-        append(".")
     }
 }
 
