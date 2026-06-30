@@ -237,3 +237,6 @@ open class MyRootException : RuntimeException()
 
 @JsExport
 open class MySpecificException : MyRootException()
+
+@JsExport
+class Delegated(val ig: IG<Int>, val ib: IB): IG<Int> by ig, IB by ib

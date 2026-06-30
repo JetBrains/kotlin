@@ -259,5 +259,19 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => MySpecificException;
             }
         }
+        class Delegated implements foo.IG<number>, foo.IA/*, foo.IB */ {
+            constructor(ig: foo.IG<number>, ib: foo.IA/* foo.IB */);
+            get ig(): foo.IG<number>;
+            get ib(): foo.IA/* foo.IB */;
+            process(value: number): void;
+            get foo(): any;
+            readonly __doNotUseOrImplementIt: foo.IA["__doNotUseOrImplementIt"] & foo.IG<any>["__doNotUseOrImplementIt"];
+        }
+        namespace Delegated {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Delegated;
+            }
+        }
     }
 }
