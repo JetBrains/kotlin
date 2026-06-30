@@ -24,6 +24,7 @@ class JKlibSerializedIrDumpHandler(
         return super.createDumpOptions(module, info, isFirFrontend).copy(
             renderOriginForExternalDeclarations = false,
             printSealedSubclasses = false,
+            printAnnotationsWithSourceRetention = true,
         )
     }
 }

@@ -996,15 +996,9 @@ internal fun List<IrAnnotation>.filterOutSourceRetentions(options: DumpIrTreeOpt
             if (!it.symbol.isBound) return@filterNot false
             val annotationClass = it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass ?: return@filterNot false
             val fqName = annotationClass.fqNameWhenAvailable
-            if (fqName?.isCompilerInternalSyntheticAnnotation == true) {
-                return@filterNot true
-            }
             annotationClass.getAnnotationRetention() == KotlinRetention.SOURCE
         }
     }
-
-private val FqName.isCompilerInternalSyntheticAnnotation: Boolean
-    get() = this == StandardClassIds.Annotations.EnhancedNullability.asSingleFqName() || startsWith(StandardClassIds.BASE_INTERNAL_IR_PACKAGE)
 
 private fun renderTypeAnnotations(annotations: List<IrAnnotation>, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions): String =
     annotations.filterOutSourceRetentions(options).let {
