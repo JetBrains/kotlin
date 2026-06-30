@@ -108,7 +108,6 @@ object CompilerModules {
         ":compiler:frontend:cfg",
         ":compiler:ir.psi2ir",
         ":compiler:javac-wrapper",
-        ":js:js.frontend",
         ":native:frontend.native",
         ":wasm:wasm.frontend",
     )

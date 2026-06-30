@@ -222,7 +222,6 @@ include(
     ":js:js.parser",
     ":js:js.config",
     ":js:js.frontend.common",
-    ":js:js.frontend",
     ":js:js.translator",
     ":js:js.tests",
     ":js:js.tests:klib-compatibility",

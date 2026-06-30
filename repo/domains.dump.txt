@@ -73,7 +73,6 @@ Js:
  - js/ReadMe.md
  - js/js.ast
  - js/js.config
- - js/js.frontend
  - js/js.frontend.common
  - js/js.parser
  - js/js.sourcemap

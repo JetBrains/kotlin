@@ -15,7 +15,6 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":js:js.frontend"))
     compileOnly(intellijCore())
 
 }

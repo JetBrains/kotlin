@@ -49,7 +49,6 @@ dependencies {
     testFixturesApi(project(":compiler:serialization"))
     testFixturesApi(project(":kotlin-preloader"))
     testFixturesApi(project(":daemon-common"))
-    testFixturesApi(project(":js:js.frontend"))
     testFixturesApi(project(":native:frontend.native"))
     testFixturesImplementation(project(":native:native.config"))
     testFixturesImplementation(project(":kotlin-util-klib-metadata"))
