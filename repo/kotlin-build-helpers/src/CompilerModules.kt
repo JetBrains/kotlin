@@ -113,7 +113,6 @@ object CompilerModules {
         ":core:deserialization",
         ":compiler:frontend:cfg",
         ":compiler:ir.psi2ir",
-        ":js:js.frontend",
         ":native:frontend.native",
         ":wasm:wasm.frontend",
     )
