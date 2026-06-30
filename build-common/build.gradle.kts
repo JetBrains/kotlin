@@ -70,10 +70,5 @@ testsJarToBeUsedAlongWithFixtures()
 
 projectTests {
     testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
-    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
-        jvmArgs(
-            // additions for SDK 261
-            "--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED",
-        )
-    }
+    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
 }
