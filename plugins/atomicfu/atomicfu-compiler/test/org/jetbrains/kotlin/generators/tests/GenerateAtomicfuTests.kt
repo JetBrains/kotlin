@@ -71,6 +71,18 @@ fun main(args: Array<String>) {
                 model("box/")
             }
         }
+
+        testGroup(
+            "plugins/atomicfu/atomicfu-compiler/tests-gen",
+            "plugins/atomicfu/atomicfu-compiler/testData",
+            testRunnerMethodName = "runTest0"
+        ) {
+            testClass<AbstractAtomicfuNativeWithInlinedFunInKlibDiagnosticTest>(
+                annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("backendDiagnostic/")
+            }
+        }
     }
 }
 
