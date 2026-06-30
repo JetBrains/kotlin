@@ -21,18 +21,48 @@ fun g() = <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>f<!>()
 
 val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
 
+fun <T> T.accept(arg: (T) -> Unit) {}
+
+inline fun <reified T> T.acceptNoInline(noinline arg: (T) -> Unit) {}
+
+inline fun <reified T> T.acceptCrossInline(crossinline arg: (T) -> Unit) {}
+
 fun local() {
     val x = f()
 
     val nullableX = nullableF()
 
-    x.let <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
+    x.let {
+
+    }
+
+    nullableX?.let {
+
+    }
+
+    x.accept() <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
 
     }<!>
 
-    nullableX?.let <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
+    nullableX?.accept() <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
 
     }<!>
+
+    x.acceptNoInline() <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
+
+    }<!>
+
+    nullableX?.acceptNoInline() <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{
+
+    }<!>
+
+    x.acceptCrossInline() {
+
+    }
+
+    nullableX?.acceptCrossInline() {
+
+    }
 
     val sam = Sam <!MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION_ERROR!>{}<!>
 }
