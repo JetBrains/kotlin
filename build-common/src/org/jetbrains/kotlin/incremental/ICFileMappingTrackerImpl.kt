@@ -21,4 +21,8 @@ class ICFileMappingTrackerImpl(private val outputItemsCollector: OutputItemsColl
     override fun recordOutputFileGeneratedForPlugin(outputFile: File) {
         outputItemsCollector.addOutputFileGeneratedForPlugin(outputFile)
     }
+
+    override fun recordSourceFileGeneratedForPlugin(sourceFile: File) {
+        outputItemsCollector.addSourceFileGeneratedForPlugin(sourceFile)
+    }
 }

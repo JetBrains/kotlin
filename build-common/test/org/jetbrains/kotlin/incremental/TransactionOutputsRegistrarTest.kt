@@ -31,6 +31,7 @@ class TransactionOutputsRegistrarTest {
         override fun addSourceReferencedByCompilerPlugin(sourceFile: File) {}
 
         override fun addOutputFileGeneratedForPlugin(outputFile: File) {}
+        override fun addSourceFileGeneratedForPlugin(sourceFile: File) {}
     }
 
     @Test
