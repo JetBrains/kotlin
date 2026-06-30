@@ -40,10 +40,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class SignaturesPropagationData {
 
-    private static final KotlinToJvmSignatureMapper SIGNATURE_MAPPER = ServiceLoader.load(
-            KotlinToJvmSignatureMapper.class,
-            KotlinToJvmSignatureMapper.class.getClassLoader()
-    ).iterator().next();
+    private static final KotlinToJvmSignatureMapper SIGNATURE_MAPPER = new KotlinToJvmSignatureMapperImpl();
 
     private final ValueParameters modifiedValueParameters;
     private final List<String> signatureErrors = new ArrayList<>(0);
