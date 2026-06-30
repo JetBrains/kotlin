@@ -21,7 +21,7 @@ class JKlibSourceRootConfigurator(testServices: TestServices) : EnvironmentConfi
         configuration.addSourcesForDependsOnClosure(module, testServices)
 
         val stdlibKlib = System.getProperty("kotlin.stdlib.jklib.for.test")
-            ?: error("kotlin.stdlib.jvm.ir.klib system property is not set")
+            ?: error("kotlin.stdlib.jklib.for.test system property is not set")
         configuration.klibPaths += stdlibKlib
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("klib-output")
