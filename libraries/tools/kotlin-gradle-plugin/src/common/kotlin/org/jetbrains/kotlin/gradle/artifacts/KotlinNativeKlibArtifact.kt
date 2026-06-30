@@ -51,7 +51,7 @@ internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, _, _ ->
 
 internal fun createRegularKlibArtifact(compilation: AbstractKotlinNativeCompilation) = createKlibArtifact(
     compilation = compilation,
-    classifier = null,
+    classifier = compilation.target.targetName,
     klibProducingTask = compilation.compileTaskProvider
 )
 

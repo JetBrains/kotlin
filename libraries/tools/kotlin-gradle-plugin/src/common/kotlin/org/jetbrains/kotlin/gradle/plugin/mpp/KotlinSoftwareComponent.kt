@@ -62,6 +62,7 @@ abstract class KotlinSoftwareComponent(
      * These are variants pointing to subcomponent variants via available-at pointers
      */
     private val _variants = project.future {
+        return@future emptySet()
         subcomponentTargetsWithAvailableAtPointers()
             .flatMap { target ->
                 val targetPublishableComponentNames = target.internal.kotlinComponents
@@ -112,7 +113,9 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages() + includeExtraUsagesFrom.usages + uklibUsages.getOrThrow().toSet()
+        return _usages.getOrThrow().publishableUsages() +
+                includeExtraUsagesFrom.usages +
+                uklibUsages.getOrThrow().toSet()
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +

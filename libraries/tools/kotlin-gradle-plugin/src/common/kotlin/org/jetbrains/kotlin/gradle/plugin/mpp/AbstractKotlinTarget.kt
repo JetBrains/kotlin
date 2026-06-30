@@ -152,7 +152,7 @@ abstract class AbstractKotlinTarget(
         project.configurations.findByName(sourcesElementsConfigurationName) ?: return null
 
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
-        artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
+        artifact.classifier = dashSeparatedName(classifierPrefix, "${this.targetName}-sources")
 
         return DefaultKotlinUsageContext(
             compilation = producingCompilation,
