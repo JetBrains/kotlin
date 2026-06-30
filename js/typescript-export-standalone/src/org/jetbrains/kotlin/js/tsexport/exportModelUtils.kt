@@ -250,7 +250,7 @@ private fun KaNamedSymbol.getTopLevelQualifier(shouldIncludePackage: Boolean): F
 internal fun KaAnnotated.isJsImplicitExport(): Boolean =
     annotations.contains(JsImplicitExport)
 
-private fun KaAnnotated.isJsExportIgnore(): Boolean =
+internal fun KaAnnotated.isJsExportIgnore(): Boolean =
     annotations.contains(JsExportIgnore)
 
 internal fun KaAnnotated.isJsExport(): Boolean =
