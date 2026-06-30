@@ -112,7 +112,6 @@ Js:
  - js/js.config/src/org/jetbrains/kotlin/js/artifacts
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
- - js/js.frontend
  - js/js.frontend.common
  - js/js.parser
  - js/js.tests/ReadMe.md
