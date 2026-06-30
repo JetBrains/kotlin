@@ -6798,7 +6798,6 @@ final fun kotlin/doubleToULong(kotlin/Double): kotlin/ULong // kotlin/doubleToUL
 final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
 final fun kotlin/uintDivide(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintDivide|uintDivide(kotlin.UInt;kotlin.UInt){}[0]
 final fun kotlin/uintRemainder(kotlin/UInt, kotlin/UInt): kotlin/UInt // kotlin/uintRemainder|uintRemainder(kotlin.UInt;kotlin.UInt){}[0]
-final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 final fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // kotlin/ulongCompare|ulongCompare(kotlin.Long;kotlin.Long){}[0]
 final fun kotlin/ulongDivide(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongDivide|ulongDivide(kotlin.ULong;kotlin.ULong){}[0]
 final fun kotlin/ulongRemainder(kotlin/ULong, kotlin/ULong): kotlin/ULong // kotlin/ulongRemainder|ulongRemainder(kotlin.ULong;kotlin.ULong){}[0]
@@ -9788,6 +9787,9 @@ final fun kotlin/isAssertionArgumentEvaluationEnabled(): kotlin/Boolean // kotli
 
 // Targets: [native, wasmJs, wasmWasi]
 final fun kotlin/isAssertionThrowingErrorEnabled(): kotlin/Boolean // kotlin/isAssertionThrowingErrorEnabled|isAssertionThrowingErrorEnabled(){}[0]
+
+// Targets: [native, wasmJs, wasmWasi]
+final fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 
 // Targets: [native, wasmJs, wasmWasi]
 final inline fun (kotlin.text/StringBuilder).kotlin.text/deleteCharAt(kotlin/Int): kotlin.text/StringBuilder // kotlin.text/deleteCharAt|deleteCharAt@kotlin.text.StringBuilder(kotlin.Int){}[0]
@@ -15841,6 +15843,9 @@ final inline fun kotlin.math/truncate(kotlin/Double): kotlin/Double // kotlin.ma
 
 // Targets: [js]
 final inline fun kotlin.math/truncate(kotlin/Float): kotlin/Float // kotlin.math/truncate|truncate(kotlin.Float){}[0]
+
+// Targets: [js]
+final inline fun kotlin/uintToDouble(kotlin/Int): kotlin/Double // kotlin/uintToDouble|uintToDouble(kotlin.Int){}[0]
 
 // Targets: [js]
 final suspend fun <#A: kotlin/Any?> kotlin.js/returnIfSuspended(kotlin/Any?): #A // kotlin.js/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
