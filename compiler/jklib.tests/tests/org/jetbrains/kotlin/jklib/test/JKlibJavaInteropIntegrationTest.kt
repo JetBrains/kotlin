@@ -24,8 +24,7 @@ class JKlibJavaInteropIntegrationTest {
 
     @Test
     fun testJavaExtendingNestedKotlinClassFromKlib(@TempDir tempDir: File) {
-        val stdlibKlib = System.getProperty("kotlin.stdlib.jklib.for.test")
-            ?: error("Property kotlin.stdlib.jklib.for.test is not set")
+        val stdlibKlib = ForTestCompileRuntime.jklibStdlibForTests().path
         val stdlibJar = ForTestCompileRuntime.runtimeJarForTests().path
 
         val libADir = File(tempDir, "libA").apply { mkdirs() }
