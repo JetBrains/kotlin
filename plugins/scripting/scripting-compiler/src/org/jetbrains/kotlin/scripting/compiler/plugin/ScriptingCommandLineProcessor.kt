@@ -63,6 +63,30 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "Do not attempt to use script compilation cache, even if provided by the definition",
             required = false, allowMultipleOccurrences = false
         )
+        val REPL_SNIPPET_MODE_OPTION = CliOption(
+            "repl-snippet-mode", "true/false",
+            "Compile the input source as a stateless K2 REPL snippet against the prior-snippet artifacts " +
+                    "(see 'repl-snippet-prior-artifact'), writing the produced artifact to 'repl-snippet-artifact-output'",
+            required = false, allowMultipleOccurrences = false
+        )
+        val REPL_SNIPPET_PRIOR_ARTIFACT_OPTION = CliOption(
+            "repl-snippet-prior-artifact", "<path>",
+            "Path to a prior-snippet artifact file feeding the REPL snippet compilation state; " +
+                    "repeat in snippet order (1..N-1)",
+            required = false, allowMultipleOccurrences = true
+        )
+        val REPL_SNIPPET_ARTIFACT_OUTPUT_OPTION = CliOption(
+            "repl-snippet-artifact-output", "<path>",
+            "Destination file for the artifact produced by a REPL snippet compilation",
+            required = false, allowMultipleOccurrences = false
+        )
+        val REPL_SNIPPET_NAME_OPTION = CliOption(
+            "repl-snippet-name", "<name>",
+            "Explicit name for the REPL snippet being compiled; gives a multi-snippet sequence the " +
+                    "distinct, stable names that stateless reconstruction needs (mainly useful when the " +
+                    "source enters through '-expression', which is otherwise always named 'script.kts')",
+            required = false, allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
@@ -78,6 +102,10 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
             ENABLE_SCRIPT_EXPLANATION_OPTION,
             DISABLE_SCRIPT_COMPILATION_CACHE,
+            REPL_SNIPPET_MODE_OPTION,
+            REPL_SNIPPET_PRIOR_ARTIFACT_OPTION,
+            REPL_SNIPPET_ARTIFACT_OUTPUT_OPTION,
+            REPL_SNIPPET_NAME_OPTION,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -148,6 +176,23 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                 ScriptingConfigurationKeys.DISABLE_SCRIPT_COMPILATION_CACHE,
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: false
             )
+        }
+        REPL_SNIPPET_MODE_OPTION -> {
+            configuration.put(
+                ScriptingConfigurationKeys.REPL_SNIPPET_COMPILATION_MODE,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: true
+            )
+        }
+        REPL_SNIPPET_PRIOR_ARTIFACT_OPTION -> {
+            val current = configuration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_ARTIFACTS).toMutableList()
+            current.add(File(value))
+            configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_ARTIFACTS, current)
+        }
+        REPL_SNIPPET_ARTIFACT_OUTPUT_OPTION -> {
+            configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_ARTIFACT_OUTPUT, File(value))
+        }
+        REPL_SNIPPET_NAME_OPTION -> {
+            configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_NAME, value)
         }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }

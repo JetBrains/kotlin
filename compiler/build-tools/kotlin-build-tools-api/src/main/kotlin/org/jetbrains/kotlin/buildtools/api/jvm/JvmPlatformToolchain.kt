@@ -72,7 +72,9 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
 
     /**
      * Creates a builder for an operation that compiles a single K2 REPL snippet against an
-     * ordered list of prior-snippet artifact bytes, producing the new snippet's artifact bytes.
+     * ordered list of prior-snippet artifact bytes, producing a
+     * [org.jetbrains.kotlin.buildtools.api.jvm.operations.ReplSnippetCompilationResult] (a
+     * `Success` carrying the new snippet's artifact bytes, or a `Failure` carrying diagnostics).
      *
      * This op is the BTA transport surface of the stateless K2 REPL compilation prototype.
      * See `plugins/scripting/.ai/target/40-jsr223-target.md` §"Stateless snippet compilation"

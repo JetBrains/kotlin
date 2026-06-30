@@ -13,17 +13,27 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 
 /**
  * Compiles a single K2 REPL snippet against an ordered list of prior-snippet artifacts, producing
- * a new self-describing artifact for that snippet.
+ * a [ReplSnippetCompilationResult] — either a [ReplSnippetCompilationResult.Success] carrying a new
+ * self-describing artifact for that snippet, or a [ReplSnippetCompilationResult.Failure] carrying
+ * the diagnostics that explain why it did not compile.
  *
  * This op is the **transport seam** for the stateless K2 REPL compilation prototype
  * (see plugins/scripting/.ai/target/40-jsr223-target.md §"Stateless snippet compilation" and
  * plugins/scripting/.ai/target/90-open-questions.md Q5d).
  *
+ * ### Failure handling
+ *
+ * A snippet that fails to compile is **not** signalled by a thrown exception — it is reported as a
+ * [ReplSnippetCompilationResult.Failure] whose [ReplSnippetCompilationResult.diagnostics] contain
+ * the compiler errors. Exceptions are reserved for infrastructure/precondition problems (an
+ * unsupported [org.jetbrains.kotlin.buildtools.api.ExecutionPolicy], or a prior-snippet artifact
+ * that cannot be decoded).
+ *
  * ### Wire shape
  *
- * Both prior artifacts and the produced artifact are transported as self-delimited byte arrays
- * encoded by `SnippetArtifactCodec` (scripting-compiler-internal). Each blob is a single JSON
- * document of shape:
+ * Both prior artifacts and the artifact embedded in a [ReplSnippetCompilationResult.Success] are
+ * transported as self-delimited byte arrays encoded by `SnippetArtifactCodec`
+ * (scripting-compiler-internal). Each blob is a single JSON document of shape:
  *
  * ```json
  * {
@@ -36,7 +46,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
  * The version is the envelope-layout version (separate from the sidecar's field-set version);
  * incompatible inputs are rejected with a clear diagnostic.
  *
- * ### Why a `List<ByteArray>` + `ByteArray` and not `List<Path>` / a typed result?
+ * ### Why a `List<ByteArray>` input + a byte-array-backed artifact and not `List<Path>`?
  *
  *  * The natural caller is an IDE consumer (IntelliJ today) that keeps prior artifacts in memory.
  *  * The byte-array shape forces the framing/envelope decision to live **inside** the artifact
@@ -55,7 +65,7 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
  * @since 2.4.0
  */
 @ExperimentalBuildToolsApi
-public interface CompileReplSnippetOperation : BuildOperation<ByteArray> {
+public interface CompileReplSnippetOperation : BuildOperation<ReplSnippetCompilationResult> {
     /**
      * Ordered list of prior-snippet artifacts (1..N-1), each encoded with `SnippetArtifactCodec`.
      * The order matters — the consumer of artifact k may reference declarations from any

@@ -59,6 +59,6 @@ internal class JvmPlatformToolchainImpl(
         snippetSource: String,
         snippetName: String,
     ): CompileReplSnippetOperation.Builder {
-        return CompileReplSnippetOperationImpl(priorSnippets, snippetSource, snippetName)
+        return CompileReplSnippetOperationImpl(priorSnippets, snippetSource, snippetName, buildIdToSessionFlagFile)
     }
 }
