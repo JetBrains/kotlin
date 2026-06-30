@@ -48,6 +48,17 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
     class BodyVisitor : IrVisitor<Unit, IrFunction>() {
         val alreadyVisited = hashSetOf<IrFunction>()
 
+        fun visit(owner: IrFunction) {
+            if (alreadyVisited.contains(owner)) return
+            alreadyVisited.add(owner)
+            owner.setMaxEffects(EffectsKind.PURE)
+            owner.accept(this, owner)
+        }
+
+        override fun visitElement(element: IrElement, data: IrFunction) {
+            element.acceptChildren(this, data)
+        }
+
         private fun isLocal(expression: IrExpression, owner: IrDeclaration): Boolean {
             return when (expression) {
                 is IrGetValue -> expression.symbol.owner == owner
@@ -56,20 +67,11 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
             }
         }
 
-        fun visit(owner: IrFunction) {
-            if (alreadyVisited.contains(owner)) return
-            alreadyVisited.add(owner)
-            owner.accept(this, owner)
-        }
-
-        override fun visitElement(element: IrElement, data: IrFunction) {
-            element.acceptChildren(this, data)
-        }
-
         override fun visitExpression(expression: IrExpression, data: IrFunction) {
             super.visitExpression(expression, data)
-            if (isLocal(expression, data)) return
-            data.setMaxEffects(EffectsKind.READ)
+            if (!isLocal(expression, data)) {
+                data.setMaxEffects(EffectsKind.READ)
+            }
         }
 
         override fun visitSetField(expression: IrSetField, data: IrFunction) {
@@ -77,6 +79,7 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
                 val receiver = expression.receiver
                 if (receiver is IrGetValue) {
                     if (receiver.symbol == data.constructedClass.thisReceiver!!.symbol) {
+                        expression.acceptChildren(this, data)
                         return
                     }
                 }
@@ -89,15 +92,16 @@ class EffectAnalysisLowering(context: JsIrBackendContext) : BodyLoweringPass {
                 data.setMaxEffects(EffectsKind.WRITE)
                 return
             }
+            data.setMaxEffects(EffectsKind.PURE)
             super.visitSetValue(expression, data)
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrFunction) {
-            super.visitFunctionAccess(expression, data)
-            if (!expression.symbol.owner.isFinal) {
+            if (!expression.symbol.owner.isFinal || expression.symbol.owner.isExternal) {
                 data.setMaxEffects(EffectsKind.WRITE)
                 return
             }
+            super.visitFunctionAccess(expression, data)
             if (expression.symbol.owner.effects == null) {
                 visit(expression.symbol.owner)
             }
