@@ -49,7 +49,6 @@ abstract class LLDBSessionSpec {
             val breakpointOffset = Regex("""(Breakpoint .* \+ )\d+( at)""")
             val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
             val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
-            val emptyCategoryWarning = Regex("""warning: empty category enabled \(typo\?\)""")
 
             return lldbOutput
                 .replace(executablePathRegexp, "<path to executable>")
@@ -61,7 +60,6 @@ abstract class LLDBSessionSpec {
                 .replace(breakpointOffset, "$1<breakpoint offset>$2")
                 .replace(targetStoppedLine, "")
                 .replace(setFormatLine, "")
-                .replace(emptyCategoryWarning, "")
         }
     }
 }
