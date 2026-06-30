@@ -61,7 +61,6 @@ fun makeFirMetadataSerializerForIrClass(
         FirJvmElementAwareStringTable(context.defaultTypeMapper, components)
     )
     return FirMetadataSerializer(
-        context.state.globalSerializationBindings,
         serializationBindings,
         approximator,
         makeElementSerializer(
@@ -76,7 +75,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     metadata: MetadataSource?,
     session: FirSession,
     scopeSession: ScopeSession,
-    globalSerializationBindings: JvmSerializationBindings,
     parent: MetadataSerializer?,
     targetId: TargetId,
     configuration: CompilerConfiguration,
@@ -92,7 +90,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     }
 
     val firSerializerExtension = FirJvmSerializerExtension(
-        session, serializationBindings, emptyList(), scopeSession, globalSerializationBindings,
+        session, serializationBindings, emptyList(), scopeSession,
         configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE),
         targetId.name,
         ClassBuilderMode.FULL,
@@ -105,7 +103,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         additionalMetadataProvider = null
     )
     return FirMetadataSerializer(
-        globalSerializationBindings,
         serializationBindings,
         approximator,
         makeElementSerializer(
@@ -117,7 +114,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
 }
 
 class FirMetadataSerializer(
-    private val globalSerializationBindings: JvmSerializationBindings,
     private val serializationBindings: JvmSerializationBindings,
     private val approximator: AbstractTypeApproximator,
     internal val serializer: FirElementSerializer?,
@@ -144,14 +140,13 @@ class FirMetadataSerializer(
 
     override fun bindPropertyMetadata(metadata: MetadataSource.Property, signature: Method, origin: IrDeclarationOrigin) {
         val fir = (metadata as FirMetadataSource.Property).fir
-        val slice = when (origin) {
+        when (origin) {
             JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
-                FirJvmSerializerExtension.SYNTHETIC_METHOD_FOR_FIR_VARIABLE
+                fir.syntheticMethodForFirVariable = signature
             IrDeclarationOrigin.PROPERTY_DELEGATE ->
-                FirJvmSerializerExtension.DELEGATE_METHOD_FOR_FIR_VARIABLE
+                fir.delegateMethodForFirVariable = signature
             else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
         }
-        globalSerializationBindings.put(slice, fir, signature)
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {
@@ -161,11 +156,7 @@ class FirMetadataSerializer(
 
     override fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>) {
         when (metadata) {
-            is FirMetadataSource.Property -> globalSerializationBindings.put(
-                FirJvmSerializerExtension.FIELD_FOR_PROPERTY,
-                metadata.fir,
-                signature,
-            )
+            is FirMetadataSource.Property -> metadata.fir.fieldForProperty = signature
             is FirMetadataSource.Field -> metadata.fir.run {
                 // We don't serialize synthetic delegate fields, and we don't expect any other fields here.
                 require(source?.kind == KtFakeSourceElementKind.ClassDelegationField) {

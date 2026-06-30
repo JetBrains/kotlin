@@ -260,7 +260,7 @@ class K1JvmIrCodegenFactory(
             symbolTable,
             irProviders,
             debuggerExtensions = null,
-            K1JvmBackendExtension,
+            K1JvmBackendExtension(),
             pluginContext,
         )
     }
@@ -403,7 +403,9 @@ private class FakeActualFunctionDescriptor(original: FunctionDescriptor) : Funct
     override fun getOriginal(): FunctionDescriptor = this
 }
 
-private object K1JvmBackendExtension : JvmBackendExtension {
+private class K1JvmBackendExtension : JvmBackendExtension {
+    private val globalSerializationBindings = JvmSerializationBindings()
+
     override fun createSerializer(
         context: JvmBackendContext,
         klass: IrClass,
@@ -411,7 +413,7 @@ private object K1JvmBackendExtension : JvmBackendExtension {
         bindings: JvmSerializationBindings,
         parentSerializer: MetadataSerializer?
     ): MetadataSerializer {
-        return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
+        return DescriptorMetadataSerializer(context, klass, type, bindings, globalSerializationBindings, parentSerializer)
     }
 
     override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
@@ -431,9 +433,11 @@ private class DescriptorMetadataSerializer(
     private val irClass: IrClass,
     private val type: Type,
     private val serializationBindings: JvmSerializationBindings,
+    private val globalSerializationBindings: JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
-    private val serializerExtension = JvmSerializerExtension(serializationBindings, context.state, context.defaultTypeMapper)
+    private val serializerExtension =
+        JvmSerializerExtension(serializationBindings, globalSerializationBindings, context.state, context.defaultTypeMapper)
 
     @OptIn(K1Deprecation::class)
     private val serializer: DescriptorSerializer? = run {
@@ -499,7 +503,7 @@ private class DescriptorMetadataSerializer(
                 JvmSerializationBindings.DELEGATE_METHOD_FOR_PROPERTY
             else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
         }
-        context.state.globalSerializationBindings.put(slice, descriptor, signature)
+        globalSerializationBindings.put(slice, descriptor, signature)
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {
@@ -509,16 +513,16 @@ private class DescriptorMetadataSerializer(
 
     override fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>) {
         val descriptor = (metadata as DescriptorMetadataSource.Property).descriptor
-        context.state.globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, signature)
+        globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, signature)
     }
 }
 
 private class JvmSerializerExtension(
     private val bindings: JvmSerializationBindings,
+    private val globalBindings: JvmSerializationBindings,
     state: GenerationState,
     private val typeMapper: KotlinTypeMapperBase,
 ) : SerializerExtension() {
-    private val globalBindings = state.globalSerializationBindings
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
