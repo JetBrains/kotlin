@@ -204,10 +204,14 @@ class GradlePluginTests {
         } as ProjectInternal
 
     private fun createFakeKotlinRoot(): Project {
+        workingDir.resolve("gradle.properties").writeText(
+            """
+            build.number=1.0
+            """.trimIndent()
+        )
         val root = ProjectBuilder.builder().also {
             it.withProjectDir(workingDir)
         }.build()
-        root.extraProperties.set("buildNumber", "1.0")
         root.extraProperties.set("projectsDependingOnStableStdlib", emptyArray<String>())
         root.extraProperties.set("kotlinApiVersionForProjectsDependingOnStableStdlib", emptyArray<String>())
         root.tasks.register("mvnInstall")

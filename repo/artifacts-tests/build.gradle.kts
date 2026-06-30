@@ -21,7 +21,6 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
-val defaultSnapshotVersion: String by extra
 findProperty("deployVersion")?.let {
     assert(findProperty("build.number") != null) { "`build.number` parameter is expected to be explicitly set with the `deployVersion`" }
 }

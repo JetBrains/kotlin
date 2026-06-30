@@ -16,12 +16,12 @@ fun Jar.setupPublicJar(
     baseName: Provider<String>,
     classifier: Provider<String> = project.provider { "" }
 ) {
-    val buildNumber = project.kotlinBuildProperties.buildNumber.get()
+    val buildNumber = project.kotlinBuildProperties.buildNumber
     this.archiveBaseName.set(baseName)
     this.archiveClassifier.set(classifier)
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
         put("Implementation-Title", baseName.get())
-        put("Implementation-Version", buildNumber)
+        put("Implementation-Version", buildNumber.get())
     }
 }
