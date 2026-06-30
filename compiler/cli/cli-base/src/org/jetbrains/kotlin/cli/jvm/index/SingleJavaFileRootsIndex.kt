@@ -21,6 +21,7 @@ import com.intellij.java.syntax.element.JavaSyntaxTokenType
 import com.intellij.java.syntax.parser.JavaKeywords
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.syntax.SyntaxElementType
+import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.name.ClassId
@@ -134,7 +135,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         }
 
         companion object {
-            private val CLASS_KEYWORDS = setOf(
+            private val CLASS_KEYWORDS = syntaxElementTypeSetOf(
                 JavaSyntaxTokenType.CLASS_KEYWORD, JavaSyntaxTokenType.INTERFACE_KEYWORD, JavaSyntaxTokenType.ENUM_KEYWORD
             )
         }
