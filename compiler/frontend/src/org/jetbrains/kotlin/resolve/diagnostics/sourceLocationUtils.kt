@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.resolve.diagnostics
+package org.jetbrains.kotlin.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.K1Deprecation
