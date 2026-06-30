@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,7 +107,15 @@ object ConeTypeCompatibilityChecker {
             is ConeClassLikeType -> true
             is ConeDefinitelyNotNullType -> original.isConcreteType()
             is ConeIntersectionType -> intersectedTypes.all { it.isConcreteType() }
-            else -> false
+
+            is ConeFlexibleType,
+            is ConeCapturedType,
+            is ConeTypeVariableType,
+            is ConeStubType,
+            is ConeTypeParameterType,
+            is ConeIntegerLiteralType,
+            is ConeLookupTagBasedType
+                -> false
         }
     }
 
