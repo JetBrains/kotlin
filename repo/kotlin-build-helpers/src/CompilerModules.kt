@@ -27,6 +27,7 @@ object CompilerModules {
         ":compiler:compiler.version",
         ":compiler:resolution.common",
         ":compiler:resolution.common.jvm",
+        ":compiler:resolution.common.js",
         ":compiler:backend.common.jvm",
         ":compiler:plugin-api",
         ":core:metadata",
@@ -53,7 +54,6 @@ object CompilerModules {
         ":kotlin-util-klib-metadata",
         ":compiler:build-tools:kotlin-build-statistics",
         ":js:js.config",
-        ":js:js.frontend.common",
         ":js:js.ast", // used by js fir checkers and js backend
         ":wasm:wasm.config",
         ":native:base",

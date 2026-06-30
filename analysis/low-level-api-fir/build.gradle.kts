@@ -33,7 +33,6 @@ dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":js:js.config"))
-    implementation(project(":js:js.frontend.common"))
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(project(":native:frontend.native"))
     implementation(project(":native:native.config"))
