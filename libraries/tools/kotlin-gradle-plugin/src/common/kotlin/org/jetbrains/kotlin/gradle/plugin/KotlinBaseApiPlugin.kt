@@ -11,6 +11,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
@@ -105,10 +106,24 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         )
     }
 
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
     override fun registerKotlinJvmCompileTask(
         taskName: String,
         compilerOptions: KotlinJvmCompilerOptions,
         explicitApiMode: Provider<ExplicitApiMode>,
+    ): TaskProvider<out KotlinJvmCompile> = registerKotlinJvmCompileTask(
+        taskName,
+        compilerOptions,
+        explicitApiMode,
+        providerFactory.provider { null },
+    )
+
+    @ExperimentalKotlinGradlePluginApi
+    override fun registerKotlinJvmCompileTask(
+        taskName: String,
+        compilerOptions: KotlinJvmCompilerOptions,
+        explicitApiMode: Provider<ExplicitApiMode>,
+        returnValueCheckerMode: Provider<ReturnValueCheckerMode>,
     ): TaskProvider<out KotlinJvmCompile> {
         val taskCompilerOptions = createCompilerJvmOptions()
         KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(compilerOptions, taskCompilerOptions)
@@ -119,6 +134,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             KotlinCompileConfig(
                 myProject,
                 explicitApiMode,
+                returnValueCheckerMode,
             )
         )
         return registeredKotlinJvmCompileTask

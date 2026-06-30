@@ -532,6 +532,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBaseApiPlugin : o
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
+	public fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper : org/jetbrains/kotlin/gradle/plugin/DefaultKotlinBasePlugin {
