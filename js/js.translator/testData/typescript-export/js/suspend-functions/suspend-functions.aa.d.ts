@@ -117,6 +117,7 @@ declare namespace JS_TESTS {
         class ExportedChild /* extends foo.NotExportedParent */ implements foo.HolderOfParentSuspendFun1<string> {
             constructor();
             childSuspendFun(): Promise<string>;
+            parentSuspendFun1(someValue?: string): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.HolderOfParentSuspendFun1<any>["__doNotUseOrImplementIt"];
         }
         namespace ExportedChild {

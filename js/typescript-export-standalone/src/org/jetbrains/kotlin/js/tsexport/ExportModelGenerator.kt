@@ -664,11 +664,27 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 }
             }
 
+            fun shouldExplicitlyExportFakeOverride(): Boolean {
+                if (klass.classKind == KaClassKind.INTERFACE) return false
+                for (symbol in sequenceOf(member) + member.allOverriddenSymbols) {
+                    if (symbol.fakeOverrideOriginal != symbol) {
+                        // Filter out fake overrides
+                        continue
+                    }
+                    val parentClass = symbol.containingDeclaration as KaClassSymbol
+                    if (parentClass.isEffectivelyExported(config, includingImplicitExport = true)) {
+                        return parentClass.classKind == KaClassKind.INTERFACE && !symbol.isJsExportIgnore()
+                    }
+                }
+                return false
+            }
+
             val original = member.fakeOverrideOriginal
             val actualParent = original.containingDeclaration as? KaClassSymbol ?: continue
             // We include only declarations from the class itself, plus inherited interface members that have a default implementation.
-            val shouldInclude =
-                actualParent == klass || (klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent))
+            val shouldInclude = actualParent == klass
+                    || (klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent))
+                    || shouldExplicitlyExportFakeOverride()
             if (!shouldInclude){
                 continue
             }

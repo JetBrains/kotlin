@@ -112,6 +112,11 @@ declare namespace JS_TESTS {
         }
         abstract class A2 implements foo.I3 {
             constructor();
+            abstract bay(): string;
+            abstract get foo(): string;
+            abstract get bar(): string;
+            abstract set bar(value: string);
+            abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
         namespace A2 {
@@ -171,6 +176,7 @@ declare namespace JS_TESTS {
             get foo(): string;
             get bar(): string;
             set bar(value: string);
+            abstract get baz(): string;
             readonly __doNotUseOrImplementIt: foo.I3["__doNotUseOrImplementIt"];
         }
         namespace EC {
@@ -202,6 +208,8 @@ declare namespace JS_TESTS {
         }
         class Sixth extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
             constructor();
+            process(value: number): void;
+            get foo(): number;
             readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Sixth {
@@ -212,6 +220,8 @@ declare namespace JS_TESTS {
         }
         abstract class Seventh extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
             constructor();
+            process(value: number): void;
+            get foo(): number;
             readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
         }
         namespace Seventh {

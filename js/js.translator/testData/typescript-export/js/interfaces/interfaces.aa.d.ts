@@ -479,6 +479,7 @@ declare namespace JS_TESTS {
         class ExportedSuspendChild /* extends foo.HiddenSuspendParent */ implements foo.HolderOfInheritedSuspend {
             constructor();
             childSuspend(): Promise<string>;
+            parentSuspend(value: string): Promise<string>;
             readonly __doNotUseOrImplementIt: foo.HolderOfInheritedSuspend["__doNotUseOrImplementIt"];
         }
         namespace ExportedSuspendChild {
