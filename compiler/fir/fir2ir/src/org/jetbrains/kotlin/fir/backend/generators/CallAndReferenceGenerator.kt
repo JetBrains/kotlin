@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.*
@@ -288,9 +289,17 @@ class CallAndReferenceGenerator(
      *
      * This method attempts to replicate the behavior of K1 in generation of `superQualifiedSymbol` for IrFieldAccessExpression
      */
-    private fun FirExpression.superQualifierSymbolForFieldAccess(firResolvedSymbol: FirBasedSymbol<*>?): IrClassSymbol? {
-        if (firResolvedSymbol is FirBackingFieldSymbol || firResolvedSymbol is FirDelegateFieldSymbol) return null
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun FirExpression.superQualifierSymbolForFieldAccess(fieldSymbol: IrFieldSymbol?): IrClassSymbol? {
+        val origin = fieldSymbol?.owner?.origin
+        if (origin == org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.PROPERTY_BACKING_FIELD ||
+            origin == org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.PROPERTY_DELEGATE
+        ) {
+            return null
+        }
 
+        val realFieldSymbol = (fieldSymbol as? IrFieldFakeOverrideSymbol)?.originalSymbol ?: fieldSymbol
+        val declaringIrClassSymbol = realFieldSymbol?.owner?.parentAsClass?.symbol
         val classSymbol = when (this) {
             is FirResolvedQualifier -> {
                 if (resolvedToCompanionObject) return null
@@ -301,18 +310,10 @@ class CallAndReferenceGenerator(
 
                 fun findIntersectionComponent(type: ConeKotlinType): ConeKotlinType? {
                     if (type !is ConeIntersectionType) return type
-                    // in the case of intersection type in the receiver we need to find the component which contains referenced field
-                    if (firResolvedSymbol !is FirCallableSymbol<*>) return null
-                    val containingClassType = firResolvedSymbol.dispatchReceiverType as? ConeLookupTagBasedType ?: return null
-                    val containingClassLookupTag = containingClassType.lookupTag
-                    val typeContext = session.typeContext
-                    return type.intersectedTypes.first {
-                        val componentConstructor = with(typeContext) { it.lowerBoundIfFlexible().typeConstructor() }
-                        AbstractTypeChecker.isSubtypeOfClass(
-                            typeContext,
-                            componentConstructor,
-                            containingClassLookupTag
-                        )
+                    val declaringIrClass = fieldSymbol?.owner?.parentAsClass ?: return null
+                    return type.intersectedTypes.firstOrNull {
+                        val componentIrClass = (it.toClassSymbol()?.let { s -> classifierStorage.getIrClassSymbol(s) })?.owner ?: return@firstOrNull false
+                        componentIrClass.isSubclassOf(declaringIrClass)
                     }
                 }
                 findIntersectionComponent(type)?.toClassSymbol()
@@ -366,10 +367,15 @@ class CallAndReferenceGenerator(
          */
         if (
             conversionScope.initBlocksStack.any { it.parentAsClass.symbol == irClassSymbol } &&
-            !(this is FirThisReceiverExpression && firResolvedSymbol?.fir is FirJavaField)
+            !(this is FirThisReceiverExpression && fieldSymbol?.owner?.origin == org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
         ) {
             return null
         }
+
+        if (declaringIrClassSymbol != null && irClassSymbol.owner.isSubclassOf(declaringIrClassSymbol.owner)) {
+            return declaringIrClassSymbol
+        }
+
         return irClassSymbol
     }
 
@@ -699,7 +705,7 @@ class CallAndReferenceGenerator(
 
                         backingFieldSymbol != null -> IrGetFieldImpl(
                             startOffset, endOffset, backingFieldSymbol, irType,
-                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
+                            superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(backingFieldSymbol)
                         )
 
                         else -> IrErrorCallExpressionImpl(
@@ -711,7 +717,7 @@ class CallAndReferenceGenerator(
 
                 is IrFieldSymbol -> IrGetFieldImpl(
                     startOffset, endOffset, irSymbol, irType,
-                    superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
+                    superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFieldAccess(irSymbol)
                 )
 
                 is IrValueSymbol -> {
@@ -845,7 +851,7 @@ class CallAndReferenceGenerator(
             when (symbol) {
                 is IrFieldSymbol -> IrSetFieldImpl(
                     startOffset, endOffset, symbol, type, origin,
-                    superQualifierSymbol = lValue.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
+                    superQualifierSymbol = lValue.dispatchReceiver?.superQualifierSymbolForFieldAccess(symbol)
                 ).apply {
                     value = irRhsWithCast
                 }
@@ -885,7 +891,7 @@ class CallAndReferenceGenerator(
                         backingFieldSymbol != null -> IrSetFieldImpl(
                             startOffset, endOffset, backingFieldSymbol, type,
                             origin = null, // NB: to be consistent with PSI2IR, origin should be null here
-                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFieldAccess(firSymbol)
+                            superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFieldAccess(backingFieldSymbol)
                         ).apply {
                             value = irRhsWithCast
                         }
