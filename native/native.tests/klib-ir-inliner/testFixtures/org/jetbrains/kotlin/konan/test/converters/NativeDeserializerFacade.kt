@@ -98,7 +98,6 @@ class NativeDeserializerFacade(
             configuration.languageVersionSettings,
         )
 
-        @OptIn(K1Deprecation::class)
         val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
         val irLinker = KonanIrLinker(

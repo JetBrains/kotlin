@@ -41,7 +41,6 @@ internal class KonanForwardDeclarationModuleDeserializer(
     private val linker: KonanIrLinker,
 ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.Companion.CURRENT) {
     init {
-        @OptIn(K1Deprecation::class)
         require(moduleDescriptor.isForwardDeclarationModule)
     }
 

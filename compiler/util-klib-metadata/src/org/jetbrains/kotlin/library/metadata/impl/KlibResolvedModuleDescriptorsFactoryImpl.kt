@@ -256,6 +256,5 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
-@K1Deprecation
 val ModuleDescriptor.isForwardDeclarationModule: Boolean
     get() = name == FORWARD_DECLARATIONS_MODULE_NAME

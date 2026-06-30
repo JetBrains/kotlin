@@ -159,7 +159,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor, 
             cachedLibraries = config.cachedLibraries,
     )
 
-    @OptIn(K1Deprecation::class)
     val forwardDeclarationsModuleDescriptor = moduleDescriptor.allDependencyModules.firstOrNull { it.isForwardDeclarationModule }
 
     // TODO Don't use file names in friend modules detection. Should be done in scope of KT-61096
