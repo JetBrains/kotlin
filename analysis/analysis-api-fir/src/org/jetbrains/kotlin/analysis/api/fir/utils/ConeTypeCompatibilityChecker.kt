@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.collectUpperBounds
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.types.Variance
  * covariant and contravariant bounds is empty. For example, a range like `[Collection, List]` is empty and hence invalid because `List` is
  * not a super class/interface of `Collection`
  */
+@KaImplementationDetail
 object ConeTypeCompatibilityChecker {
 
     private val javaClassClassId = ClassId.fromString("java/lang/Class")
@@ -53,6 +55,7 @@ object ConeTypeCompatibilityChecker {
     /**
      * The result returned by [ConeTypeCompatibilityChecker]. Note the order of enum entries matters.
      */
+    @KaImplementationDetail
     enum class Compatibility : Comparable<Compatibility> {
         /** The given types are fully compatible. */
         COMPATIBLE,
