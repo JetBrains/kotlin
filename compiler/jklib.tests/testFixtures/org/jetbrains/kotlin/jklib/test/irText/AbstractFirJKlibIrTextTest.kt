@@ -77,7 +77,6 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
         defaultDirectives {
             +CodegenTestDirectives.IGNORE_IR_EXPECT_FLAG
             +JvmEnvironmentConfigurationDirectives.NO_RUNTIME
-            DUMP_CLASSIFIER with "jklib"
         }
 
         useFailureSuppressors(

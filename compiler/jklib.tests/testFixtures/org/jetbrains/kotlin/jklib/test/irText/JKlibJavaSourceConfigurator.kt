@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -37,6 +38,8 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         get() = listOf(JvmEnvironmentConfigurationDirectives, ForeignAnnotationsDirectives)
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (testServices.moduleStructure.modules.none { it.javaFiles.isNotEmpty() }) return
+
         val registeredDirectives = module.directives
         val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
         JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.let { configuration.put(JVMConfigurationKeys.JDK_HOME, it) }
