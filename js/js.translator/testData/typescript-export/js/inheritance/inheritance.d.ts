@@ -218,6 +218,18 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => Sixth;
             }
         }
+        abstract class Seventh extends /* foo.Fifth<number> */ foo.Third.$metadata$.constructor<number> implements foo.IA, foo.IG<number>/*, foo.IC */ {
+            constructor();
+            process(value: number): void;
+            get foo(): number;
+            readonly __doNotUseOrImplementIt: foo.IG<any>["__doNotUseOrImplementIt"] & foo.IA["__doNotUseOrImplementIt"];
+        }
+        namespace Seventh {
+            /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+            namespace $metadata$ {
+                const constructor: abstract new () => Seventh;
+            }
+        }
         class First {
             constructor();
         }
