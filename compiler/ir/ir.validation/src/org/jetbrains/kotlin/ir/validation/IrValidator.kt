@@ -81,7 +81,9 @@ private class IrFileValidator(
     private val checkersPerElementCache = hashMapOf<Class<out IrElement>, List<IrElementChecker<*>>>()
 
     private fun List<ContextUpdater>.runWithContextUpdaters(element: IrElement, block: () -> Unit) {
-        this.fold(block) { currentBlock, updater -> { updater.runInNewContext(context, element, currentBlock) } }.invoke()
+        for (updater in this) updater.enterContext(context, element)
+        block()
+        for (updater in this.asReversed()) updater.exitContext(context, element)
     }
 
     private fun getCheckersFor(type: Class<out IrElement>) = checkersPerElementCache.computeIfAbsent(type) {

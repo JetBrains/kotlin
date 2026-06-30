@@ -14,25 +14,20 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 object ValueScopeUpdater : ContextUpdater {
-    override fun runInNewContext(
-        context: CheckerContext,
-        element: IrElement,
-        block: () -> Unit,
-    ) {
+    override fun enterContext(context: CheckerContext, element: IrElement) {
         when (element) {
             is IrValueDeclaration -> {
                 context.valueSymbolScopeStack.addToCurrentScope(element.symbol)
-                block()
             }
             is IrClass -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     // By default, `thisReceiver` is always visited _after_ the child declarations (where it may be referenced),
                     // so we add it manually before.
                     addIfNotNull(element.thisReceiver?.symbol)
                 }
             }
             is IrScript -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     // By default, `thisReceiver` is always visited _after_ the script statements (where it may be referenced),
                     // so we add it manually before.
                     addIfNotNull(element.thisReceiver?.symbol)
@@ -41,38 +36,48 @@ object ValueScopeUpdater : ContextUpdater {
                 }
             }
             is IrReplSnippet -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     element.variablesFromOtherSnippets.mapTo(this, IrVariable::symbol)
                 }
             }
             is IrFunction -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     // A function parameter's default value may reference the parameters that come after it,
                     // so we add all the parameters to the scope manually before validating any of them
                     element.parameters.mapTo(this, IrValueParameter::symbol)
                 }
             }
             is IrAnonymousInitializer -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     addValueParametersOfPrimaryConstructor(element)
                 }
             }
             is IrField -> {
-                context.withScopeOwner(element, block) {
+                context.enterNewScopeForOwner(element) {
                     addValueParametersOfPrimaryConstructor(element)
                 }
             }
             is IrCatch -> {
                 // catchParameter only has scope over result expression, so create a new scope
-                context.withScopeOwner(element, block)
+                context.enterNewScopeForOwner(element)
             }
             is IrBlock -> {
                 // Entering a new scope
-                context.withScopeOwner(element, block)
+                context.enterNewScopeForOwner(element)
             }
-            is IrElement -> {
-                block()
-            }
+        }
+    }
+
+    override fun exitContext(context: CheckerContext, element: IrElement) {
+        when (element) {
+            is IrClass -> context.exitScopeForOwner(element)
+            is IrScript -> context.exitScopeForOwner(element)
+            is IrReplSnippet -> context.exitScopeForOwner(element)
+            is IrFunction -> context.exitScopeForOwner(element)
+            is IrAnonymousInitializer -> context.exitScopeForOwner(element)
+            is IrField -> context.exitScopeForOwner(element)
+            is IrCatch -> context.exitScopeForOwner(element)
+            is IrBlock -> context.exitScopeForOwner(element)
         }
     }
 
