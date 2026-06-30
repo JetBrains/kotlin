@@ -18,7 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
-import androidx.compose.compiler.plugins.kotlin.k1.ComposeDescriptorSerializerContext
 import androidx.compose.compiler.plugins.kotlin.lower.*
 import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.AddHiddenFromObjCLowering
 import com.intellij.openapi.progress.ProgressManager
@@ -42,10 +41,8 @@ class ComposeIrGenerationExtension(
     private val traceMarkersEnabled: Boolean = true,
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
-    private val useK2: Boolean = false,
     private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
     private val moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
-    private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,
     private val skipIfRuntimeNotFound: Boolean = false,
     private val targetRuntimeVersion: ComposeRuntimeVersion? = null,
@@ -67,9 +64,7 @@ class ComposeIrGenerationExtension(
             stableTypeMatchers,
         )
 
-        if (useK2) {
-            moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
-        }
+        moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
 
         if (moduleMetricsFactory != null) {
             metrics = moduleMetricsFactory.invoke(stabilityInferencer, featureFlags)
@@ -83,21 +78,15 @@ class ComposeIrGenerationExtension(
             AddHiddenFromObjCLowering(
                 pluginContext,
                 metrics,
-                descriptorSerializerContext?.hideFromObjCDeclarationsSet,
                 stabilityInferencer,
                 featureFlags,
             ).lower(moduleFragment)
         }
 
         ClassStabilityTransformer(
-            useK2,
             pluginContext,
             metrics,
             stabilityInferencer,
-            classStabilityInferredCollection = descriptorSerializerContext
-                ?.classStabilityInferredCollection?.takeIf {
-                    !pluginContext.platform.isJvm()
-                },
             featureFlags,
             pluginContext.diagnosticReporter,
         ).lower(moduleFragment)
@@ -128,10 +117,6 @@ class ComposeIrGenerationExtension(
         )
 
         functionKeyTransformer.lower(moduleFragment)
-
-        if (!useK2) {
-            CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
-        }
 
         ProgressManager.checkCanceled()
 

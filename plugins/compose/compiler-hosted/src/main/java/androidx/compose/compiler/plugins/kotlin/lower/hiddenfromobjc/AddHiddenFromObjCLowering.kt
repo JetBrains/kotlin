@@ -47,7 +47,6 @@ val hiddenFromObjCClassId = ClassId.fromString("kotlin/native/HiddenFromObjC")
 class AddHiddenFromObjCLowering(
     private val pluginContext: IrPluginContext,
     metrics: ModuleMetrics,
-    private val hideFromObjCDeclarationsSet: HideFromObjCDeclarationsSet?,
     stabilityInferencer: StabilityInferencer,
     featureFlags: FeatureFlags,
 ) : AbstractComposeLowering(
@@ -85,7 +84,6 @@ class AddHiddenFromObjCLowering(
         // data classes can't be open, so it should work.
         if (currentShouldAnnotateClass && cls.isData) {
             cls.addHiddenFromObjCAnnotation()
-            hideFromObjCDeclarationsSet?.add(cls)
         }
 
         currentShouldAnnotateClass = previousShouldAnnotateClass
@@ -106,7 +104,6 @@ class AddHiddenFromObjCLowering(
 
         if (f.hasComposableAnnotation() || f.needsComposableRemapping()) {
             f.addHiddenFromObjCAnnotation()
-            hideFromObjCDeclarationsSet?.add(f)
             currentShouldAnnotateClass = true
         }
 
@@ -123,7 +120,6 @@ class AddHiddenFromObjCLowering(
 
         if (shouldAdd) {
             p.addHiddenFromObjCAnnotation()
-            hideFromObjCDeclarationsSet?.add(p)
             currentShouldAnnotateClass = true
         }
 

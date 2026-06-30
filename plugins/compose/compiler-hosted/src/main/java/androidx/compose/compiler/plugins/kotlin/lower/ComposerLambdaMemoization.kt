@@ -980,9 +980,8 @@ class ComposerLambdaMemoization(
                     (
                             // K2 uses invokedynamic for lambdas, which doesn't perform lambda optimization
                             // on Android.
-                            context.platform.isJvm() &&
-                                    context.languageVersionSettings.languageVersion.usesK2
-                            )
+                            context.platform.isJvm()
+                    )
 
         // If the function doesn't capture, Kotlin's default optimization is sufficient
         if (!memoizeLambdasWithoutCaptures && captures.isEmpty()) {
