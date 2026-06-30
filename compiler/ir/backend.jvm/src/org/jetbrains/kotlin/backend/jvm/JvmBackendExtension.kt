@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.metadata.BuiltinsSerializer
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -16,9 +16,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendExtension {
     fun createSerializer(
-        context: JvmBackendContext, klass: IrClass, type: Type, bindings: JvmSerializationBindings, parentSerializer: MetadataSerializer?
+        context: JvmBackendContext, klass: IrClass, type: Type, classBuilder: ClassBuilder, parentSerializer: MetadataSerializer?,
     ): MetadataSerializer
-
 
     fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer
 

@@ -78,7 +78,7 @@ class ClassCodegen private constructor(
     }
     private val metadataSerializer: MetadataSerializer by lazy {
         context.backendExtension.createSerializer(
-            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+            context, irClass, type, visitor, parentClassCodegen?.metadataSerializer
         )
     }
 

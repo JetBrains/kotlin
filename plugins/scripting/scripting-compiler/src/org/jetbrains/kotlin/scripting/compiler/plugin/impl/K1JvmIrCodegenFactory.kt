@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -41,23 +40,9 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.isExpect
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
@@ -92,6 +77,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K1JvmSerializationBindings.*
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.SerializerExtension
@@ -404,17 +390,15 @@ private class FakeActualFunctionDescriptor(original: FunctionDescriptor) : Funct
 }
 
 private class K1JvmBackendExtension : JvmBackendExtension {
-    private val globalSerializationBindings = JvmSerializationBindings()
+    private val globalSerializationBindings = K1JvmSerializationBindings()
+    private val serializationBindings = HashMap<ClassBuilder, K1JvmSerializationBindings>()
 
     override fun createSerializer(
-        context: JvmBackendContext,
-        klass: IrClass,
-        type: Type,
-        bindings: JvmSerializationBindings,
-        parentSerializer: MetadataSerializer?
-    ): MetadataSerializer {
-        return DescriptorMetadataSerializer(context, klass, type, bindings, globalSerializationBindings, parentSerializer)
-    }
+        context: JvmBackendContext, klass: IrClass, type: Type, classBuilder: ClassBuilder, parentSerializer: MetadataSerializer?,
+    ): MetadataSerializer = DescriptorMetadataSerializer(
+        context, klass, type, serializationBindings.getOrPut(classBuilder) { K1JvmSerializationBindings() },
+        globalSerializationBindings, parentSerializer,
+    )
 
     override fun createModuleMetadataSerializer(context: JvmBackendContext): ModuleMetadataSerializer = object : ModuleMetadataSerializer {
         override fun serializeOptionalAnnotationClass(
@@ -432,8 +416,8 @@ private class DescriptorMetadataSerializer(
     private val context: JvmBackendContext,
     private val irClass: IrClass,
     private val type: Type,
-    private val serializationBindings: JvmSerializationBindings,
-    private val globalSerializationBindings: JvmSerializationBindings,
+    private val serializationBindings: K1JvmSerializationBindings,
+    private val globalSerializationBindings: K1JvmSerializationBindings,
     parent: MetadataSerializer?
 ) : MetadataSerializer {
     private val serializerExtension =
@@ -483,8 +467,8 @@ private class DescriptorMetadataSerializer(
                 }.build()
             is DescriptorMetadataSource.Function -> {
                 val withTypeParameters = createFreeFakeLambdaDescriptor(metadata.descriptor, context.state.typeApproximator)
-                serializationBindings.get(JvmSerializationBindings.METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
-                    serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, withTypeParameters, it)
+                serializationBindings.get(METHOD_FOR_FUNCTION, metadata.descriptor)?.let {
+                    serializationBindings.put(METHOD_FOR_FUNCTION, withTypeParameters, it)
                 }
                 serializer!!.functionProto(withTypeParameters)?.build()
             }
@@ -498,9 +482,9 @@ private class DescriptorMetadataSerializer(
         val descriptor = (metadata as DescriptorMetadataSource.Property).descriptor
         val slice = when (origin) {
             JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
-                JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY
+                SYNTHETIC_METHOD_FOR_PROPERTY
             IrDeclarationOrigin.PROPERTY_DELEGATE ->
-                JvmSerializationBindings.DELEGATE_METHOD_FOR_PROPERTY
+                DELEGATE_METHOD_FOR_PROPERTY
             else -> throw IllegalStateException("invalid origin $origin for property-related method $signature")
         }
         globalSerializationBindings.put(slice, descriptor, signature)
@@ -508,18 +492,18 @@ private class DescriptorMetadataSerializer(
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {
         val descriptor = (metadata as DescriptorMetadataSource.Function).descriptor
-        serializationBindings.put(JvmSerializationBindings.METHOD_FOR_FUNCTION, descriptor, signature)
+        serializationBindings.put(METHOD_FOR_FUNCTION, descriptor, signature)
     }
 
     override fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>) {
         val descriptor = (metadata as DescriptorMetadataSource.Property).descriptor
-        globalSerializationBindings.put(JvmSerializationBindings.FIELD_FOR_PROPERTY, descriptor, signature)
+        globalSerializationBindings.put(FIELD_FOR_PROPERTY, descriptor, signature)
     }
 }
 
 private class JvmSerializerExtension(
-    private val bindings: JvmSerializationBindings,
-    private val globalBindings: JvmSerializationBindings,
+    private val bindings: K1JvmSerializationBindings,
+    private val globalBindings: K1JvmSerializationBindings,
     state: GenerationState,
     private val typeMapper: KotlinTypeMapperBase,
 ) : SerializerExtension() {
