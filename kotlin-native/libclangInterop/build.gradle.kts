@@ -8,6 +8,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     id("native-interop-plugin")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 dependencies {

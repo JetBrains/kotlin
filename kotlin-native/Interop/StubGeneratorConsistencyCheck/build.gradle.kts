@@ -14,6 +14,7 @@ dependencies {
 
 sourceSets {
     main { none() }
+    test { none() }
     testFixtures {
         projectDefault()
     }

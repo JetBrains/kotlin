@@ -10,6 +10,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("project-tests-convention")
+    id("test-inputs-check-v2")
 }
 
 sourceSets {
@@ -26,9 +27,9 @@ kotlin {
 }
 
 projectTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
-        workingDir = rootDir
+    testData(isolated, "testData")
 
+    testTask(jUnitMode = JUnitMode.JUnit5) {
         val testProjectKlib = configurations.create("testProjectKlib") {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
