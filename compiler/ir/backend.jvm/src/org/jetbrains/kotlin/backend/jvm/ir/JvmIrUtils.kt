@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -234,6 +235,9 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
 fun IrDeclaration.shouldBeExposedByAnnotationOrFlag(context: JvmBackendContext): Boolean {
     val isPropagatedOrImplicit = propagatedOrImplicitJvmExposeBoxed(context)
     val isExplicit = hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+
+    // Do not try to propagate implicit @JvmExposeBoxed to declarations from other modules.
+    if (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && !isExplicit) return false
 
     if (!(isExplicit || isPropagatedOrImplicit)) return false
     if (!isFunctionWhichCanBeExposed(isPropagatedOrImplicit && !isExplicit)) return false

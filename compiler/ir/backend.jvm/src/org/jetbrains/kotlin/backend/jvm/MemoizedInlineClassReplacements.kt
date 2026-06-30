@@ -377,8 +377,23 @@ class MemoizedInlineClassReplacements(
             isPrimary = constructor.isPrimary
         }.apply {
             parent = constructor.parent
-            metadata = constructor.metadata
-            constructor.metadata = null
+
+            if (constructor.metadata != null) {
+                metadata = constructor.metadata
+                constructor.metadata = null
+
+                // Propagate implicit @JvmExposeBoxed to metadata.
+                // This metadata is copied to synthetic constructor, which is not accessible from Java.
+                // Which might look contradictory, but otherwise there is no way to distinguish
+                // exposed constructor from non-exposed one if the constructor comes from another module.
+                // So, the metadata with annotation is on the synthetic constructor, but
+                // the annotation on bytecode is on the exposed constructor, which is expected to be called from Java.
+                if (!constructor.hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
+                    context.irPluginContext
+                        ?.metadataDeclarationRegistrar
+                        ?.addMetadataVisibleAnnotationsToElement(this, createJvmExposeBoxedAnnotation(this, context))
+                }
+            }
             copyFunctionSignatureFrom(constructor)
             annotations = constructor.annotations.withoutJvmExposeBoxedAnnotation()
             body = constructor.body?.patchDeclarationParents(this)
@@ -432,8 +447,15 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
     }
     // The declaration is not annotated with @JvmExposeBoxed - the annotation is on class
     // or -Xjvm-expose-boxed is specified. Add the annotation.
+    return this + createJvmExposeBoxedAnnotation(declaration, context)
+}
+
+private fun createJvmExposeBoxedAnnotation(
+    declaration: IrDeclaration,
+    context: JvmBackendContext,
+): IrAnnotationImpl {
     val constructor = context.symbols.jvmExposeBoxedAnnotation.constructors.first()
-    return this + IrAnnotationImpl.fromSymbolOwner(
+    return IrAnnotationImpl.fromSymbolOwner(
         constructor.owner.returnType,
         constructor
     ).apply {
