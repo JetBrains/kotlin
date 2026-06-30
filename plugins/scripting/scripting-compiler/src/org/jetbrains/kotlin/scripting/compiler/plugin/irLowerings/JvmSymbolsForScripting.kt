@@ -59,6 +59,7 @@ class JvmSymbolsForScripting(
 
     private fun createPackage(packageName: String): IrPackageFragment =
         createEmptyExternalPackageFragment(
+            // TODO(KT-87315): Use `stdlib` module instead of this one.
             moduleFragment,
             FqName(packageName)
         )
