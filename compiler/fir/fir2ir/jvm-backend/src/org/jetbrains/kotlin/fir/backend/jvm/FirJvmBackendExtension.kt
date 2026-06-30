@@ -43,7 +43,6 @@ class FirJvmBackendExtension(
             components.session,
             context,
             klass,
-            bindings,
             components,
             parentSerializer,
             actualizedExpectDeclarations
@@ -63,7 +62,7 @@ class FirJvmBackendExtension(
             val typeApproximator = TypeApproximatorForMetadataSerializer(session)
             val firSerializerExtension = object : FirJvmSerializerExtension(
                 session,
-                JvmSerializationBindings(),
+                emptyMap(),
                 context.state,
                 // annotation can't have local delegated properties, it is safe to pass empty list
                 localDelegatedProperties = emptyList(),

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.localDelegatedProperties
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -42,7 +41,6 @@ fun makeFirMetadataSerializerForIrClass(
     session: FirSession,
     context: JvmBackendContext,
     irClass: IrClass,
-    serializationBindings: JvmSerializationBindings,
     components: Fir2IrComponents,
     parent: MetadataSerializer?,
     actualizedExpectDeclarations: Set<FirDeclaration>?
@@ -51,9 +49,10 @@ fun makeFirMetadataSerializerForIrClass(
     val localDelegatedProperties = irClass.localDelegatedProperties?.mapNotNull {
         (it.owner.metadata as? FirMetadataSource.Property)?.fir?.copyToFreeProperty(approximator)
     } ?: emptyList()
+    val methodSignatures = mutableMapOf<FirFunction, Method>()
     val firSerializerExtension = FirJvmSerializerExtension(
         session,
-        serializationBindings,
+        methodSignatures,
         context.state,
         localDelegatedProperties,
         approximator,
@@ -61,7 +60,7 @@ fun makeFirMetadataSerializerForIrClass(
         FirJvmElementAwareStringTable(context.defaultTypeMapper, components)
     )
     return FirMetadataSerializer(
-        serializationBindings,
+        methodSignatures,
         approximator,
         makeElementSerializer(
             irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent,
@@ -80,7 +79,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     configuration: CompilerConfiguration,
     actualizedExpectDeclarations: Set<FirDeclaration>?
 ): FirMetadataSerializer {
-    val serializationBindings = JvmSerializationBindings()
+    val methodSignatures = mutableMapOf<FirFunction, Method>()
     val approximator = TypeApproximatorForMetadataSerializer(session)
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
@@ -90,7 +89,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     }
 
     val firSerializerExtension = FirJvmSerializerExtension(
-        session, serializationBindings, emptyList(), scopeSession,
+        session, methodSignatures, emptyList(), scopeSession,
         configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE),
         targetId.name,
         ClassBuilderMode.FULL,
@@ -103,7 +102,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         additionalMetadataProvider = null
     )
     return FirMetadataSerializer(
-        serializationBindings,
+        methodSignatures,
         approximator,
         makeElementSerializer(
             metadata, session, scopeSession, firSerializerExtension, approximator, parent,
@@ -114,7 +113,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
 }
 
 class FirMetadataSerializer(
-    private val serializationBindings: JvmSerializationBindings,
+    private val methodSignatures: MutableMap<FirFunction, Method>,
     private val approximator: AbstractTypeApproximator,
     internal val serializer: FirElementSerializer?,
     private val actualizedExpectDeclarations: Set<FirDeclaration>?
@@ -126,9 +125,7 @@ class FirMetadataSerializer(
             is FirMetadataSource.File -> serializer!!.packagePartProto(metadata.fir, actualizedExpectDeclarations).build()
             is FirMetadataSource.Function -> {
                 val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction(approximator)
-                serializationBindings.get(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.fir)?.let {
-                    serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, withTypeParameters, it)
-                }
+                methodSignatures[metadata.fir]?.let { methodSignatures[withTypeParameters] = it }
                 serializer!!.functionProto(withTypeParameters)?.build()
             }
             is FirMetadataSource.Script -> serializer!!.scriptProto(metadata.fir).build()
@@ -150,8 +147,7 @@ class FirMetadataSerializer(
     }
 
     override fun bindMethodMetadata(metadata: MetadataSource.Function, signature: Method) {
-        val fir = (metadata as FirMetadataSource.Function).fir
-        serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, fir, signature)
+        methodSignatures[(metadata as FirMetadataSource.Function).fir] = signature
     }
 
     override fun bindFieldMetadata(metadata: MetadataSource.Property, signature: Pair<Type, String>) {

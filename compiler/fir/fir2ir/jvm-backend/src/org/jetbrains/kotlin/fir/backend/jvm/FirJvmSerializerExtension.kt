@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSignatureSerializer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -46,7 +45,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 open class FirJvmSerializerExtension(
     override val session: FirSession,
-    private val bindings: JvmSerializationBindings,
+    private val methodSignatures: Map<FirFunction, Method>,
     private val localDelegatedProperties: List<FirProperty>,
     override val scopeSession: ScopeSession,
     private val useTypeTable: Boolean,
@@ -63,7 +62,7 @@ open class FirJvmSerializerExtension(
 
     constructor(
         session: FirSession,
-        bindings: JvmSerializationBindings,
+        methodSignatures: Map<FirFunction, Method>,
         state: GenerationState,
         localDelegatedProperties: List<FirProperty>,
         approximator: AbstractTypeApproximator,
@@ -71,7 +70,7 @@ open class FirJvmSerializerExtension(
         stringTable: FirElementAwareStringTable
     ) : this(
         session,
-        bindings,
+        methodSignatures,
         localDelegatedProperties,
         components.scopeSession,
         state.config.useTypeTableInSerializer,
@@ -222,7 +221,7 @@ open class FirJvmSerializerExtension(
     override fun serializeConstructor(
         constructor: FirConstructor, proto: ProtoBuf.Constructor.Builder, childSerializer: FirElementSerializer
     ) {
-        val method = bindings.get(METHOD_FOR_FIR_FUNCTION, constructor)
+        val method = methodSignatures[constructor]
         if (method != null) {
             val signature = signatureSerializer.methodSignature(constructor, null, method)
             if (signature != null) {
@@ -239,7 +238,7 @@ open class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
     ) {
-        val method = bindings.get(METHOD_FOR_FIR_FUNCTION, function)
+        val method = methodSignatures[function]
         if (method != null) {
             val signature = signatureSerializer.methodSignature(function, (function as? FirNamedFunction)?.name, method)
             if (signature != null) {
@@ -283,8 +282,8 @@ open class FirJvmSerializerExtension(
     ) {
         val getter = property.getter
         val setter = property.setter
-        val getterMethod = if (getter == null) null else bindings.get(METHOD_FOR_FIR_FUNCTION, getter)
-        val setterMethod = if (setter == null) null else bindings.get(METHOD_FOR_FIR_FUNCTION, setter)
+        val getterMethod = getter?.let { methodSignatures[it] }
+        val setterMethod = setter?.let { methodSignatures[it] }
 
         val field = property.fieldForProperty
         val syntheticMethod = property.syntheticMethodForFirVariable
@@ -385,11 +384,6 @@ open class FirJvmSerializerExtension(
                 }
             }
         }
-    }
-
-    companion object {
-        val METHOD_FOR_FIR_FUNCTION: JvmSerializationBindings.SerializationMappingSlice<FirFunction, Method> =
-            JvmSerializationBindings.SerializationMappingSlice.create()
     }
 }
 
