@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.codegen;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity;
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
-import static org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt.SUSPEND_FUNCTION_CREATE_METHOD_NAME;
 import static org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 
@@ -35,22 +34,6 @@ public class JvmCodegenUtil {
 
     public static boolean isJvmInterface(KotlinType type) {
         return isJvmInterface(type.getConstructor().getDeclarationDescriptor());
-    }
-
-    @Nullable
-    public static ClassDescriptor getDispatchReceiverParameterForConstructorCall(@NotNull ConstructorDescriptor descriptor) {
-        //for compilation against binaries
-        //TODO: It's best to use this code also for compilation against sources
-        // but sometimes structures that have dispatchReceiver (bug?) mapped to static classes
-        ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
-        if (dispatchReceiver != null) {
-            ClassDescriptor expectedThisClass = (ClassDescriptor) dispatchReceiver.getContainingDeclaration();
-            if (!expectedThisClass.getKind().isSingleton()) {
-                return expectedThisClass;
-            }
-        }
-
-        return null;
     }
 
     @NotNull
@@ -76,15 +59,5 @@ public class JvmCodegenUtil {
         // '%' is also replaced to avoid variable expansion in shell/batch environments.
         String sanitizedName = moduleName.replaceAll("[<>:\"/\\\\|?*%\\x00-\\x1F]", "_");
         return "META-INF/" + sanitizedName + "." + ModuleMapping.MAPPING_FILE_EXT;
-    }
-
-    public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof FunctionInvokeDescriptor && ((FunctionInvokeDescriptor) descriptor).hasBigArity();
-    }
-
-    public static boolean isDeclarationOfBigArityCreateCoroutineMethod(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof SimpleFunctionDescriptor && descriptor.getName().asString().equals(SUSPEND_FUNCTION_CREATE_METHOD_NAME) &&
-               ((SimpleFunctionDescriptor) descriptor).getValueParameters().size() >= BuiltInFunctionArity.BIG_ARITY - 1 &&
-               descriptor.getContainingDeclaration() instanceof AnonymousFunctionDescriptor && ((AnonymousFunctionDescriptor) descriptor.getContainingDeclaration()).isSuspend();
     }
 }

@@ -20,30 +20,18 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.suppressWildcardsMode
-
-val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
-    get() {
-        if (this !is CallableMemberDescriptor) return false
-        return original.firstOverridden(useOriginal = true) {
-            it.propertyIfAccessor.fqNameOrNull().isMethodWithDeclarationSiteWildcardsFqName
-        } != null
-    }
 
 val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
     get() = this in METHODS_WITH_DECLARATION_SITE_WILDCARDS

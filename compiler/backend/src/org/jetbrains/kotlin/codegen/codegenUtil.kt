@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
@@ -86,9 +85,6 @@ private fun generateNullCheckForNonSafeAs(v: InstructionAdapter, type: IrType, u
         mark(nonnull)
     }
 }
-
-fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String? =
-    valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
 
 class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
 
