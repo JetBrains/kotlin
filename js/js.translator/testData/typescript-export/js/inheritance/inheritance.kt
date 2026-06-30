@@ -215,6 +215,9 @@ open class Fifth<B>: Forth<B>(), IG<B> {
 class Sixth: Fifth<Int>(), IC
 
 @JsExport
+abstract class Seventh: Fifth<Int>(), IC
+
+@JsExport
 open class First
 
 @JsExport.Ignore
