@@ -266,11 +266,8 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 }
             }
 
-            if (classId != null) {
-                classId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
-            } else {
-                ConeErrorType(ConeSimpleDiagnostic("Failed to resolve class: $fqName", DiagnosticKind.Java))
-            }
+            val finalClassId = classId ?: ClassId.topLevel(fqName)
+            finalClassId.constructClassLikeType(emptyArray(), isMarkedNullable = lowerBound != null, attributes)
         }
 
         else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
