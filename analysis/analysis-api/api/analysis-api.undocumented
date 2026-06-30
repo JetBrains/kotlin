@@ -570,7 +570,12 @@ org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionNavigatio
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.EP_NAME
 org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider.Companion.provideExtensionsFor(KaModule)
 org.jetbrains.kotlin.analysis.api.scopes.KaScopeLike
+org.jetbrains.kotlin.analysis.api.session.KaAnalysisListenerRunner
+org.jetbrains.kotlin.analysis.api.session.KaSessionAcquisitionListenerRunner
 org.jetbrains.kotlin.analysis.api.session.KaSessionListener.Companion.EP_NAME
+org.jetbrains.kotlin.analysis.api.session.KaSessionListenerRunner.after()
+org.jetbrains.kotlin.analysis.api.session.KaSessionListenerRunner.before()
+org.jetbrains.kotlin.analysis.api.session.KaSessionListenerRunner.onException(Throwable)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KaModule, context(KaSession) () -> R)
 org.jetbrains.kotlin.analysis.api.session.KaSessionProvider.analyze(KtElement, KaSession.() -> R)
