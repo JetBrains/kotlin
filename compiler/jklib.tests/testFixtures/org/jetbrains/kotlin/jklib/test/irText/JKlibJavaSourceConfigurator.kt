@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.CompiledLibraryCache
+import java.io.File
 
 class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
@@ -50,6 +52,13 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
         }
 
         configuration.configureJdkClasspathRoots()
+
+        // Compile all dependencies (Kotlin or Java) to JVM Jars and add them to classpath
+        val compiledJars = mutableMapOf<TestModule, File>()
+        for (dependency in module.allDependencies) {
+            compileDependencyToJvm(dependency.dependencyModule, configuration, compiledJars)
+        }
+        compiledJars.values.forEach { configuration.addJvmClasspathRoot(it) }
 
         val javaFiles = module.javaFiles
         if (javaFiles.isEmpty()) return
@@ -90,5 +99,48 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                         "Underlying error: ${e.message}"
             }
         }
+    }
+
+    private fun compileDependencyToJvm(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+        compiledJars: MutableMap<TestModule, File>
+    ) {
+        if (compiledJars.containsKey(module)) return
+
+        for (dependency in module.allDependencies) {
+            compileDependencyToJvm(dependency.dependencyModule, configuration, compiledJars)
+        }
+
+        val kotlinFiles = module.files.filter { it.name.endsWith(".kt") || it.name.endsWith(".kts") }
+        val javaFiles = module.javaFiles
+        if (kotlinFiles.isEmpty() && javaFiles.isEmpty()) return
+
+        val classpath = mutableListOf<String>()
+        classpath += configuration.jvmClasspathRoots.map { it.absolutePath }
+        for (dependency in module.allDependencies) {
+            compiledJars[dependency.dependencyModule]?.let { classpath += it.absolutePath }
+        }
+
+        val compiledJar = if (kotlinFiles.isNotEmpty()) {
+            val kotlinDir = testServices.sourceFileProvider.getKotlinSourceDirectoryForModule(module)
+            kotlinFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            MockLibraryUtil.compileJvmLibraryToJar(
+                kotlinDir.path,
+                "${module.name}-jvm-binaries",
+                extraOptions = listOf("-no-stdlib"),
+                extraClasspath = classpath + ForTestCompileRuntime.runtimeJarForTests().absolutePath
+            )
+        } else {
+            val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+            javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
+            MockLibraryUtil.compileJavaFilesLibraryToJar(
+                javaDir.path,
+                "${module.name}-java-binaries",
+                extraClasspath = classpath,
+                assertions = testServices.assertions
+            )
+        }
+        compiledJars[module] = compiledJar
     }
 }

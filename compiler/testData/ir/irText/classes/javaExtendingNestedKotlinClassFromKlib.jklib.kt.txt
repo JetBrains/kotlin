@@ -1,0 +1,38 @@
+// MODULE: libA
+// FILE: Outer.kt
+package test
+
+open class Outer {
+  open class Inner {
+    val prop: String
+      field = "OK"
+      get
+
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun foo(): String {
+      return "OK"
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+// MODULE: main
+// FILE: Main.kt
+package test
+
+fun test() {
+  val j: JavaClass = JavaClass()
+  val x: String = j.<get-prop>()
+}

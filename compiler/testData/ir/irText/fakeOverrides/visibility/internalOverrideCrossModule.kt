@@ -1,6 +1,5 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JKLIB
 
 // K1 reflect behavior is wrong.
 // In 'I' class:
