@@ -4,6 +4,4 @@ This module, despite its name, for historical reasons, contains a bunch of diffe
 
 Right now here we can find:
 - The actual configuration classes (the `org.jetbrains.kotlin.js.config` package)
-- The JS AST protobuf serializer. This is no longer used anywhere in the compiler, but it is used by the IntelliJ IDEA metadata decompiler.
-  To be removed ([KT-73067](https://youtrack.jetbrains.com/issue/KT-73067)).
 - Some incremental compilation helpers (to be moved into some more appropriate place).
