@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jklib.test
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.jklib.K2JKlibCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -123,7 +124,7 @@ class JKlibJavaInteropIntegrationTest {
                 error("compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
             }
         } finally {
-            Disposer.dispose(disposable)
+            disposeRootInWriteAction(disposable)
         }
     }
 }
