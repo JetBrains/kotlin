@@ -4,14 +4,13 @@
  */
 package org.jetbrains.kotlin.psi
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.junit.jupiter.api.AfterEach
 
 abstract class KotlinTestWithEnvironment {
@@ -21,9 +20,7 @@ abstract class KotlinTestWithEnvironment {
 
     @AfterEach
     fun tearDown() {
-        ApplicationManager.getApplication().runWriteAction {
-            Disposer.dispose(testRootDisposable)
-        }
+        disposeRootDisposable(testRootDisposable)
     }
 
     private fun createEnvironment(): KotlinCoreEnvironment {

@@ -17,7 +17,6 @@ package org.jetbrains.kotlin.test.testFramework
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -60,9 +59,7 @@ abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String,
 
     @AfterEach
     fun tearDown() {
-        ApplicationManager.getApplication().runWriteAction {
-            Disposer.dispose(testRootDisposable)
-        }
+        disposeRootDisposable(testRootDisposable)
     }
 
     protected val testDataPath: String

@@ -16,8 +16,8 @@
 package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
@@ -36,8 +36,6 @@ abstract class TestCaseWithTmpdir {
 
     @AfterEach
     fun tearDown() {
-        ApplicationManager.getApplication().runWriteAction {
-            Disposer.dispose(testRootDisposable)
-        }
+        disposeRootDisposable(testRootDisposable)
     }
 }

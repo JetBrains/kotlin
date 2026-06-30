@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.disposeRootDisposable
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -53,10 +53,8 @@ class KotlinCliJavaFileManagerTest {
 
     @AfterEach
     fun tearDown() {
-        ApplicationManager.getApplication().runWriteAction {
-            javaFilesDir.deleteRecursively()
-            Disposer.dispose(testRootDisposable)
-        }
+        javaFilesDir.deleteRecursively()
+        disposeRootDisposable(testRootDisposable)
     }
 
     @Test
