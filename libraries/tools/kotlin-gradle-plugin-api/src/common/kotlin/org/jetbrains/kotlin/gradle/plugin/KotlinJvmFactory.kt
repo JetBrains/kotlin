@@ -10,6 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.Kapt
@@ -126,6 +127,32 @@ interface KotlinJvmFactory {
         taskName: String,
         compilerOptions: KotlinJvmCompilerOptions = createCompilerJvmOptions(),
         explicitApiMode: Provider<ExplicitApiMode> = providerFactory.provider { ExplicitApiMode.Disabled },
+    ): TaskProvider<out KotlinJvmCompile>
+
+    /**
+     * Registers a new standalone Kotlin compilation task for the JVM platform.
+     *
+     * This task is not associated with any [KotlinTarget] or [KotlinCompilation].
+     * It is not executed as part of the common compilation pipeline.
+     *
+     * @param taskName the name of the task.
+     * @param compilerOptions values of this [KotlinJvmCompilerOptions] instance that are used as convention values
+     * for [KotlinJvmCompilerOptions]'s inside task.
+     * @param explicitApiMode desired [ExplicitApiMode] mode in the task.
+     * The [Provider] can have `null` value which is the same as specify [ExplicitApiMode.Disabled].
+     * By default, the value is [ExplicitApiMode.Disabled].
+     * @param returnValueCheckerMode desired [ReturnValueCheckerMode] in the task.
+     * The [Provider] can have a `null` value, which is the same as [ReturnValueCheckerMode.Disabled].
+     * By default, the value is `null`.
+     *
+     * @since 2.4.0
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun registerKotlinJvmCompileTask(
+        taskName: String,
+        compilerOptions: KotlinJvmCompilerOptions = createCompilerJvmOptions(),
+        explicitApiMode: Provider<ExplicitApiMode> = providerFactory.provider { ExplicitApiMode.Disabled },
+        returnValueCheckerMode: Provider<ReturnValueCheckerMode> = providerFactory.provider { null },
     ): TaskProvider<out KotlinJvmCompile>
 
     /**
