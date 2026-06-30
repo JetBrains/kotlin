@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.analysis.*
 import androidx.compose.compiler.plugins.kotlin.k2.ComposeErrors
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
@@ -54,11 +53,9 @@ enum class StabilityBits(val bits: Int) {
  * annotation on it, as well as putting a static final int of the stability to be used at runtime.
  */
 class ClassStabilityTransformer(
-    private val useK2: Boolean,
     context: IrPluginContext,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-    private val classStabilityInferredCollection: ClassStabilityInferredCollection? = null,
     featureFlags: FeatureFlags,
     private val reporter: IrDiagnosticReporter,
 ) : AbstractComposeLowering(context, metrics, stabilityInferencer, featureFlags),
@@ -192,14 +189,13 @@ class ClassStabilityTransformer(
             it.arguments[0] = irConst(parameterMask)
         }
 
-        if (useK2 && cls.hasFirDeclaration()) {
+        if (cls.hasFirDeclaration()) {
             context.metadataDeclarationRegistrar.addMetadataVisibleAnnotationsToElement(
                 cls,
                 annotation,
             )
         } else {
             cls.annotations += annotation
-            classStabilityInferredCollection?.addClass(cls, parameterMask)
         }
 
         if (cls.visibility.isPublicAPI || cls.visibility == DescriptorVisibilities.INTERNAL) {
