@@ -30,6 +30,8 @@ internal class JvmMetadataComponentWriterTest {
         override fun recordOutputFileGeneratedForPlugin(outputFile: File) {
             recordedMappings += null to outputFile
         }
+
+        override fun recordSourceFileGeneratedForPlugin(sourceFile: File) {}
     }
 
     @Test
