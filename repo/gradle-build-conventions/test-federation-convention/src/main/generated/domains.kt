@@ -34,7 +34,7 @@ internal object CompilerInfrastructureDomainInfo : DomainInfo {
 
 internal object FrontendDomainInfo : DomainInfo {
     override val domain = Domain.Frontend
-    override val include: List<String> = listOf("compiler/fir", "compiler/frontend", "compiler/frontend.common", "compiler/frontend.common.jvm", "compiler/frontend.common-psi", "compiler/frontend.java", "compiler/ir/ir.psi2ir", "compiler/java-direct", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution", "compiler/resolution.common", "compiler/resolution.common.jvm", "compiler/serialization", "compiler/serialization.common", "compiler/tests-java8", "compiler/tests-spec")
+    override val include: List<String> = listOf("compiler/fir", "compiler/frontend", "compiler/frontend.common", "compiler/frontend.common.jvm", "compiler/frontend.common-psi", "compiler/frontend.java", "compiler/ir/ir.psi2ir", "compiler/java-direct", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution", "compiler/resolution.common", "compiler/resolution.common.jvm", "compiler/resolution.common.js", "compiler/serialization", "compiler/serialization.common", "compiler/tests-java8", "compiler/tests-spec")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo) }
 }

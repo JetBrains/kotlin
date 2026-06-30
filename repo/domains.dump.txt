@@ -68,6 +68,7 @@ Frontend:
  - compiler/psi/parser
  - compiler/resolution
  - compiler/resolution.common
+ - compiler/resolution.common.js
  - compiler/resolution.common.jvm
  - compiler/serialization
  - compiler/serialization.common
@@ -112,7 +113,6 @@ Js:
  - js/js.config/src/org/jetbrains/kotlin/js/artifacts
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
- - js/js.frontend.common
  - js/js.parser
  - js/js.tests/ReadMe.md
  - js/js.tests/build.gradle.kts

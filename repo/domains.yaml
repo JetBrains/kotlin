@@ -56,6 +56,7 @@ Frontend:
     - "compiler/resolution"
     - "compiler/resolution.common"
     - "compiler/resolution.common.jvm"
+    - "compiler/resolution.common.js"
     - "compiler/serialization"
     - "compiler/serialization.common"
     - "compiler/tests-java8"
