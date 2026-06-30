@@ -98,8 +98,8 @@ internal actual inline fun floatToUInt(value: Float): UInt = doubleToUInt(value.
 // For JS engines, the operation `value >>> 0` is a no-op at run-time.
 // It only changes the internal type information of the JIT to an unsigned 32-bit integer.
 // That makes this operation, and subsequent operations on its result, very efficient.
-@PublishedApi
 @InlineOnly
+@PublishedApi
 internal actual inline fun uintToDouble(value: Int): Double = js("value >>> 0")
 
 @PublishedApi
