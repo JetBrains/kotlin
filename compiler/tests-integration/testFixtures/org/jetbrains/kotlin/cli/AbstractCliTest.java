@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.util.PerformanceManager;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+import org.jetbrains.kotlin.utils.KotlinNativePaths;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt.ARGFILE_ARGUMENT;
+import static org.jetbrains.kotlin.konan.library.NativeLibraryConstantsKt.KONAN_STDLIB_NAME;
+import static org.jetbrains.kotlin.konan.library.NativeLibraryConstantsKt.konanCommonLibraryPath;
 import static org.jetbrains.kotlin.test.TestDataAssertions.assertValueAgnosticEqualsToFile;
 
 public abstract class AbstractCliTest extends TestCaseWithTmpdir {
@@ -315,6 +318,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         str = replaceIfNeeded(str, "$JDK_17$", () -> KtTestUtil.getJdk17Home().getPath());
         str = replaceIfNeeded(str, "$STDLIB_JS$", () -> ForTestCompileRuntime.stdlibJsForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$STDLIB_WASM_JS$", () -> ForTestCompileRuntime.stdlibWasmJsForTests().getAbsolutePath());
+        str = replaceIfNeeded(str, "$STDLIB_NATIVE$", () -> FilesKt.resolve(KotlinNativePaths.INSTANCE.getHomePath(), konanCommonLibraryPath(KONAN_STDLIB_NAME)).getAbsolutePath());
         str = replaceIfNeeded(str, "$LOMBOK-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.lombokCompilerPluginForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$ALLOPEN-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.allOpenCompilerPluginForTests().getAbsolutePath());
         str = replaceIfNeeded(str, "$NOARG-COMPILER-PLUGIN-JAR$", () -> ForTestCompileRuntime.noArgCompilerPluginForTests().getAbsolutePath());

@@ -38,6 +38,8 @@ and the options are:
     -signature-version {1|2}
         Render IR signatures of a specific version. By default, the most up-to-date signature version
         that is supported in the library is used.
+        Supported in commands: dump-abi, dump-ir-signatures, dump-metadata-signatures
 
     -only-top-level-signatures {true|false}
-        Dump IR signatures of only top-level declarations. Applicable only to the "dump-ir-signatures" command.
+        Dump IR signatures of only top-level declarations.
+        Supported in commands: dump-ir-signatures
