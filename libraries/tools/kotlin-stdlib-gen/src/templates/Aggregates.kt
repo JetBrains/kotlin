@@ -313,27 +313,39 @@ object Aggregates : TemplateGroupBase() {
             """
             val iterator = iterator()
             if (!iterator.hasNext()) return true
-            val first = iterator.next()
+            var element = iterator.next()
             if (!iterator.hasNext()) return true
-            val firstKey = selector(first)
-            do {
-                val key = selector(iterator.next())
-                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                val equal = firstKey?.equals(key) ?: (key == null)
-                if (!equal) return false
-            } while (iterator.hasNext())
+            var firstKey: K? = null
+            var isFirst = true
+            while (true) {
+                val key = selector(element)
+                if (isFirst) {
+                    firstKey = key
+                    isFirst = false
+                } else {
+                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                    val equal = firstKey?.equals(key) ?: (key == null)
+                    if (!equal) return false
+                }
+                if (!iterator.hasNext()) break
+                element = iterator.next()
+            }
             return true
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size < 2) return true
-            val firstKey = selector(this[0])
-            for (i in 1..lastIndex) {
+            var firstKey: K? = null
+            for (i in indices) {
                 val key = selector(this[i])
-                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
-                val equal = firstKey?.equals(key) ?: (key == null)
-                if (!equal) return false
+                if (i == 0) {
+                    firstKey = key
+                } else {
+                    // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                    val equal = firstKey?.equals(key) ?: (key == null)
+                    if (!equal) return false
+                }
             }
             return true
             """
