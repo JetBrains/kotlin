@@ -59,7 +59,7 @@ public final enum class MyEnum {
 public final class Regular {
     // source: 'Test.kt'
     private final @org.jetbrains.annotations.NotNull field id: java.lang.String
-    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: Id): void
     private method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -72,7 +72,7 @@ public final class Regular {
 public final class ResultHolder {
     // source: 'Test.kt'
     private final @org.jetbrains.annotations.NotNull field result: java.lang.Object
-    public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(): void
+    public method <init>(): void
     public @kotlin.jvm.JvmExposeBoxed(jvmName="") method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.Result): void
     private method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker): void
     public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.BoxingConstructorMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
