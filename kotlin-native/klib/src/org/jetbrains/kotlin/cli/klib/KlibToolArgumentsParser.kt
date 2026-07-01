@@ -58,7 +58,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                 onlyTopLevelSignatures = parsedOptions[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
                 signatureVersion,
                 testMode = parsedOptions[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
-                absolutePathPrefixes = parsedOptions[CliOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
+                relativePathBases = parsedOptions[CliOption.RELATIVE_PATH_BASE] ?: emptyList(),
         )
     }
 
@@ -137,7 +137,7 @@ internal sealed interface KlibToolArgumentsParserResult {
             val onlyTopLevelSignatures: Boolean,
             val signatureVersion: KotlinIrSignatureVersion?,
             val testMode: Boolean,
-            val absolutePathPrefixes: List<String>,
+            val relativePathBases: List<String>,
     ) : KlibToolArgumentsParserResult
 }
 
@@ -222,10 +222,14 @@ private enum class CliOption(val isPrivate: Boolean = false) {
         override val applicableTo get() = setOf(CliCommand.DUMP_IR_SIGNATURES)
     },
 
-    /**
-     * A file path prefix to be removed from full paths to render relative paths, thus making dumps reproducible.
-     */
-    ABSOLUTE_PATH_PREFIX(isPrivate = true) {
+    RELATIVE_PATH_BASE {
+        override val hintOnValues = null
+
+        override val description = """
+            A file path prefix to be removed from all paths to render them as relative paths.
+            Note: By repeating this option multiple times it's possible to specify multiple prefixes.
+        """.trimIndent()
+
         override val applicableTo get() = setOf(CliCommand.DUMP_IR)
     },
 

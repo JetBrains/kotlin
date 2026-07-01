@@ -43,3 +43,8 @@ and the options are:
     -only-top-level-signatures {true|false}
         Dump IR signatures of only top-level declarations.
         Supported in commands: dump-ir-signatures
+
+    -relative-path-base
+        A file path prefix to be removed from all paths to render them as relative paths.
+        Note: By repeating this option multiple times it's possible to specify multiple prefixes.
+        Supported in commands: dump-ir

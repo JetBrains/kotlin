@@ -51,7 +51,7 @@ private fun invokeKlibTool(
             this += "true"
         }
         absolutePathPrefixes.forEach {
-            this += "-absolute-path-prefix"
+            this += "-relative-path-base"
             this += it
         }
     }
