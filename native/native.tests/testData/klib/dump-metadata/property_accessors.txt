@@ -45,5 +45,8 @@ library {
         public open get
         protected open /* non-default */ set(value: kotlin/Int)
     }
+
+    package {
+    }
   }
 }

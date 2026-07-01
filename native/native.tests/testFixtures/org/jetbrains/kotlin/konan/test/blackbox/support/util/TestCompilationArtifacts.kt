@@ -30,7 +30,7 @@ private fun invokeKlibTool(
     kotlinNativeClassLoader: ClassLoader,
     klibFile: File,
     command: String,
-    metadataTestMode: Boolean = false,
+    metadataTestMode: String? = null,
     signatureVersion: KotlinIrSignatureVersion? = null,
     onlyTopLevelSignatures: Boolean = false,
     absolutePathPrefixes: List<String> = emptyList(),
@@ -38,9 +38,9 @@ private fun invokeKlibTool(
     val args = buildList<String> {
         this += command
         this += klibFile.canonicalPath
-        if (metadataTestMode) {
-            this += "-test-mode"
-            this += "true"
+        metadataTestMode?.let {
+            this += "-dump-metadata-test-mode"
+            this += metadataTestMode
         }
         signatureVersion?.let {
             this += "-signature-version"
@@ -77,15 +77,17 @@ private fun invokeKlibTool(
 
 fun TestCompilationArtifact.KLIB.dumpMetadata(
     kotlinNativeClassLoader: ClassLoader,
-): String = klibFile.dumpMetadata(kotlinNativeClassLoader)
+    metadataTestMode: String? = "compact-with-stable-order",
+): String = klibFile.dumpMetadata(kotlinNativeClassLoader, metadataTestMode)
 
 fun File.dumpMetadata(
     kotlinNativeClassLoader: ClassLoader,
+    metadataTestMode: String? = "compact-with-stable-order",
 ): String = invokeKlibTool(
     kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-metadata",
-    metadataTestMode = true,
+    metadataTestMode = metadataTestMode,
 )
 
 fun TestCompilationArtifact.KLIB.dumpIr(

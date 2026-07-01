@@ -1,0 +1,62 @@
+library {
+  // module name: <Objects.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: B.C
+    // class name: B.Companion
+    // class name: D
+    // class name: D.E
+
+    public final object A : kotlin/Any {
+
+      private constructor()
+
+      public final fun a(): kotlin/Unit
+    }
+
+    public final class B : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: C
+    }
+
+    public final object B.C : kotlin/Any {
+
+      private constructor()
+
+      public final fun c(): kotlin/Unit
+    }
+
+    public final companion object B.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final fun b(): kotlin/Unit
+    }
+
+    public final class D : kotlin/Any {
+
+      public constructor()
+
+      // companion object: E
+
+      // nested class: E
+    }
+
+    public final companion object D.E : kotlin/Any {
+
+      private constructor()
+
+      public final fun e(): kotlin/Unit
+    }
+  }
+}

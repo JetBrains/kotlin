@@ -4,12 +4,10 @@ library {
   library fragment {
     // package name: <root>
 
-    // class name: Bar
-    // class name: Class1
-    // class name: Class2
     // class name: Foo
+    // class name: Class1
 
-    public final annotation class Bar : kotlin/Annotation {
+    public final annotation class Foo : kotlin/Annotation {
 
       public constructor()
     }
@@ -20,15 +18,28 @@ library {
       public constructor()
     }
 
+    package {
+    }
+  }
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Class2
+
+    public final annotation class Bar : kotlin/Annotation {
+
+      public constructor()
+    }
+
     @Bar
     public final class Class2 : kotlin/Any {
 
       public constructor()
     }
 
-    public final annotation class Foo : kotlin/Annotation {
-
-      public constructor()
+    package {
     }
   }
 }

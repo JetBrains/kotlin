@@ -42,14 +42,20 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val klib: KLIB = testCompilationResult.assertSuccess().resultingArtifact
 
-        val metadataDump = klib.dumpMetadata(kotlinNativeClassLoader.classLoader)
+        JUnit5Assertions.assertAll(
+            supportedDumpModes.map { dumpMode ->
+                {
+                    val metadataDump = klib.dumpMetadata(kotlinNativeClassLoader.classLoader, metadataTestMode = dumpMode)
 
-        val testDataFile = testPathFull.withSuffixAndExtension(
-            suffix = "",
-            extension = "txt"
+                    val testDataFile = testPathFull.withSuffixAndExtension(
+                        suffix = dumpMode?.let { ".$it" }.orEmpty(),
+                        extension = "txt"
+                    )
+
+                    assertEqualsToFile(testDataFile, metadataDump)
+                }
+            }
         )
-
-        assertEqualsToFile(testDataFile, metadataDump)
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
@@ -86,10 +92,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun equalDumps(testDataFileK1: File, testDataFileK2: File): Boolean {
-        if (!testDataFileK1.exists() || !testDataFileK2.exists()) return true
-        val originalText = testDataFileK1.readText().trimEnd()
-        val firText = testDataFileK2.readText().trimEnd()
-        return originalText == firText
+    companion object {
+        private val supportedDumpModes = listOf(null, "compact-with-stable-order")
     }
 }

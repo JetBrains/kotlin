@@ -42,5 +42,8 @@ library {
 
       // has Enum.entries
     }
+
+    package {
+    }
   }
 }

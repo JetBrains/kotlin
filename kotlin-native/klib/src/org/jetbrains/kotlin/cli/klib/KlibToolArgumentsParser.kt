@@ -52,12 +52,19 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             return KlibToolArgumentsParserResult.Error
         }
 
+        val dumpMetadataTestMode = parsedOptions[CliOption.DUMP_METADATA_TEST_MODE]?.last()?.let { modeName ->
+            MetadataDumpMode.parseOrNull(modeName) ?: run {
+                output.logError("Invalid metadata dump mode: $modeName")
+                return KlibToolArgumentsParserResult.Error
+            }
+        }
+
         return KlibToolArgumentsParserResult.ParsedArguments(
                 command = command,
                 library = library,
                 onlyTopLevelSignatures = parsedOptions[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
                 signatureVersion,
-                testMode = parsedOptions[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
+                dumpMetadataTestMode = dumpMetadataTestMode,
                 relativePathBases = parsedOptions[CliOption.RELATIVE_PATH_BASE] ?: emptyList(),
         )
     }
@@ -136,7 +143,7 @@ internal sealed interface KlibToolArgumentsParserResult {
             val library: KotlinLibrary,
             val onlyTopLevelSignatures: Boolean,
             val signatureVersion: KotlinIrSignatureVersion?,
-            val testMode: Boolean,
+            val dumpMetadataTestMode: MetadataDumpMode?,
             val relativePathBases: List<String>,
     ) : KlibToolArgumentsParserResult
 }
@@ -234,14 +241,12 @@ private enum class CliOption(val isPrivate: Boolean = false) {
     },
 
     /**
-     * This is an option that allows running the commands that support it in a special "test mode".
-     * The "test mode" means (but not limited to) that a command may, for example, sort the output
-     * which is unsorted by default, and this way guarantee stable output. This is essentially helpful
-     * for tests, which rely on the command output.
+     * This is an option that allows running the "dump-metadata" command in one of the special "test modes" (see [MetadataDumpMode]).
+     * This is essentially helpful for tests, which rely on the stable command output.
      *
-     * NOTE: This option is not supposed to be advertised in KLIB tool's "usage info".
+     * NOTE: This option is not supposed to be advertised in KLIB tool's "usage" output.
      */
-    TEST_MODE(isPrivate = true) {
+    DUMP_METADATA_TEST_MODE(isPrivate = true) {
         override val applicableTo get() = setOf(CliCommand.DUMP_METADATA)
     },
     ;
@@ -261,5 +266,24 @@ private enum class CliOption(val isPrivate: Boolean = false) {
 
     companion object {
         fun parseOrNull(optionName: String): CliOption? = entries.firstOrNull { it.optionName == optionName }
+    }
+}
+
+internal enum class MetadataDumpMode(val modeName: String?) {
+    /** The default dump mode. */
+    DEFAULT(null),
+
+    /**
+     * - empty package fragments are removed
+     * - package fragments with the same package FQN are merged
+     * - declarations are sorted in alphabetical order
+     */
+    COMPACT_WITH_STABLE_ORDER("compact-with-stable-order"),
+    ;
+
+    override fun toString() = modeName ?: "<no test mode>"
+
+    companion object {
+        fun parseOrNull(modeName: String?): MetadataDumpMode? = MetadataDumpMode.entries.firstOrNull { it.modeName == modeName }
     }
 }

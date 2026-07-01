@@ -4,17 +4,17 @@ library {
   library fragment {
     // package name: custom.pkg
 
-    // class name: custom/pkg/Bar
     // class name: custom/pkg/Foo
-
-    public final object custom/pkg/Bar : kotlin/Any {
-
-      private constructor()
-    }
+    // class name: custom/pkg/Bar
 
     public final class custom/pkg/Foo : kotlin/Any {
 
       public constructor()
+    }
+
+    public final object custom/pkg/Bar : kotlin/Any {
+
+      private constructor()
     }
 
     package {
