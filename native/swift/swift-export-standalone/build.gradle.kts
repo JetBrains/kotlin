@@ -33,6 +33,10 @@ sourceSets {
     "main" { projectDefault() }
 }
 
+tasks.named("check") {
+    dependsOn(":native:swift:swift-export-standalone-integration-tests:check")
+}
+
 publish()
 
 runtimeJar()

@@ -22,3 +22,7 @@ sourceSets {
     "main" { none() }
     "testFixtures" { projectDefault() }
 }
+
+tasks.named("check") {
+    dependsOn(subprojects.map { it.tasks.named("check") })
+}
