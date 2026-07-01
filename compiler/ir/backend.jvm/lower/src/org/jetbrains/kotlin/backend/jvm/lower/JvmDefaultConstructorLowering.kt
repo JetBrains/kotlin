@@ -46,9 +46,6 @@ internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : C
         if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
             return
 
-        if (primaryConstructor.hasMangledParameters())
-            return
-
         if (primaryConstructor.parameters.any { !it.hasDefaultValue() })
             return
 

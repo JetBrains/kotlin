@@ -32,6 +32,8 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
 
   private  RegularClassWithValueConstructor(int);//  .ctor(int)
 
+  public  RegularClassWithValueConstructor();//  .ctor()
+
   public final int getProperty-7j0DjTs();//  getProperty-7j0DjTs()
 }
 
