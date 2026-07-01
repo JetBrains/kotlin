@@ -70,6 +70,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val JS_DROP_REGION_COMMENTS by directive(
+        description = "",
+        applicability = DirectiveApplicability.Global
+    )
+
     val PROPERTY_LAZY_INITIALIZATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ES6_MODE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.JS_DROP_REGION_COMMENTS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.KEEP
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN
@@ -81,6 +82,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(CALL_MAIN, JSConfigurationKeys.CALL_MAIN)
         register(SAFE_EXTERNAL_BOOLEAN, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN)
         register(SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)
+        register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -109,7 +111,6 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         configuration.sourceMapEmbedSources = sourceMapSourceEmbedding
 
         configuration.generatePolyfills = true
-        configuration.generateRegionComments = true
 
         configuration.filePathsPrefixMap = mapOf(File(".").absolutePath.removeSuffix(".") to "")
 
