@@ -2326,7 +2326,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Int>("maxArity")
         }
 
-        val OPERATOR_RENAMED_ON_IMPORT by error<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
+        val OPERATOR_RENAMED_ON_IMPORT by warning<KtImportDirective>(PositioningStrategy.IMPORT_LAST_NAME)
 
         val TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT by deprecationError<KtImportDirective>(
             LanguageFeature.ProhibitTypealiasAsCallableQualifierInImport,

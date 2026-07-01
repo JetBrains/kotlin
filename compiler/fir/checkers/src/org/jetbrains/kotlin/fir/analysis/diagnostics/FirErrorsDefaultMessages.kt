@@ -3776,7 +3776,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Conflicting import: imported name ''{0}'' is ambiguous.",
             TO_STRING
         )
-        map.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import.")
+        map.put(OPERATOR_RENAMED_ON_IMPORT, "Renamed operator function will not be usable through operator syntax.")
         map.put(
             TYPEALIAS_AS_CALLABLE_QUALIFIER_IN_IMPORT,
             "Cannot use typealias ''{0}'' as a callable qualifier in import. " +
