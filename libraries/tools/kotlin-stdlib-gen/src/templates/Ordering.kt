@@ -830,13 +830,15 @@ object Ordering : TemplateGroupBase() {
             """
             val iterator = iterator()
             if (!iterator.hasNext()) return true
-            val previous = iterator.next()
+            var element = iterator.next()
             if (!iterator.hasNext()) return true
-            var previousValue = selector(previous)
-            while (iterator.hasNext()) {
-                val currentValue = selector(iterator.next())
+            var previousValue: R? = null
+            while (true) {
+                val currentValue = selector(element)
                 if (compareValues(previousValue, currentValue) > 0) return false
                 previousValue = currentValue
+                if (!iterator.hasNext()) break
+                element = iterator.next()
             }
             return true
             """
@@ -844,9 +846,9 @@ object Ordering : TemplateGroupBase() {
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size < 2) return true
-            var previousValue = selector(this[0])
-            for (i in 1..lastIndex) {
-                val currentValue = selector(this[i])
+            var previousValue: R? = null
+            for (element in this) {
+                val currentValue = selector(element)
                 if (compareValues(previousValue, currentValue) > 0) return false
                 previousValue = currentValue
             }
@@ -886,13 +888,17 @@ object Ordering : TemplateGroupBase() {
             """
             val iterator = iterator()
             if (!iterator.hasNext()) return true
-            val previous = iterator.next()
+            var element = iterator.next()
             if (!iterator.hasNext()) return true
-            var previousValue = selector(previous)
-            while (iterator.hasNext()) {
-                val currentValue = selector(iterator.next())
-                if (compareValues(previousValue, currentValue) < 0) return false
+            var previousValue: R? = null
+            var isFirst = true
+            while (true) {
+                val currentValue = selector(element)
+                if (!isFirst && compareValues(previousValue, currentValue) < 0) return false
                 previousValue = currentValue
+                isFirst = false
+                if (!iterator.hasNext()) break
+                element = iterator.next()
             }
             return true
             """
@@ -900,10 +906,10 @@ object Ordering : TemplateGroupBase() {
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             if (size < 2) return true
-            var previousValue = selector(this[0])
-            for (i in 1..lastIndex) {
+            var previousValue: R? = null
+            for (i in indices) {
                 val currentValue = selector(this[i])
-                if (compareValues(previousValue, currentValue) < 0) return false
+                if (i > 0 && compareValues(previousValue, currentValue) < 0) return false
                 previousValue = currentValue
             }
             return true
