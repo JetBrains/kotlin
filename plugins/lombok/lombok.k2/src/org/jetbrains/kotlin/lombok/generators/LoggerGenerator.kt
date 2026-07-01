@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaField
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -52,7 +54,7 @@ import org.jetbrains.kotlin.lombok.generators.kotlin.createConstructorIfGenerate
 import org.jetbrains.kotlin.lombok.generators.kotlin.initializeCompanionObjectIfNeeded
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.generators.kotlin.needsConstructorIfGeneratedCompanion
-import org.jetbrains.kotlin.lombok.generators.kotlin.tryBuildingJvmStaticAnnotationCall
+import org.jetbrains.kotlin.lombok.generators.kotlin.buildJvmStaticAnnotationCallOrError
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -197,10 +199,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
         if (fieldOrPropertyAlreadyExists) return null
 
-        return tryGeneratingLogFieldOrProperty(log, classSymbol, targetClassSymbol)
+        return generateLogFieldOrProperty(log, classSymbol, targetClassSymbol)
     }
 
-    private fun tryGeneratingLogFieldOrProperty(
+    private fun generateLogFieldOrProperty(
         log: ConeLombokAnnotations.AbstractLog,
         logContainingClass: FirClassSymbol<*>,
         logTargetClass: FirClassSymbol<*>
@@ -238,10 +240,6 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 }
             }.symbol
         } else {
-            /**
-             * Immediately break (don't generate a property) if the necessary classes/methods can't be found to prevent the compiler crashing.
-             * Report resolving errors instead.
-             */
             createMemberProperty(
                 owner = logContainingClass,
                 key = LoggerGeneratorKey(log.annotation),
@@ -253,14 +251,12 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 val topicExpression = if (log is ConeLombokAnnotations.FloggerLog) {
                     null
                 } else {
-                    tryGeneratingTopicExpression(log, logTargetClass.classId) ?: return null
+                    generateTopicExpression(log, logTargetClass.classId)
                 }
-                val initializer = tryGeneratingInitializer(log, topicExpression, loggerClassType) ?: return null
+                val initializer = generateInitializer(log, topicExpression, loggerClassType)
 
                 if (fieldIsStatic) {
-                    replaceAnnotations(
-                        listOf(symbol.tryBuildingJvmStaticAnnotationCall(session) ?: return null)
-                    )
+                    replaceAnnotations(listOf(symbol.buildJvmStaticAnnotationCallOrError(session)))
                 }
 
                 // Finalize the property initializer
@@ -269,25 +265,24 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
     }
 
-    private fun tryGeneratingInitializer(
+    private fun generateInitializer(
         log: ConeLombokAnnotations.AbstractLog,
         topicExpression: FirExpression?,
         loggerClassType: ConeClassLikeType,
-    ): FirFunctionCall? {
+    ): FirFunctionCall {
         val loggerFactoryClassId = log.factoryClassId
         val factoryMethodName = log.getMethodName
 
         val loggerFactorySymbol =
-            session.symbolProvider.getClassLikeSymbolByClassId(loggerFactoryClassId) as? FirRegularClassSymbol ?: return null
+            session.symbolProvider.getClassLikeSymbolByClassId(loggerFactoryClassId) as? FirRegularClassSymbol
 
         @OptIn(SymbolInternals::class)
         val loggerFactoryStaticCallableMemberScope =
-            loggerFactorySymbol.fir.scopeProvider.getStaticCallableMemberScope(loggerFactorySymbol.fir, session, ScopeSession())
-                ?: return null
+            loggerFactorySymbol?.fir?.scopeProvider?.getStaticCallableMemberScope(loggerFactorySymbol.fir, session, ScopeSession())
 
         var getLoggerFunctionSymbol: FirNamedFunctionSymbol? = null
 
-        loggerFactoryStaticCallableMemberScope.processFunctionsByName(factoryMethodName) {
+        loggerFactoryStaticCallableMemberScope?.processFunctionsByName(factoryMethodName) {
             if (getLoggerFunctionSymbol != null) return@processFunctionsByName
 
             if (topicExpression == null) {
@@ -307,13 +302,16 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             }
         }
 
-        if (getLoggerFunctionSymbol == null) return null
-
         return buildFunctionCall {
             val loggerFactoryClassType = loggerFactoryClassId.constructClassLikeType()
-            calleeReference = buildResolvedNamedReference {
+            calleeReference = getLoggerFunctionSymbol?.let {
+                buildResolvedNamedReference {
+                    name = factoryMethodName
+                    resolvedSymbol = it
+                }
+            } ?: buildErrorNamedReference {
                 name = factoryMethodName
-                resolvedSymbol = getLoggerFunctionSymbol
+                diagnostic = ConeUnresolvedReferenceError(factoryMethodName)
             }
             dispatchReceiver = buildResolvedQualifier {
                 packageFqName = loggerFactoryClassId.packageFqName
@@ -327,8 +325,8 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             @OptIn(SymbolInternals::class)
             argumentList = buildResolvedArgumentList(
                 original = null,
-                linkedMapOf<FirExpression, FirValueParameter>().apply {
-                    if (topicExpression != null) {
+                mapping = linkedMapOf<FirExpression, FirValueParameter>().apply {
+                    if (topicExpression != null && getLoggerFunctionSymbol != null) {
                         this[topicExpression] = getLoggerFunctionSymbol.valueParameterSymbols.single().fir
                     }
                 }
@@ -336,10 +334,10 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
         }
     }
 
-    private fun tryGeneratingTopicExpression(
+    private fun generateTopicExpression(
         log: ConeLombokAnnotations.AbstractLog,
         targetClassId: ClassId,
-    ): FirExpression? {
+    ): FirExpression {
         return if (log.topic.isEmpty()) {
             // Generate `ClassWithLogger::class`
             val targetClassType = targetClassId.constructClassLikeType()
@@ -359,15 +357,20 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             // Generate `ClassWithLogger::class.java`
             val javaPropertySymbol = session.symbolProvider
                 .getTopLevelPropertySymbols(JvmStandardClassIds.BASE_JVM_PACKAGE, JAVA_PROPERTY_NAME)
-                .singleOrNull() ?: return null
+                .singleOrNull()
 
             val javaClassType =
-                javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
+                javaPropertySymbol?.resolvedReturnType?.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
             val javaPropertyAccess = buildPropertyAccessExpression {
                 extensionReceiver = getClassCall
-                calleeReference = buildResolvedNamedReference {
+                calleeReference = javaPropertySymbol?.let {
+                    buildResolvedNamedReference {
+                        name = JAVA_PROPERTY_NAME
+                        resolvedSymbol = it
+                    }
+                } ?: buildErrorNamedReference {
                     name = JAVA_PROPERTY_NAME
-                    resolvedSymbol = javaPropertySymbol
+                    diagnostic = ConeUnresolvedReferenceError(JAVA_PROPERTY_NAME)
                 }
                 coneTypeOrNull = javaClassType
             }
@@ -376,23 +379,32 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 is ConeLombokAnnotations.Log -> {
                     // Generate `ClassWithLogger::class.java.getName()`
                     @OptIn(SymbolInternals::class)
-                    val javaClassFir = javaClassType?.toClassSymbol(session)?.fir ?: return null
+                    val javaClassFir = javaClassType?.toClassSymbol(session)?.fir
                     val useSiteMemberScope =
-                        javaClassFir.scopeProvider.getUseSiteMemberScope(javaClassFir, session, ScopeSession(), memberRequiredPhase = null)
+                        javaClassFir?.scopeProvider?.getUseSiteMemberScope(
+                            javaClassFir,
+                            session,
+                            ScopeSession(),
+                            memberRequiredPhase = null,
+                        )
 
                     var getNameFunction: FirFunctionSymbol<*>? = null
-                    useSiteMemberScope.processFunctionsByName(JAVA_GET_NAME) {
+                    useSiteMemberScope?.processFunctionsByName(JAVA_GET_NAME) {
                         if (getNameFunction == null && it.valueParameterSymbols.isEmpty()) {
                             getNameFunction = it
                         }
                     }
-                    if (getNameFunction == null) return null
 
                     buildFunctionCall {
                         dispatchReceiver = javaPropertyAccess
-                        calleeReference = buildResolvedNamedReference {
+                        calleeReference = getNameFunction?.let {
+                            buildResolvedNamedReference {
+                                name = JAVA_GET_NAME
+                                resolvedSymbol = it
+                            }
+                        } ?: buildErrorNamedReference {
                             name = JAVA_GET_NAME
-                            resolvedSymbol = getNameFunction
+                            diagnostic = ConeUnresolvedReferenceError(JAVA_GET_NAME)
                         }
                         coneTypeOrNull = session.builtinTypes.stringType.coneType
                     }
