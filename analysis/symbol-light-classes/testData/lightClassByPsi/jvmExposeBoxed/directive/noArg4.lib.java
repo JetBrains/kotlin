@@ -35,12 +35,11 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
   public final IntWrapper getProperty();//  getProperty()
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  public  RegularClassWithValueConstructor();//  .ctor()
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructor(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
   private  RegularClassWithValueConstructor(int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, kotlin.jvm.internal.BoxingConstructorMarker)
+
+  public  RegularClassWithValueConstructor();//  .ctor()
 
   public final int getProperty-7j0DjTs();//  getProperty-7j0DjTs()
 }
@@ -53,12 +52,11 @@ public final class RegularClassWithValueConstructorAndAnnotation /* RegularClass
   public final IntWrapper getProperty();//  getProperty()
 
   @kotlin.jvm.JvmExposeBoxed(jvmName = "")
-  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
-
-  @kotlin.jvm.JvmExposeBoxed(jvmName = "")
   public  RegularClassWithValueConstructorAndAnnotation(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(IntWrapper)
 
   private  RegularClassWithValueConstructorAndAnnotation(int, kotlin.jvm.internal.BoxingConstructorMarker);//  .ctor(int, kotlin.jvm.internal.BoxingConstructorMarker)
+
+  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
 
   public final int getProperty-7j0DjTs();//  getProperty-7j0DjTs()
 }

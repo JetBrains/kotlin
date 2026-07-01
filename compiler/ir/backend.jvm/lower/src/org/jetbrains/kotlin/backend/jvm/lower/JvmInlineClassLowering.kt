@@ -363,7 +363,7 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
             copyFunctionSignatureFrom(original)
             parameters = emptyList()
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
-            annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
+            annotations = original.annotations.withoutJvmExposeBoxedAnnotation()
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(constructor).apply {
                     arguments[constructor.parameters.size - 1] = irNull()
