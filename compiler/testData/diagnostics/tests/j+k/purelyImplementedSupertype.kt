@@ -56,7 +56,7 @@ inline fun <reified P1 : <!EXPOSED_TYPE_PARAMETER_BOUND, INVISIBLE_REFERENCE, LE
     if (!(hihiEquals(p1, string) || hihiEquals(p2, string))) {
         return 0
     }
-    return string.foo()
+    return string.<!UNRESOLVED_REFERENCE!>foo<!>()
 }
 
 inline fun <reified P1 : <!EXPOSED_TYPE_PARAMETER_BOUND!><!INVISIBLE_REFERENCE, LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_ERROR!>PrivateInterface<!>?<!>, reified P2 : P1> testDnn(p1: P1 & Any, p2: P2 & Any): Int {
