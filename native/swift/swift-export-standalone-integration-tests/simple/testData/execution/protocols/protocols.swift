@@ -121,3 +121,16 @@ func testSAMConverterShouldBridge() throws {
     let actual = testFunctionalInterface(arg: value)
     #expect(actual == expected)
 }
+
+@Test
+func testExistentialWithExportedSuperclass() throws {
+    let x: any InhFoo = returnInhFoo()
+    #expect(x is InhFoo)
+    #expect((x as? InhBar) == nil)
+}
+
+@Test
+func testExistentialInheritsExportedSuperInterface() throws {
+    let x: any InhIface = returnInhIface()
+    #expect(x.ping() == 42)
+}

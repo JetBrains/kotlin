@@ -97,3 +97,25 @@ fun interface FunctionalInterface {
 }
 
 fun testFunctionalInterface(arg: FunctionalInterface): Int = arg.getNumber()
+
+// FILE: existentialInheritance.kt
+
+interface InhFoo
+
+open class InhBar
+
+internal class InhBaz : InhBar(), InhFoo
+
+fun returnInhFoo(): InhFoo = InhBaz()
+
+interface InhIface {
+    fun ping(): Int
+}
+
+open class InhBarWithIface : InhIface {
+    override fun ping(): Int = 42
+}
+
+internal class InhBaz2 : InhBarWithIface()
+
+fun returnInhIface(): InhIface = InhBaz2()
