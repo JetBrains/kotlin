@@ -103,7 +103,9 @@ class IncrementalJsCompilerRunner(
         get() = icFeatures.withAbiSnapshot
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments): IncrementalJsCachesManager {
-        return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory)
+        return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory).also { caches ->
+            icContext.compilerGeneratedSyntheticSources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
+        }
     }
 
     override fun destinationDir(args: CommonJsAndWasmCompilerArguments): File {

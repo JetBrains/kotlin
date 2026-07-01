@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.incremental.snapshots.librarySetRemovedSentinel
 import org.jetbrains.kotlin.incremental.storage.BasicFileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
-import org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
@@ -577,6 +576,7 @@ abstract class IncrementalCompilerRunner<
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
@@ -656,10 +656,7 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
-                caches.compilerPluginFilesCache.let {
-                    it.recordSourceFilesReferencedByPlugins(outputItemsCollector.sourcesReferencedByCompilerPlugin)
-                    it.recordOutputFilesGeneratedByPlugins(outputItemsCollector.outputsFileGeneratedForPlugin)
-                }
+                caches.recordCompilerPluginFilesCaches(outputItemsCollector)
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
 
