@@ -57,12 +57,18 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
      * when exporting a klib to the previous ABI version, we may use a 2.X compiler while the previous ABI version is 2.(X − 2).
      * Since this is only a temporary situation (the ABI version is usually bumped shortly after the language version),
      * we simply ignore these tests when this happens.
+     *
+     * The same is true for bumping the language version, which happens with a lag after bumping the compiler version.
      */
     @BeforeEach
-    fun assumeAbiAndLanguageAligned() {
+    fun assumeCompilerVersionAlignedWithAbiAndLanguageVersions() {
         Assumptions.assumeTrue(
-            LanguageVersion.LATEST_STABLE.major == KotlinAbiVersion.CURRENT.major && LanguageVersion.LATEST_STABLE.minor == KotlinAbiVersion.CURRENT.minor,
-            "ABI and language basic versions are not aligned"
+            KotlinVersion.CURRENT.major == LanguageVersion.LATEST_STABLE.major && KotlinVersion.CURRENT.minor == LanguageVersion.LATEST_STABLE.minor,
+            "The compiler and LV versions are not aligned"
+        )
+        Assumptions.assumeTrue(
+            KotlinVersion.CURRENT.major == KotlinAbiVersion.CURRENT.major && KotlinVersion.CURRENT.minor == KotlinAbiVersion.CURRENT.minor,
+            "The compiler and ABI versions are not aligned"
         )
     }
 
