@@ -24,46 +24,18 @@ final class PrivateClass /* PrivateClass*/ {
   @org.jetbrains.annotations.NotNull()
   private final @org.jetbrains.annotations.NotNull() java.lang.String ic;
 
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IC getIc();//  getIc()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IC getProperty();//  getProperty()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IC member(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() IC);//  member(@org.jetbrains.annotations.NotNull() IC)
-
-  @kotlin.jvm.JvmExposeBoxed()
-  public  PrivateClass(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() IC);//  .ctor(@org.jetbrains.annotations.NotNull() IC)
-
-  @kotlin.jvm.JvmExposeBoxed()
-  public final void setProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() IC);//  setProperty(@org.jetbrains.annotations.NotNull() IC)
-
   private  PrivateClass(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   class Nested ...
 }
 
 public static final class Nested /* PrivateClass.Nested*/ {
-  @kotlin.jvm.JvmExposeBoxed()
-  @org.jetbrains.annotations.NotNull()
-  public final @org.jetbrains.annotations.NotNull() IC nestedMember(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() IC);//  nestedMember(@org.jetbrains.annotations.NotNull() IC)
-
   public  Nested();//  .ctor()
 }
 
 public final class PrivateKt /* PrivateKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static @org.jetbrains.annotations.NotNull() java.lang.String privateTopLevelSetter;
-
-  @kotlin.jvm.JvmExposeBoxed()
-  private static final @org.jetbrains.annotations.NotNull() IC privateTopLevel(@org.jetbrains.annotations.NotNull() IC);//  privateTopLevel(@org.jetbrains.annotations.NotNull() IC)
-
-  @kotlin.jvm.JvmExposeBoxed()
-  private static final void setPrivateTopLevelSetter(@org.jetbrains.annotations.NotNull() IC);//  setPrivateTopLevelSetter(@org.jetbrains.annotations.NotNull() IC)
 
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() java.lang.String getPrivateTopLevelSetter();//  getPrivateTopLevelSetter()
@@ -79,12 +51,6 @@ public final class Public /* Public*/ {
   @kotlin.jvm.JvmExposeBoxed()
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() IC getIc();//  getIc()
-
-  @kotlin.jvm.JvmExposeBoxed()
-  private  Public(@org.jetbrains.annotations.NotNull() IC);//  .ctor(@org.jetbrains.annotations.NotNull() IC)
-
-  @kotlin.jvm.JvmExposeBoxed()
-  private final @org.jetbrains.annotations.NotNull() IC privateMember(@org.jetbrains.annotations.NotNull() IC);//  privateMember(@org.jetbrains.annotations.NotNull() IC)
 
   private  Public(@org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String)
 }

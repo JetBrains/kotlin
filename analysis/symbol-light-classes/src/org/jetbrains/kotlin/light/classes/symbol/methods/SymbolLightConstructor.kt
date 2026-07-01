@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
@@ -118,7 +121,11 @@ internal class SymbolLightConstructor private constructor(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE && (hasValueClassInParameterType || destinationClassIsValueClass)) {
+                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
+                        (hasValueClassInParameterType || destinationClassIsValueClass) &&
+                        // Private declarations are inaccessible from Java, so they are never exposed as boxed
+                        !isEffectivelyPrivate(constructor)
+                    ) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
@@ -150,7 +157,7 @@ internal class SymbolLightConstructor private constructor(
                         )
                     }
 
-                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE -> {
+                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = true,
