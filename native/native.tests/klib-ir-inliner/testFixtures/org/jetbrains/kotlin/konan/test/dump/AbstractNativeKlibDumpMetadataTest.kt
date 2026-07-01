@@ -93,6 +93,6 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
     }
 
     companion object {
-        private val supportedDumpModes = listOf(null, "compact-with-stable-order")
+        private val supportedDumpModes = listOf(null, "compact-with-stable-order", "ultracompact-with-stable-order")
     }
 }

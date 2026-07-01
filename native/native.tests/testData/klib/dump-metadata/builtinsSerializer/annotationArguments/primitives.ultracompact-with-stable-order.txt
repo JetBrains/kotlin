@@ -1,0 +1,20 @@
+@test/Primitives public final class test/C : kotlin/Any
+public constructor test/C.<init>()
+public final annotation class test/Primitives : kotlin/Annotation
+public constructor test/Primitives.<init>(byte: kotlin/Byte, char: kotlin/Char, short: kotlin/Short, int: kotlin/Int, long: kotlin/Long, float: kotlin/Float, double: kotlin/Double, boolean: kotlin/Boolean)
+public final val test/Primitives.boolean: kotlin/Boolean
+public final /* getter */ test/Primitives.boolean.<get-boolean>
+public final val test/Primitives.byte: kotlin/Byte
+public final /* getter */ test/Primitives.byte.<get-byte>
+public final val test/Primitives.char: kotlin/Char
+public final /* getter */ test/Primitives.char.<get-char>
+public final val test/Primitives.double: kotlin/Double
+public final /* getter */ test/Primitives.double.<get-double>
+public final val test/Primitives.float: kotlin/Float
+public final /* getter */ test/Primitives.float.<get-float>
+public final val test/Primitives.int: kotlin/Int
+public final /* getter */ test/Primitives.int.<get-int>
+public final val test/Primitives.long: kotlin/Long
+public final /* getter */ test/Primitives.long.<get-long>
+public final val test/Primitives.short: kotlin/Short
+public final /* getter */ test/Primitives.short.<get-short>

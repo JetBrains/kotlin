@@ -1,0 +1,22 @@
+@test/anno public final class test/C1 : kotlin/Any
+@test/anno public constructor test/C1.<init>()
+@test/anno public final fun test/C1.f3(@test/anno p: kotlin/Int): kotlin/Unit
+@test/anno public final fun kotlin/String.test/C1.f4(): kotlin/Unit
+@test/anno public final val test/C1.p3: kotlin/Nothing?
+public final /* getter */ test/C1.p3.<get-p3>
+@test/anno public final val kotlin/Int.test/C1.v4: kotlin/Int
+public final /* non-default */ /* getter */ test/C1.v4.<get-v4>
+@test/anno public final class test/C1.C2 : kotlin/Any
+public constructor test/C1.C2.<init>()
+@test/anno public final companion object test/C1.Companion : kotlin/Any
+private constructor test/C1.Companion.<init>()
+public final annotation class test/anno : kotlin/Annotation
+public constructor test/anno.<init>(x: kotlin/String)
+public final val test/anno.x: kotlin/String
+public final /* getter */ test/anno.x.<get-x>
+@test/anno public final fun test/f1(@test/anno p: kotlin/Int): kotlin/Unit
+@test/anno public final fun kotlin/Long.test/f2(@test/anno p: kotlin/Int): kotlin/Unit
+@test/anno public final val test/p1: kotlin/Nothing?
+public final /* getter */ test/p1.<get-p1>
+@test/anno public final val kotlin/Double.test/p2: kotlin/Double
+public final /* non-default */ /* getter */ test/p2.<get-p2>

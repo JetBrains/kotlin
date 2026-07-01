@@ -1,0 +1,17 @@
+@test/JustEnum @test/EnumArray public final class test/C1 : kotlin/Any
+public constructor test/C1.<init>()
+@test/EnumArray public final class test/C2 : kotlin/Any
+public constructor test/C2.<init>()
+public final annotation class test/EnumArray : kotlin/Annotation
+public constructor test/EnumArray.<init>(enumArray: kotlin/Array<test/Weapon>)
+public final val test/EnumArray.enumArray: kotlin/Array<test/Weapon>
+public final /* getter */ test/EnumArray.enumArray.<get-enumArray>
+public final annotation class test/JustEnum : kotlin/Annotation
+public constructor test/JustEnum.<init>(weapon: test/Weapon)
+public final val test/JustEnum.weapon: test/Weapon
+public final /* getter */ test/JustEnum.weapon.<get-weapon>
+public final enum class test/Weapon : kotlin/Enum<test/Weapon>
+private constructor test/Weapon.<init>()
+enum entry test/Weapon.ROCK
+enum entry test/Weapon.PAPER
+enum entry test/Weapon.SCISSORS

@@ -1,0 +1,16 @@
+public abstract class AbstractClass : Interface
+public constructor AbstractClass.<init>()
+public abstract fun AbstractClass.abstractFun(): kotlin/Unit
+public open fun AbstractClass.interfaceFun(): kotlin/Unit
+public final class FinalClass : OpenClass
+public constructor FinalClass.<init>()
+public open fun FinalClass.openFun1(): kotlin/Unit
+public final fun FinalClass.openFun2(): kotlin/Unit
+public abstract interface Interface : kotlin/Any
+public abstract fun Interface.interfaceFun(): kotlin/Unit
+public open class OpenClass : AbstractClass
+public constructor OpenClass.<init>()
+public open fun OpenClass.abstractFun(): kotlin/Unit
+public final fun OpenClass.finalFun(): kotlin/Unit
+public open fun OpenClass.openFun1(): kotlin/Unit
+public open fun OpenClass.openFun2(): kotlin/Unit

@@ -1,0 +1,14 @@
+public final annotation class test/AnnotationArray : kotlin/Annotation
+public constructor test/AnnotationArray.<init>(annotationArray: kotlin/Array<test/JustAnnotation>)
+public final val test/AnnotationArray.annotationArray: kotlin/Array<test/JustAnnotation>
+public final /* getter */ test/AnnotationArray.annotationArray.<get-annotationArray>
+@test/JustAnnotation @test/AnnotationArray public final class test/C1 : kotlin/Any
+public constructor test/C1.<init>()
+@test/AnnotationArray public final class test/C2 : kotlin/Any
+public constructor test/C2.<init>()
+public final annotation class test/Empty : kotlin/Annotation
+public constructor test/Empty.<init>()
+public final annotation class test/JustAnnotation : kotlin/Annotation
+public constructor test/JustAnnotation.<init>(annotation: test/Empty)
+public final val test/JustAnnotation.annotation: test/Empty
+public final /* getter */ test/JustAnnotation.annotation.<get-annotation>

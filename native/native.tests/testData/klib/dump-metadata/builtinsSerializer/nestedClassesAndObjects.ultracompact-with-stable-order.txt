@@ -1,0 +1,33 @@
+public final class test/ClassA : kotlin/Any
+public constructor test/ClassA.<init>()
+public final class test/ClassA.classB : kotlin/Any
+public constructor test/ClassA.classB.<init>()
+public final fun test/ClassA.classB.memberFromB(): kotlin/Int
+public final class test/ClassA.classB.BC : kotlin/Any
+public constructor test/ClassA.classB.BC.<init>()
+public final val test/ClassA.classB.BC.memberFromBB: kotlin/Int /* = ... */
+public final /* getter */ test/ClassA.classB.BC.memberFromBB.<get-memberFromBB>
+public final object test/ClassA.classB.BO : kotlin/Any
+private constructor test/ClassA.classB.BO.<init>()
+public final val test/ClassA.classB.BO.memberFromBO: kotlin/Int /* = ... */
+public final /* getter */ test/ClassA.classB.BO.memberFromBO.<get-memberFromBO>
+public final inner class test/ClassA.classC : kotlin/Any
+public constructor test/ClassA.classC.<init>()
+public final val test/ClassA.classC.memberFromC: kotlin/Int /* = ... */
+public final /* getter */ test/ClassA.classC.memberFromC.<get-memberFromC>
+public final class test/E : kotlin/Any
+public constructor test/E.<init>()
+public final companion object test/E.Companion : kotlin/Any
+private constructor test/E.Companion.<init>()
+public final val test/E.Companion.stat: kotlin/Int /* = ... */
+public final /* getter */ test/E.Companion.stat.<get-stat>
+public final class test/E.Companion.D : kotlin/Any
+public constructor test/E.Companion.D.<init>()
+public final val test/E.Companion.D.memberFromD: kotlin/Int /* = ... */
+public final /* getter */ test/E.Companion.D.memberFromD.<get-memberFromD>
+public final class test/F : kotlin/Any
+public constructor test/F.<init>()
+public final object test/F.ObjA : kotlin/Any
+private constructor test/F.ObjA.<init>()
+public final val test/F.ObjA.memberFromObjA: kotlin/Int /* = ... */
+public final /* getter */ test/F.ObjA.memberFromObjA.<get-memberFromObjA>

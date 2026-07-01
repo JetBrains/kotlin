@@ -1,0 +1,51 @@
+public final class test/Class : kotlin/Any
+public constructor test/Class.<init>()
+public final val test/Class.arrayConst: kotlin/Any
+public final /* getter */ test/Class.arrayConst.<get-arrayConst>
+public final val test/Class.booleanConst: kotlin/Boolean /* = ... */
+public final /* getter */ test/Class.booleanConst.<get-booleanConst>
+public final val test/Class.byteConst: kotlin/Byte /* = ... */
+public final /* getter */ test/Class.byteConst.<get-byteConst>
+public final val test/Class.charConst: kotlin/Char /* = ... */
+public final /* getter */ test/Class.charConst.<get-charConst>
+public final val test/Class.doubleConst: kotlin/Double /* = ... */
+public final /* getter */ test/Class.doubleConst.<get-doubleConst>
+public final val test/Class.enumConst: test/Weapon?
+public final /* getter */ test/Class.enumConst.<get-enumConst>
+public final val test/Class.floatConst: kotlin/Float /* = ... */
+public final /* getter */ test/Class.floatConst.<get-floatConst>
+public final val test/Class.intConst: kotlin/Int /* = ... */
+public final /* getter */ test/Class.intConst.<get-intConst>
+public final val test/Class.longConst: kotlin/Long /* = ... */
+public final /* getter */ test/Class.longConst.<get-longConst>
+public final val test/Class.shortConst: kotlin/Short /* = ... */
+public final /* getter */ test/Class.shortConst.<get-shortConst>
+public final val test/Class.stringConst: kotlin/String /* = ... */
+public final /* getter */ test/Class.stringConst.<get-stringConst>
+public final enum class test/Weapon : kotlin/Enum<test/Weapon>
+private constructor test/Weapon.<init>()
+enum entry test/Weapon.ROCK
+enum entry test/Weapon.PAPER
+enum entry test/Weapon.SCISSORS
+public final val test/arrayConst: kotlin/Any
+public final /* getter */ test/arrayConst.<get-arrayConst>
+public final val test/booleanConst: kotlin/Boolean /* = ... */
+public final /* getter */ test/booleanConst.<get-booleanConst>
+public final val test/byteConst: kotlin/Byte /* = ... */
+public final /* getter */ test/byteConst.<get-byteConst>
+public final val test/charConst: kotlin/Char /* = ... */
+public final /* getter */ test/charConst.<get-charConst>
+public final val test/doubleConst: kotlin/Double /* = ... */
+public final /* getter */ test/doubleConst.<get-doubleConst>
+public final val test/enumConst: test/Weapon?
+public final /* getter */ test/enumConst.<get-enumConst>
+public final val test/floatConst: kotlin/Float /* = ... */
+public final /* getter */ test/floatConst.<get-floatConst>
+public final val test/intConst: kotlin/Int /* = ... */
+public final /* getter */ test/intConst.<get-intConst>
+public final val test/longConst: kotlin/Long /* = ... */
+public final /* getter */ test/longConst.<get-longConst>
+public final val test/shortConst: kotlin/Short /* = ... */
+public final /* getter */ test/shortConst.<get-shortConst>
+public final val test/stringConst: kotlin/String /* = ... */
+public final /* getter */ test/stringConst.<get-stringConst>

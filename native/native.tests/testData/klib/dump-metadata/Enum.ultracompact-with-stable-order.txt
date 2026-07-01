@@ -1,0 +1,13 @@
+public final enum class E : kotlin/Enum<E>
+private constructor E.<init>(x: kotlin/Int /* = ... */)
+public open fun E.enumFun(): kotlin/Int
+public final val E.enumVal: kotlin/Int /* = ... */
+public final /* getter */ E.enumVal.<get-enumVal>
+public final var E.enumVar: kotlin/String
+public final /* getter */ E.enumVar.<get-enumVar>
+public final /* setter */ E.enumVar.<set-enumVar>
+public final val E.x: kotlin/Int
+public final /* getter */ E.x.<get-x>
+enum entry E.B
+enum entry E.A
+enum entry E.C
