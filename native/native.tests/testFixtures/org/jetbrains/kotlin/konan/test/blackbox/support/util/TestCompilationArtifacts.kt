@@ -10,14 +10,9 @@ import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-private fun invokeKlibTool(
+fun invokeKlibTool(
     kotlinNativeClassLoader: ClassLoader,
-    klibFile: File,
-    command: String,
-    printSignatures: Boolean,
-    signatureVersion: KotlinIrSignatureVersion?,
-    onlyTopLevelSignatures: Boolean = false,
-    absolutePathPrefixes: List<String> = emptyList(),
+    args: List<String>,
 ): String {
     val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
         .declaredMethods
@@ -26,29 +21,7 @@ private fun invokeKlibTool(
     val stdout = StringBuilder()
     val stderr = StringBuilder()
 
-    val args: Array<String> = mutableListOf(
-        command, klibFile.canonicalPath,
-        "-test-mode", "true",
-    ).apply {
-        runIf(printSignatures) {
-            this += "-print-signatures"
-            this += "true"
-        }
-        signatureVersion?.let {
-            this += "-signature-version"
-            this += signatureVersion.number.toString()
-        }
-        if (onlyTopLevelSignatures) {
-            this += "-only-top-level-signatures"
-            this += "true"
-        }
-        absolutePathPrefixes.forEach {
-            this += "-absolute-path-prefix"
-            this += it
-        }
-    }.toTypedArray()
-
-    val exitCode = entryPoint.invoke(null, stdout, stderr, args) as Int
+    val exitCode = entryPoint.invoke(null, stdout, stderr, args.toTypedArray()) as Int
     if (exitCode != 0) {
         error(
             buildString {
@@ -67,8 +40,43 @@ private fun invokeKlibTool(
             }
         )
     } else {
-        return stdout.toString()
+        return stdout.toString() + stderr.toString()
     }
+}
+
+private fun invokeKlibTool(
+    kotlinNativeClassLoader: ClassLoader,
+    klibFile: File,
+    command: String,
+    printSignatures: Boolean,
+    signatureVersion: KotlinIrSignatureVersion?,
+    onlyTopLevelSignatures: Boolean = false,
+    absolutePathPrefixes: List<String> = emptyList(),
+): String {
+    val args = buildList<String> {
+        this += command
+        this += klibFile.canonicalPath
+        this += "-test-mode"
+        this += "true"
+        runIf(printSignatures) {
+            this += "-print-signatures"
+            this += "true"
+        }
+        signatureVersion?.let {
+            this += "-signature-version"
+            this += signatureVersion.number.toString()
+        }
+        if (onlyTopLevelSignatures) {
+            this += "-only-top-level-signatures"
+            this += "true"
+        }
+        absolutePathPrefixes.forEach {
+            this += "-absolute-path-prefix"
+            this += it
+        }
+    }
+
+    return invokeKlibTool(kotlinNativeClassLoader, args)
 }
 
 fun TestCompilationArtifact.KLIB.dumpMetadata(
