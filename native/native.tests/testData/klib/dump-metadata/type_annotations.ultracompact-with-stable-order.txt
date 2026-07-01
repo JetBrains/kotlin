@@ -1,0 +1,9 @@
+@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/AnnoBinary : kotlin/Annotation
+public constructor test/AnnoBinary.<init>()
+@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/AnnoRuntime : kotlin/Annotation
+public constructor test/AnnoRuntime.<init>()
+@kotlin/annotation/Retention @kotlin/annotation/Target public final annotation class test/AnnoSource : kotlin/Annotation
+public constructor test/AnnoSource.<init>()
+public final fun test/withBinaryAnnotation(id: @test/AnnoBinary kotlin/Int): kotlin/Unit
+public final fun test/withRuntimeAnnotation(id: @test/AnnoRuntime kotlin/Int): kotlin/Unit
+public final fun test/withSourceAnnotation(id: kotlin/Int): kotlin/Unit

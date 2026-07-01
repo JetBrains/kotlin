@@ -1,0 +1,16 @@
+public final object A : kotlin/Any
+private constructor A.<init>()
+public final fun A.a(): kotlin/Unit
+public final class B : kotlin/Any
+public constructor B.<init>()
+public final object B.C : kotlin/Any
+private constructor B.C.<init>()
+public final fun B.C.c(): kotlin/Unit
+public final companion object B.Companion : kotlin/Any
+private constructor B.Companion.<init>()
+public final fun B.Companion.b(): kotlin/Unit
+public final class D : kotlin/Any
+public constructor D.<init>()
+public final companion object D.E : kotlin/Any
+private constructor D.E.<init>()
+public final fun D.E.e(): kotlin/Unit

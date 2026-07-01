@@ -1,0 +1,7 @@
+public final class test/Class : kotlin/Any
+public constructor test/Class.<init>()
+public final fun test/Class.member(): kotlin/Nothing?
+public final fun <T#0> T#0.test/extension(): T#0?
+public final fun test/function(int: kotlin/Int, string: kotlin/String /* = ... */): test/Class
+public final val test/property: kotlin/Unit
+public final /* getter */ test/property.<get-property>

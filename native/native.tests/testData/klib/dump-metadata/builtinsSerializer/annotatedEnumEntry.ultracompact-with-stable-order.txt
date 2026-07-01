@@ -1,0 +1,14 @@
+public final annotation class test/Anno : kotlin/Annotation
+public constructor test/Anno.<init>(value: kotlin/String = , x: kotlin/Int = )
+public final val test/Anno.value: kotlin/String
+public final /* getter */ test/Anno.value.<get-value>
+public final val test/Anno.x: kotlin/Int
+public final /* getter */ test/Anno.x.<get-x>
+public final annotation class test/Bnno : kotlin/Annotation
+public constructor test/Bnno.<init>()
+public final enum class test/Eee : kotlin/Enum<test/Eee>
+private constructor test/Eee.<init>()
+@test/Anno enum entry test/Eee.Entry1
+enum entry test/Eee.Entry2
+@test/Anno @test/Bnno enum entry test/Eee.Entry3
+@test/Anno enum entry test/Eee.Entry4

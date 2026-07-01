@@ -1,0 +1,9 @@
+public final val custom/pkg/v1: kotlin/Int /* = ... */
+public final /* getter */ custom/pkg/v1.<get-v1>
+public final val custom/pkg/v2: kotlin/String /* = ... */
+public final /* getter */ custom/pkg/v2.<get-v2>
+public final val custom/pkg/v3: kotlin/Function1<kotlin/String, kotlin/Int>
+public final /* getter */ custom/pkg/v3.<get-v3>
+public final val custom/pkg/v4: kotlin/Function1<kotlin/String, kotlin/Int>
+public final /* getter */ custom/pkg/v4.<get-v4>
+public typealias custom/pkg/MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int>

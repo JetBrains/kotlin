@@ -1,0 +1,22 @@
+@test/PrimitiveArrays public final class test/C1 : kotlin/Any
+public constructor test/C1.<init>()
+@test/PrimitiveArrays public final class test/C2 : kotlin/Any
+public constructor test/C2.<init>()
+public final annotation class test/PrimitiveArrays : kotlin/Annotation
+public constructor test/PrimitiveArrays.<init>(byteArray: kotlin/ByteArray, charArray: kotlin/CharArray, shortArray: kotlin/ShortArray, intArray: kotlin/IntArray, longArray: kotlin/LongArray, floatArray: kotlin/FloatArray, doubleArray: kotlin/DoubleArray, booleanArray: kotlin/BooleanArray)
+public final val test/PrimitiveArrays.booleanArray: kotlin/BooleanArray
+public final /* getter */ test/PrimitiveArrays.booleanArray.<get-booleanArray>
+public final val test/PrimitiveArrays.byteArray: kotlin/ByteArray
+public final /* getter */ test/PrimitiveArrays.byteArray.<get-byteArray>
+public final val test/PrimitiveArrays.charArray: kotlin/CharArray
+public final /* getter */ test/PrimitiveArrays.charArray.<get-charArray>
+public final val test/PrimitiveArrays.doubleArray: kotlin/DoubleArray
+public final /* getter */ test/PrimitiveArrays.doubleArray.<get-doubleArray>
+public final val test/PrimitiveArrays.floatArray: kotlin/FloatArray
+public final /* getter */ test/PrimitiveArrays.floatArray.<get-floatArray>
+public final val test/PrimitiveArrays.intArray: kotlin/IntArray
+public final /* getter */ test/PrimitiveArrays.intArray.<get-intArray>
+public final val test/PrimitiveArrays.longArray: kotlin/LongArray
+public final /* getter */ test/PrimitiveArrays.longArray.<get-longArray>
+public final val test/PrimitiveArrays.shortArray: kotlin/ShortArray
+public final /* getter */ test/PrimitiveArrays.shortArray.<get-shortArray>

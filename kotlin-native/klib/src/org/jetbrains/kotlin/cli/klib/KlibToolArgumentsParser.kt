@@ -279,6 +279,13 @@ internal enum class MetadataDumpMode(val modeName: String?) {
      * - declarations are sorted in alphabetical order
      */
     COMPACT_WITH_STABLE_ORDER("compact-with-stable-order"),
+
+    /**
+     * - empty package fragments are removed
+     * - package fragments with the same package FQN are merged
+     * - declarations are sorted in alphabetical order
+     */
+    ULTRACOMPACT_WITH_STABLE_ORDER("ultracompact-with-stable-order"),
     ;
 
     override fun toString() = modeName ?: "<no test mode>"

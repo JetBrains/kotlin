@@ -1,0 +1,8 @@
+@kotlin/Deprecated public final class Foo : kotlin/Any
+public constructor Foo.<init>()
+public final object Obj : kotlin/Any
+private constructor Obj.<init>()
+public final const val Obj.O: kotlin/String /* = ... */
+public final /* getter */ Obj.O.<get-O>
+public final val Obj.concat: kotlin/String /* = ... */
+public final /* getter */ Obj.concat.<get-concat>

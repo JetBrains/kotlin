@@ -1,0 +1,23 @@
+public final annotation class custom/pkg/A : kotlin/Annotation
+public constructor custom/pkg/A.<init>()
+public final class custom/pkg/Foo : kotlin/Any
+public constructor custom/pkg/Foo.<init>()
+@custom/pkg/A public final val custom/pkg/Foo.annotated: kotlin/Int /* = ... */
+public final /* getter */ custom/pkg/Foo.annotated.<get-annotated>
+public final var custom/pkg/Foo.annotatedAccessors: kotlin/Int
+@custom/pkg/A public final /* getter */ custom/pkg/Foo.annotatedAccessors.<get-annotatedAccessors>
+@custom/pkg/A public final /* setter */ custom/pkg/Foo.annotatedAccessors.<set-annotatedAccessors>
+public final val custom/pkg/Foo.annotatedGetter: kotlin/Int /* = ... */
+@custom/pkg/A public final /* getter */ custom/pkg/Foo.annotatedGetter.<get-annotatedGetter>
+public final var custom/pkg/Foo.annotatedSetter: kotlin/Int
+public final /* getter */ custom/pkg/Foo.annotatedSetter.<get-annotatedSetter>
+@custom/pkg/A public final /* setter */ custom/pkg/Foo.annotatedSetter.<set-annotatedSetter>
+public final var custom/pkg/Foo.privateSetter: kotlin/Int
+public final /* getter */ custom/pkg/Foo.privateSetter.<get-privateSetter>
+private final /* non-default */ /* setter */ custom/pkg/Foo.privateSetter.<set-privateSetter>(value: kotlin/Int)
+private final val custom/pkg/Foo.privateSimple: kotlin/Int /* = ... */
+private final /* getter */ custom/pkg/Foo.privateSimple.<get-privateSimple>
+protected final val custom/pkg/Foo.protectedSimple: kotlin/Int /* = ... */
+protected final /* getter */ custom/pkg/Foo.protectedSimple.<get-protectedSimple>
+public final val custom/pkg/Foo.simple: kotlin/Int /* = ... */
+public final /* getter */ custom/pkg/Foo.simple.<get-simple>

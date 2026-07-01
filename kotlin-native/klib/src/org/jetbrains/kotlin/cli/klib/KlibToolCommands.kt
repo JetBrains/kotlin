@@ -297,7 +297,7 @@ internal class DumpAbi(output: KlibToolOutput, args: ParsedArguments) : KlibTool
 
 internal class DumpMetadata(output: KlibToolOutput, args: ParsedArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        KotlinpBasedMetadataDumper(output).dumpLibrary(args.library, args.dumpMetadataTestMode ?: MetadataDumpMode.DEFAULT)
+        MetadataDumper(output).dumpLibrary(args.library, args.dumpMetadataTestMode ?: MetadataDumpMode.DEFAULT)
     }
 }
 

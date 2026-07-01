@@ -1,0 +1,12 @@
+@test/JustString @test/StringArray public final class test/C1 : kotlin/Any
+public constructor test/C1.<init>()
+@test/StringArray public final class test/C2 : kotlin/Any
+public constructor test/C2.<init>()
+public final annotation class test/JustString : kotlin/Annotation
+public constructor test/JustString.<init>(string: kotlin/String)
+public final val test/JustString.string: kotlin/String
+public final /* getter */ test/JustString.string.<get-string>
+public final annotation class test/StringArray : kotlin/Annotation
+public constructor test/StringArray.<init>(stringArray: kotlin/Array<kotlin/String>)
+public final val test/StringArray.stringArray: kotlin/Array<kotlin/String>
+public final /* getter */ test/StringArray.stringArray.<get-stringArray>
