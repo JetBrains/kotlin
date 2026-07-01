@@ -101,7 +101,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             clazz.isFunInterface to "fun",
         )
         append(CLASS_KIND_MAP[clazz.kind])
-        append(clazz.name)
+        appendName(clazz)
         appendTypeParameters(clazz.typeParameters)
         appendCollectionIfNotEmpty(clazz.supertypes, prefix = " : ") { appendType(it) }
         appendLine(" {")
@@ -120,7 +120,8 @@ abstract class Kotlinp(protected val settings: Settings) {
                 appendLine()
                 appendSignatures(enumEntry)
                 appendAnnotations(enumEntry.annotations)
-                appendLine(enumEntry.name, ",")
+                appendName(enumEntry)
+                appendLine(",")
             }
             clazz.sealedSubclasses.sortIfNeeded { it }.forEach {
                 appendLine()
@@ -158,7 +159,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendPluginCustomData(constructor.compilerPluginMetadata)
         appendAnnotations(constructor.annotations)
         renderConstructorModifiers(constructor, printer)
-        append("constructor")
+        appendName(constructor)
         appendValueParameters(constructor.valueParameters)
         appendLine()
     }
@@ -186,7 +187,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         append("fun ")
         appendTypeParameters(function.typeParameters, postfix = " ")
         appendReceiverParameterType(function.receiverParameterType)
-        append(function.name)
+        appendName(function)
         appendValueParameters(function.valueParameters)
         append(": ").appendType(function.returnType)
         appendLine()
@@ -331,7 +332,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         append(if (property.isVar) "var " else "val ")
         appendTypeParameters(property.typeParameters, postfix = " ")
         appendReceiverParameterType(property.receiverParameterType)
-        append(property.name)
+        appendName(property)
         append(": ").appendType(property.returnType)
         if (property.hasConstant) {
             append(" /* = ").appendCompileTimeConstant(property).append(" */")
@@ -341,12 +342,13 @@ abstract class Kotlinp(protected val settings: Settings) {
             appendGetterSignatures(property)
             appendAnnotations(property.getter.annotations)
             renderPropertyAccessorModifiers(property.getter, printer)
-            appendLine("get")
+            appendGetterName(property)
+            appendLine()
             property.setter?.let { setter ->
                 appendSetterSignatures(property)
                 appendAnnotations(setter.annotations)
                 renderPropertyAccessorModifiers(setter, printer)
-                append("set")
+                appendSetterName(property)
                 property.setterParameter?.let {
                     appendValueParameters(listOf(it))
                 }
@@ -386,7 +388,8 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendSignatures(typeAlias)
         appendPluginCustomData(typeAlias.compilerPluginMetadata)
         appendAnnotations(typeAlias.annotations)
-        append(VISIBILITY_MAP[typeAlias.visibility], "typealias ", typeAlias.name)
+        append(VISIBILITY_MAP[typeAlias.visibility], "typealias ")
+        appendName(typeAlias)
         appendTypeParameters(typeAlias.typeParameters)
         append(" = ").appendType(typeAlias.underlyingType)
         append(" /* = ").appendType(typeAlias.expandedType).append(" */")
@@ -588,6 +591,15 @@ abstract class Kotlinp(protected val settings: Settings) {
     protected open fun sortConstructors(constructors: List<KmConstructor>): List<KmConstructor> = constructors
     protected open fun sortFunctions(functions: List<KmFunction>): List<KmFunction> = functions
     protected open fun sortProperties(properties: List<KmProperty>): List<KmProperty> = properties
+
+    protected open fun Printer.appendName(clazz: KmClass) = append(clazz.name)
+    protected open fun Printer.appendName(constructor: KmConstructor) = append("constructor")
+    protected open fun Printer.appendName(function: KmFunction) = append(function.name)
+    protected open fun Printer.appendName(property: KmProperty) = append(property.name)
+    protected open fun Printer.appendGetterName(property: KmProperty) = append("get")
+    protected open fun Printer.appendSetterName(property: KmProperty) = append("set")
+    protected open fun Printer.appendName(typeAlias: KmTypeAlias) = append(typeAlias.name)
+    protected open fun Printer.appendName(enumEntry: KmEnumEntry) = append(enumEntry.name)
 
     protected open fun Printer.appendSignatures(clazz: KmClass) = Unit
     protected open fun Printer.appendSignatures(constructor: KmConstructor) = Unit
