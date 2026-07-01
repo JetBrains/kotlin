@@ -14,19 +14,19 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             return null
         }
 
-        val extraArgs: Map<ExtraOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
+        val extraArgs: Map<CliOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
             ?.entries
             ?.mapNotNull { [option, values] ->
-                val knownOption = ExtraOption.parseOrNull(option)
+                val knownOption = CliOption.parseOrNull(option)
                 if (knownOption == null) {
-                    output.logWarning("Unrecognized command-line argument: $option")
+                    output.logWarning("Unknown option: $option")
                     return@mapNotNull null
                 }
                 knownOption to values
             }?.toMap()
             ?: return null
 
-        val signatureVersion = extraArgs[ExtraOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
+        val signatureVersion = extraArgs[CliOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
             rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion) ?: run {
                 output.logError("Invalid signature version: $rawSignatureVersion")
                 return null
@@ -41,11 +41,11 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         return KlibToolArguments(
             commandName = rawArgs[0],
             libraryPath = rawArgs[1],
-            printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
-            onlyTopLevelSignatures = extraArgs[ExtraOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
+            printSignatures = extraArgs[CliOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
+            onlyTopLevelSignatures = extraArgs[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
             signatureVersion,
-            testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true,
-            absolutePathPrefixes = extraArgs[ExtraOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
+            testMode = extraArgs[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
+            absolutePathPrefixes = extraArgs[CliOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
         )
     }
 
@@ -91,18 +91,25 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             }
 
             appendLine()
-            appendLine(
-                    """
-                    and the options are:
-                       -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
-                                                 Render IR signatures of a specific version. By default, the most up-to-date signature version
-                                                   that is supported in the library is used.
-                       -only-top-level-signatures {true|false}
-                                                 Dump IR signatures of only top-level declatations. Applicable only to the "dump-ir-signatures" command.
-                       -print-signatures {true|false}
-                                                 Print IR signature for every declaration. Applicable only to the "dump-metadata" command.                    
-                """.trimIndent()
-            )
+            appendLine("and the options are:")
+
+            CliOption.entries.forEach { option ->
+                if (option.isPrivate) return@forEach
+
+                repeat(PRE_COMMAND_INDENT) { append(' ') }
+                append(option.optionName)
+
+                when (val hintOnValues = option.hintOnValues) {
+                    null -> appendLine()
+                    else -> append(' ').appendLine(hintOnValues)
+                }
+
+                option.description.lines().forEachIndexed { index, descriptionLine ->
+                    repeat(OPTION_DESCRIPTION_INDENT) { append(' ') }
+                    if (index > 0) repeat(SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT) { append(' ') }
+                    appendLine(descriptionLine)
+                }
+            }
         }
     }
 
@@ -110,6 +117,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         private const val PRE_COMMAND_INDENT = 3
         private const val POST_COMMAND_MINIMAL_INDENT = 3
         private const val SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT = 2
+        private const val OPTION_DESCRIPTION_INDENT = 29
     }
 }
 
@@ -173,15 +181,31 @@ internal enum class CliCommand(val description: String) {
     }
 }
 
-private enum class ExtraOption(val option: String) {
-    PRINT_SIGNATURES("-print-signatures"),
-    ONLY_TOP_LEVEL_SIGNATURES("-only-top-level-signatures"),
-    SIGNATURE_VERSION("-signature-version"),
+private enum class CliOption(val isPrivate: Boolean = false) {
+    SIGNATURE_VERSION {
+        override val hintOnValues
+            get() = "{${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}"
+
+        override val description = """
+                Render IR signatures of a specific version. By default, the most up-to-date signature version
+                that is supported in the library is used.
+            """.trimIndent()
+    },
+
+    ONLY_TOP_LEVEL_SIGNATURES {
+        override val hintOnValues = "{true|false}"
+        override val description = "Dump IR signatures of only top-level declatations. Applicable only to the \"dump-ir-signatures\" command."
+    },
+
+    PRINT_SIGNATURES {
+        override val hintOnValues = "{true|false}"
+        override val description = "Print IR signature for every declaration. Applicable only to the \"dump-metadata\" command."
+    },
 
     /**
      * A file path prefix to be removed from full paths to render relative paths, thus making dumps reproducible.
      */
-    ABSOLUTE_PATH_PREFIX("-absolute-path-prefix"),
+    ABSOLUTE_PATH_PREFIX(isPrivate = true),
 
     /**
      * This is an option that allows running the commands that support it in a special "test mode".
@@ -191,9 +215,19 @@ private enum class ExtraOption(val option: String) {
      *
      * NOTE: This option is not supposed to be advertised in KLIB tool's "usage info".
      */
-    INTERNAL_TEST_MODE("-test-mode");
+    TEST_MODE(isPrivate = true),
+    ;
+
+    open val hintOnValues: String?
+        get() = error("No hint on values available for option $optionName")
+
+    open val description: String
+        get() = error("No description available for option $optionName")
+
+    val optionName: String
+        get() = "-" + name.replace("_", "-").lowercase()
 
     companion object {
-        fun parseOrNull(option: String): ExtraOption? = entries.firstOrNull { it.option == option }
+        fun parseOrNull(optionName: String): CliOption? = entries.firstOrNull { it.optionName == optionName }
     }
 }
