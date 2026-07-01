@@ -1009,7 +1009,7 @@ static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) 
   }
 }
 
-static Class createClass(const TypeInfo* typeInfo, Class superClass) {
+static Class createClass(const TypeInfo* typeInfo, Class superClass, const TypeInfo* objCSuperType) {
   // NOTE: in swift export, the generated class isn't used for direct instantiation, but rather serves the purpose of marker type
   // - for kotlin existentials (_KotlinExistential, KotlinRuntimeSupport.swift). This relies on generated class conformance to
   // - objc protocol counterparsts bound trough kotlin interface TypeInfo's
@@ -1039,8 +1039,8 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   }
 
   std::unordered_set<const TypeInfo*> superImplementedInterfaces(
-          typeInfo->superType_->implementedInterfaces_,
-          typeInfo->superType_->implementedInterfaces_ + typeInfo->superType_->implementedInterfacesCount_
+          objCSuperType->implementedInterfaces_,
+          objCSuperType->implementedInterfaces_ + objCSuperType->implementedInterfacesCount_
   );
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
@@ -1088,13 +1088,17 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
     result = objc_getClass(typeAdapter->objCName);
     setClassEnsureInitialized(typeInfo, result);
   } else {
-    Class superClass = getOrCreateClass(typeInfo->superType_);
+    // Swift Export only: make sure a synthesized marker never inherits from a Swift class
+    const bool detachFromSwiftSuper = compiler::swiftExport() && getTypeAdapter(typeInfo->superType_) != nullptr;
+
+    const TypeInfo* objCSuperType = detachFromSwiftSuper ? theAnyTypeInfo : typeInfo->superType_;
+    Class superClass = getOrCreateClass(objCSuperType);
 
     std::lock_guard lockGuard(classCreationMutex); // Note: non-recursive
 
     result = objCExport(typeInfo).objCClass; // double-checking.
     if (result == nullptr) {
-        result = createClass(typeInfo, superClass);
+        result = createClass(typeInfo, superClass, objCSuperType);
         // Don't have to be a release store –
         // the operations above are synchronized and thus might not be reordered after this store.
         setClassEnsureInitialized(typeInfo, result);
