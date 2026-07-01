@@ -6,45 +6,59 @@
 package org.jetbrains.kotlin.cli.klib
 
 import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
+import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
-    fun parseArguments(rawArgs: Array<String>): KlibToolArguments? {
+    fun parseArguments(rawArgs: Array<String>): KlibToolArgumentsParserResult {
         if (rawArgs.size < 2) {
             printUsage()
-            return null
+            return KlibToolArgumentsParserResult.UsagePrinted
         }
 
-        val extraArgs: Map<CliOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
+        val command = CliCommand.parseOrNull(rawArgs[0])
+        if (command == null) {
+            output.logError("Unknown command: ${rawArgs[0]}")
+            return KlibToolArgumentsParserResult.Error
+        }
+
+        val library = loadKlib(rawArgs[1], output)
+                ?: return KlibToolArgumentsParserResult.Error
+
+        val parsedOptions: Map<CliOption, List<String>> = parseOptions(rawArgs.drop(2).toTypedArray<String>())
             ?.entries
-            ?.mapNotNull { [option, values] ->
+            ?.map { [option, values] ->
                 val knownOption = CliOption.parseOrNull(option)
                 if (knownOption == null) {
-                    output.logWarning("Unknown option: $option")
-                    return@mapNotNull null
+                    output.logError("Unknown option: $option")
+                    return KlibToolArgumentsParserResult.Error
+                }
+                if (command !in knownOption.applicableTo) {
+                    output.logError("Option $option is not applicable to command $command")
+                    return KlibToolArgumentsParserResult.Error
                 }
                 knownOption to values
             }?.toMap()
-            ?: return null
+            ?: return KlibToolArgumentsParserResult.Error
 
-        val signatureVersion = extraArgs[CliOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
+        val signatureVersion = parsedOptions[CliOption.SIGNATURE_VERSION]?.last()?.let { rawSignatureVersion ->
             rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion) ?: run {
                 output.logError("Invalid signature version: $rawSignatureVersion")
-                return null
+                return KlibToolArgumentsParserResult.Error
             }
         }
 
         if (signatureVersion != null && signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS) {
             output.logError("Unsupported signature version: ${signatureVersion.number}")
-            return null
+            return KlibToolArgumentsParserResult.Error
         }
 
-        return KlibToolArguments(
-            commandName = rawArgs[0],
-            libraryPath = rawArgs[1],
-            onlyTopLevelSignatures = extraArgs[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
-            signatureVersion,
-            testMode = extraArgs[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
-            absolutePathPrefixes = extraArgs[CliOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
+        return KlibToolArgumentsParserResult.ParsedArguments(
+                command = command,
+                library = library,
+                onlyTopLevelSignatures = parsedOptions[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
+                signatureVersion,
+                testMode = parsedOptions[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
+                absolutePathPrefixes = parsedOptions[CliOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
         )
     }
 
@@ -101,6 +115,9 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                 repeat(DOUBLE_INDENT) { append(' ') }
                 appendLine(descriptionLine)
             }
+
+            repeat(DOUBLE_INDENT) { append(' ') }
+            option.applicableTo.sorted().joinTo(this, prefix = "Supported in commands: ", postfix = "\n")
         }
     }
 
@@ -108,6 +125,20 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         private const val SINGLE_INDENT = 4
         private const val DOUBLE_INDENT = SINGLE_INDENT * 2
     }
+}
+
+internal sealed interface KlibToolArgumentsParserResult {
+    object Error : KlibToolArgumentsParserResult
+    object UsagePrinted : KlibToolArgumentsParserResult
+
+    class ParsedArguments(
+            val command: CliCommand,
+            val library: KotlinLibrary,
+            val onlyTopLevelSignatures: Boolean,
+            val signatureVersion: KotlinIrSignatureVersion?,
+            val testMode: Boolean,
+            val absolutePathPrefixes: List<String>,
+    ) : KlibToolArgumentsParserResult
 }
 
 internal enum class CliCommand(val description: String) {
@@ -165,6 +196,8 @@ internal enum class CliCommand(val description: String) {
     val commandName: String
         get() = name.replace("_", "-").lowercase()
 
+    override fun toString() = commandName
+
     companion object {
         fun parseOrNull(commandName: String): CliCommand? = entries.firstOrNull { it.commandName == commandName }
     }
@@ -179,17 +212,22 @@ private enum class CliOption(val isPrivate: Boolean = false) {
                 Render IR signatures of a specific version. By default, the most up-to-date signature version
                 that is supported in the library is used.
             """.trimIndent()
+
+        override val applicableTo get() = setOf(CliCommand.DUMP_ABI, CliCommand.DUMP_IR_SIGNATURES, CliCommand.DUMP_METADATA_SIGNATURES)
     },
 
     ONLY_TOP_LEVEL_SIGNATURES {
         override val hintOnValues = "{true|false}"
-        override val description = "Dump IR signatures of only top-level declarations. Applicable only to the \"dump-ir-signatures\" command."
+        override val description = "Dump IR signatures of only top-level declarations."
+        override val applicableTo get() = setOf(CliCommand.DUMP_IR_SIGNATURES)
     },
 
     /**
      * A file path prefix to be removed from full paths to render relative paths, thus making dumps reproducible.
      */
-    ABSOLUTE_PATH_PREFIX(isPrivate = true),
+    ABSOLUTE_PATH_PREFIX(isPrivate = true) {
+        override val applicableTo get() = setOf(CliCommand.DUMP_IR)
+    },
 
     /**
      * This is an option that allows running the commands that support it in a special "test mode".
@@ -199,7 +237,9 @@ private enum class CliOption(val isPrivate: Boolean = false) {
      *
      * NOTE: This option is not supposed to be advertised in KLIB tool's "usage info".
      */
-    TEST_MODE(isPrivate = true),
+    TEST_MODE(isPrivate = true) {
+        override val applicableTo get() = setOf(CliCommand.DUMP_METADATA)
+    },
     ;
 
     open val hintOnValues: String?
@@ -210,6 +250,10 @@ private enum class CliOption(val isPrivate: Boolean = false) {
 
     val optionName: String
         get() = "-" + name.replace("_", "-").lowercase()
+
+    abstract val applicableTo: Set<CliCommand>
+
+    override fun toString() = optionName
 
     companion object {
         fun parseOrNull(optionName: String): CliOption? = entries.firstOrNull { it.optionName == optionName }

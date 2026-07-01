@@ -12,7 +12,7 @@ import java.io.File
 fun invokeKlibTool(
     kotlinNativeClassLoader: ClassLoader,
     args: List<String>,
-): String {
+): Pair<Int, String> {
     val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
         .declaredMethods
         .single { it.name == "exec" }
@@ -21,32 +21,16 @@ fun invokeKlibTool(
     val stderr = StringBuilder()
 
     val exitCode = entryPoint.invoke(null, stdout, stderr, args.toTypedArray()) as Int
-    if (exitCode != 0) {
-        error(
-            buildString {
-                appendLine("Execution of KLIB tool finished with exit code $exitCode")
-                args.joinTo(this, prefix = "Arguments: [", postfix = "]\n")
-                appendLine()
-                appendLine("========== BEGIN: STDOUT ==========")
-                append(stdout)
-                if (stdout.isNotEmpty() && stdout.last() != '\n') appendLine()
-                appendLine("========== END: STDOUT ==========")
-                appendLine()
-                appendLine("========== BEGIN: STDERR ==========")
-                append(stderr)
-                if (stderr.isNotEmpty() && stderr.last() != '\n') appendLine()
-                appendLine("========== END: STDERR ==========")
-            }
-        )
-    } else {
-        return stdout.toString() + stderr.toString()
-    }
+    val output = stdout.toString() + stderr.toString()
+
+    return exitCode to output
 }
 
 private fun invokeKlibTool(
     kotlinNativeClassLoader: ClassLoader,
     klibFile: File,
     command: String,
+    metadataTestMode: Boolean = false,
     signatureVersion: KotlinIrSignatureVersion? = null,
     onlyTopLevelSignatures: Boolean = false,
     absolutePathPrefixes: List<String> = emptyList(),
@@ -54,8 +38,10 @@ private fun invokeKlibTool(
     val args = buildList<String> {
         this += command
         this += klibFile.canonicalPath
-        this += "-test-mode"
-        this += "true"
+        if (metadataTestMode) {
+            this += "-test-mode"
+            this += "true"
+        }
         signatureVersion?.let {
             this += "-signature-version"
             this += signatureVersion.number.toString()
@@ -70,7 +56,23 @@ private fun invokeKlibTool(
         }
     }
 
-    return invokeKlibTool(kotlinNativeClassLoader, args)
+    val [exitCode, output] = invokeKlibTool(kotlinNativeClassLoader, args)
+
+    if (exitCode != 0) {
+        error(
+            buildString {
+                appendLine("Execution of KLIB tool finished with exit code $exitCode")
+                args.joinTo(this, prefix = "Arguments: [", postfix = "]\n")
+                appendLine()
+                appendLine("========== BEGIN: OUTPUT ==========")
+                append(output)
+                if (output.isNotEmpty() && output.last() != '\n') appendLine()
+                appendLine("========== END: OUTPUT ==========")
+            }
+        )
+    }
+
+    return output
 }
 
 fun TestCompilationArtifact.KLIB.dumpMetadata(
@@ -83,6 +85,7 @@ fun File.dumpMetadata(
     kotlinNativeClassLoader,
     klibFile = this,
     command = "dump-metadata",
+    metadataTestMode = true,
 )
 
 fun TestCompilationArtifact.KLIB.dumpIr(

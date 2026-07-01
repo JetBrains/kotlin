@@ -19,7 +19,7 @@ abstract class AbstractKlibToolCliTest : AbstractCliTest() {
     }
 
     fun doKlibToolTest(fileName: String) {
-        val actual = invokeKlibTool(kotlinNativeClassLoader, args = readArgs(fileName, tmpdir.path))
+        val actual = invokeKlibTool(kotlinNativeClassLoader, args = readArgs(fileName, tmpdir.path)).second
 
         val outFile = File(fileName.replaceFirst("\\.args$".toRegex(), ".out"))
         assertEqualsToFile(outFile, actual)
