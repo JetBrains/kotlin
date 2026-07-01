@@ -116,17 +116,10 @@ interface KotlinPaths {
 
     // TODO: Maybe we need separate classpaths for compilers with and without the daemon
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
-        Empty(),
-        StdLib(Jar.StdLib, gen = {
-            when {
-                currentJavaVersion() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
-                currentJavaVersion() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
-                else -> emptyList()
-            }
-        }),
+        Empty,
+        StdLib(Jar.StdLib),
         Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
-        MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())
