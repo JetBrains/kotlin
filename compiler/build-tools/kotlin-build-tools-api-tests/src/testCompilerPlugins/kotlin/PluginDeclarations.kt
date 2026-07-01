@@ -17,6 +17,7 @@ private enum class KnownCompilerPlugin(val pluginId: String, val classpathSystem
     ASSIGNMENT("org.jetbrains.kotlin.assignment", "ASSIGNMENT_COMPILER_PLUGIN"),
     SCRIPTING("kotlin.scripting", "SCRIPTING_COMPILER_PLUGIN"),
     SERIALIZATION("org.jetbrains.kotlinx.serialization", "SERIALIZATION_COMPILER_PLUGIN"),
+    PLUGIN_SANDBOX("org.jetbrains.kotlin.plugin.sandbox", "PLUGIN_SANDBOX"),
 }
 
 private fun getCompilerPlugin(plugin: KnownCompilerPlugin, arguments: List<CompilerPluginOption>): CompilerPlugin {
@@ -44,6 +45,10 @@ internal val SERIALIZATION_PLUGIN =
 
 internal val SERIALIZATION_CORE_CLASSPATH: List<Path>
     get() = System.getProperty("SERIALIZATION_CORE").split(File.pathSeparator).map { Paths.get(it) }
+
+internal val PLUGIN_SANDBOX_PLUGIN =
+    getCompilerPlugin(KnownCompilerPlugin.PLUGIN_SANDBOX, emptyList())
+
 
 internal fun scriptingPlugin(templateClass: KClass<*>) =
     getCompilerPlugin(
