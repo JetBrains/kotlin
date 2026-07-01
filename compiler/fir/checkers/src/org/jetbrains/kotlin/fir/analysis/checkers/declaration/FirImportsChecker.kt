@@ -243,7 +243,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     private fun checkOperatorRename(import: FirResolvedImport) {
         val alias = import.aliasName ?: return
         val importedName = import.importedName ?: return
-        if (!OperatorConventions.isConventionName(alias)) return
+        if (!OperatorConventions.isConventionName(alias) || alias == importedName) return
 
         val classId = import.resolvedParentClassId
         val illegalRename = if (classId != null) {
