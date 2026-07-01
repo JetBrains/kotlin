@@ -42,7 +42,7 @@ class NativeDownloadAndPlatformLibsNonParallelIT : KGPDaemonsBaseTest() {
                 "assemble",
                 buildOptions = defaultBuildOptions.copy(konanDataDir = null) // we need to download konan bundle to default dir
             ) {
-                assertOutputContains("Moved Kotlin/Native bundle from .* to $userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion".toRegex())
+                assertOutputContains("Installing Kotlin/Native bundle from .* to $userHomeDir/.konan/kotlin-native-prebuilt-$platformName-$currentCompilerVersion".toRegex())
                 assertOutputDoesNotContain("Generate platform libraries for ")
 
                 // checking that konan was downloaded and native dependencies were not downloaded into ~/.konan dir

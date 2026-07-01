@@ -202,7 +202,9 @@ class NativeCompilerDownloader(
                     it.into(tmpDir)
                 }
                 val compilerTmp = tmpDir.resolve(dependencyNameWithOsAndVersion)
-                if (!compilerTmp.renameTo(compilerDirectory)) {
+                if (!compilerTmp.renameTo(compilerDirectory) && !compilerDirectory.exists()) {
+                    // Another process may have installed the distribution concurrently.
+                    // Copying over an existing installation races with concurrent readers (KT-86251).
                     project.copy {
                         it.from(compilerTmp)
                         it.into(compilerDirectory)
