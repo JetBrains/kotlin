@@ -5,9 +5,11 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.FunctionBase
+import kotlin.metadata.KmAnnotation
 import kotlin.metadata.KmType
 import kotlin.metadata.KmValueParameter
 import kotlin.metadata.jvm.JvmMethodSignature
@@ -32,6 +34,7 @@ internal abstract class KotlinKFunction(
     protected abstract val valueParameters: List<KmValueParameter>
     protected abstract val typeParameterTable: TypeParameterTable
     protected abstract val jvmSignature: JvmMethodSignature
+    protected abstract val metadataAnnotations: List<KmAnnotation>
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
         computeParameters(contextParameters, extensionReceiverType, valueParameters, typeParameterTable, includeReceivers = true)
@@ -47,6 +50,9 @@ internal abstract class KotlinKFunction(
 
     override val annotations: List<Annotation>
         get() {
+            if ((container as? KClassImpl<*>)?.isMappedBuiltin == true) {
+                return metadataAnnotations.map { it.toAnnotation(container.jClass.safeClassLoader) }
+            }
             val member = caller.member as? AnnotatedElement ?: return emptyList()
             return member.annotations.toList().unwrapKotlinRepeatableAnnotations()
         }

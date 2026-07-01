@@ -32,6 +32,7 @@ internal class KotlinKNamedFunction(
     override val typeParameterTable: TypeParameterTable get() = _typeParameterTable.value
     override val jvmSignature: JvmMethodSignature
         get() = kmFunction.signature ?: throw KotlinReflectionInternalError("No signature for function: $this")
+    override val metadataAnnotations: List<KmAnnotation> get() = kmFunction.annotations
 
     private val _typeParameterTable: Lazy<TypeParameterTable> = lazy(PUBLICATION) {
         val parent = (container as? KClassImpl<*>)?.typeParameterTable
