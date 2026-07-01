@@ -79,3 +79,26 @@ class CtxClass {
         get() = if (c) 1 else 0
         set(v) {}
 }
+
+class WithCompanionObject {
+    companion object {
+        val x = 0
+        val y: Int
+            get() = 0
+        fun f() {}
+    }
+}
+
+class WithCompanionBlock {
+    companion {
+        val x = 0
+        val y: Int
+            get() = 0
+        fun f() {}
+    }
+}
+
+companion val SimpleClass.y: Int
+    get() = 0
+
+companion fun SimpleClass.f() {}

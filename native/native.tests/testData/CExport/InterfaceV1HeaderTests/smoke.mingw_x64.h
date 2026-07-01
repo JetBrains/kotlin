@@ -116,6 +116,12 @@ typedef struct {
 typedef struct {
   smoke_KNativePtr pinned;
 } smoke_kref_tests_native_CtxClass;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_WithCompanionObject;
+typedef struct {
+  smoke_KNativePtr pinned;
+} smoke_kref_tests_native_WithCompanionObject_Companion;
 
 
 typedef struct {
@@ -219,6 +225,16 @@ typedef struct {
             smoke_KType* (*_type)(void);
             smoke_kref_tests_native_CtxClass (*CtxClass)();
           } CtxClass;
+          struct {
+            struct {
+              smoke_KType* (*_type)(void);
+              smoke_kref_tests_native_WithCompanionObject_Companion (*_instance)();
+              smoke_KInt (*get_x)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+              void (*f)(smoke_kref_tests_native_WithCompanionObject_Companion thiz);
+            } Companion;
+            smoke_KType* (*_type)(void);
+            smoke_kref_tests_native_WithCompanionObject (*WithCompanionObject)();
+          } WithCompanionObject;
           smoke_KDouble (*get_constDouble)();
           smoke_KFloat (*get_constFloat)();
           smoke_KInt (*get_constInt)();
