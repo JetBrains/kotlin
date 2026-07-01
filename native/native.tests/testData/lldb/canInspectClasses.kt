@@ -5,6 +5,9 @@
 // FIR_IDENTICAL
 // INPUT_DATA_FILE: canInspectClasses.in
 // OUTPUT_DATA_FILE: canInspectClasses.out
+
+
+
 fun main(args: Array<String>) {
     val point = Point(1, 2)
     val person = Person()

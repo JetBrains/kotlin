@@ -1,4 +1,6 @@
-b main.kt:12
+b main.kt:14
 r
 fr var
+v point->x
+v point->y
 q
