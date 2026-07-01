@@ -17,8 +17,8 @@ fun baz(a: A) { }
 package second
 
 import first.A
-<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>import first.foo<!>
-<!HOME_PACKAGE_WOULD_RESOLVE_THIS!>import first.bar<!>
+import first.foo
+import first.bar
 
 class B : A()
 

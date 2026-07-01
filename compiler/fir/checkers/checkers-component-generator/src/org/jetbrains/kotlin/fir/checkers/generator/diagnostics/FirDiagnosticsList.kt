@@ -2154,7 +2154,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNUSED_EXPRESSION by warning<PsiElement>()
         val UNUSED_LAMBDA_EXPRESSION by warning<PsiElement>()
-        val HOME_PACKAGE_WOULD_RESOLVE_THIS by warning<PsiElement>()
     }
 
     val RETURNS by object : DiagnosticGroup("Returns") {

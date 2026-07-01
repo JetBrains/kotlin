@@ -4896,12 +4896,6 @@ private fun KaDiagnosticConverterBuilder.addConversions108() {
             token,
         )
     }
-    add(FirErrors.HOME_PACKAGE_WOULD_RESOLVE_THIS) { firDiagnostic ->
-        HomePackageWouldResolveThisImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_WITH_TYPE_ARGUMENTS) { firDiagnostic ->
         CompanionExtensionReceiverWithTypeArgumentsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
