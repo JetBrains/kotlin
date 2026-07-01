@@ -23,6 +23,6 @@ public class ExplicitBuilderWithTypeParametersMoreThanRequired {
 // FILE: test.kt
 
 fun main() {
-    val obj = ExplicitBuilderWithTypeParametersLessThanRequired.builder().build()
-    val obj2 = ExplicitBuilderWithTypeParametersMoreThanRequired.builder().build()
+    val obj = <!TYPE_MISMATCH!>ExplicitBuilderWithTypeParametersLessThanRequired.builder()<!>.<!UNRESOLVED_REFERENCE!>build<!>()
+    val obj2 = <!TYPE_MISMATCH!>ExplicitBuilderWithTypeParametersMoreThanRequired.builder()<!>.<!UNRESOLVED_REFERENCE!>build<!>()
 }
