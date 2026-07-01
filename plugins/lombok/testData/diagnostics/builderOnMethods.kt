@@ -34,12 +34,10 @@ public class User2 {
 
     @Builder
     public static void create(String name) {
-        return User2(name, -1);
     }
 
     @Builder
     public static void create(String name, int age) {
-        return User2(name, age);
     }
 
     private User2(String name, int age) {
@@ -51,7 +49,7 @@ public class User2 {
 // FILE: Foo.java
 
 public class Foo {
-    @Builder(builderMethodName = "arrayBuilder") // Incorrect, because builder name is inferred from return type and it's an invalid identifier `Char[]Builder`
+    @Builder(builderMethodName = "arrayBuilder") // Incorrect, because builder name is inferred from return type and the `Char[]Builder` identifier is invalid
     char[] initWithCharArray(char[] chars) { return chars; }
 }
 
@@ -61,8 +59,8 @@ fun test() {
     // Correct
     val user = User.builder().name("name").age(42).build()
 
-    // Incorrect, `age` is not accessible because the first method always wins
-    val user2 = User2.builder().name("name2").<!UNRESOLVED_REFERENCE!>age<!>(5).build()
+    // Green code, although it looks awkward. But it's the way Lombok works in case of builders clashing.
+    User2.builder().name("name2").age(5).build()
 
     val foo = Foo()
     foo.<!UNRESOLVED_REFERENCE!>arrayBuilder<!>().chars(arrayOf('a', 'b', 'c')).build()
