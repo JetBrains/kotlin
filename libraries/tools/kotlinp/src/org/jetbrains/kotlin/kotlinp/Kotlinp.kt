@@ -11,13 +11,17 @@ import kotlin.metadata.*
 abstract class Kotlinp(protected val settings: Settings) {
     fun renderAnnotation(annotation: KmAnnotation, printer: Printer): Unit = with(printer) {
         append(annotation.className)
-        appendCollectionIfNotEmpty(annotation.arguments.entries, prefix = "(", postfix = ")") { [name, argument] ->
-            append(name, " = ")
-            renderAnnotationArgument(argument, printer)
+        if (settings.showAnnotationArguments) {
+            appendCollectionIfNotEmpty(annotation.arguments.entries, prefix = "(", postfix = ")") { [name, argument] ->
+                append(name, " = ")
+                renderAnnotationArgument(argument, printer)
+            }
         }
     }
 
     fun renderAnnotationArgument(argument: KmAnnotationArgument, printer: Printer): Unit = with(printer) {
+        if (!settings.showAnnotationArguments) return
+
         fun String.sanitize(quote: Char): String = buildString(length) {
             for (c in this@sanitize) {
                 when (c) {
@@ -71,7 +75,7 @@ abstract class Kotlinp(protected val settings: Settings) {
                 append(useSiteTarget).append(":")
             }
             renderAnnotation(annotation, this)
-            if (onePerLine) appendLine() else append(" ")
+            if (!onePerLine || settings.annotationsInOneLine) append(" ") else appendLine()
         }
     }
 
@@ -391,8 +395,12 @@ abstract class Kotlinp(protected val settings: Settings) {
         append(VISIBILITY_MAP[typeAlias.visibility], "typealias ")
         appendName(typeAlias)
         appendTypeParameters(typeAlias.typeParameters)
-        append(" = ").appendType(typeAlias.underlyingType)
-        append(" /* = ").appendType(typeAlias.expandedType).append(" */")
+        if (settings.showTypeAbbreviations) {
+            append(" = ").appendType(typeAlias.underlyingType)
+            append(" /* = ").appendType(typeAlias.expandedType).append(" */")
+        } else {
+            append(" = ").appendType(typeAlias.expandedType)
+        }
         appendLine()
     }
 
@@ -453,7 +461,7 @@ abstract class Kotlinp(protected val settings: Settings) {
 
             if (type.isNullable) append("?")
             if (type.isDefinitelyNonNull) append(" & Any")
-            if (abbreviatedType != null) append(" /* = ").appendType(abbreviatedType).append(" */")
+            if (abbreviatedType != null && settings.showTypeAbbreviations) append(" /* = ").appendType(abbreviatedType).append(" */")
 
             if (platformTypeUpperBound == "$this?") {
                 append("!")
@@ -492,7 +500,9 @@ abstract class Kotlinp(protected val settings: Settings) {
         val varargElementType = valueParameter.varargElementType
         if (varargElementType != null) {
             append("vararg ", valueParameter.name, ": ").appendType(varargElementType)
-            append(" /* ").appendType(valueParameter.type).append(" */")
+            if (settings.showVarargTypes) {
+                append(" /* ").appendType(valueParameter.type).append(" */")
+            }
         } else {
             append(valueParameter.name, ": ").appendType(valueParameter.type)
         }
