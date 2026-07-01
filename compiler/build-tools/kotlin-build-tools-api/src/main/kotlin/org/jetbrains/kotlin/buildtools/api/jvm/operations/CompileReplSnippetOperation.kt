@@ -37,13 +37,15 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
  *
  * ```json
  * {
- *   "artifactVersion": 1,
- *   "sidecar":   "<base64 of sidecar JSON>",
+ *   "artifactVersion": 2,
+ *   "header":    "<base64 of the out-of-band header>",
  *   "classFiles": { "InternalName": "<base64 of class bytes>", ... }
  * }
  * ```
  *
- * The version is the envelope-layout version (separate from the sidecar's field-set version);
+ * The reconstruction payload (declarations, imports) is **not** in the envelope — it rides inside
+ * the `classFiles`' `.kotlin_metadata`; the `header` is only a minimal out-of-band index. The
+ * version is the envelope-layout version (separate from the header's field-set version);
  * incompatible inputs are rejected with a clear diagnostic.
  *
  * ### Why a `List<ByteArray>` input + a byte-array-backed artifact and not `List<Path>`?

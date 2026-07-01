@@ -7,15 +7,16 @@
  * Execution-side counterpart of [K2ReplStatelessCompiler] for the **stateless K2 REPL** prototype.
  *
  * [K2ReplStatelessCompiler] turns each REPL snippet into a portable [SnippetArtifact] (class bytes
- * + JSON sidecar). This file closes the loop: given the ordered list of artifacts for a whole REPL
- * session, [SnippetArtifactEvaluator] materialises every snippet's `.class` bytes onto a single
- * in-memory [ClassLoader] and drives each snippet's `$$eval` driver in history order, exactly as the
- * stateful evaluators do (`K2ReplEvaluator` / `AbstractReplTestBaseClasses`):
+ * + out-of-band [SnippetArtifactHeader]). This file closes the loop: given the ordered list of
+ * artifacts for a whole REPL session, [SnippetArtifactEvaluator] materialises every snippet's
+ * `.class` bytes onto a single in-memory [ClassLoader] and drives each snippet's `$$eval` driver in
+ * history order, exactly as the stateful evaluators do (`K2ReplEvaluator` /
+ * `AbstractReplTestBaseClasses`):
  *
  *  * each snippet wrapper is a JVM `object` exposing a public static `INSTANCE` field,
  *  * the snippet body is the `$$eval` ([REPL_SNIPPET_EVAL_FUN_NAME]) method on that object,
- *  * an expression snippet's value is stored in the `$$result`
- *    ([SnippetArtifactSidecar.resultPropertyName] / [REPL_SNIPPET_EVAL_FUN_NAME]) field.
+ *  * an expression snippet's value is stored in the field named by
+ *    [SnippetArtifactHeader.resultPropertyName] (e.g. `res2`).
  *
  * Because every snippet of the session is replayed from a flat classloader that already holds *all*
  * the snippets' classes, cross-snippet references (`Snippet_2.$$eval` reading `Snippet_1.INSTANCE.x`)
@@ -59,7 +60,7 @@ internal class SnippetArtifactEvaluator(
     fun evaluate(artifacts: List<SnippetArtifact>): SnippetArtifactEvalResult {
         require(artifacts.isNotEmpty()) { "SnippetArtifactEvaluator: nothing to evaluate (empty artifact list)" }
 
-        val sidecars = artifacts.map { it.decodeSidecar() }
+        val headers = artifacts.map { it.decodeHeader() }
 
         // Collect every class of every snippet into one binary-name-keyed map. Later snippets'
         // classes never collide with earlier ones (wrapper class names embed the snippet id), so a
@@ -76,8 +77,8 @@ internal class SnippetArtifactEvaluator(
         val snippetClasses = ArrayList<Class<*>>(artifacts.size)
         val snippetInstances = ArrayList<Any>(artifacts.size)
 
-        for ([index, sidecar] in sidecars.withIndex()) {
-            val binaryName = sidecar.snippetClassInternalName.replace('/', '.')
+        for ([index, header] in headers.withIndex()) {
+            val binaryName = header.snippetClassInternalName.replace('/', '.')
             val snippetClass = loader.loadClass(binaryName)
             val evalMethod = snippetClass.methods.firstOrNull { it.name == evalFunName }
                 ?: error(
@@ -90,7 +91,7 @@ internal class SnippetArtifactEvaluator(
                 evalMethod.invoke(instance)
             } catch (e: InvocationTargetException) {
                 throw SnippetArtifactEvaluationException(
-                    "stateless REPL: snippet[$index] '${sidecar.snippetName}' threw during \$\$eval",
+                    "stateless REPL: snippet[$index] '${header.snippetName}' threw during \$\$eval",
                     e.targetException ?: e,
                 )
             }
@@ -98,13 +99,13 @@ internal class SnippetArtifactEvaluator(
             snippetInstances += instance
         }
 
-        // Read the last snippet's result field, if it declares one. The field name is the sidecar's
+        // Read the last snippet's result field, if it declares one. The field name is the header's
         // `resultPropertyName`; it may legitimately be absent (declaration-only snippets emit no
         // result field), in which case the result value is `null` — mirroring `K2ReplEvaluator`,
         // which falls back to `ResultValue.Unit` when the field is missing.
         val lastClass = snippetClasses.last()
         val lastInstance = snippetInstances.last()
-        val resultFieldName = sidecars.last().resultPropertyName?.takeIf { it.isNotBlank() }
+        val resultFieldName = headers.last().resultPropertyName?.takeIf { it.isNotBlank() }
         val lastResultValue = resultFieldName?.let { name ->
             val field = runCatching { lastClass.getDeclaredField(name) }.getOrNull()
             field?.isAccessible = true

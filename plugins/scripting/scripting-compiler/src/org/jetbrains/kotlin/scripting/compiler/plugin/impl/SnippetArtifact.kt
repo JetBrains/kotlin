@@ -8,14 +8,16 @@
  * prototype (see `.junie/plans/k2-stateless-repl-prototype-step1.md`).
  *
  * A [SnippetArtifact] is the full per-snippet handoff between a stateless-compiler caller and the
- * compiler: the wrapper class plus its nested classes as raw `.class` bytes, paired with a small
- * JSON-encoded [SnippetArtifactSidecar] that carries information which is **not** preserved in
- * `.kotlin_metadata` — most notably the REPL-only `isReplSnippetDeclaration` markers, the snippet's
- * imports, and the REPL state-object FQ name.
+ * compiler: the wrapper class plus its nested classes as raw `.class` bytes, plus a small
+ * [SnippetArtifactHeader] — a minimal out-of-band index.
  *
- * The paired-JSON layout is **only** for the prototype. The field set is unstable; once the field
- * set stabilises the sidecar will be promoted to a protobuf extension attached to the snippet
- * wrapper class's `.kotlin_metadata` (step 3 of the original proposal).
+ * The REPL-only reconstruction data that is **not** preserved by stock `.kotlin_metadata` — the
+ * `isReplSnippetDeclaration` markers, their source-level visibilities, and the file-level imports —
+ * is **no longer** carried alongside the class files. After the "full cut" it lives **only** inside
+ * the snippet wrapper class's own `.kotlin_metadata`, embedded via the generic
+ * `ProtoBuf.CompilerPluginData` channel (keyed by [REPL_SIDECAR_PLUGIN_ID]) as a
+ * [SnippetArtifactSidecar]. The [SnippetArtifactHeader] retains only what a consumer needs *before*
+ * (or *without*) deserializing a class's metadata — see its docs.
  *
  * Everything in this file is `internal` to `scripting-compiler`. It is **not** part of any public
  * API surface (`libraries/scripting/common`).
@@ -23,6 +25,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
 
 /**
@@ -31,11 +34,13 @@ import java.nio.charset.StandardCharsets
  * @property classFiles `.class` bytes of every JVM class emitted for this snippet. The key is the
  *   class file's relative path **without** the trailing `.class` (i.e. the JVM internal name, e.g.
  *   `"Snippet_1"` or `"some/pkg/Snippet_1$Nested"`).
- * @property sidecar JSON-encoded [SnippetArtifactSidecar]. See [SnippetArtifactJsonCodec].
+ * @property header protobuf-wire-encoded [SnippetArtifactHeader] — the minimal out-of-band index.
+ *   See [SnippetArtifactHeaderProtoCodec]. The bulky reconstruction payload is **not** here; it is
+ *   embedded in [classFiles]' `.kotlin_metadata` (see the class doc).
  */
 data class SnippetArtifact(
     val classFiles: Map<String, ByteArray>,
-    val sidecar: ByteArray,
+    val header: ByteArray,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -45,7 +50,7 @@ data class SnippetArtifact(
             val o = other.classFiles[k] ?: return false
             if (!v.contentEquals(o)) return false
         }
-        if (!sidecar.contentEquals(other.sidecar)) return false
+        if (!header.contentEquals(other.header)) return false
         return true
     }
 
@@ -55,15 +60,24 @@ data class SnippetArtifact(
             result = 31 * result + k.hashCode()
             result = 31 * result + v.contentHashCode()
         }
-        result = 31 * result + sidecar.contentHashCode()
+        result = 31 * result + header.contentHashCode()
         return result
     }
 }
 
 /**
- * Information about a compiled snippet that is *not* recoverable from `.kotlin_metadata` alone and
- * which the stateless compiler needs to reconstruct a `FirReplSnippetSymbol` view of a prior
- * snippet during the next compile.
+ * Information about a compiled snippet that is *not* recoverable from stock `.kotlin_metadata`
+ * alone and which the stateless compiler needs to reconstruct a `FirReplSnippetSymbol` view of a
+ * prior snippet during the next compile.
+ *
+ * After the "full cut" this is carried **only** embedded inside the snippet wrapper class's own
+ * `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel, keyed by
+ * [REPL_SIDECAR_PLUGIN_ID]); it is no longer duplicated in a standalone blob alongside the class
+ * files. The read path (`ArtifactBackedFirReplHistoryProvider`) finds the wrapper class via the
+ * out-of-band [SnippetArtifactHeader], then reads this sidecar from the located class's metadata.
+ * The config-only fields ([resultPropertyName], [isSynthetic], [isImplicit], [historyIndex]) are
+ * therefore unused on the embedded copy — they are sourced from the [SnippetArtifactHeader] (or, in
+ * the case of [historyIndex]/[isSynthetic], not consumed by the read path at all).
  *
  * Field set is unstable; bumping [sidecarVersion] is mandatory on any structural change.
  */
@@ -170,148 +184,274 @@ data class SnippetArtifactSidecar(
 }
 
 /**
- * Hand-rolled JSON writer/reader for [SnippetArtifactSidecar].
+ * Hand-rolled **protobuf wire-format** writer/reader for [SnippetArtifactSidecar].
  *
- * Hand-rolled rather than using `kotlinx.serialization` because:
- *  1. The sidecar is a throwaway prototype format that will be replaced by protobuf-in-metadata.
- *  2. Avoids pulling a serialization runtime into `scripting-compiler`.
+ * This is the "protobuf sidecar cut" of the prototype's paired-JSON format. The bytes produced here
+ * are a plain protobuf message (varints + length-delimited fields), written directly per the
+ * protobuf spec rather than via a generated `.proto` message, so the codec stays self-contained
+ * (no `.proto`-generation build wiring, no dependency on the relocated protobuf runtime's API) and
+ * is unit-testable in isolation.
  *
- * Supports only the strict subset of JSON that this format needs: objects, string arrays, strings,
- * integers, booleans, and `null`. No whitespace tolerance beyond what the writer emits.
+ * These same bytes are what the stateless REPL embeds into the snippet wrapper class's
+ * `.kotlin_metadata` via the generic `ProtoBuf.CompilerPluginData` channel (keyed by
+ * [REPL_SIDECAR_PLUGIN_ID]) — so promoting the standalone blob to in-metadata storage is a
+ * transport change, not a format change.
+ *
+ * ### Field schema (stable field numbers)
+ *
+ * Top-level `Sidecar`: `1` version (int32), `2` snippetName, `3` snippetClassInternalName,
+ * `4` packageFqName, `5` historyIndex (int32), `6` replSnippetDeclarations (repeated `MemberRef`),
+ * `7` imports (repeated `ImportEntry`), `8` stateObjectFqName, `9` resultPropertyName (optional),
+ * `10` isSynthetic (bool), `11` isImplicit (bool).
+ *
+ * `MemberRef`: `1` kind (int32), `2` name, `3` descriptor (optional), `4` visibility (int32),
+ * `5` returnTypeSignature (optional).
+ *
+ * `ImportEntry`: `1` fqName, `2` isAllUnder (bool), `3` aliasName (optional).
+ *
+ * Unknown fields are skipped on read (forward-compatible), but [SnippetArtifactSidecar.sidecarVersion]
+ * is still validated for an exact match — the field set is not yet declared stable.
  */
-object SnippetArtifactJsonCodec {
+object SnippetArtifactSidecarProtoCodec {
+
+    private const val WIRETYPE_VARINT = 0
+    private const val WIRETYPE_LEN = 2
+
+    private fun memberRefKindId(kind: SnippetArtifactSidecar.MemberRef.Kind): Int = when (kind) {
+        SnippetArtifactSidecar.MemberRef.Kind.PROPERTY -> 1
+        SnippetArtifactSidecar.MemberRef.Kind.FUNCTION -> 2
+        SnippetArtifactSidecar.MemberRef.Kind.CLASS -> 3
+        SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS -> 4
+    }
+
+    private fun memberRefKind(id: Int): SnippetArtifactSidecar.MemberRef.Kind = when (id) {
+        1 -> SnippetArtifactSidecar.MemberRef.Kind.PROPERTY
+        2 -> SnippetArtifactSidecar.MemberRef.Kind.FUNCTION
+        3 -> SnippetArtifactSidecar.MemberRef.Kind.CLASS
+        4 -> SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS
+        else -> error("SnippetArtifactSidecar: unknown MemberRef.Kind id=$id")
+    }
+
+    private fun visibilityId(v: SnippetArtifactSidecar.MemberRef.Visibility): Int = when (v) {
+        SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN -> 0
+        SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC -> 1
+        SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL -> 2
+        SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED -> 3
+        SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE -> 4
+    }
+
+    private fun visibility(id: Int): SnippetArtifactSidecar.MemberRef.Visibility = when (id) {
+        0 -> SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN
+        1 -> SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC
+        2 -> SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL
+        3 -> SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED
+        4 -> SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE
+        else -> SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN
+    }
 
     fun encode(sidecar: SnippetArtifactSidecar): ByteArray {
-        val sb = StringBuilder()
-        sb.append('{')
-        sb.appendField("sidecarVersion", sidecar.sidecarVersion); sb.append(',')
-        sb.appendField("snippetName", sidecar.snippetName); sb.append(',')
-        sb.appendField("snippetClassInternalName", sidecar.snippetClassInternalName); sb.append(',')
-        sb.appendField("packageFqName", sidecar.packageFqName); sb.append(',')
-        sb.appendField("historyIndex", sidecar.historyIndex); sb.append(',')
-        sb.appendArrayField("replSnippetDeclarations", sidecar.replSnippetDeclarations) { sb, m ->
-            sb.append('{')
-            sb.appendField("kind", m.kind.name); sb.append(',')
-            sb.appendField("name", m.name); sb.append(',')
-            sb.appendNullableField("descriptor", m.descriptor); sb.append(',')
-            sb.appendField("visibility", m.visibility.name); sb.append(',')
-            sb.appendNullableField("returnTypeSignature", m.returnTypeSignature)
-            sb.append('}')
-        }
-        sb.append(',')
-        sb.appendArrayField("imports", sidecar.imports) { sb, i ->
-            sb.append('{')
-            sb.appendField("fqName", i.fqName); sb.append(',')
-            sb.appendField("isAllUnder", i.isAllUnder); sb.append(',')
-            sb.appendNullableField("aliasName", i.aliasName)
-            sb.append('}')
-        }
-        sb.append(',')
-        sb.appendField("stateObjectFqName", sidecar.stateObjectFqName); sb.append(',')
-        sb.appendNullableField("resultPropertyName", sidecar.resultPropertyName); sb.append(',')
-        sb.appendField("isSynthetic", sidecar.isSynthetic); sb.append(',')
-        sb.appendField("isImplicit", sidecar.isImplicit)
-        sb.append('}')
-        return sb.toString().toByteArray(StandardCharsets.UTF_8)
+        val out = ByteArrayOutputStream()
+        out.writeInt32Field(1, sidecar.sidecarVersion)
+        out.writeStringField(2, sidecar.snippetName)
+        out.writeStringField(3, sidecar.snippetClassInternalName)
+        out.writeStringField(4, sidecar.packageFqName)
+        out.writeInt32Field(5, sidecar.historyIndex)
+        for (m in sidecar.replSnippetDeclarations) out.writeBytesField(6, encodeMemberRef(m))
+        for (i in sidecar.imports) out.writeBytesField(7, encodeImport(i))
+        out.writeStringField(8, sidecar.stateObjectFqName)
+        sidecar.resultPropertyName?.let { out.writeStringField(9, it) }
+        out.writeBoolField(10, sidecar.isSynthetic)
+        out.writeBoolField(11, sidecar.isImplicit)
+        return out.toByteArray()
+    }
+
+    private fun encodeMemberRef(m: SnippetArtifactSidecar.MemberRef): ByteArray {
+        val out = ByteArrayOutputStream()
+        out.writeInt32Field(1, memberRefKindId(m.kind))
+        out.writeStringField(2, m.name)
+        m.descriptor?.let { out.writeStringField(3, it) }
+        out.writeInt32Field(4, visibilityId(m.visibility))
+        m.returnTypeSignature?.let { out.writeStringField(5, it) }
+        return out.toByteArray()
+    }
+
+    private fun encodeImport(i: SnippetArtifactSidecar.ImportEntry): ByteArray {
+        val out = ByteArrayOutputStream()
+        out.writeStringField(1, i.fqName)
+        out.writeBoolField(2, i.isAllUnder)
+        i.aliasName?.let { out.writeStringField(3, it) }
+        return out.toByteArray()
     }
 
     fun decode(bytes: ByteArray): SnippetArtifactSidecar {
-        val parser = JsonParser(String(bytes, StandardCharsets.UTF_8))
-        val obj = parser.parseObject()
-        parser.skipWhitespace()
-        if (!parser.eof) error("SnippetArtifactSidecar: trailing content at offset ${parser.pos}")
-        val version = (obj["sidecarVersion"] as? Long)?.toInt()
-            ?: error("SnippetArtifactSidecar: missing 'sidecarVersion'")
+        val r = ProtoReader(bytes)
+        var version = -1
+        var snippetName = ""
+        var snippetClassInternalName = ""
+        var packageFqName = ""
+        var historyIndex = 0
+        val declarations = ArrayList<SnippetArtifactSidecar.MemberRef>()
+        val imports = ArrayList<SnippetArtifactSidecar.ImportEntry>()
+        var stateObjectFqName = ""
+        var resultPropertyName: String? = null
+        var isSynthetic = false
+        var isImplicit = false
+        while (r.hasMore) {
+            val tag = r.readVarint().toInt()
+            val field = tag ushr 3
+            val wireType = tag and 0x7
+            when (field) {
+                1 -> version = r.readVarint().toInt()
+                2 -> snippetName = r.readString()
+                3 -> snippetClassInternalName = r.readString()
+                4 -> packageFqName = r.readString()
+                5 -> historyIndex = r.readVarint().toInt()
+                6 -> declarations += decodeMemberRef(r.readBytes())
+                7 -> imports += decodeImport(r.readBytes())
+                8 -> stateObjectFqName = r.readString()
+                9 -> resultPropertyName = r.readString()
+                10 -> isSynthetic = r.readVarint() != 0L
+                11 -> isImplicit = r.readVarint() != 0L
+                else -> r.skipField(wireType)
+            }
+        }
         if (version != SnippetArtifactSidecar.CURRENT_VERSION) {
             error(
                 "SnippetArtifactSidecar: unsupported sidecarVersion=$version " +
                         "(expected ${SnippetArtifactSidecar.CURRENT_VERSION}). " +
-                        "The paired-JSON sidecar format is unstable; rebuild prior snippets with the matching compiler version."
+                        "The sidecar field set is unstable; rebuild prior snippets with the matching compiler version."
             )
         }
-        @Suppress("UNCHECKED_CAST")
         return SnippetArtifactSidecar(
             sidecarVersion = version,
-            snippetName = obj.req("snippetName") as String,
-            snippetClassInternalName = obj.req("snippetClassInternalName") as String,
-            packageFqName = obj.req("packageFqName") as String,
-            historyIndex = (obj.req("historyIndex") as Long).toInt(),
-            replSnippetDeclarations = (obj.req("replSnippetDeclarations") as List<Map<String, Any?>>).map { m ->
-                SnippetArtifactSidecar.MemberRef(
-                    kind = SnippetArtifactSidecar.MemberRef.Kind.valueOf(m["kind"] as String),
-                    name = m["name"] as String,
-                    descriptor = m["descriptor"] as String?,
-                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.valueOf(m.req("visibility") as String),
-                    returnTypeSignature = m["returnTypeSignature"] as String?,
-                )
-            },
-            imports = (obj.req("imports") as List<Map<String, Any?>>).map { m ->
-                SnippetArtifactSidecar.ImportEntry(
-                    fqName = m["fqName"] as String,
-                    isAllUnder = m["isAllUnder"] as Boolean,
-                    aliasName = m["aliasName"] as String?,
-                )
-            },
-            stateObjectFqName = obj.req("stateObjectFqName") as String,
-            resultPropertyName = obj["resultPropertyName"] as String?,
-            isSynthetic = obj.req("isSynthetic") as Boolean,
-            isImplicit = obj.req("isImplicit") as Boolean,
+            snippetName = snippetName,
+            snippetClassInternalName = snippetClassInternalName,
+            packageFqName = packageFqName,
+            historyIndex = historyIndex,
+            replSnippetDeclarations = declarations,
+            imports = imports,
+            stateObjectFqName = stateObjectFqName,
+            resultPropertyName = resultPropertyName,
+            isSynthetic = isSynthetic,
+            isImplicit = isImplicit,
         )
     }
 
-    private fun Map<String, Any?>.req(key: String): Any =
-        this[key] ?: error("SnippetArtifactSidecar: missing required field '$key'")
-
-    private fun StringBuilder.appendField(name: String, value: String) {
-        appendJsonString(name); append(':'); appendJsonString(value)
-    }
-
-    private fun StringBuilder.appendField(name: String, value: Int) {
-        appendJsonString(name); append(':'); append(value)
-    }
-
-    private fun StringBuilder.appendField(name: String, value: Boolean) {
-        appendJsonString(name); append(':'); append(if (value) "true" else "false")
-    }
-
-    private fun StringBuilder.appendNullableField(name: String, value: String?) {
-        appendJsonString(name); append(':')
-        if (value == null) append("null") else appendJsonString(value)
-    }
-
-    private inline fun <T> StringBuilder.appendArrayField(
-        name: String,
-        items: List<T>,
-        writeItem: (StringBuilder, T) -> Unit,
-    ) {
-        appendJsonString(name); append(":[")
-        for ([idx, item] in items.withIndex()) {
-            if (idx > 0) append(',')
-            writeItem(this, item)
-        }
-        append(']')
-    }
-
-    private fun StringBuilder.appendJsonString(s: String) {
-        append('"')
-        for (c in s) {
-            when (c) {
-                '"' -> append("\\\"")
-                '\\' -> append("\\\\")
-                '\n' -> append("\\n")
-                '\r' -> append("\\r")
-                '\t' -> append("\\t")
-                '\b' -> append("\\b")
-                '\u000C' -> append("\\f")
-                else -> if (c.code < 0x20) {
-                    append("\\u")
-                    val hex = c.code.toString(16)
-                    repeat(4 - hex.length) { append('0') }
-                    append(hex)
-                } else append(c)
+    private fun decodeMemberRef(bytes: ByteArray): SnippetArtifactSidecar.MemberRef {
+        val r = ProtoReader(bytes)
+        var kindId = 0
+        var name = ""
+        var descriptor: String? = null
+        var visibilityId = 0
+        var returnTypeSignature: String? = null
+        while (r.hasMore) {
+            val tag = r.readVarint().toInt()
+            val field = tag ushr 3
+            val wireType = tag and 0x7
+            when (field) {
+                1 -> kindId = r.readVarint().toInt()
+                2 -> name = r.readString()
+                3 -> descriptor = r.readString()
+                4 -> visibilityId = r.readVarint().toInt()
+                5 -> returnTypeSignature = r.readString()
+                else -> r.skipField(wireType)
             }
         }
-        append('"')
+        return SnippetArtifactSidecar.MemberRef(
+            kind = memberRefKind(kindId),
+            name = name,
+            descriptor = descriptor,
+            visibility = visibility(visibilityId),
+            returnTypeSignature = returnTypeSignature,
+        )
+    }
+
+    private fun decodeImport(bytes: ByteArray): SnippetArtifactSidecar.ImportEntry {
+        val r = ProtoReader(bytes)
+        var fqName = ""
+        var isAllUnder = false
+        var aliasName: String? = null
+        while (r.hasMore) {
+            val tag = r.readVarint().toInt()
+            val field = tag ushr 3
+            val wireType = tag and 0x7
+            when (field) {
+                1 -> fqName = r.readString()
+                2 -> isAllUnder = r.readVarint() != 0L
+                3 -> aliasName = r.readString()
+                else -> r.skipField(wireType)
+            }
+        }
+        return SnippetArtifactSidecar.ImportEntry(fqName = fqName, isAllUnder = isAllUnder, aliasName = aliasName)
+    }
+
+    private fun ByteArrayOutputStream.writeVarint(valueArg: Long) {
+        var value = valueArg
+        while (true) {
+            val b = (value and 0x7F).toInt()
+            value = value ushr 7
+            if (value != 0L) write(b or 0x80) else { write(b); return }
+        }
+    }
+
+    private fun ByteArrayOutputStream.writeTag(field: Int, wireType: Int) = writeVarint(((field shl 3) or wireType).toLong())
+
+    private fun ByteArrayOutputStream.writeInt32Field(field: Int, value: Int) {
+        writeTag(field, WIRETYPE_VARINT); writeVarint(value.toLong() and 0xFFFFFFFFL)
+    }
+
+    private fun ByteArrayOutputStream.writeBoolField(field: Int, value: Boolean) {
+        writeTag(field, WIRETYPE_VARINT); writeVarint(if (value) 1L else 0L)
+    }
+
+    private fun ByteArrayOutputStream.writeStringField(field: Int, value: String) {
+        writeBytesField(field, value.toByteArray(StandardCharsets.UTF_8))
+    }
+
+    private fun ByteArrayOutputStream.writeBytesField(field: Int, value: ByteArray) {
+        writeTag(field, WIRETYPE_LEN); writeVarint(value.size.toLong()); write(value)
+    }
+
+    /** Minimal protobuf-wire reader over a [ByteArray]. */
+    private class ProtoReader(private val buf: ByteArray) {
+        private var pos = 0
+        val hasMore: Boolean get() = pos < buf.size
+
+        fun readVarint(): Long {
+            var shift = 0
+            var result = 0L
+            while (true) {
+                if (pos >= buf.size) error("SnippetArtifactSidecar: truncated varint")
+                val b = buf[pos++].toInt() and 0xFF
+                result = result or ((b and 0x7F).toLong() shl shift)
+                if (b and 0x80 == 0) return result
+                shift += 7
+            }
+        }
+
+        fun readString(): String {
+            val len = readVarint().toInt()
+            val s = String(buf, pos, len, StandardCharsets.UTF_8)
+            pos += len
+            return s
+        }
+
+        fun readBytes(): ByteArray {
+            val len = readVarint().toInt()
+            val b = buf.copyOfRange(pos, pos + len)
+            pos += len
+            return b
+        }
+
+        fun skipField(wireType: Int) {
+            when (wireType) {
+                WIRETYPE_VARINT -> readVarint()
+                WIRETYPE_LEN -> { val len = readVarint().toInt(); pos += len }
+                1 -> pos += 8 // 64-bit
+                5 -> pos += 4 // 32-bit
+                else -> error("SnippetArtifactSidecar: unsupported wire type $wireType")
+            }
+        }
     }
 }
 
@@ -443,26 +583,210 @@ private class JsonParser(private val src: String) {
     }
 }
 
-/** Encode the given sidecar into a [SnippetArtifact] together with the supplied class files. */
-fun SnippetArtifactSidecar.toArtifact(classFiles: Map<String, ByteArray>): SnippetArtifact =
-    SnippetArtifact(classFiles, SnippetArtifactJsonCodec.encode(this))
-
-/** Decode this artifact's sidecar back into a [SnippetArtifactSidecar]. */
-fun SnippetArtifact.decodeSidecar(): SnippetArtifactSidecar =
-    SnippetArtifactJsonCodec.decode(sidecar)
+/**
+ * Minimal out-of-band index carried alongside a stateless REPL snippet's class files in a
+ * [SnippetArtifact].
+ *
+ * After the "full cut" of the standalone [SnippetArtifactSidecar] blob, this header holds **only**
+ * the facts a consumer needs *without* deserializing a class's `.kotlin_metadata`:
+ *
+ *  * [snippetClassInternalName] + [packageFqName] — the wrapper class id. The read path
+ *    (`ArtifactBackedFirReplHistoryProvider`) must *find* the wrapper class before it can read the
+ *    embedded [SnippetArtifactSidecar] from that class's metadata, and the reflection-based
+ *    [SnippetArtifactEvaluator] uses it to load the class to run.
+ *  * [snippetName] — used to name the reconstructed `FirReplSnippet` and in diagnostics.
+ *  * [stateObjectFqName] — the REPL state-object FQ name, validated by `K2ReplStatelessCompiler`
+ *    *before* any class is compiled or loaded (so it cannot be sourced from metadata).
+ *  * [resultPropertyName] — the actual emitted result-field name (e.g. `res2`), read reflectively
+ *    by [SnippetArtifactEvaluator]; it is only known post-codegen, and the evaluator does not
+ *    deserialize `.kotlin_metadata`.
+ *  * [isImplicit] — the Q10b history-provider flag, exposed (via `implicitFlags`) *before*
+ *    `materialize()` runs, i.e. before any wrapper class is located.
+ *
+ * Everything else the read path needs — the `isReplSnippetDeclaration` member refs with their
+ * visibilities and the file-level imports — is read from the [SnippetArtifactSidecar] embedded in
+ * the wrapper class's `.kotlin_metadata`, never from here.
+ */
+data class SnippetArtifactHeader(
+    val headerVersion: Int,
+    val snippetName: String,
+    /** JVM internal name of the wrapper class containing `$$eval`, e.g. `"Snippet_1"`. */
+    val snippetClassInternalName: String,
+    val packageFqName: String,
+    /** Fully-qualified name of the REPL state-object class, or empty if generated from defaults. */
+    val stateObjectFqName: String,
+    /** Actual emitted JVM result-field name (e.g. `res2`), or `null` for a declaration-only snippet. */
+    val resultPropertyName: String?,
+    /** `true` when this snippet was implicitly prepended (see [SnippetArtifactSidecar.isImplicit]). */
+    val isImplicit: Boolean,
+) {
+    companion object {
+        /** Bumped on every structural change to the header. */
+        const val CURRENT_VERSION: Int = 1
+    }
+}
 
 /**
- * Wire codec for a complete [SnippetArtifact] (sidecar **plus** class files), suitable for
- * transport across an out-of-process boundary — most notably the Build Tools API
- * `CompileReplSnippetOperation` (see `iterations/2026-05-28c_stateless-repl-bta-transport.md`).
+ * Hand-rolled **protobuf wire-format** writer/reader for [SnippetArtifactHeader] — the same
+ * self-contained approach as [SnippetArtifactSidecarProtoCodec] (no `.proto`-generation wiring, no
+ * dependency on the relocated protobuf runtime's API).
+ *
+ * ### Field schema (stable field numbers)
+ *
+ * `1` headerVersion (int32), `2` snippetName, `3` snippetClassInternalName, `4` packageFqName,
+ * `5` stateObjectFqName, `6` resultPropertyName (optional), `7` isImplicit (bool).
+ *
+ * Unknown fields are skipped on read (forward-compatible); [SnippetArtifactHeader.headerVersion] is
+ * validated for an exact match.
+ */
+object SnippetArtifactHeaderProtoCodec {
+
+    private const val WIRETYPE_VARINT = 0
+    private const val WIRETYPE_LEN = 2
+
+    fun encode(header: SnippetArtifactHeader): ByteArray {
+        val out = ByteArrayOutputStream()
+        out.writeInt32Field(1, header.headerVersion)
+        out.writeStringField(2, header.snippetName)
+        out.writeStringField(3, header.snippetClassInternalName)
+        out.writeStringField(4, header.packageFqName)
+        out.writeStringField(5, header.stateObjectFqName)
+        header.resultPropertyName?.let { out.writeStringField(6, it) }
+        out.writeBoolField(7, header.isImplicit)
+        return out.toByteArray()
+    }
+
+    fun decode(bytes: ByteArray): SnippetArtifactHeader {
+        val r = ProtoReader(bytes)
+        var version = -1
+        var snippetName = ""
+        var snippetClassInternalName = ""
+        var packageFqName = ""
+        var stateObjectFqName = ""
+        var resultPropertyName: String? = null
+        var isImplicit = false
+        while (r.hasMore) {
+            val tag = r.readVarint().toInt()
+            val field = tag ushr 3
+            val wireType = tag and 0x7
+            when (field) {
+                1 -> version = r.readVarint().toInt()
+                2 -> snippetName = r.readString()
+                3 -> snippetClassInternalName = r.readString()
+                4 -> packageFqName = r.readString()
+                5 -> stateObjectFqName = r.readString()
+                6 -> resultPropertyName = r.readString()
+                7 -> isImplicit = r.readVarint() != 0L
+                else -> r.skipField(wireType)
+            }
+        }
+        if (version != SnippetArtifactHeader.CURRENT_VERSION) {
+            error(
+                "SnippetArtifactHeader: unsupported headerVersion=$version " +
+                        "(expected ${SnippetArtifactHeader.CURRENT_VERSION}). " +
+                        "The header field set is unstable; rebuild prior snippets with the matching compiler version."
+            )
+        }
+        return SnippetArtifactHeader(
+            headerVersion = version,
+            snippetName = snippetName,
+            snippetClassInternalName = snippetClassInternalName,
+            packageFqName = packageFqName,
+            stateObjectFqName = stateObjectFqName,
+            resultPropertyName = resultPropertyName,
+            isImplicit = isImplicit,
+        )
+    }
+
+    private fun ByteArrayOutputStream.writeVarint(valueArg: Long) {
+        var value = valueArg
+        while (true) {
+            val b = (value and 0x7F).toInt()
+            value = value ushr 7
+            if (value != 0L) write(b or 0x80) else { write(b); return }
+        }
+    }
+
+    private fun ByteArrayOutputStream.writeTag(field: Int, wireType: Int) = writeVarint(((field shl 3) or wireType).toLong())
+
+    private fun ByteArrayOutputStream.writeInt32Field(field: Int, value: Int) {
+        writeTag(field, WIRETYPE_VARINT); writeVarint(value.toLong() and 0xFFFFFFFFL)
+    }
+
+    private fun ByteArrayOutputStream.writeBoolField(field: Int, value: Boolean) {
+        writeTag(field, WIRETYPE_VARINT); writeVarint(if (value) 1L else 0L)
+    }
+
+    private fun ByteArrayOutputStream.writeStringField(field: Int, value: String) {
+        writeTag(field, WIRETYPE_LEN)
+        val b = value.toByteArray(StandardCharsets.UTF_8)
+        writeVarint(b.size.toLong()); write(b)
+    }
+
+    /** Minimal protobuf-wire reader over a [ByteArray]. */
+    private class ProtoReader(private val buf: ByteArray) {
+        private var pos = 0
+        val hasMore: Boolean get() = pos < buf.size
+
+        fun readVarint(): Long {
+            var shift = 0
+            var result = 0L
+            while (true) {
+                if (pos >= buf.size) error("SnippetArtifactHeader: truncated varint")
+                val b = buf[pos++].toInt() and 0xFF
+                result = result or ((b and 0x7F).toLong() shl shift)
+                if (b and 0x80 == 0) return result
+                shift += 7
+            }
+        }
+
+        fun readString(): String {
+            val len = readVarint().toInt()
+            val s = String(buf, pos, len, StandardCharsets.UTF_8)
+            pos += len
+            return s
+        }
+
+        fun skipField(wireType: Int) {
+            when (wireType) {
+                WIRETYPE_VARINT -> readVarint()
+                WIRETYPE_LEN -> { val len = readVarint().toInt(); pos += len }
+                1 -> pos += 8
+                5 -> pos += 4
+                else -> error("SnippetArtifactHeader: unsupported wire type $wireType")
+            }
+        }
+    }
+}
+
+/**
+ * Plugin id under which the stateless REPL [SnippetArtifactSidecar] is embedded into the snippet
+ * wrapper class's `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel). After
+ * the "full cut" this is the **sole** carrier of the reconstruction payload; the [SnippetArtifact]
+ * itself carries only the out-of-band [SnippetArtifactHeader].
+ */
+const val REPL_SIDECAR_PLUGIN_ID: String = "org.jetbrains.kotlin.scripting.repl.stateless"
+
+/** Encode the given header into a [SnippetArtifact] together with the supplied class files. */
+fun SnippetArtifactHeader.toArtifact(classFiles: Map<String, ByteArray>): SnippetArtifact =
+    SnippetArtifact(classFiles, SnippetArtifactHeaderProtoCodec.encode(this))
+
+/** Decode this artifact's out-of-band [SnippetArtifactHeader]. */
+fun SnippetArtifact.decodeHeader(): SnippetArtifactHeader =
+    SnippetArtifactHeaderProtoCodec.decode(header)
+
+/**
+ * Wire codec for a complete [SnippetArtifact] (out-of-band [header][SnippetArtifactHeader] **plus**
+ * class files), suitable for transport across an out-of-process boundary — most notably the Build
+ * Tools API `CompileReplSnippetOperation` (see `iterations/2026-05-28c_stateless-repl-bta-transport.md`).
  *
  * The format is a single root JSON document — the simplest envelope that makes the
- * sidecar+payload pair self-delimited:
+ * header+payload pair self-delimited:
  *
  * ```json
  * {
- *   "artifactVersion": 1,
- *   "sidecar": "<base64 of SnippetArtifactJsonCodec.encode(sidecar)>",
+ *   "artifactVersion": 2,
+ *   "header": "<base64 of SnippetArtifactHeaderProtoCodec.encode(header)>",
  *   "classFiles": { "ClassName1": "<base64 of bytes>", "ClassName2": "<base64>" }
  * }
  * ```
@@ -472,32 +796,29 @@ fun SnippetArtifact.decodeSidecar(): SnippetArtifactSidecar =
  *  * **Single self-delimited root.** Each artifact is one JSON object — easy to length-prefix in
  *    any outer transport, or to drop into a `byte[]` BTA op parameter unchanged. No multi-part
  *    framing, no resource handles, no filesystem dependency.
- *  * **Opaque payloads.** Both the sidecar (which is *itself* JSON, but treated here as an
- *    opaque blob) and the class-file bytes are base64-encoded. This lets the envelope evolve
- *    independently of the inner sidecar format — the day the sidecar is promoted to a protobuf
- *    `.kotlin_metadata` extension, only the *content* of the `sidecar` field changes, not the
- *    envelope's wire shape.
+ *  * **Opaque payloads.** Both the header (which is *itself* a protobuf message, but treated here
+ *    as an opaque blob) and the class-file bytes are base64-encoded. The bulky reconstruction
+ *    payload no longer travels here at all — it rides inside the class files' `.kotlin_metadata`.
  *  * **Versioned.** [ARTIFACT_VERSION] is the envelope-layout version, **separate** from
- *    [SnippetArtifactSidecar.CURRENT_VERSION] (the sidecar field set). Bumping the envelope
+ *    [SnippetArtifactHeader.CURRENT_VERSION] (the header field set). Bumping the envelope
  *    version covers envelope-shape changes (framing/keys), not field additions inside the
- *    sidecar.
+ *    header. Bumped to `2` by the "full cut" (the `sidecar` key became `header`).
  *
- * This codec is **prototype-only** alongside [SnippetArtifactJsonCodec]. When the sidecar is
- * promoted to protobuf-in-`.kotlin_metadata`, the BTA op should switch to a length-delimited
- * binary envelope (`[ver][sidecar-len][sidecar][n-files][per-file: name-len, name, body-len,
- * body]` or a protobuf root message). The single-root choice here lets the protobuf transition
- * keep the same envelope semantics: one self-delimited message per artifact.
+ * This codec is **prototype-only** alongside [SnippetArtifactHeaderProtoCodec]. A future hardening
+ * could switch the BTA op to a length-delimited binary envelope (`[ver][header-len][header]
+ * [n-files][per-file: name-len, name, body-len, body]` or a protobuf root message). The single-root
+ * choice here keeps the same envelope semantics: one self-delimited message per artifact.
  */
 object SnippetArtifactCodec {
 
-    const val ARTIFACT_VERSION: Int = 1
+    const val ARTIFACT_VERSION: Int = 2
 
     fun encode(artifact: SnippetArtifact): ByteArray {
         val b64 = java.util.Base64.getEncoder()
         val sb = StringBuilder()
         sb.append('{')
         appendFieldKey(sb, "artifactVersion"); sb.append(ARTIFACT_VERSION); sb.append(',')
-        appendFieldKey(sb, "sidecar"); appendJsonString(sb, b64.encodeToString(artifact.sidecar)); sb.append(',')
+        appendFieldKey(sb, "header"); appendJsonString(sb, b64.encodeToString(artifact.header)); sb.append(',')
         appendFieldKey(sb, "classFiles"); sb.append('{')
         var first = true
         // Sort keys so the encoded bytes are deterministic — useful for digests, debugging diffs,
@@ -526,9 +847,9 @@ object SnippetArtifactCodec {
             )
         }
         val b64 = java.util.Base64.getDecoder()
-        val sidecarBase64 = obj["sidecar"] as? String
-            ?: error("SnippetArtifactCodec: missing 'sidecar' field")
-        val sidecarBytes = b64.decode(sidecarBase64)
+        val headerBase64 = obj["header"] as? String
+            ?: error("SnippetArtifactCodec: missing 'header' field")
+        val headerBytes = b64.decode(headerBase64)
         @Suppress("UNCHECKED_CAST")
         val classFilesRaw = obj["classFiles"] as? Map<String, Any?>
             ?: error("SnippetArtifactCodec: missing 'classFiles' field")
@@ -537,7 +858,7 @@ object SnippetArtifactCodec {
             val s = v as? String ?: error("SnippetArtifactCodec: classFiles['$k'] is not a string")
             classFiles[k] = b64.decode(s)
         }
-        return SnippetArtifact(classFiles, sidecarBytes)
+        return SnippetArtifact(classFiles, headerBytes)
     }
 
     private fun appendFieldKey(sb: StringBuilder, name: String) {

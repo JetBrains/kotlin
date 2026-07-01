@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.TestKotlinLogger
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 
@@ -35,11 +37,14 @@ import java.nio.file.Path
  * the proof that the artifact wire-codec + op transport actually round-trips across the process-style
  * seam an out-of-process IDE/build-system consumer would use — not merely within one classloader.
  *
- * Both execution policies are exercised: in-process (drives `K2ReplStatelessCompiler` directly) and
- * with-daemon (the snippet is compiled on the regular `CompileService.compile(...)` path, switched
- * into snippet mode by scripting-plugin options, with the artifact exchanged through files —
- * migration step 3 / Q5d). The daemon variant is the proof that a snippet sequence compiles
- * out-of-process without any REPL-specific daemon RMI.
+ * The op is **out-of-process only**: it is exercised with the with-daemon policy (the snippet is
+ * compiled on the regular `CompileService.compile(...)` path, switched into snippet mode by
+ * scripting-plugin options, with the artifact exchanged through files — migration step 3 / Q5d),
+ * the proof that a snippet sequence compiles out-of-process without any REPL-specific daemon RMI.
+ * The in-process policy is intentionally unsupported and is asserted to be rejected
+ * (`replSnippetCompilationRejectsInProcessExecution`); an in-process consumer is expected to call
+ * `K2ReplStatelessCompiler` directly (covered by `K2ReplStatelessCompilerTest` in
+ * `:kotlin-scripting-compiler`).
  *
  * The deferral of this test (and the reason it lives here rather than in `:kotlin-scripting-compiler`'s
  * test source set) is recorded in
@@ -50,6 +55,7 @@ class ReplSnippetCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Stateless REPL: compile a multi-snippet sequence end-to-end through the BTA transport")
     fun smokeTestStatelessReplSnippetCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assumeDaemon(strategyConfig)
         val toolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
         val stdlib = currentKotlinStdlibLocation
@@ -76,6 +82,7 @@ class ReplSnippetCompilationTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Stateless REPL: a snippet that references an undefined symbol returns a structured Failure")
     fun replSnippetCompilationSurfacesErrors(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assumeDaemon(strategyConfig)
         val toolchain = strategyConfig.first
         val executionPolicy = strategyConfig.second
         val stdlib = currentKotlinStdlibLocation
@@ -97,6 +104,40 @@ class ReplSnippetCompilationTest : BaseCompilationTest() {
         assertTrue(
             message.contains("noSuchSymbol"),
             "diagnostics must reference the offending symbol; was: $message"
+        )
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Stateless REPL: the in-process execution policy is rejected (out-of-process only)")
+    fun replSnippetCompilationRejectsInProcessExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        // The transport op is out-of-process only; the in-process policy must be refused with a
+        // clear assertion rather than silently driving the compiler in the consumer's process.
+        assumeTrue(
+            strategyConfig.second is ExecutionPolicy.InProcess,
+            "this case only verifies the in-process rejection"
+        )
+        val toolchain = strategyConfig.first
+        val executionPolicy = strategyConfig.second
+        val stdlib = currentKotlinStdlibLocation
+
+        val operation = toolchain.jvm.compileReplSnippetOperation(emptyList(), "val x = 42", "s1.repl.kts") {
+            this[CompileReplSnippetOperation.ADDITIONAL_CLASSPATH] = listOf(stdlib)
+        }
+        val error = assertThrows(UnsupportedOperationException::class.java) {
+            toolchain.createBuildSession().use { session ->
+                session.executeOperation(operation, executionPolicy, TestKotlinLogger())
+            }
+        }
+        assertTrue(
+            error.message?.contains("out-of-process") == true,
+            "the rejection must explain the out-of-process constraint; was: ${error.message}"
+        )
+    }
+
+    private fun assumeDaemon(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        assumeTrue(
+            strategyConfig.second is ExecutionPolicy.WithDaemon,
+            "stateless REPL snippet compilation is out-of-process only (with-daemon)"
         )
     }
 

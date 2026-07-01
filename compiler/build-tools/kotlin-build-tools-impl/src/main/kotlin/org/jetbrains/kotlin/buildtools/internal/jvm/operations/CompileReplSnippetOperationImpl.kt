@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplStatelessCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactCodec
 import java.io.File
 import java.net.URLClassLoader
 import java.nio.file.Files
@@ -32,43 +30,30 @@ import java.nio.file.Path
 import java.rmi.RemoteException
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.impl.internalScriptingRunSuspend
-import kotlin.script.experimental.jvm.updateClasspath
 
 /**
  * BTA op implementation that bridges the public [CompileReplSnippetOperation] API to the
  * stateless K2 REPL compile entry point.
  *
- * Two execution policies are supported:
+ * **This is an out-of-process operation.** The whole point of the stateless refactoring is that a
+ * snippet is compiled in a *separate* process from the IDE/build-tool consumer — keeping no
+ * server-side REPL state — so only [ExecutionPolicy.WithDaemon] is supported. There is
+ * deliberately **no** [ExecutionPolicy.InProcess] variant: an in-process consumer that wants to
+ * drive the stateless compiler directly should call [K2ReplStatelessCompiler] itself rather than
+ * go through this transport op (and [executeImpl] rejects the in-process policy with a clear
+ * [UnsupportedOperationException]).
  *
- *  * [ExecutionPolicy.InProcess] — drives [K2ReplStatelessCompiler] directly in the current
- *    process:
- *      1. Decode each prior-snippet `ByteArray` with [SnippetArtifactCodec] into a typed
- *         [SnippetArtifact].
- *      2. Build a per-call [ScriptCompilationConfiguration] (adds [ADDITIONAL_CLASSPATH] entries).
- *      3. Invoke `K2ReplStatelessCompiler.compile(...)` via [internalScriptingRunSuspend].
- *      4. Map every emitted [ScriptDiagnostic] to a [ReplSnippetDiagnostic] and stream the rendered
- *         form through the [KotlinLogger] (honouring [COMPILER_MESSAGE_RENDERER]).
- *      5. On success, encode the resulting [SnippetArtifact] back to bytes and return it inside a
- *         [ReplSnippetCompilationResult.Success]; on a compile failure, return a
- *         [ReplSnippetCompilationResult.Failure] carrying the diagnostics.
+ * On [ExecutionPolicy.WithDaemon] the snippet is compiled on the **regular** Kotlin compile daemon
+ * path (migration step 3, Q5d): the snippet rides a plain `CompileService.compile(...)` call
+ * switched into snippet mode by scripting-plugin options (`repl-snippet-mode` /
+ * `repl-snippet-name` / `repl-snippet-prior-artifact` / `repl-snippet-artifact-output`), exactly
+ * as a CLI invocation would. No REPL-specific RMI is added to `CompileService` (which migration
+ * step 4 strips) — priors and the produced artifact are exchanged through plain files, and the
+ * daemon-reported compiler messages are captured back into the structured
+ * [ReplSnippetCompilationResult].
  *
- *  * [ExecutionPolicy.WithDaemon] — compiles the snippet on the **regular** Kotlin compile daemon
- *    path (migration step 3, Q5d): the snippet rides a plain `CompileService.compile(...)` call
- *    switched into snippet mode by scripting-plugin options (`repl-snippet-mode` /
- *    `repl-snippet-name` / `repl-snippet-prior-artifact` / `repl-snippet-artifact-output`), exactly
- *    as a CLI invocation would. No REPL-specific RMI is added to `CompileService` (which migration
- *    step 4 strips) — priors and the produced artifact are exchanged through plain files, and the
- *    daemon-reported compiler messages are captured back into the structured
- *    [ReplSnippetCompilationResult].
- *
- * A plain compile failure is **not** signalled by a thrown exception on either path — exceptions are
- * reserved for precondition/infra errors (unsupported execution policy, undecodable prior artifact,
- * daemon connection failure).
+ * A plain compile failure is **not** signalled by a thrown exception — exceptions are reserved for
+ * precondition/infra errors (unsupported execution policy, daemon connection failure).
  */
 internal class CompileReplSnippetOperationImpl private constructor(
     override val options: Options = Options(CompileReplSnippetOperation::class),
@@ -101,40 +86,16 @@ internal class CompileReplSnippetOperationImpl private constructor(
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
     ): ReplSnippetCompilationResult = when (executionPolicy) {
-        is InProcessExecutionPolicyImpl -> executeInProcess(logger)
         is DaemonExecutionPolicyImpl -> executeWithDaemon(projectId, executionPolicy, logger)
+        is InProcessExecutionPolicyImpl -> throw UnsupportedOperationException(
+            "Stateless REPL snippet compilation is an out-of-process operation: only " +
+                    "ExecutionPolicy.WithDaemon is supported. In-process execution is intentionally not " +
+                    "provided — the stateless refactoring exists so a snippet can be compiled in a separate " +
+                    "process (the daemon, or a regular compiler subprocess) without keeping server-side REPL " +
+                    "state. An in-process consumer should call K2ReplStatelessCompiler directly instead of " +
+                    "going through this transport operation."
+        )
         else -> throw IllegalStateException("Unsupported execution policy: ${executionPolicy::class.qualifiedName}")
-    }
-
-    private fun executeInProcess(logger: KotlinLogger?): ReplSnippetCompilationResult {
-        val priors: List<SnippetArtifact> = priorSnippets.map { SnippetArtifactCodec.decode(it) }
-        val extraClasspath: List<Path> = this[ADDITIONAL_CLASSPATH]
-        val compilationConfig = ScriptCompilationConfiguration {
-            if (extraClasspath.isNotEmpty()) {
-                updateClasspath(extraClasspath.map { it.toFile() })
-            }
-        }
-
-        val compiler = K2ReplStatelessCompiler()
-        @Suppress("DEPRECATION_ERROR")
-        val result: ResultWithDiagnostics<SnippetArtifact> = internalScriptingRunSuspend {
-            compiler.compile(
-                priorSnippets = priors,
-                snippet = snippetSource.toScriptSource(snippetName),
-                scriptCompilationConfiguration = compilationConfig,
-            )
-        }
-
-        val diagnostics = result.reports.map { it.toReplSnippetDiagnostic() }
-        reportDiagnostics(diagnostics, logger)
-
-        return when (result) {
-            is ResultWithDiagnostics.Success ->
-                ReplSnippetCompilationResult.Success(SnippetArtifactCodec.encode(result.value), diagnostics)
-
-            is ResultWithDiagnostics.Failure ->
-                ReplSnippetCompilationResult.Failure(diagnostics)
-        }
     }
 
     /**
@@ -162,11 +123,11 @@ internal class CompileReplSnippetOperationImpl private constructor(
             val extraClasspath: List<Path> = this[ADDITIONAL_CLASSPATH]
             // The shaded `kotlin-build-tools-impl` jar deliberately strips the scripting plugin's
             // `CompilerPluginRegistrar`/`CommandLineProcessor` service files (so it does not
-            // auto-register on every regular compilation). The in-process path sidesteps this by
-            // calling `K2ReplStatelessCompiler` directly, but the daemon runs the *regular* compiler,
-            // which discovers plugins via services — so we hand it a tiny `-Xplugin` jar that
-            // re-declares the (relocated) scripting plugin (its classes are already on the daemon's
-            // compiler classpath inside the shaded jar).
+            // auto-register on every regular compilation). Calling `K2ReplStatelessCompiler`
+            // directly would sidestep this, but the daemon runs the *regular* compiler, which
+            // discovers plugins via services — so we hand it a tiny `-Xplugin` jar that re-declares
+            // the (relocated) scripting plugin (its classes are already on the daemon's compiler
+            // classpath inside the shaded jar).
             val pluginServicesJar = createScriptingPluginServicesJar(workDir)
 
             val arguments = buildSnippetCompilerArguments(extraClasspath, priorFiles, outputFile, pluginServicesJar)
@@ -333,43 +294,6 @@ internal class CompileReplSnippetOperationImpl private constructor(
             serviceEntry("org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor", commandLineProcessorFqName)
         }
         return jar
-    }
-
-    /** Renders [diagnostics] with [COMPILER_MESSAGE_RENDERER] and streams them through [logger]. */
-    private fun reportDiagnostics(diagnostics: List<ReplSnippetDiagnostic>, logger: KotlinLogger?) {
-        if (diagnostics.isEmpty()) return
-        val renderer = this[COMPILER_MESSAGE_RENDERER]
-        val kotlinLogger = logger ?: DefaultKotlinLogger
-        for (diagnostic in diagnostics) {
-            val rendered = renderer.render(diagnostic.severity, diagnostic.message, diagnostic.location)
-            when (diagnostic.severity) {
-                CompilerMessageRenderer.Severity.ERROR -> kotlinLogger.error(rendered)
-                CompilerMessageRenderer.Severity.WARNING -> kotlinLogger.warn(rendered)
-                CompilerMessageRenderer.Severity.INFO -> kotlinLogger.info(rendered)
-                CompilerMessageRenderer.Severity.DEBUG -> kotlinLogger.debug(rendered)
-            }
-        }
-    }
-
-    /** Maps a scripting [ScriptDiagnostic] onto the BTA-level [ReplSnippetDiagnostic]. */
-    private fun ScriptDiagnostic.toReplSnippetDiagnostic(): ReplSnippetDiagnostic {
-        val mappedSeverity = when (severity) {
-            ScriptDiagnostic.Severity.DEBUG -> CompilerMessageRenderer.Severity.DEBUG
-            ScriptDiagnostic.Severity.INFO -> CompilerMessageRenderer.Severity.INFO
-            ScriptDiagnostic.Severity.WARNING -> CompilerMessageRenderer.Severity.WARNING
-            ScriptDiagnostic.Severity.ERROR, ScriptDiagnostic.Severity.FATAL -> CompilerMessageRenderer.Severity.ERROR
-        }
-        val mappedLocation = location?.let { loc ->
-            CompilerMessageRenderer.SourceLocation(
-                path = sourcePath ?: snippetName,
-                line = loc.start.line,
-                column = loc.start.col,
-                lineEnd = loc.end?.line ?: -1,
-                columnEnd = loc.end?.col ?: -1,
-                lineContent = null,
-            )
-        }
-        return ReplSnippetDiagnostic(mappedSeverity, message, mappedLocation)
     }
 
     override fun toBuilder(): CompileReplSnippetOperation.Builder = deepCopy()

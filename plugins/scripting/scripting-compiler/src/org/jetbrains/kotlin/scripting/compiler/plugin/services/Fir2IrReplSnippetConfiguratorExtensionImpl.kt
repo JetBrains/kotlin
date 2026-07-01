@@ -45,6 +45,9 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildReplSidecarFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSidecarMetadataAttr
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -143,6 +146,41 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             )
 
         irSnippet.stateObject = stateObject.symbol
+
+        stashReplSidecarMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * On the **stateless** REPL compile path, assemble the frontend-derivable
+     * `SnippetArtifactSidecar` (declarations + visibilities + imports + state-object FQ name +
+     * name) and stash its protobuf-wire bytes on [irSnippet] so that
+     * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass` can embed them into the wrapper
+     * class's `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel).
+     *
+     * This is a no-op on the stateful/golden path — detected by the host configuration carrying an
+     * [ArtifactBackedFirReplHistoryProvider] (only the stateless orchestrator installs one) — so
+     * stateful snippet `.kotlin_metadata` is left bit-for-bit unchanged.
+     *
+     * The config-only fields (`isSynthetic` / `isImplicit` / the result-field name) are not
+     * reachable here (no `ScriptCompilationConfiguration` / `GenerationState` before code-gen);
+     * they are passed as best-effort defaults. The read path consults the embedded copy only for
+     * the frontend-derivable fields above and continues to read those config-only flags from the
+     * authoritative standalone blob.
+     */
+    private fun stashReplSidecarMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]
+        if (historyProvider !is ArtifactBackedFirReplHistoryProvider) return
+
+        val sidecar = buildReplSidecarFromFir(
+            firSnippet = firReplSnippet,
+            session = session,
+            hostConfiguration = hostConfiguration,
+            historyIndex = historyProvider.getSnippetCount(),
+            resultPropertyName = null,
+            isSynthetic = false,
+            isImplicit = false,
+        )
+        irSnippet.replSidecarMetadataAttr = SnippetArtifactSidecarProtoCodec.encode(sidecar)
     }
 
     private fun Fir2IrComponents.getOrBuildActualParent(

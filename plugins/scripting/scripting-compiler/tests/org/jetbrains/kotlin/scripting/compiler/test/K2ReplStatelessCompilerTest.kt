@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactEvaluator
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactJsonCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactHeader
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactHeaderProtoCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeHeader
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.replStateObjectFqName
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -72,14 +74,15 @@ class K2ReplStatelessCompilerTest {
             name = "s1.repl.kts",
         ).valueOrThrowExplained("snippet 1 compile failed")
 
-        val sidecar1 = artifact1.decodeSidecar()
-        assertEquals(0, sidecar1.historyIndex, "snippet 1 historyIndex should be 0")
+        val header1 = artifact1.decodeHeader()
         assertTrue(artifact1.classFiles.isNotEmpty(), "snippet 1 must emit at least one .class file")
-        val declNames1 = sidecar1.replSnippetDeclarations.map { it.name }.toSet()
         assertTrue(
-            "x" in declNames1,
-            "snippet 1 sidecar must list `x` as a repl-snippet declaration; got: $declNames1"
+            header1.snippetClassInternalName.isNotEmpty(),
+            "snippet 1 header must record the wrapper class internal name"
         )
+        // Note: `x` being a recognised repl declaration is proven by snippet 2 resolving it below —
+        // after the "full cut" the declaration list is no longer carried in the artifact header; it
+        // lives only in the wrapper class's embedded `.kotlin_metadata`.
 
         // 2. Compile snippet 2 against [artifact1]: `x + 1`.
         //    Successful compile = the entire stateless reconstruction chain worked.
@@ -90,8 +93,7 @@ class K2ReplStatelessCompilerTest {
             name = "s2.repl.kts",
         ).valueOrThrowExplained("stateless snippet 2 compile failed (cross-snippet resolution likely broken)")
 
-        val sidecar2 = artifact2.decodeSidecar()
-        assertEquals(1, sidecar2.historyIndex, "snippet 2 historyIndex should be 1")
+        val header2 = artifact2.decodeHeader()
         assertTrue(artifact2.classFiles.isNotEmpty(), "snippet 2 must emit at least one .class file")
         // Snippet wrapper class names embed the source name; assert at least one classfile mentions `s2`.
         val classKeys = artifact2.classFiles.keys
@@ -99,12 +101,54 @@ class K2ReplStatelessCompilerTest {
             classKeys.any { it.contains("s2", ignoreCase = true) || it.contains("S2", ignoreCase = true) },
             "snippet 2 classfiles should encode the source name `s2`; got keys: $classKeys"
         )
-        // Snippet 2 wrapper class internal name from the sidecar should be present among the classfile keys.
+        // Snippet 2 wrapper class internal name from the header should be present among the classfile keys.
         assertTrue(
-            sidecar2.snippetClassInternalName in classKeys ||
-                    classKeys.any { it.endsWith("/${sidecar2.snippetClassInternalName.substringAfterLast('/')}") },
-            "snippet 2 wrapper class `${sidecar2.snippetClassInternalName}` must be among classfile keys $classKeys"
+            header2.snippetClassInternalName in classKeys ||
+                    classKeys.any { it.endsWith("/${header2.snippetClassInternalName.substringAfterLast('/')}") },
+            "snippet 2 wrapper class `${header2.snippetClassInternalName}` must be among classfile keys $classKeys"
         )
+    }
+
+    /**
+     * Falsifiable proof that, after the **full cut**, the reconstruction payload (declarations +
+     * imports) is carried **only** inside the wrapper class's `.kotlin_metadata` — never in the
+     * artifact's out-of-band header — and that it survives the [SnippetArtifactCodec] wire envelope.
+     *
+     * Snippet 1 (`val x = 42`) is encoded to wire bytes and decoded back. The decoded artifact's
+     * header has no declaration list (the [SnippetArtifactHeader] type physically has no such
+     * field), so the declaration `x` is recoverable *only* from the embedded `.kotlin_metadata` that
+     * rode inside the class-file payload. Compiling snippet 2 (`x + 1`) against the round-tripped
+     * prior can only resolve `x` if reconstruction read the declaration list from that embedded copy
+     * — proving the cut end-to-end. Were the embedded sidecar missing or ignored, `x` would be left
+     * untagged and snippet 2 would fail with an unresolved reference.
+     */
+    @Test
+    fun testStatelessReplReconstructsDeclarationsFromEmbeddedMetadataAcrossWire() {
+        if (!isK2) return
+
+        val compiler = K2ReplStatelessCompiler()
+
+        // 1. Compile snippet 1 and round-trip the whole artifact (header + class files) through the
+        //    wire envelope, exactly as an out-of-process BTA caller would.
+        val artifact1 = compileStateless(compiler, emptyList(), "val x = 42", "s1.repl.kts")
+            .valueOrThrowExplained("snippet 1 compile failed")
+        val artifact1Wire = SnippetArtifactCodec.decode(SnippetArtifactCodec.encode(artifact1))
+
+        // 2. The out-of-band header still travels, but it carries no declaration list (compile-time
+        //    guarantee — the type has no such field). The declaration `x` lives only in the embedded
+        //    `.kotlin_metadata` inside the class files.
+        assertTrue(
+            artifact1Wire.header.isNotEmpty(),
+            "the wire-encoded artifact must still carry a (minimal) out-of-band header"
+        )
+
+        // 3. Compile snippet 2 against the round-tripped prior. Success ⇒ `x` was tagged from the
+        //    embedded `.kotlin_metadata` sidecar that survived the wire envelope, proving the cut.
+        compileStateless(compiler, listOf(artifact1Wire), "x + 1", "s2.repl.kts")
+            .valueOrThrowExplained(
+                "snippet 2 failed to resolve `x` after a wire round-trip — reconstruction must source " +
+                        "declarations from the embedded `.kotlin_metadata` sidecar, not the artifact header"
+            )
     }
 
     @Test
@@ -141,13 +185,13 @@ class K2ReplStatelessCompilerTest {
         assertEquals(43, evalResult.readDeclaredField(1, "y"), "snippet 2 `y` must hold x+1 == 43 after eval")
 
         // s3 is an expression `x + y`; its value is captured in the REPL result field named by the
-        // sidecar's `resultPropertyName`. For a REPL snippet that is `res<snippetId>` (e.g. `res2`,
-        // the `resultFieldPrefix`+id form), not the `$$result` config default — the sidecar must
+        // header's `resultPropertyName`. For a REPL snippet that is `res<snippetId>` (e.g. `res2`,
+        // the `resultFieldPrefix`+id form), not the `$$result` config default — the header must
         // therefore record the *emitted* field name for the value to be readable. 42 + 43 == 85
         // proves both prior snippets contributed at runtime.
         val resultFieldName = assertNotNull(
             evalResult.resultFieldName,
-            "expression snippet must record a result-field name in its sidecar"
+            "expression snippet must record a result-field name in its header"
         )
         assertTrue(
             resultFieldName.startsWith("res"),
@@ -157,7 +201,7 @@ class K2ReplStatelessCompilerTest {
     }
 
     @Test
-    fun testSidecarJsonRoundtrip() {
+    fun testSidecarProtoRoundtrip() {
         val original = SnippetArtifactSidecar(
             sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
             snippetName = "Snippet_1",
@@ -215,13 +259,13 @@ class K2ReplStatelessCompilerTest {
             isSynthetic = true,
             isImplicit = true,
         )
-        val bytes = SnippetArtifactJsonCodec.encode(original)
-        val decoded = SnippetArtifactJsonCodec.decode(bytes)
-        assertEquals(original, decoded, "sidecar must round-trip through JSON without loss")
+        val bytes = SnippetArtifactSidecarProtoCodec.encode(original)
+        val decoded = SnippetArtifactSidecarProtoCodec.decode(bytes)
+        assertEquals(original, decoded, "sidecar must round-trip through protobuf without loss")
 
         // Round-trip the synthetic flag with the opposite value too.
         val nonSynthetic = original.copy(isSynthetic = false, resultPropertyName = null)
-        val decoded2 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(nonSynthetic))
+        val decoded2 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(nonSynthetic))
         assertEquals(nonSynthetic, decoded2)
         assertNotEquals(decoded, decoded2)
 
@@ -229,41 +273,61 @@ class K2ReplStatelessCompilerTest {
         // a user-authored snippet that the compilation flagged implicit, *without* the
         // compile-side `_isSyntheticSnippet` flag.
         val implicitNotSynthetic = original.copy(isSynthetic = false, isImplicit = true)
-        val decoded3 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(implicitNotSynthetic))
+        val decoded3 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(implicitNotSynthetic))
         assertEquals(implicitNotSynthetic, decoded3)
         assertTrue(decoded3.isImplicit, "isImplicit must round-trip independently of isSynthetic")
         assertEquals(false, decoded3.isSynthetic, "isSynthetic must round-trip independently of isImplicit")
 
         // And the inverse — a synthetic snippet that callers chose *not* to surface as implicit.
         val syntheticNotImplicit = original.copy(isSynthetic = true, isImplicit = false)
-        val decoded4 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(syntheticNotImplicit))
+        val decoded4 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(syntheticNotImplicit))
         assertEquals(syntheticNotImplicit, decoded4)
         assertEquals(false, decoded4.isImplicit)
         assertTrue(decoded4.isSynthetic)
     }
 
     @Test
+    fun testHeaderProtoRoundtrip() {
+        val original = SnippetArtifactHeader(
+            headerVersion = SnippetArtifactHeader.CURRENT_VERSION,
+            snippetName = "Snippet_1",
+            snippetClassInternalName = "some/pkg/Snippet_1",
+            packageFqName = "some.pkg",
+            stateObjectFqName = "some.pkg.MyReplState",
+            resultPropertyName = "res1",
+            isImplicit = true,
+        )
+        val decoded = SnippetArtifactHeaderProtoCodec.decode(SnippetArtifactHeaderProtoCodec.encode(original))
+        assertEquals(original, decoded, "header must round-trip through protobuf without loss")
+
+        // Optional `resultPropertyName` + the `isImplicit` flag round-trip independently.
+        val noResult = original.copy(resultPropertyName = null, isImplicit = false)
+        val decoded2 = SnippetArtifactHeaderProtoCodec.decode(SnippetArtifactHeaderProtoCodec.encode(noResult))
+        assertEquals(noResult, decoded2)
+        assertNotEquals(decoded, decoded2)
+        assertEquals(null, decoded2.resultPropertyName, "null resultPropertyName must round-trip as absent")
+        assertEquals(false, decoded2.isImplicit)
+    }
+
+    @Test
     fun testStateObjectFqNameMismatchIsRejected() {
-        // Build a prior artifact whose sidecar carries a specific `stateObjectFqName`.
-        val priorSidecar = SnippetArtifactSidecar(
-            sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
+        // Build a prior artifact whose header carries a specific `stateObjectFqName`.
+        val priorHeader = SnippetArtifactHeader(
+            headerVersion = SnippetArtifactHeader.CURRENT_VERSION,
             snippetName = "Snippet_1",
             snippetClassInternalName = "Snippet_1",
             packageFqName = "",
-            historyIndex = 0,
-            replSnippetDeclarations = emptyList(),
-            imports = emptyList(),
             stateObjectFqName = "some.pkg.PriorState",
             resultPropertyName = null,
-            isSynthetic = false,
+            isImplicit = false,
         )
         val priorArtifact = SnippetArtifact(
             classFiles = emptyMap(),
-            sidecar = SnippetArtifactJsonCodec.encode(priorSidecar),
+            header = SnippetArtifactHeaderProtoCodec.encode(priorHeader),
         )
 
         // The caller supplies a host configuration whose `replStateObjectFqName` disagrees with the
-        // prior artifact's sidecar — the orchestrator must reject this with a clear diagnostic.
+        // prior artifact's header — the orchestrator must reject this with a clear diagnostic.
         val mismatchHostConfig = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
             repl {
                 replStateObjectFqName("some.pkg.CallerState")
@@ -292,7 +356,7 @@ class K2ReplStatelessCompilerTest {
 
     @Test
     fun testSnippetArtifactCodecRoundtrip() {
-        // Compile a real snippet to obtain a non-trivial artifact (class files + sidecar bytes)
+        // Compile a real snippet to obtain a non-trivial artifact (class files + header bytes)
         // that exercises both fields of the envelope.
         if (!isK2) return
         val compiler = K2ReplStatelessCompiler()
@@ -303,12 +367,12 @@ class K2ReplStatelessCompilerTest {
             name = "codec_probe.repl.kts",
         ).valueOrThrowExplained("codec probe snippet failed to compile")
         assertTrue(artifact.classFiles.isNotEmpty(), "codec probe must produce class files")
-        assertTrue(artifact.sidecar.isNotEmpty(), "codec probe must produce sidecar bytes")
+        assertTrue(artifact.header.isNotEmpty(), "codec probe must produce header bytes")
 
         val encoded = SnippetArtifactCodec.encode(artifact)
         val decoded = SnippetArtifactCodec.decode(encoded)
 
-        // The envelope must preserve content (per-class-file bytes and the sidecar bytes), but
+        // The envelope must preserve content (per-class-file bytes and the header bytes), but
         // class-file key ordering need not survive — `SnippetArtifactCodec.encode` deliberately
         // sorts keys for deterministic output. So compare by `equals` (which checks key set +
         // per-key contents) rather than re-encoding bytes.

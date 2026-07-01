@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactCodec
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeHeader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.Test
@@ -173,8 +174,10 @@ class ScriptingCompilerPluginTest {
             assertTrue(artifact1File.exists()) { "snippet 1 artifact must be written" }
             val artifact1 = SnippetArtifactCodec.decode(artifact1File.readBytes())
             assertTrue(artifact1.classFiles.isNotEmpty()) { "snippet 1 must emit at least one class file" }
-            assertTrue("x" in artifact1.decodeSidecar().replSnippetDeclarations.map { it.name }) {
-                "snippet 1 sidecar must declare `x`"
+            // After the "full cut", declarations are no longer carried in the artifact header; that
+            // `x` is a recognised repl declaration is proven by snippet 2 resolving it below.
+            assertTrue(artifact1.decodeHeader().snippetClassInternalName.isNotEmpty()) {
+                "snippet 1 header must record the wrapper class internal name"
             }
 
             // 2. Snippet 2 against snippet 1: `x + 1` — proves the prior artifact is consumed.
@@ -186,11 +189,11 @@ class ScriptingCompilerPluginTest {
             val exit2 = compileReplSnippet("x + 1".toScriptSource("s2.repl.kts"), config2)
             assertEquals(ExitCode.OK, exit2, "snippet 2 should compile against snippet 1:\n$collector2")
             assertTrue(artifact2File.exists()) { "snippet 2 artifact must be written" }
-            assertEquals(
-                1,
-                SnippetArtifactCodec.decode(artifact2File.readBytes()).decodeSidecar().historyIndex,
-                "snippet 2 historyIndex should be 1",
-            )
+            val artifact2 = SnippetArtifactCodec.decode(artifact2File.readBytes())
+            assertTrue(artifact2.classFiles.isNotEmpty()) { "snippet 2 must emit at least one class file" }
+            assertTrue(artifact2.decodeHeader().snippetClassInternalName.isNotEmpty()) {
+                "snippet 2 header must record the wrapper class internal name"
+            }
 
             // 3. Error path: an unresolved reference must fail and write no artifact.
             val artifact3File = File(tmpdir, "s3.artifact")
@@ -233,12 +236,85 @@ class ScriptingCompilerPluginTest {
 
             val artifact = SnippetArtifactCodec.decode(artifactFile.readBytes())
             assertTrue(artifact.classFiles.isNotEmpty()) { "CLI-produced artifact must contain class files" }
-            val sidecar = artifact.decodeSidecar()
-            assertEquals(0, sidecar.historyIndex, "first snippet historyIndex should be 0")
-            assertTrue("x" in sidecar.replSnippetDeclarations.map { it.name }) {
-                "CLI-produced artifact sidecar must declare `x`"
+            val header = artifact.decodeHeader()
+            assertTrue(header.snippetClassInternalName.isNotEmpty()) {
+                "CLI-produced artifact header must record the wrapper class internal name"
             }
         }
+    }
+
+    @Test
+    fun testReplSnippetCompilationViaKotlincSubprocess() {
+        // Like `testReplSnippetCompilationViaCli`, but compiles each snippet in a *genuinely separate
+        // OS process* — a freshly forked JVM running `K2JVMCompiler` off this test's classpath (the
+        // scripting plugin is auto-discovered there via its `META-INF/services` files). This is the
+        // strongest proof that the stateless snippet sequence works
+        // out-of-process via the regular compile path: the artifact of snippet 1 is handed to a
+        // *second*, independent compiler process as a prior, and snippet 2 (`x + 1`) resolves `x`
+        // across that process boundary. Snippets are given distinct names via `repl-snippet-name`
+        // because `-expression` always names the synthetic source `script.kts`.
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+                System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+        if (!isK2) return
+
+        withTempDir { tmpdir ->
+            val scriptCp = (runtimeClasspath + scriptingClasspath).joinToString(File.pathSeparator)
+
+            fun snippetArgs(source: String, name: String, output: File, priors: List<File>): List<String> = buildList {
+                add(K2JVMCompilerArguments::classpath.cliArgument); add(scriptCp)
+                add(K2JVMCompilerArguments::expression.cliArgument); add(source)
+                add("-P"); add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-mode=true")
+                add("-P"); add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-name=$name")
+                for (prior in priors) {
+                    add("-P"); add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-prior-artifact=${prior.absolutePath}")
+                }
+                add("-P"); add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-artifact-output=${output.absolutePath}")
+                add(CommonCompilerArguments::suppressVersionWarnings.cliArgument)
+            }
+
+            // Snippet 1 (no priors), compiled in its own process.
+            val out1 = File(tmpdir, "s1.artifact")
+            val result1 = runCompilerSubprocess(snippetArgs("val x = 42", "s1.repl.kts", out1, emptyList()))
+            assertEquals(ExitCode.OK.code, result1.first, "snippet 1 subprocess compile must succeed; output:\n${result1.second}")
+            assertTrue(out1.exists()) { "snippet 1 artifact must be written by the subprocess" }
+
+            // Snippet 2 (`x + 1`), compiled in a *second* process with snippet 1 as a prior.
+            val out2 = File(tmpdir, "s2.artifact")
+            val result2 = runCompilerSubprocess(snippetArgs("x + 1", "s2.repl.kts", out2, listOf(out1)))
+            assertEquals(ExitCode.OK.code, result2.first, "snippet 2 subprocess compile against the prior must succeed; output:\n${result2.second}")
+            assertTrue(out2.exists()) { "snippet 2 artifact must be written by the subprocess" }
+
+            val artifact2 = SnippetArtifactCodec.decode(out2.readBytes())
+            assertTrue(artifact2.classFiles.isNotEmpty()) { "snippet 2 artifact must contain class files" }
+            // The prior artifact having been decoded and consumed across the process boundary is
+            // proven by snippet 2's `x + 1` compiling at all (its `ExitCode.OK` above) — `x` resolves
+            // only from the prior. The header just records snippet 2's own wrapper class.
+            assertTrue(artifact2.decodeHeader().snippetClassInternalName.isNotEmpty()) {
+                "snippet 2 header must record the wrapper class internal name"
+            }
+        }
+    }
+
+    /**
+     * Runs `K2JVMCompiler` in a freshly forked JVM (this test's classpath, which carries the
+     * scripting plugin auto-discovered via `META-INF/services`). Returns the process exit code and
+     * the merged stdout+stderr, the latter only for failure diagnostics.
+     */
+    private fun runCompilerSubprocess(compilerArgs: List<String>): Pair<Int, String> {
+        val javaExe = File(File(System.getProperty("java.home"), "bin"), "java").absolutePath
+        val command = buildList {
+            add(javaExe)
+            add("-cp"); add(System.getProperty("java.class.path"))
+            add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+            addAll(compilerArgs)
+        }
+        val process = ProcessBuilder(command).redirectErrorStream(true).start()
+        val output = process.inputStream.bufferedReader().use { it.readText() }
+        if (!process.waitFor(5, TimeUnit.MINUTES)) {
+            process.destroyForcibly()
+            fail("Compiler subprocess timed out")
+        }
+        return process.exitValue() to output
     }
 
     @Test

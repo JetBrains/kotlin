@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.utils.compilerPluginMetadata
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -39,9 +40,12 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.REPL_SIDECAR_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactHeader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecarProtoCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeHeader
 
 /**
  * A [FirReplHistoryProvider] that reconstructs `FirReplSnippetSymbol` views of prior REPL snippets
@@ -76,19 +80,21 @@ internal class ArtifactBackedFirReplHistoryProvider(
     private var cached: List<FirReplSnippetSymbol>? = null
 
     /**
-     * Identity-keyed mapping from a reconstructed [FirReplSnippetSymbol] back to the sidecar it
-     * was materialised from.
+     * Identity-keyed mapping from a reconstructed [FirReplSnippetSymbol] back to the **embedded**
+     * [SnippetArtifactSidecar] (read from the wrapper class's `.kotlin_metadata`) it was
+     * materialised from.
      *
      * Populated as a side-effect of [materialize] (in lock-step with [cached]); read by
      * [getSnippetImports] to project the sidecar's `ImportEntry`s into [FirImport]s without a
      * second `materialize`-style walk. Identity-based (`===`) because two prior snippets that
      * happen to share a wrapper-class short name would otherwise collide; `FirReplSnippetSymbol`
-     * has no inherent identity beyond reference equality.
+     * has no inherent identity beyond reference equality. A `null` value records a prior snippet
+     * whose wrapper class carried no embedded sidecar (so it contributes no imports).
      */
-    private val symbolToSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar> = HashMap()
+    private val symbolToEmbeddedSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar?> = HashMap()
 
-    private val decodedSidecars: List<SnippetArtifactSidecar> by lazy {
-        priorSnippets.map { it.decodeSidecar() }
+    private val decodedHeaders: List<SnippetArtifactHeader> by lazy {
+        priorSnippets.map { it.decodeHeader() }
     }
 
     /**
@@ -96,7 +102,7 @@ internal class ArtifactBackedFirReplHistoryProvider(
      * against the caller's host configuration before installing the provider.
      */
     val agreedStateObjectFqName: String? by lazy {
-        decodedSidecars.asSequence()
+        decodedHeaders.asSequence()
             .map { it.stateObjectFqName }
             .filter { it.isNotEmpty() }
             .firstOrNull()
@@ -113,34 +119,34 @@ internal class ArtifactBackedFirReplHistoryProvider(
      * The list is `priorSnippets.size`-long and order-aligned with `priorSnippets`, *not* with the
      * `getSnippets()` result. If `materialize()` skipped an artifact (lookup MISS), that index is
      * still present here — consumers wanting the [FirReplSnippetSymbol]→`isImplicit` mapping should
-     * look up the symbol's owning sidecar via [findSidecarFor] instead.
+     * look up the symbol's owning header via [findHeaderFor] instead.
      */
     val implicitFlags: List<Boolean> by lazy {
-        decodedSidecars.map { it.isImplicit }
+        decodedHeaders.map { it.isImplicit }
     }
 
     /**
-     * Returns the [SnippetArtifactSidecar] whose reconstructed symbol equals [symbol], or `null`
+     * Returns the [SnippetArtifactHeader] whose reconstructed symbol equals [symbol], or `null`
      * if [symbol] does not correspond to any prior snippet known to this provider.
      *
      * Cheap O(N) walk — fine for the prototype because [priorSnippets] is bounded by the REPL
      * session length per call.
      */
-    fun findSidecarFor(symbol: FirReplSnippetSymbol): SnippetArtifactSidecar? {
+    fun findHeaderFor(symbol: FirReplSnippetSymbol): SnippetArtifactHeader? {
         val materialized = cached ?: return null
         val index = materialized.indexOfFirst { it === symbol }
         if (index < 0) return null
         // `cached` may be shorter than `priorSnippets` (lookup misses are skipped). Recover the
-        // original sidecar by matching on the wrapper class's short name, which is unique within
+        // original header by matching on the wrapper class's short name, which is unique within
         // a REPL session.
-        val sidecarName = materialized[index].snippetClassSymbol.classId.shortClassName.asString()
-        return decodedSidecars.firstOrNull {
-            it.snippetClassInternalName.substringAfterLast('/').substringAfterLast('$') == sidecarName
+        val headerName = materialized[index].snippetClassSymbol.classId.shortClassName.asString()
+        return decodedHeaders.firstOrNull {
+            it.snippetClassInternalName.substringAfterLast('/').substringAfterLast('$') == headerName
         }
     }
 
     /** `true` if [symbol] corresponds to a prior snippet that was implicitly prepended. */
-    fun isImplicit(symbol: FirReplSnippetSymbol): Boolean = findSidecarFor(symbol)?.isImplicit == true
+    fun isImplicit(symbol: FirReplSnippetSymbol): Boolean = findHeaderFor(symbol)?.isImplicit == true
 
     override fun getSnippets(): Iterable<FirReplSnippetSymbol> {
         cached?.let { return it }
@@ -190,10 +196,10 @@ internal class ArtifactBackedFirReplHistoryProvider(
      * in the stateless suite. See `iterations/2026-05-28_stateless-repl-read-side-wiring.md`.
      */
     override fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? {
-        // Force materialise so symbolToSidecar is populated when this hook fires *before* the
-        // resolver's first call to getSnippets() (it doesn't today, but defensive).
+        // Force materialise so symbolToEmbeddedSidecar is populated when this hook fires *before*
+        // the resolver's first call to getSnippets() (it doesn't today, but defensive).
         cached ?: getSnippets()
-        val sidecar = symbolToSidecar[symbol] ?: return null
+        val sidecar = symbolToEmbeddedSidecar[symbol] ?: return null
         return sidecar.imports.map { entry ->
             buildImport {
                 // No source: the original .kts is not available cross-compile; the resolver
@@ -210,14 +216,25 @@ internal class ArtifactBackedFirReplHistoryProvider(
     private fun materialize(session: FirSession): List<FirReplSnippetSymbol> {
         val result = ArrayList<FirReplSnippetSymbol>(priorSnippets.size)
         for ([index, artifact] in priorSnippets.withIndex()) {
-            val sidecar = decodedSidecars[index]
-            val classId = sidecar.toClassId()
+            val header = decodedHeaders[index]
+            val classId = header.toClassId()
             val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
             if (classSymbol == null) {
                 debug("materialize: lookup MISS for snippet[$index] $classId")
                 continue
             }
-            debug("materialize: lookup HIT for snippet[$index] $classId")
+
+            // After the "full cut", the reconstruction payload (declarations + visibilities +
+            // imports) lives ONLY in the wrapper class's `.kotlin_metadata`, embedded via the
+            // generic `CompilerPluginData` channel (keyed by [REPL_SIDECAR_PLUGIN_ID]). The
+            // out-of-band [header] supplies only the class id used for the lookup above, the snippet
+            // name, and the config-only flags (`isImplicit`, read via [findHeaderFor]); the
+            // frontend-derivable fields are read from the embedded sidecar. A snippet produced by
+            // the stateless compiler always carries it; if it is somehow absent we still surface the
+            // snippet in history (so it stays visible) but tag no declarations and project no
+            // imports.
+            val embeddedSidecar = readEmbeddedSidecar(classSymbol)
+            debug("materialize: lookup HIT for snippet[$index] $classId (embedded sidecar=${embeddedSidecar != null})")
 
             val reconstructedSymbol = FirReplSnippetSymbol(classSymbol)
 
@@ -233,14 +250,14 @@ internal class ArtifactBackedFirReplHistoryProvider(
             val classFir = classSymbol.fir
             val evalSymbol = findEvalSymbol(classSymbol)
             ReconstructedFirReplSnippet(
-                snippetName = sidecar.snippetName,
+                snippetName = header.snippetName,
                 snippetModuleData = classFir.moduleData,
                 snippetClassFir = classFir,
                 snippetSymbol = reconstructedSymbol,
                 evalSymbol = evalSymbol,
             )
 
-            val byName = sidecar.replSnippetDeclarations.associateBy { it.name }
+            val byName = embeddedSidecar?.replSnippetDeclarations.orEmpty().associateBy { it.name }
             var tagged = 0
             for (declSymbol in classSymbol.declarationSymbols) {
                 val fir = declSymbol.fir
@@ -286,12 +303,31 @@ internal class ArtifactBackedFirReplHistoryProvider(
             // or a future cross-snippet anonymous-return-type checker) can reason about
             // prior-snippet shapes without re-loading the wrapper class. See
             // `iterations/2026-05-27_stateless-repl-sidecar-v3.md` for the rationale.
-            debug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] (${sidecar.snippetName})")
+            debug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] (${header.snippetName})")
 
-            symbolToSidecar[reconstructedSymbol] = sidecar
+            symbolToEmbeddedSidecar[reconstructedSymbol] = embeddedSidecar
             result += reconstructedSymbol
         }
         return result
+    }
+
+    /**
+     * Decode the [SnippetArtifactSidecar] embedded in [classSymbol]'s `.kotlin_metadata` via the
+     * generic `ProtoBuf.CompilerPluginData` channel (keyed by [REPL_SIDECAR_PLUGIN_ID]), or `null`
+     * if the prior snippet's wrapper class carries no such payload (e.g. it was produced by a
+     * compiler version that predates the metadata-embedding write side). After the "full cut" this
+     * embedded copy is the **only** source of the reconstruction payload — there is no standalone
+     * fallback — so a `null` here means the snippet's declarations/imports cannot be recovered.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun readEmbeddedSidecar(classSymbol: FirRegularClassSymbol): SnippetArtifactSidecar? {
+        val bytes = classSymbol.fir.compilerPluginMetadata?.get(REPL_SIDECAR_PLUGIN_ID) ?: return null
+        return try {
+            SnippetArtifactSidecarProtoCodec.decode(bytes)
+        } catch (t: Throwable) {
+            debug("readEmbeddedSidecar: failed to decode embedded sidecar for ${classSymbol.classId}: ${t.message}")
+            null
+        }
     }
 
     companion object {
@@ -304,8 +340,8 @@ internal class ArtifactBackedFirReplHistoryProvider(
     }
 }
 
-/** Parse the sidecar's package + internal-name pair into a [ClassId]. */
-private fun SnippetArtifactSidecar.toClassId(): ClassId {
+/** Parse the header's package + internal-name pair into a [ClassId]. */
+private fun SnippetArtifactHeader.toClassId(): ClassId {
     val pkgSlashed = packageFqName.replace('.', '/')
     val relative = when {
         pkgSlashed.isEmpty() -> snippetClassInternalName

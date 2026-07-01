@@ -129,26 +129,26 @@ class K2ReplStatelessCompiler {
         messageCollector: ScriptDiagnosticsMessageCollector,
         disposable: Disposable,
     ): ResultWithDiagnostics<SnippetArtifact> {
-        // 1. Decode sidecars + validate state-object FQ name agreement.
-        val sidecars = try {
-            priorSnippets.map { it.decodeSidecar() }
+        // 1. Decode headers + validate state-object FQ name agreement.
+        val headers = try {
+            priorSnippets.map { it.decodeHeader() }
         } catch (t: Throwable) {
-            return makeFailureResult("stateless REPL: failed to decode prior snippet sidecar: ${t.message}")
+            return makeFailureResult("stateless REPL: failed to decode prior snippet header: ${t.message}")
         }
         val callerStateObjectFqName = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]
-        for ([index, sidecar] in sidecars.withIndex()) {
-            if (sidecar.stateObjectFqName.isEmpty()) continue
-            if (callerStateObjectFqName != null && sidecar.stateObjectFqName != callerStateObjectFqName) {
+        for ([index, header] in headers.withIndex()) {
+            if (header.stateObjectFqName.isEmpty()) continue
+            if (callerStateObjectFqName != null && header.stateObjectFqName != callerStateObjectFqName) {
                 return makeFailureResult(
                     "stateless REPL: stateObjectFqName mismatch — prior snippet[$index] " +
-                            "carries '${sidecar.stateObjectFqName}', caller hostConfiguration " +
+                            "carries '${header.stateObjectFqName}', caller hostConfiguration " +
                             "supplies '$callerStateObjectFqName'"
                 )
             }
         }
-        for (i in 1 until sidecars.size) {
-            val prev = sidecars[i - 1].stateObjectFqName
-            val cur = sidecars[i].stateObjectFqName
+        for (i in 1 until headers.size) {
+            val prev = headers[i - 1].stateObjectFqName
+            val cur = headers[i].stateObjectFqName
             if (prev.isNotEmpty() && cur.isNotEmpty() && prev != cur) {
                 return makeFailureResult(
                     "stateless REPL: stateObjectFqName disagreement across priorSnippets — " +
@@ -163,8 +163,8 @@ class K2ReplStatelessCompiler {
         val sessionRef = AtomicReference<FirSession?>()
         try {
             for ([i, artifact] in priorSnippets.withIndex()) {
-                val sidecar = sidecars[i]
-                writeClassFiles(tempDir, artifact, sidecar)
+                val header = headers[i]
+                writeClassFiles(tempDir, artifact, header)
             }
 
             // 3. Build the stateless-flavoured host configuration:
@@ -209,7 +209,7 @@ class K2ReplStatelessCompiler {
             val capturedRef = AtomicReference<CapturedCompile?>()
             state.snippetCompilationObserver = { firSnippet, session, generationState, resultFieldName ->
                 sessionRef.set(session)
-                capturedRef.set(CapturedCompile(firSnippet, session, generationState, resultFieldName))
+                capturedRef.set(CapturedCompile(firSnippet, generationState, resultFieldName))
             }
 
             // 7. Drive the compile.
@@ -230,11 +230,9 @@ class K2ReplStatelessCompiler {
                 } else {
                     buildSnippetArtifactFromCompile(
                         firSnippet = cap.firSnippet,
-                        session = cap.session,
                         generationState = cap.generationState,
                         scriptCompilationConfiguration = augmentedConfig,
                         hostConfiguration = statelessHostConfiguration,
-                        historyIndex = priorSnippets.size,
                         resultFieldName = cap.resultFieldName,
                     ).also {
                         debug(
@@ -275,21 +273,20 @@ class K2ReplStatelessCompiler {
     /** Snapshot captured by [K2ReplCompilationState.snippetCompilationObserver] for one compile. */
     private class CapturedCompile(
         val firSnippet: FirReplSnippet,
-        val session: FirSession,
         val generationState: GenerationState,
         /** Actual emitted JVM result-field name (e.g. `res2`), or `null` if the snippet has no result. */
         val resultFieldName: String?,
     )
 
     @OptIn(kotlin.io.path.ExperimentalPathApi::class)
-    private fun writeClassFiles(tempDir: Path, artifact: SnippetArtifact, sidecar: SnippetArtifactSidecar) {
+    private fun writeClassFiles(tempDir: Path, artifact: SnippetArtifact, header: SnippetArtifactHeader) {
         for ([internalName, bytes] in artifact.classFiles) {
             val rel = internalName + ".class"
             val target = tempDir.resolve(rel.replace('/', File.separatorChar))
             target.parent?.createDirectories()
             target.writeBytes(bytes)
         }
-        debug("writeClassFiles: wrote ${artifact.classFiles.size} file(s) for ${sidecar.snippetName} under ${tempDir.absolutePathString()}")
+        debug("writeClassFiles: wrote ${artifact.classFiles.size} file(s) for ${header.snippetName} under ${tempDir.absolutePathString()}")
     }
 
     companion object {

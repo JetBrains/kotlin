@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplStatelessCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeHeader
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -180,9 +180,9 @@ class FirReplStatelessCompilerFacade(
 }
 
 /**
- * Convenience accessor: returns the latest sidecar from the accumulator, decoded. Useful for
- * post-run assertions in dedicated handlers.
+ * Convenience accessor: returns the latest out-of-band [SnippetArtifactHeader][org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactHeader]
+ * from the accumulator, decoded. Useful for post-run assertions in dedicated handlers.
  */
 @Suppress("unused")
-internal fun FirReplStatelessCompilerFacade.latestDecodedSidecar() =
-    retrieveAccumulatedArtifacts().lastOrNull()?.decodeSidecar()
+internal fun FirReplStatelessCompilerFacade.latestDecodedHeader() =
+    retrieveAccumulatedArtifacts().lastOrNull()?.decodeHeader()

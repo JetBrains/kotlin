@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.ReplSnippetsToClassesLowering
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
@@ -493,6 +494,17 @@ private fun compileImpl(
             //     including their resolved return types and bodies) remain intact — only the
             //     top-level eval driver is gutted.
             elideErrorBodiedEvalFunctions(irIn.irModuleFragment)
+            // `convertToIrAndActualizeForJvm` skips plugin `IrGenerationExtension`s (including
+            // `ReplLoweringExtension`, which both converts each snippet to its wrapper class AND
+            // embeds the stateless-REPL sidecar into the wrapper's `.kotlin_metadata`) when the FIR
+            // reporter has errors. On the stateless best-effort path we still need the errored
+            // snippet's wrapper class to carry its embedded sidecar, because — after the "full cut"
+            // of the standalone sidecar blob — the stateless read path
+            // (`ArtifactBackedFirReplHistoryProvider`) reconstructs prior snippets *only* from that
+            // embedded metadata. Run the snippet->class lowering explicitly here so the best-effort
+            // artifact is embedded like a clean one. Safe no-op if the extension already ran (the
+            // `IrReplSnippet`s are then already removed from the module, so the lowering finds none).
+            ReplSnippetsToClassesLowering(irIn.pluginContext).lower(irIn.irModuleFragment)
             ModuleCompilerEnvironment(state.projectEnvironment, DiagnosticsCollectorImpl())
         } else compilerEnvironment
         val genState = generateCodeFromIr(irIn, codegenEnv)
