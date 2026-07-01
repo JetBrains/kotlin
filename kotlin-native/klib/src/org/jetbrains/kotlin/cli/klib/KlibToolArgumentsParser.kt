@@ -68,41 +68,108 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
     }
 
     private fun printUsage() {
-        output.stderr.appendLine(
-            """
-                Usage: klib <command> <library path> [<option>]
+        val preDescriptionIndent = PRE_COMMAND_INDENT + CliCommand.entries.maxOf { it.commandName.length } + POST_COMMAND_MINIMAL_INDENT
 
-                where the commands are:
-                   info                          General information about the library
-                   dump-abi                      Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
-                                                   declaration. Whenever an ABI-incompatible change happens to a declaration, this should
-                                                   be visible in the corresponding line of the snapshot.
-                   dump-ir                       Dump the intermediate representation (IR) of declarations in the library.
-                                                   The output of this command is intended to be used for debugging purposes only.
-                   dump-ir-signatures            Dump IR signatures of all non-private declarations in the library and all non-private
-                                                   declarations consumed by this library (as two separate lists). This command relies
-                                                   purely on the data in IR.
-                   dump-ir-inlinable-functions   Dump the intermediate representation (IR) of inlinable functions in the library.
-                                                   The output of this command is intended to be used for debugging purposes only.
-                   dump-metadata                 Dump the metadata of all declarations in the library.
-                                                   The output of this command intended to be used for debugging purposes only.
-                   dump-metadata-signatures      Dump IR signatures of all non-private declarations in the library. Note, that this command
-                                                   renders the signatures based on the library metadata. This is different from
-                                                   "dump-ir-signatures", which renders signatures based on the IR. On practice,
-                                                   in most cases there is no difference between output of these two commands. However,
-                                                   if IR transforming compiler plugins (such as Compose) were used during compilation
-                                                   of the library, there would be different signatures for patched declarations.
+        with(output.stderr) {
+            appendLine("Usage: klib <command> <library path> [<option>]")
+            appendLine()
+            appendLine("where the commands are:")
 
-                and the options are:
-                   -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
-                                             Render IR signatures of a specific version. By default, the most up-to-date signature version
-                                               that is supported in the library is used.
-                   -only-top-level-signatures {true|false}
-                                             Dump IR signatures of only top-level declatations. Applicable only to the "dump-ir-signatures" command.
-                   -print-signatures {true|false}
-                                             Print IR signature for every declaration. Applicable only to the "dump-metadata" command.
+            CliCommand.entries.forEach { command ->
+                repeat(PRE_COMMAND_INDENT) { append(' ') }
+                append(command.commandName)
+                repeat(preDescriptionIndent - PRE_COMMAND_INDENT - command.commandName.length) { append(' ') }
+
+                command.description.trim().lines().forEachIndexed { index, descriptionLine ->
+                    if (index == 0)
+                        appendLine(descriptionLine)
+                    else {
+                        repeat(preDescriptionIndent + SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT) { append(' ') }
+                        appendLine(descriptionLine)
+                    }
+                }
+            }
+
+            appendLine()
+            appendLine(
+                    """
+                    and the options are:
+                       -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
+                                                 Render IR signatures of a specific version. By default, the most up-to-date signature version
+                                                   that is supported in the library is used.
+                       -only-top-level-signatures {true|false}
+                                                 Dump IR signatures of only top-level declatations. Applicable only to the "dump-ir-signatures" command.
+                       -print-signatures {true|false}
+                                                 Print IR signature for every declaration. Applicable only to the "dump-metadata" command.                    
                 """.trimIndent()
-        )
+            )
+        }
+    }
+
+    companion object {
+        private const val PRE_COMMAND_INDENT = 3
+        private const val POST_COMMAND_MINIMAL_INDENT = 3
+        private const val SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT = 2
+    }
+}
+
+internal enum class CliCommand(val description: String) {
+    INFO(description = "General information about the library"),
+
+    DUMP_ABI(
+            description = """
+                Dump the ABI snapshot of the library. Each line in the snapshot corresponds exactly to one
+                declaration. Whenever an ABI-incompatible change happens to a declaration, this should
+                be visible in the corresponding line of the snapshot.
+            """.trimIndent()
+    ),
+
+    DUMP_IR(
+            description = """
+                Dump the intermediate representation (IR) of declarations in the library.
+                The output of this command is intended to be used for debugging purposes only.
+            """.trimIndent()
+    ),
+
+    DUMP_IR_SIGNATURES(
+            description = """
+                Dump IR signatures of all non-private declarations in the library and all non-private
+                declarations consumed by this library (as two separate lists). This command relies
+                purely on the data in IR.
+            """.trimIndent()
+    ),
+
+    DUMP_IR_INLINABLE_FUNCTIONS(
+            description = """
+                Dump the intermediate representation (IR) of inlinable functions in the library.
+                The output of this command is intended to be used for debugging purposes only.
+            """.trimIndent()
+    ),
+
+    DUMP_METADATA(
+            description = """
+                Dump the metadata of all declarations in the library.
+                The output of this command intended to be used for debugging purposes only.
+            """.trimIndent()
+    ),
+
+    DUMP_METADATA_SIGNATURES(
+            description = """
+                Dump IR signatures of all non-private declarations in the library. Note, that this command
+                renders the signatures based on the library metadata. This is different from
+                "dump-ir-signatures", which renders signatures based on the IR. On practice,
+                in most cases there is no difference between output of these two commands. However,
+                if IR transforming compiler plugins (such as Compose) were used during compilation
+                of the library, there would be different signatures for patched declarations.
+            """.trimIndent()
+    ),
+    ;
+
+    val commandName: String
+        get() = name.replace("_", "-").lowercase()
+
+    companion object {
+        fun parseOrNull(commandName: String): CliCommand? = entries.firstOrNull { it.commandName == commandName }
     }
 }
 
