@@ -2,7 +2,7 @@
 
 > **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-05-18 (post step 1b fix — G11/Q13 closed; 5 BLOCKED-CODEGEN → PASS; 1 → new BLOCKED-DESIGN-Q17)
+> **Last verified**: 2026-07-01 (Q17 resolved — `testEvalWithContextDirect` → PASS; the remaining blocked JSR-223 rows are now `@Disabled` with tracked references so the suite is green)
 
 Where the tests live and how to run them.
 
@@ -31,7 +31,7 @@ Where the tests live and how to run them.
 | `isRunningTestOnK2` | Runtime branch |
 | `expectTestToFailOnK2` | Marks tests known to fail on K2 (skipped) |
 
-`ResolveDependenciesTest` is the main known-failing-on-K2 entry today.
+`ResolveDependenciesTest` is the main known-failing-on-K2 entry today (classloader-reflection dep extraction, KT-60443 — **postponed**, not critical for the first migration attempt; a real fix needs a FIR `PackageFragmentProviderExtension` equivalent, not classloader-classpath extraction).
 
 ## JSR-223 per-test status (BLOCKED-BY matrix)
 
@@ -68,12 +68,12 @@ Suite: `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt`.
 | `testResolveFromContextDirectExperimental` | PASS | 2026-05-18 | un-disabled after step 1b fix (G11 / Q13 closed). |
 | `testMultipleCompilable` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed); `joinToString$default` now lowers correctly. |
 | `testEvalWithContext` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G2 / G11 / Q13 closed). |
-| `testEvalWithContextDirect` | `BLOCKED-DESIGN-Q17` | 2026-05-18 | step 1b fix unblocked the codegen failure; test now exposes a different bug — synthetic-snippet generator declares `nullable: Any` (non-null) for `engine.put("nullable", null)`, so the getter NPEs at the kotlin-cast (Q17). |
-| `testSimpleEvalInEval` | `STEP-1-FOLLOWUP` | 2026-05-18 | `Method.invoke` arity mismatch in inner eval; likely `ScriptContext` implicit-receiver duplication when inner compile runs through the same engine. |
-| `testEvalWithContextNamesWithSymbols` | `BLOCKED-DESIGN-Q14` | 2026-05-18 | binding names with `.`, `:`, `\`, etc. need a JVM-safe encoding scheme; K1 backslash-table fails `FirJvmNamesChecker` (G8). |
-| `testEvalInEvalWithBindingsWithLambda` | `BLOCKED-DESIGN-Q16` | 2026-05-18 | synthetic-snippet parse-error fixed (G9 filter landed); remaining failure: user-snippet `fun ScriptTemplateWithBindings.foo(...)` unreachable because K2 implicit receiver is `ScriptContext` (G10). |
+| `testEvalWithContextDirect` | PASS | 2026-07-01 | **Q17 resolved 2026-07-01** — the generated accessor now renders the nullability marker (`var nullable: kotlin.Any?` / `... as kotlin.Any?`), so `engine.put("nullable", null)` no longer NPEs at the cast. Un-`@Disabled`. |
+| `testSimpleEvalInEval` | `STEP-1-FOLLOWUP` (now `@Disabled`) | 2026-07-01 | `Method.invoke` arity mismatch in inner eval; eval-in-eval re-entrancy — `K2ReplEvaluator` re-walks the pending-snippet chain into the still-executing outer snippet. `@Disabled` with a tracked reference (was active-failing); needs a re-entrancy guard / isolated nested-eval state. |
+| `testEvalWithContextNamesWithSymbols` | `BLOCKED-DESIGN-Q14` (now `@Disabled`) | 2026-07-01 | binding names with `.`, `:`, `\`, etc. need a JVM-safe encoding scheme; K1 backslash-table fails `FirJvmNamesChecker` (G8). `@Disabled` with a Q14 reference (was active-failing). |
+| `testEvalInEvalWithBindingsWithLambda` | `BLOCKED-DESIGN-Q16` (now `@Disabled`) | 2026-07-01 | synthetic-snippet parse-error fixed (G9 filter landed); remaining failure: user-snippet `fun ScriptTemplateWithBindings.foo(...)` unreachable because K2 implicit receiver is `ScriptContext` (G10). `@Disabled` with a Q16 reference (was active-failing). |
 
-**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th flipped to `BLOCKED-DESIGN-Q17`.
+**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th (`testEvalWithContextDirect`) was `BLOCKED-DESIGN-Q17` and flipped to PASS on 2026-07-01 (Q17 resolved). The remaining blocked rows (`testSimpleEvalInEval` STEP-1-FOLLOWUP, `testEvalWithContextNamesWithSymbols` Q14, `testEvalInEvalWithBindingsWithLambda` Q16) are now `@Disabled` with tracked references — each carries its status in this matrix, and the JSR-223 suite is green (21 tests, 3 skipped, 0 failures).
 
 ## Running tests
 

@@ -2,7 +2,7 @@
 
 > **When to consult**: before committing to a design answer or claiming a Q* as a task. Q1–Q12 are referenceable IDs; sub-questions Q5a–e, Q10a–f are individually delegate-able.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-05-16
+> **Last verified**: 2026-07-01 (Q17 resolved)
 
 Items needing brainstorm before they can be acted on.
 
@@ -190,13 +190,15 @@ Two sub-questions resolved as part of the umbrella fix:
 | Q13a | `@InlineOnly` deserialisation: should the K2 REPL Fir2Ir pipeline run the inliner phase on declarations imported from stdlib `klib`/jar with `@InlineOnly`, or should `IrLazyDeclarations` keep the body materialised for those members regardless of inliner ordering? | **closed** — the umbrella parent-shape fix routes `@InlineOnly` calls through the standard `IrInlineFunctionResolver` path (callee now has `IrClass` parent → codegen no longer chokes; inliner runs at its usual phase). Body-materialisation as a separate concern is theoretically still open but not observed in any test after the fix. | — | — | 2026-05-18 (third iteration) |
 | Q13b | Cross-snippet fake-override resolution: when a user snippet calls a member inherited by a class defined in a previous snippet's FIR module, why does the fake-override resolver fail to materialise the override chain? | **closed (no separate fix needed)** — once the umbrella fix lands, `[fake_override]` calls with `IrExternalPackageFragment` parent are reparented onto the JVM file-class facade and pass the codegen require. `Fir2IrReplSnippetConfiguratorExtensionImpl.getStateObject()` rehydration analysis (first iteration) is still useful as a mechanism description but does not require a production change. If a future test exposes the fake-override resolver gap independently of parent shape, file a fresh question. | — | — | 2026-05-18 (third iteration) |
 
-## Q17. JSR-223 K2 synthetic-snippet `null`-binding type generates non-null property accessor
+## Q17. ~~JSR-223 K2 synthetic-snippet `null`-binding type generates non-null property accessor~~ — resolved
 
-- Status: open — generator bug, design needed
+- Status: **resolved — landed 2026-07-01** (Option "emit `Any?` for null-valued bindings")
 - Owner: unassigned
 - YT: —
 - Target doc: [`40-jsr223-target.md`](40-jsr223-target.md)
-- Last touched: 2026-05-18 (third iteration — surfaced after G11 fix unblocked `testEvalWithContextDirect`)
+- Last touched: 2026-07-01
+
+**Resolved** ([iteration](../iterations/2026-07-01_jsr223-q17-null-binding-type.md)): the generator already tagged null bindings `KotlinType(Any::class, isNullable = true)`, but `propertiesFromContext.kt` rendered the property/getter-cast type as `${type.typeName}`, and `KotlinType.typeName` strips the trailing `?` — so the emitted accessor was `var x: kotlin.Any` / `... as kotlin.Any`, which NPEd on the null value before the user's own null-safety could run. Fix: render the type with its nullability marker (`if (type.isNullable) "${type.typeName}?" else type.typeName`) in both the declared type and the getter cast. `testEvalWithContextDirect` un-`@Disabled` and now PASSes.
 
 **Symptom**: `engine.put("nullable", null)` followed by `engine.eval("nullable?.let { it as Int } ?: -1")` throws `java.lang.NullPointerException: null cannot be cast to non-null type kotlin.Any` from the synthetic-snippet's `getNullable()` accessor. The user's `?.let { ... } ?: -1` defence is bypassed because the cast happens *before* the user code receives the value.
 

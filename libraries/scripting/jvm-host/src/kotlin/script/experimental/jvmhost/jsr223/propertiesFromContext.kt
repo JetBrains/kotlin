@@ -151,11 +151,16 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
         newBindings.forEach { [name, type] ->
             val encodedName = encodeBindingNameToKotlinIdentifier(name)!!
             val safeKey = escapeForKotlinStringLiteral(name)
+            // Render the source-level type with its nullability marker: KotlinType.typeName strips the
+            // trailing `?`, so a `null`-valued binding (typed Any?) would otherwise emit `var x: kotlin.Any`
+            // with a `as kotlin.Any` getter cast that NPEs on the null value, bypassing the user's own
+            // null-safety (see plugins/scripting/.ai/target/90-open-questions.md Q17).
+            val renderedType = if (type.isNullable) "${type.typeName}?" else type.typeName
             bindingsSnippet +=
                 """
                     @Suppress("UNCHECKED_CAST")
-                    var $encodedName: ${type.typeName}
-                        get() = bindings["$safeKey"] as ${type.typeName}
+                    var $encodedName: $renderedType
+                        get() = bindings["$safeKey"] as $renderedType
                         set(value) { bindings.put("$safeKey", value) }
 
                 """.trimIndent() + "\n"
