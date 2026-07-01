@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -18,6 +20,8 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 /**
  * Lower calls to `js(code)` into `@JsFun(code) external` functions.
@@ -34,6 +38,46 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 else -> null
             }
         }
+        verifyNoRemainingJsCalls(irFile)
+    }
+
+    private fun verifyNoRemainingJsCalls(irFile: IrFile) {
+        irFile.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                if (expression.symbol == jsRelatedSymbols.jsCode) {
+                    compilationException(
+                        "A call to js() was not lowered. " +
+                                "The js() call must be the only expression in a top-level function body or property initializer. " +
+                                "Annotations that modify function bodies (e.g., @Composable) are not compatible with js().",
+                        expression
+                    )
+                }
+                super.visitCall(expression)
+            }
+        })
+    }
+
+    private fun containsJsCodeCall(body: IrBody): Boolean {
+        var found = false
+        body.acceptChildrenVoid(object : IrVisitorVoid() {
+            override fun visitElement(element: IrElement) {
+                if (found) return
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                if (expression.symbol == jsRelatedSymbols.jsCode) {
+                    found = true
+                    return
+                }
+                super.visitCall(expression)
+            }
+        })
+        return found
     }
 
     private fun transformFunction(function: IrSimpleFunction): List<IrDeclaration>? {
@@ -49,14 +93,41 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         val jsCode: String
         when (statement) {
             is IrReturn -> {
-                jsCode = statement.value.getJsCode() ?: return null
+                jsCode = statement.value.getJsCode() ?: run {
+                    if (containsJsCodeCall(body))
+                        compilationException(
+                            "A call to js() could not be lowered. " +
+                                    "Ensure the js() call is the only expression in the function body " +
+                                    "and no annotations (e.g., @Composable) modify the function body.",
+                            function
+                        )
+                    return null
+                }
                 isSingleExpressionJsCode = true
             }
             is IrCall -> {
-                jsCode = statement.getJsCode() ?: return null
+                jsCode = statement.getJsCode() ?: run {
+                    if (containsJsCodeCall(body))
+                        compilationException(
+                            "A call to js() could not be lowered. " +
+                                    "Ensure the js() call is the only expression in the function body " +
+                                    "and no annotations (e.g., @Composable) modify the function body.",
+                            function
+                        )
+                    return null
+                }
                 isSingleExpressionJsCode = false
             }
-            else -> return null
+            else -> {
+                if (containsJsCodeCall(body))
+                    compilationException(
+                        "A call to js() could not be lowered. " +
+                                "Ensure the js() call is the only expression in the function body " +
+                                "and no annotations (e.g., @Composable) modify the function body.",
+                        function
+                    )
+                return null
+            }
         }
         val valueParameters = function.parameters
         val jsFunCode = buildString {
