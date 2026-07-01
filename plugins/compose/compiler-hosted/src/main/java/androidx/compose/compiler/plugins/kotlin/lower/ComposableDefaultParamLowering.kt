@@ -228,7 +228,7 @@ class ComposableDefaultParamLowering(
         val wrapper = context.irFactory.createSimpleFunction(
             startOffset = source.startOffset,
             endOffset = source.endOffset,
-            origin = IrDeclarationOrigin.DEFINED,
+            origin = source.origin,
             name = Name.identifier("${source.name.asString()}\$default"),
             visibility = if (source.visibility.isPublicAPI) {
                 // public or protected
