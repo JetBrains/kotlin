@@ -287,14 +287,16 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
             var first = true
 
-            for (methodModel in testMethods) {
-                if (first) {
-                    first = false
-                } else {
-                    p.println()
-                }
+            if (!testClassModel.isEmpty) {
+                for (methodModel in testMethods) {
+                    if (first) {
+                        first = false
+                    } else {
+                        p.println()
+                    }
 
-                generateTestMethod(p, methodModel)
+                    generateTestMethod(p, methodModel)
+                }
             }
 
             for (innerTestClass in innerTestClasses) {
