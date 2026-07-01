@@ -490,7 +490,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     private inner class TypeCheckResolver(val typeCheckResults: MutableMap<IrTypeOperatorCall, TypeCheckResult>) : IrVisitor<VisitorResult, Predicate>() {
         val leafTerms = mutableListOf<LeafTerm>()
         val simpleTermsMap = mutableMapOf<Pair<IrValueDeclaration, IrClass?>, Int>()
-        val complexTermsMap = mutableMapOf<IrElement, Int>()
+        val complexTermsMap = mutableMapOf<IrValueDeclaration, Int>()
         val complexTermsMask = CustomBitSet()
 
         // It's convenient to think of the predicate as a stack of sub-predicates which get anded to get the result.
@@ -617,13 +617,24 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     leafTerms.size - 1
                 }
 
+        fun newComplexTerm(element: IrElement): Int {
+            leafTerms.add(ComplexTerm(element, currentDepth))
+            val termIndex = leafTerms.size - 1
+            complexTermsMask.set((termIndex setTo true).bitIndex)
+            complexTermsMask.set((termIndex setTo false).bitIndex)
+            return termIndex
+        }
+
         fun buildComplexTerm(element: IrElement): Int =
-                complexTermsMap.getOrPut(element) {
-                    leafTerms.add(ComplexTerm(element, currentDepth))
-                    val termIndex = leafTerms.size - 1
-                    complexTermsMask.set((termIndex setTo true).bitIndex)
-                    complexTermsMask.set((termIndex setTo false).bitIndex)
-                    termIndex
+                if (element is IrValueDeclaration) {
+                    // A value declaration (a parameter, a phi node, ...) denotes the same value everywhere it is
+                    // read, including across loop iterations, so all its reads must share one term.
+                    complexTermsMap.getOrPut(element) { newComplexTerm(element) }
+                } else {
+                    // An arbitrary expression (e.g. an unknown call) denotes a fresh dynamic value on each evaluation
+                    // (since IR nodes are all different), so it must NOT be memoized: reusing its term across loop iterations
+                    // conflates different evaluations of the same call site (KT-86959).
+                    newComplexTerm(element)
                 }
 
         fun IrExpression.isNullConst() = this is IrConst && this.value == null
