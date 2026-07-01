@@ -1241,6 +1241,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("stubBasedNonLocalDestructuring.kt")
+  public void testStubBasedNonLocalDestructuring() {
+    run("stubBasedNonLocalDestructuring.kt");
+  }
+
+  @Test
   @TestMetadata("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt")
   public void testSuperQualifierTypeArgsInDelegatedConstructorInnerClass() {
     run("superQualifierTypeArgsInDelegatedConstructorInnerClass.kt");

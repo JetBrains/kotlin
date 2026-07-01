@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.test.framework.base
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.AbstractFileViewProvider
+import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -179,7 +181,50 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
     protected open fun doTest(testServices: TestServices) {
         (val mainFile, val mainModule = module) = findMainFileAndModule(testServices) ?: error("Cannot find the main test module")
 
+        if (AnalysisApiTestDirectives.STUB_BASED in testServices.moduleStructure.allDirectives) {
+            requireNotNull(mainFile) {
+                "The '${AnalysisApiTestDirectives.STUB_BASED.name}' directive requires a main file, but none was found"
+            }
+
+            forceStubTree(mainFile, testServices)
+        }
+
         doTestByMainModuleAndOptionalMainFile(mainFile, mainModule, testServices)
+    }
+
+    /**
+     * Puts [file] into a stub-based state: drops the loaded AST (if any) and marks the file's view provider as physical so
+     * that stub requests are allowed. After this call, the file is served from its stub, and any access to the AST will trigger
+     * tree loading (which can be guarded against with [withAstLoadingAssertion]).
+     *
+     * @see com.intellij.psi.AbstractFileViewProvider
+     */
+    protected fun forceStubTree(file: KtFile, testServices: TestServices) {
+        val viewProvider = file.viewProvider as AbstractFileViewProvider
+        val myPhysicalField = AbstractFileViewProvider::class.java.getDeclaredField("myPhysical").apply { isAccessible = true }
+
+        // A hack to enable AST loading assertion and allow stub requests
+        myPhysicalField.set(viewProvider, true)
+
+        file.setTreeElementPointer(null)
+        testServices.assertions.assertNotNull(file.stub) { "Stub should be present for unloaded file" }
+    }
+
+    /**
+     * Runs the given [action] with an assertion that fails the test on any attempt to load the AST of [file].
+     *
+     * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
+     * @see com.intellij.psi.impl.PsiManagerEx.isAssertOnFileLoading
+     */
+    protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
+        val virtualFile = file.virtualFile
+        val disposable = Disposer.newDisposable("AST loading assertion")
+        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
+        return try {
+            action()
+        } finally {
+            Disposer.dispose(disposable)
+        }
     }
 
     private lateinit var testInfo: KotlinTestInfo
