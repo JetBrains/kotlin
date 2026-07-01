@@ -145,11 +145,13 @@ fun <T, R> Collection<T>.singleOrZeroValue(
 }
 
 /**
- * Removes the given Kotlin [version] suffix from the file name.
+ * Removes the given Kotlin [version] or the next minor version suffix from the file name.
  * The function only strips out the version once.
  *
  * The file extension is preserved.
  * If the file extension isn't included ([fileName] is the base file name), no extension is added.
+ *
+ * The patch version is ignored.
  *
  * kotlin-stdlib-2.3.0.jar -> kotlin-stdlib.jar
  * kotlin-stdlib-2.3.255-SNAPSHOT.jar -> kotlin-stdlib.jar
@@ -157,8 +159,14 @@ fun <T, R> Collection<T>.singleOrZeroValue(
  * kotlin-stdlib-2.3.0-RC3.jar -> kotlin-stdlib.jar
  */
 fun stripOutKotlinVersionFromFileName(fileName: String, version: KotlinVersion = KotlinVersion.CURRENT): String {
-    // E.g., kotlin-stdlib[[-2.3-SNAPSHOT]].jar
-    val kotlinVersionSuffixBase = "-$version"
+    return stripOutKotlinVersionFromFileNameStrictly(fileName, version).takeIf { it.length != fileName.length }
+    // Strip out the next version as well since it is a valid case between major versions switch
+        ?: stripOutKotlinVersionFromFileNameStrictly(fileName, KotlinVersion(major = version.major, minor = version.minor + 1))
+}
+
+private fun stripOutKotlinVersionFromFileNameStrictly(fileName: String, version: KotlinVersion): String {
+    // E.g., kotlin-stdlib[[-2.3.0-SNAPSHOT]].jar
+    val kotlinVersionSuffixBase = "-${version.major}.${version.minor}."
 
     val startIndex = fileName.indexOf(kotlinVersionSuffixBase)
     if (startIndex < 0) {
