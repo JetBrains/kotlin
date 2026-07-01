@@ -1,0 +1,32 @@
+// MODULE: lib
+// FILE: first.kt
+package lib
+
+private sealed interface SealedInterface {
+  class Implementation : SealedInterface {
+    constructor() /* primary */
+
+  }
+
+}
+
+fun myFunc() {
+}
+
+// MODULE: main
+// FILE: main.kt
+package main
+
+class App {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun run() {
+    myFunc()
+  }
+
+}
+
