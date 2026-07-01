@@ -60,7 +60,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
         FirInlineExposedLessVisibleTypeQualifiedAccessChecker,
-        // FirHomePackageWouldResolveThisChecker,
     )
 
     override val callCheckers: Set<FirCallChecker> = setOf(
