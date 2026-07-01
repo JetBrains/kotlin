@@ -67,62 +67,52 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         return options
     }
 
-    private fun printUsage() {
-        val preDescriptionIndent = PRE_COMMAND_INDENT + CliCommand.entries.maxOf { it.commandName.length } + POST_COMMAND_MINIMAL_INDENT
+    private fun printUsage(): Unit = with(output.stderr) {
+        appendLine("Usage: klib <command> <library path> [<options>]")
+        appendLine()
+        appendLine("where the commands are:")
 
-        with(output.stderr) {
-            appendLine("Usage: klib <command> <library path> [<option>]")
-            appendLine()
-            appendLine("where the commands are:")
+        CliCommand.entries.forEachIndexed { index, command ->
+            if (index > 0) appendLine()
 
-            CliCommand.entries.forEach { command ->
-                repeat(PRE_COMMAND_INDENT) { append(' ') }
-                append(command.commandName)
-                repeat(preDescriptionIndent - PRE_COMMAND_INDENT - command.commandName.length) { append(' ') }
+            repeat(SINGLE_INDENT) { append(' ') }
+            appendLine(command.commandName)
 
-                command.description.trim().lines().forEachIndexed { index, descriptionLine ->
-                    if (index == 0)
-                        appendLine(descriptionLine)
-                    else {
-                        repeat(preDescriptionIndent + SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT) { append(' ') }
-                        appendLine(descriptionLine)
-                    }
-                }
+            command.description.lines().forEach { descriptionLine ->
+                repeat(DOUBLE_INDENT) { append(' ') }
+                appendLine(descriptionLine)
+            }
+        }
+
+        appendLine()
+        appendLine("and the options are:")
+
+        CliOption.entries.filterNot { it.isPrivate }.forEachIndexed { index, option ->
+            if (index > 0) appendLine()
+
+            repeat(SINGLE_INDENT) { append(' ') }
+            append(option.optionName)
+
+            when (val hintOnValues = option.hintOnValues) {
+                null -> appendLine()
+                else -> append(' ').appendLine(hintOnValues)
             }
 
-            appendLine()
-            appendLine("and the options are:")
-
-            CliOption.entries.forEach { option ->
-                if (option.isPrivate) return@forEach
-
-                repeat(PRE_COMMAND_INDENT) { append(' ') }
-                append(option.optionName)
-
-                when (val hintOnValues = option.hintOnValues) {
-                    null -> appendLine()
-                    else -> append(' ').appendLine(hintOnValues)
-                }
-
-                option.description.lines().forEachIndexed { index, descriptionLine ->
-                    repeat(OPTION_DESCRIPTION_INDENT) { append(' ') }
-                    if (index > 0) repeat(SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT) { append(' ') }
-                    appendLine(descriptionLine)
-                }
+            option.description.lines().forEach { descriptionLine ->
+                repeat(DOUBLE_INDENT) { append(' ') }
+                appendLine(descriptionLine)
             }
         }
     }
 
     companion object {
-        private const val PRE_COMMAND_INDENT = 3
-        private const val POST_COMMAND_MINIMAL_INDENT = 3
-        private const val SECOND_LINE_DESCRIPTION_ADDITIONAL_INDENT = 2
-        private const val OPTION_DESCRIPTION_INDENT = 29
+        private const val SINGLE_INDENT = 4
+        private const val DOUBLE_INDENT = SINGLE_INDENT * 2
     }
 }
 
 internal enum class CliCommand(val description: String) {
-    INFO(description = "General information about the library"),
+    INFO(description = "Print general information about the library."),
 
     DUMP_ABI(
             description = """
