@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-87137
 // FILE: NameClashing.java
 
@@ -49,7 +48,7 @@ public class NameClashingOnMethod<T> {
 
 fun testNameClashing() {
     val builder: NameClashing.NameClashingBuilder<String> = NameClashing.builder<String>()
-    builder.field(<!ARGUMENT_TYPE_MISMATCH!>"FAIL"<!>).customMethod("OK") // TODO: should be resolved
+    builder.field("FAIL").customMethod("OK")
     val obj: NameClashing<String> = builder.build()
     assertEquals("OK", obj.field)
 }
