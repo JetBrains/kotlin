@@ -34,7 +34,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(toolsJarApi())
-    api(intellijCore())
+    compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(commonDependency("org.jetbrains.intellij.deps:jdom:2.0.6"))
     compileOnly(libs.kotlinx.coroutines.core.jvm)
