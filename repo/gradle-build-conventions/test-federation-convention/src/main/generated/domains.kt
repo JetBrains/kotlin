@@ -37,7 +37,7 @@ internal object WasmDomainInfo : DomainInfo {
 
 internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
-    override val include: List<String> = listOf("js/**")
+    override val include: List<String> = listOf("js/**", "libraries/tools/analysis-api-based-klib-reader/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
@@ -65,7 +65,7 @@ internal object AnalysisApiDomainInfo : DomainInfo {
 
 internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
-    override val include: List<String> = listOf("native/swift/**")
+    override val include: List<String> = listOf("native/swift/**", "libraries/tools/analysis-api-based-klib-reader/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(AnalysisApiDomainInfo) }
 }

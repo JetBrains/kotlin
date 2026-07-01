@@ -24,6 +24,7 @@ Wasm:
 Js:
   include:
     - "js/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
@@ -58,6 +59,7 @@ AnalysisApi:
 SwiftExport:
   include:
     - "native/swift/**"
+    - "libraries/tools/analysis-api-based-klib-reader/**"
   fullyAffectedBy:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
