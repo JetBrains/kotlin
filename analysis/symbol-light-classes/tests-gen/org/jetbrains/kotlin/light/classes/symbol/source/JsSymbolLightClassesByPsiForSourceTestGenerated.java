@@ -1825,6 +1825,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
       }
 
       @Test
+      @TestMetadata("private.kt")
+      public void testPrivate() {
+        run("private.kt");
+      }
+
+      @Test
       @TestMetadata("script.kts")
       public void testScript() {
         run("script.kts");

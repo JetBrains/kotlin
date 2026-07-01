@@ -1819,6 +1819,12 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("private.kt")
+      public void testPrivate() {
+        run("private.kt");
+      }
+
+      @Test
       @TestMetadata("simple.kt")
       public void testSimple() {
         run("simple.kt");
