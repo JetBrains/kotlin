@@ -11,6 +11,11 @@ private fun log(t: String) {
     l += t + "\n"
 }
 
+private fun logValue(t: String): String {
+    log(t)
+    return t
+}
+
 // Each test uses its own class hierarchy so companions are initialized fresh.
 
 // companion-only access (no instance created)
@@ -106,6 +111,86 @@ class A8 : B8() {
     companion object { init { log("A8.Companion") } }
 }
 
+// parent companion access and repeated child companion access
+open class B9 {
+    companion object { init { log("B9.Companion") } }
+}
+class A9 : B9() {
+    companion object { init { log("A9.Companion") } }
+}
+
+// named private parent companion
+open class B10 {
+    private companion object Parent { init { log("B10.Parent") } }
+}
+class A10 : B10() {
+    companion object Child { init { log("A10.Child") } }
+}
+
+// child companion initializer reads from parent companion
+open class B11 {
+    companion object {
+        val value = logValue("B11.Companion")
+    }
+}
+class A11 : B11() {
+    companion object {
+        val value = B11.value + "/" + logValue("A11.Companion")
+    }
+}
+
+// superinterface companions are not superclass companions
+interface I12 {
+    companion object { init { log("I12.Companion") } }
+}
+class A12 : I12 {
+    companion object { init { log("A12.Companion") } }
+}
+
+// child companion object has its own superclass
+open class B13 {
+    companion object { init { log("B13.Companion") } }
+}
+open class CompanionBase13 {
+    init { log("CompanionBase13.init") }
+}
+class A13 : B13() {
+    companion object : CompanionBase13() {
+        init { log("A13.Companion") }
+    }
+}
+
+// two intermediate classes with no companion
+open class C14 {
+    companion object { init { log("C14.Companion") } }
+}
+open class D14 : C14()
+open class B14 : D14()
+class A14 : B14() {
+    companion object { init { log("A14.Companion") } }
+}
+
+// superclass and superinterface both have companions
+interface I15 {
+    companion object {
+        val marker = logValue("I15.Companion")
+    }
+}
+open class B15 {
+    companion object { init { log("B15.Companion") } }
+}
+class A15 : B15(), I15 {
+    companion object { init { log("A15.Companion") } }
+}
+
+// generic superclass
+open class B16<T> {
+    companion object { init { log("B16.Companion") } }
+}
+class A16 : B16<String>() {
+    companion object { init { log("A16.Companion") } }
+}
+
 fun box(): String {
     l = ""
     A1
@@ -150,6 +235,51 @@ fun box(): String {
     A8()
     val r8 = l
     if (r8 != "C8.Companion\nA8.Companion\nC8.init\nA8.init\n") return "fail test8: '$r8'"
+
+    l = ""
+    B9
+    A9
+    A9
+    B9
+    val r9 = l
+    if (r9 != "B9.Companion\nA9.Companion\n") return "fail test9: '$r9'"
+
+    l = ""
+    A10
+    val r10 = l
+    if (r10 != "B10.Parent\nA10.Child\n") return "fail test10: '$r10'"
+
+    l = ""
+    if (A11.value != "B11.Companion/A11.Companion") return "fail test11 value: '${A11.value}'"
+    val r11 = l
+    if (r11 != "B11.Companion\nA11.Companion\n") return "fail test11: '$r11'"
+
+    l = ""
+    A12
+    val r12 = l
+    if (r12 != "A12.Companion\n") return "fail test12: '$r12'"
+
+    l = ""
+    A13
+    val r13 = l
+    if (r13 != "B13.Companion\nCompanionBase13.init\nA13.Companion\n") return "fail test13: '$r13'"
+
+    l = ""
+    A14
+    val r14 = l
+    if (r14 != "C14.Companion\nA14.Companion\n") return "fail test14: '$r14'"
+
+    l = ""
+    A15
+    log("--")
+    if (I15.marker != "I15.Companion") return "fail test15 marker"
+    val r15 = l
+    if (r15 != "B15.Companion\nA15.Companion\n--\nI15.Companion\n") return "fail test15: '$r15'"
+
+    l = ""
+    A16
+    val r16 = l
+    if (r16 != "B16.Companion\nA16.Companion\n") return "fail test16: '$r16'"
 
     return "OK"
 }
