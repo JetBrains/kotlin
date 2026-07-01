@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig.Companion.RunAllTests
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
     id("common-configuration")
     id("test-federation-convention")
@@ -45,4 +48,6 @@ val test by tasks.existing(Test::class) {
     systemProperty("kotlinVersion", project.version)
     systemProperty("testCasesClassesDirs", sourceSets["test"].output.classesDirs.asPath)
     jvmArgs("-ea")
+
+    smokeTestConfig = RunAllTests
 }
