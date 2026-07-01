@@ -25,15 +25,15 @@ private fun execImpl(output: KlibToolOutput, rawArgs: Array<String>): Int {
     val args = KlibToolArgumentsParser(output).parseArguments(rawArgs)
 
     if (args != null) {
-        val command = when (args.commandName) {
-            "dump-abi" -> DumpAbi(output, args)
-            "dump-ir" -> DumpIr(output, args)
-            "dump-ir-signatures" -> DumpIrSignatures(output, args)
-            "dump-ir-inlinable-functions" -> DumpIrInlinableFunctions(output, args)
-            "dump-metadata" -> DumpMetadata(output, args)
-            "dump-metadata-signatures" -> DumpMetadataSignatures(output, args)
-            "info" -> Info(output, args)
-            else -> {
+        val command = when (CliCommand.parseOrNull(args.commandName)) {
+            CliCommand.DUMP_ABI -> DumpAbi(output, args)
+            CliCommand.DUMP_IR -> DumpIr(output, args)
+            CliCommand.DUMP_IR_SIGNATURES -> DumpIrSignatures(output, args)
+            CliCommand.DUMP_IR_INLINABLE_FUNCTIONS -> DumpIrInlinableFunctions(output, args)
+            CliCommand.DUMP_METADATA -> DumpMetadata(output, args)
+            CliCommand.DUMP_METADATA_SIGNATURES -> DumpMetadataSignatures(output, args)
+            CliCommand.INFO -> Info(output, args)
+            null -> {
                 output.logError("Unknown command: ${args.commandName}")
                 null
             }
