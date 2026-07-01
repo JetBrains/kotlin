@@ -41,7 +41,6 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
         return KlibToolArguments(
             commandName = rawArgs[0],
             libraryPath = rawArgs[1],
-            printSignatures = extraArgs[CliOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
             onlyTopLevelSignatures = extraArgs[CliOption.ONLY_TOP_LEVEL_SIGNATURES]?.last()?.toBoolean() == true,
             signatureVersion,
             testMode = extraArgs[CliOption.TEST_MODE]?.last()?.toBoolean() == true,
@@ -185,11 +184,6 @@ private enum class CliOption(val isPrivate: Boolean = false) {
     ONLY_TOP_LEVEL_SIGNATURES {
         override val hintOnValues = "{true|false}"
         override val description = "Dump IR signatures of only top-level declarations. Applicable only to the \"dump-ir-signatures\" command."
-    },
-
-    PRINT_SIGNATURES {
-        override val hintOnValues = "{true|false}"
-        override val description = "Print IR signature for every declaration. Applicable only to the \"dump-metadata\" command."
     },
 
     /**

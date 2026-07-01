@@ -303,13 +303,9 @@ internal class DumpAbi(output: KlibToolOutput, args: KlibToolArguments) : KlibTo
 
 internal class DumpMetadata(output: KlibToolOutput, args: KlibToolArguments) : KlibToolCommand(output, args) {
     override fun execute() {
-        val idSignatureRenderer: IdSignatureRenderer? = runIf(args.printSignatures) {
-            args.signatureVersion.getMostSuitableSignatureRenderer() ?: return
-        }
-
         val library = loadKlib(args.libraryPath, output) ?: return
 
-        KotlinpBasedMetadataDumper(output, idSignatureRenderer).dumpLibrary(library, args.testMode)
+        KotlinpBasedMetadataDumper(output).dumpLibrary(library, args.testMode)
     }
 }
 

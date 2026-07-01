@@ -164,7 +164,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
             }
         } else {
             val metadata = testCompilationResult.assertSuccess().resultingArtifact
-                .dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
+                .dumpMetadata(kotlinNativeClassLoader.classLoader)
                 .let(::normalizeCSymbolNames)
 
             val filteredMetadata = if (ignoreExperimentalForeignApi)
