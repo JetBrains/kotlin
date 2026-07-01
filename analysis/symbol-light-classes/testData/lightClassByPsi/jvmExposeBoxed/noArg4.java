@@ -23,6 +23,8 @@ public final class RegularClassWithValueConstructor /* RegularClassWithValueCons
   private final int property;
 
   private  RegularClassWithValueConstructor(int);//  .ctor(int)
+
+  public  RegularClassWithValueConstructor();//  .ctor()
 }
 
 @kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi.class})
@@ -30,10 +32,9 @@ public final class RegularClassWithValueConstructorAndAnnotation /* RegularClass
   private final int property;
 
   @kotlin.jvm.JvmExposeBoxed()
-  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
-
-  @kotlin.jvm.JvmExposeBoxed()
   public  RegularClassWithValueConstructorAndAnnotation(@org.jetbrains.annotations.NotNull() IntWrapper);//  .ctor(@org.jetbrains.annotations.NotNull() IntWrapper)
 
   private  RegularClassWithValueConstructorAndAnnotation(int);//  .ctor(int)
+
+  public  RegularClassWithValueConstructorAndAnnotation();//  .ctor()
 }

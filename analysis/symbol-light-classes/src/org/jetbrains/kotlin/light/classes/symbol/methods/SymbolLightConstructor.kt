@@ -143,7 +143,7 @@ internal class SymbolLightConstructor private constructor(
             val primaryConstructor = constructors.singleOrNull { it.isPrimary }
             if (primaryConstructor != null && shouldGenerateNoArgOverload(lightClass, primaryConstructor, constructors)) {
                 when {
-                    !destinationClassIsValueClass && !hasValueClassInSignature(primaryConstructor) -> {
+                    !destinationClassIsValueClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
                             isJvmExposedBoxed = false,
