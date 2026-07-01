@@ -107,10 +107,10 @@ public class SirVisibilityCheckerImpl(
                 }
             }
             is KaVariableSymbol -> {
-                if (ktSymbol.hasHiddenGetter)
-                    return@withSessions SirAvailability.Hidden("Property declaration has hidden accessors")
-                else
-                    SirVisibility.PUBLIC
+                val exported = ktSymbol.isExported()
+                if (exported is SirAvailability.Available) {
+                    exported.visibility
+                } else return@withSessions exported
             }
             is KaTypeAliasSymbol -> ktSymbol.expandedType.fullyExpandedType.let { type ->
                 if (type is KaFunctionType) {
@@ -144,8 +144,10 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaNamedFunctionSymbol.isExported(): Boolean = sirSession.withSessions {
-        if (isStatic && !isValueOfOnEnum(this@isExported)) {
-            unsupportedDeclarationReporter.report(this@isExported, "static functions are not supported yet.")
+        // TODO(KT-87720): Support companion blocks and extensions.
+        @OptIn(KaExperimentalApi::class)
+        if (isCompanion && !isValueOfOnEnum(this@isExported)) {
+            unsupportedDeclarationReporter.report(this@isExported, "companion blocks and extensions are not supported yet.")
             return@withSessions false
         }
         if (origin !in SUPPORTED_SYMBOL_ORIGINS) {
@@ -200,6 +202,18 @@ public class SirVisibilityCheckerImpl(
             return@withSessions SirAvailability.Hidden("Some super type isn't available")
         }
 
+        return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
+    }
+
+    private fun KaVariableSymbol.isExported(): SirAvailability = sirSession.withSessions {
+        if (hasHiddenGetter) {
+            return@withSessions SirAvailability.Hidden("Property declaration has hidden accessors")
+        }
+        // TODO(KT-87720): Support companion blocks and extensions.
+        @OptIn(KaExperimentalApi::class)
+        if (isCompanion && this !is KaEnumEntrySymbol) {
+            return@withSessions SirAvailability.Hidden("companion blocks and extensions are not supported yet.")
+        }
         return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
     }
 
