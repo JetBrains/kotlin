@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -32,6 +33,10 @@ import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeMismatch
@@ -139,23 +144,74 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         }.takeIf { it.isNotEmpty() }
     }
 
+    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?) {
         val containingClassSymbol = classSymbol.getContainingClassSymbol() as? FirClassSymbol<*> ?: return
         val builderWithDeclarations = builderWithDeclarationsCache.getValue(containingClassSymbol) ?: return
         val className = classSymbol.classId.shortClassName.asString()
+        val builderFir = classSymbol.fir as? FirJavaClass
+        val entityJavaClass = containingClassSymbol.fir as FirJavaClass
+
+        val nestedClassifierScope =
+            containingClassSymbol.fir.scopeProvider.getNestedClassifierScope(containingClassSymbol.fir, session, ScopeSession())
+        var builderSymbolAlreadyExists = false // TODO: distinguish explicit/generated builders via origin, it's blocked by KT-79778
+        nestedClassifierScope?.processClassifiersByName(classSymbol.name) {
+            builderSymbolAlreadyExists = true
+        }
+
+        val existingFunctionNames = context.getExistingFunctionNames()
 
         for ((builder, declaration) in builderWithDeclarations) {
             val containingClassBuilderName = builder.getBuilderClassShortName(declaration)
             // Make sure the current class is really a builder of the containing parent
             if (className != containingClassBuilderName) continue
 
-            addBuilderMethods(
+            if (builderSymbolAlreadyExists && builderFir != null) {
+                // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
+                // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
+                // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
+                val typeParametersMapping =
+                    declaration.initializeTypeParametersMapping(newContainingDeclarationSymbol = classSymbol, existingDeclaration = true)
+                for ([key, value] in typeParametersMapping) {
+                    builderFir.classJavaTypeParameterStack.addParameter(key, value.symbol)
+                }
+            }
+
+            addSpecialBuilderMethods(
                 builder,
-                builderDeclaration = declaration,
                 builderSymbol = classSymbol,
-                entitySymbol = containingClassSymbol,
-                context,
+                builderDeclaration = declaration,
+                existingFunctionNames = existingFunctionNames
             )
+
+            val items = when (declaration) {
+                is FirJavaClass -> {
+                    if (entityJavaClass.isRecord) {
+                        entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                    } else {
+                        entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
+                    }
+                }
+                is FirJavaConstructor -> declaration.valueParameters
+                is FirJavaMethod -> declaration.valueParameters
+                else -> emptyList()
+            }
+            for (item in items) {
+                when (val singular = lombokService.getSingular(item.symbol)) {
+                    null -> {
+                        addSetterMethod(builder, item, builderSymbol = classSymbol, existingFunctionNames = existingFunctionNames)
+                    }
+                    else -> {
+                        addMethodsForSingularFields(
+                            builder,
+                            singular,
+                            item,
+                            builderSymbol = classSymbol,
+                            existingFunctionNames = existingFunctionNames
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -287,61 +343,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     }
 
     private data class BuilderWithDeclaration<T>(val builder: T, val declaration: FirDeclaration)
-
-    @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
-    private fun MutableMap<Name, FirJavaMethod>.addBuilderMethods(
-        builder: T,
-        builderDeclaration: FirDeclaration,
-        builderSymbol: FirClassSymbol<*>,
-        entitySymbol: FirClassSymbol<*>,
-        context: MemberGenerationContext?,
-    ) {
-        val entityJavaClass = entitySymbol.fir as FirJavaClass
-
-        val nestedClassifierScope = entitySymbol.fir.scopeProvider.getNestedClassifierScope(entitySymbol.fir, session, ScopeSession())
-        var builderSymbolAlreadyExists = false // TODO: distinguish explicit/generated builders via origin, KT-79778
-        nestedClassifierScope?.processClassifiersByName(builderSymbol.name) {
-            builderSymbolAlreadyExists = true
-        }
-
-        val builderFir = builderSymbol.fir as? FirJavaClass
-        if (builderSymbolAlreadyExists && builderFir != null) {
-            // For already existing explicit builders, initialize and populate type parameters to link generated functions with them.
-            // Unfortunately, we can't do it on nested classes generation step because scope are being traversed recursively (that would lead to StackOverflow)
-            // For Lombok-generated builders, createEmptyBuilderClass already sets up the correct mapping
-            val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol, existingDeclaration = true)
-            for ([key, value] in typeParametersMapping) {
-                builderFir.classJavaTypeParameterStack.addParameter(key, value.symbol)
-            }
-        }
-
-        val existingFunctionNames = context.getExistingFunctionNames()
-
-        addSpecialBuilderMethods(builder, builderSymbol, builderDeclaration, existingFunctionNames)
-
-        val items = when (builderDeclaration) {
-            is FirJavaClass -> {
-                if (entityJavaClass.isRecord) {
-                    entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
-                } else {
-                    entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
-                }
-            }
-            is FirJavaConstructor -> builderDeclaration.valueParameters
-            is FirJavaMethod -> builderDeclaration.valueParameters
-            else -> emptyList()
-        }
-        for (item in items) {
-            when (val singular = lombokService.getSingular(item.symbol)) {
-                null -> {
-                    addSetterMethod(builder, item, builderSymbol, existingFunctionNames)
-                }
-                else -> {
-                    addMethodsForSingularFields(builder, singular, item, builderSymbol, existingFunctionNames)
-                }
-            }
-        }
-    }
 
     private fun MutableMap<Name, FirJavaMethod>.addSetterMethod(
         builder: AbstractBuilder,
