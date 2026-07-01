@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.generators
 
+import org.jetbrains.kotlin.builtins.StandardNames.TO_STRING_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -68,8 +69,6 @@ val FirDeclarationOrigin.isToString get() = this is FirDeclarationOrigin.Plugin 
  */
 class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        val TO_STRING_NAME = Name.identifier("toString")
-
         private val PREDICATE = DeclarationPredicate.create { annotated(listOf(LombokNames.TO_STRING)) }
     }
 

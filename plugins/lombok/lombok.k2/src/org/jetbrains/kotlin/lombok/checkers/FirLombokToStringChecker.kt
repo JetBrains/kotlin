@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.lombok.checkers
 
+import org.jetbrains.kotlin.builtins.StandardNames.TO_STRING_NAME
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,13 +18,12 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.ToStringGenerator
 import org.jetbrains.kotlin.lombok.generators.isToString
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 
 object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
-    private val functionNames = setOf(ToStringGenerator.TO_STRING_NAME)
+    private val functionNames = setOf(TO_STRING_NAME)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
@@ -32,7 +32,7 @@ object FirLombokToStringChecker : FirRegularClassChecker(MppCheckerKind.Platform
 
         val declaredMemberScope = context.session.declaredMemberScope(declaration.symbol, memberRequiredPhase = null)
         var hasConflict = false
-        declaredMemberScope.processFunctionsByName(ToStringGenerator.TO_STRING_NAME) {
+        declaredMemberScope.processFunctionsByName(TO_STRING_NAME) {
             hasConflict = hasConflict || it.isRelevantForConflictsCheck && !it.origin.isToString && it.valueParameterSymbols.isEmpty()
         }
         if (hasConflict) {
