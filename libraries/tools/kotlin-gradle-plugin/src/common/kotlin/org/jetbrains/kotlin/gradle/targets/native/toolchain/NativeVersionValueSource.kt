@@ -13,8 +13,12 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCom
 import org.jetbrains.kotlin.konan.util.ArchiveType
 import org.jetbrains.kotlin.konan.util.DependencyExtractor
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal abstract class NativeVersionValueSource :
     ValueSource<String, NativeVersionValueSource.Params> {
@@ -24,13 +28,13 @@ internal abstract class NativeVersionValueSource :
         val reinstallBundle: Property<Boolean>
         val simpleKotlinNativeVersion: Property<String>
         val kotlinNativeVersion: Property<String>
-        val kotlinNativeCompilerConfiguration: Property<ConfigurableFileCollection>
+        val kotlinNativeCompilerConfiguration: ConfigurableFileCollection
     }
 
     override fun obtain(): String {
         val kotlinNativeVersion = parameters.kotlinNativeVersion.get()
         prepareKotlinNativeBundle(
-            parameters.kotlinNativeCompilerConfiguration.get(),
+            parameters.kotlinNativeCompilerConfiguration,
             kotlinNativeVersion,
             File(parameters.bundleDirectory.get()),
             parameters.reinstallBundle.get(),
@@ -39,16 +43,12 @@ internal abstract class NativeVersionValueSource :
     }
 
     /**
-     * This function downloads and installs a Kotlin Native bundle if needed
-     * and then prepares its platform libraries if needed.
+     * Installs the Kotlin/Native bundle into [bundleDir] unless it is already there.
      *
-     * @param project The Gradle project object.
-     * @param kotlinNativeBundleConfiguration Gradle configuration for Kotlin Native Bundle
-     * @param kotlinNativeVersion The version of Kotlin/Native to install
-     * @param bundleDir The directory to store the Kotlin/Native bundle.
-     * @param reinstallFlag A flag indicating whether to reinstall the bundle.
-     * @param konanTargets The set of KonanTarget objects representing the targets for the Kotlin/Native bundle.
-     * @return kotlin native version if toolchain was used, path to konan home if konan home was used
+     * @param kotlinNativeBundleConfiguration configuration resolving to the Kotlin/Native bundle archive
+     * @param kotlinNativeVersion the Kotlin/Native version to install
+     * @param bundleDir target directory for the bundle
+     * @param reinstallFlag whether to reinstall the bundle
      */
     private fun prepareKotlinNativeBundle(
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
@@ -66,7 +66,7 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
         val lock =
-            NativeDistributionCommonizerLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
+            NativeDistributionCommonizerLock(stagingDirectoryFor(bundleDir)) { message -> logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
             val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
@@ -77,10 +77,10 @@ internal abstract class NativeVersionValueSource :
             removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
             if (!bundleDir.resolve(MARKER_FILE).exists()) {
-                val gradleCachesKotlinNativeDir =
+                val bundleArchive =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
 
-                copyNativeBundleDistribution(gradleCachesKotlinNativeDir, bundleDir)
+                extractNativeBundleDistribution(bundleArchive, bundleDir)
             }
         }
     }
@@ -89,57 +89,133 @@ internal abstract class NativeVersionValueSource :
         reinstallFlag: Boolean,
         bundleDir: File,
     ) {
-        if (reinstallFlag && canBeReinstalled) {
+        if (reinstallFlag && canBeReinstalled.compareAndSet(true, false)) {
             logger.info("Removing Kotlin/Native bundle")
             bundleDir.deleteRecursively()
-            canBeReinstalled = false // we don't need to reinstall k/n if it was reinstalled once during the same build
         }
     }
 
     private fun resolveKotlinNativeConfiguration(
         kotlinNativeVersion: String,
-        kotlinNativeCompilerConfiguration: ConfigurableFileCollection,
+        kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ): File {
         val resolutionErrorMessage = "Kotlin Native dependency has not been properly resolved. " +
                 "Please, make sure that you've declared the repository, which contains $kotlinNativeVersion."
 
-        val gradleCachesKotlinNativeDir = kotlinNativeCompilerConfiguration
-            .singleOrNull() ?: error(resolutionErrorMessage)
-
-        return gradleCachesKotlinNativeDir
+        return kotlinNativeBundleConfiguration.singleOrNull() ?: error(resolutionErrorMessage)
     }
 
     companion object {
-        private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
+        private val canBeReinstalled: AtomicBoolean = AtomicBoolean(true) // we can reinstall a k/n bundle once during the build
         internal const val MARKER_FILE = "provisioned.ok"
-        val logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
+        val logger: Logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
         internal fun isSnapshotVersion(kotlinNativeVersion: String): Boolean =
             KotlinToolingVersion(kotlinNativeVersion).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
 
-        internal fun copyNativeBundleDistribution(
-            fromDirectory: File,
+        /**
+         * Directory for the install `.lock` and the temporary extraction workspace. It sits beside
+         * [bundleDir], not inside it, because the lock holds `.lock` open for the whole install and
+         * Windows can't rename or delete a directory that has an open handle. [publishBundleAtomically]
+         * renames and deletes [bundleDir], so the lock has to stay out of it. KT-86251.
+         */
+        private fun stagingDirectoryFor(bundleDir: File): File =
+            bundleDir.resolveSibling("${bundleDir.name}.staging")
+
+        internal fun extractNativeBundleDistribution(
+            archiveFile: File,
             toDirectory: File,
         ) {
-            logger.info("Moving Kotlin/Native bundle from  $fromDirectory to ${toDirectory.absolutePath}")
-            if (!toDirectory.list().isNullOrEmpty()) {
-                logger.warn("Kotlin/Native bundle directory ${toDirectory.absolutePath} is not empty. Native bundle files will be overwritten.")
+            logger.info("Installing Kotlin/Native bundle from $archiveFile to ${toDirectory.absolutePath}")
+
+            // Already installed by another process or daemon.
+            if (toDirectory.resolve(MARKER_FILE).exists()) {
+                logger.info("Kotlin/Native bundle already installed at ${toDirectory.absolutePath}")
+                return
             }
-            unzipTo(fromDirectory, toDirectory.parentFile)
 
-            checkKotlinNativeVersionWasDownloaded(toDirectory)
+            // Extract inside the staging dir (the same sibling that holds the install .lock), so
+            // the bundle and toDirectory share a filesystem and publishing is a cheap atomic
+            // rename. A unique subdir keeps concurrent extractions from colliding.
+            val stagingDir = stagingDirectoryFor(toDirectory).also { it.mkdirs() }
+            val tmpParent = Files.createTempDirectory(
+                stagingDir.toPath(),
+                "${archiveFile.archiveBaseName}.tmp."
+            ).toFile()
 
-            createSuccessfulInstallationFile(toDirectory)
+            try {
+                unzipTo(archiveFile, tmpParent)
 
-            logger.info("Moved Kotlin/Native bundle from $fromDirectory to ${toDirectory.absolutePath}")
+                val tmpContents = tmpParent.listFiles()
+                    ?: error(
+                        "Failed to list contents of temp extraction directory ${tmpParent.absolutePath}. " +
+                                "This may indicate a filesystem I/O error."
+                    )
+                val extractedDir = tmpContents.singleOrNull()
+                    ?: error(
+                        "Kotlin/Native bundle archive $archiveFile did not contain exactly one " +
+                                "top-level directory (found ${tmpContents.size} entries in ${tmpParent.absolutePath})"
+                    )
+
+                requireExtractedBundleIsNonEmpty(extractedDir)
+                requireKotlinNativeVersionWasDownloaded(extractedDir, toDirectory.name)
+
+                // Stamp the marker inside the temp dir so dir + marker move into place together.
+                createSuccessfulInstallationFile(extractedDir)
+
+                publishBundleAtomically(extractedDir, toDirectory)
+
+                logger.info("Installed Kotlin/Native bundle at ${toDirectory.absolutePath}")
+            } finally {
+                tmpParent.deleteRecursively()
+            }
         }
 
-        private fun checkKotlinNativeVersionWasDownloaded(
-            gradleKotlinNativeDir: File,
-        ) {
-            //check that native was actually downloaded and unpacked and there is something except .lock file
-            if (!gradleKotlinNativeDir.exists() || (gradleKotlinNativeDir.list().size <= 1)) {
+        /**
+         * Renames [extractedDir] onto [toDirectory] in a single move, so a reader never sees a
+         * half-written bundle: [toDirectory] is either absent or complete with [MARKER_FILE].
+         *
+         * Called under the install lock and only when [toDirectory] had no marker. So a
+         * [toDirectory] that exists here is a leftover from an interrupted or old in-place install.
+         * The compiler writes generated caches (`klib/cache/...`) only after the marker is stamped,
+         * so a marker-less leftover holds no caches and we can delete it. A [toDirectory] that
+         * already has a marker is a finished install that may hold caches, so we keep it and drop
+         * our copy instead. KT-86251.
+         */
+        private fun publishBundleAtomically(extractedDir: File, toDirectory: File) {
+            if (toDirectory.exists()) {
+                if (toDirectory.resolve(MARKER_FILE).exists()) {
+                    logger.info(
+                        "Kotlin/Native bundle already installed at ${toDirectory.absolutePath}; " +
+                                "keeping it and discarding the freshly extracted copy."
+                    )
+                    return
+                }
+                logger.info("Removing incomplete Kotlin/Native bundle at ${toDirectory.absolutePath}")
+                toDirectory.deleteRecursively()
+            }
+            atomicMove(extractedDir, toDirectory)
+        }
+
+        private fun atomicMove(from: File, to: File) {
+            Files.move(from.toPath(), to.toPath(), StandardCopyOption.ATOMIC_MOVE)
+        }
+
+        private fun requireExtractedBundleIsNonEmpty(extractedDir: File) {
+            val contents = extractedDir.list()
+            if (contents == null || contents.isEmpty()) {
                 error(
-                    "Kotlin Native bundle dependency was used. " +
+                    "Kotlin/Native bundle extraction produced an empty or missing directory at " +
+                            "${extractedDir.absolutePath}. " +
+                            "Ensure 'kotlin.native.version' is set to a valid published version."
+                )
+            }
+        }
+
+        private fun requireKotlinNativeVersionWasDownloaded(extractedDir: File, expectedName: String) {
+            // Wrong version resolved: the archive's top-level dir won't match the bundle dir name.
+            if (extractedDir.name != expectedName) {
+                error(
+                    "Kotlin/Native bundle dependency was used. " +
                             "Please provide the corresponding version in 'kotlin.native.version' property instead of any other ways."
                 )
             }
@@ -147,7 +223,7 @@ internal abstract class NativeVersionValueSource :
 
         private fun unzipTo(archive: File, toDirectory: File) {
             when {
-                archive.name.endsWith("zip") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.ZIP)
+                archive.name.endsWith(".zip") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.ZIP)
                 archive.name.endsWith(".tar.gz") -> DependencyExtractor().extract(archive, toDirectory, ArchiveType.TAR_GZ)
                 else -> error("Unsupported format for unzipping $archive")
             }
@@ -156,5 +232,12 @@ internal abstract class NativeVersionValueSource :
         private fun createSuccessfulInstallationFile(bundleDir: File) {
             bundleDir.resolve(MARKER_FILE).createNewFile()
         }
+
+        private val File.archiveBaseName: String
+            get() = when {
+                name.endsWith(".tar.gz", ignoreCase = true) -> name.dropLast(".tar.gz".length)
+                name.endsWith(".zip", ignoreCase = true) -> name.dropLast(".zip".length)
+                else -> nameWithoutExtension
+            }
     }
 }
