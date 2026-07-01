@@ -77,6 +77,11 @@ class K()
 @NoArgsConstructor(staticName = "!@#$%^&*()") // TODO: KT-86816
 class L()
 
+@NoArgsConstructor(
+    onConstructor = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
+)
+class UnsupportedArguments()
+
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.
     <!NO_VALUE_FOR_PARAMETER!>D<!>() // Don't generate no-args constructor because there are multiple super classes (`MANY_CLASSES_IN_SUPERTYPE_LIST`)

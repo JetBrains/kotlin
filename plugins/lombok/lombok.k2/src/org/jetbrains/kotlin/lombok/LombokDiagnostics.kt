@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.KOTL
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_CONFIG_IS_MISSING
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.LOMBOK_PLUGIN_IS_EXPERIMENTAL
 import org.jetbrains.kotlin.lombok.LombokCliDiagnostics.UNKNOWN_PLUGIN_OPTION
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_HAS_NO_EFFECT
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.ANNOTATION_IS_NOT_SUPPORTED
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT
@@ -49,6 +50,7 @@ object LombokCliDiagnostics : KtDiagnosticsContainer() {
 
 object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val ANNOTATION_IS_NOT_SUPPORTED by warning1<KtAnnotationEntry, Name>()
+    val ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED by warning1<KtExpression, Name>()
     val ANNOTATION_HAS_NO_EFFECT by warning2<KtAnnotationEntry, String, Collection<KotlinTarget>>()
     val FLAG_USAGE_WARNING by warning1<KtAnnotationEntry, Name>()
     val FLAG_USAGE_ERROR by error1<KtAnnotationEntry, Name>()
@@ -76,6 +78,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
     const val FLAG_USAGE_MESSAGE = "Use of any @''{0}'' is flagged according to lombok configuration."
     override val MAP by KtDiagnosticFactoryToRendererMap("FIR") { map ->
         map.put(ANNOTATION_IS_NOT_SUPPORTED, "Lombok annotation ''{0}'' is not supported in Kotlin.", CommonRenderers.NAME)
+        map.put(
+            ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED,
+            "Lombok annotation argument ''{0}'' is not supported in Kotlin.",
+            CommonRenderers.NAME
+        )
         map.put(
             ANNOTATION_HAS_NO_EFFECT,
             "This annotation has no effect on target ''{0}''. Relevant targets: {1}.",
