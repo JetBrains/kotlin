@@ -22,7 +22,7 @@ fun (<!WRONG_ANNOTATION_TARGET!>@IntroducedAt("1")<!> Int).withReceiver(a: Strin
 
 fun withVararg1(x: String, <!INVALID_VERSIONING_ON_VARARG!>@IntroducedAt("1")<!> vararg rest: String) { }
 
-fun withVararg2(@IntroducedAt("1") x: String = "hello", <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>vararg rest: String<!>) { }
+fun withVararg2(@IntroducedAt("1") x: String = "hello", <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>vararg rest: String<!>) { }
 
 fun withVararg3(vararg rest: String, @IntroducedAt("1") x: String = "hello") { }
 

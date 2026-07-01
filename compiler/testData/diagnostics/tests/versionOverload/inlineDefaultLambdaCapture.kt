@@ -3,7 +3,7 @@
 
 @file:OptIn(ExperimentalVersionOverloading::class)
 
-inline fun foo(
+inline fun <!INVALID_VERSIONING_ON_INLINE!>foo<!>(
     x: String,
     @IntroducedAt("1") y: Int = 1,
     @IntroducedAt("2") z: Boolean = true,

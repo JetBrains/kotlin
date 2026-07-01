@@ -6,7 +6,7 @@ class C {
     fun foo(
         @IntroducedAt("2") a: Int = 1,
         @IntroducedAt("3") b: Int = 2,
-        <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>c: Int<!>,
+        <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>c: Int<!>,
         @IntroducedAt("4") d: Int = 2,
         f: () -> Unit
     ) { }
@@ -20,14 +20,14 @@ class C {
     fun foo2(
         @IntroducedAt("2") a: Int = 1,
         @IntroducedAt("3") b: Int = 2,
-        <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>c: Int<!>,
+        <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>c: Int<!>,
     ) { }
 }
 
 data class D(
     @IntroducedAt("2") val a: Int = 1,
     @IntroducedAt("3") val b: Int = 2,
-    <!INVALID_NON_OPTIONAL_PARAMETER_POSITION!>val c: Int<!>,
+    <!INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL!>val c: Int<!>,
     val f: () -> Unit
 )
 

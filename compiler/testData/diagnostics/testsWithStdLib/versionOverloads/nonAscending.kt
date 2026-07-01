@@ -25,7 +25,7 @@ data class E(
     @IntroducedAt("1.0") val d: Int = 4,
 )
 
-inline fun inlineFunction(
+fun functionWithLambda(
     @IntroducedAt("1") x: Int = 4,
     @IntroducedAt("2") y: Int = 2,
     <!NON_ASCENDING_VERSION_ANNOTATION!>@IntroducedAt("1")<!> block: () -> String = { x.toString() }

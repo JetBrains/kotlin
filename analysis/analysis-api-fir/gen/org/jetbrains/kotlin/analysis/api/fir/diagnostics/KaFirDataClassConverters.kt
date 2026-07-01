@@ -771,6 +771,12 @@ private fun KaDiagnosticConverterBuilder.addConversions11() {
             token,
         )
     }
+    add(FirErrors.INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL) { firDiagnostic ->
+        InvalidVersioningOnRequiredAfterOptionalImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.THROWS_IN_ANNOTATION.warningFactory) { firDiagnostic ->
         ThrowsInAnnotationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -801,12 +807,6 @@ private fun KaDiagnosticConverterBuilder.addConversions12() {
     }
     add(FirErrors.ILLEGAL_PROJECTION_USAGE) { firDiagnostic ->
         IllegalProjectionUsageImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION) { firDiagnostic ->
-        InvalidNonOptionalParameterPositionImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

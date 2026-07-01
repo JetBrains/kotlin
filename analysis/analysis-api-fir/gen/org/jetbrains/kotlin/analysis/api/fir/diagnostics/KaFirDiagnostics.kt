@@ -4716,57 +4716,57 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val containingDeclarationName: Name
     }
 
-    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
-    }
-
-    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<PsiElement> {
+    interface InvalidVersioningOnNonfinalFunction : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InvalidVersioningOnNonfinalFunction::class
     }
 
-    interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
-    }
-
-    interface InvalidVersioningOnLocalFunction : KaFirDiagnostic<PsiElement> {
+    interface InvalidVersioningOnLocalFunction : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InvalidVersioningOnLocalFunction::class
     }
 
-    interface InvalidVersioningOnAnnotationClass : KaFirDiagnostic<PsiElement> {
+    interface InvalidVersioningOnNonfinalClass : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InvalidVersioningOnNonfinalClass::class
+    }
+
+    interface InvalidVersioningOnAnnotationClass : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = InvalidVersioningOnAnnotationClass::class
     }
 
-    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidDefaultValueDependency::class
-        val lowestVersion: MavenComparableVersion?
-        val highestVersion: MavenComparableVersion?
-    }
-
-    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
+    interface InvalidVersioningOnInline : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InvalidVersioningOnInline::class
     }
 
     interface InvalidVersioningOnReceiverOrContextParameterPosition : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidVersioningOnReceiverOrContextParameterPosition::class
     }
 
-    interface InvalidVersioningOnVararg : KaFirDiagnostic<PsiElement> {
+    interface InvalidVersioningOnRequiredAfterOptional : KaFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = InvalidVersioningOnRequiredAfterOptional::class
+    }
+
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
+    }
+
+    interface InvalidVersioningOnVararg : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = InvalidVersioningOnVararg::class
     }
 
-    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<PsiElement> {
+    interface InvalidVersioningOnValueClassParameter : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = InvalidVersioningOnValueClassParameter::class
     }
 
-    interface InvalidVersioningOnInline : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnInline::class
-    }
-
-    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass get() = NonAscendingVersionAnnotation::class
         val lowestVersion: MavenComparableVersion?
         val highestVersion: MavenComparableVersion?
         val sourceOfHighestVersion: KaCallableSymbol
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+        val lowestVersion: MavenComparableVersion?
+        val highestVersion: MavenComparableVersion?
     }
 
     interface VersionOverloadsTooComplexExpression : KaFirDiagnostic<PsiElement> {

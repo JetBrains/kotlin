@@ -86,35 +86,15 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
         val containingClassSymbol = declaration.getContainingClassSymbol()
         when {
             !declaration.isFinal ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
+                reporter.reportOn(declaration.source, FirErrors.INVALID_VERSIONING_ON_NONFINAL_FUNCTION)
             declaration.isLocal ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
+                reporter.reportOn(declaration.source, FirErrors.INVALID_VERSIONING_ON_LOCAL_FUNCTION)
             declaration !is FirConstructor && containingClassSymbol?.isFinal == false ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
+                reporter.reportOn(declaration.source, FirErrors.INVALID_VERSIONING_ON_NONFINAL_CLASS)
             containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
+                reporter.reportOn(declaration.source, FirErrors.INVALID_VERSIONING_ON_ANNOTATION_CLASS)
             declaration.isInline ->
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.INVALID_VERSIONING_ON_INLINE,
-                    SourceElementPositioningStrategies.DECLARATION_NAME
-                )
+                reporter.reportOn(declaration.source, FirErrors.INVALID_VERSIONING_ON_INLINE)
             else -> return false
         }
         // if we reach this point, there were problems with the declaration or its containing class
@@ -137,7 +117,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
                 val mayBeTrailingLambda =
                     (i == declaration.valueParameters.lastIndex) && param.returnTypeRef.coneType.isSomeFunctionType(context.session)
                 if (param.defaultValue == null && highestVersionUntilNow != null && !mayBeTrailingLambda) {
-                    reporter.reportOn(param.source, FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
+                    reporter.reportOn(param.source, FirErrors.INVALID_VERSIONING_ON_REQUIRED_AFTER_OPTIONAL)
                 }
                 continue
             }
@@ -147,11 +127,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Platform) 
 
             when {
                 param.isVararg ->
-                    reporter.reportOn(versionAnnotation.source ?: param.source, FirErrors.INVALID_VERSIONING_ON_VARARG)
-
+                    reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_VARARG)
                 param.isVal && declaration is FirConstructor && containingClassSymbol?.isInlineOrValue == true ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER)
-
                 param.defaultValue == null && !declaration.isActual ->
                     reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
             }
