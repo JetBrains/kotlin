@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
@@ -165,15 +167,31 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         for ((val builder, val builderDeclaration = declaration) in builderWithDeclarations) {
             val visibility = builder.visibility ?: continue
             val entityClassId = entitySymbol.classId
-            val builderClassName = builder.getBuilderClassShortName(builderDeclaration)
-            val builderClassId = entityClassId.createNestedClassId(Name.identifier(builderClassName))
+            val builderClassName = Name.identifier(builder.getBuilderClassShortName(builderDeclaration))
+            val builderClassId = entityClassId.createNestedClassId(builderClassName)
 
             val existingFunctionNames = context.getExistingFunctionNames()
 
+            var existingBuilder: FirClassSymbol<*>? = null
+            context?.declaredScope?.processClassifiersByName(builderClassName) {
+                if (existingBuilder == null && it is FirClassSymbol<*>) {
+                    existingBuilder = it
+                }
+            }
+
             fun createBuilderTypeRef(typeParameterSymbols: List<FirTypeParameterSymbol>): FirResolvedTypeRef {
-                return builderClassId
-                    .constructClassLikeType((typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()).toTypedArray())
-                    .toFirResolvedTypeRef()
+                val newTypeArguments = typeParameterSymbols.map { it.toConeType() } + getExtraTypeArguments()
+                val existingBuilderType = existingBuilder?.defaultType()
+                val existingBuilderTypeArguments = existingBuilderType?.typeArguments
+                val resultType = builderClassId.constructClassLikeType(newTypeArguments.toTypedArray())
+
+                // Create an error type if the existing builder has a type that doesn't conform to the expected.
+                // It satisfies compiler expectations and prevents crashing.
+                return if (existingBuilderTypeArguments == null || existingBuilderTypeArguments.size == newTypeArguments.size) {
+                    resultType
+                } else {
+                    ConeErrorType(ConeTypeMismatch(existingBuilderType, resultType))
+                }.toFirResolvedTypeRef()
             }
 
             addIfNonClashing(Name.identifier(builder.builderMethodName), existingFunctionNames) { name ->
@@ -197,12 +215,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             if (builder.requiresToBuilder) {
                 addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
+                    // toBuilder() is always an instance method, so the class type parameters are
+                    // already provided by the dispatch receiver. The method must not introduce its
+                    // own independent type parameters — otherwise call-site inference would fail.
                     entitySymbol.createJavaMethod(
                         name,
                         valueParameters = emptyList(),
-                        // toBuilder() is always an instance method, so the class type parameters are
-                        // already provided by the dispatch receiver. The method must not introduce its
-                        // own independent type parameters — otherwise call-site inference would fail.
                         returnTypeRef = createBuilderTypeRef(entitySymbol.typeParameterSymbols),
                         visibility = visibility,
                         modality = Modality.FINAL,
