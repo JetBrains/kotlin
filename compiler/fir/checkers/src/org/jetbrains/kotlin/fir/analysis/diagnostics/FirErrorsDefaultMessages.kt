@@ -516,6 +516,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_ACTUAL_ANN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
@@ -2639,6 +2640,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOL_WITH_CONTAINING_DECLARATION,
             SYMBOL_WITH_CONTAINING_DECLARATION
         )
+        map.put(
+            FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL,
+            "''lateinit val'' property {0} cannot be overridden by ''val'' property ''{1}''.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL
+        )
         map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect on a final class.")
         map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect on object.")
         map.put(
@@ -3066,6 +3073,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'Foo::bar').")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a 'lateinit' property.")
+        map.put(LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL, "This declaration cannot be called on a reference to a 'val' property.")
         map.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration cannot be used inside an inline function.")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point.", SYMBOL)
 

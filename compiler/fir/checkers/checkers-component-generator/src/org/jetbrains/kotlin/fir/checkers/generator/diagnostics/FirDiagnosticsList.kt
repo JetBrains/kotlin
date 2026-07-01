@@ -1451,6 +1451,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridingDeclaration")
             parameter<FirCallableSymbol<*>>("overriddenDeclaration")
         }
+        val LATEINIT_VAL_OVERRIDDEN_BY_VAL by error<KtNamedDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE) {
+            parameter<FirCallableSymbol<*>>("overridingDeclaration")
+            parameter<FirCallableSymbol<*>>("overriddenDeclaration")
+        }
         val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val NON_FINAL_MEMBER_IN_OBJECT by warning<KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
         val VIRTUAL_MEMBER_HIDDEN by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
@@ -1670,6 +1674,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error<PsiElement>()
         val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement> {
             parameter<Symbol>("declaration")

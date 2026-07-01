@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -79,7 +80,7 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         }
 
         val returnTypeVariance =
-            if (member is FirPropertySymbol && member.isVar) Variance.INVARIANT else Variance.OUT_VARIANCE
+            if (member is FirPropertySymbol && (member.isVar || member.isLateInit)) Variance.INVARIANT else Variance.OUT_VARIANCE
 
         var returnSource = member.resolvedReturnTypeRef.source
         if (returnSource != null) {

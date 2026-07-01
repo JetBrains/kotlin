@@ -3373,6 +3373,13 @@ internal class VarImplementedByInheritedValWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.VarImplementedByInheritedValWarning
 
+internal class LateinitValOverriddenByValImpl(
+    override val overridingDeclaration: KaCallableSymbol,
+    override val overriddenDeclaration: KaCallableSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KaFirDiagnostic.LateinitValOverriddenByVal
+
 internal class NonFinalMemberInFinalClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
@@ -3975,6 +3982,11 @@ internal class LateinitIntrinsicCallOnNonLateinitImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LateinitIntrinsicCallOnNonLateinit
+
+internal class LateinitIntrinsicCallOnLateinitValImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.LateinitIntrinsicCallOnLateinitVal
 
 internal class LateinitIntrinsicCallInInlineFunctionImpl(
     firDiagnostic: KtPsiDiagnostic,

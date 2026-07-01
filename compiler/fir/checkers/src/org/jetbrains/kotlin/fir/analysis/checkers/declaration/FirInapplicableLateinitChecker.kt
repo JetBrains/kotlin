@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -30,7 +32,9 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             return
         }
 
-        if (declaration.isVal) {
+        val isSupportedVal = declaration.isVal && LanguageFeature.LateinitVals.isEnabled()
+
+        if (declaration.isVal && !LanguageFeature.LateinitVals.isEnabled()) {
             reporter.reportError(declaration.source, "is allowed only on mutable properties")
         }
 
@@ -46,11 +50,11 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
             reporter.reportError(declaration.source, "is not allowed on delegated properties")
         }
 
-        if (declaration.returnTypeRef.coneType.canBeNull(context.session)) {
+        if (!isSupportedVal && declaration.returnTypeRef.coneType.canBeNull(context.session)) {
             reporter.reportError(declaration.source, "is not allowed on properties of a type with nullable upper bound")
         }
 
-        if (declaration.returnTypeRef.coneType.isPrimitive) {
+        if (!isSupportedVal && declaration.returnTypeRef.coneType.isPrimitive) {
             if (declaration.symbol is FirLocalPropertySymbol) {
                 reporter.reportError(declaration.source, "is not allowed on local variables of primitive types")
             } else {
@@ -91,6 +95,10 @@ object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common
                     "is not allowed on $variables of inline class types"
                 )
             }
+        }
+
+        if (isSupportedVal && declaration.symbol is FirLocalPropertySymbol) {
+            reporter.reportError(declaration.source, "is only allowed on mutable local variables")
         }
     }
 
