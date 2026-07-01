@@ -304,6 +304,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - companion blocks and extensions`() {
+        doTest(headersTestDataDir.resolve("companionBlocksAndExtensions"))
+    }
+
+    @Test
     fun `test - anonymous functions`() {
         doTest(headersTestDataDir.resolve("anonymousFunctions"))
     }
