@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -24,10 +23,9 @@ import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
-import org.jetbrains.kotlin.lombok.config.LombokConfigNames.DO_NOT_USE_GETTERS
 import org.jetbrains.kotlin.lombok.config.lombokService
-import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
+import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -63,15 +61,6 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
                 LombokNames.EQUALS_AND_HASH_CODE.shortName(),
                 context,
             )
-        }
-
-        if (annotationInfo.doNotUseGetters != null) {
-            /**
-             * `doNotUseGetters` is a Java-specific concept; in Kotlin a property is always accessed through
-             * a unified getter. Warn so users know the parameter has no effect on generated code.
-             */
-            val argSource = annotationInfo.annotation.findArgumentByName(DO_NOT_USE_GETTERS, returnFirstWhenNotFound = false)!!.source
-            reporter.reportOn(argSource, LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT, context)
         }
 
         declaredMemberScope.processAllProperties { variableSymbol ->

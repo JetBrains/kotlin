@@ -137,7 +137,13 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                 }
 
                 for ([argumentName, argumentExpression] in annotation.argumentMapping.mapping) {
-                    if (unsupportedArguments.contains(argumentName)) {
+                    if (argumentName == DO_NOT_USE_GETTERS) {
+                        reporter.reportOn(
+                            argumentExpression.source,
+                            LombokFirDiagnostics.DO_NOT_USE_GETTERS_IRRELEVANT,
+                            context
+                        )
+                    } else if (unsupportedArguments.contains(argumentName)) {
                         reporter.reportOn(
                             argumentExpression.source,
                             LombokFirDiagnostics.ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED,

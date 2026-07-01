@@ -63,16 +63,16 @@ class WithOnlyExclude(@EqualsAndHashCode.Exclude val excluded: String, val norma
 class Normal(val x: Int)
 
 // doNotUseGetters is Java-specific and has no effect in Kotlin
-@EqualsAndHashCode(doNotUseGetters = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED, DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
+@EqualsAndHashCode(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
 class WithDoNotUseGettersTrue(val x: Int)
 
-@EqualsAndHashCode(doNotUseGetters = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED, DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
+@EqualsAndHashCode(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)
 
 @EqualsAndHashCode(
     exclude = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
     of = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
-    doNotUseGetters = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED, DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>,
+    doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>,
     cacheStrategy = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>EqualsAndHashCode.CacheStrategy.LAZY<!>,
     onParam = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED!>[]<!>,
 )

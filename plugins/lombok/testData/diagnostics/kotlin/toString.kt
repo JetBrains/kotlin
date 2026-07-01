@@ -51,10 +51,10 @@ class WithOnlyExclude(@ToString.Exclude val excluded: String, val normal: String
 class Normal(val x: Int)
 
 // DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = true is Java-specific and has no effect in Kotlin
-@ToString(doNotUseGetters = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED, DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
 class WithDoNotUseGettersTrue(val x: Int)
 
 // DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = false is Java-specific.
 // Despite the absence of behavioral difference, report a warning because the parameter is redundant and it's discrouraged to use in Kotlin.
-@ToString(doNotUseGetters = <!ANNOTATION_ARGUMENT_IS_NOT_SUPPORTED, DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)
