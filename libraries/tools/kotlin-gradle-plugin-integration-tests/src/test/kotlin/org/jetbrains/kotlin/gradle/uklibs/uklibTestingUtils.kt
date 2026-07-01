@@ -293,10 +293,7 @@ private fun TestProject.dumpKlib(klib: File, dumpMethod: String): String {
                             null,
                             PrintStream(it),
                             System.err,
-                            arrayOf(
-                                dumpMethod, klib.path,
-                                "-test-mode", "true",
-                            )
+                            arrayOf(dumpMethod, klib.path)
                         ) as Int
                         if (result != 0) {
                             error("Couldn't dump metadata klib at ${klib}. Stdout:\n${outputFile.readText()}")

@@ -16,11 +16,14 @@ library {
 
       public final suspend fun f3(): kotlin/Unit
 
+      public final operator fun plus(x: kotlin/Int): kotlin/Unit
+
       public final tailrec fun f4(): kotlin/Unit
 
       public final fun f5(vararg x: kotlin/Int /* kotlin/IntArray */): kotlin/Unit
+    }
 
-      public final operator fun plus(x: kotlin/Int): kotlin/Unit
+    package {
     }
   }
 }

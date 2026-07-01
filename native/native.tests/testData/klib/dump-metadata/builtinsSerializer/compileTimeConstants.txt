@@ -4,46 +4,8 @@ library {
   library fragment {
     // package name: test
 
-    // class name: test/Class
     // class name: test/Weapon
-
-    public final class test/Class : kotlin/Any {
-
-      public constructor()
-
-      public final val arrayConst: kotlin/Any
-        public final get
-
-      public final val booleanConst: kotlin/Boolean /* = ... */
-        public final get
-
-      public final val byteConst: kotlin/Byte /* = ... */
-        public final get
-
-      public final val charConst: kotlin/Char /* = ... */
-        public final get
-
-      public final val doubleConst: kotlin/Double /* = ... */
-        public final get
-
-      public final val enumConst: test/Weapon?
-        public final get
-
-      public final val floatConst: kotlin/Float /* = ... */
-        public final get
-
-      public final val intConst: kotlin/Int /* = ... */
-        public final get
-
-      public final val longConst: kotlin/Long /* = ... */
-        public final get
-
-      public final val shortConst: kotlin/Short /* = ... */
-        public final get
-
-      public final val stringConst: kotlin/String /* = ... */
-        public final get
-    }
+    // class name: test/Class
 
     public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
 
@@ -58,27 +20,14 @@ library {
       // has Enum.entries
     }
 
-    package {
+    public final class test/Class : kotlin/Any {
 
-      public final val arrayConst: kotlin/Any
-        public final get
-
-      public final val booleanConst: kotlin/Boolean /* = ... */
-        public final get
+      public constructor()
 
       public final val byteConst: kotlin/Byte /* = ... */
         public final get
 
-      public final val charConst: kotlin/Char /* = ... */
-        public final get
-
-      public final val doubleConst: kotlin/Double /* = ... */
-        public final get
-
-      public final val enumConst: test/Weapon?
-        public final get
-
-      public final val floatConst: kotlin/Float /* = ... */
+      public final val shortConst: kotlin/Short /* = ... */
         public final get
 
       public final val intConst: kotlin/Int /* = ... */
@@ -87,10 +36,61 @@ library {
       public final val longConst: kotlin/Long /* = ... */
         public final get
 
-      public final val shortConst: kotlin/Short /* = ... */
+      public final val charConst: kotlin/Char /* = ... */
         public final get
 
       public final val stringConst: kotlin/String /* = ... */
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = ... */
+        public final get
+
+      public final val floatConst: kotlin/Float /* = ... */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = ... */
+        public final get
+
+      public final val enumConst: test/Weapon?
+        public final get
+
+      public final val arrayConst: kotlin/Any
+        public final get
+    }
+
+    package {
+
+      public final val byteConst: kotlin/Byte /* = ... */
+        public final get
+
+      public final val shortConst: kotlin/Short /* = ... */
+        public final get
+
+      public final val intConst: kotlin/Int /* = ... */
+        public final get
+
+      public final val longConst: kotlin/Long /* = ... */
+        public final get
+
+      public final val charConst: kotlin/Char /* = ... */
+        public final get
+
+      public final val stringConst: kotlin/String /* = ... */
+        public final get
+
+      public final val booleanConst: kotlin/Boolean /* = ... */
+        public final get
+
+      public final val floatConst: kotlin/Float /* = ... */
+        public final get
+
+      public final val doubleConst: kotlin/Double /* = ... */
+        public final get
+
+      public final val enumConst: test/Weapon?
+        public final get
+
+      public final val arrayConst: kotlin/Any
         public final get
     }
   }

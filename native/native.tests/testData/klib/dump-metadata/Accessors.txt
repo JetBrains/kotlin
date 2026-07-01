@@ -16,15 +16,22 @@ library {
 
       public constructor()
 
+      public final val simple: kotlin/Int /* = ... */
+        public final get
+
+      private final val privateSimple: kotlin/Int /* = ... */
+        private final get
+
+      protected final val protectedSimple: kotlin/Int /* = ... */
+        protected final get
+
+      public final var privateSetter: kotlin/Int
+        public final get
+        private final /* non-default */ set(value: kotlin/Int)
+
       @custom/pkg/A
       public final val annotated: kotlin/Int /* = ... */
         public final get
-
-      public final var annotatedAccessors: kotlin/Int
-        @custom/pkg/A
-        public final get
-        @custom/pkg/A
-        public final set
 
       public final val annotatedGetter: kotlin/Int /* = ... */
         @custom/pkg/A
@@ -35,18 +42,14 @@ library {
         @custom/pkg/A
         public final set
 
-      public final var privateSetter: kotlin/Int
+      public final var annotatedAccessors: kotlin/Int
+        @custom/pkg/A
         public final get
-        private final /* non-default */ set(value: kotlin/Int)
+        @custom/pkg/A
+        public final set
+    }
 
-      private final val privateSimple: kotlin/Int /* = ... */
-        private final get
-
-      protected final val protectedSimple: kotlin/Int /* = ... */
-        protected final get
-
-      public final val simple: kotlin/Int /* = ... */
-        public final get
+    package {
     }
   }
 }

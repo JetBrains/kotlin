@@ -1,0 +1,71 @@
+library {
+  // module name: <Constructors.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Bar
+    // class name: Baz
+    // class name: Foo
+    // class name: Qux
+    // class name: Typed
+
+    public final annotation class A : kotlin/Annotation {
+
+      public constructor()
+    }
+
+    public final class Bar : kotlin/Any {
+
+      @A
+      public constructor(x: kotlin/Int)
+    }
+
+    public final class Baz : kotlin/Any {
+
+      private constructor(x: kotlin/Int)
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      public constructor(x: kotlin/Int)
+
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+
+    public final class Qux : kotlin/Any {
+
+      protected constructor(x: kotlin/Int)
+    }
+
+    public final class Typed<T#0 /* T */> : kotlin/Any {
+
+      public /* secondary */ constructor()
+
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      public constructor(x: kotlin/Int)
+
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+  }
+}

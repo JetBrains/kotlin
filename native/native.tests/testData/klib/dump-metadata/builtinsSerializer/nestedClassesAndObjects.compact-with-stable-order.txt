@@ -1,0 +1,104 @@
+library {
+  // module name: <nestedClassesAndObjects.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/ClassA
+    // class name: test/ClassA.classB
+    // class name: test/ClassA.classB.BC
+    // class name: test/ClassA.classB.BO
+    // class name: test/ClassA.classC
+    // class name: test/E
+    // class name: test/E.Companion
+    // class name: test/E.Companion.D
+    // class name: test/F
+    // class name: test/F.ObjA
+
+    public final class test/ClassA : kotlin/Any {
+
+      public constructor()
+
+      // nested class: classB
+
+      // nested class: classC
+    }
+
+    public final class test/ClassA.classB : kotlin/Any {
+
+      public constructor()
+
+      public final fun memberFromB(): kotlin/Int
+
+      // nested class: BC
+
+      // nested class: BO
+    }
+
+    public final class test/ClassA.classB.BC : kotlin/Any {
+
+      public constructor()
+
+      public final val memberFromBB: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final object test/ClassA.classB.BO : kotlin/Any {
+
+      private constructor()
+
+      public final val memberFromBO: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final inner class test/ClassA.classC : kotlin/Any {
+
+      public constructor()
+
+      public final val memberFromC: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final class test/E : kotlin/Any {
+
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object test/E.Companion : kotlin/Any {
+
+      private constructor()
+
+      public final val stat: kotlin/Int /* = ... */
+        public final get
+
+      // nested class: D
+    }
+
+    public final class test/E.Companion.D : kotlin/Any {
+
+      public constructor()
+
+      public final val memberFromD: kotlin/Int /* = ... */
+        public final get
+    }
+
+    public final class test/F : kotlin/Any {
+
+      public constructor()
+
+      // nested class: ObjA
+    }
+
+    public final object test/F.ObjA : kotlin/Any {
+
+      private constructor()
+
+      public final val memberFromObjA: kotlin/Int /* = ... */
+        public final get
+    }
+  }
+}

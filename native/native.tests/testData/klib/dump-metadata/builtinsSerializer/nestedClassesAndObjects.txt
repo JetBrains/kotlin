@@ -100,5 +100,8 @@ library {
       public final val memberFromObjA: kotlin/Int /* = ... */
         public final get
     }
+
+    package {
+    }
   }
 }

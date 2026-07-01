@@ -4,23 +4,10 @@ library {
   library fragment {
     // package name: test
 
-    // class name: test/C1
-    // class name: test/C2
     // class name: test/JustString
     // class name: test/StringArray
-
-    @test/JustString(string = "kotlin")
-    @test/StringArray(stringArray = [])
-    public final class test/C1 : kotlin/Any {
-
-      public constructor()
-    }
-
-    @test/StringArray(stringArray = ["java", ""])
-    public final class test/C2 : kotlin/Any {
-
-      public constructor()
-    }
+    // class name: test/C1
+    // class name: test/C2
 
     public final annotation class test/JustString : kotlin/Annotation {
 
@@ -36,6 +23,22 @@ library {
 
       public final val stringArray: kotlin/Array<kotlin/String>
         public final get
+    }
+
+    @test/JustString(string = "kotlin")
+    @test/StringArray(stringArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      public constructor()
+    }
+
+    @test/StringArray(stringArray = ["java", ""])
+    public final class test/C2 : kotlin/Any {
+
+      public constructor()
+    }
+
+    package {
     }
   }
 }

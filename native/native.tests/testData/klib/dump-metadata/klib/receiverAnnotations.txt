@@ -4,8 +4,13 @@ library {
   library fragment {
     // package name: test
 
-    // class name: test/A
     // class name: test/Ann
+    // class name: test/A
+
+    public final annotation class test/Ann : kotlin/Annotation {
+
+      public constructor()
+    }
 
     public final class test/A : kotlin/Any {
 
@@ -19,11 +24,6 @@ library {
       @receiver:test/Ann
       public final val kotlin/Int.bar: kotlin/Int
         public final /* non-default */ get
-    }
-
-    public final annotation class test/Ann : kotlin/Annotation {
-
-      public constructor()
     }
 
     package {

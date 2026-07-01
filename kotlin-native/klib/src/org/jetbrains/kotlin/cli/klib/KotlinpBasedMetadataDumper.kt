@@ -20,18 +20,17 @@ internal class KotlinpBasedMetadataDumper(output: KlibToolOutput) {
 
     private val printer = Printer(output)
 
-    /**
-     * @param testMode if `true` then a special pre-processing is performed towards the metadata before rendering:
-     *        - empty package fragments are removed
-     *        - package fragments with the same package FQN are merged
-     *        - classes are sorted in alphabetical order
-     */
-    fun dumpLibrary(library: KotlinLibrary, testMode: Boolean) {
-        val moduleMetadata = loadModuleMetadata(library)
-            .let { originalModuleMetadata -> if (testMode) preprocessMetadataForTests(originalModuleMetadata) else originalModuleMetadata }
+    fun dumpLibrary(library: KotlinLibrary, metadataDumpMode: MetadataDumpMode) {
+
+        val moduleMetadata = loadModuleMetadata(library).let { originalModuleMetadata ->
+            when (metadataDumpMode) {
+                MetadataDumpMode.COMPACT_WITH_STABLE_ORDER -> preprocessMetadataForTests(originalModuleMetadata)
+                MetadataDumpMode.DEFAULT -> originalModuleMetadata
+            }
+        }
 
         KlibKotlinp(
-                settings = Settings(isVerbose = true, sortDeclarations = testMode),
+                settings = Settings(isVerbose = true, sortDeclarations = metadataDumpMode != MetadataDumpMode.DEFAULT),
                 signatureComputer = null,
         ).renderModule(moduleMetadata, printer)
     }

@@ -12,6 +12,9 @@ library {
 
       public open fun enumFun(): kotlin/Int
 
+      public final val x: kotlin/Int
+        public final get
+
       public final val enumVal: kotlin/Int /* = ... */
         public final get
 
@@ -19,16 +22,16 @@ library {
         public final get
         public final set
 
-      public final val x: kotlin/Int
-        public final get
+      B,
 
       A,
-
-      B,
 
       C,
 
       // has Enum.entries
+    }
+
+    package {
     }
   }
 }

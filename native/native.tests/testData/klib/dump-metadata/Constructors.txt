@@ -5,15 +5,33 @@ library {
     // package name: <root>
 
     // class name: A
+    // class name: Foo
     // class name: Bar
     // class name: Baz
-    // class name: Foo
     // class name: Qux
     // class name: Typed
 
     public final annotation class A : kotlin/Annotation {
 
       public constructor()
+    }
+
+    public final class Foo : kotlin/Any {
+
+      public constructor(x: kotlin/Int)
+
+      public /* secondary */ constructor()
+
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      @A
+      public /* secondary */ constructor(x: Foo)
     }
 
     public final class Bar : kotlin/Any {
@@ -27,24 +45,6 @@ library {
       private constructor(x: kotlin/Int)
     }
 
-    public final class Foo : kotlin/Any {
-
-      public /* secondary */ constructor()
-
-      @A
-      public /* secondary */ constructor(x: Foo)
-
-      public /* secondary */ constructor(x: kotlin/Double)
-
-      public constructor(x: kotlin/Int)
-
-      private /* secondary */ constructor(x: kotlin/Long)
-
-      protected /* secondary */ constructor(x: kotlin/String)
-
-      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
-    }
-
     public final class Qux : kotlin/Any {
 
       protected constructor(x: kotlin/Int)
@@ -52,20 +52,23 @@ library {
 
     public final class Typed<T#0 /* T */> : kotlin/Any {
 
-      public /* secondary */ constructor()
+      public constructor(x: kotlin/Int)
 
-      @A
-      public /* secondary */ constructor(x: Foo)
+      public /* secondary */ constructor()
 
       public /* secondary */ constructor(x: kotlin/Double)
 
-      public constructor(x: kotlin/Int)
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
 
       private /* secondary */ constructor(x: kotlin/Long)
 
       protected /* secondary */ constructor(x: kotlin/String)
 
-      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+      @A
+      public /* secondary */ constructor(x: Foo)
+    }
+
+    package {
     }
   }
 }
