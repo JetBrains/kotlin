@@ -1,0 +1,11 @@
+There should left no projections after capture conversion, but org.jetbrains.kotlin.fir.types.ConeStarProjection@28ffae50 found at 0
+java.lang.IllegalArgumentException: There should left no projections after capture conversion, but org.jetbrains.kotlin.fir.types.ConeStarProjection@28ffae50 found at 0
+	at org.jetbrains.kotlin.fir.resolve.SupertypeUtilsKt.createSubstitutionForScope(SupertypeUtils.kt:196)
+	at org.jetbrains.kotlin.fir.resolve.ScopeUtilsKt.classScope(ScopeUtils.kt:157)
+	at org.jetbrains.kotlin.fir.resolve.ScopeUtilsKt.scope(ScopeUtils.kt:101)
+	at org.jetbrains.kotlin.fir.resolve.ScopeUtilsKt.scope(ScopeUtils.kt:81)
+	at org.jetbrains.kotlin.fir.resolve.ScopeUtilsKt.scope(ScopeUtils.kt:91)
+	at org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue.scope(FirReceivers.kt:77)
+	at org.jetbrains.kotlin.fir.resolve.LocalVariableScopeStorage.getScope(LocalVariableScopeStorage.kt:45)
+	at org.jetbrains.kotlin.fir.resolve.calls.tower.DispatchReceiverMemberScopeTowerLevel.cachedScopeIfAvailable$cachedLocalVariableScopeIfAvailable(TowerLevels.kt:183)
+...
