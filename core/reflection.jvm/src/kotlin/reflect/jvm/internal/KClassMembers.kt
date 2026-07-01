@@ -31,6 +31,10 @@ internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable
     if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
         addAll(getDescriptorBasedMembers(memberScope, DECLARED))
         addAll(getDescriptorBasedMembers(staticScope, DECLARED))
+    } else if (!useNewImplementationForJavaInstanceMethods) {
+        addAll(getDescriptorBasedMembers(memberScope, DECLARED))
+        getDescriptorBasedMembers(staticScope, DECLARED).filterNotTo(this) { it is KProperty<*> }
+        addJavaStaticProperties(this)
     } else {
         getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
         getDescriptorBasedMembers(memberScope, DECLARED).filterTo(this) { it is KProperty<*> }
@@ -39,27 +43,30 @@ internal fun KClassImpl<*>.computeDeclaredMembers(): Collection<ReflectKCallable
                 add(JavaKNamedFunction(kClass, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
             }
         }
+        addJavaStaticProperties(this)
+    }
+}
 
-        for (field in jClass.declaredFields) {
-            if (field.isEnumConstant) continue
-            if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
-                if (Modifier.isFinal(field.modifiers)) {
-                    add(JavaKProperty0<Any>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                } else {
-                    add(JavaKMutableProperty0<Any>(kClass, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
-                }
+private fun KClassImpl<*>.addJavaStaticProperties(result: MutableList<ReflectKCallable<*>>) {
+    for (field in jClass.declaredFields) {
+        if (field.isEnumConstant) continue
+        if (Modifier.isStatic(field.modifiers) && !field.isSynthetic) {
+            if (Modifier.isFinal(field.modifiers)) {
+                result.add(JavaKProperty0<Any>(this, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
+            } else {
+                result.add(JavaKMutableProperty0<Any>(this, field, NO_RECEIVER, KCallableOverriddenStorage.EMPTY))
             }
         }
+    }
 
-        if (jClass.isEnum) {
-            @Suppress("UNCHECKED_CAST")
-            add(JavaEnumEntriesKProperty(kClass as KClassImpl<out Enum<*>>))
-        }
+    if (jClass.isEnum) {
+        @Suppress("UNCHECKED_CAST")
+        result.add(JavaEnumEntriesKProperty(this as KClassImpl<out Enum<*>>))
     }
 }
 
 internal fun KClassImpl<*>.computeAllMembers(): Collection<ReflectKCallable<*>> =
-    if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass) {
+    if (!newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass || !useNewImplementationForJavaInstanceMethods) {
         buildList {
             addAll(data.value.declaredMembers)
             addAll(getDescriptorBasedMembers(memberScope, INHERITED))

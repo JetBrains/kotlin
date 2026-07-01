@@ -133,17 +133,20 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         }
 
     fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
+        getOrCreateClassLoader(::k1ReflectJarClassLoader, listOf("useK1Implementation"))
 
     fun getRuntimeAndReflectWithNewFakeOverrridesJarClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::reflectWithNewFakeOverridesJarClassLoader, "newFakeOverridesImplementation")
+        getOrCreateClassLoader(
+            ::reflectWithNewFakeOverridesJarClassLoader,
+            listOf("newFakeOverridesImplementation", "useNewImplementationForJavaInstanceMethods")
+        )
 
     fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
+        getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, listOf("loadMetadataDirectly"))
 
     private fun getOrCreateClassLoader(
         property: KMutableProperty0<SoftReference<ClassLoader?>>,
-        reflectSystemPropertyToEnable: String? = null,
+        reflectSystemPropertyToEnable: List<String> = emptyList(),
         skipReflect: Boolean = false,
     ): ClassLoader {
         property.get().get()?.let { return it }
@@ -158,7 +161,7 @@ interface KotlinStandardLibrariesPathProvider : TestService {
                 ).toTypedArray(),
             ).also { loader ->
                 property.set(SoftReference(loader))
-                reflectSystemPropertyToEnable?.let { name ->
+                for (name in reflectSystemPropertyToEnable) {
                     val clazz = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
                     clazz.getDeclaredField(name).apply { this.isAccessible = true }.set(null, true)
                     check(clazz.getMethod(JvmAbi.getterName(name)).invoke(null) == true)

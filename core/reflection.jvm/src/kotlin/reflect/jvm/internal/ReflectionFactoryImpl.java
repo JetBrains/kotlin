@@ -97,7 +97,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction, KCallableOverriddenStorage.EMPTY);
             }
             else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
-                if (isJava) {
+                if (isJava && SystemPropertiesKt.getUseNewImplementationForJavaInstanceMethods()) {
                     Method method = container.findJavaMethod(name, signature);
                     return new JavaKNamedFunction(container, method, f.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
                 }

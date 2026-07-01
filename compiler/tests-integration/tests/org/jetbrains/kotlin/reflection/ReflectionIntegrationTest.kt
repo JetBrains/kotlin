@@ -166,6 +166,21 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         )
     }
 
+    fun testUseNewImplementationForJavaInstanceMethods() {
+        val [stdout, stderr] = compileAndRunProgram(
+            KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/useNewImplementationForJavaInstanceMethods").path,
+        )
+        JUnit4Assertions.assertEquals("", stderr)
+        JUnit4Assertions.assertEquals("", stdout)
+
+        val [stdout2, stderr2] = compileAndRunProgram(
+            KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/useNewImplementationForJavaInstanceMethods").path,
+            listOf("-Dkotlin.reflect.jvm.useNewImplementationForJavaInstanceMethods=true"),
+        )
+        JUnit4Assertions.assertEquals("", stderr2)
+        JUnit4Assertions.assertEquals("", stdout2)
+    }
+
     private fun compileAndRunProgram(
         root: String,
         jvmArgs: List<String> = emptyList(),

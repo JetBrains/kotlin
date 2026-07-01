@@ -49,3 +49,13 @@ internal var newFakeOverridesImplementation = runCatching {
 internal var loadMetadataDirectly = runCatching {
     System.getProperty("kotlin.reflect.jvm.loadMetadataDirectly")
 }.getOrNull()?.toBoolean() == true
+
+/**
+ * True if the system property `kotlin.reflect.jvm.useNewImplementationForJavaInstanceMethods` is set to `true`.
+ *
+ * This system property instructs kotlin-reflect to use the legacy K1-based implementation for Java instance methods only, while using
+ * the new implementation for everything else that is supported (`typeOf`, Kotlin top-level callables, etc).
+ */
+internal var useNewImplementationForJavaInstanceMethods = runCatching {
+    System.getProperty("kotlin.reflect.jvm.useNewImplementationForJavaInstanceMethods")
+}.getOrNull()?.toBoolean() == true

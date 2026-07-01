@@ -33,7 +33,7 @@ fun box(): String {
     assertEquals(listOf(false, false, true), B::foo.parameters.map { it.isOptional })
     assertEquals(listOf(false, false, true), C::foo.parameters.map { it.isOptional })
 
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseNewImplementationForJavaInstanceMethods").invoke(null) != true) {
         assertEquals(listOf(false, false, true), J::foo.parameters.map { it.isOptional })
     } else {
         // TODO(KT-86692): isOptional for new Java method implementation doesn't consider inherited default values

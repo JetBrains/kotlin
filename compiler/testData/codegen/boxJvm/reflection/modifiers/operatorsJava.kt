@@ -123,7 +123,7 @@ fun box(): String {
     assertFalse(J2::inc.isOperator)
     assertFalse(J2::dec.isOperator)
 
-    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true) {
+    if (Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseNewImplementationForJavaInstanceMethods").invoke(null) != true) {
         // K1 doesn't support `LanguageFeature.ForbidGetSetValueWithTooManyParameters`
         assertTrue(J2::setValue.isOperator)
         assertTrue(J2::getValue.isOperator)
