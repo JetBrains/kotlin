@@ -382,6 +382,11 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         if (!leftIsUnboxed && !rightIsUnboxed)
             return null
 
+        // After transformation, a generic inline class field getter may produce a type parameter type
+        // (e.g., Wrapper<T>.value has type T). We can't specialize equals for type parameters.
+        if (left.type.classOrNull == null)
+            return null
+
         // Precondition: left is an unboxed inline class type
         fun equals(left: IrExpression, right: IrExpression): IrExpression {
             // Unsigned types use primitive comparisons
