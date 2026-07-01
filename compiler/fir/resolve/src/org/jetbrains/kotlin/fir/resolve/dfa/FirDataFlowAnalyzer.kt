@@ -247,7 +247,14 @@ abstract class FirDataFlowAnalyzer(
                                 is ConeFlexibleType -> lowerBound.isAcceptableForSmartcast() && upperBound.isAcceptableForSmartcast()
                                 is ConeIntersectionType -> intersectedTypes.all { it.isAcceptableForSmartcast() }
                                 is ConeDefinitelyNotNullType -> original.isAcceptableForSmartcast()
-                                else -> false
+
+                                is ConeCapturedType -> constructor.supertypes?.all { it.isAcceptableForSmartcast() } == true
+                                is ConeIntegerLiteralType -> true
+
+                                is ConeLookupTagBasedType,
+                                is ConeStubType,
+                                is ConeTypeVariableType,
+                                    -> false
                             }
                         }
                     }
