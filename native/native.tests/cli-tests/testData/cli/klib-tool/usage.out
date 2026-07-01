@@ -41,6 +41,3 @@ and the options are:
 
     -only-top-level-signatures {true|false}
         Dump IR signatures of only top-level declarations. Applicable only to the "dump-ir-signatures" command.
-
-    -print-signatures {true|false}
-        Print IR signature for every declaration. Applicable only to the "dump-metadata" command.
