@@ -26,6 +26,6 @@ and the options are:
                              Render IR signatures of a specific version. By default, the most up-to-date signature version
                                that is supported in the library is used.
    -only-top-level-signatures {true|false}
-                             Dump IR signatures of only top-level declatations. Applicable only to the "dump-ir-signatures" command.
+                             Dump IR signatures of only top-level declarations. Applicable only to the "dump-ir-signatures" command.
    -print-signatures {true|false}
                              Print IR signature for every declaration. Applicable only to the "dump-metadata" command.

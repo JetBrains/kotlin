@@ -194,7 +194,7 @@ private enum class CliOption(val isPrivate: Boolean = false) {
 
     ONLY_TOP_LEVEL_SIGNATURES {
         override val hintOnValues = "{true|false}"
-        override val description = "Dump IR signatures of only top-level declatations. Applicable only to the \"dump-ir-signatures\" command."
+        override val description = "Dump IR signatures of only top-level declarations. Applicable only to the \"dump-ir-signatures\" command."
     },
 
     PRINT_SIGNATURES {
