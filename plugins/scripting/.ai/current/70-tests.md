@@ -2,7 +2,7 @@
 
 > **When to consult**: test triage, before migration step 12, before removing K1 fixtures.
 > **Cache lifetime**: mutable-per-iteration
-> **Last verified**: 2026-07-01 (Q17 resolved — `testEvalWithContextDirect` → PASS; the remaining blocked JSR-223 rows are now `@Disabled` with tracked references so the suite is green)
+> **Last verified**: 2026-07-01 (eval-in-eval fixed — `testSimpleEvalInEval` → PASS; only Q14/Q16 remain `@Disabled` pending design sign-off; JSR-223 suite green 21 / 2-skip / 0-fail)
 
 Where the tests live and how to run them.
 
@@ -69,11 +69,11 @@ Suite: `libraries/scripting/jsr223-test/test/.../KotlinJsr223ScriptEngineIT.kt`.
 | `testMultipleCompilable` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G11 / Q13 closed); `joinToString$default` now lowers correctly. |
 | `testEvalWithContext` | PASS | 2026-05-18 | un-disabled after step 1b fix (G1 / G2 / G11 / Q13 closed). |
 | `testEvalWithContextDirect` | PASS | 2026-07-01 | **Q17 resolved 2026-07-01** — the generated accessor now renders the nullability marker (`var nullable: kotlin.Any?` / `... as kotlin.Any?`), so `engine.put("nullable", null)` no longer NPEs at the cast. Un-`@Disabled`. |
-| `testSimpleEvalInEval` | `STEP-1-FOLLOWUP` (now `@Disabled`) | 2026-07-01 | `Method.invoke` arity mismatch in inner eval; eval-in-eval re-entrancy — `K2ReplEvaluator` re-walks the pending-snippet chain into the still-executing outer snippet. `@Disabled` with a tracked reference (was active-failing); needs a re-entrancy guard / isolated nested-eval state. |
+| `testSimpleEvalInEval` | PASS | 2026-07-01 | **eval-in-eval fixed 2026-07-01** — the `Method.invoke` "wrong number of arguments" was an implicit-receiver arity mismatch: the engine threads a single (mutating) `ScriptCompilationConfiguration`, and the nested-eval fresh REPL state is seeded from it, so `configureExposedJsr223Context` (a `beforeCompiling` refinement) kept re-appending `ScriptContext` → a snippet's `$$eval` took 3 receivers while the evaluator passed 1. Fix: add the `ScriptContext` implicit receiver **idempotently** (`propertiesFromContext.kt`). Un-`@Disabled`. |
 | `testEvalWithContextNamesWithSymbols` | `BLOCKED-DESIGN-Q14` (now `@Disabled`) | 2026-07-01 | binding names with `.`, `:`, `\`, etc. need a JVM-safe encoding scheme; K1 backslash-table fails `FirJvmNamesChecker` (G8). `@Disabled` with a Q14 reference (was active-failing). |
 | `testEvalInEvalWithBindingsWithLambda` | `BLOCKED-DESIGN-Q16` (now `@Disabled`) | 2026-07-01 | synthetic-snippet parse-error fixed (G9 filter landed); remaining failure: user-snippet `fun ScriptTemplateWithBindings.foo(...)` unreachable because K2 implicit receiver is `ScriptContext` (G10). `@Disabled` with a Q16 reference (was active-failing). |
 
-**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th (`testEvalWithContextDirect`) was `BLOCKED-DESIGN-Q17` and flipped to PASS on 2026-07-01 (Q17 resolved). The remaining blocked rows (`testSimpleEvalInEval` STEP-1-FOLLOWUP, `testEvalWithContextNamesWithSymbols` Q14, `testEvalInEvalWithBindingsWithLambda` Q16) are now `@Disabled` with tracked references — each carries its status in this matrix, and the JSR-223 suite is green (21 tests, 3 skipped, 0 failures).
+**Step 1 acceptance** excludes `BLOCKED-DESIGN-*` rows — see [`../target/50-migration-plan.md`](../target/50-migration-plan.md) step 1 "Done when". The historical `BLOCKED-CODEGEN-Q13` carve-out is now empty: step 1b landed 2026-05-18 and 5 of 6 previously-disabled rows flipped to PASS; the 6th (`testEvalWithContextDirect`) was `BLOCKED-DESIGN-Q17` and flipped to PASS on 2026-07-01 (Q17 resolved). The last `STEP-1-FOLLOWUP` row (`testSimpleEvalInEval`, eval-in-eval re-entrancy) flipped to PASS on 2026-07-01 (idempotent `ScriptContext` implicit receiver). The only remaining blocked rows are the two design-gated ones (`testEvalWithContextNamesWithSymbols` Q14, `testEvalInEvalWithBindingsWithLambda` Q16) — both `@Disabled` with tracked references, each carrying its status in this matrix; the JSR-223 suite is green (21 tests, 2 skipped, 0 failures).
 
 ## Running tests
 

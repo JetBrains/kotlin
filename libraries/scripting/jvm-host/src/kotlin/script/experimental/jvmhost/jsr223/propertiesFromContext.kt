@@ -66,6 +66,20 @@ fun configureExposedJsr223Context(context: ScriptConfigurationRefinementContext)
     if (context.compilationConfiguration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke() == null)
         return context.compilationConfiguration.asSuccess()
 
+    // Add `ScriptContext` as an implicit receiver, but only once. This refinement runs `beforeCompiling`
+    // on every snippet, and the engine threads (and mutates) a single `ScriptCompilationConfiguration`
+    // across evals; a freshly-created nested-eval REPL state is even seeded from that threaded config
+    // (see `KotlinJsr223ScriptEngineImpl.createState` and the generated `eval(...)` helper that resets
+    // the engine state before re-entering). Appending unconditionally would let the receiver list grow
+    // across evals, so a snippet's `$$eval` would take N `ScriptContext` parameters while the evaluator
+    // always passes exactly one — surfacing as `IllegalArgumentException: wrong number of arguments` in
+    // the eval-in-eval scenario (`KotlinJsr223ScriptEngineIT.testSimpleEvalInEval`). Adding it
+    // idempotently keeps the count at one in every (including nested) state.
+    val alreadyPresent =
+        context.compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers]
+            ?.contains(KotlinType(ScriptContext::class)) == true
+    if (alreadyPresent) return context.compilationConfiguration.asSuccess()
+
     return ScriptCompilationConfiguration(context.compilationConfiguration) {
         implicitReceivers(ScriptContext::class)
     }.asSuccess()
