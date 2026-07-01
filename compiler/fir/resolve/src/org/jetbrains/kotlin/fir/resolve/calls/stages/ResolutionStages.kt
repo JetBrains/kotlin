@@ -997,9 +997,9 @@ internal object CheckCallModifiers : ResolutionStage() {
                 is FirNamedFunctionSymbol -> when {
                     candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Infix && !functionSymbol.fir.isInfix ->
                         sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
-                    candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !functionSymbol.fir.isOperator ->
+                    candidate.callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !isEligibleOperator(functionSymbol, candidate) ->
                         sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
-                    candidate.callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
+                    candidate.callInfo.isImplicitInvoke && !isEligibleOperator(functionSymbol, candidate) ->
                         sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
                 }
                 is FirConstructorSymbol -> {
@@ -1009,6 +1009,11 @@ internal object CheckCallModifiers : ResolutionStage() {
                 }
             }
         }
+    }
+
+    private fun isEligibleOperator(functionSymbol: FirNamedFunctionSymbol, candidate: Candidate): Boolean {
+        // we filter out imported aliased operators
+        return functionSymbol.fir.isOperator && candidate.callInfo.name == functionSymbol.name
     }
 }
 
