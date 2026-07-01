@@ -57,9 +57,8 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
  *    resulting [SnippetArtifact] is built from them via [buildSnippetArtifactFromCompile].
  *
  * Callers must retain **synthetic** prior snippets (e.g. JSR-223 binding cells) in
- * [SnippetArtifact] order as well — the sidecar carries the `isSynthetic` flag but the resolve
- * extension does not branch on it, so dropping synthetic snippets would break references from
- * subsequent user snippets.
+ * [SnippetArtifact] order as well — the resolve extension does not branch on whether a snippet was
+ * synthetic, so dropping synthetic snippets would break references from subsequent user snippets.
  *
  * This class is **internal** and prototype-only. The eventual stable surface lives in
  * `libraries/scripting/common` as `StatelessReplCompiler` (planned for a later step).
@@ -76,7 +75,7 @@ class K2ReplStatelessCompiler {
      *   `dependencies` are augmented with the per-call temp-dir holding the prior classfiles.
      * @param hostConfiguration host configuration. The provided value's
      *   `repl.firReplHistoryProvider` and `repl.isReplSnippetSource` are overridden by this method.
-     *   `repl.replStateObjectFqName` is validated against every prior snippet's sidecar; a
+     *   `repl.replStateObjectFqName` is validated against every prior snippet's header; a
      *   mismatch causes a [ResultWithDiagnostics.Failure] return.
      * @param parentDisposable optional caller-owned [Disposable] under which the compilation
      *   environment will be created. When `null` (default), this call allocates a private

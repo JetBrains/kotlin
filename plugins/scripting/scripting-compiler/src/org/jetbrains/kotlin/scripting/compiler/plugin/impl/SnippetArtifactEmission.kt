@@ -5,8 +5,9 @@
 
 /**
  * Emission helper: takes the *just-compiled* `FirReplSnippet` plus the producing `FirSession` and
- * `GenerationState`, and builds a portable [SnippetArtifact] (classfile bytes + JSON sidecar) that
- * the stateless K2 REPL compiler can consume as a prior snippet on a subsequent compile.
+ * `GenerationState`, and builds a portable [SnippetArtifact] (classfile bytes + an out-of-band
+ * [SnippetArtifactHeader]) that the stateless K2 REPL compiler can consume as a prior snippet on a
+ * subsequent compile.
  *
  * This file deliberately does **not** touch [K2ReplCompiler] or its `compileImpl`. It is a pure
  * function over the values that the new orchestrator captures from a successful compile.
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.api.resultField
@@ -131,44 +131,23 @@ internal fun buildReplHeaderFromFir(
 }
 
 /**
- * Assembles the [SnippetArtifactSidecar] from the information that is reachable from the
- * **frontend** alone — i.e. the resolved [firSnippet], its producing [session], and the
- * [hostConfiguration]. This is everything the read path
- * (`ArtifactBackedFirReplHistoryProvider.materialize`) genuinely needs to reconstruct a prior
- * snippet: the wrapper class id, the `isReplSnippetDeclaration` member refs (with their
- * source-level visibilities), the file-level imports, and the REPL state-object FQ name.
+ * Assembles the [SnippetArtifactSidecar] — the REPL-only reconstruction payload — from the
+ * information that is reachable from the **frontend** alone: the resolved [firSnippet] and its
+ * producing [session]. After the "full cut" this is exactly what the read path
+ * (`ArtifactBackedFirReplHistoryProvider`) sources from the embedded copy: the
+ * `isReplSnippetDeclaration` member refs (with their source-level visibilities) and the file-level
+ * imports. Everything else a consumer needs is carried out-of-band on the [SnippetArtifactHeader].
  *
- * It is shared by two producers:
- *  * [buildSidecar] (post-compile, standalone-blob path), which supplies the config-derived
- *    [resultPropertyName] / [isSynthetic] / [isImplicit] from the script compilation configuration;
- *  * the `.kotlin_metadata`-embedding write path
- *    (`Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet`), which runs *before* code-gen
- *    and has no `GenerationState`/`ScriptCompilationConfiguration` in hand, so it passes
- *    best-effort defaults for those config-only fields. The embedded copy is consulted by the read
- *    path only for the frontend-derivable fields above; the config-only flags (Q10b `isImplicit`,
- *    the result-field name) continue to be read from the authoritative standalone blob until the
- *    standalone blob is cut entirely.
- *
- * The two producers therefore agree bit-for-bit on every field the read path consumes.
+ * The sole producer is the `.kotlin_metadata`-embedding write path
+ * (`Fir2IrReplSnippetConfiguratorExtensionImpl.prepareSnippet`), which runs *before* code-gen; the
+ * encoded bytes are embedded into the wrapper class's `.kotlin_metadata` via the generic
+ * `ProtoBuf.CompilerPluginData` channel.
  */
 @OptIn(DirectDeclarationsAccess::class)
 internal fun buildReplSidecarFromFir(
     firSnippet: FirReplSnippet,
     session: FirSession,
-    hostConfiguration: ScriptingHostConfiguration,
-    historyIndex: Int,
-    resultPropertyName: String?,
-    isSynthetic: Boolean,
-    isImplicit: Boolean,
 ): SnippetArtifactSidecar {
-    val snippetClassId = firSnippet.snippetClass.symbol.classId
-    val packageFqName = snippetClassId.packageFqName.asString()
-    val snippetClassInternalName = run {
-        val pkgSlashed = packageFqName.replace('.', '/')
-        val relative = snippetClassId.relativeClassName.asString().replace('.', '$')
-        if (pkgSlashed.isEmpty()) relative else "$pkgSlashed/$relative"
-    }
-
     val declarations = firSnippet.snippetClass.declarations
         .filter { it.isReplSnippetDeclaration == true }
         .mapNotNull { decl ->
@@ -214,30 +193,12 @@ internal fun buildReplSidecarFromFir(
             )
         }
 
-    val stateObjectFqName = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName].orEmpty()
-
     return SnippetArtifactSidecar(
         sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
-        snippetName = firSnippet.name.asString(),
-        snippetClassInternalName = snippetClassInternalName,
-        packageFqName = packageFqName,
-        historyIndex = historyIndex,
         replSnippetDeclarations = declarations,
         imports = imports,
-        stateObjectFqName = stateObjectFqName,
-        resultPropertyName = resultPropertyName,
-        isSynthetic = isSynthetic,
-        isImplicit = isImplicit,
     )
 }
-
-/**
- * Returns the [FirReplHistoryProvider]-derived "current history size" for the given host
- * configuration, or `0` if no provider is installed. Convenience: lets the orchestrator derive
- * `historyIndex` without poking at the host config every time.
- */
-internal fun ScriptingHostConfiguration.firReplHistorySizeOrZero(): Int =
-    this[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount() ?: 0
 
 /**
  * Project a FIR [KotlinVisibility][org.jetbrains.kotlin.descriptors.Visibility] onto the small

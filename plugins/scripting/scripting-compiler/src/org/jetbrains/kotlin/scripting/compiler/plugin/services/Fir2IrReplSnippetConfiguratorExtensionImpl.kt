@@ -152,8 +152,8 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
 
     /**
      * On the **stateless** REPL compile path, assemble the frontend-derivable
-     * `SnippetArtifactSidecar` (declarations + visibilities + imports + state-object FQ name +
-     * name) and stash its protobuf-wire bytes on [irSnippet] so that
+     * `SnippetArtifactSidecar` (the `isReplSnippetDeclaration` member refs with their visibilities
+     * plus the file-level imports) and stash its protobuf-wire bytes on [irSnippet] so that
      * `ReplSnippetsToClassesLowering.finalizeReplSnippetClass` can embed them into the wrapper
      * class's `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel).
      *
@@ -161,25 +161,15 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
      * [ArtifactBackedFirReplHistoryProvider] (only the stateless orchestrator installs one) — so
      * stateful snippet `.kotlin_metadata` is left bit-for-bit unchanged.
      *
-     * The config-only fields (`isSynthetic` / `isImplicit` / the result-field name) are not
-     * reachable here (no `ScriptCompilationConfiguration` / `GenerationState` before code-gen);
-     * they are passed as best-effort defaults. The read path consults the embedded copy only for
-     * the frontend-derivable fields above and continues to read those config-only flags from the
-     * authoritative standalone blob.
+     * After the "full cut" the embedded sidecar is the sole carrier of the reconstruction payload;
+     * everything else a consumer needs (class id, snippet name, state-object FQ name, emitted
+     * result-field name, `isImplicit`) rides out-of-band on the `SnippetArtifactHeader`.
      */
     private fun stashReplSidecarMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
         val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]
         if (historyProvider !is ArtifactBackedFirReplHistoryProvider) return
 
-        val sidecar = buildReplSidecarFromFir(
-            firSnippet = firReplSnippet,
-            session = session,
-            hostConfiguration = hostConfiguration,
-            historyIndex = historyProvider.getSnippetCount(),
-            resultPropertyName = null,
-            isSynthetic = false,
-            isImplicit = false,
-        )
+        val sidecar = buildReplSidecarFromFir(firSnippet = firReplSnippet, session = session)
         irSnippet.replSidecarMetadataAttr = SnippetArtifactSidecarProtoCodec.encode(sidecar)
     }
 

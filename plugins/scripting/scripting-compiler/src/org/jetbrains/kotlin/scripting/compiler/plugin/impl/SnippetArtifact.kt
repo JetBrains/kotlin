@@ -66,49 +66,27 @@ data class SnippetArtifact(
 }
 
 /**
- * Information about a compiled snippet that is *not* recoverable from stock `.kotlin_metadata`
- * alone and which the stateless compiler needs to reconstruct a `FirReplSnippetSymbol` view of a
- * prior snippet during the next compile.
+ * The REPL-only reconstruction payload of a compiled snippet — the information that is *not*
+ * recoverable from stock `.kotlin_metadata` alone and which the stateless compiler needs to
+ * reconstruct a `FirReplSnippetSymbol` view of a prior snippet during the next compile: the
+ * `isReplSnippetDeclaration` member refs (with their source-level visibilities) and the file-level
+ * imports.
  *
  * After the "full cut" this is carried **only** embedded inside the snippet wrapper class's own
  * `.kotlin_metadata` (via the generic `ProtoBuf.CompilerPluginData` channel, keyed by
  * [REPL_SIDECAR_PLUGIN_ID]); it is no longer duplicated in a standalone blob alongside the class
  * files. The read path (`ArtifactBackedFirReplHistoryProvider`) finds the wrapper class via the
  * out-of-band [SnippetArtifactHeader], then reads this sidecar from the located class's metadata.
- * The config-only fields ([resultPropertyName], [isSynthetic], [isImplicit], [historyIndex]) are
- * therefore unused on the embedded copy — they are sourced from the [SnippetArtifactHeader] (or, in
- * the case of [historyIndex]/[isSynthetic], not consumed by the read path at all).
+ * Everything a consumer needs *before/without* deserializing the metadata (class id, snippet name,
+ * state-object FQ name, emitted result-field name, `isImplicit`) lives on the [SnippetArtifactHeader]
+ * instead — so the sidecar carries only the two fields the read path sources from the embedded copy.
  *
  * Field set is unstable; bumping [sidecarVersion] is mandatory on any structural change.
  */
 data class SnippetArtifactSidecar(
     val sidecarVersion: Int,
-    val snippetName: String,
-    /** JVM internal name of the wrapper class containing `$$eval`, e.g. `"Snippet_1"`. */
-    val snippetClassInternalName: String,
-    val packageFqName: String,
-    val historyIndex: Int,
     val replSnippetDeclarations: List<MemberRef>,
     val imports: List<ImportEntry>,
-    /** Fully-qualified name of the REPL state-object class (e.g. `kotlin.script.experimental.repl.ReplState`). */
-    val stateObjectFqName: String,
-    val resultPropertyName: String?,
-    val isSynthetic: Boolean,
-    /**
-     * `true` when this snippet was *implicitly* prepended to the REPL history rather than directly
-     * authored by the user — e.g. a JSR-223 binding cell emitted by a `prependSyntheticSnippets`
-     * refinement-DSL callback (Option D, [target/40-jsr223-target.md](../../../.ai/target/40-jsr223-target.md)),
-     * or a refinement-handler-injected helper cell.
-     *
-     * The flag is **independent of [isSynthetic]**: `isSynthetic` records that the snippet's
-     * compilation configuration carried [kotlin.script.experimental.impl._isSyntheticSnippet]; a
-     * compiler-internal flag used during compile. `isImplicit` describes a **history-provider**
-     * fact — whether `FirReplHistoryProvider` should expose this snippet to consumers (e.g.
-     * diagnostics, scope reconstruction, UI) as user-authored or implicitly emitted. The two
-     * usually coincide today, but the resolve question (Q10b) is about the history-provider view,
-     * not the compilation flag.
-     */
-    val isImplicit: Boolean = false,
 ) {
     /**
      * Reference to a top-level member of the snippet wrapper class that originated as a
@@ -178,8 +156,14 @@ data class SnippetArtifactSidecar(
          * |         | `function_returns_anonymous_object` diagnostic by carrying the function |
          * |         | return type's renderable signature so cross-snippet anonymous return |
          * |         | types can be reasoned about. |
+         * | 4       | Trimmed to the embedded-only reconstruction payload. Dropped the |
+         * |         | config-only / header-duplicated fields (`snippetName`, |
+         * |         | `snippetClassInternalName`, `packageFqName`, `historyIndex`, |
+         * |         | `stateObjectFqName`, `resultPropertyName`, `isSynthetic`, `isImplicit`) |
+         * |         | after the "full cut": they are unused on the embedded copy — every fact |
+         * |         | a consumer needs out-of-band is read from the [SnippetArtifactHeader]. |
          */
-        const val CURRENT_VERSION: Int = 3
+        const val CURRENT_VERSION: Int = 4
     }
 }
 
@@ -199,10 +183,8 @@ data class SnippetArtifactSidecar(
  *
  * ### Field schema (stable field numbers)
  *
- * Top-level `Sidecar`: `1` version (int32), `2` snippetName, `3` snippetClassInternalName,
- * `4` packageFqName, `5` historyIndex (int32), `6` replSnippetDeclarations (repeated `MemberRef`),
- * `7` imports (repeated `ImportEntry`), `8` stateObjectFqName, `9` resultPropertyName (optional),
- * `10` isSynthetic (bool), `11` isImplicit (bool).
+ * Top-level `Sidecar`: `1` version (int32), `2` replSnippetDeclarations (repeated `MemberRef`),
+ * `3` imports (repeated `ImportEntry`).
  *
  * `MemberRef`: `1` kind (int32), `2` name, `3` descriptor (optional), `4` visibility (int32),
  * `5` returnTypeSignature (optional).
@@ -252,16 +234,8 @@ object SnippetArtifactSidecarProtoCodec {
     fun encode(sidecar: SnippetArtifactSidecar): ByteArray {
         val out = ByteArrayOutputStream()
         out.writeInt32Field(1, sidecar.sidecarVersion)
-        out.writeStringField(2, sidecar.snippetName)
-        out.writeStringField(3, sidecar.snippetClassInternalName)
-        out.writeStringField(4, sidecar.packageFqName)
-        out.writeInt32Field(5, sidecar.historyIndex)
-        for (m in sidecar.replSnippetDeclarations) out.writeBytesField(6, encodeMemberRef(m))
-        for (i in sidecar.imports) out.writeBytesField(7, encodeImport(i))
-        out.writeStringField(8, sidecar.stateObjectFqName)
-        sidecar.resultPropertyName?.let { out.writeStringField(9, it) }
-        out.writeBoolField(10, sidecar.isSynthetic)
-        out.writeBoolField(11, sidecar.isImplicit)
+        for (m in sidecar.replSnippetDeclarations) out.writeBytesField(2, encodeMemberRef(m))
+        for (i in sidecar.imports) out.writeBytesField(3, encodeImport(i))
         return out.toByteArray()
     }
 
@@ -286,32 +260,16 @@ object SnippetArtifactSidecarProtoCodec {
     fun decode(bytes: ByteArray): SnippetArtifactSidecar {
         val r = ProtoReader(bytes)
         var version = -1
-        var snippetName = ""
-        var snippetClassInternalName = ""
-        var packageFqName = ""
-        var historyIndex = 0
         val declarations = ArrayList<SnippetArtifactSidecar.MemberRef>()
         val imports = ArrayList<SnippetArtifactSidecar.ImportEntry>()
-        var stateObjectFqName = ""
-        var resultPropertyName: String? = null
-        var isSynthetic = false
-        var isImplicit = false
         while (r.hasMore) {
             val tag = r.readVarint().toInt()
             val field = tag ushr 3
             val wireType = tag and 0x7
             when (field) {
                 1 -> version = r.readVarint().toInt()
-                2 -> snippetName = r.readString()
-                3 -> snippetClassInternalName = r.readString()
-                4 -> packageFqName = r.readString()
-                5 -> historyIndex = r.readVarint().toInt()
-                6 -> declarations += decodeMemberRef(r.readBytes())
-                7 -> imports += decodeImport(r.readBytes())
-                8 -> stateObjectFqName = r.readString()
-                9 -> resultPropertyName = r.readString()
-                10 -> isSynthetic = r.readVarint() != 0L
-                11 -> isImplicit = r.readVarint() != 0L
+                2 -> declarations += decodeMemberRef(r.readBytes())
+                3 -> imports += decodeImport(r.readBytes())
                 else -> r.skipField(wireType)
             }
         }
@@ -324,16 +282,8 @@ object SnippetArtifactSidecarProtoCodec {
         }
         return SnippetArtifactSidecar(
             sidecarVersion = version,
-            snippetName = snippetName,
-            snippetClassInternalName = snippetClassInternalName,
-            packageFqName = packageFqName,
-            historyIndex = historyIndex,
             replSnippetDeclarations = declarations,
             imports = imports,
-            stateObjectFqName = stateObjectFqName,
-            resultPropertyName = resultPropertyName,
-            isSynthetic = isSynthetic,
-            isImplicit = isImplicit,
         )
     }
 

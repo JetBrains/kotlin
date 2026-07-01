@@ -204,10 +204,6 @@ class K2ReplStatelessCompilerTest {
     fun testSidecarProtoRoundtrip() {
         val original = SnippetArtifactSidecar(
             sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
-            snippetName = "Snippet_1",
-            snippetClassInternalName = "some/pkg/Snippet_1",
-            packageFqName = "some.pkg",
-            historyIndex = 7,
             replSnippetDeclarations = listOf(
                 // PROPERTY with PUBLIC visibility + a concrete return type signature — the common case.
                 SnippetArtifactSidecar.MemberRef(
@@ -254,36 +250,17 @@ class K2ReplStatelessCompilerTest {
                 SnippetArtifactSidecar.ImportEntry("kotlin.random.Random", isAllUnder = false, aliasName = null),
                 SnippetArtifactSidecar.ImportEntry("java.util", isAllUnder = true, aliasName = "ju"),
             ),
-            stateObjectFqName = "some.pkg.MyReplState",
-            resultPropertyName = "\$\$result",
-            isSynthetic = true,
-            isImplicit = true,
         )
         val bytes = SnippetArtifactSidecarProtoCodec.encode(original)
         val decoded = SnippetArtifactSidecarProtoCodec.decode(bytes)
         assertEquals(original, decoded, "sidecar must round-trip through protobuf without loss")
 
-        // Round-trip the synthetic flag with the opposite value too.
-        val nonSynthetic = original.copy(isSynthetic = false, resultPropertyName = null)
-        val decoded2 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(nonSynthetic))
-        assertEquals(nonSynthetic, decoded2)
+        // A declaration-only sidecar (no imports) must also round-trip — an empty repeated field
+        // decodes back to an empty list, not a distinct value.
+        val noImports = original.copy(imports = emptyList())
+        val decoded2 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(noImports))
+        assertEquals(noImports, decoded2)
         assertNotEquals(decoded, decoded2)
-
-        // Round-trip `isImplicit` independently of `isSynthetic` (Q10b read-side decoupling):
-        // a user-authored snippet that the compilation flagged implicit, *without* the
-        // compile-side `_isSyntheticSnippet` flag.
-        val implicitNotSynthetic = original.copy(isSynthetic = false, isImplicit = true)
-        val decoded3 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(implicitNotSynthetic))
-        assertEquals(implicitNotSynthetic, decoded3)
-        assertTrue(decoded3.isImplicit, "isImplicit must round-trip independently of isSynthetic")
-        assertEquals(false, decoded3.isSynthetic, "isSynthetic must round-trip independently of isImplicit")
-
-        // And the inverse — a synthetic snippet that callers chose *not* to surface as implicit.
-        val syntheticNotImplicit = original.copy(isSynthetic = true, isImplicit = false)
-        val decoded4 = SnippetArtifactSidecarProtoCodec.decode(SnippetArtifactSidecarProtoCodec.encode(syntheticNotImplicit))
-        assertEquals(syntheticNotImplicit, decoded4)
-        assertEquals(false, decoded4.isImplicit)
-        assertTrue(decoded4.isSynthetic)
     }
 
     @Test
