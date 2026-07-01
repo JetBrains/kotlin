@@ -173,8 +173,8 @@ internal class DumpIr(output: KlibToolOutput, args: ParsedArguments) : KlibToolC
             printSignatures = true,
             filePathRenderer = { _, fullPath ->
                 // Similar to logic in IrFileEntryPathRelativizer.getRelativePath()
-                args.absolutePathPrefixes.firstNotNullOfOrNull { absolutePathPrefix ->
-                    runIf(fullPath.startsWith(absolutePathPrefix)) { fullPath.removePrefix(absolutePathPrefix) }
+                args.relativePathBases.firstNotNullOfOrNull { pathPrefix ->
+                    runIf(fullPath.startsWith(pathPrefix)) { fullPath.removePrefix(pathPrefix) }
                 } ?: fullPath
             },
             referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
