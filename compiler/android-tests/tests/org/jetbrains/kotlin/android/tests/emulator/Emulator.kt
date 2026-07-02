@@ -74,8 +74,8 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
 
             commandLine.addParameters("-avd", AVD_NAME, "-no-audio", "-no-window", "-gpu", "swiftshader_indirect", "-verbose")
             if (isRunningInCi) {
-                println("Disabling emulator hardware acceleration in CI")
-                commandLine.addParameter("-no-accel")
+//                println("Disabling emulator hardware acceleration in CI")
+//                commandLine.addParameter("-no-accel")
             } else {
                 println("Using emulator hardware acceleration for local run")
             }
