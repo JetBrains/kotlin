@@ -322,7 +322,11 @@ object JKlibIrCompilationPhase :
     }
 
     private fun loadLibraries(klibFiles: List<String>, configuration: CompilerConfiguration): List<KotlinLibrary> {
-        val loadingResult = KlibLoader { libraryPaths(klibFiles) }.load()
+        val loadingResult =
+            KlibLoader {
+                libraryPaths(klibFiles)
+                configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
+            }.load()
         loadingResult.reportLoadingProblemsIfAny(configuration, allAsErrors = true)
         return loadingResult.librariesStdlibFirst
     }
