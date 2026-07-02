@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.js.config.TsCompilationStrategy
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -25,22 +23,7 @@ class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: St
         if (JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in globalDirectives) return
 
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)
-
-        val translationModes = when (globalDirectives[JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY].lastOrNull()) {
-            TsCompilationStrategy.MERGED -> listOf(
-                when {
-                    JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in globalDirectives -> TranslationMode.PER_MODULE_DEV
-                    else -> TranslationMode.FULL_DEV
-                }
-            )
-
-            TsCompilationStrategy.EACH_FILE -> JsEnvironmentConfigurator
-                .getTranslationModesForTest(testServices, mainModule)
-                .filter { !it.production }
-
-            TsCompilationStrategy.NONE, null -> return
-        }
-
+        val translationModes = JsEnvironmentConfigurator.getTypeScriptExportTranslationModes(testServices, mainModule)
         val generated = translationModes
             .associateWith { mode ->
                 val outputDir = JsEnvironmentConfigurator
