@@ -170,7 +170,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testConstNot() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(42.inv()), Not(ConstI(42)))
+            assertEquals(ConstI(42.inv()), Inv(ConstI(42)))
             ReturnVoid()
         }
     }
@@ -178,7 +178,7 @@ class NormalizationTest : IrTest {
     @Test
     fun testNotZero() = withTestSession {
         buildInitialIR {
-            assertEquals(ConstI(-1), Not(ConstI(0)))
+            assertEquals(ConstI(-1), Inv(ConstI(0)))
             ReturnVoid()
         }
     }
@@ -383,7 +383,7 @@ class NormalizationTest : IrTest {
             val bit   = 3
             assertEquals(
                 ConstI(0b10100010),
-                And(INT)(ConstI(value), Not(Shl(INT)(ConstI(1), ConstI(bit))))
+                And(INT)(ConstI(value), Inv(Shl(INT)(ConstI(1), ConstI(bit))))
             )
             ReturnVoid()
         }
