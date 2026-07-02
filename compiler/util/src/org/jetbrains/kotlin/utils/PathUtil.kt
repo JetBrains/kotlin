@@ -95,6 +95,8 @@ object PathUtil {
 
     const val KOTLIN_TEST_JS_NAME = "kotlin-test-js"
     const val KOTLIN_TEST_JS_JAR = "$KOTLIN_TEST_JS_NAME.jar"
+    const val KOTLIN_TEST_WASM_JS_NAME = "kotlin-test-wasm-js"
+    const val KOTLIN_TEST_WASM_WASI_NAME = "kotlin-test-wasm-wasi"
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
 

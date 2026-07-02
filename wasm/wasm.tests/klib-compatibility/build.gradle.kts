@@ -7,6 +7,7 @@ plugins {
     id("java-test-fixtures")
     id("d8-configuration")
     id("binaryen-configuration")
+    id("nodejs-configuration")
     id("project-tests-convention")
     id("test-inputs-check-v2")
 }
@@ -17,6 +18,9 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testFixturesApi(testFixtures(project(":wasm:wasm.tests")))
+
+    implicitDependencies("org.nodejs:node:$nodejsVersion:linux-x64@tar.gz")
+    implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
 }
 
 sourceSets {
@@ -26,6 +30,13 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+}
+
+node {
+    download.set(true)
+    version.set(nodejsVersion)
+    nodeProjectDir.set(layout.buildDirectory.dir("node"))
+    distBaseUrl.set(null as String?)
 }
 
 data class CustomCompilerVersion(val rawVersion: String) {
@@ -46,6 +57,8 @@ fun Project.customCompilerTest(
     val runtimeDependencies: Configuration = getOrCreateConfiguration("customCompilerRuntimeDependencies_$version") {
         project.dependencies.add(name,"org.jetbrains.kotlin:kotlin-stdlib-wasm-js:${version.rawVersion}")
         project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-test-wasm-js:${version.rawVersion}")
+        project.dependencies.add(name,"org.jetbrains.kotlin:kotlin-stdlib-wasm-wasi:${version.rawVersion}")
+        project.dependencies.add(name, "org.jetbrains.kotlin:kotlin-test-wasm-wasi:${version.rawVersion}")
     }
 
     return projectTests.jsTestTask(taskName, tag) {
@@ -57,6 +70,9 @@ fun Project.customCompilerTest(
         addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
         with(binaryenKotlinBuild) {
             setupBinaryen()
+        }
+        with(wasmNodeJsKotlinBuild) {
+            setupNodeJs(nodejsVersion)
         }
         body()
     }
@@ -114,7 +130,7 @@ tasks.test {
 }
 
 projectTests {
-    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmJsKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmKlibCompatibilityTestsKt", generateTestsInBuildDirectory = true)
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib/klib-compatibility/sanity")
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test.klib
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import kotlin.getValue
 import kotlin.test.fail
@@ -22,8 +23,8 @@ val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
         compilerClass = "org.jetbrains.kotlin.cli.js.K2JSCompiler",
         runtimeDependenciesPropertyName = "kotlin.internal.js.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.js.test.compat.customCompilerVersion",
-        stdlibArtifactName = "kotlin-stdlib-js",
-        kotlinTestArtifactName = "kotlin-test-js",
+        stdlibArtifactName = PathUtil.JS_LIB_NAME,
+        kotlinTestArtifactName = PathUtil.KOTLIN_TEST_JS_NAME,
     )
 }
 
@@ -37,8 +38,23 @@ val customWasmJsCompilerSettings: CustomWebCompilerSettings by lazy {
         compilerClass = "org.jetbrains.kotlin.cli.js.KotlinWasmCompiler",
         runtimeDependenciesPropertyName = "kotlin.internal.wasm.test.compat.runtimeDependencies",
         versionPropertyName = "kotlin.internal.wasm.test.compat.customCompilerVersion",
-        stdlibArtifactName = "kotlin-stdlib-wasm-js",
-        kotlinTestArtifactName = "kotlin-test-wasm-js",
+        stdlibArtifactName = PathUtil.WASM_JS_LIB_NAME,
+        kotlinTestArtifactName = PathUtil.KOTLIN_TEST_WASM_JS_NAME,
+    )
+}
+
+/**
+ * An accessor to "custom" (alternative) Kotlin/Wasm compiler and the relevant artifacts (stdlib, kotlin-test)
+ * which are used in KLIB backward/forward compatibility tests.
+ */
+val customWasmWasiCompilerSettings: CustomWebCompilerSettings by lazy {
+    createCustomWebCompilerSettings(
+        compilerClasspathPropertyName = "kotlin.internal.wasm.test.compat.customCompilerClasspath",
+        compilerClass = "org.jetbrains.kotlin.cli.js.KotlinWasmCompiler",
+        runtimeDependenciesPropertyName = "kotlin.internal.wasm.test.compat.runtimeDependencies",
+        versionPropertyName = "kotlin.internal.wasm.test.compat.customCompilerVersion",
+        stdlibArtifactName = PathUtil.WASM_WASI_LIB_NAME,
+        kotlinTestArtifactName = PathUtil.KOTLIN_TEST_WASM_WASI_NAME,
     )
 }
 

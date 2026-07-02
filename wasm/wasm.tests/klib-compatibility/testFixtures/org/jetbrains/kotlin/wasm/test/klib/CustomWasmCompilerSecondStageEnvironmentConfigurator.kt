@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironme
  * Note: This configuration is supposed to be used in tests with the custom compiler on the first compilation phase,
  *       so the second stage must be adapted a bit to accept old-style IR
  */
-class CustomWasmJsCompilerSecondStageEnvironmentConfigurator(
+class CustomWasmCompilerSecondStageEnvironmentConfigurator(
     testServices: TestServices,
     wasmTarget: WasmTarget,
 ) : WasmSecondStageEnvironmentConfigurator(testServices, wasmTarget) {

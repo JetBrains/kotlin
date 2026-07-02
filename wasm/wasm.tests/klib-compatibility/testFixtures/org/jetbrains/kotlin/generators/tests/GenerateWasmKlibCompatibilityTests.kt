@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmJsCompilerFirstStageTest
 import org.jetbrains.kotlin.test.HeavyTest
 import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmJsCompilerSecondStageTest
+import org.jetbrains.kotlin.wasm.test.klib.AbstractCustomWasmWasiCompilerFirstStageTest
 import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
@@ -23,6 +24,13 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomWasmJsCompilerFirstStageTest>(
+                annotations = listOf(annotation(HeavyTest::class.java))
+            ) {
+                model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("boxInline")
+            }
+
+            testClass<AbstractCustomWasmWasiCompilerFirstStageTest>(
                 annotations = listOf(annotation(HeavyTest::class.java))
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.platform.wasm.isWasmJs
+import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerFirstStageFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -43,6 +44,7 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
         outputKlibPath: String,
     ): BinaryArtifacts.KLib {
         val outputKlibFile = File(outputKlibPath).absoluteFile
+        val targetPlatform = testServices.targetPlatformProvider.getTargetPlatform(module)
 
         val compilerXmlOutput = ByteArrayOutputStream()
 
@@ -68,8 +70,11 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
                 runIf(friendDependencies.isNotEmpty()) {
                     listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
                 },
-                runIf(testServices.targetPlatformProvider.getTargetPlatform(module).isWasmJs()) {
+                runIf(targetPlatform.isWasmJs()) {
                     listOf(K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.JS.alias))
+                },
+                runIf(targetPlatform.isWasmWasi()) {
+                    listOf(K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.WASI.alias))
                 },
                 customArgs,
                 sources,
