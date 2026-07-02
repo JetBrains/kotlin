@@ -13,7 +13,8 @@ RUN apt-get install -y git \
     && apt-get install -y zip zstd \
     && apt-get install -y clang \
     && apt-get install -y libnspr4 \
-    && apt-get install -y libatomic1 # native library for nodejs
+    && apt-get install -y libatomic1 # native library for nodejs \
+    && apt-get install -y libc++1 # required by Android emulator swiftshader GPU backend
 
 RUN rm -rf /var/lib/apt/lists/*
 
