@@ -211,6 +211,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
   }
 
   @Test
+  @TestMetadata("prohibitKotlinPackageInNative.kt")
+  public void testProhibitKotlinPackageInNative() {
+    run("prohibitKotlinPackageInNative.kt");
+  }
+
+  @Test
   @TestMetadata("resolveToDelegatedProperty.kt")
   public void testResolveToDelegatedProperty() {
     run("resolveToDelegatedProperty.kt");
