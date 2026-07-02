@@ -466,6 +466,8 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             // Is it something like (a is A) | (b is A)? It's not clear and complicates the analysis a lot, so here we just
             // handle a simple but practical case when the phi node only has a single value.
             var phiNodeAlias: IrValueDeclaration? = null,
+            // True if a value not coming from a variable (e.g. a constant) has flowed into the phi node.
+            var phiNodeHasNonVariableValue: Boolean = false,
             var predicate: Predicate = Predicate.Empty,
             val variableAliases: MutableMap<IrVariable, IrValueDeclaration> = mutableMapOf(),
     )
@@ -507,6 +509,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
         val doWhileLoopForWhileLoops = mutableMapOf<IrWhileLoop, IrDoWhileLoop>()
 
         val multipleValuesMarker = createVariable("\$TheMarker", unitType)
+        val safeCallResultWhens = mutableSetOf<IrWhen>()
         val variableAliases = mutableMapOf<IrVariable, IrValueDeclaration>()
         val getValueMergedVariableAliases = mutableMapOf<IrVariable, IrValueDeclaration>()
         val returnableBlockCFMPInfos = mutableMapOf<IrReturnableBlock, ControlFlowMergePointInfo>()
@@ -551,7 +554,9 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     variableAliases[variable] = multipleValuesMarker
             }
             val resultVariable = result.variable
-            if (resultVariable != null) {
+            if (resultVariable == null) {
+                phiNodeHasNonVariableValue = true
+            } else {
                 if (phiNodeAlias == null)
                     phiNodeAlias = resultVariable
                 else if (phiNodeAlias != resultVariable)
@@ -597,7 +602,19 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             }
             return VisitorResult(
                     Predicates.optimizeAwayComplexTerms(cfmpInfo.predicate, localComplexTermsMask),
-                    cfmpInfo.phiNodeAlias.takeIf { it != multipleValuesMarker }
+                    cfmpInfo.phiNodeAlias
+                            .takeIf { it != multipleValuesMarker }
+                            ?.takeIf {
+                                // Generally, a non-variable value flowing into a phi node forbids aliasing of the phi node to other
+                                // variable (KT-87261 fired before this fix).
+                                !cfmpInfo.phiNodeHasNonVariableValue
+                                        // The exception is a safe call `recv?.prop` (see visitBlock): its null value only
+                                        // flows when the receiver is null, while the phi alias (a property phantom variable
+                                        // of the receiver, which the registration in visitBlock guarantees) is only ever
+                                        // constrained on paths dereferencing the receiver, and the safe call's own nullability
+                                        // comes from matchSafeCall rather than this alias - so keeping it is consistent.
+                                        || irElement in safeCallResultWhens
+                            }
             )
         }
 
@@ -983,6 +1000,17 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             val returnableBlock = expression as? IrReturnableBlock
             val statements = expression.statements
             if (returnableBlock == null) {
+                expression.matchSafeCall()?.let { [_, safeCallResult] ->
+                    // Only register a proper safe call `recv?.foo(..)` - one whose result is a call with recv as
+                    // the dispatch receiver, so that the phi alias (if any) can only be a property phantom variable of recv.
+                    // A safe call with an inlined lambda (`recv?.let { obj }`) can produce an arbitrary variable as its result,
+                    // for which keeping the phi alias would be unsound.
+                    var receiver = (safeCallResult as? IrCall)?.dispatchReceiver
+                    while (receiver is IrTypeOperatorCall && receiver.isCast())
+                        receiver = receiver.argument
+                    if ((receiver as? IrGetValue)?.symbol?.owner == statements[0])
+                        safeCallResultWhens.add(statements[1] as IrWhen)
+                }
                 var predicate = data
                 var resultVariable: IrValueDeclaration? = null
                 statements.forEachIndexed { index, statement ->
