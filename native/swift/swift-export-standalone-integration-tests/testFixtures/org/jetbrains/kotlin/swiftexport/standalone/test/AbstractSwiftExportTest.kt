@@ -120,6 +120,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         val config = SwiftExportConfig(
             outputPath = buildDir(testPathFull.name).resolve(testDir).toPath(),
             stableDeclarationsOrder = true,
+            renderDocComments = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
             errorTypeStrategy = ErrorTypeStrategy.Fail,

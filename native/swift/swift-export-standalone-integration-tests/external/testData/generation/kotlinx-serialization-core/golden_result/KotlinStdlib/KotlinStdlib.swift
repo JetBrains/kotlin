@@ -7304,21 +7304,27 @@ extension ExportedKotlinPackages.kotlin.time {
         }
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.Annotation where Self : ExportedKotlinPackages.kotlin.__Annotation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Annotation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation, ExportedKotlinPackages.kotlin.__Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
 extension ExportedKotlinPackages.kotlin.Annotation {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections.__Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable {
@@ -7836,6 +7842,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlinPackages.kotlin.__CharSequence {
     public var length: Swift.Int32 {
         get {
@@ -7861,12 +7868,15 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlin
         }
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._CharSequence {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
@@ -7875,8 +7885,10 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Export
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {

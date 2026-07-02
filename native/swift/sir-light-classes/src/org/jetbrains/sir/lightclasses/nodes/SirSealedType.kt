@@ -278,7 +278,7 @@ private val KaClassSymbol?.isSealed: Boolean
             (this.classKind != KaClassKind.INTERFACE || this.typeParameters.isEmpty())
 
 private val SirDeclaration.propagatedAttributes: List<SirAttribute>
-    get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI }
+    get() = attributes.filter { it is SirAttribute.Available || it is SirAttribute.SPI || it is SirAttribute.Documentation }
 
 context(_: SirSession, _: KaSession)
 private fun createUniqueCaseNames(

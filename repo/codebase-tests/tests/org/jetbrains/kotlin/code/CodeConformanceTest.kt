@@ -134,7 +134,10 @@ class CodeConformanceTest {
 
         @Suppress("SpellCheckingInspection") val tests = listOf(
             FileTestCase(
-                "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
+                "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
+                allowedFiles = listOf(
+                    "native/swift/swift-export-standalone-integration-tests/simple/testData/generation/docc/"
+                )
             ) { _, source ->
                 // substring check is an optimization
                 "@author" in source && atAuthorPattern.matcher(source).find() &&

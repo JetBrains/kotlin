@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Collection where Self : ExportedKotlinPackages.kotlin.collections.__Collection {
     public var size: Swift.Int32 {
         get {
@@ -29,6 +30,7 @@ extension ExportedKotlinPackages.kotlin.collections.Collection where Self : Expo
 }
 extension ExportedKotlinPackages.kotlin.collections.Collection {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
@@ -36,6 +38,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : Export
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
@@ -46,6 +49,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Export
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKotlinPackages.kotlin.collections.__List {
     public var size: Swift.Int32 {
         get {
@@ -108,6 +112,7 @@ extension ExportedKotlinPackages.kotlin.collections.List where Self : ExportedKo
 }
 extension ExportedKotlinPackages.kotlin.collections.List {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : ExportedKotlinPackages.kotlin.collections.__ListIterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_ListIterator_hasNext(self.__externalRCRef())
@@ -130,24 +135,34 @@ extension ExportedKotlinPackages.kotlin.collections.ListIterator where Self : Ex
 }
 extension ExportedKotlinPackages.kotlin.collections.ListIterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.List, ExportedKotlinPackages.kotlin.collections.__List where Wrapped : ExportedKotlinPackages.kotlin.collections._List {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.__Collection where Wrapped : ExportedKotlinPackages.kotlin.collections._Collection {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.ListIterator, ExportedKotlinPackages.kotlin.collections.__ListIterator where Wrapped : ExportedKotlinPackages.kotlin.collections._ListIterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections.__Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._List {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Collection {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._ListIterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterable {
 }
 extension ExportedKotlinPackages.kotlin.collections {

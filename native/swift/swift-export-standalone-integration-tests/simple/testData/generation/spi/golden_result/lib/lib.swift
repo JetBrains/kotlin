@@ -227,14 +227,17 @@ public func normalLibFunction() -> Swift.Void {
 public func returnAlias() -> lib.InternalLibAlias {
     return __root___returnAlias()
 }
+@_documentation(visibility: internal)
 extension lib.InterfaceOne where Self : lib.__InterfaceOne {
 }
 extension lib.InterfaceOne {
 }
+@_documentation(visibility: internal)
 extension lib.InterfaceTwo where Self : lib.__InterfaceTwo {
 }
 extension lib.InterfaceTwo {
 }
+@_documentation(visibility: internal)
 extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {
     @_spi(ExperimentalLibApi) @_spi(InternalLibApi)
     public var experimentalProp: Swift.String {
@@ -299,19 +302,22 @@ extension lib.InternalLibInterface {
         fatalError("'experimentalFun' is an @_spi requirement that must be implemented by Swift conformers")
     }
 }
-@_spi(InternalLibApi)
+@_spi(InternalLibApi) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface, lib.__InternalLibInterface where Wrapped : lib._InternalLibInterface {
 }
-@_spi(InterfaceOptInOne)
+@_spi(InterfaceOptInOne) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceOne, lib.__InterfaceOne where Wrapped : lib._InterfaceOne {
 }
-@_spi(InterfaceOptInTwo)
+@_spi(InterfaceOptInTwo) @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceTwo, lib.__InterfaceTwo where Wrapped : lib._InterfaceTwo {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InternalLibInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceOne {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InterfaceTwo {
 }
 @_cdecl("InternalLibInterface_bar__reverse_swift")

@@ -482,12 +482,15 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return { __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
+@_documentation(visibility: internal)
 extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE, main.__INTERFACE where Wrapped : main._INTERFACE {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._INTERFACE {
 }
 extension ExportedKotlinPackages.namespace.deeper {

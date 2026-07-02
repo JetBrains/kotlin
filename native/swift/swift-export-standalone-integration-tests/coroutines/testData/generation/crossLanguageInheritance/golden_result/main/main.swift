@@ -310,6 +310,7 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
         }
     }
 }
+@_documentation(visibility: internal)
 extension main.AsyncDefaulter where Self : main.__AsyncDefaulter {
     public func describe() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
@@ -371,6 +372,7 @@ extension main.AsyncDefaulter {
         }
     }
 }
+@_documentation(visibility: internal)
 extension main.AsyncGreeter where Self : main.__AsyncGreeter {
     public func greet(
         name: Swift.String
@@ -415,12 +417,16 @@ extension main.AsyncGreeter where Self : main.__AsyncGreeter {
 }
 extension main.AsyncGreeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.AsyncGreeter, main.__AsyncGreeter where Wrapped : main._AsyncGreeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.AsyncDefaulter, main.__AsyncDefaulter where Wrapped : main._AsyncDefaulter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AsyncGreeter {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._AsyncDefaulter {
 }
 @_cdecl("AsyncAbstractBase_abstractGreet__reverse_swift")

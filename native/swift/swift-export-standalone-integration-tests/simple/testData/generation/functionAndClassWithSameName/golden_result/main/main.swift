@@ -167,28 +167,37 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
+@_documentation(visibility: internal)
 extension main.CompletableJob where Self : main.__CompletableJob {
 }
 extension main.CompletableJob {
 }
+@_documentation(visibility: internal)
 extension main.InterfaceWithFactory where Self : main.__InterfaceWithFactory {
 }
 extension main.InterfaceWithFactory {
 }
+@_documentation(visibility: internal)
 extension main.Job where Self : main.__Job {
 }
 extension main.Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Job, main.__Job where Wrapped : main._Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.CompletableJob, main.__CompletableJob where Wrapped : main._CompletableJob {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory, main.__InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Job {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._CompletableJob {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {

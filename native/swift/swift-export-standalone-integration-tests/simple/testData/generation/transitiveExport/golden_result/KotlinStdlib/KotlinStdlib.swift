@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
@@ -13,8 +14,10 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Export
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections {

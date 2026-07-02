@@ -11,6 +11,7 @@ class SirParameter(
     val type: SirType,
     val origin: Origin? = null,
     val isVariadic: Boolean = false,
+    val kotlinName: String? = null,
 ) {
     init {
         require(argumentName?.isEmpty() != true) { "argumentName must not be empty; use null to suppress the argument label" }

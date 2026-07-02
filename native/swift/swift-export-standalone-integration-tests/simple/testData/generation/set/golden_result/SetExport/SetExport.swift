@@ -86,11 +86,14 @@ public func testSetString(
 ) -> Swift.Set<Swift.String> {
     return __root___testSetString__TypesOfArguments__Swift_Set_Swift_String___(s) as! Swift.Set<Swift.String>
 }
+@_documentation(visibility: internal)
 extension SetExport.Foo where Self : SetExport.__Foo {
 }
 extension SetExport.Foo {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: SetExport.Foo, SetExport.__Foo where Wrapped : SetExport._Foo {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: SetExport._Foo {
 }

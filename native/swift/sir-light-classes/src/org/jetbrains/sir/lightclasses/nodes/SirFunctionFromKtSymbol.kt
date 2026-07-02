@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
-import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
@@ -51,7 +50,7 @@ internal open class SirFunctionFromKtSymbol(
     override val name: String by lazyWithSessions {
         ktSymbol.sirDeclarationName()
     }
-    private val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
+    internal val contextParameters: Pair<SirParameter, List<SirParameter>>? by lazy {
         translateContextParameters()
     }
     override val contextParameter: SirParameter? get() = contextParameters?.first
@@ -64,8 +63,11 @@ internal open class SirFunctionFromKtSymbol(
     override val returnType: SirType by lazy {
         translateReturnType()
     }
+    private val kdocElements: KDocElements? by lazyWithSessions {
+        KDocElements(this)
+    }
     override val documentation: String? by lazyWithSessions {
-        ktSymbol.documentation()
+        translateDocumentation(kdocElements)
     }
 
     override var parent: SirDeclarationParent
@@ -101,6 +103,7 @@ internal open class SirFunctionFromKtSymbol(
                     add(returnType)
                 }.flatMap { it.unavailableTypes }
             }
+            addDocumentationVisibility(kdocElements)
         }
     }
 

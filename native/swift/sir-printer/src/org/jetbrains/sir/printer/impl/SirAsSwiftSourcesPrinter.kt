@@ -316,7 +316,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 
     private fun SirDeclaration.printDocumentation() {
         if (!renderDocComments) return
-        documentation?.lines()?.forEach { println(it.trimIndent()) }
+        documentation?.trimIndent()?.prependIndent("/// ")?.let { printlnMultiLine(it) }
     }
 
     private fun SirImport.print() {
@@ -395,7 +395,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             .takeUnless { currentContext.declaration is SirProtocol }
             ?.let { (currentContext.declaration as? SirExtension)?.let { decl -> minOf(decl.visibility, it) } ?: it }
             .takeIf { it != SirVisibility.INTERNAL }
-            ?.let { it.swift + " " }
+            ?.let { it.value + " " }
             ?: ""
     )
 
@@ -630,15 +630,6 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                 type.swiftRender((SirTypeVariance.CONTRAVARIANT)) +
                 if (isVariadic) "..." else ""
 }
-
-private val SirVisibility.swift
-    get(): String = when (this) {
-        SirVisibility.PRIVATE -> "private"
-        SirVisibility.FILEPRIVATE -> "fileprivate"
-        SirVisibility.INTERNAL -> "internal"
-        SirVisibility.PUBLIC -> "public"
-        SirVisibility.PACKAGE -> "package"
-    }
 
 private val SirClassMemberDeclaration.callableKind: SirCallableKind
     get() = when (this) {

@@ -3,6 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface.FunctionalInterface where Self : ExportedKotlinPackages.funinterface.__FunctionalInterface {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_FunctionalInterface_invoke(self.__externalRCRef())
@@ -10,6 +11,7 @@ extension ExportedKotlinPackages.funinterface.FunctionalInterface where Self : E
 }
 extension ExportedKotlinPackages.funinterface.FunctionalInterface {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation where Self : ExportedKotlinPackages.funinterface.__XMLFunctionalInterfaceWithLeadingAbbreviation {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke(self.__externalRCRef())
@@ -17,6 +19,7 @@ extension ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingA
 }
 extension ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers where Self : ExportedKotlinPackages.funinterface.___123FunctionalInterfaceWithLeadingNumbers {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke(self.__externalRCRef())
@@ -24,6 +27,7 @@ extension ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeading
 }
 extension ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation where Self : ExportedKotlinPackages.funinterface.___123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke(self.__externalRCRef())
@@ -31,6 +35,7 @@ extension ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLead
 }
 extension ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore where Self : ExportedKotlinPackages.funinterface.___FunctionalInterfaceWithLeadingUnderscore {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke(self.__externalRCRef())
@@ -38,30 +43,43 @@ extension ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnd
 }
 extension ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface.__FunctionalInterface where Wrapped : ExportedKotlinPackages.funinterface._FunctionalInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore, ExportedKotlinPackages.funinterface.___FunctionalInterfaceWithLeadingUnderscore where Wrapped : ExportedKotlinPackages.funinterface.__FunctionalInterfaceWithLeadingUnderscore {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers, ExportedKotlinPackages.funinterface.___123FunctionalInterfaceWithLeadingNumbers where Wrapped : ExportedKotlinPackages.funinterface.__123FunctionalInterfaceWithLeadingNumbers {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation, ExportedKotlinPackages.funinterface.__XMLFunctionalInterfaceWithLeadingAbbreviation where Wrapped : ExportedKotlinPackages.funinterface._XMLFunctionalInterfaceWithLeadingAbbreviation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation, ExportedKotlinPackages.funinterface.___123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation where Wrapped : ExportedKotlinPackages.funinterface.__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading, ExportedKotlinPackages.funinterface.__functionalInterfaceWithAlreadyLowercaseLeading where Wrapped : ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._FunctionalInterface {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__FunctionalInterfaceWithLeadingUnderscore {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__123FunctionalInterfaceWithLeadingNumbers {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._XMLFunctionalInterfaceWithLeadingAbbreviation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface.__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
 }
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Self : ExportedKotlinPackages.funinterface.__functionalInterfaceWithAlreadyLowercaseLeading {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke(self.__externalRCRef())

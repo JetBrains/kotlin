@@ -6,7 +6,6 @@
 package org.jetbrains.sir.lightclasses.extensions
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.sir.SirCallableKind
 import org.jetbrains.kotlin.sir.SirModality
 
@@ -25,8 +24,6 @@ internal val KaCallableSymbol.sirCallableKind: SirCallableKind
         KaSymbolLocation.LOCAL,
             -> TODO("encountered callable location($location) that is not translatable currently. Fix this crash during KT-65980.")
     }
-
-internal fun KaSymbol.documentation(): String? = this.psiSafe<KtDeclaration>()?.docComment?.text
 
 internal val KaSymbolModality.sirModality: SirModality
     get() = when (this) {

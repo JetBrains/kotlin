@@ -82,4 +82,11 @@ public sealed interface SirAttribute {
         override val identifier: String get() = "_disfavoredOverload"
         override val arguments: List<SirArgument>? get() = null
     }
+
+    class Documentation(
+        val visibility: SirVisibility
+    ) : SirAttribute {
+        override val identifier: String get() = "_documentation"
+        override val arguments: List<SirArgument> get() = listOf(SirArgument("visibility", visibility.value))
+    }
 }

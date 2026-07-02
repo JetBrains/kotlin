@@ -60,6 +60,7 @@ open class BaseDriver: KotlinRuntime.KotlinBase {
         }
     }
 }
+@_documentation(visibility: internal)
 extension main.Driver where Self : main.__Driver {
     public func addListener(
         queryKeys: Swift.String...,
@@ -71,16 +72,21 @@ extension main.Driver where Self : main.__Driver {
 extension main.Driver {
     typealias Listener = main._Driver_Listener
 }
+@_documentation(visibility: internal)
 extension main._Driver_Listener where Self : main.___Driver_Listener {
 }
 extension main._Driver_Listener {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main.Driver, main.__Driver where Wrapped : main._Driver {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._Driver_Listener, main.___Driver_Listener where Wrapped : main.__Driver_Listener {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Driver {
 }
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__Driver_Listener {
 }
 @_cdecl("BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg_____reverse_swift")
