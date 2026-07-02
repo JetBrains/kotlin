@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.js
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.*
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
+import kotlin.io.path.moveTo
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.test.assertContains
 
@@ -87,6 +90,67 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 val env = createdExecSpecLog.substringAfter("Environment: {").substringBefore("},")
                 assertContains(env, "CUSTOM_ENV=custom-env-value")
                 assertContains(env, "CUSTOM_ENV_LAZY=lazy-custom-env-value")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `karma should run when kotlin-node-modules are not installed on top-level node_modules`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js().browser {
+                        testTask {
+                            it.useKarma {
+                                useChromeHeadless()
+                            }
+                        }
+                    }
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+
+                project.projectDir.resolve("src/jsTest/kotlin/DummyTest.kt").apply {
+                    parentFile.mkdirs()
+                    writeText(
+                        """
+                        class DummyTest {
+                          @kotlin.test.Test
+                          fun dummy() {
+                            println("dummy test")
+                          }
+                        }
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            // prepare build/js/
+            build("kotlinNpmInstall")
+            val rootLevelWebHelpers = projectPath.resolve("build/js/node_modules/kotlin-web-helpers")
+            val packageLevelWebHelpers = projectPath.resolve("build/js/packages/empty-test/node_modules/kotlin-web-helpers")
+            rootLevelWebHelpers.moveTo(packageLevelWebHelpers)
+
+            // -x kotlinNpmInstall to prevent overwriting
+            if (isTeamCityRun) { // Should be fixed by KTI-3326, but only in master branch
+                buildAndFail("jsBrowserTest", "-x", "kotlinNpmInstall") {
+                    assertTasksFailed(":jsBrowserTest")
+                    assertOutputContains("> Errors occurred during launch of browser for testing.")
+                    assertOutputDoesNotContain(":jsBrowserTest exited with errors (exit code: 1)")
+                }
+            } else {
+                build("jsBrowserTest", "-x", "kotlinNpmInstall") {
+                    assertTasksAreNotInTaskGraph("kotlinNpmInstall")
+                    assertTasksExecuted(":jsBrowserTest")
+                }
             }
         }
     }

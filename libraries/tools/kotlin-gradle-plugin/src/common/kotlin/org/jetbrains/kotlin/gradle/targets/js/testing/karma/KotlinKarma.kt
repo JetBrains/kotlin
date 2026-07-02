@@ -200,11 +200,11 @@ class KotlinKarma internal constructor(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-reporter.js');
+                config.plugins.push(require('kotlin-web-helpers/dist/karma-kotlin-reporter'));
                 
                 config.loggers = [
                     {
-                        type: 'kotlin-web-helpers/dist/tc-log-appender.js',
+                        type: require('kotlin-web-helpers/dist/tc-log-appender'),
                         //default layout
                         layout: { type: 'pattern', pattern: '%[%d{DATETIME}:%p [%c]: %]%m' }
                     }
@@ -224,7 +224,7 @@ class KotlinKarma internal constructor(
             it.appendLine(
                 """
                 config.plugins = config.plugins || [];
-                config.plugins.push('kotlin-web-helpers/dist/karma-webpack-output.js');
+                config.plugins.push(require('kotlin-web-helpers/dist/karma-webpack-output'));
             """.trimIndent()
             )
         }
@@ -669,7 +669,7 @@ internal fun writeConfig(
                 """
                         config.plugins = config.plugins || [];
                         
-                        config.plugins.push('kotlin-web-helpers/dist/karma-kotlin-debug-plugin.js');
+                        config.plugins.push(require('kotlin-web-helpers/dist/karma-kotlin-debug-plugin'));
                     """.trimIndent()
             )
         }
