@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.io.readProperties
-import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.io.zipDirAs
 import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -20,9 +18,11 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.Properties
 import kotlin.collections.forEach
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
@@ -297,7 +297,6 @@ abstract class AbstractKlibLoaderTest {
      * This test is needed to ensure that [KlibLoader] does not mix up libraries without extension and with "klib" extension,
      * and always treats them as distinct libraries, even if they have repeating "unique names".
      */
-    @OptIn(ExperimentalPathApi::class)
     @Suppress("LocalVariableName")
     @Test
     fun testNoFileExtensionHeuristics() {
@@ -312,18 +311,18 @@ abstract class AbstractKlibLoaderTest {
         val qux = libsDir.resolve("qux").pathString
         val qux_klib = libsDir.resolve("qux.klib").pathString
 
-        with(Path(generateNewKlib(asFile = false, fileExtension = ""))) {
-            copyToRecursively(Path(foo), followLinks = false, overwrite = false)
-            copyToRecursively(Path(foo_klib), followLinks = false, overwrite = false)
-            copyToRecursively(Path(bar), followLinks = false, overwrite = false)
-            copyToRecursively(Path(baz_klib), followLinks = false, overwrite = false)
+        with(File(generateNewKlib(asFile = false, fileExtension = ""))) {
+            copyRecursively(File(foo))
+            copyRecursively(File(foo_klib))
+            copyRecursively(File(bar))
+            copyRecursively(File(baz_klib))
         }
 
-        with(Path(generateNewKlib(asFile = true, fileExtension = "klib"))) {
-            copyToRecursively(Path(bar_klib), followLinks = false, overwrite = false)
-            copyToRecursively(Path(baz), followLinks = false, overwrite = false)
-            copyToRecursively(Path(qux), followLinks = false, overwrite = false)
-            copyToRecursively(Path(qux_klib), followLinks = false, overwrite = false)
+        with(File(generateNewKlib(asFile = true, fileExtension = "klib"))) {
+            copyRecursively(File(bar_klib))
+            copyRecursively(File(baz))
+            copyRecursively(File(qux))
+            copyRecursively(File(qux_klib))
         }
 
         assertEquals(
@@ -477,12 +476,13 @@ abstract class AbstractKlibLoaderTest {
 
         // There is no ability to save no ABI version in manifest at all.
         // Thus, we need to patch the manifest manually.
-        val manifestFile = Path(libraryPath).resolve("default/manifest")
-        with(manifestFile.readProperties()) {
+        val manifestFile = File(libraryPath).resolve("default/manifest")
+        Properties().apply {
+            manifestFile.inputStream().use { load(it) }
             assertTrue(containsKey(KLIB_PROPERTY_ABI_VERSION))
             remove(KLIB_PROPERTY_ABI_VERSION)
             assertFalse(containsKey(KLIB_PROPERTY_ABI_VERSION))
-            manifestFile.writeProperties(this)
+            manifestFile.outputStream().use { store(it, null) }
         }
 
         // Load without ABI version check.
@@ -616,7 +616,7 @@ abstract class AbstractKlibLoaderTest {
         var stdlibExpectedInPaths = stdlib != null
 
         val otherLibrariesCanonicalPaths = libraryPaths.mapNotNull { libraryPath ->
-            val canonicalLibraryPath: String = Path(libraryPath).toRealPath().pathString
+            val canonicalLibraryPath: String = File(libraryPath).canonicalPath
 
             if (canonicalLibraryPath == stdlib?.libraryFile?.canonicalPath) {
                 assertTrue(stdlibExpectedInPaths)
