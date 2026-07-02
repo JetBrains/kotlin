@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 
 class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: String? = null) : JsBinaryArtifactHandler(testServices) {
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
 
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in globalDirectives) return
 
@@ -57,7 +57,7 @@ class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: St
             } else {
                 "$suffix.d.ts"
             }
-            val referenceDtsFile = module.files.first().originalFile.withReplacedExtensionOrNull(".kt", extension)
+            val referenceDtsFile = mainModule.files.first().originalFile.withReplacedExtensionOrNull(".kt", extension)
                 ?: error("Can't find reference $extension file")
 
             return@map {

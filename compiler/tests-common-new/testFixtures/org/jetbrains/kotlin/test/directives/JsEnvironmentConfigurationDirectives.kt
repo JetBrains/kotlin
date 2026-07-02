@@ -148,6 +148,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val GENERATE_DTS_FROM_IR by directive(
+        description = "Use IR-based TypeScript export",
+        applicability = DirectiveApplicability.Global
+    )
+
     val TSC_TARGET by stringDirective(
         description = """
         The argument for the --target CLI option of the TypeScript compiler.
