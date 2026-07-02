@@ -74,11 +74,14 @@ class MainKtsIT {
     fun testCompileWithImport() {
         val mainKtsJar = ForTestCompileRuntime.mainKtsJar()
 
-        runWithK2JVMCompiler(
-            "$TEST_DATA_ROOT/import-test.main.kts",
-            classpath = listOf(mainKtsJar),
-            skipScriptArgument = true
-        )
+        withTempDir { tmpDir ->
+            runWithK2JVMCompiler(
+                "$TEST_DATA_ROOT/import-test.main.kts",
+                classpath = listOf(mainKtsJar),
+                skipScriptArgument = true,
+                additionalArgs = listOf("-d", tmpDir.absolutePath)
+            )
+        }
     }
 
     @Test
