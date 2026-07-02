@@ -10,8 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeText
+import kotlin.io.path.deleteExisting
 
 @MppGradlePluginTests
 @DisplayName("JVM classpath metadata incremental compilation")
@@ -65,7 +64,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Verify that incremental compilation without JVM classpath metadata leads to correct resolution")
+    @DisplayName("Verify that incremental compilation with JVM classpath metadata leads to correct resolution")
     fun testWithJvmClasspathMetadataEnabled(gradleVersion: GradleVersion) {
         project(
             projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
@@ -129,6 +128,121 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
                 println("KMP output: ${foo()}")
             }
             """.trimIndent()
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Verify metadata header merge preserves packages of files not recompiled")
+    fun testMetadataHeaderMergePreservesUntouchedPackages(gradleVersion: GradleVersion) {
+        project(
+            projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
+        ) {
+            setupMetadataHeaderTestProject()
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(
+                        listOf(
+                            kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt"),
+                            kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt")
+                        )
+                    ), output = output
+                )
+            }
+
+            kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt").modify { content ->
+                content.replace("fun foo() = bar(42)", "fun foo() = bar(41)")
+            }
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt"))),
+                    output = output
+                )
+            }
+
+            kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt").modify { content ->
+                content.replace("fun foo() = bar(41)", "fun foo() = bar(40)")
+            }
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt"))),
+                    output = output
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Verify obsolete package data in metadata header does not break incremental compilation")
+    fun testObsoletePackageInMetadataHeaderDoesNotBreakIncrementalCompilation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
+        ) {
+            setupMetadataHeaderTestProject()
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(
+                        listOf(
+                            kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt"),
+                            kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt")
+                        )
+                    ), output = output
+                )
+            }
+
+            kotlinSourcesDir("commonMain").resolve("com/example/two/foo.kt").deleteExisting()
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = emptyList(),
+                    output = output
+                )
+            }
+
+            kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt").modify { content ->
+                content.replace("fun bar(a: Any) = \"Any\"", "fun bar(a: Any) = \"Any!\"")
+            }
+
+            build("compileKotlinJvm") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(listOf(kotlinSourcesDir("commonMain").resolve("com/example/one/bar.kt"))),
+                    output = output
+                )
+            }
+        }
+    }
+
+    private fun TestProject.setupMetadataHeaderTestProject() {
+        addKgpToBuildScriptCompilationClasspath()
+        buildScriptInjection {
+            project.applyMultiplatform {
+                jvm()
+            }
+        }
+        kotlinSourcesDir("commonMain").apply {
+            source("com/example/one/bar.kt") {
+                """
+                    package com.example.one
+                    fun bar(a: Any) = "Any"
+                    """.trimIndent()
+            }
+
+            source("com/example/two/foo.kt") {
+                """
+                    package com.example.two
+                    import com.example.one.bar
+                    fun foo() = bar(42)
+                    """.trimIndent()
+            }
         }
     }
 }
