@@ -1,9 +1,15 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-87253
 
 fun foo(vararg ts: String, a: Any?) {
     if (ts[0] == a) {
-        a.<!UNRESOLVED_REFERENCE!>length<!>
+        a.length
+    }
+}
+
+fun <T: <!FINAL_UPPER_BOUND!>String<!>> bar(ts: T, a: Any?) {
+    if (ts == a) {
+        a.length
     }
 }
 
