@@ -49,6 +49,12 @@ public class LLReversedNativeDiagnosticsTestGenerated extends AbstractLLReversed
   }
 
   @Test
+  @TestMetadata("crossModuleVolatile.kt")
+  public void testCrossModuleVolatile() {
+    run("crossModuleVolatile.kt");
+  }
+
+  @Test
   @TestMetadata("dynamic.kt")
   public void testDynamic() {
     run("dynamic.kt");
