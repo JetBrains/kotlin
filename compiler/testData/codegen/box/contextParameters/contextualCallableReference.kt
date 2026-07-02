@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
 // IGNORE_BACKEND: JVM_IR, NATIVE
-// ^KT-86452
+// ^KT-86452, KT-87390
 
 object O {
     context(s: String, c: Char)
@@ -19,12 +19,19 @@ var O.bar: String
 fun box(): String {
     context("O", 'K') {
         val fnRef: () -> String = O::foo
-        if (fnRef() != "OK") return "FAIL 1"
+        fnRef().let { result ->
+            if (result != "OK") return "FAIL 1: $result != \"OK\""
+        }
 
         val propRef = O::bar
-        if (propRef() != "") return "FAIL 2"
+        propRef().let { result ->
+            if (result != "") return "FAIL 2: $result != \"\""
+        }
+
         propRef.set("K")
-        if (propRef() != "OK") return "FAIL 3"
+        propRef().let { result ->
+            if (result != "OK") return "FAIL 3: $result != \"OK\""
+        }
     }
 
     return "OK"
