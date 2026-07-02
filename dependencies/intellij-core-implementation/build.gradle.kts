@@ -23,6 +23,7 @@ dependencies {
     api("com.jetbrains.intellij.platform:syntax:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:syntax-extensions:$intellijVersion") { isTransitive = false }
     api("com.jetbrains.intellij.platform:syntax-psi:$intellijVersion") { isTransitive = false }
+    runtimeOnly("com.jetbrains.intellij.java:java-analysis-impl:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:diagnostic:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:diagnostic-telemetry:$intellijVersion") { isTransitive = false }
     runtimeOnly("com.jetbrains.intellij.platform:syntax-i18-n:$intellijVersion") { isTransitive = false }
