@@ -8,13 +8,15 @@ RUN apt-get update \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG=en_US.utf8
 
+# libatomic1 is a native library for nodejs
+# libc++1 is required by Android emulator swiftshader GPU backend
 RUN apt-get install -y git \
     && apt-get install -y curl \
     && apt-get install -y zip zstd \
     && apt-get install -y clang \
     && apt-get install -y libnspr4 \
-    && apt-get install -y libatomic1 # native library for nodejs \
-    && apt-get install -y libc++1 # required by Android emulator swiftshader GPU backend
+    && apt-get install -y libatomic1  \
+    && apt-get install -y libc++1
 
 RUN rm -rf /var/lib/apt/lists/*
 
