@@ -63,12 +63,18 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return visitor.visitUserType(this, data);
     }
 
+    /**
+     * Returns the angle-bracketed type argument list, or {@code null} if this type has no type arguments.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeArgumentList getTypeArgumentList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_ARGUMENT_LIST);
     }
 
+    /**
+     * Returns the type arguments (as projections), or an empty list if this type has none.
+     */
     @NotNull
     public List<KtTypeProjection> getTypeArguments() {
         // TODO: empty elements in PSI
@@ -86,6 +92,10 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return result;
     }
 
+    /**
+     * Returns the simple-name reference to the classifier (the rightmost segment of the type name), or {@code null} if
+     * it is absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     @SuppressWarnings("deprecation") // KT-78356
     public KtSimpleNameExpression getReferenceExpression() {
@@ -93,6 +103,10 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(KtStubBasedElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
     }
 
+    /**
+     * Returns the qualifier of a dotted type name (for example, {@code kotlin.collections} in
+     * {@code kotlin.collections.List}), or {@code null} if the type name is unqualified.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtUserType getQualifier() {
@@ -108,6 +122,10 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         KtPsiMutationService.getInstance().removeQualifier(this);
     }
 
+    /**
+     * Returns the simple name of the referenced classifier (the rightmost segment), or {@code null} if it is absent in
+     * incomplete code.
+     */
     @Nullable
     public String getReferencedName() {
         KtSimpleNameExpression referenceExpression = getReferenceExpression();

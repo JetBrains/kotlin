@@ -43,12 +43,20 @@ public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStu
         return visitor.visitSuperTypeListEntry(this, data);
     }
 
+    /**
+     * Returns the type reference of the supertype named by this entry, or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {
         return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
     }
 
+    /**
+     * Returns the supertype as a {@link KtUserType}, or {@code null} if the type reference is absent or is not a user
+     * type (for example, a function type).
+     */
     @Nullable
     public KtUserType getTypeAsUserType() {
         KtTypeReference reference = getTypeReference();

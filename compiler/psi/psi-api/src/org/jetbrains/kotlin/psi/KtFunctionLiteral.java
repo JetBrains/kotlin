@@ -44,6 +44,10 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         return null;
     }
 
+    /**
+     * Returns {@code true} if the lambda declares its parameters explicitly (there is an {@code ->} arrow), as opposed
+     * to using the implicit {@code it} parameter.
+     */
     public boolean hasParameterSpecification() {
         return findChildByType(KtTokens.ARROW) != null;
     }
@@ -59,17 +63,27 @@ public class KtFunctionLiteral extends KtFunctionNotStubbed {
         return null;
     }
 
+    /**
+     * Returns the opening brace {@code &#123;} of the lambda.
+     */
     @NotNull
     public PsiElement getLBrace() {
         return findChildByType(KtTokens.LBRACE);
     }
 
+    /**
+     * Returns the closing brace {@code &#125;} of the lambda, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     @IfNotParsed
     public PsiElement getRBrace() {
         return findChildByType(KtTokens.RBRACE);
     }
 
+    /**
+     * Returns the {@code ->} arrow separating the parameters from the body, or {@code null} if the lambda declares no
+     * explicit parameters.
+     */
     @Nullable
     public PsiElement getArrow() {
         return findChildByType(KtTokens.ARROW);

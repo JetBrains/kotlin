@@ -49,21 +49,37 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitClassBody(this, data)
 
+    /**
+     * The `init` blocks declared directly in this body, in source order; empty if there are none.
+     */
     val anonymousInitializers: List<KtAnonymousInitializer>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CLASS_INITIALIZER)
 
     internal val secondaryConstructors: List<KtSecondaryConstructor>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR)
 
+    /**
+     * The properties declared directly in this body, in source order; empty if there are none.
+     */
     val properties: List<KtProperty>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.PROPERTY)
 
+    /**
+     * The named functions declared directly in this body, in source order; empty if there are none.
+     */
     val functions: List<KtNamedFunction>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.FUNCTION)
 
+    /**
+     * The enum entries declared in this body, in source order; empty if the owner is not an enum class.
+     */
     val enumEntries: List<KtEnumEntry>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ENUM_ENTRY)
 
+    /**
+     * The companion objects declared in this body, in source order; empty if there are none. Valid Kotlin allows at
+     * most one, but several may appear in erroneous code.
+     */
     val allCompanionObjects: List<KtObjectDeclaration>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.OBJECT_DECLARATION).filter { it.isCompanion() }
 
@@ -74,9 +90,15 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     val companionBlocks: List<KtCompanionBlock>
         get() = getStubOrPsiChildrenAsList(KtStubBasedElementTypes.COMPANION_BLOCK)
 
+    /**
+     * The closing brace `}` of the body, or `null` if it is absent in incomplete code.
+     */
     val rBrace: PsiElement?
         get() = node.getChildren(rBraceTokenSet).singleOrNull()?.psi
 
+    /**
+     * The opening brace `{` of the body, or `null` if it is absent in incomplete code.
+     */
     val lBrace: PsiElement?
         get() = node.getChildren(lBraceTokenSet).singleOrNull()?.psi
 

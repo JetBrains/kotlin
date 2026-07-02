@@ -31,6 +31,9 @@ public class KtObjectLiteralExpression extends KtExpressionImpl {
         return visitor.visitObjectLiteralExpression(this, data);
     }
 
+    /**
+     * Returns the anonymous object declaration wrapped by this expression.
+     */
     @NotNull
     public KtObjectDeclaration getObjectDeclaration() {
         return (KtObjectDeclaration) findChildByType(KtNodeTypes.OBJECT_DECLARATION);

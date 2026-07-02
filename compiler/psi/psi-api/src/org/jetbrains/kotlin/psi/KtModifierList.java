@@ -114,6 +114,9 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
         return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 
+    /**
+     * Returns {@code true} if this modifier list contains the given modifier keyword.
+     */
     public boolean hasModifier(@NotNull KtModifierKeywordToken tokenType) {
         KotlinModifierListStub stub = getStub();
         if (stub != null) {
@@ -122,17 +125,27 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
         return getModifier(tokenType) != null;
     }
 
+    /**
+     * Returns the token for the given modifier keyword, or {@code null} if this modifier list does not contain it.
+     */
     @Nullable
     public PsiElement getModifier(@NotNull KtModifierKeywordToken tokenType) {
         return findChildByType(tokenType);
     }
 
+    /**
+     * Returns the first token whose type is in the given set, or {@code null} if none is present.
+     */
     @Nullable
     public PsiElement getModifier(@NotNull TokenSet tokenTypes) {
         return findChildByType(tokenTypes);
     }
 
 
+    /**
+     * Returns the element that owns this modifier list (the declaration or other {@link KtModifierListOwner} it
+     * belongs to).
+     */
     public PsiElement getOwner() {
         return getParentByStub();
     }

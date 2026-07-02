@@ -41,16 +41,27 @@ public class KtArrayAccessExpression extends KtExpressionImpl implements KtRefer
         return visitor.visitArrayAccessExpression(this, data);
     }
 
+    /**
+     * Returns the expression being indexed (the part before {@code [}), or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getArrayExpression() {
         return findChildByClass(KtExpression.class);
     }
 
+    /**
+     * Returns the index expressions inside the brackets (there may be several, as in {@code matrix[i, j]}); empty if
+     * there are none.
+     */
     @NotNull
     public List<KtExpression> getIndexExpressions() {
         return PsiTreeUtil.getChildrenOfTypeAsList(getIndicesNode(), KtExpression.class);
     }
 
+    /**
+     * Returns the container node that wraps the bracketed indices.
+     */
     @NotNull
     public KtContainerNode getIndicesNode() {
         KtContainerNode indicesNode = findChildByType(KtNodeTypes.INDICES);
@@ -58,6 +69,9 @@ public class KtArrayAccessExpression extends KtExpressionImpl implements KtRefer
         return indicesNode;
     }
 
+    /**
+     * Returns the text ranges of the opening and closing brackets, or an empty list if either bracket is missing.
+     */
     @NotNull
     public List<TextRange> getBracketRanges() {
         PsiElement lBracket = getLeftBracket();
@@ -68,16 +82,25 @@ public class KtArrayAccessExpression extends KtExpressionImpl implements KtRefer
         return Lists.newArrayList(lBracket.getTextRange(), rBracket.getTextRange());
     }
 
+    /**
+     * Returns the opening bracket {@code [}, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getLeftBracket() {
         return getIndicesNode().findChildByType(KtTokens.LBRACKET);
     }
 
+    /**
+     * Returns the closing bracket {@code ]}, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable
     public PsiElement getRightBracket() {
         return getIndicesNode().findChildByType(KtTokens.RBRACKET);
     }
 
+    /**
+     * Returns the trailing comma after the last index, or {@code null} if there is none.
+     */
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightBracket());
     }

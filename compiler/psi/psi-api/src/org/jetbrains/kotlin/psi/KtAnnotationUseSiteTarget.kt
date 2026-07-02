@@ -30,6 +30,12 @@ class KtAnnotationUseSiteTarget : KtElementImplStub<KotlinAnnotationUseSiteTarge
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitAnnotationUseSiteTarget(this, data)
 
+    /**
+     * Returns the parsed use-site target this element denotes (for example, [AnnotationUseSiteTarget.PROPERTY_GETTER]
+     * for `@get:`).
+     *
+     * @throws IllegalStateException if the target keyword is not recognized
+     */
     fun getAnnotationUseSiteTarget(): AnnotationUseSiteTarget {
         val targetString = stub?.useSiteTarget
         if (targetString != null) {

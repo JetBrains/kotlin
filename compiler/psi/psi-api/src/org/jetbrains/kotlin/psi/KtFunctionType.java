@@ -66,24 +66,39 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         return visitor.visitFunctionType(this, data);
     }
 
+    /**
+     * Returns the parenthesized list of the function type's parameters, or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtParameterList getParameterList() {
         return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
     }
 
+    /**
+     * Returns the function type's parameters, or an empty list if it takes no parameters.
+     */
     @NotNull
     public List<KtParameter> getParameters() {
         KtParameterList list = getParameterList();
         return list != null ? list.getParameters() : Collections.emptyList();
     }
 
+    /**
+     * Returns the receiver declaration of a function type with receiver (as in {@code String.() -> Unit}), or
+     * {@code null} if the function type has no receiver.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtFunctionTypeReceiver getReceiver() {
         return getStubOrPsiChild(KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
     }
 
+    /**
+     * Returns the receiver type reference of a function type with receiver, or {@code null} if the function type has no
+     * receiver.
+     */
     @Nullable
     public KtTypeReference getReceiverTypeReference() {
         KtFunctionTypeReceiver receiverDeclaration = getReceiver();
@@ -124,6 +139,10 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         return getStubOrPsiChild(KtStubBasedElementTypes.CONTEXT_PARAMETER_LIST);
     }
 
+    /**
+     * Returns the type references of the context receivers declared for this function type, or an empty list if there
+     * are none.
+     */
     public List<KtTypeReference> getContextReceiversTypeReferences() {
         KtContextParameterList contextReceiverList = getContextParameterList();
         if (contextReceiverList != null) {
@@ -133,6 +152,10 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
         }
     }
 
+    /**
+     * Returns the return type reference (the part after {@code ->}), or {@code null} if it is absent in incomplete
+     * code.
+     */
     @Nullable
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getReturnTypeReference() {

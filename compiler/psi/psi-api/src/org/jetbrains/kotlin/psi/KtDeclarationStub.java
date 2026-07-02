@@ -42,6 +42,10 @@ public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModi
         modificationStamp.getAndIncrement();
     }
 
+    /**
+     * Returns a stamp that is incremented whenever this declaration's subtree changes, allowing callers to detect
+     * modifications.
+     */
     public long getModificationStamp() {
         return modificationStamp.get();
     }

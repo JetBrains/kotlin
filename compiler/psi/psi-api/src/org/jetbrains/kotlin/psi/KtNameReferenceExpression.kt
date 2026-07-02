@@ -97,6 +97,10 @@ class KtNameReferenceExpression : KtExpressionImplStub<KotlinNameReferenceExpres
         return visitor.visitSimpleNameExpression(this, data)
     }
 
+    /**
+     * `true` if this reference is the underscore placeholder `_` (used, for example, to ignore a destructuring
+     * component or a lambda parameter).
+     */
     val isPlaceholder: Boolean
         get() = getIdentifier()?.text?.equals("_") == true
 

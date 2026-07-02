@@ -41,6 +41,10 @@ public abstract class KtExpressionImplStub<T extends StubElement<?>> extends KtE
         return KtPsiMutationService.getInstance().replaceExpression(this, newElement, true, this::rawReplace);
     }
 
+    /**
+     * Replaces this element using the raw platform implementation, bypassing the Kotlin-specific {@link #replace}
+     * handling. Intended for use by the PSI mutation machinery.
+     */
     @NotNull
     public PsiElement rawReplace(@NotNull PsiElement newElement) {
         return super.replace(newElement);

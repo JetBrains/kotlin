@@ -28,6 +28,9 @@ public class KtFunctionTypeReceiver extends KtElementImplStub<KotlinPlaceHolderS
         super(stub, KtStubBasedElementTypes.FUNCTION_TYPE_RECEIVER);
     }
 
+    /**
+     * Returns the receiver type reference (the type before the {@code .} in a function type with receiver).
+     */
     @NotNull
     @SuppressWarnings("deprecation") // KT-78356
     public KtTypeReference getTypeReference() {

@@ -35,6 +35,9 @@ public class KtTypeConstraintList extends KtElementImplStub<KotlinPlaceHolderStu
         return visitor.visitTypeConstraintList(this, data);
     }
 
+    /**
+     * Returns the constraints in this {@code where} clause, in source order; empty if there are none.
+     */
     @NotNull
     public List<KtTypeConstraint> getConstraints() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.TYPE_CONSTRAINT);

@@ -29,6 +29,9 @@ public class KtCallableReferenceExpression extends KtExpressionImpl implements K
         super(node);
     }
 
+    /**
+     * Returns the reference to the callable being referenced (the name after {@code ::}, as in {@code ::foo}).
+     */
     @NotNull
     public KtSimpleNameExpression getCallableReference() {
         PsiElement psi = getDoubleColonTokenReference();

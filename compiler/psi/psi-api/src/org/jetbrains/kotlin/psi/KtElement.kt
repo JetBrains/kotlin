@@ -49,6 +49,11 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
     override fun getReference(): PsiReference?
 }
 
+/**
+ * Returns the modification stamp of the nearest enclosing element that tracks one (a file, a stub-based declaration, or
+ * a supertype list). The stamp changes whenever that element's subtree is modified, so it can be used to invalidate
+ * caches keyed on this element.
+ */
 fun KtElement.getModificationStamp(): Long = when (this) {
     is PsiFile -> this.modificationStamp
     is KtDeclarationStub<*> -> this.modificationStamp

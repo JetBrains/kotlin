@@ -34,23 +34,40 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
         return visitor.visitContextReceiver(this, data)
     }
 
+    /**
+     * Returns the explicit label of this context receiver (as in `context(logger@ Logger)`), or `null` if it has no
+     * label.
+     */
     fun targetLabel(): KtSimpleNameExpression? =
         findChildByType<KtContainerNode?>(KtNodeTypes.LABEL_QUALIFIER)
             ?.findChildByType(KtNodeTypes.LABEL)
 
+    /**
+     * Returns the explicit label name, or `null` if this context receiver has no label.
+     */
     fun labelName(): String? {
         stub?.let { return it.label }
         return targetLabel()?.getReferencedName()
     }
 
+    /**
+     * Returns the explicit label name as a [Name], or `null` if this context receiver has no label.
+     */
     fun labelNameAsName(): Name? {
         stub?.let { stub -> return stub.label?.let { Name.identifier(it) } }
         return targetLabel()?.getReferencedNameAsName()
     }
 
+    /**
+     * Returns the type reference of this context receiver, or `null` if it is absent in incomplete code.
+     */
     @Suppress("DEPRECATION") // KT-78356
     fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
+    /**
+     * Returns the effective name used to reference this context receiver: the explicit [labelName] if present,
+     * otherwise the receiver type's short name, or `null` if neither is available.
+     */
     fun name(): String? = labelName() ?: typeReference()?.nameForReceiverLabel()
 
     /**

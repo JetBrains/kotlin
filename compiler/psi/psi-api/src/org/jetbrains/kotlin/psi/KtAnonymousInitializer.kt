@@ -58,9 +58,15 @@ class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitia
     override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
 
+    /**
+     * The opening brace of the `init` block's body, or `null` if the body is not a block.
+     */
     val openBraceNode: PsiElement?
         get() = (body as? KtBlockExpression)?.lBrace
 
+    /**
+     * The `init` keyword introducing this block.
+     */
     val initKeyword: PsiElement
         get() = findChildByType(KtTokens.INIT_KEYWORD)!!
 

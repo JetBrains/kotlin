@@ -28,6 +28,9 @@ public class KtThrowExpression extends KtExpressionImpl implements KtStatementEx
         return visitor.visitThrowExpression(this, data);
     }
 
+    /**
+     * Returns the expression being thrown, or {@code null} if it is absent in incomplete code.
+     */
     @Nullable @IfNotParsed
     public KtExpression getThrownExpression() {
         return findChildByClass(KtExpression.class);

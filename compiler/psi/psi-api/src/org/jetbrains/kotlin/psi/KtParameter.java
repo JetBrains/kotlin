@@ -109,11 +109,17 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtTokens.COLON);
     }
 
+    /**
+     * Returns the {@code =} token preceding the default value, or {@code null} if this parameter has no default value.
+     */
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(KtTokens.EQ);
     }
 
+    /**
+     * Returns {@code true} if this parameter declares a default value.
+     */
     public boolean hasDefaultValue() {
         KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
@@ -122,6 +128,9 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return getDefaultValue() != null;
     }
 
+    /**
+     * Returns the default value expression, or {@code null} if this parameter has no default value.
+     */
     @Nullable
     public KtExpression getDefaultValue() {
         KotlinParameterStub stub = getGreenStub();
@@ -135,6 +144,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return equalsToken != null ? PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression.class) : null;
     }
 
+    /**
+     * Returns {@code true} if this parameter is a mutable {@code var} property parameter (only valid in a primary
+     * constructor).
+     */
     public boolean isMutable() {
         KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
@@ -144,11 +157,18 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtTokens.VAR_KEYWORD) != null;
     }
 
+    /**
+     * Returns {@code true} if this parameter has the {@code vararg} modifier.
+     */
     public boolean isVarArg() {
         KtModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(KtTokens.VARARG_KEYWORD);
     }
 
+    /**
+     * Returns {@code true} if this parameter is declared with a {@code val} or {@code var} keyword (a primary
+     * constructor property parameter).
+     */
     public boolean hasValOrVar() {
         KotlinParameterStub stub = getGreenStub();
         if (stub != null) {
@@ -167,6 +187,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtTokens.VAL_VAR);
     }
 
+    /**
+     * Returns the destructuring declaration if this parameter destructures its argument (as in a lambda
+     * {@code { (a, b) -> ... }}), or {@code null} otherwise.
+     */
     @Nullable
     public KtDestructuringDeclaration getDestructuringDeclaration() {
         // No destructuring declaration in stubs
@@ -186,6 +210,9 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return ItemPresentationProviders.getItemPresentation(this);
     }
 
+    /**
+     * Returns {@code true} if this parameter is the loop variable of a {@code for} loop (as in {@code for (item in list)}).
+     */
     public boolean isLoopParameter() {
         return getParent() instanceof KtForExpression;
     }
@@ -199,6 +226,9 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return klass.isInstance(parent.getParent());
     }
 
+    /**
+     * Returns {@code true} if this parameter is the exception parameter of a {@code catch} clause.
+     */
     public boolean isCatchParameter() {
         return checkParentOfParentType(KtCatchClause.class);
     }
@@ -281,6 +311,11 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return Collections.emptyList();
     }
 
+    /**
+     * Returns the function-like declaration this parameter belongs to, or {@code null} if it is not a value parameter
+     * of a function (for example, a context parameter or a parameter of a function type). See {@link #getOwnerDeclaration()}
+     * for the more general accessor.
+     */
     @Nullable
     public KtDeclarationWithBody getOwnerFunction() {
         PsiElement parent = getParentByStub();

@@ -43,10 +43,21 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     override fun getConstructorKeyword() = notNullChild<PsiElement>(super.getConstructorKeyword())
 
+    /**
+     * Returns the delegation call to another constructor (`: this(...)` / `: super(...)`). A delegation call is always
+     * present in the tree, even when implicit (see [KtConstructorDelegationCall.isImplicit]); use [getDelegationCallOrNull]
+     * to tolerate incomplete code.
+     */
     fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(KtConstructorDelegationCall::class.java)
 
+    /**
+     * Returns the delegation call, or `null` if it is absent in incomplete code.
+     */
     fun getDelegationCallOrNull(): KtConstructorDelegationCall? = findChildByClass(KtConstructorDelegationCall::class.java)
 
+    /**
+     * Returns `true` if the delegation call is implicit, that is, not written in the source.
+     */
     fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit
 
     @Deprecated(
