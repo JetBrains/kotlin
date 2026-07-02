@@ -1,10 +1,7 @@
-// LANGUAGE: +CompanionBlocksAndExtensions
-// ^ On Native `CompanionBlocksAndExtensions` language feature enables the JVM-like initialization.
-//   See nativeCompanionInitOrderLegacy for Native behavior without the language feature.
-// ISSUE: KT-84267 K/Wasm: init order of companion objects is different from JVM
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS,Wasm-js:2.3,2.4
-// ^^^KT-84267 is fixed in 2.4.20-beta1 for WASM
-// ^^^KT-40768 is fixed in 2.4.20-beta1 for JS
+// See companionInitOrderWithSuperclass for the common treatment.
+// TARGET_BACKEND: NATIVE
+// LANGUAGE: -CompanionBlocksAndExtensions
+// Without this language feature, the initialization order on Native does not include recursive initialization of superclasses and superinterfaces.
 
 var l = ""
 private fun log(t: String) {
@@ -251,46 +248,46 @@ fun box(): String {
     l = ""
     A1
     val r1 = l
-    if (r1 != "B1.Companion\nA1.Companion\n") return "fail test1: '$r1'"
+    if (r1 != "A1.Companion\n") return "fail test1: '$r1'"
 
     l = ""
     A2()
     val r2 = l
-    if (r2 != "B2.Companion\nA2.Companion\nB2.init#1\nB2.init#2\nA2.init#1\nA2.init#2\n") return "fail test2: '$r2'"
+    if (r2 != "A2.Companion\nB2.Companion\nB2.init#1\nB2.init#2\nA2.init#1\nA2.init#2\n") return "fail test2: '$r2'"
 
     l = ""
     A3
     log("--")
     A3()
     val r3 = l
-    if (r3 != "B3.Companion\nA3.Companion\n--\nB3.init#1\nB3.init#2\nA3.init#1\nA3.init#2\n") return "fail test3: '$r3'"
+    if (r3 != "A3.Companion\n--\nB3.Companion\nB3.init#1\nB3.init#2\nA3.init#1\nA3.init#2\n") return "fail test3: '$r3'"
 
     l = ""
     A4()
     log("--")
     A4
     val r4 = l
-    if (r4 != "B4.Companion\nA4.Companion\nB4.init#1\nB4.init#2\nA4.init#1\nA4.init#2\n--\n") return "fail test4: '$r4'"
+    if (r4 != "A4.Companion\nB4.Companion\nB4.init#1\nB4.init#2\nA4.init#1\nA4.init#2\n--\n") return "fail test4: '$r4'"
 
     l = ""
     A5
     val r5 = l
-    if (r5 != "C5.Companion\nB5.Companion\nA5.Companion\n") return "fail test5: '$r5'"
+    if (r5 != "A5.Companion\n") return "fail test5: '$r5'"
 
     l = ""
     A6()
     val r6 = l
-    if (r6 != "C6.Companion\nB6.Companion\nA6.Companion\nC6.init\nB6.init\nA6.init\n") return "fail test6: '$r6'"
+    if (r6 != "A6.Companion\nB6.Companion\nC6.Companion\nC6.init\nB6.init\nA6.init\n") return "fail test6: '$r6'"
 
     l = ""
     A7
     val r7 = l
-    if (r7 != "C7.Companion\nA7.Companion\n") return "fail test7: '$r7'"
+    if (r7 != "A7.Companion\n") return "fail test7: '$r7'"
 
     l = ""
     A8()
     val r8 = l
-    if (r8 != "C8.Companion\nA8.Companion\nC8.init\nA8.init\n") return "fail test8: '$r8'"
+    if (r8 != "A8.Companion\nC8.Companion\nC8.init\nA8.init\n") return "fail test8: '$r8'"
 
     l = ""
     B9
@@ -303,7 +300,7 @@ fun box(): String {
     l = ""
     A10
     val r10 = l
-    if (r10 != "B10.Parent\nA10.Child\n") return "fail test10: '$r10'"
+    if (r10 != "A10.Child\n") return "fail test10: '$r10'"
 
     l = ""
     if (A11.value != "B11.Companion/A11.Companion") return "fail test11 value: '${A11.value}'"
@@ -318,34 +315,34 @@ fun box(): String {
     l = ""
     A13
     val r13 = l
-    if (r13 != "B13.Companion\nCompanionBase13.init\nA13.Companion\n") return "fail test13: '$r13'"
+    if (r13 != "CompanionBase13.init\nA13.Companion\n") return "fail test13: '$r13'"
 
     l = ""
     A14
     val r14 = l
-    if (r14 != "C14.Companion\nA14.Companion\n") return "fail test14: '$r14'"
+    if (r14 != "A14.Companion\n") return "fail test14: '$r14'"
 
     l = ""
     A15
     log("--")
     if (I15.marker != "I15.Companion") return "fail test15 marker"
     val r15 = l
-    if (r15 != "B15.Companion\nA15.Companion\n--\nI15.Companion\n") return "fail test15: '$r15'"
+    if (r15 != "A15.Companion\n--\nI15.Companion\n") return "fail test15: '$r15'"
 
     l = ""
     A16
     val r16 = l
-    if (r16 != "B16.Companion\nA16.Companion\n") return "fail test16: '$r16'"
+    if (r16 != "A16.Companion\n") return "fail test16: '$r16'"
 
     l = ""
     A17
     val r17 = l
-    if (r17 != "J17.Companion\nI17.Companion\nK17.Companion\nB17.Companion\nL17.Companion\nA17.Companion\n") return "fail test17: '$r17'"
+    if (r17 != "A17.Companion\n") return "fail test17: '$r17'"
 
     l = ""
     A18()
     val r18 = l
-    if (r18 != "J18.Companion\nI18.Companion\nK18.Companion\nB18.Companion\nL18.Companion\nA18.Companion\nB18.init\nA18.init\n") return "fail test18: '$r18'"
+    if (r18 != "A18.Companion\nB18.Companion\nB18.init\nA18.init\n") return "fail test18: '$r18'"
 
     return "OK"
 }
